@@ -1,0 +1,57 @@
+{% load form_tags %}
+
+{% block custom_head %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/generic_form.css' %}" />
+{% endblock %}
+
+{% block content %}
+    <section class="formulario">
+        <section class="formulario-container">
+            <h2>{{titulo}}</h2>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for field in form.hidden_fields %}
+                    {{ field }}
+                {% endfor %}
+                {% for field in form.visible_fields %}
+                    
+                    {% abrir_alineado form field as abrir %}
+                    {% if abrir %}
+                        <div class="row">
+                    {% endif %}
+
+                        {% calcular_ancho form field as ancho %}
+                        <div class="col-sm-{{ancho}} no-padding enlinea">
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {% for error in field.errors %}
+                                <p class="error">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                    {% cerrar_alineado form field as cerrar %}
+                    {% if cerrar %}
+                        </div>
+                    {% endif %}
+                
+                {% endfor %}
+                <br>
+                {% for error in form.non_field_errors %}
+                    <p class="error">
+                        {{error|escape}}
+                    </p>
+                {% endfor %}
+                <p{{message}}</p>
+                <br>
+                <button type="submit">{{boton}}</button>
+            </form>
+        </section>
+    </section>
+
+    <!-- Para el autocomplete -->
+    <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+    {{ form.media }}
+
+{% endblock %}
+

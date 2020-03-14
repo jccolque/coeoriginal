@@ -1,0 +1,79 @@
+{% extends 'base/base.html' %}
+{% load adminusers_tags %}
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">        
+                    <h1>Listado de Usuarios: <b>{{app_name}}</b></h1>
+                    <p style="float:right;">
+                        {% if administrado and request.user.is_superuser %}
+                            <a href="{% crear_link_addadmin app_name %}">
+                                Crear Administrador General
+                                <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo Usuario">
+                            </a>
+                        {% else %}
+                            <a href="{% url 'core:crear_usuario' app_name=app_name %}">
+                                Crear Usuario
+                                <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo Usuario">
+                            </a>
+                        {% endif %}
+                    </p>
+                    <div class="col-md-12">
+                        <table class="listado">
+                            <tr>
+                                <th colspan="3">usuario</th>
+                                <th>Email</th>
+                                <th>Administra</th>
+                                <th>Roles</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                            {% for admin in administradores %}
+                                <tr>
+                                    <td>{{admin.usuario.username}}</td>
+                                    <td>{{admin.usuario.first_name}}</td>
+                                    <td>{{admin.usuario.last_name}}</td>
+                                    <td>{{admin.usuario.email}}</td>
+                                    <td>
+                                        {{admin.get_administrado}}
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            {% for grupo in admin.usuario.groups.all %}
+                                                <li>{{grupo.name}}</li>
+                                            {% endfor %}
+                                        </td>
+                                    <td>
+                                        {% if admin.usuario.is_active %}
+                                            <b style="color:green;">Activo</b>
+                                        {% else %}
+                                            <b style="color:red;">Inactivo</b>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a class="nolink" href="{% url 'core:modificar_usuario' app_name=app_name admin_id=admin.id %}">
+                                            <img class="icons" src="/static/admin/img/icon-changelink.svg" alt="Modificar">
+                                        </a>
+                                        <a class="nolink" href="{% url 'core:cambiar_password' app_name=app_name user_id=admin.usuario.id %}">
+                                            <img class="icons" src="/static/img/icons/changepassword.png" alt="Cambiar contraseña">
+                                        </a>
+                                        {% if admin.usuario.is_active %}
+                                            <a class="nolink" href="{% url 'core:desactivar_usuario' app_name=app_name user_id=admin.usuario.id %}">
+                                                <img class="icons" src="/static/admin/img/icon-deletelink.svg" alt="Desactivar">
+                                            </a>
+                                        {% else %}
+                                            <a class="nolink" href="{% url 'core:activar_usuario' app_name=app_name user_id=admin.usuario.id %}">
+                                                <img class="icons" src="/static/img/icons/check.png" alt="Activar">
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}   

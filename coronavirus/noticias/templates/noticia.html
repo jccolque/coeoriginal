@@ -1,0 +1,28 @@
+{% extends 'base_noticias.html' %} 
+
+{% block content %}
+    <div class="noticias container">
+        <div class="row">
+            <div class="col-sm-9">
+                <div class="noticia">
+                    <br>
+                    <h1>{{noticia.titulo}}</h1>
+                    <div class="noticia-cuerpo row">
+                        <br>
+                        <div class="foto col-sm-4">
+                            <img src="{{noticia.portada.url}}">
+                            <p class="epigrafe">{{noticia.epigrafe}}
+                        </div>
+                        <div class="info col-sm-8">
+                            {{ noticia.cuerpo|safe }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                    {% include 'extras/buscador_noticias.html' with etiquetas=noticia.etiquetas.all %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

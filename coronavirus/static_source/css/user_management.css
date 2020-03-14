@@ -1,0 +1,34 @@
+div.grupo {
+    color: #fff;
+    background-color: var(--color_claro);
+    border-color: white;
+    border: solid 5px;
+    border-radius: 25px;
+    padding: 10px;
+}
+
+.grupo h3 {
+    text-align: center;
+    color: #fff;
+    background-color: var(--color_oscuro);
+    border-radius: 25px;
+    padding: 10px;
+}
+
+.grupo input[type=checkbox] {
+    
+}
+
+.grupo label{
+    font-size: 1em;
+    font-weight: lighter;
+}
+
+button {
+    color: white;
+    background-color: var(--color_oscuro);
+    margin-left: 25%;
+    width: 50%;
+    border-radius: 25px;
+    font-size: 2em;
+}

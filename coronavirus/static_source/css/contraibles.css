@@ -1,0 +1,46 @@
+/* QUE ES */
+.quees h1 {
+    text-align: center;
+    color: #333;
+}
+
+.quees .texto-explicativo {
+    word-wrap:break-word;
+    text-align: center;
+    color: #333;
+}
+
+.quees .seccion-preguntas-frecuentes {
+    max-width: 90%;
+    margin: auto;
+    padding: 10px 40px;
+    box-shadow: 0 0 20px #00000026;
+    border-radius: 10px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.quees .preguntas-frecuentes {
+    list-style: none;
+    padding-left: 0;
+}
+
+.quees .collapse.in {
+    margin-top: 5px;
+    margin-bottom: 10px;
+    text-align: justify;
+    padding-left: 2%;
+    padding-right: 2%;
+}
+
+.quees .btn-primary {
+    color: #fff;
+    background-color: var(--color_primario);
+    border-color: var(--color_oscuro);
+    width: 90%;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    text-align: center;
+}
+/* FIN QUE ES */

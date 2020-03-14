@@ -1,0 +1,120 @@
+﻿@media all{
+    @page { 
+        size: 8.56cm 5.39cm landscape;
+        margin: 0 1mm 0 1mm;
+    }
+
+   .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {
+        float: left;
+
+   }
+   .col-sm-12 {
+        width: 100%;
+   }
+   .col-sm-11 {
+        width: 91.66666667%;
+   }
+   .col-sm-10 {
+        width: 83.33333333%;
+   }
+   .col-sm-9 {
+        width: 75%;
+   }
+   .col-sm-8 {
+        width: 66.66666667%;
+   }
+   .col-sm-7 {
+        width: 58.33333333%;
+   }
+   .col-sm-6 {
+        width: 50%;
+   }
+   .col-sm-5 {
+        width: 41.66666667%;
+   }
+   .col-sm-4 {
+        width: 33.33333333%;
+   }
+   .col-sm-3 {
+        width: 25%;
+   }
+   .col-sm-2 {
+        width: 16.66666667%;
+   }
+   .col-sm-1 {
+        width: 8.33333333%;
+   }
+
+    body{
+        width: 8.56cm; 
+        height: 5.39cm;
+        margin: 0;
+        break-before: avoid;
+        break-after: avoid;
+
+    }
+    .tarjeta {
+        padding: 0mm;
+    }
+
+    .cabecera {
+
+    }
+
+    .tipo {
+        font-size: 0.8em;
+        font-weight: bold;
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+    }
+
+    .tramo {
+        font-size: 0.5em;
+        font-weight: bold;
+    }
+
+    hr {
+        margin: 0px!important;
+        margin-top: 0.2em!important;
+        margin-bottom: 0.2em!important;
+    }
+
+    p {
+        margin-bottom: 0.4em!important;
+    }
+
+    p.nums {
+        font-size: 1.3em;
+    }
+    .informacion {
+        margin: 0px;
+        font-size: 0.5em;
+    }
+    
+    .tab {
+        margin-left: 10%;
+        font-size: 1.3em;
+    }
+
+    .recuadrofoto {
+        padding: 1mm;
+        padding-bottom: 0;
+    }
+
+    img {
+        margin: 0;
+        page-break-before: avoid;
+        page-break-after: avoid;
+        page-break-inside: avoid;
+    }
+
+    img.foto {
+        width: 2.3cm;
+        height: 2.3cm;
+    }
+
+    img.qr {
+        width: 2.2cm;
+        height: 2.2cm;
+    }
+}

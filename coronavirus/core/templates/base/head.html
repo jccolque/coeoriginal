@@ -1,0 +1,18 @@
+{% load static %}
+{% block content %}
+    <meta charset="utf-8">
+    <title>{% block title %}BEGUP{% endblock %}</title>
+    <link rel="icon" href="{% static 'img/icons/favicon.ico' %}">
+    {% if refresh %}<meta http-equiv="refresh" content="{{refresh}}"/>{%endif%}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/lightbox.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}" />
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/screen.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/constantes.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/menu.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/footer.css' %}" />
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/menu_botones.css' %}" />  
+{% endblock %}

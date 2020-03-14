@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% include "base/head.html" %}
+        {% block custom_head %}
+        
+        {% endblock %}
+    </head>
+
+    <body id="body">
+        {% include "base/menu.html" %}
+        <main>
+            {% block content %}
+            
+            {% endblock %}
+        </main>
+        {% include "base/footer.html" %}
+        
+        {% include "base/scripts.html" %}
+        {% block custom_script %}
+        
+        {% endblock %}
+    </body>
+</html>

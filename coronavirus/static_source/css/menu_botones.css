@@ -1,0 +1,39 @@
+.menu_botones {
+    margin-top: 25px;
+}
+
+.menu_botones li {
+    width: 50%;
+    list-style-type:none;
+    text-align: center;
+    margin: 15px;
+    background: var(--color_primario);
+    border-radius: 4px;
+    font-family: "arial-black";
+    font-size: 14px;
+    padding: 12px 12px;
+    cursor: pointer;   
+  }
+
+.menu_botones li.delete {
+    background: rgb(238, 81, 81);
+}
+
+.menu_botones a {
+    text-decoration: none;
+    color: white;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.boton, .boton:hover {
+    color: rgb(0, 0, 0);
+    text-align: center;
+    margin: 10px;
+    background: var(--color_primario);
+    border-radius: 4px;
+    font-family: "arial-black";
+    font-size: 14px;
+    padding: 12px 12px;
+    cursor: pointer;
+    text-decoration: none;
+}

@@ -1,0 +1,50 @@
+{% extends 'base_noticias.html' %} 
+
+{% block content %}
+    <div class="noticias container">
+        <div class="row">
+            <div class="col-sm-9">
+                {% if noticias %}
+                    <br>
+                    <h1><b>Ultimas Noticias</b></h1>
+                    <hr>
+                    <div class="lista-noticias container">
+                        <ul>
+                            {% for noticia in noticias %}
+                            <li class="noticia">
+                                <div class=row>
+                                    <div class="col-sm-3 foto">
+                                        <a class="novedad-link" href="{{noticia.id}}">
+                                                <img src="{{noticia.portada.url}}">
+                                        </a>
+                                    </div>
+                                    <div class="col-sm-8 info">
+                                        <h2 class="titulo">{{noticia.titulo}}</h2>
+                                        <p>{{ noticia.cuerpo|truncatewords:40|safe }}</p>
+                                        <p style="text-align: right;">
+                                            <a href="{{noticia.id}}">
+                                                &lt;Leer Nota&gt;
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+                            
+                            
+                            </li>
+                            <br>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% else %}
+                    <div class="aviso_faltadata">
+                        <h2>No se han cargado noticias destacadas</h2>
+                        <p>Por favor comience a agregar contenido <a href="{% url 'admin:noticias_noticia_add' %}">aqui</a></p>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col-sm-3">
+                {% include 'extras/buscador_noticias.html' %}
+            </div>
+        </div>
+    </div> 
+{% endblock %}

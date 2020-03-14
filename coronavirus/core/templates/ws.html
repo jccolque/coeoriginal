@@ -1,0 +1,14 @@
+{% extends 'base/base.html' %}
+{% block content %}
+    <h2>Estas son las URL Disponibles:</h2>
+        {% for app, models in apps_listas.items %}
+            <ul>
+                <li><b>{{app}}</b></li>
+                <ul>
+                {% for modelo in models %}
+                     <li><a href="/ws/{{app}}/{{modelo}}">{{modelo}}</a></li>
+                {% endfor %}
+                </ul> 
+            </ul>  
+        {% endfor %}
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base/base.html' %}
+
+{% block custom_head %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/generic_form.css' %}" />
+{% endblock %}
+
+{% block content %}
+    <section class="formulario">
+        <section class="formulario-container">
+                {% if user.is_authenticated %}
+                    <form method="post" action="/">
+                        {% csrf_token %}
+                        <h1>Tu usuario no tiene acceso a esta seccion, por favor contacte al administrador.</h1>
+                        <div class="input-group" style="margin:10px;">
+                            <button class="btn btn-primary" type="submit">Regresar</button>
+                        </div>
+                    </form>
+                {% else %}
+                    <h2>Ingrese al sitio para tener acceso a la seccion requerida:</h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <label for="id_username">Usuario:</label><br>
+                            <input type="text" class="form-control" name="username" autofocus maxlength="254" required id="id_username" /><br>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="id_password">Contraseña:</label><br>
+                            <input type="password" class="form-control" name="password" id="id_password" required /><br>
+                        </div>
+                        {% if form.errors %}
+                            <p>Tu usuario y Contraseña son incorrectos, por favor intenta de nuevo.</p>
+                        {% endif %}
+                        <div class="input-group" style="margin:10px;">
+                            <button class="btn btn-primary" type="submit">Ingresar</button>
+                        </div>
+                    </form>
+                {% endif %}
+        </section>
+    </section>
+{% endblock %}

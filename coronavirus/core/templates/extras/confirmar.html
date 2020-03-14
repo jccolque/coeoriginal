@@ -1,0 +1,26 @@
+{% extends 'base/base.html' %}
+
+{% block custom_head %}
+
+{% endblock %}
+
+{% block content %}
+    <div class="confirmar container">
+        <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8">
+                <h2>{{titulo}}</h2>
+                <p>{{message}}</p>
+                <br>
+                <p>Seguro desea continuar?</p>
+                <div class="col-sm-4"></div>
+                <div class="col-sm-2">
+                    <a href="javascript:history.back()">Cancelar</a>
+                </div>
+                <div class="col-sm-2">
+                    <a href="si">Confirmar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

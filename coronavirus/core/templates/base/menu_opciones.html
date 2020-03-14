@@ -1,0 +1,26 @@
+{% load menu_tags %}
+
+{% block content %}
+    <li><a href="{% url 'core:home' %}">Inicio</a></li>
+    <li><a href="{% url 'noticias:ver_noticias' %}">Noticias</a></li>
+    <li><a href="{% url 'core:faqs' %}">¿Que es el BEGUP?</a></li>
+    <li><a href="{% url 'core:contacto' %}">Contacto</a></li>
+    {% ct_opciones request.user as opciones %}
+    {% if opciones %}
+        <li>
+            <a {% if user.is_staff %}href="{% url 'admin:index' %}"{% endif %}>{{user.username|title}}</a>
+            <ul class="submenu">
+                {% for opcion in opciones %}
+                    <li><a href="/{{opcion.1}}">{{opcion.0}}</a></li>
+                {% endfor %}
+                {% if request.user.is_superuser %}
+                    <li><a href="{% url 'core:ws' %}">Web Services</a></li>
+                {% endif %}
+                <li><a href="{% url 'core:home_logout' %}">Cerrar Sesion</a></li>
+            </ul>
+            <span class="triangle glyphicon glyphicon-triangle-bottom"></span>
+        </li>
+    {% else %}
+        <li><a href="{% url 'core:home_login' %}">Ingresar</a></li>
+    {% endif %}
+{% endblock %}

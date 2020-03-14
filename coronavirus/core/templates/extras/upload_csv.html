@@ -1,0 +1,36 @@
+{% extends 'base/base.html' %}
+{% block content %}
+    <h1><b>{{titulo}}</b></h1>
+    <hr>
+    {% if form %}
+        <div class="centrado">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                {% for field in form %}
+                    <div class="input-group">
+                    {{ field.label_tag }}<br>
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <p style="color:black">{{ error }}</p>
+                    {% endfor %}
+                    </div>
+                {% endfor %}
+                
+                <br>
+                {% for error in form.non_field_errors %}
+                    <p class="error">
+                        {{error|escape}}
+                    </p>
+                {% endfor %}
+                <br>
+                <button style="margin-top:15px;" type="submit">Cargar</button>
+            </form>
+        </div>
+
+    {% elif count %}
+        <h1>Se lograron Cargar {{ count }} Elementos.</h1>
+    {% elif message %}
+        <h1>{{message}}</h1>
+    {% endif %}
+{% endblock %}

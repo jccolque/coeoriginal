@@ -1,0 +1,34 @@
+/* Personal */
+.empleado p {
+    font-size: 1em;
+}
+
+.link_edicion {
+    float: right;
+}
+.retrato {
+    padding: 10px;
+    width: 90%;
+}
+
+.credito {
+    margin: 5px;
+    padding: 10px;
+    background: var(--color_claro);
+    border-radius: 10px;
+    padding-bottom: 5px;
+    z-index: 1;
+    color: rgb(7, 7, 7);
+}
+
+.historico {
+    margin: 5px;
+    padding: 10px;
+    background: var(--color_claro);
+    border-radius: 10px;
+    padding-bottom: 5px;
+    z-index: 1;
+    color: rgb(7, 7, 7);
+    max-height: 800px;
+    overflow-y: scroll;
+}

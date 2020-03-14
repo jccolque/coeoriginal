@@ -1,0 +1,35 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block custom_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/faqs.css' %}" />
+{% endblock %}
+
+{% block content %}
+    {% if faqs %}
+        <div class="quees">
+            <div class="seccion-preguntas-frecuentes">
+                <ul class="preguntas-frecuentes">
+                    {% for faq in faqs %}
+                    <li>
+                        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#{{ faq.id }}" aria-expanded="false" aria-controls="collapseExample">
+                        {{ faq.pregunta }}
+                        </button>
+                        <div id="{{ faq.id }}" class="collapse texto-explicativo">{{ faq.respuesta | safe }}</div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <br>
+    {% else %}
+        <div class="aviso_faltadata">
+            <h2>No se han cargado preguntas frecuentes</h2>
+            <p>Por favor comience a agregar contenido</p>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block custom_scripts %}
+        <script type="text/javascript" src="{% static 'js/faqs.js' %}"></script>
+{% endblock %}

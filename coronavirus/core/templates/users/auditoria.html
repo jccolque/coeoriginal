@@ -1,0 +1,40 @@
+{% extends 'base/base.html' %}
+{% load adminusers_tags %}
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">        
+                    <h1>Auditoria de: <b>{{usuario}}</b></h1>
+                    <h3>Periodo: {{begda}} - {{endda}}</h3>
+                    <div class="col-md-12">
+                        <table class="listado">
+                            <tr>
+                                <th colspan="2">Objeto</th>
+                                <th>Accion</th>
+                                <th>Fecha</th>
+                                <th>Cambios</th>
+                            </tr>
+                            {% for reg in registros %}
+                                <tr>
+                                    <td>{% ct_model_name reg %}</td>
+                                    <td>{{reg.object_repr}}</td>
+                                    <td>{{reg.get_action_display}}</td>
+                                    <td>{{reg.timestamp}}</td>
+                                    <td>
+                                        <ul>
+                                            {% ct_changes_to_list reg.changes as changes %}
+                                            {% for change in changes %}
+                                                <li>{{change}}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}   
