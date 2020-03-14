@@ -1,0 +1,12 @@
+pillow
+qrcode
+python-dateutil
+django
+django-taggit
+django-tinymce
+django-nested-inline
+django-autocomplete-light
+django-geoposition-2
+django-auditlog
+django-background-tasks
+django-debug-toolbar
