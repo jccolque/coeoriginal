@@ -52,6 +52,10 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'georef.apps.GeorefConfig',
     'noticias.apps.NoticiasConfig',
+    'operadores.apps.OperadoresConfig',
+    'actas.apps.ActasConfig',
+    'tareas.apps.TareasConfig',
+    'inventario.apps.InventarioConfig',
 ]
 
 MIDDLEWARE = [
