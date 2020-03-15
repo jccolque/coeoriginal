@@ -11,11 +11,6 @@ from .apps import CoreConfig
 def agregar_menu(app):
     CoreConfig.ADMIN_MENU += [(app.name.capitalize() , app.name)]
 
-#def agregar_user_admin(app):
-#    #Delegamos el manejo de usuarios
-#    from app.models import Administrador
-#    CoreConfig.ADMIN_MODELS[app.name.capitalize()] = Administrador
-
 def obtener_organismos():#Funcion que obtiene del sistema de organigrama los organismos disponibles
     organismos = cache.get("organismos")
     if organismos is None:

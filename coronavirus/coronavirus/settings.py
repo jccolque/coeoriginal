@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'actas.apps.ActasConfig',
     'tareas.apps.TareasConfig',
     'inventario.apps.InventarioConfig',
+    'informacion.apps.InformacionConfig',
 ]
 
 MIDDLEWARE = [

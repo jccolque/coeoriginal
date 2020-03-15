@@ -37,8 +37,10 @@ urlpatterns = [
     path('georef/', include('georef.urls')),
     path('noticias/', include('noticias.urls')),
     path('operadores/', include('operadores.urls')),
+    path('actas/', include('actas.urls')),
     path('tareas/', include('tareas.urls')),
     path('inventario/', include('inventario.urls')),
+    path('informacion/', include('informacion.urls')),
 ]
 #Agregamos destinos de Archivos Estaticos
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
