@@ -1,0 +1,31 @@
+{% extends 'base_informacion.html' %}
+{% load static %}
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2>Archivos Sin Procesar</h2>
+        </div>
+        <div class="row">
+        <div class="col-md-12">
+            <table class="listado">
+                <tr>
+                    <th>Tipo</th>
+                    <th>Titulo</th>
+                    <th>Fecha Subido</th>
+                    <th>Operador</th>
+                    <th>Ver Documento</th>
+                </tr>
+                {% for archivo in archivos %}
+                    <tr>
+                        <td>{{archivo.get_tipo_display}}</td>
+                        <td>{{archivo.nombre}}</td>
+                        <td>{{archivo.fecha}}</td>
+                        <td>{{archivo.operador}}</td>
+                        <td><a href="{% url 'informacion:ver_archivo' archivo_id=archivo.id %}" target="_blank">(Ver Documento)</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+            {% include 'extras/paginador.html' with elementos=documentos %}
+        </div>
+    </div>
+{% endblock %}

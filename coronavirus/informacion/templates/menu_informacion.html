@@ -10,8 +10,11 @@
                     <h1>Menu Informacion:</h1>
                     <div class="col-md-8">
                         <ul class="menu_botones">
-                            {% if perms.informacion.menu %}
-                                <li><a href="{% url 'informacion:menu'  %}">Ejemplo 1</a></li>
+                            {% if perms.operadores.subir_archivos %}
+                                <li><a href="{% url 'informacion:subir_archivos'  %}">Subir Archivos</a></li>
+                            {% endif %}
+                            {% if perms.operadores.archivos_pendientes %}
+                                <li><a href="{% url 'informacion:archivos_pendientes'  %}">Ver Listado de Archivos sin Procesar</a></li>
                             {% endif %}
                             {% if request.user.is_superuser %}
                                 <li><a href="{% url 'informacion:menu' %}">Opcion del Administrador</a></li>

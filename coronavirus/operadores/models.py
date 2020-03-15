@@ -20,6 +20,22 @@ class Operador(models.Model):
     qrpath = models.CharField('qrpath', max_length=100, null=True, blank=True)
     class Meta:
         verbose_name_plural = 'Operadores'
+        permissions = (
+            ("menu_operadores", "Puede Acceder al menu de Operadores"),
+
+            ("menu_inventario", "Puede Acceder al menu Inventario"),
+
+            ("menu_tareas", "Puede Acceder al menu de Tareas"),
+
+            ("menu_informacion", "Puede Acceder al menu de Informacion"),
+            ("archivos_pendientes", "Puede ver listado archivos pendientes."),
+            ("ver_archivos", "Puede ver archivos."),
+            ("subir_archivos", "Puede subir archivos."),
+
+            ("menu_actas", "Puede Acceder al menu de Actas"),
+
+            ("administrador", "Puede administrar Usuarios."),
+        )   
     def get_qrimage(self):
         if self.qrpath:
             return self.qrpath

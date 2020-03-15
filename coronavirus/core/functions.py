@@ -3,6 +3,7 @@ import json
 import requests
 #Imports django
 from django.core.cache import cache
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 #Imports de la app
 from .apps import CoreConfig
 
@@ -21,3 +22,13 @@ def obtener_organismos():#Funcion que obtiene del sistema de organigrama los org
             organismos.append((org['id'],org['nombre']))
         cache.set("organismos", organismos, 10 * 60)  # guardar la data por 10 minutos, y después sola expira
     return organismos
+
+def paginador(request, queryset):
+    page = request.GET.get('page', 1)
+    paginator = Paginator(queryset, 50)
+    try:
+        return paginator.page(page)
+    except PageNotAnInteger:
+        return paginator.page(1)
+    except EmptyPage:
+        return paginator.page(paginator.num_pages)

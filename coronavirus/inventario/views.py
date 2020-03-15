@@ -4,6 +4,6 @@ from django.contrib.auth.decorators import permission_required
 
 
 # Create your views here.
-@permission_required('inventario.menu')
+@permission_required('operador.menu')
 def menu(request):
     return render(request, 'menu_inventario.html', {})

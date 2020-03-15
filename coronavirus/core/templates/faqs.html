@@ -25,7 +25,7 @@
     {% else %}
         <div class="aviso_faltadata">
             <h2>No se han cargado preguntas frecuentes</h2>
-            <p>Por favor comience a agregar contenido</p>
+            <p>Por favor comience a agregar contenido: <a href="{% url 'admin:core_faq_add' %}"> Aqui.</a></p>
         </div>
     {% endif %}
 {% endblock %}

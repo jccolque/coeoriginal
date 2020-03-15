@@ -7,4 +7,9 @@ from . import views
 app_name = 'informacion'
 urlpatterns = [
     path('', views.menu, name='menu'),
+    #Archivos
+    path('archivos_pendientes/', views.archivos_pendientes, name='archivos_pendientes'),
+    path('ver_archivo/<int:archivo_id>', views.ver_archivo, name='ver_archivo'),
+    path('subir_archivos', views.subir_archivos, name='subir_archivos'),
+    #Carga de datos
 ]

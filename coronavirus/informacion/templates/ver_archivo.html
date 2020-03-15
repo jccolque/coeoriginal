@@ -1,0 +1,38 @@
+{% extends 'base_informacion.html' %}
+
+{% load seguridad_tags%}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">        
+                    <h1>Archivo Subido con Exito!</h1>
+                    <div class="col-md-8">
+
+                        <h2>{{archivo.tipo}} - {{archivo.nombre}}</h2>
+                        <p><b>Fecha de Recibido:</b> {{archivo.fecha}}</p>
+                        <p><b>Usuario Emisor:</b> {{archivo.operador}}</p>
+                        <p><b>Procesado:</b> {{archivo.procesado}}</p>                
+                        <img src="{{archivo.archivo.url}}">
+
+                    </div>
+                    <div class="col-md-4">
+                        <p>Informacion del usuario: <b>{{request.user.username}}</b></p>
+                        <p>Roles del usuario:</p>
+                        <ul>
+                            {% ct_get_grupos request.user as grupos %}
+                            {% for grupo in grupos %}
+                                <li>{{grupo.name}}</li>
+                            {% endfor %}
+                        </ul>
+                        <ul class="menu_botones">
+                            <li><a href="{% url 'informacion:subir_archivos'  %}">Subir otro Archivos</a></li>
+                            <li><a href="{% url 'informacion:menu' %}">Volver al Menu</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}
