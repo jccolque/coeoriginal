@@ -107,7 +107,7 @@ class EventoOperador(models.Model):
     tipo = models.CharField('Tipo de Evento', max_length=1, choices=TIPO_EVENTO, default='I')
     fecha = models.DateTimeField('Fecha', default=timezone.now)
     def __str__(self):
-        return str(self.operador) + ': ' + self.get_tipo_display() + ' - ' + (self.fecha)
+        return str(self.operador) + ': ' + self.get_tipo_display() + ' - ' + str(self.fecha)
     def as_dict(self):
         return {
             'id': self.id,
