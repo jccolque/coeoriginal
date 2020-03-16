@@ -1,0 +1,44 @@
+{% extends 'base/base.html' %}
+
+{% load operadores_tags %}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">
+                    <h1>Registro de Asistencia de Operadores:</h1>
+                    <h3>{% include 'extras/buscador.html' %}</h3>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="listado">
+                            <tr>
+                                <th colspan="3">Operador</th>
+                                <th>organismo</th>
+                                <th>Ingreso</th>
+                                <th>Egreso</th>
+                                <th>Acciones</th>
+                            </tr>
+                            {% for asistente in asistentes %}
+                                <tr>
+                                    <td>{{asistente.num_doc}}</td>
+                                    <td>{{asistente.usuario.first_name}}</td>
+                                    <td>{{asistente.usuario.last_name}}</td>
+                                    <td>{{asistente.get_organismo_display}}</td>
+                                    <td>{% ct_get_fecha asistente ingresos %}</td>
+                                    <td>{% ct_get_fecha asistente egresos %}</td>
+                                    <td>
+                                        <a class="nolink" href="{% url 'operadores:ver_credencial' operador_id=asistente.id %}">
+                                            <img class="icons" src="/static/img/icons/access_card.png" alt="Ver Tarjeta">
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}   

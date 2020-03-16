@@ -9,6 +9,7 @@ from tinymce.models import HTMLField
 #Imports del proyecto:
 from core.choices import TIPO_DOCUMENTOS
 from operadores.models import Operador
+from georef.models import Localidad, Barrio
 #Imports de la app
 from .choices import TIPO_IMPORTANCIA, TIPO_ARCHIVO, TIPO_VEHICULO
 
@@ -47,6 +48,24 @@ class Individuo(models.Model):
     origen = models.CharField('Apellidos', max_length=200)
     destino = models.CharField('Apellidos', max_length=200)
     particularidades = HTMLField(null=True, blank=True)
+
+class Domicilio(models.Model):
+    individuo = models.OneToOneField(Individuo, on_delete=models.CASCADE, related_name="domicilio")
+    localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="domicilios_individuos")
+    barrio = models.ForeignKey(Barrio, on_delete=models.SET_NULL, null=True, blank=True, related_name="domicilios_individuos")
+    calle = models.CharField('Calle', max_length=50, default='', blank=False)
+    numero = models.CharField('Numero', max_length=50, default='', blank=False)
+    def __str__(self):
+        return self.calle + ' ' + self.numero + ', ' + str(self.localidad)
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "beneficiario_id": self.beneficiario.id,
+            "localidad": str(self.localidad),
+            "barrio": str(self.barrio),
+            "calle": self.calle,
+            "numero": self.numero,
+        }
 
 class Origen(models.Model):#Origen del Dato
     vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, related_name="origenes")

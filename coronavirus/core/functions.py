@@ -12,17 +12,6 @@ from .apps import CoreConfig
 def agregar_menu(app):
     CoreConfig.ADMIN_MENU += [(app.name.capitalize() , app.name)]
 
-def obtener_organismos():#Funcion que obtiene del sistema de organigrama los organismos disponibles
-    organismos = cache.get("organismos")
-    if organismos is None:
-        r = requests.get('http://organigrama.jujuy.gob.ar/ws_org/')
-        orgs = json.loads(r.text)['data']
-        organismos = list()
-        for org in orgs:
-            organismos.append((org['id'],org['nombre']))
-        cache.set("organismos", organismos, 10 * 60)  # guardar la data por 10 minutos, y después sola expira
-    return organismos
-
 def paginador(request, queryset):
     page = request.GET.get('page', 1)
     paginator = Paginator(queryset, 50)

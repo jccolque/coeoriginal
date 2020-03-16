@@ -4,8 +4,6 @@ from datetime import date
 from django.utils import timezone
 from django import forms
 from django.contrib.auth.models import User
-from django.contrib.auth.models import Group
-from django.forms.widgets import CheckboxSelectMultiple
 #Imports extra
 from dal import autocomplete
 #Imports del proyecto
@@ -14,6 +12,9 @@ from coronavirus.settings import SECRET_KEY
 from .models import Consulta
 
 #Definimos nuestros formularios
+class SearchForm(forms.Form):
+    buscar = forms.CharField(label="", required=True)
+
 class ConsultaForm(forms.ModelForm):
     class Meta:
         model = Consulta
@@ -71,8 +72,8 @@ class PeriodoForm(forms.Form):
     def clean(self):
         if self.cleaned_data['begda'] > self.cleaned_data['endda']:
             raise forms.ValidationError("La fecha de Inicio debe ser Menor a la de fin.")
-        if self.cleaned_data['endda'] > date.today():
-            raise forms.ValidationError("No puede ingresar una fecha posteriores a hoy.")
+        self.begda = self.cleaned_data['begda']
+        self.endda = self.cleaned_data['endda']
         return self.cleaned_data
 
 class AuditoriaForm(forms.Form):

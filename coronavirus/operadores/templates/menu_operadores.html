@@ -10,10 +10,23 @@
                     <h1>Menu Inventario:</h1>
                     <div class="col-md-8">
                         <ul class="menu_botones">
-                            {% if perms.operadores.menu %}
-                                <li><a href="{% url 'operadores:menu'  %}">Ejemplo 1</a></li>
+                            {% if perms.operadores.listar_operadores %}
+                                <li><a href="{% url 'operadores:listar_operadores'  %}">Ver Listado de Operadores</a></li>
                             {% endif %}
+
+                            {% if perms.operadores.crear_operador %}
+                                <li><a href="{% url 'operadores:crear_operador'  %}">Crear Operador</a></li>
+                            {% endif %}
+
+                            {% if perms.operadores.control_asistencia %}
+                                <hr>
+                                <li><a href="{% url 'operadores:checkin'  %}">Ingreso Operador</a></li>
+                                <li><a href="{% url 'operadores:listado_presentes'  %}">Listado de Presentes</a></li>
+                                <li><a href="{% url 'operadores:registro_asistencia'  %}">Registro de Asistencia</a></li>
+                            {% endif %}
+
                             {% if request.user.is_superuser %}
+                                <hr>
                                 <li><a href="{% url 'operadores:menu' %}">Opcion del Administrador</a></li>
                             {% endif %}
                         </ul>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ImprimirCredencial</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width">
+        {% load static %}
+        <link href="{% static 'css/tarjeta/bootstrap.css' %}" rel="stylesheet">
+        <link href="{% static 'css/tarjeta/style.css' %}" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container tarjeta">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="col-sm-8">
+                        <hr>
+                        <div class="informacion">
+                            <p class="nums"><b>N° Documento:</b> {{operador.num_doc}}</p>
+                            <p><b>Nombre y Apellido:</b></p>
+                            <p class="tab">{{operador.usuario.last_name}}, {{operador.usuario.first_name}}</p>
+                            <p><b>Organismo:</b></p>
+                            <p class="tab">{{operador.get_organismo_display}}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-sm-4">
+                        <div class="row recuadrofoto">
+                            <img class="foto" src="{{operador.fotografia.url}}">
+                        </div>
+                        <div class="row">
+                            <img class="qr" src="{{operador.get_qrimage}}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
