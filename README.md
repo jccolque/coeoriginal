@@ -1,6 +1,6 @@
-# coronavirus
+# COE
 
-Sistema de apoyo al Comite Operativo de Emergencias por Coronavirus.
+Sistema de apoyo al Comite Operativo de Emergencias.
 
 Para poder probar este proyecto solo deben Instalar:
 - Python3+
