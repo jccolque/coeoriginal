@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
 from core.functions import paginador
+from core.forms import SearchForm
 from operadores.functions import obtener_operador
 #Imports de la app
 from .models import Tarea, Responsable, EventoTarea
@@ -17,7 +18,15 @@ def menu(request):
 @permission_required('operador.ver_tarea')
 def lista_tareas(request):
     tareas = Tarea.objects.all()
-    tareas = tareas.order_by('subcomite').select_related('subcomite')
+    tareas = tareas.order_by('subcomite')
+    tareas = tareas.select_related('subcomite')
+    tareas = tareas.prefetch_related('responsables', 'eventos')
+    #Si utilizo el buscador filtramos
+    if request.method == 'POST':
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            search = form.cleaned_data['search']
+            tareas = tareas.filter(nombre__icontains=search)
     tareas = paginador(request, tareas)
     return render(request, "lista_tareas.html", {'tareas': tareas, })
 
