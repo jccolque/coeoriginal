@@ -64,7 +64,7 @@ def eliminar_tarea(request, tarea_id):
     return redirect('tareas:lista_tareas', )
 
 #Responsable
-@permission_required('operador.crear_tarea')
+@permission_required('operador.asignar_responsable')
 def agregar_responsable(request, tarea_id):
     tarea = Tarea.objects.get(pk=tarea_id)
     form = ResponsableForm(initial={'tarea': tarea, })
@@ -77,7 +77,7 @@ def agregar_responsable(request, tarea_id):
             return redirect('tareas:ver_tarea', tarea_id=tarea.id)
     return render(request, "extras/generic_form.html", {'titulo': "Agregar Responsable", 'form': form, 'boton': "Agregar", })
 
-@permission_required('operador.crear_tarea')
+@permission_required('operador.asignar_responsable')
 def eliminar_responsable(request, responsable_id):
     responsable = Responsable.objects.get(pk=responsable_id)
     tarea = responsable.tarea
@@ -85,7 +85,7 @@ def eliminar_responsable(request, responsable_id):
     return redirect('tareas:ver_tarea', tarea_id=tarea.id)
 
 #Eventos
-@permission_required('operador.crear_tarea')
+@permission_required('operador.cargar_evento')
 def agregar_evento(request, tarea_id):
     tarea = Tarea.objects.get(pk=tarea_id)
     form = EventoTareaForm(initial={'tarea': tarea, })
@@ -98,7 +98,7 @@ def agregar_evento(request, tarea_id):
             return redirect('tareas:ver_tarea', tarea_id=tarea.id)
     return render(request, "extras/generic_form.html", {'titulo': "Agregar Evento", 'form': form, 'boton': "Agregar", })
 
-@permission_required('operador.crear_tarea')
+@permission_required('operador.cargar_evento')
 def eliminar_evento(request, evento_id):
     evento = EventoTarea.objects.get(pk=evento_id)
     tarea = evento.tarea
