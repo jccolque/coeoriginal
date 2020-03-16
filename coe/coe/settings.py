@@ -25,7 +25,6 @@ SECRET_KEY = 'n!+$&mpxi^8b1tgi)bffl0*gl$0%(esc&icba-0_p#ptayuz=0'
 # SECURITY WARNING: don't run with debug turned on in production!
 ALLOWED_HOSTS = ['localhost', 'coe.jujuy.gob.ar',]
 
-
 # Application definition
 
 INSTALLED_APPS = [
