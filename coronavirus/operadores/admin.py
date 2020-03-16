@@ -2,8 +2,10 @@
 from django.contrib import admin
 #Imports extras
 
+#Imports de proyecto
+from core.admin import register_hidden_models
 #Imports de la app
-from .models import Operador
+from .models import SubComite, Operador
 
 #Definimos nuestros modelos administrables:
 class OperadorAdmin(admin.ModelAdmin):
@@ -15,4 +17,5 @@ class OperadorAdmin(admin.ModelAdmin):
         return False
 
 # Register your models here.
+register_hidden_models(SubComite)
 admin.site.register(Operador, OperadorAdmin)

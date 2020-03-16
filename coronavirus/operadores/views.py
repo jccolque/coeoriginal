@@ -1,4 +1,5 @@
 #Imports de Python
+import pytz
 from datetime import timedelta
 #Imports Django
 from django.db.models import Q
@@ -12,7 +13,7 @@ from django.contrib.auth.decorators import permission_required
 from auditlog.models import LogEntry
 #Import del proyecto
 from core.functions import paginador
-from core.forms import SearchForm, PeriodoForm
+from core.forms import SearchForm, PeriodoForm, FechaForm
 #Imports de la app
 from .functions import obtener_permisos
 from .models import Operador, EventoOperador
@@ -108,11 +109,14 @@ def activar_usuario(request, operador_id):
 #Ingreso y Egreso
 @permission_required('control_asistencia')
 def registro_asistencia(request):
-    form = PeriodoForm()
+    form = FechaForm()
     if request.method == 'POST':
-        form = PeriodoForm(request.POST)
+        form = FechaForm(request.POST)
         if form.is_valid():
-            asistentes = EventoOperador.objects.filter(fecha__range=(form.begda, form.endda))
+            dia = form.cleaned_data['fecha']
+            begda = timezone.datetime(dia.year, dia.month, dia.day, 0, 0, 0, tzinfo=timezone.get_current_timezone())
+            endda = timezone.datetime(dia.year, dia.month, dia.day, 23, 59, 59, tzinfo=timezone.get_current_timezone())
+            asistentes = EventoOperador.objects.filter(fecha__range=(begda, endda))
             ingresos = {i.operador.id: i for i in asistentes.filter(tipo='I')}#Va a ir pisando hasta dejar solo el ultimo
             egresos = {e.operador.id: e for e in asistentes.filter(tipo='E')}#Va a ir pisando hasta dejar solo el ultimo
             asistentes = [a.operador for a in asistentes]

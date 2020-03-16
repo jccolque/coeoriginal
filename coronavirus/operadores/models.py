@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 #Imports de paquetes extras
 from auditlog.registry import auditlog
+from tinymce.models import HTMLField
 #Imports del proyecto:
 from coronavirus.settings import MEDIA_ROOT
 from core.choices import TIPO_DOCUMENTOS
@@ -14,9 +15,24 @@ from core.api import obtener_organismos
 from .choices import TIPO_EVENTO
 
 # Create your models here.
+class SubComite(models.Model):
+    nombre = models.CharField('Nombre', max_length=50)
+    descripcion = HTMLField()
+    activo = models.BooleanField(default=True)
+    def __str__(self):
+        return self.nombre
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'nombre': self.nombred,
+            'descripcion': self.descripcion,
+            'activo': self.activo,
+        }
+
 class Operador(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="operadores")
     organismo = models.PositiveIntegerField(choices=obtener_organismos(), default=0)
+    subcomite = models.ForeignKey(SubComite, on_delete=models.SET_NULL, null=True, blank=True, related_name="operadores")
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="operadores")
     tipo_doc = models.IntegerField(choices=TIPO_DOCUMENTOS, default=2)
     num_doc = models.IntegerField('Numero de Documento', unique=True)
     telefono = models.CharField('Telefono', max_length=20, default='+549388')
@@ -46,7 +62,22 @@ class Operador(models.Model):
             ("menu_actas", "Puede Acceder al menu de Actas"),
 
             ("administrador", "Puede administrar Usuarios."),
-        )   
+        )
+    def __str__(self):
+        return self.get_organismo_display() + ': ' + self.usuario.last_name + ', ' + self.usuario.first_name
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'organismo': self.get_organismo_display(),
+            'subcomite': self.subcomite,
+            'usuario_id': self.usuario.id,
+            'usuario_username': self.usuario.username,
+            'tipo_doc': self.tipo_doc,
+            'num_doc': self.num_doc,
+            'telefono': self.telefono,
+            'fotografia': self.fotografia,
+            'qrpath': self.qrpath,
+        }
     def get_qrimage(self):
         if self.qrpath:
             return self.qrpath
@@ -63,6 +94,16 @@ class EventoOperador(models.Model):
     operador = models.ForeignKey(Operador, on_delete=models.CASCADE, null=True, blank=True, related_name="asistencia")
     tipo = models.CharField('Tipo de Evento', max_length=1, choices=TIPO_EVENTO, default='I')
     fecha = models.DateTimeField('Fecha', default=timezone.now)
-
+    def __str__(self):
+        return str(self.operador) + ': ' + self.get_tipo_display() + ' - ' + (self.fecha)
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'operador_id': self.operador.id,
+            'operador': str(self.operador),
+            'tipo': self.get_tipo_display,
+            'fecha': self.fecha,
+        }
 #Auditoria
+auditlog.register(SubComite)
 auditlog.register(Operador)

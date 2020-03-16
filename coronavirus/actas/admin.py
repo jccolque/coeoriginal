@@ -1,28 +1,19 @@
 #Imports Django
 from django.contrib import admin
 #Imports extras
-from nested_inline.admin import NestedStackedInline, NestedModelAdmin
 #Imports de la app
-from .models import Acta, Participes, EventoParticipe
+from .models import Acta, Participes
 
 #Definimos los inlines:
-class EventoParticipeInline(NestedStackedInline):
-    model = EventoParticipe
-    fk_name = 'participe'
-    extra = 1
-    def has_delete_permission(self, request, obj=None):
-        return False
-
-class ParticipesInline(NestedStackedInline):
+class ParticipesInline(admin.TabularInline):
     model = Participes
     fk_name = 'acta'
-    inlines = [EventoParticipeInline]
     extra = 1
     def has_delete_permission(self, request, obj=None):
         return False
 
 #Definimos nuestros modelos administrables:
-class ActaAdmin(NestedModelAdmin):
+class ActaAdmin(admin.ModelAdmin):
     model = Acta
     search_fields = ['nombre',]
     list_filter = ['tipo']
