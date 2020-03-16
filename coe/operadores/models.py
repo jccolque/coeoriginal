@@ -56,6 +56,8 @@ class Operador(models.Model):
             ("menu_tareas", "Puede Acceder al menu de Tareas"),
             ("ver_tarea", "Puede ver listado de Tareas"),
             ("crear_tarea", "Puede crear Tareas"),
+            ("asignar_responsable", "Puede Agregar Responsables a las Tareas"),
+            ("cargar_evento", "Puede cargar_evento a las Tareas"),
             #Informacion:
             ("menu_informacion", "Puede Acceder al menu de Informacion"),
             ("archivos_pendientes", "Puede ver listado archivos pendientes."),
