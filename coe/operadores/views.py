@@ -64,7 +64,7 @@ def crear_operador(request, operador_id=None):
         if form.is_valid():
             operador = form.save(commit=False)
             #Primero creamos el usuario
-            if not operador.usuario:
+            if not hasattr(operador, 'usuario'):
                 usuario = User(
                     username = form.cleaned_data['username'],
                     #password > Se genera en el envio del mail
