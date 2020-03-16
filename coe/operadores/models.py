@@ -61,6 +61,8 @@ class Operador(models.Model):
             ("subir_archivos", "Puede subir archivos."),
 
             ("menu_actas", "Puede Acceder al menu de Actas"),
+            ("ver_acta", "Puede Ver Actas"),
+            ("crear_acta", "Puede Crear Actas"),
 
             ("administrador", "Puede administrar Usuarios."),
         )

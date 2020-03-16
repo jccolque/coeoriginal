@@ -11,25 +11,24 @@ from .choices import TIPO_ACTA
 
 # Create your models here.
 class Acta(models.Model):
-    nombre = models.CharField('Nombre', max_length=200)
+    titulo = models.CharField('Titulo', max_length=200)
     cuerpo = HTMLField()
     tipo = models.IntegerField(choices=TIPO_ACTA, default=5)
     fecha = models.DateTimeField('Fecha del Acta', default=timezone.now)
     publica = models.BooleanField('Publicable', default=False)
     def __str__(self):
-        return self.nombre + ': ' + str(self.fecha)
+        return self.titulo + ': ' + str(self.fecha)
     def as_dict(self):
         return {
             'id': self.id,
-            'nombre': self.nombre,
+            'nombre': self.titulo,
             'cuerpo': self.cuerpo,
             'tipo': self.tipo,
             'fecha': self.fecha,
             'publica': self.publica,
         }
 
-
-class Participes(models.Model):
+class Participe(models.Model):
     acta = models.ForeignKey(Acta, on_delete=models.CASCADE, related_name="participes")
     operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="participes")
     def __str__(self):
@@ -43,4 +42,4 @@ class Participes(models.Model):
 
 #Auditoria
 auditlog.register(Acta)
-auditlog.register(Participes)
+auditlog.register(Participe)

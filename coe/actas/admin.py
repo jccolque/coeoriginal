@@ -2,11 +2,11 @@
 from django.contrib import admin
 #Imports extras
 #Imports de la app
-from .models import Acta, Participes
+from .models import Acta, Participe
 
 #Definimos los inlines:
-class ParticipesInline(admin.TabularInline):
-    model = Participes
+class ParticipeInline(admin.TabularInline):
+    model = Participe
     fk_name = 'acta'
     extra = 1
     def has_delete_permission(self, request, obj=None):
@@ -17,7 +17,7 @@ class ActaAdmin(admin.ModelAdmin):
     model = Acta
     search_fields = ['nombre',]
     list_filter = ['tipo']
-    inlines = [ParticipesInline]
+    inlines = [ParticipeInline]
     def has_delete_permission(self, request, obj=None):
         return False
 

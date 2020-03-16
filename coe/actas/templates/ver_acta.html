@@ -1,0 +1,41 @@
+{% extends 'base/base.html' %}
+{% load adminusers_tags %}
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">        
+                    <h1>Acta: <b>{{acta.titulo}}</b></h1>
+                    <p><b>Tipo:</b> {{acta.get_tipo_display}}</p>
+                    <p><b>Fecha:</b> {{acta.fecha}}</p>
+                    <hr>
+                    <div class="col-sm-9">
+                        <p>{{acta.cuerpo|safe}}</p>
+                    </div>
+                    <div class="col-sm-3">
+                        <ul class="menu_botones">
+                            {% if perms.operadores.ver_acta %}
+                                <li><a href="{% url 'actas:listar_actas' %}">Listar Actas</a></li>
+                            {% endif %}
+                            {% if perms.operadores.crear_acta %}
+                                <li><a href="{% url 'actas:modificar_acta' acta_id=acta.id %}">Modificar Acta</a></li>
+                            {% endif %}
+                        </ul>
+                        {% for participe in acta.participes.all %}
+                            {% if forloop.first %}
+                                <p>Participantes:</p>
+                                <ul>
+                            {% endif %}
+                            <li>{{participe}}</li>
+                            {% if forloop.last %}
+                                </ul>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <hr>
+                <p>Publicable: {{acta.publica}}</p>
+            </div>
+        </section>
+    </section>
+{% endblock %}   

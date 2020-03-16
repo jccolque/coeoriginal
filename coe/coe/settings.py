@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #Extras:
-
     'taggit',
     'tinymce',
     'auditlog',
@@ -165,14 +164,15 @@ except ImportError:#Si no logramos importar:
 AWS_PRELOAD_METADATA = True
 
 #Configuramos Tinymce
+#Configuramos Tinymce
 TINYMCE_DEFAULT_CONFIG = {
     'plugins': "table,xhtmlxtras,paste,searchreplace",
     'theme': "advanced",
     "theme_advanced_buttons3_add" : "cite,abbr",
     'cleanup_on_startup': True,
     'custom_undo_redo_levels': 10,
-    'width': '70%',
-    'height': '600',
+    'width': '90%',
+    'height': '500px',
 }
 
 #Definimos todos los paneles del debug que queremos disponibles:

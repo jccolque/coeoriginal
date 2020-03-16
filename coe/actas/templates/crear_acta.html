@@ -1,0 +1,48 @@
+{% extends 'base_informacion.html' %}
+{% load static %}
+
+{% block custom_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/generic_form.css' %}" />
+    <style>
+        textarea {
+            width: 100%;
+            height: 550px;
+        }
+
+        button {
+            float: right;
+        }
+    </style>
+    {{ form.media }}
+{% endblock %}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-1"></div>
+                    <div class="col-sm-11">
+                        <form method="post">
+                            {% csrf_token %}
+                            <h1>Titulo: {{ form.titulo }}</h1>
+                            <hr>
+                            <p>Tipo: {{ form.tipo }}</p>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    {{ form.cuerpo }}
+                                </div>
+                                <div class="col-sm-4">
+                                    <p>Participes:</p>
+                                    {{ form.participes }}
+                                    <p>Publicable: {{ form.publica }}</p>
+                                </div>
+                                <button type="submit">Crear</button>
+                            </div> 
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}
