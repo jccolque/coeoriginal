@@ -1,0 +1,53 @@
+{% extends 'base_informacion.html' %}
+
+{% load seguridad_tags%}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">
+                    <br>
+                    <h2>Individuo: {{individuo.apellidos}}, {{individuo.nombres}}</h2>
+                    <div class="col-md-8">
+                        <p>Documento: {{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</p>
+                        <p>Fecha de Nacimiento: {{individuo.fecha_nacimiento}}</p>
+                        <p>Telefono: {{individuo.telefono}}</p>
+                        <p>Email: {{individuo.email}}</p>
+                        <p>Nacionalidad: {{individuo.nacionalidad}}</p>
+                        {% if individuo.domicilio %}
+                            <p>Domicilio: {{individuo.domicilio.calle}} {{individuo.domicilio.numero}}, {{individuo.domicilio.barrio}} - {{individuo.domicilio.localidad}}</p>
+                        {% endif %}
+                        <p>Origen: {{individuo.origen}} - Destino:{{individuo.destino}}</p>
+                        <p>Particularidades:{{individuo.particularidades|safe}}</p>
+
+                        {% for sintoma in individuo.sintomas.all %}
+                            {% if forloop.first %}
+                                <p>Sintomas:</p>
+                                <ul>
+                            {% endif %}
+                            <li>{{sintoma.sintoma.nombre}}: {{sintoma.fecha}} | {{sintoma.aclaracion}}</li>
+                            {% if forloop.last %}
+                                </ul>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-4">
+                        <p>Informacion del usuario: <b>{{request.user.username}}</b></p>
+                        <ul class="menu_botones">
+                            {% if individuo.origenes %}
+                                {% for origen in individuo.origenes.all %}
+                                    <li><a href="{% url 'informacion:ver_vehiculo' vehiculo_id=origen.vehiculo.id %}">Volver al Vehiculos {{origen.vehiculo}}</a></li>
+                                {% endfor %}
+                            {% endif %}
+                            <li><a href="{% url 'informacion:cargar_domicilio' individuo_id=individuo.id %}">Cargar Domicilio</a></li>
+                            <li><a href="{% url 'informacion:cargar_sintoma' individuo_id=individuo.id  %}">Cargar Sintomas</a></li>
+                            <li><a href="{% url 'informacion:listar_individuos' %}">Volver al Listado de Individuos</a></li>
+                            <li><a href="{% url 'informacion:listar_vehiculos' %}">Volver al Listado de Vehiculos</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}

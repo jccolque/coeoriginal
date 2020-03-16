@@ -52,6 +52,9 @@
                                         {% endif %}
                                     </td>
                                     <td>
+                                        <a class="nolink" href="{% url 'operadores:ver_credencial' operador_id=operador.id %}">
+                                            <img class="icons" src="/static/img/icons/access_card.png" alt="Ver Tarjeta">
+                                        </a>
                                         <a class="nolink" href="{% url 'operadores:modificar_usuario'  operador_id=operador.id %}">
                                             <img class="icons" src="/static/admin/img/icon-changelink.svg" alt="Modificar">
                                         </a>

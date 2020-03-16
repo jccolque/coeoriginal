@@ -7,7 +7,6 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 #Imports de la app
 from .apps import CoreConfig
 
-
 #Funciones para asignar a las app.configs    
 def agregar_menu(app):
     CoreConfig.ADMIN_MENU += [(app.name.capitalize() , app.name)]

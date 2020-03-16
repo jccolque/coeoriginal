@@ -1,0 +1,35 @@
+{% extends 'base_informacion.html' %}
+{% load static %}
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2>Tareas Creadas</h2>
+        </div>
+        <div class="row">
+        <div class="col-md-12">
+            <table class="listado">
+                <tr>
+                    <th>Subcomite</th>
+                    <th>Nombre</th>
+                    <th>Prioridad</th>
+                    <th>Inicio</th>
+                    <th>Fecha Limite</th>
+                    <th>Ultimo Cambio</th>
+                    <th>Ver Detalle</th>
+                </tr>
+                {% for tarea in tareas %}
+                    <tr>
+                        <td>{{tarea.subcomite}}</td>
+                        <td>{{tarea.nombre}}</td>
+                        <td>{{tarea.get_prioridad_display}}</td>
+                        <td>{{tarea.begda}}</td>
+                        <td>{{tarea.endda}}</td>
+                        <td>{{tarea.get_last_event.get_accion_display}}</td>
+                        <td><a href="{% url 'tareas:ver_tarea' tarea_id=tarea.id %}" target="_blank">(Ver Detalle)</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+            {% include 'extras/paginador.html' with elementos=documentos %}
+        </div>
+    </div>
+{% endblock %}

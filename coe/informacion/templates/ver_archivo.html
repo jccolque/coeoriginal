@@ -28,7 +28,16 @@
                         </ul>
                         <ul class="menu_botones">
                             <li><a href="{% url 'informacion:subir_archivos'  %}">Subir otro Archivos</a></li>
-                            <li><a href="{% url 'informacion:menu' %}">Volver al Menu</a></li>
+                            <li>
+                                <a href="{% url 'informacion:procesar_archivos' archivo_id=archivo.id  %}">
+                                    {% if not archivo.procesado %}
+                                        Marcar como Procesado
+                                    {% else %}
+                                        Quitar Procesado
+                                    {% endif %}
+                                </a>
+                            </li>
+                            <li><a href="{% url 'informacion:archivos_pendientes' %}">Volver al Listado de Pendientes</a></li>
                         </ul>
                     </div>
                 </div>

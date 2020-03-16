@@ -41,3 +41,10 @@ def obtener_organismos():
             organismos.append((org['id'],org['nombre']))
         cache.set("organismos", organismos)
     return organismos
+
+def org_id_from_name(nombre):
+    organismos = obtener_organismos()
+    for organismo in organismos:
+        if nombre == organismo[1]:
+            return organismo[0]
+    return ''

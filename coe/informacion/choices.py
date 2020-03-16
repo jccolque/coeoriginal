@@ -1,10 +1,9 @@
 #Choice Fields
 TIPO_IMPORTANCIA = (
-    (1, 'Particular'),
-    (2, 'Colectivo'),
-    (3, 'Traffic'),
-    (4, 'Comercial Pequeño'),
-    (5, 'Avion'),
+    (1, 'Importante'),
+    (2, 'Intermedia'),
+    (3, 'Baja'),
+    (4, 'Nula'),
 )
 
 TIPO_ARCHIVO = (

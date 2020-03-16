@@ -1,0 +1,54 @@
+{% extends 'base_informacion.html' %}
+
+{% load seguridad_tags%}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">        
+                    <h2>Vehiculo: {{vehiculo.identificacion}}</h2>
+                    <div class="col-md-8">
+                        <h3>{{vehiculo.get_tipo_display}} {{vehiculo.empresa}}</h3>
+                        <p><b>Pasajeros:</b> {{vehiculo.cant_pasajeros}}</p>
+                        <p><b>Plan de Ruta:</b> {{vehiculo.plan}}</p>
+
+                        <hr>
+                        <h3>Listado de Pasajeros:</h3>
+                        <table class="listado">
+                            <tr>
+                                <th>Documento</th>
+                                <th>Apellidos</th>
+                                <th>Nombres</th>
+                                <th>Fecha de Nacimiento</th>
+                                <th>Nacionalidad</th>
+                                <th>Origen</th>
+                                <th>Destino</th>
+                                <th>Ver Individuo</th>
+                            </tr>
+                            {% for origen in vehiculo.origenes.all %}
+                                <tr>
+                                    <td>{{origen.individuo.num_doc}}</td>
+                                    <td>{{origen.individuo.apellidos}}</td>
+                                    <td>{{origen.individuo.nombres}}</td>
+                                    <td>{{origen.individuo.fecha_nacimiento}}</td>
+                                    <td>{{origen.individuo.nacionalidad}}</td>
+                                    <td>{{origen.individuo.origen}}</td>
+                                    <td>{{origen.individuo.destino}}</td>
+                                    <td><a href="{% url 'informacion:ver_individuo' individuo_id=origen.individuo.id %}" target="_blank">(Ver Individuo)</a></td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    <div class="col-md-4">
+                        <p>Informacion del usuario: <b>{{request.user.username}}</b></p>
+                        <ul class="menu_botones">
+                            <li><a href="{% url 'informacion:cargar_pasajero' vehiculo_id=vehiculo.id  %}">Cargar Pasajero</a></li>
+                            <li><a href="{% url 'informacion:menu' %}">Volver al Menu</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}

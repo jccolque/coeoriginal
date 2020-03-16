@@ -23,8 +23,8 @@ class Acta(models.Model):
             'id': self.id,
             'nombre': self.titulo,
             'cuerpo': self.cuerpo,
-            'tipo': self.tipo,
-            'fecha': self.fecha,
+            'tipo': self.get_tipo_display(),
+            'fecha': str(self.fecha),
             'publica': self.publica,
         }
 

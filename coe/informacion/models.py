@@ -16,7 +16,7 @@ from .choices import TIPO_IMPORTANCIA, TIPO_ARCHIVO, TIPO_VEHICULO
 #Tipo Definition
 class TipoSintoma(models.Model):#Origen del Dato
     nombre = models.CharField('Nombre', max_length=100)
-    descripcion = HTMLField(verbose_name='Plan de Ruta')
+    descripcion = HTMLField(verbose_name='Descripcion', null=True, blank=True)
     importancia = models.IntegerField(choices=TIPO_IMPORTANCIA, default='1')
     def __str__(self):
         return self.nombre
@@ -43,9 +43,9 @@ class Archivo(models.Model):
             'id': self.id,
             'tipo': self.get_tipo_display(),
             'nombre': self.nombre,
-            'archivo': self.archivo,
-            'fecha': self.fecha,
-            'operador': self.operador,
+            'archivo': str(self.archivo),
+            'fecha': str(self.fecha),
+            'operador': str(self.operador),
             'procesado': self.procesado,
         }
 
@@ -62,7 +62,7 @@ class Vehiculo(models.Model):
         return {
             'id': self.id,
             'tipo': self.get_tipo_display(),
-            'fecha': self.fecha,
+            'fecha': str(self.fecha),
             'identificacion': self.identificacion,
             'cant_pasajeros': self.cant_pasajeros,
             'empresa': self.empresa,
@@ -77,9 +77,9 @@ class Individuo(models.Model):
     fecha_nacimiento = models.DateField(verbose_name="Fecha de Nacimiento")
     telefono = models.CharField('Telefono', max_length=20, default='+549388', null=True, blank=True)
     email = models.EmailField('Correo Electronico', null=True, blank=True)#Enviar mails
-    nacionalidad = models.CharField('Apellidos', max_length=100)
-    origen = models.CharField('Apellidos', max_length=200)
-    destino = models.CharField('Apellidos', max_length=200)
+    nacionalidad = models.CharField('Nacionalidad', max_length=100)
+    origen = models.CharField('Origen', max_length=200)
+    destino = models.CharField('Destino', max_length=200)
     particularidades = HTMLField(null=True, blank=True)
     def __str__(self):
         return str(self.num_doc) + ': ' + self.apellidos + ', ' + self.nombres

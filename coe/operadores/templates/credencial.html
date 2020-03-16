@@ -5,14 +5,16 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width">
         {% load static %}
+        <link href="{% static 'css/constantes.css' %}" rel="stylesheet">
         <link href="{% static 'css/tarjeta/bootstrap.css' %}" rel="stylesheet">
         <link href="{% static 'css/tarjeta/style.css' %}" rel="stylesheet">
     </head>
     <body>
-        <div class="container tarjeta">
-            <div class="row">
+        <div class="container">
+            <div class="row tarjeta">
                 <div class="col-sm-12">
                     <div class="col-sm-8">
+                        <h3 class="tipo">COMITE OPERATIVO DE EMERGENCIA</h3>
                         <hr>
                         <div class="informacion">
                             <p class="nums"><b>N° Documento:</b> {{operador.num_doc}}</p>
@@ -22,7 +24,6 @@
                             <p class="tab">{{operador.get_organismo_display}}</p>
                         </div>
                     </div>
-                    
                     <div class="col-sm-4">
                         <div class="row recuadrofoto">
                             <img class="foto" src="{{operador.fotografia.url}}">
@@ -33,6 +34,8 @@
                     </div>
                 </div>
             </div>
+            <a class="no-print" onclick='window.print();return false;'>Imprimir</a>
+            <a class="no-print" href="javascript:history.back()">Volver</a>
         </div>
     </body>
 </html>

@@ -31,7 +31,7 @@ class Item(models.Model):
 class EventoItem(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="eventos")
     operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="eventos")
-    accion = models.IntegerField(choices=TIPO_EVENTO_ITEM, default='1')
+    accion = models.CharField('Accion', max_length=1 ,choices=TIPO_EVENTO_ITEM, default='I')
     fecha = models.DateTimeField('Fecha del evento', default=timezone.now)
     detalle = HTMLField()
     def __str__(self):

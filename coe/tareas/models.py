@@ -5,12 +5,13 @@ from django.utils import timezone
 from tinymce.models import HTMLField
 from auditlog.registry import auditlog
 #Imports del proyecto
-from operadores.models import Operador
+from operadores.models import SubComite, Operador
 #Imports de la app
 from .choices import TIPO_PRIORIDAD, TIPO_EVENTO_TAREA
 
 # Create your models here.
 class Tarea(models.Model):
+    subcomite = models.ForeignKey(SubComite, on_delete=models.CASCADE, null=True, related_name="tareas")
     nombre = models.CharField('Nombre', max_length=200)
     descripcion = HTMLField()
     prioridad = models.IntegerField(choices=TIPO_PRIORIDAD, default=5)
@@ -28,6 +29,8 @@ class Tarea(models.Model):
             'begda': self.begda,
             'endda': self.endda,
         }
+    def get_last_event(self):
+        return self.eventos.order_by('fecha').last()
 
 class Responsable(models.Model):
     tarea = models.ForeignKey(Tarea, on_delete=models.CASCADE, null=True, related_name="responsables")
@@ -35,7 +38,7 @@ class Responsable(models.Model):
     fecha_asignacion = models.DateTimeField('Fecha de Asignacion', default=timezone.now)
     obligaciones = HTMLField()
     def __str__(self):
-        return self.nombre + ': ' + self.get_prioridad_display()
+        return str(self.operador) + ': ' + str(self.fecha_asignacion)
     def as_dict(self):
         return {
             'id': self.id,
@@ -52,7 +55,7 @@ class EventoTarea(models.Model):
     responsable = models.ForeignKey(Responsable, on_delete=models.CASCADE, null=True, blank=True, related_name="eventos")
     accion = models.IntegerField(choices=TIPO_EVENTO_TAREA, default='1')
     fecha = models.DateTimeField('Fecha del evento', default=timezone.now)
-    detalle = HTMLField()
+    detalle = HTMLField(null=True, blank=True)
     def __str__(self):
         return self.get_accion_display() + ': ' + str(self.fecha)
     def as_dict(self):

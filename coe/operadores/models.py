@@ -41,25 +41,32 @@ class Operador(models.Model):
     class Meta:
         verbose_name_plural = 'Operadores'
         permissions = (
+            #Operadores:
             ("menu_operadores", "Puede Acceder al menu de Operadores"),
             ("listar_operadores", "Puede ver el Listado de Operadores"),
             ("crear_operador", "Puede Crear Operadores"),
             ("modificar_operador", "Puede Modificar Operadores"),
             ("ver_credencial", "Ver Credencial de Operador"),
-
-            ("auditar_operadores", "Auditar Acciones de otros Operadores"),
-
             ("control_asistencia", "Control de Ingreso Fisico de los Operadores"),
-
+            ("auditar_operadores", "Auditar Acciones de otros Operadores"),
+            #Inventario
             ("menu_inventario", "Puede Acceder al menu Inventario"),
-
+            
+            #Tareas:
             ("menu_tareas", "Puede Acceder al menu de Tareas"),
-
+            ("ver_tarea", "Puede ver listado de Tareas"),
+            ("crear_tarea", "Puede crear Tareas"),
+            #Informacion:
             ("menu_informacion", "Puede Acceder al menu de Informacion"),
             ("archivos_pendientes", "Puede ver listado archivos pendientes."),
             ("ver_archivos", "Puede ver archivos."),
             ("subir_archivos", "Puede subir archivos."),
-
+            ("procesar_archivos", "Puede Marcar Archivos como Procesado."),
+            ("ver_vehiculo", "Puede Ver Informacion de Vehiculo."),
+            ("cargar_vehiculo", "Puede Cargar Informacion de Vehiculo."),
+            ("ver_individuo", "Puede Ver Informacion de Individuos."),
+            ("cargar_individuo", "Puede Cargar Informacion de Individuos."),
+            #Actas:
             ("menu_actas", "Puede Acceder al menu de Actas"),
             ("ver_acta", "Puede Ver Actas"),
             ("crear_acta", "Puede Crear Actas"),
@@ -67,7 +74,7 @@ class Operador(models.Model):
             ("administrador", "Puede administrar Usuarios."),
         )
     def __str__(self):
-        return self.get_organismo_display() + ': ' + self.usuario.last_name + ', ' + self.usuario.first_name
+        return self.usuario.last_name + ', ' + self.usuario.first_name
     def as_dict(self):
         return {
             'id': self.id,

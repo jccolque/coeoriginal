@@ -9,12 +9,13 @@ from django.forms.widgets import CheckboxSelectMultiple
 #Imports extra
 from dal import autocomplete
 #Imports del proyecto
-
+from core.api import org_id_from_name
 #Imports de la app
 from .models import Operador
 
 #Definimos nuestros forms
 class OperadorForm(forms.ModelForm):
+    organismo = forms.CharField(label='organismo', max_length=100, widget=autocomplete.ListSelect2(url='core:organismos-autocomplete'))
     username = forms.CharField(label='Usuario', max_length=15, min_length=6)
     nombre = forms.CharField(label='Nombre', max_length=50)
     apellido = forms.CharField(label='Apellido', max_length=50)
@@ -26,10 +27,7 @@ class OperadorForm(forms.ModelForm):
     class Meta:
         model = Operador
         fields= '__all__'
-        exclude = ('qrpath', 'usuario', )
-        widgets = {
-            #'organismo': autocomplete.ListSelect2(url='core:organismos-autocomplete'),
-        }
+        exclude = ('qrpath', 'usuario',)
     #Inicializacion
     def __init__(self, *args, **kwargs):
         permisos_list = kwargs.pop('permisos_list', None)
@@ -37,6 +35,13 @@ class OperadorForm(forms.ModelForm):
             self.base_fields['permisos'].choices = permisos_list.values_list('id', 'name')
         super(OperadorForm, self).__init__(*args, **kwargs)
     #Chequeos de Seguridad
+    def clean_organismo(self):
+        try:
+            org_name = self.cleaned_data['organismo']
+            print(org_name)
+            return org_id_from_name(org_name)
+        except Exception as errors:
+            raise forms.ValidationError(errors)
     def clean_username(self):
         if not hasattr(self, 'instance') and User.objects.filter(username=self.cleaned_data['username']):
             raise forms.ValidationError("El usuario indicado ya esta en uso, si el usuario tiene mas de una funcion, contacte al administrador")

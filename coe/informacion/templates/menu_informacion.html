@@ -15,7 +15,21 @@
                             {% endif %}
                             {% if perms.operadores.archivos_pendientes %}
                                 <li><a href="{% url 'informacion:archivos_pendientes'  %}">Ver Listado de Archivos sin Procesar</a></li>
+                                <hr>
                             {% endif %}
+
+                            {% if perms.operadores.cargar_vehiculo %}
+                                <li><a href="{% url 'informacion:listar_vehiculos'  %}">Listar Vehiculos</a></li>
+                                <li><a href="{% url 'informacion:cargar_vehiculo'  %}">Cargar Vehiculo</a></li>
+                                <hr>
+                            {% endif %}
+
+                            {% if perms.operadores.cargar_individuo %}
+                                <li><a href="{% url 'informacion:listar_individuos'  %}">Listar Individuos</a></li>
+                                <li><a href="{% url 'informacion:cargar_individuo'  %}">Cargar Individuo</a></li>
+                                <hr>
+                            {% endif %}
+
                             {% if request.user.is_superuser %}
                                 <li><a href="{% url 'informacion:menu' %}">Opcion del Administrador</a></li>
                             {% endif %}

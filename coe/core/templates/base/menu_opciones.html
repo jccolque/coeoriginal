@@ -3,7 +3,7 @@
 {% block content %}
     <li><a href="{% url 'core:home' %}">Inicio</a></li>
     <li><a href="{% url 'noticias:ver_noticias' %}">Noticias</a></li>
-    <li><a href="{% url 'core:faqs' %}">¿Que es el BEGUP?</a></li>
+    <li><a href="{% url 'core:faqs' %}">¿Que es el COE?</a></li>
     <li><a href="{% url 'core:contacto' %}">Contacto</a></li>
     {% ct_opciones request.user as opciones %}
     {% if opciones %}

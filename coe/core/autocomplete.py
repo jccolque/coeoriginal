@@ -15,4 +15,4 @@ class UsuariosAutocomplete(autocomplete.Select2QuerySetView):
 
 class OrganismosAutocomplete(autocomplete.Select2ListView):
     def get_list(self):
-        return obtener_organismos()
+        return [o[1] for o in obtener_organismos()]

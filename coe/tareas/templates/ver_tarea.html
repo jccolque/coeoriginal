@@ -1,0 +1,86 @@
+{% extends 'base_informacion.html' %}
+
+{% load static %}
+{% load seguridad_tags%}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">        
+                    <h2>Tarea: {{tarea.nombre}} - <b>{{tarea.get_prioridad_display}}</b></h2>
+                    <div class="col-md-8">
+                        <h3>Subcomite Responsable: {{tarea.subcomite}}</h3>
+                        <p><b>Descripcion:</b> {{tarea.descripcion|safe}}</p>
+                        <p><b>Periodo:</b> {{tarea.begda}} - {{tarea.endda}}</p>
+                        <div class="row">
+                            <hr>
+                            <h3>Eventos:</h3>
+                            <table class="listado">
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Responsable</th>
+                                    <th>Fecha</th>
+                                    <th>Detalles</th>
+                                    <th>Acciones</th>
+                                </tr>
+                                {% for evento in tarea.eventos.all %}
+                                    <tr>
+                                        <td>{{evento.get_accion_display}}</td>
+                                        <td>{{evento.responsable}}</td>
+                                        <td>{{evento.fecha}}</td>
+                                        <td>{{evento.detalle|safe}}</td>
+                                        <td>
+                                            <a href="{% url 'tareas:eliminar_evento' evento_id=evento.id %}">
+                                                <img class="icons" src="{% static 'img/icons/delete.png' %}">
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                        <div class="row">
+                            <hr>
+                            <h3>Operadores Asignados:</h3>
+                            <table class="listado">
+                                <tr>
+                                    <th>Documento</th>
+                                    <th>Apellidos</th>
+                                    <th>Nombres</th>
+                                    <th>Organismo</th>
+                                    <th>Fecha de Asignacion</th>
+                                    <th>Obligaciones</th>
+                                    <th>Acciones</th>
+                                </tr>
+                                {% for responsable in tarea.responsables.all %}
+                                    <tr>
+                                        <td>{{responsable.operador.num_doc}}</td>
+                                        <td>{{responsable.operador.usuario.last_name}}</td>
+                                        <td>{{responsable.operador.usuario.first_name}}</td>
+                                        <td>{{responsable.operador.get_organismo_display}}</td>
+                                        <td>{{responsable.fecha_asignacion}}</td>
+                                        <td>{{responsable.obligaciones|safe}}</td>
+                                        <td>
+                                            <a href="{% url 'tareas:eliminar_responsable' responsable_id=responsable.id %}">
+                                                <img class="icons" src="{% static 'img/icons/delete.png' %}">
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <p>Informacion del usuario: <b>{{request.user.username}}</b></p>
+                        <ul class="menu_botones">
+                            <li><a href="{% url 'tareas:agregar_responsable' tarea_id=tarea.id  %}">Agregar Responsable</a></li>
+                            <li><a href="{% url 'tareas:agregar_evento' tarea_id=tarea.id  %}">Agregar Evento</a></li>
+                            <li><a href="{% url 'tareas:eliminar_tarea' tarea_id=tarea.id  %}"><b>Eliminar Tarea</b></a></li>
+                            <li><a href="{% url 'tareas:menu' %}">Volver al Menu</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}

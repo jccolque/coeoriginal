@@ -1,18 +1,24 @@
-{% extends 'base/base.html' %}
+{% extends 'base_actas.html' %}
 {% load adminusers_tags %}
 {% block content %}
     <section class="resumen">
         <section class="informacion_basica">
-            <div class="container">
-                <div class="row">        
-                    <h1>Acta: <b>{{acta.titulo}}</b></h1>
-                    <p><b>Tipo:</b> {{acta.get_tipo_display}}</p>
-                    <p><b>Fecha:</b> {{acta.fecha}}</p>
+            <div class="container acta">
+                <div class="row">
+                    <div class="row titulo">
+                        <div class="col-sm-6">
+                            <h1>Acta: <b>{{acta.titulo}}</b></h1>
+                        </div>
+                        <div class="col-sm-4">
+                        <p><b>Tipo:</b> {{acta.get_tipo_display}}</p>
+                        <p><b>Fecha:</b> {{acta.fecha}}</p>
+                        </div>
+                    </div>
                     <hr>
-                    <div class="col-sm-9">
+                    <div class="col-sm-8 cuerpo">
                         <p>{{acta.cuerpo|safe}}</p>
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         <ul class="menu_botones">
                             {% if perms.operadores.ver_acta %}
                                 <li><a href="{% url 'actas:listar_actas' %}">Listar Actas</a></li>

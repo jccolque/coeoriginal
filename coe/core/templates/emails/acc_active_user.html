@@ -1,13 +1,13 @@
 {% autoescape off %}
     Bienvenido {{ usuario.last_name }},{{ usuario.first_name }}:
 
-    Tu usuario para el sistema BEGUP 3.0 fue creado con exito.
+    Tu usuario para el sistema COE2020 fue creado con exito.
 
     Usuario: {{ usuario.username }}
     Password: {{ raw_password }}
 
     Por favor ingresa a este link para validar tu correo personal:
-    http://begup.jujuy.gob.ar/act_usuario/{{usuario.pk}}/{{token}}
+    http://coe.jujuy.gob.ar/act_usuario/{{usuario.pk}}/{{token}}
     Sin esta accion no podras acceder al panel de Administracion.
 
     Lo esperanos en nuestra pagina!

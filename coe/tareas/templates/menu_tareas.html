@@ -10,11 +10,11 @@
                     <h1>Menu Inventario:</h1>
                     <div class="col-md-8">
                         <ul class="menu_botones">
-                            {% if perms.tareas.menu %}
-                                <li><a href="{% url 'tareas:menu'  %}">Ejemplo 1</a></li>
+                            {% if perms.operadores.ver_tareas %}
+                                <li><a href="{% url 'tareas:lista_tareas'  %}">Lista de Tareas</a></li>
                             {% endif %}
-                            {% if request.user.is_superuser %}
-                                <li><a href="{% url 'tareas:menu' %}">Opcion del Administrador</a></li>
+                            {% if perms.operadores.crear_tareas %}
+                                <li><a href="{% url 'tareas:crear_tarea'  %}">Crear Tarea</a></li>
                             {% endif %}
                         </ul>
                     </div>

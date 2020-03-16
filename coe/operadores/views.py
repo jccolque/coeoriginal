@@ -37,7 +37,7 @@ def listar_operadores(request):
                 Q(usuario__last_name__icontains=search)
             )
     operadores = paginador(request, operadores)
-    return render(request, 'listar_operadores.html', {'operadores': operadores,})
+    return render(request, 'users/listar_operadores.html', {'operadores': operadores,})
 
 @permission_required('operador.crear_operador')
 def crear_operador(request, operador_id=None):
@@ -52,6 +52,7 @@ def crear_operador(request, operador_id=None):
             instance=operador, 
             permisos_list=obtener_permisos(),
             initial={
+                'organismo':operador.get_organismo_display(),
                 'username':usuario.username,
                 'nombre':usuario.first_name,
                 'apellido':usuario.last_name,
@@ -85,6 +86,11 @@ def crear_operador(request, operador_id=None):
             return redirect('operadores:listar_operadores')
     return render(request, "extras/generic_form.html", {'titulo': "Subir Archivo para Carga", 'form': form, 'boton': "Subir", })
 
+@permission_required('ver_credencial')
+def ver_credencial(request, operador_id):
+    operador = Operador.objects.get(id=operador_id)
+    return render(request, 'credencial.html', {'operador': operador,})
+
 @permission_required('operador.mod_operador')
 def cambiar_password(request, operador_id):
     operador = Operador.objects.get(pk=operador_id)
@@ -114,29 +120,6 @@ def activar_usuario(request, operador_id):
     usuario.is_active = True
     usuario.save()
     return redirect('operadores:listar_operadores')
-
-@permission_required('operador.auditar_operadores')
-def auditoria(request, user_id=None):
-    form = AuditoriaForm()
-    if user_id:
-        usuario = User.objects.get(id=user_id)
-        form = AuditoriaForm(initial={'usuario': usuario, })
-    if request.method == "POST":
-        form = AuditoriaForm(request.POST)
-        if form.is_valid():
-            begda = form.cleaned_data['begda']
-            endda = form.cleaned_data['endda']
-            usuario = form.cleaned_data['usuario']
-            #Obtenemos los registros y los filtramos
-            registros = LogEntry.objects.filter(actor=usuario, action=1)#beneficiarios modificados
-            registros = registros.filter(timestamp__range=(begda, endda))
-            registros = registros.select_related('content_type')
-            return render(request, "users/auditoria.html", {
-                'usuario': usuario,
-                'begda': begda, 'endda': endda,
-                'registros': registros,})
-    #Lanzamos form basico
-    return render(request, "extras/generic_form.html", {'titulo': "Auditoria Usuario", 'form': form, 'boton': "Auditar", })
 
 #Ingreso y Egreso
 @permission_required('control_asistencia')
@@ -209,7 +192,26 @@ def checkout(request, operador_id):
     evento.save()
     return redirect('operadores:listado_presentes')
 
-@permission_required('ver_credencial')
-def ver_credencial(request, operador_id):
-    operador = Operador.objects.get(id=operador_id)
-    return render(request, 'credencial.html', {'operador': operador,})
+#Auditoria
+@permission_required('operador.auditar_operadores')
+def auditoria(request, user_id=None):
+    form = AuditoriaForm()
+    if user_id:
+        usuario = User.objects.get(id=user_id)
+        form = AuditoriaForm(initial={'usuario': usuario, })
+    if request.method == "POST":
+        form = AuditoriaForm(request.POST)
+        if form.is_valid():
+            begda = form.cleaned_data['begda']
+            endda = form.cleaned_data['endda']
+            usuario = form.cleaned_data['usuario']
+            #Obtenemos los registros y los filtramos
+            registros = LogEntry.objects.filter(actor=usuario)#beneficiarios modificados
+            registros = registros.filter(timestamp__range=(begda, endda))
+            registros = registros.select_related('content_type')
+            return render(request, "users/auditoria.html", {
+                'usuario': usuario,
+                'begda': begda, 'endda': endda,
+                'registros': registros,})
+    #Lanzamos form basico
+    return render(request, "extras/generic_form.html", {'titulo': "Auditoria Usuario", 'form': form, 'boton': "Auditar", })
