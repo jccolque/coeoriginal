@@ -21,7 +21,7 @@ def menu(request):
 def lista_items(request, rubro_id=None, subgrupo_id=None):
     items = Item.objects.all()
     if rubro_id:
-        items = items.filter(rubro__id=rubro_id)
+        items = items.filter(subgrupo__rubro__id=rubro_id)
     if subgrupo_id:
         items = items.filter(subgrupo__id=subgrupo_id)
     if request.method == "POST":

@@ -26,8 +26,16 @@
                 </tr>
                 {% for item in items %}
                     <tr>
-                        <td>{{item.subgrupo.rubro}}</td>
-                        <td>{{item.subgrupo}}</td>
+                        <td>
+                            <a href={% url 'inventario:lista_rubro' rubro_id=item.subgrupo.rubro.id %}>
+                                {{item.subgrupo.rubro}}
+                            </a>
+                        </td>
+                        <td>
+                            <a href={% url 'inventario:lista_subgrupo' subgrupo_id=item.subgrupo.id %}>
+                                {{item.subgrupo}}
+                            </a>
+                        </td>
                         <td>{{item.nombre}}</td>
                         <td>{{item.cantidad_disponible}}</td>
                         <td>{{item.cantidad_distribuida}}</td>

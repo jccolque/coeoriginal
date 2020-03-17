@@ -62,8 +62,8 @@ def listar_operadores(request):
         if form.is_valid():
             search = form.cleaned_data['search']
             operadores = operadores.filter(
-                Q(usuario__username__icontains=search) |
-                Q(usuario__last_name__icontains=search)
+                Q(apellidos__icontains=search) |
+                Q(subcomite__nombre__icontains=search)
             )
     operadores = paginador(request, operadores)
     return render(request, 'users/lista_operadores.html', {'operadores': operadores,})
