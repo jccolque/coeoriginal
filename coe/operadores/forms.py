@@ -27,10 +27,11 @@ class CrearOperadorForm(forms.ModelForm):
         exclude = ('qrpath', 'usuario',)
 
 class ModOperadorForm(forms.ModelForm):
-    username = forms.CharField(label='Usuario', max_length=15, min_length=6)
+    username = forms.CharField(label='Usuario', max_length=15, min_length=6, required=False)
     permisos = forms.MultipleChoiceField(
         label='Permisos',
-        widget=CheckboxSelectMultiple(attrs={'class':'multiplechoice',}), 
+        widget=CheckboxSelectMultiple(attrs={'class':'multiplechoice',}),
+        required=False,
     )
     class Meta:
         model = Operador
