@@ -49,10 +49,10 @@ INSTALLED_APPS = [
     'georef.apps.GeorefConfig',
     'noticias.apps.NoticiasConfig',
     'operadores.apps.OperadoresConfig',
-    'actas.apps.ActasConfig',
     'tareas.apps.TareasConfig',
     'inventario.apps.InventarioConfig',
     'informacion.apps.InformacionConfig',
+    #'actas.apps.ActasConfig',
 ]
 
 MIDDLEWARE = [

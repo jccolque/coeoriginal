@@ -42,9 +42,16 @@ def obtener_organismos():
         cache.set("organismos", organismos)
     return organismos
 
-def org_id_from_name(nombre):
+def org_id_from_name(org_nombre):
     organismos = obtener_organismos()
     for organismo in organismos:
-        if nombre == organismo[1]:
+        if org_nombre == organismo[1]:
             return organismo[0]
+    return ''
+
+def org_from_from_id(org_id):
+    organismos = obtener_organismos()
+    for organismo in organismos:
+        if org_id == organismo[0]:
+            return organismo[1]
     return ''

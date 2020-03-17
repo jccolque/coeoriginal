@@ -1,0 +1,45 @@
+{% extends 'base_operadores.html' %}
+
+{% load adminusers_tags %}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-7 tarjeta color-{{operador.nivel_acceso}}">
+                        <div class="col-sm-8">
+                            <h3 class="tipo">COMITE OPERATIVO DE EMERGENCIA</h3>
+                            <hr>
+                            <div class="informacion">
+                                <p class="nums"><b>N° Documento:</b> {{operador.num_doc}}</p>
+                                <p><b>Nombre y Apellido:</b></p>
+                                <p class="tab">{{operador.usuario.last_name}}, {{operador.usuario.first_name}}</p>
+                                <p><b>Subcomite:</b></p>
+                                <p class="tab">{{operador.subcomite}}</p>
+                                <p><b>Nivel de Acceso:</b></p>
+                                <p class="nums">{{operador.get_nivel_acceso_display}}</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="row recuadrofoto">
+                                <img class="fotos" src="{{operador.get_foto}}">
+                            </div>
+                            <div class="row">
+                                <img class="fotos" src="{{operador.get_qrimage}}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <ul class="menu_botones">
+                            {% if perms.operadores.control_asistencia %}
+                                <li><a href="{% url 'operadores:checkin'  %}">Ingresar Otro Operador</a></li>
+                                <li><a href="{% url 'operadores:listado_presentes'  %}">Listado de Operadores Presentes</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}

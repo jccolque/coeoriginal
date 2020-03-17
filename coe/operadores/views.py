@@ -13,19 +13,48 @@ from django.contrib.auth.decorators import permission_required
 from auditlog.models import LogEntry
 #Import del proyecto
 from core.functions import paginador
-from core.forms import SearchForm, PeriodoForm, FechaForm
+from core.forms import SearchForm, FechaForm
 #Imports de la app
 from .functions import obtener_permisos
-from .models import Operador, EventoOperador
-from .forms import OperadorForm, ModPassword, AuditoriaForm
+from .models import SubComite, Operador, EventoOperador
+from .forms import SubComiteForm, CrearOperadorForm
+from .forms import ModOperadorForm, ModPassword, AuditoriaForm
 from .forms import AsistenciaForm
 # Create your views here.
-@permission_required('operador.menu')
+@permission_required('operadores.menu_operadores')
 def menu(request):
     return render(request, 'menu_operadores.html', {})
 
+#Manejo de SubComites
+@permission_required('operadores.ver_subcomite')
+def listar_subcomites(request):
+    subcomites = SubComite.objects.all()
+    if request.method == 'POST':
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            search = form.cleaned_data['search']
+            if search:
+                subcomites = subcomites.filter(nombre__icontains=search)
+    return render(request, 'users/lista_subcomites.html', {'subcomites': subcomites, })
+
+@permission_required('operadores.ver_subcomite')
+def ver_subcomite(request, subco_id):
+    subcomite = SubComite.objects.get(pk=subco_id)
+    return render(request, 'users/ver_subcomite.html', {'subcomite': subcomite, })
+
+@permission_required('operadores.crear_subcomite')
+def crear_subcomite(request):
+    form = SubComiteForm()
+    if request.method == "POST":
+        form = SubComiteForm(request.POST, request.FILES)
+        if form.is_valid():
+            subcomite = form.save(commit=False)
+            subcomite.save()
+            return redirect('operadores:listar_subcomites')
+    return render(request, "extras/generic_form.html", {'titulo': "Subir Archivo para Carga", 'form': form, 'boton': "Subir", })
+
 #Manejo de Operadores
-@permission_required('operador.listar_operadores')
+@permission_required('operadores.listar_operadores')
 def listar_operadores(request):
     operadores = Operador.objects.all()
     if request.method == 'POST':
@@ -39,46 +68,60 @@ def listar_operadores(request):
     operadores = paginador(request, operadores)
     return render(request, 'users/listar_operadores.html', {'operadores': operadores,})
 
-@permission_required('operador.crear_operador')
-def crear_operador(request, operador_id=None):
+def crear_operador(request):
+    form = CrearOperadorForm()
+    if request.method == "POST":
+        form = CrearOperadorForm(request.POST, request.FILES)
+        if form.is_valid():
+            operador = form.save(commit=False)
+            operador.save()
+            return redirect('operadores:listar_operadores')
+    return render(request, "extras/generic_form.html", {'titulo': "Subir Archivo para Carga", 'form': form, 'boton': "Subir", })
+
+@permission_required('operadores.crear_operador')
+def mod_operador(request, operador_id=None):
     operador = None
-    form = OperadorForm(permisos_list=obtener_permisos(),)
+    form = ModOperadorForm(permisos_list=obtener_permisos(),)
     if operador_id:
         #Si es para modificar conseguimos las bases
         operador = Operador.objects.get(pk=operador_id)
         usuario = operador.usuario
-        #Generamos el form
-        form = OperadorForm(
-            instance=operador, 
-            permisos_list=obtener_permisos(),
-            initial={
-                'organismo':operador.get_organismo_display(),
-                'username':usuario.username,
-                'nombre':usuario.first_name,
-                'apellido':usuario.last_name,
-                'email':usuario.email,
-                'permisos': [p.id for p in obtener_permisos(usuario=usuario)],
+        if usuario:
+            #Generamos el form
+            form = ModOperadorForm(
+                instance=operador, 
+                permisos_list=obtener_permisos(),
+                initial={
+                    'username': usuario.username,
+                    'permisos': [p.id for p in obtener_permisos(usuario=usuario)],
             })
+        else:
+            form = ModOperadorForm(
+                instance=operador, 
+                permisos_list=obtener_permisos(),
+            )
     if request.method == "POST":
-        form = OperadorForm(request.POST, request.FILES, instance=operador)
+        form = ModOperadorForm(request.POST, request.FILES, instance=operador)
         if form.is_valid():
             operador = form.save(commit=False)
             #Primero creamos el usuario
-            if not hasattr(operador, 'usuario'):
-                usuario = User(
-                    username = form.cleaned_data['username'],
-                    #password > Se genera en el envio del mail
-                    email = form.cleaned_data['email'],
-                    first_name = form.cleaned_data['nombre'],
-                    last_name = form.cleaned_data['apellido'],
-                    is_staff=True,
-                    is_active=False,
-                )
+            #Que sea nivel_seg = "R"
+            if form.cleaned_data['username']:
+                if not usuario:
+                    usuario = User()
+                    usuario.username = form.cleaned_data['username']
+                    usuario.is_active=False
+                #Cargamos datos del Form
+                usuario.email = operador.email
+                usuario.first_name = operador.nombres
+                usuario.last_name = operador.apellidos
+                usuario.is_staff=True                    
                 usuario.save()
                 operador.usuario = usuario
             #Reiniciamos sus permisos:
-            for permiso in obtener_permisos():
-                usuario.user_permissions.remove(permiso)
+            if usuario:
+                for permiso in obtener_permisos():
+                    usuario.user_permissions.remove(permiso)
             for permiso in request.POST.getlist('permisos'):
                 usuario.user_permissions.add(permiso)
             usuario.save()
@@ -86,12 +129,12 @@ def crear_operador(request, operador_id=None):
             return redirect('operadores:listar_operadores')
     return render(request, "extras/generic_form.html", {'titulo': "Subir Archivo para Carga", 'form': form, 'boton': "Subir", })
 
-@permission_required('ver_credencial')
+@permission_required('operadores.ver_credencial')
 def ver_credencial(request, operador_id):
     operador = Operador.objects.get(id=operador_id)
     return render(request, 'credencial.html', {'operador': operador,})
 
-@permission_required('operador.mod_operador')
+@permission_required('operadores.mod_operador')
 def cambiar_password(request, operador_id):
     operador = Operador.objects.get(pk=operador_id)
     usuario = operador.usuario
@@ -105,7 +148,7 @@ def cambiar_password(request, operador_id):
     #Sea por ingreso o por salida:
     return render(request, "extras/generic_form.html", {'titulo': "Modificar Usuario", 'form': form, 'boton': "Modificar", })
 
-@permission_required('operador.mod_operador')
+@permission_required('operadores.mod_operador')
 def desactivar_usuario(request, operador_id):
     operador = Operador.objects.get(pk=operador_id)
     usuario = operador.usuario
@@ -113,7 +156,7 @@ def desactivar_usuario(request, operador_id):
     usuario.save()
     return redirect('operadores:listar_operadores')
 
-@permission_required('operador.mod_operador')
+@permission_required('operadores.mod_operador')
 def activar_usuario(request, operador_id):
     operador = Operador.objects.get(pk=operador_id)
     usuario = operador.usuario
@@ -122,7 +165,7 @@ def activar_usuario(request, operador_id):
     return redirect('operadores:listar_operadores')
 
 #Ingreso y Egreso
-@permission_required('control_asistencia')
+@permission_required('operadores.control_asistencia')
 def registro_asistencia(request):
     form = FechaForm()
     if request.method == 'POST':
@@ -143,7 +186,7 @@ def registro_asistencia(request):
                 })
     return render(request, "extras/generic_form.html", {'titulo': "Registro de Asistencia", 'form': form, 'boton': "Generar Reporte", })
 
-@permission_required('control_asistencia')
+@permission_required('operadores.control_asistencia')
 def listado_presentes(request):
     asistentes = EventoOperador.objects.all()#Traemos todos los eventos
     asistentes = asistentes.select_related('operador', 'operador__usuario')#Traemos operador para evitar consultas db
@@ -173,8 +216,7 @@ def listado_presentes(request):
             presentes.append(ingreso)
     return render(request, 'listar_presentes.html', {'presentes': presentes,})
 
-
-@permission_required('control_asistencia')
+@permission_required('operadores.control_asistencia')
 def checkin(request):
     form = AsistenciaForm()
     if request.method == 'POST':
@@ -182,10 +224,15 @@ def checkin(request):
         if form.is_valid():
             evento = EventoOperador(operador=form.operador)
             evento.save()
-            return redirect('operadores:listado_presentes')
+            return redirect('operadores:ingreso', operador_id=evento.operador.id)
     return render(request, "extras/generic_form.html", {'titulo': "Modificar Usuario", 'form': form, 'boton': "Modificar", })
 
-@permission_required('control_asistencia')
+@permission_required('operadores.control_asistencia')
+def ingreso(request, operador_id):
+    operador = Operador.objects.get(id=operador_id)
+    return render(request, 'users/ingreso_operador.html', {'operador': operador,})
+
+@permission_required('operadores.control_asistencia')
 def checkout(request, operador_id):
     operador = Operador.objects.get(id=operador_id)
     evento = EventoOperador(operador=operador, tipo='E')
@@ -193,7 +240,7 @@ def checkout(request, operador_id):
     return redirect('operadores:listado_presentes')
 
 #Auditoria
-@permission_required('operador.auditar_operadores')
+@permission_required('operadores.auditar_operadores')
 def auditoria(request, user_id=None):
     form = AuditoriaForm()
     if user_id:

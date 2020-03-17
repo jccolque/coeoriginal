@@ -188,6 +188,11 @@ img.documento{
     max-height: 10em;
 }
 
+img.fotos {
+    width: 100%;
+    padding: 10%;
+}
+
 /* BUSCADOR */
 .buscador {
     float: right;

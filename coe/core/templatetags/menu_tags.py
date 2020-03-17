@@ -9,8 +9,6 @@ register = template.Library()
 @register.simple_tag
 def ct_opciones(usuario):
     listado = []
-    for app in CoreConfig.ADMIN_MENU:
-        permiso_name = app[1]+'.menu'
-        if usuario.has_perm(permiso_name):
-            listado.append(app)
+    if usuario.has_perm('operadores.menu_operadores'):
+        listado = [app for app in CoreConfig.ADMIN_MENU]
     return listado

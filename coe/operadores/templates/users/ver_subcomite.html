@@ -1,0 +1,14 @@
+{% extends 'base_operadores.html' %}
+{% load adminusers_tags %}
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">        
+                    <h1>Subcomites: {{subcomite.nombre}}</h1>
+                    <p>{{subcomite.descripcion|safe}}</p>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}

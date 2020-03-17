@@ -10,9 +10,9 @@ from tinymce.models import HTMLField
 #Imports del proyecto:
 from coe.settings import MEDIA_ROOT
 from core.choices import TIPO_DOCUMENTOS
-from core.api import obtener_organismos
+#from core.api import obtener_organismos
 #improts de la app
-from .choices import TIPO_EVENTO
+from .choices import TIPO_EVENTO, NIVELES_SEGURIDAD
 
 # Create your models here.
 class SubComite(models.Model):
@@ -28,13 +28,23 @@ class SubComite(models.Model):
             'descripcion': self.descripcion,
             'activo': self.activo,
         }
+    def cant_miembros(self):
+        return self.operadores.count()
+    def cant_tareas_terminadas(self):
+        return self.tareas.filter(eventos__accion="E").count()
+    def cant_tareas_pendientes(self):
+        return self.tareas.exclude(eventos__accion="E").count()
 
 class Operador(models.Model):
-    organismo = models.PositiveIntegerField(choices=obtener_organismos(), default=0)
+    #organismo = models.PositiveIntegerField(choices=obtener_organismos(), default=0)
     subcomite = models.ForeignKey(SubComite, on_delete=models.SET_NULL, null=True, blank=True, related_name="operadores")
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="operadores")
+    nivel_acceso = models.CharField("Acceso de Seguridad", max_length=1, choices=NIVELES_SEGURIDAD, default='B')
+    usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="operadores")
     tipo_doc = models.IntegerField(choices=TIPO_DOCUMENTOS, default=2)
     num_doc = models.IntegerField('Numero de Documento', unique=True)
+    apellidos = models.CharField('Apellidos', max_length=50)
+    nombres  = models.CharField('Nombres', max_length=50)
+    email = models.EmailField('Correo Electronico')
     telefono = models.CharField('Telefono', max_length=20, default='+549388')
     fotografia = models.FileField('Fotografia', upload_to='operadores/', null=True, blank=True)
     qrpath = models.CharField('qrpath', max_length=100, null=True, blank=True)
@@ -43,6 +53,8 @@ class Operador(models.Model):
         permissions = (
             #Operadores:
             ("menu_operadores", "Puede Acceder al menu de Operadores"),
+            ("ver_subcomites", "Puede ver SubComites"),
+            ("crear_subcomite", "Puede Crear Subcomites"),
             ("listar_operadores", "Puede ver el Listado de Operadores"),
             ("crear_operador", "Puede Crear Operadores"),
             ("modificar_operador", "Puede Modificar Operadores"),
@@ -76,7 +88,7 @@ class Operador(models.Model):
             ("administrador", "Puede administrar Usuarios."),
         )
     def __str__(self):
-        return self.usuario.last_name + ', ' + self.usuario.first_name
+        return self.apellidos + ', ' + self.nombres
     def as_dict(self):
         return {
             'id': self.id,
@@ -90,6 +102,11 @@ class Operador(models.Model):
             'fotografia': self.fotografia,
             'qrpath': self.qrpath,
         }
+    def get_foto(self):
+        if self.fotografia:
+            return self.fotografia.url
+        else:
+            return 'NOIMAGE'
     def get_qrimage(self):
         if self.qrpath:
             return self.qrpath

@@ -37,7 +37,7 @@ urlpatterns = [
     path('georef/', include('georef.urls')),
     path('noticias/', include('noticias.urls')),
     path('operadores/', include('operadores.urls')),
-    path('actas/', include('actas.urls')),
+    #path('actas/', include('actas.urls')),
     path('tareas/', include('tareas.urls')),
     path('inventario/', include('inventario.urls')),
     path('informacion/', include('informacion.urls')),

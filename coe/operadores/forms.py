@@ -9,17 +9,25 @@ from django.forms.widgets import CheckboxSelectMultiple
 #Imports extra
 from dal import autocomplete
 #Imports del proyecto
-from core.api import org_id_from_name
+from core.api import org_id_from_name, org_from_from_id
 #Imports de la app
-from .models import Operador
+from .models import SubComite, Operador
 
 #Definimos nuestros forms
-class OperadorForm(forms.ModelForm):
-    organismo = forms.CharField(label='organismo', max_length=100, widget=autocomplete.ListSelect2(url='core:organismos-autocomplete'))
+class SubComiteForm(forms.ModelForm):
+    class Meta:
+        model = SubComite
+        fields= '__all__'
+        exclude = ('activo',)
+
+class CrearOperadorForm(forms.ModelForm):
+    class Meta:
+        model = Operador
+        fields= '__all__'
+        exclude = ('qrpath', 'usuario',)
+
+class ModOperadorForm(forms.ModelForm):
     username = forms.CharField(label='Usuario', max_length=15, min_length=6)
-    nombre = forms.CharField(label='Nombre', max_length=50)
-    apellido = forms.CharField(label='Apellido', max_length=50)
-    email = forms.EmailField(label='Email', max_length=50)
     permisos = forms.MultipleChoiceField(
         label='Permisos',
         widget=CheckboxSelectMultiple(attrs={'class':'multiplechoice',}), 
@@ -30,18 +38,11 @@ class OperadorForm(forms.ModelForm):
         exclude = ('qrpath', 'usuario',)
     #Inicializacion
     def __init__(self, *args, **kwargs):
+        #Obtenemos permisos
         permisos_list = kwargs.pop('permisos_list', None)
         if permisos_list:
             self.base_fields['permisos'].choices = permisos_list.values_list('id', 'name')
-        super(OperadorForm, self).__init__(*args, **kwargs)
-    #Chequeos de Seguridad
-    def clean_organismo(self):
-        try:
-            org_name = self.cleaned_data['organismo']
-            print(org_name)
-            return org_id_from_name(org_name)
-        except Exception as errors:
-            raise forms.ValidationError(errors)
+        super(ModOperadorForm, self).__init__(*args, **kwargs)
     def clean_username(self):
         if not hasattr(self, 'instance') and User.objects.filter(username=self.cleaned_data['username']):
             raise forms.ValidationError("El usuario indicado ya esta en uso, si el usuario tiene mas de una funcion, contacte al administrador")

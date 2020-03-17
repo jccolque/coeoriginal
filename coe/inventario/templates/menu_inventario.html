@@ -11,7 +11,7 @@
                     <div class="col-md-8">
                         <ul class="menu_botones">
                             {% if perms.inventario.menu %}
-                                <li><a href="{% url 'inventario:menu'  %}">Ejemplo 1</a></li>
+                                <li><a href="{% url 'inventario:cargar_item'  %}">Cargar Elemento</a></li>
                             {% endif %}
                             {% if request.user.is_superuser %}
                                 <li><a href="{% url 'inventario:menu' %}">Opcion del Administrador</a></li>
