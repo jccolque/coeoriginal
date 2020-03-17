@@ -17,6 +17,8 @@ from .choices import TIPO_IMPORTANCIA, TIPO_ARCHIVO, TIPO_VEHICULO
 class TipoAtributo(models.Model):#Origen del Dato
     nombre = models.CharField('Nombre', max_length=100, unique=True)
     importancia = models.IntegerField(choices=TIPO_IMPORTANCIA, default='1')
+    class Meta:
+        ordering = ['nombre']
     def __str__(self):
         return self.nombre
     def as_dict(self):
@@ -31,6 +33,8 @@ class TipoSintoma(models.Model):#Origen del Dato
     nombre = models.CharField('Nombre', max_length=100, unique=True)
     descripcion = HTMLField(verbose_name='Descripcion', null=True, blank=True)
     importancia = models.IntegerField(choices=TIPO_IMPORTANCIA, default='1')
+    class Meta:
+        ordering = ['nombre']
     def __str__(self):
         return self.nombre
     def as_dict(self):
