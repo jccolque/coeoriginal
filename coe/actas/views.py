@@ -9,11 +9,11 @@ from .models import Acta, Participe
 from .forms import CrearActaForm
 
 # Create your views here.
-@permission_required('operador.menu_actas')
+@permission_required('operadores.menu_actas')
 def menu(request):
     return render(request, 'menu_actas.html', {})
 
-@permission_required('operador.ver_acta')
+@permission_required('operadores.ver_acta')
 def listar_actas(request):
     actas = Acta.objects.all()
     form = SearchForm()
@@ -23,12 +23,12 @@ def listar_actas(request):
             actas = actas.filter(titulo__icontains=form.cleaned_data['search'])
     return render(request, 'lista_actas.html', {'actas': actas, })
 
-@permission_required('operador.ver_acta')
+@permission_required('operadores.ver_acta')
 def ver_acta(request, acta_id):
     acta = Acta.objects.get(id=acta_id)
     return render(request, 'ver_acta.html', {'acta': acta, })
 
-@permission_required('operador.crear_acta')
+@permission_required('operadores.crear_acta')
 def crear_acta(request, acta_id=None):
     acta = None
     participes = []
