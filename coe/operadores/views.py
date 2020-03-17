@@ -134,7 +134,7 @@ def ver_credencial(request, operador_id):
     operador = Operador.objects.get(id=operador_id)
     return render(request, 'credencial.html', {'operador': operador,})
 
-@permission_required('operadores.mod_operador')
+@permission_required('operadores.modificar_operador')
 def cambiar_password(request, operador_id):
     operador = Operador.objects.get(pk=operador_id)
     usuario = operador.usuario
@@ -148,7 +148,7 @@ def cambiar_password(request, operador_id):
     #Sea por ingreso o por salida:
     return render(request, "extras/generic_form.html", {'titulo': "Modificar Usuario", 'form': form, 'boton': "Modificar", })
 
-@permission_required('operadores.mod_operador')
+@permission_required('operadores.modificar_operador')
 def desactivar_usuario(request, operador_id):
     operador = Operador.objects.get(pk=operador_id)
     usuario = operador.usuario
@@ -156,7 +156,7 @@ def desactivar_usuario(request, operador_id):
     usuario.save()
     return redirect('operadores:listar_operadores')
 
-@permission_required('operadores.mod_operador')
+@permission_required('operadores.modificar_operador')
 def activar_usuario(request, operador_id):
     operador = Operador.objects.get(pk=operador_id)
     usuario = operador.usuario
