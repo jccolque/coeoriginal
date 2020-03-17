@@ -5,7 +5,7 @@ from django.utils import timezone
 from tinymce.models import HTMLField
 from auditlog.registry import auditlog
 #Imports del proyecto
-#from operadores.models import Operador
+from operadores.models import Operador
 #Imports de la app
 from .choices import TIPO_ACTA
 
@@ -30,7 +30,7 @@ class Acta(models.Model):
 
 class Participe(models.Model):
     acta = models.ForeignKey(Acta, on_delete=models.CASCADE, related_name="participes")
-#    operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="participes")
+    operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="participes")
     def __str__(self):
         return str(self.operador)
     def as_dict(self):

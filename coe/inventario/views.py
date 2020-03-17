@@ -12,7 +12,7 @@ from .models import Item, EventoItem
 from .forms import ItemForm, EventoItemForm
 
 # Create your views here.
-@permission_required('operadores.menu')
+@permission_required('operadores.menu_inventario')
 def menu(request):
     return render(request, 'menu_inventario.html', {})
 

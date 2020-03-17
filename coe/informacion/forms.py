@@ -44,7 +44,7 @@ class AtributoForm(forms.ModelForm):
     class Meta:
         model = Atributo
         fields= '__all__'
-        exclude = ('individuo', 'fecha', )
+        exclude = ('individuo', 'fecha', 'activo', )
 
 class SintomaForm(forms.ModelForm):
     class Meta:

@@ -10,7 +10,7 @@ from .models import Tarea, Responsable, EventoTarea
 from .forms import TareaForm, ResponsableForm, EventoTareaForm
 
 # Create your views here.
-@permission_required('operadores.menu')
+@permission_required('operadores.menu_tareas')
 def menu(request):
     return render(request, 'menu_tareas.html', {})
 

@@ -7,7 +7,7 @@ from django.utils import timezone
 from auditlog.registry import auditlog
 from tinymce.models import HTMLField
 #Imports del proyecto:
-from core.choices import TIPO_DOCUMENTOS
+from core.choices import TIPO_DOCUMENTOS, TIPO_SEXO
 from operadores.models import Operador
 from georef.models import Localidad, Barrio
 #Imports de la app
@@ -100,6 +100,7 @@ class Vehiculo(models.Model):
 class Individuo(models.Model):
     tipo_doc = models.IntegerField(choices=TIPO_DOCUMENTOS, default=2)
     num_doc = models.IntegerField('Numero de Documento/Pasaporte', unique=True)
+    sexo = models.CharField('Sexo', max_length=1, choices=TIPO_SEXO, default='M')
     apellidos = models.CharField('Apellidos', max_length=100)
     nombres = models.CharField('Nombres', max_length=100)
     fecha_nacimiento = models.DateField(verbose_name="Fecha de Nacimiento")

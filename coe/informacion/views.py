@@ -130,7 +130,7 @@ def cargar_atributo(request, individuo_id):
             sintoma.individuo = individuo
             sintoma.save()
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
-    return render(request, "extras/generic_form.html", {'titulo': "Cargar Domicilio", 'form': form, 'boton': "Cargar", })
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Atributo", 'form': form, 'boton': "Cargar", })
 
 @permission_required('operadores.cargar_individuo')
 def cargar_sintoma(request, individuo_id):
@@ -143,4 +143,4 @@ def cargar_sintoma(request, individuo_id):
             sintoma.individuo = individuo
             sintoma.save()
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
-    return render(request, "extras/generic_form.html", {'titulo': "Cargar Domicilio", 'form': form, 'boton': "Cargar", })
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Sintoma", 'form': form, 'boton': "Cargar", })

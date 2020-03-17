@@ -12,7 +12,7 @@ from .models import Acta
 class CrearActaForm(forms.ModelForm):
     participes = forms.MultipleChoiceField(
         label='Participes',
-        choices=[(o.id,o.usuario.last_name+', '+o.usuario.first_name) for o in Operador.objects.all()],
+        choices=[(o.id,o.apellidos+', '+o.nombres) for o in Operador.objects.all()],
         widget=CheckboxSelectMultiple(attrs={'class':'multiplechoice',}), 
     )
     class Meta:

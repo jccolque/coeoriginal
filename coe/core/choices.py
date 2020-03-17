@@ -7,6 +7,11 @@ TIPO_DOCUMENTOS = (
     (5, 'Pasaporte'),
 )
 
+TIPO_SEXO = (
+    ('M', 'Masculino'),
+    ('F', 'Femenino'),
+)
+
 TIPO_LOG = (
     ('C', 'Creacion'),
     ('M', 'Modificacion'),
