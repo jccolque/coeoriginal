@@ -86,19 +86,21 @@ def mod_operador(request, operador_id=None):
         #Si es para modificar conseguimos las bases
         operador = Operador.objects.get(pk=operador_id)
         usuario = operador.usuario
+        permisos_habilitados = [p for p in obtener_permisos(usuario=usuario)]
+        id_permisos_habilitados = [p.id for p in obtener_permisos(usuario=usuario)]
         if usuario:
             #Generamos el form
             form = ModOperadorForm(
                 instance=operador, 
-                permisos_list=obtener_permisos(),
+                permisos_list=permisos_habilitados,
                 initial={
                     'username': usuario.username,
-                    'permisos': [p.id for p in obtener_permisos(usuario=usuario)],
+                    'permisos': id_permisos_habilitados,
             })
         else:
             form = ModOperadorForm(
                 instance=operador, 
-                permisos_list=obtener_permisos(),
+                permisos_list=permisos_habilitados,
             )
     if request.method == "POST":
         form = ModOperadorForm(request.POST, request.FILES, instance=operador)

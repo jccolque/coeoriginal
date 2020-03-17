@@ -42,7 +42,7 @@ class ModOperadorForm(forms.ModelForm):
         #Obtenemos permisos
         permisos_list = kwargs.pop('permisos_list', None)
         if permisos_list:
-            self.base_fields['permisos'].choices = permisos_list.values_list('id', 'name')
+            self.base_fields['permisos'].choices = [(p.id, p.name) for p in permisos_list]
         super(ModOperadorForm, self).__init__(*args, **kwargs)
     def clean_username(self):
         if not hasattr(self, 'instance') and User.objects.filter(username=self.cleaned_data['username']):
