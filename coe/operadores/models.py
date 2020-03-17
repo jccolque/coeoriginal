@@ -136,3 +136,4 @@ class EventoOperador(models.Model):
 #Auditoria
 auditlog.register(SubComite)
 auditlog.register(Operador)
+auditlog.register(User)
