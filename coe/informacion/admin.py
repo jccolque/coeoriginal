@@ -1,11 +1,14 @@
 #Imports Django
 from django.contrib import admin
 #Imports extras
+from django.db import models
+from django.forms import CheckboxSelectMultiple
 from nested_inline.admin import NestedStackedInline, NestedModelAdmin
 #Imports del proyecto
 from core.admin import register_hidden_models
 #Imports de la app
 from .models import Archivo
+from .models import Enfermedad
 from .models import Vehiculo, Origen, Individuo
 from .models import TipoEvento, Evento
 from .models import TipoSintoma, Sintoma
@@ -40,6 +43,16 @@ class ArchivoAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
+class EnfermedadAdmin(admin.ModelAdmin):
+    model = Individuo
+    search_fields = ['nombres', 'sintomas__nombre', ]
+    list_filter = ['sintomas']
+    def has_delete_permission(self, request, obj=None):
+        return False
+    formfield_overrides = {
+        models.ManyToManyField: {'widget': CheckboxSelectMultiple},
+    }
+
 class IndividuoAdmin(admin.ModelAdmin):
     model = Individuo
     search_fields = ['nombres', 'apellidos', 'num_dic', ]
@@ -58,5 +71,6 @@ class VehiculoAdmin(admin.ModelAdmin):
 # Register your models here.
 register_hidden_models(TipoSintoma, TipoEvento)
 admin.site.register(Archivo, ArchivoAdmin)
+admin.site.register(Enfermedad, EnfermedadAdmin)
 admin.site.register(Individuo, IndividuoAdmin)
 admin.site.register(Vehiculo, VehiculoAdmin)

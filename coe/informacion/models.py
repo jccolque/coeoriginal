@@ -63,6 +63,21 @@ class Archivo(models.Model):
             'procesado': self.procesado,
         }
 
+class Enfermedad(models.Model):#Origen del Dato
+    nombre = models.CharField('Nombre', max_length=100)
+    descripcion = HTMLField(verbose_name='Descripcion', null=True, blank=True)
+    importancia = models.IntegerField(choices=TIPO_IMPORTANCIA, default='1')
+    sintomas = models.ManyToManyField(TipoSintoma)
+    def __str__(self):
+        return self.nombre
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'nombre': self.nombre,
+            'descripcion': self.descripcion,
+            'importancia': self.get_importancia_display(),
+        }
+
 class Vehiculo(models.Model):
     tipo = models.IntegerField(choices=TIPO_VEHICULO, default='1')
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
