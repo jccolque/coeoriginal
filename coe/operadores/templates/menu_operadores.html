@@ -45,14 +45,7 @@
                         </ul>
                     </div>
                     <div class="col-md-4">
-                        <p>Informacion del usuario: <b>{{request.user.username}}</b></p>
-                        <p>Roles del usuario:</p>
-                        <ul>
-                            {% ct_get_grupos request.user as grupos %}
-                            {% for grupo in grupos %}
-                                <li>{{grupo.name}}</li>
-                            {% endfor %}
-                        </ul>
+                        {% include 'users/info_user.html' %}
                     </div>
                 </div>
             </div>

@@ -66,7 +66,7 @@ def listar_operadores(request):
                 Q(usuario__last_name__icontains=search)
             )
     operadores = paginador(request, operadores)
-    return render(request, 'users/listar_operadores.html', {'operadores': operadores,})
+    return render(request, 'users/lista_operadores.html', {'operadores': operadores,})
 
 def crear_operador(request):
     form = CrearOperadorForm()

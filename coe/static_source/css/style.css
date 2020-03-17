@@ -203,3 +203,7 @@ img.fotos {
 .buscador input {
     width: 250px;
 }
+
+.info_user {
+    padding-left: 10%;
+}

@@ -1,0 +1,41 @@
+{% load operadores_tags %}
+{% block content %}
+    <div class="info_user">
+        {% ct_get_operador request as operador %}
+        <p><b>{{operador.apellidos}}, {{operador.nombres}}</b></p>
+        <p>Num Doc: {{operador.num_doc}}</p>
+        <p><b>Grupo de Tareas:</b> {{operador.subcomite}}</p>
+        <p><b>Usuario:</b> {{request.user.username}}</b>
+            {% if perms.operadores.auditar_operadores %}
+                <a href="{% url 'operadores:auditoria_propia' user_id=operador.usuario.id %}">
+                    <img class="icons" src="/static/img/icons/audit.png" alt="Crear Nuevo Usuario">
+                </a>
+            {% endif %}
+        </p>
+        {% for tarea in operador.tareas_asignadas %}
+            {% if forloop.first %}
+                <h3>Tareas Asignadas:</h3>
+            {% endif %}
+                {% with tarea.hrs_restantes as hrs %}
+                    <p class="
+                        {% if hrs < 0 %}
+                            tiempo_negativo
+                        {% elif hrs < 12 %}
+                            tiempo_limitado
+                        {% else %}
+                            tiempo_disponible
+                        {% endif %}
+                    ">
+                        <b>
+                            <a href="{% url 'tareas:ver_tarea' tarea_id=tarea.id %}">
+                                {{tarea.nombre}}
+                            </a>
+                        </b> | Limite: {{hrs}}hrs
+                    </p>
+                {% endwith %}
+            {% if forloop.last %}
+                <hr>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -118,6 +118,8 @@ class Operador(models.Model):
             self.qrpath = relative_path
             self.save()
             return self.qrpath
+    def tareas_asignadas(self):
+        return [r.tarea for r in self.responsables.all()]
 
 class EventoOperador(models.Model):
     operador = models.ForeignKey(Operador, on_delete=models.CASCADE, null=True, blank=True, related_name="asistencia")
