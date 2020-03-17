@@ -11,7 +11,7 @@
                     <div class="col-md-8">
                         <h3>{{vehiculo.get_tipo_display}} {{vehiculo.empresa}}</h3>
                         <p><b>Pasajeros:</b> {{vehiculo.cant_pasajeros}}</p>
-                        <p><b>Plan de Ruta:</b> {{vehiculo.plan}}</p>
+                        <p><b>Plan de Ruta:</b> {{vehiculo.plan|safe}}</p>
 
                         <hr>
                         <h3>Listado de Pasajeros:</h3>
