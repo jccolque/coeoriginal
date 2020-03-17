@@ -40,7 +40,7 @@ class Tarea(models.Model):
 
 class Responsable(models.Model):
     tarea = models.ForeignKey(Tarea, on_delete=models.CASCADE, null=True, related_name="responsables")
-    operador = models.ForeignKey(Operador, on_delete=models.CASCADE, null=True, blank=True, related_name="responsables")
+    operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="responsables")
     fecha_asignacion = models.DateTimeField('Fecha de Asignacion', default=timezone.now)
     obligaciones = HTMLField()
     def __str__(self):
