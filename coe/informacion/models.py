@@ -14,6 +14,20 @@ from georef.models import Localidad, Barrio
 from .choices import TIPO_IMPORTANCIA, TIPO_ARCHIVO, TIPO_VEHICULO
 
 #Tipo Definition
+class TipoEvento(models.Model):#Origen del Dato
+    nombre = models.CharField('Nombre', max_length=100)
+    descripcion = HTMLField(verbose_name='Descripcion', null=True, blank=True)
+    importancia = models.IntegerField(choices=TIPO_IMPORTANCIA, default='1')
+    def __str__(self):
+        return self.nombre
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'nombre': self.nombre,
+            'descripcion': self.descripcion,
+            'importancia': self.get_importancia_display(),
+        }
+
 class TipoSintoma(models.Model):#Origen del Dato
     nombre = models.CharField('Nombre', max_length=100)
     descripcion = HTMLField(verbose_name='Descripcion', null=True, blank=True)
@@ -99,6 +113,18 @@ class Individuo(models.Model):
             'particularidades': self.particularidades,
         }
 
+class Origen(models.Model):#Origen del Dato
+    vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, related_name="origenes")
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="origenes")
+    def __str__(self):
+        return str(self.vehiculo) + ': ' + str(self.individuo)
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "vehiculo_id": self.vehiculo.id,
+            "individuo_id": self.individuo.id,
+        }
+
 class Domicilio(models.Model):
     individuo = models.OneToOneField(Individuo, on_delete=models.CASCADE, related_name="domicilio")
     localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="domicilios_individuos")
@@ -117,22 +143,26 @@ class Domicilio(models.Model):
             "numero": self.numero,
         }
 
-class Origen(models.Model):#Origen del Dato
-    vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, related_name="origenes")
-    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="origenes")
+class Evento(models.Model):#Origen del Dato
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="eventos")
+    tipo = models.ForeignKey(TipoEvento, on_delete=models.CASCADE, related_name="eventos")
+    aclaracion =  models.CharField('Aclaracion', max_length=200)
+    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     def __str__(self):
-        return str(self.vehiculo) + ': ' + str(self.individuo)
+        return str(self.individuo) + ': ' + str(self.tipo) + ' ' + str(self.fecha)
     def as_dict(self):
         return {
             "id": self.id,
-            "vehiculo_id": self.vehiculo.id,
             "individuo_id": self.individuo.id,
+            "sintoma_id": self.sintoma.id,
+            "aclaracion": self.aclaracion,
+            "fecha": self.fecha,
         }
 
 class Sintoma(models.Model):#Origen del Dato
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="sintomas")
     sintoma = models.ForeignKey(TipoSintoma, on_delete=models.CASCADE, related_name="sintomas")
-    aclaracion =  models.CharField('Aclracion', max_length=200)
+    aclaracion =  models.CharField('Aclaracion', max_length=200)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     def __str__(self):
         return str(self.sintoma) + ': ' + str(self.fecha)

@@ -12,7 +12,7 @@ from dal import autocomplete
 
 #Imports de la app
 from .models import Archivo, Vehiculo
-from .models import Individuo, Domicilio, Sintoma
+from .models import Individuo, Domicilio, Evento, Sintoma
 
 #Definimos nuestros forms
 class ArchivoForm(forms.ModelForm):
@@ -39,6 +39,12 @@ class DomicilioForm(forms.ModelForm):
         model = Domicilio
         fields= '__all__'
         exclude = ('individuo', )
+
+class EventoForm(forms.ModelForm):
+    class Meta:
+        model = Evento
+        fields= '__all__'
+        exclude = ('individuo', 'fecha', )
 
 class SintomaForm(forms.ModelForm):
     class Meta:

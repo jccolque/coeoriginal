@@ -7,10 +7,17 @@ from core.admin import register_hidden_models
 #Imports de la app
 from .models import Archivo
 from .models import Vehiculo, Origen, Individuo
+from .models import TipoEvento, Evento
 from .models import TipoSintoma, Sintoma
 
-
 #Definimos los inlines:
+class EventoInline(admin.TabularInline):
+    model = Evento
+    fk_name = 'individuo'
+    extra = 0
+    def has_delete_permission(self, request, obj=None):
+        return False   
+
 class SintomaInline(admin.TabularInline):
     model = Sintoma
     fk_name = 'individuo'
@@ -37,7 +44,7 @@ class IndividuoAdmin(admin.ModelAdmin):
     model = Individuo
     search_fields = ['nombres', 'apellidos', 'num_dic', ]
     list_filter = ['nacionalidad']
-    inlines = [SintomaInline, ]
+    inlines = [EventoInline, SintomaInline, ]
     def has_delete_permission(self, request, obj=None):
         return False
 
@@ -49,7 +56,7 @@ class VehiculoAdmin(admin.ModelAdmin):
         return False
 
 # Register your models here.
-register_hidden_models(TipoSintoma)
+register_hidden_models(TipoSintoma, TipoEvento)
 admin.site.register(Archivo, ArchivoAdmin)
 admin.site.register(Individuo, IndividuoAdmin)
 admin.site.register(Vehiculo, VehiculoAdmin)

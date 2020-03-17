@@ -62,7 +62,7 @@
                                         <a class="nolink" href="{% url 'operadores:modificar_usuario'  operador_id=operador.id %}">
                                             <img class="icons" src="/static/admin/img/icon-changelink.svg" alt="Modificar">
                                         </a>
-                                        {% if operador.usuario %}%
+                                        {% if operador.usuario %}
                                             <a class="nolink" href="{% url 'operadores:cambiar_password' operador_id=operador.id %}">
                                                 <img class="icons" src="/static/img/icons/changepassword.png" alt="Cambiar contraseña">
                                             </a>
@@ -73,6 +73,11 @@
                                             {% else %}
                                                 <a class="nolink" href="{% url 'operadores:activar_usuario' operador_id=operador.id %}">
                                                     <img class="icons" src="/static/img/icons/check.png" alt="Activar">
+                                                </a>
+                                            {% endif %}
+                                            {% if perms.operadores.auditar_operadores %}
+                                                <a href="{% url 'operadores:auditoria_propia' user_id=operador.usuario.id %}">
+                                                    <img class="icons" src="/static/img/icons/audit.png" alt="Crear Nuevo Usuario">
                                                 </a>
                                             {% endif %}
                                         {% endif %}

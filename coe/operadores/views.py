@@ -21,12 +21,12 @@ from .forms import SubComiteForm, CrearOperadorForm
 from .forms import ModOperadorForm, ModPassword, AuditoriaForm
 from .forms import AsistenciaForm
 # Create your views here.
-@permission_required('operadores.menu_operadores')
+@permission_required('operador.menu_operadores')
 def menu(request):
     return render(request, 'menu_operadores.html', {})
 
 #Manejo de SubComites
-@permission_required('operadores.ver_subcomite')
+@permission_required('operador.ver_subcomite')
 def listar_subcomites(request):
     subcomites = SubComite.objects.all()
     if request.method == 'POST':
@@ -37,12 +37,12 @@ def listar_subcomites(request):
                 subcomites = subcomites.filter(nombre__icontains=search)
     return render(request, 'users/lista_subcomites.html', {'subcomites': subcomites, })
 
-@permission_required('operadores.ver_subcomite')
+@permission_required('operador.ver_subcomite')
 def ver_subcomite(request, subco_id):
     subcomite = SubComite.objects.get(pk=subco_id)
     return render(request, 'users/ver_subcomite.html', {'subcomite': subcomite, })
 
-@permission_required('operadores.crear_subcomite')
+@permission_required('operador.crear_subcomite')
 def crear_subcomite(request):
     form = SubComiteForm()
     if request.method == "POST":
@@ -54,7 +54,7 @@ def crear_subcomite(request):
     return render(request, "extras/generic_form.html", {'titulo': "Subir Archivo para Carga", 'form': form, 'boton': "Subir", })
 
 #Manejo de Operadores
-@permission_required('operadores.listar_operadores')
+@permission_required('operador.listar_operadores')
 def listar_operadores(request):
     operadores = Operador.objects.all()
     if request.method == 'POST':
@@ -78,7 +78,7 @@ def crear_operador(request):
             return redirect('operadores:listar_operadores')
     return render(request, "extras/generic_form.html", {'titulo': "Subir Archivo para Carga", 'form': form, 'boton': "Subir", })
 
-@permission_required('operadores.crear_operador')
+@permission_required('operador.crear_operador')
 def mod_operador(request, operador_id=None):
     operador = None
     form = ModOperadorForm(permisos_list=obtener_permisos(),)
@@ -129,12 +129,12 @@ def mod_operador(request, operador_id=None):
             return redirect('operadores:listar_operadores')
     return render(request, "extras/generic_form.html", {'titulo': "Subir Archivo para Carga", 'form': form, 'boton': "Subir", })
 
-@permission_required('operadores.ver_credencial')
+@permission_required('operador.ver_credencial')
 def ver_credencial(request, operador_id):
     operador = Operador.objects.get(id=operador_id)
     return render(request, 'credencial.html', {'operador': operador,})
 
-@permission_required('operadores.modificar_operador')
+@permission_required('operador.modificar_operador')
 def cambiar_password(request, operador_id):
     operador = Operador.objects.get(pk=operador_id)
     usuario = operador.usuario
@@ -148,7 +148,7 @@ def cambiar_password(request, operador_id):
     #Sea por ingreso o por salida:
     return render(request, "extras/generic_form.html", {'titulo': "Modificar Usuario", 'form': form, 'boton': "Modificar", })
 
-@permission_required('operadores.modificar_operador')
+@permission_required('operador.modificar_operador')
 def desactivar_usuario(request, operador_id):
     operador = Operador.objects.get(pk=operador_id)
     usuario = operador.usuario
@@ -156,7 +156,7 @@ def desactivar_usuario(request, operador_id):
     usuario.save()
     return redirect('operadores:listar_operadores')
 
-@permission_required('operadores.modificar_operador')
+@permission_required('operador.modificar_operador')
 def activar_usuario(request, operador_id):
     operador = Operador.objects.get(pk=operador_id)
     usuario = operador.usuario
@@ -165,7 +165,7 @@ def activar_usuario(request, operador_id):
     return redirect('operadores:listar_operadores')
 
 #Ingreso y Egreso
-@permission_required('operadores.control_asistencia')
+@permission_required('operador.control_asistencia')
 def registro_asistencia(request):
     form = FechaForm()
     if request.method == 'POST':
@@ -186,7 +186,7 @@ def registro_asistencia(request):
                 })
     return render(request, "extras/generic_form.html", {'titulo': "Registro de Asistencia", 'form': form, 'boton': "Generar Reporte", })
 
-@permission_required('operadores.control_asistencia')
+@permission_required('operador.control_asistencia')
 def listado_presentes(request):
     asistentes = EventoOperador.objects.all()#Traemos todos los eventos
     asistentes = asistentes.select_related('operador', 'operador__usuario')#Traemos operador para evitar consultas db
@@ -216,7 +216,7 @@ def listado_presentes(request):
             presentes.append(ingreso)
     return render(request, 'listar_presentes.html', {'presentes': presentes,})
 
-@permission_required('operadores.control_asistencia')
+@permission_required('operador.control_asistencia')
 def checkin(request):
     form = AsistenciaForm()
     if request.method == 'POST':
@@ -227,12 +227,12 @@ def checkin(request):
             return redirect('operadores:ingreso', operador_id=evento.operador.id)
     return render(request, "extras/generic_form.html", {'titulo': "Modificar Usuario", 'form': form, 'boton': "Modificar", })
 
-@permission_required('operadores.control_asistencia')
+@permission_required('operador.control_asistencia')
 def ingreso(request, operador_id):
     operador = Operador.objects.get(id=operador_id)
     return render(request, 'users/ingreso_operador.html', {'operador': operador,})
 
-@permission_required('operadores.control_asistencia')
+@permission_required('operador.control_asistencia')
 def checkout(request, operador_id):
     operador = Operador.objects.get(id=operador_id)
     evento = EventoOperador(operador=operador, tipo='E')
@@ -240,7 +240,7 @@ def checkout(request, operador_id):
     return redirect('operadores:listado_presentes')
 
 #Auditoria
-@permission_required('operadores.auditar_operadores')
+@permission_required('operador.auditar_operadores')
 def auditoria(request, user_id=None):
     form = AuditoriaForm()
     if user_id:

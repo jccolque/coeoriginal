@@ -9,7 +9,7 @@ from operadores.functions import obtener_operador
 from .models import Archivo
 from .models import Vehiculo, Individuo, Origen
 from .forms import ArchivoForm, VehiculoForm, IndividuoForm
-from .forms import DomicilioForm, SintomaForm
+from .forms import DomicilioForm, EventoForm, SintomaForm
 # Create your views here.
 @permission_required('operador.menu_informacion')
 def menu(request):
@@ -85,10 +85,14 @@ def ver_individuo(request, individuo_id):
     return render(request, "ver_individuo.html", {'individuo': individuo, })
 
 @permission_required('operador.cargar_individuo')
-def cargar_individuo(request, vehiculo_id=None):
-    form = IndividuoForm()
+def cargar_individuo(request, vehiculo_id=None, individuo_id=None):
+    individuo = None
+    if individuo_id:#Si manda individuo es para modificar
+        individuo = Individuo.objects.get(pk=individuo_id)
+
+    form = IndividuoForm(instance=individuo)
     if request.method == "POST":
-        form = IndividuoForm(request.POST)
+        form = IndividuoForm(request.POST, instance=individuo)
         if form.is_valid():
             operador = obtener_operador(request)
             individuo = form.save(commit=False)
@@ -112,6 +116,19 @@ def cargar_domicilio(request, individuo_id):
             domicilio = form.save(commit=False)
             domicilio.individuo = individuo
             domicilio.save()
+            return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Domicilio", 'form': form, 'boton': "Cargar", })
+
+@permission_required('operador.cargar_individuo')
+def cargar_evento(request, individuo_id):
+    form = EventoForm()
+    if request.method == "POST":
+        form = EventoForm(request.POST)
+        if form.is_valid():
+            individuo = Individuo.objects.get(pk=individuo_id)
+            sintoma = form.save(commit=False)
+            sintoma.individuo = individuo
+            sintoma.save()
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Domicilio", 'form': form, 'boton': "Cargar", })
 
