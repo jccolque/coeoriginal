@@ -8,10 +8,11 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-9">
-                        <h2>Objeto: {{item.nombre}}</h2>
+                        <h2>{{item.nombre}}</h2>
                         <p>Rubro: {{item.subgrupo.rubro}}</p>
                         <p>Subgrupo: {{item.subgrupo}}</p>
                         <p>Responsable: {{item.responsable}}</p>
+                        <p>Datos de Contacto: {{item.responsable.telefono}} /  {{item.responsable.email}}</p>
                     </div>
                     <div class="col-md-3">
                         <!--{% include 'users/info_user.html' %}-->
