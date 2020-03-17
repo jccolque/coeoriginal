@@ -69,7 +69,8 @@ class VehiculoAdmin(admin.ModelAdmin):
         return False
 
 # Register your models here.
-register_hidden_models(TipoSintoma, TipoEvento)
+admin.site.register(TipoSintoma)
+admin.site.register(TipoEvento)
 admin.site.register(Archivo, ArchivoAdmin)
 admin.site.register(Enfermedad, EnfermedadAdmin)
 admin.site.register(Individuo, IndividuoAdmin)

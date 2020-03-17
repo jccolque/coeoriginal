@@ -15,7 +15,7 @@ from .choices import TIPO_IMPORTANCIA, TIPO_ARCHIVO, TIPO_VEHICULO
 
 #Tipo Definition
 class TipoEvento(models.Model):#Origen del Dato
-    nombre = models.CharField('Nombre', max_length=100)
+    nombre = models.CharField('Nombre', max_length=100, unique=True)
     descripcion = HTMLField(verbose_name='Descripcion', null=True, blank=True)
     importancia = models.IntegerField(choices=TIPO_IMPORTANCIA, default='1')
     def __str__(self):
@@ -29,7 +29,7 @@ class TipoEvento(models.Model):#Origen del Dato
         }
 
 class TipoSintoma(models.Model):#Origen del Dato
-    nombre = models.CharField('Nombre', max_length=100)
+    nombre = models.CharField('Nombre', max_length=100, unique=True)
     descripcion = HTMLField(verbose_name='Descripcion', null=True, blank=True)
     importancia = models.IntegerField(choices=TIPO_IMPORTANCIA, default='1')
     def __str__(self):
