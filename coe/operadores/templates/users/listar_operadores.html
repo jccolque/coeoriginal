@@ -62,17 +62,19 @@
                                         <a class="nolink" href="{% url 'operadores:modificar_usuario'  operador_id=operador.id %}">
                                             <img class="icons" src="/static/admin/img/icon-changelink.svg" alt="Modificar">
                                         </a>
-                                        <a class="nolink" href="{% url 'operadores:cambiar_password' operador_id=operador.id %}">
-                                            <img class="icons" src="/static/img/icons/changepassword.png" alt="Cambiar contraseña">
-                                        </a>
-                                        {% if operador.usuario.is_active %}
-                                            <a class="nolink" href="{% url 'operadores:desactivar_usuario' operador_id=operador.id %}">
-                                                <img class="icons" src="/static/admin/img/icon-deletelink.svg" alt="Desactivar">
+                                        {% if operador.usuario %}%
+                                            <a class="nolink" href="{% url 'operadores:cambiar_password' operador_id=operador.id %}">
+                                                <img class="icons" src="/static/img/icons/changepassword.png" alt="Cambiar contraseña">
                                             </a>
-                                        {% else %}
-                                            <a class="nolink" href="{% url 'operadores:activar_usuario' operador_id=operador.id %}">
-                                                <img class="icons" src="/static/img/icons/check.png" alt="Activar">
-                                            </a>
+                                            {% if operador.usuario.is_active %}
+                                                <a class="nolink" href="{% url 'operadores:desactivar_usuario' operador_id=operador.id %}">
+                                                    <img class="icons" src="/static/admin/img/icon-deletelink.svg" alt="Desactivar">
+                                                </a>
+                                            {% else %}
+                                                <a class="nolink" href="{% url 'operadores:activar_usuario' operador_id=operador.id %}">
+                                                    <img class="icons" src="/static/img/icons/check.png" alt="Activar">
+                                                </a>
+                                            {% endif %}
                                         {% endif %}
                                     </td>
                                 </tr>
