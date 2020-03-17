@@ -3,19 +3,17 @@ from django.contrib import admin
 #Imports extras
 from django.db import models
 from django.forms import CheckboxSelectMultiple
-from nested_inline.admin import NestedStackedInline, NestedModelAdmin
 #Imports del proyecto
-from core.admin import register_hidden_models
 #Imports de la app
 from .models import Archivo
 from .models import Enfermedad
-from .models import Vehiculo, Origen, Individuo
-from .models import TipoEvento, Evento
+from .models import Vehiculo, Individuo
+from .models import TipoAtributo, Atributo
 from .models import TipoSintoma, Sintoma
 
 #Definimos los inlines:
-class EventoInline(admin.TabularInline):
-    model = Evento
+class AtributoInline(admin.TabularInline):
+    model = Atributo
     fk_name = 'individuo'
     extra = 0
     def has_delete_permission(self, request, obj=None):
@@ -57,7 +55,7 @@ class IndividuoAdmin(admin.ModelAdmin):
     model = Individuo
     search_fields = ['nombres', 'apellidos', 'num_dic', ]
     list_filter = ['nacionalidad']
-    inlines = [EventoInline, SintomaInline, ]
+    inlines = [AtributoInline, SintomaInline, ]
     def has_delete_permission(self, request, obj=None):
         return False
 
@@ -70,7 +68,7 @@ class VehiculoAdmin(admin.ModelAdmin):
 
 # Register your models here.
 admin.site.register(TipoSintoma)
-admin.site.register(TipoEvento)
+admin.site.register(TipoAtributo)
 admin.site.register(Archivo, ArchivoAdmin)
 admin.site.register(Enfermedad, EnfermedadAdmin)
 admin.site.register(Individuo, IndividuoAdmin)

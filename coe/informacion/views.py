@@ -9,7 +9,7 @@ from operadores.functions import obtener_operador
 from .models import Archivo
 from .models import Vehiculo, Individuo, Origen
 from .forms import ArchivoForm, VehiculoForm, IndividuoForm
-from .forms import DomicilioForm, EventoForm, SintomaForm
+from .forms import DomicilioForm, AtributoForm, SintomaForm
 # Create your views here.
 @permission_required('operadores.menu_informacion')
 def menu(request):
@@ -120,10 +120,10 @@ def cargar_domicilio(request, individuo_id):
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Domicilio", 'form': form, 'boton': "Cargar", })
 
 @permission_required('operadores.cargar_individuo')
-def cargar_evento(request, individuo_id):
-    form = EventoForm()
+def cargar_atributo(request, individuo_id):
+    form = AtributoForm()
     if request.method == "POST":
-        form = EventoForm(request.POST)
+        form = AtributoForm(request.POST)
         if form.is_valid():
             individuo = Individuo.objects.get(pk=individuo_id)
             sintoma = form.save(commit=False)

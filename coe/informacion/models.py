@@ -14,9 +14,8 @@ from georef.models import Localidad, Barrio
 from .choices import TIPO_IMPORTANCIA, TIPO_ARCHIVO, TIPO_VEHICULO
 
 #Tipo Definition
-class TipoEvento(models.Model):#Origen del Dato
+class TipoAtributo(models.Model):#Origen del Dato
     nombre = models.CharField('Nombre', max_length=100, unique=True)
-    descripcion = HTMLField(verbose_name='Descripcion', null=True, blank=True)
     importancia = models.IntegerField(choices=TIPO_IMPORTANCIA, default='1')
     def __str__(self):
         return self.nombre
@@ -158,9 +157,9 @@ class Domicilio(models.Model):
             "numero": self.numero,
         }
 
-class Evento(models.Model):#Origen del Dato
-    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="eventos")
-    tipo = models.ForeignKey(TipoEvento, on_delete=models.CASCADE, related_name="eventos")
+class Atributo(models.Model):#Origen del Dato
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="atributos")
+    tipo = models.ForeignKey(TipoAtributo, on_delete=models.CASCADE, related_name="atributos")
     aclaracion =  models.CharField('Aclaracion', max_length=200)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     def __str__(self):
