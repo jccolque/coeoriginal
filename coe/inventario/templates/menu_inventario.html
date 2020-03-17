@@ -10,8 +10,11 @@
                     <h1>Menu Inventario:</h1>
                     <div class="col-md-8">
                         <ul class="menu_botones">
-                            {% if perms.inventario.menu %}
-                                <li><a href="{% url 'inventario:menu'  %}">Cargar Elemento</a></li>
+                            {% if perms.operadores.crear_item %}
+                                <li><a href="{% url 'inventario:crear_item'  %}">Cargar Elemento</a></li>
+                            {% endif %}
+                            {% if perms.operadores.ver_item %}
+                                <li><a href="{% url 'inventario:lista_items'  %}">Ver Listado Items</a></li>
                             {% endif %}
                             {% if request.user.is_superuser %}
                                 <li><a href="{% url 'inventario:menu' %}">Opcion del Administrador</a></li>

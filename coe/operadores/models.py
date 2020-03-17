@@ -63,7 +63,8 @@ class Operador(models.Model):
             ("auditar_operadores", "Auditar Acciones de otros Operadores"),
             #Inventario
             ("menu_inventario", "Puede Acceder al menu Inventario"),
-            
+            ("ver_item", "Puede ver Items"),
+            ("crear_item", "Puede Crear/Modificar Items"),
             #Tareas:
             ("menu_tareas", "Puede Acceder al menu de Tareas"),
             ("ver_tarea", "Puede ver listado de Tareas"),

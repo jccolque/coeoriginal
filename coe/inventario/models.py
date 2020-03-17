@@ -6,41 +6,76 @@ from tinymce.models import HTMLField
 from auditlog.registry import auditlog
 #Imports del proyecto
 from operadores.models import Operador
+from tareas.models import Tarea
 #Imports de la app
 from .choices import TIPO_EVENTO_ITEM
 
 # Create your models here.
-class Item(models.Model):
+class Rubro(models.Model):
     nombre = models.CharField('Nombre', max_length=200)
-    cantidad = models.IntegerField('Cantidad', default=1)
-    proveedor = models.ForeignKey(Operador, on_delete=models.CASCADE, null=True, blank=True, related_name="proveedor_items")
-    responsable = models.ForeignKey(Operador, on_delete=models.CASCADE, null=True, blank=True, related_name="responsable_items")
-    situacion = HTMLField()
     def __str__(self):
-        return self.nombre + ': ' + str(self.cantidad)
+        return self.nombre
     def as_dict(self):
         return {
             'id': self.id,
             'nombre': self.nombre,
-            'cantidad': self.cantidad,
-            'proveedor': self.proveedor,
+        }
+
+class SubGrupo(models.Model):
+    rubro = models.ForeignKey(Rubro, on_delete=models.CASCADE, related_name="grupos")
+    nombre = models.CharField('Nombre', max_length=200)
+    def __str__(self):
+        return self.nombre
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'rubro_id': self.rubro.id,
+            'rubro':self.rubro.nombre,
+            'nombre': self.nombre,
+        }
+
+class Item(models.Model):
+    subgrupo = models.ForeignKey(SubGrupo, on_delete=models.CASCADE, related_name="items")
+    nombre = models.CharField('Nombre', max_length=200, unique=True)
+    responsable = models.ForeignKey(Operador, on_delete=models.CASCADE, null=True, blank=True, related_name="responsable_items")
+    def __str__(self):
+        return self.nombre
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'grupo_id': self.subgrupo.id,
+            'grupo': self.subgrupo.nombre,
+            'nombre': self.nombre,
             'responsable': str(self.responsable),
             'situacion': self.situacion,
         }
+    def cantidad_disponible(self):
+        eventos = self.eventos.all()
+        ingresos = sum([e.cantidad for e in eventos.filter(accion='I')])
+        retiros = sum([e.cantidad for e in eventos.filter(accion='R')])
+        return ingresos - retiros
+    def cantidad_distribuida(self):
+        return sum([e.cantidad for e in self.eventos.filter(accion='R')])
 
 class EventoItem(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="eventos")
-    operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="eventos")
     accion = models.CharField('Accion', max_length=1 ,choices=TIPO_EVENTO_ITEM, default='I')
+    cantidad = models.IntegerField('Cantidad', default=1)
+    actuante = models.CharField('Actuante', max_length=200)
+    tarea = models.ForeignKey(Tarea, on_delete=models.CASCADE, null=True, blank=True, related_name="recursos")
+    operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="eventos")
     fecha = models.DateTimeField('Fecha del evento', default=timezone.now)
-    detalle = HTMLField()
+    detalle = HTMLField('Detalle de la accion:')
+    devuelto = models.BooleanField(default=False)
     def __str__(self):
         return str(self.item) + ': ' + str(self.fecha) + ' - ' + self.get_accion_display()
     def as_dict(self):
         return {
             'id': self.id,
             'item_id': self.item.id,
-            'item': str(self.nombre),
+            'item': self.nombre,
+            'actuante': self.actuante,
+            'tarea': str(self.tarea),
             'operador_id': self.operador.id,
             'operador': str(self.operador),
             'accion': self.get_accion_display(),

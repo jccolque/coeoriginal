@@ -69,6 +69,30 @@
                                 {% endfor %}
                             </table>
                         </div>
+                        <div class="row">
+                            <hr>
+                            <h3>Recursos Asignados:</h3>
+                            <table class="listado">
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Nombre</th>
+                                    <th>Cantidad</th>
+                                    <th>Acciones</th>
+                                </tr>
+                                {% for evento in tarea.recursos_actuales %}
+                                    <tr>
+                                        <td>{{evento.fecha}}</td>
+                                        <td>{{evento.item.nombre}}</td>
+                                        <td>{{evento.cantidad}}</td>
+                                        <td>
+                                            <a href="{% url 'inventario:devolver' evento_id=evento.id %}">
+                                                <img class="icons" src="{% static 'img/icons/delete.png' %}">
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
                     </div>
                     <div class="col-md-4">
                         {% include 'users/info_user.html' %}

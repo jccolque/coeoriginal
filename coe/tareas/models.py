@@ -37,6 +37,8 @@ class Tarea(models.Model):
         ahora = timezone.now()
         restante = self.endda - ahora
         return int(restante.total_seconds() / 3600)
+    def recursos_actuales(self):
+        return self.recursos.filter(accion='R', devuelto=False)
 
 class Responsable(models.Model):
     tarea = models.ForeignKey(Tarea, on_delete=models.CASCADE, null=True, related_name="responsables")

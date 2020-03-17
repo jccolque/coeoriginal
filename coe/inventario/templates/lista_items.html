@@ -1,0 +1,42 @@
+{% extends 'base_inventario.html' %}
+{% load static %}
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2>Inventario General</h2>
+            {% if perms.operadores.crear_operador %}
+                <a href="{% url 'inventario:crear_item' %}">
+                    Crear Item
+                    <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo Usuario">
+                </a>
+            {% endif %}
+            <p>{% include 'extras/buscador.html' %}</h3>
+        </div>
+        <div class="row">
+        <div class="col-md-12">
+            <table class="listado">
+                <tr>
+                    <th colspan="2">Rubro</th>
+                    <th>Nombre</th>
+                    <th>Cantidad Disponible</th>
+                    <th>Cantidad Distribuida</th>
+                    <th>Administrador</th>
+
+                    <th>Ver Detalle</th>
+                </tr>
+                {% for item in items %}
+                    <tr>
+                        <td>{{item.subgrupo.rubro}}</td>
+                        <td>{{item.subgrupo}}</td>
+                        <td>{{item.nombre}}</td>
+                        <td>{{item.cantidad_disponible}}</td>
+                        <td>{{item.cantidad_distribuida}}</td>
+                        <td>{{item.responsable}}</td>
+                        <td><a href="{% url 'inventario:ver_item' item_id=item.id %}" target="_blank">(Ver Detalle)</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+            {% include 'extras/paginador.html' with elementos=documentos %}
+        </div>
+    </div>
+{% endblock %}
