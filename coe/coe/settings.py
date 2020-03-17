@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'n!+$&mpxi^8b1tgi)bffl0*gl$0%(esc&icba-0_p#ptayuz=0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-ALLOWED_HOSTS = ['localhost', 'coe.jujuy.gob.ar',]
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'coe.jujuy.gob.ar',]
 
 # Application definition
 
@@ -115,7 +115,7 @@ except ImportError:
 # SECURITY WARNING: don't run with debug turned on in production!
 import sys
 DEBUG = (len(sys.argv) > 1 and sys.argv[1] == 'runserver')
-
+DEBUG = True
 #Definicion de permisos para subida de archivos:
 FILE_UPLOAD_PERMISSIONS = 0o644
 
