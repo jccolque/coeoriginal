@@ -122,9 +122,9 @@ def mod_operador(request, operador_id=None):
             if usuario:
                 for permiso in obtener_permisos():
                     usuario.user_permissions.remove(permiso)
-            for permiso in request.POST.getlist('permisos'):
-                usuario.user_permissions.add(permiso)
-            usuario.save()
+                for permiso in request.POST.getlist('permisos'):
+                    usuario.user_permissions.add(permiso)
+                usuario.save()
             operador.save()
             return redirect('operadores:listar_operadores')
     return render(request, "extras/generic_form.html", {'titulo': "Subir Archivo para Carga", 'form': form, 'boton': "Subir", })
