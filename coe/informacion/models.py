@@ -162,6 +162,7 @@ class Atributo(models.Model):#Origen del Dato
     tipo = models.ForeignKey(TipoAtributo, on_delete=models.CASCADE, related_name="atributos")
     aclaracion =  models.CharField('Aclaracion', max_length=200)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    activo = models.BooleanField(default=True)
     def __str__(self):
         return str(self.individuo) + ': ' + str(self.tipo) + ' ' + str(self.fecha)
     def as_dict(self):
@@ -171,6 +172,7 @@ class Atributo(models.Model):#Origen del Dato
             "sintoma_id": self.sintoma.id,
             "aclaracion": self.aclaracion,
             "fecha": self.fecha,
+            "activo": self.activo,
         }
 
 class Sintoma(models.Model):#Origen del Dato
