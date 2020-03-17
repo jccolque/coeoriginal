@@ -1,0 +1,66 @@
+{% extends 'base_operadores.html' %}
+{% load adminusers_tags %}
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">        
+                    <h1>Listado de Subcomites:</h1>
+                    <p style="float:right;">
+                        {% if perms.operadores.crear_subcomite %}
+                            <a href="{% url 'operadores:crear_subcomite' %}">
+                                Crear Subcomite
+                                <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Subcomite">
+                            </a>
+                        {% endif %}
+                    </p>
+                    <p>{% include 'extras/buscador.html' %}</p>
+
+                </div> 
+                <div class="row"> 
+                    <div class="col-md-12">
+                        <table class="listado">
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Cant Miembros</th>
+                                <th>Cant Tareas Terminadas</th>
+                                <th>Cant Tareas Asignadas</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                            {% for subcomite in subcomites %}
+                                <tr> 
+                                    <td>{{subcomite.nombre}}</td>
+                                    <td>{{subcomite.cant_miembros}}</td>
+                                    <td>{{subcomite.cant_tareas_terminadas}}</td>
+                                    <td>{{subcomite.cant_tareas_pendientes}}</td>
+                                    <td>
+                                        {% if subcomite.activo %}
+                                            <b style="color:green;">Activo</b>
+                                        {% else %}
+                                            <b style="color:red;">Inactivo</b>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a class="nolink" href="{% url 'operadores:ver_subcomite' subco_id=subcomite.id %}">
+                                            <img class="icons" src="/static/img/icons/access_card.png" alt="Ver Detalle">
+                                        </a>
+                                        {% if subcomite.activo %}
+                                            <a class="nolink" href="{% url 'operadores:ver_subcomite' subco_id=subcomite.id %}">
+                                                <img class="icons" src="/static/admin/img/icon-deletelink.svg" alt="Desactivar">
+                                            </a>
+                                        {% else %}
+                                            <a class="nolink" href="{% url 'operadores:ver_subcomite' subco_id=subcomite.id %}">
+                                                <img class="icons" src="/static/img/icons/check.png" alt="Activar">
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}

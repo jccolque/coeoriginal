@@ -1,0 +1,35 @@
+/* INGRESO */
+.color-B {
+    background-color: whitesmoke;
+}
+
+.color-V {
+    background-color: rgb(90, 141, 80);
+}
+
+.color-A {
+    background-color: rgb(217, 230, 107);
+}
+
+.color-R {
+    background-color: rgb(187, 89, 50);
+}
+
+.tarjeta {
+    margin: 20px;
+    border: 1px solid black;
+    border-radius: 25px;
+}
+
+.tipo {
+    font-size: 2.5em;
+}
+
+.nums {
+    font-size: 2em;
+}
+
+.tab {
+    margin-left: 25px;
+    font-size: 2em;
+}

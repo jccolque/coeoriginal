@@ -10,7 +10,7 @@ from .models import SubComite, Operador
 #Definimos nuestros modelos administrables:
 class OperadorAdmin(admin.ModelAdmin):
     model = Operador
-    list_filter = ['organismo']
+    list_filter = ['subcomite', 'nivel_acceso']
     search_fields = ['usuario__first_name', 'usuario__last_name', 'num_doc']
     readonly_fields = ['qrpath']
     def has_delete_permission(self, request, obj=None):

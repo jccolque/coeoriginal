@@ -1,10 +1,14 @@
-{% extends 'base_informacion.html' %}
+{% extends 'base_tareas.html' %}
 {% load static %}
 {% block content %}
     <div class="beneficiario container">
         <div class="row">
             <h2>Tareas Creadas</h2>
             <h4>{% include 'extras/buscador.html' %}</h4>
+            <a href="{% url 'tareas:crear_tarea' %}">
+                Crear Tarea
+                <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Tarea">
+            </a>
         </div>
         <div class="row">
         <div class="col-md-12">
@@ -15,6 +19,7 @@
                     <th>Prioridad</th>
                     <th>Inicio</th>
                     <th>Fecha Limite</th>
+                    <th>Horas Restantes</th>
                     <th>Ultimo Cambio</th>
                     <th>Ver Detalle</th>
                 </tr>
@@ -25,6 +30,19 @@
                         <td>{{tarea.get_prioridad_display}}</td>
                         <td>{{tarea.begda}}</td>
                         <td>{{tarea.endda}}</td>
+                        {% with tarea.hrs_restantes as hrs %}
+                            <td class="
+                                {% if hrs < 0 %}
+                                    tiempo_negativo
+                                {% elif hrs < 12 %}
+                                    tiempo_limitado
+                                {% else %}
+                                    tiempo_disponible
+                                {% endif %} 
+                                "> 
+                                {{hrs}} Horas
+                            </td>
+                        {% endwith %}
                         <td>{{tarea.get_last_event.get_accion_display}}</td>
                         <td><a href="{% url 'tareas:ver_tarea' tarea_id=tarea.id %}" target="_blank">(Ver Detalle)</a></td>
                     </tr>

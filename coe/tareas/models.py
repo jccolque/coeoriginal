@@ -14,9 +14,11 @@ class Tarea(models.Model):
     subcomite = models.ForeignKey(SubComite, on_delete=models.CASCADE, null=True, related_name="tareas")
     nombre = models.CharField('Nombre', max_length=200)
     descripcion = HTMLField()
-    prioridad = models.IntegerField(choices=TIPO_PRIORIDAD, default=5)
+    prioridad = models.IntegerField(choices=TIPO_PRIORIDAD, default=0)
     begda = models.DateTimeField('Inicio', default=timezone.now)
     endda = models.DateTimeField('Limite', default=timezone.now)
+    class Meta:
+        ordering = ('-prioridad', 'endda')
     def __str__(self):
         return self.nombre + ': ' + self.get_prioridad_display()
     def as_dict(self):
@@ -31,6 +33,10 @@ class Tarea(models.Model):
         }
     def get_last_event(self):
         return self.eventos.order_by('fecha').last()
+    def hrs_restantes(self):
+        ahora = timezone.now()
+        restante = self.endda - ahora
+        return int(restante.total_seconds() / 3600)
 
 class Responsable(models.Model):
     tarea = models.ForeignKey(Tarea, on_delete=models.CASCADE, null=True, related_name="responsables")
@@ -53,7 +59,7 @@ class Responsable(models.Model):
 class EventoTarea(models.Model):
     tarea = models.ForeignKey(Tarea, on_delete=models.CASCADE, null=True, related_name="eventos")
     responsable = models.ForeignKey(Responsable, on_delete=models.CASCADE, null=True, blank=True, related_name="eventos")
-    accion = models.IntegerField(choices=TIPO_EVENTO_TAREA, default='1')
+    accion = models.CharField(max_length=1, choices=TIPO_EVENTO_TAREA, default='I')
     fecha = models.DateTimeField('Fecha del evento', default=timezone.now)
     detalle = HTMLField(null=True, blank=True)
     def __str__(self):

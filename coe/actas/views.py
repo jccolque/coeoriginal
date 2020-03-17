@@ -43,7 +43,8 @@ def crear_acta(request, acta_id=None):
         if form.is_valid():
             acta = form.save()
             Participe.objects.filter(acta=acta).delete()
-            for operador in form.cleaned_data['participes']:
-                Participe(acta=acta, operador=Operador.objects.get(id=operador)).save()
+            for operador_id in form.cleaned_data['participes']:
+                op = Operador.objects.get(pk=operador_id)
+                Participe(acta=acta, operador=op).save()
             return redirect('actas:ver_acta', acta_id=acta.id)
     return render(request, "crear_acta.html", {'form': form, })

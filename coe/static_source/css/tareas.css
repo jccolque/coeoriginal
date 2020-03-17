@@ -1,0 +1,14 @@
+.tiempo_negativo {
+    font-weight: bold;
+    color: tomato;
+}
+
+.tiempo_limitado {
+    font-weight: bold;
+    color: rgb(255, 166, 0);    
+}
+
+.tiempo_disponible {
+    font-weight: bold;
+    color: green;   
+}
