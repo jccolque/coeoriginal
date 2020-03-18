@@ -27,9 +27,8 @@ class Tarea(models.Model):
             'nombre': self.nombre,
             'descripcion': self.descripcion,
             'prioridad': self.get_prioridad_display(),
-            'responsable': str(self.responsable),
-            'begda': self.begda,
-            'endda': self.endda,
+            'begda': str(self.begda),
+            'endda': str(self.endda),
         }
     def get_last_event(self):
         return self.eventos.order_by('fecha').last()
@@ -50,7 +49,7 @@ class Responsable(models.Model):
     def as_dict(self):
         return {
             'id': self.id,
-            'tarea_id': self.nombre,
+            'tarea_id': self.tarea.id,
             'tarea': str(self.tarea),
             'operador_id': self.operador.id,
             'operador': str(self.operador),

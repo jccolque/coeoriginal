@@ -59,7 +59,6 @@ class Item(models.Model):
             'grupo': self.subgrupo.nombre,
             'nombre': self.nombre,
             'responsable': str(self.responsable),
-            'situacion': self.situacion,
         }
     def cantidad_disponible(self):
         eventos = self.eventos.all()
@@ -85,7 +84,7 @@ class EventoItem(models.Model):
         return {
             'id': self.id,
             'item_id': self.item.id,
-            'item': self.nombre,
+            'item': str(self.item),
             'actuante': self.actuante,
             'tarea': str(self.tarea),
             'operador_id': self.operador.id,

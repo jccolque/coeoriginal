@@ -25,7 +25,6 @@ class TipoAtributo(models.Model):#Origen del Dato
         return {
             'id': self.id,
             'nombre': self.nombre,
-            'descripcion': self.descripcion,
             'importancia': self.get_importancia_display(),
         }
 
@@ -123,7 +122,7 @@ class Individuo(models.Model):
             'num_doc': self.num_doc,
             'apellidos': self.apellidos,
             'nombres': self.nombres,
-            'fecha_nacimiento': self.fecha_nacimiento,
+            'fecha_nacimiento': str(self.fecha_nacimiento),
             'telefono': self.telefono,
             'email': self.email,
             'nacionalidad': self.nacionalidad,
@@ -147,7 +146,6 @@ class Origen(models.Model):#Origen del Dato
 class Domicilio(models.Model):
     individuo = models.OneToOneField(Individuo, on_delete=models.CASCADE, related_name="domicilio")
     localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="domicilios_individuos")
-    #barrio = models.ForeignKey(Barrio, on_delete=models.SET_NULL, null=True, blank=True, related_name="domicilios_individuos")
     calle = models.CharField('Calle', max_length=50, default='', blank=False)
     numero = models.CharField('Numero', max_length=50, default='', blank=False)
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
@@ -158,7 +156,6 @@ class Domicilio(models.Model):
             "id": self.id,
             "individuo_id": self.individuo.id,
             "localidad": str(self.localidad),
-            "barrio": str(self.barrio),
             "calle": self.calle,
             "numero": self.numero,
         }
@@ -178,7 +175,7 @@ class Atributo(models.Model):#Origen del Dato
             "tipo_id": self.tipo.id,
             "tipo": str(self.tipo),
             "aclaracion": self.aclaracion,
-            "fecha": self.fecha,
+            "fecha": str(self.fecha),
             "activo": self.activo,
         }
 
@@ -196,7 +193,7 @@ class Sintoma(models.Model):#Origen del Dato
             "tipo_id": self.tipo.id,
             "tipo": str(self.tipo),
             "aclaracion": self.aclaracion,
-            "fecha": self.fecha,
+            "fecha": str(self.fecha),
         }
 
 #Auditoria

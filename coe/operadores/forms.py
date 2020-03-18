@@ -25,6 +25,9 @@ class CrearOperadorForm(forms.ModelForm):
         model = Operador
         fields= '__all__'
         exclude = ('qrpath', 'usuario',)
+        widgets = {
+            'subcomite': autocomplete.ModelSelect2(url='operadores:subcomite-autocomplete'),
+        }
 
 class ModOperadorForm(forms.ModelForm):
     username = forms.CharField(label='Usuario', max_length=15, min_length=6, required=False)

@@ -28,7 +28,7 @@ class SubComite(models.Model):
     def as_dict(self):
         return {
             'id': self.id,
-            'nombre': self.nombred,
+            'nombre': self.nombre,
             'descripcion': self.descripcion,
             'activo': self.activo,
         }
@@ -99,7 +99,6 @@ class Operador(models.Model):
     def as_dict(self):
         return {
             'id': self.id,
-            'organismo': self.get_organismo_display(),
             'subcomite': self.subcomite,
             'usuario_id': self.usuario.id,
             'usuario_username': self.usuario.username,
@@ -139,8 +138,8 @@ class EventoOperador(models.Model):
             'id': self.id,
             'operador_id': self.operador.id,
             'operador': str(self.operador),
-            'tipo': self.get_tipo_display,
-            'fecha': self.fecha,
+            'tipo': self.get_tipo_display(),
+            'fecha': str(self.fecha),
         }
 #Auditoria
 auditlog.register(SubComite)
