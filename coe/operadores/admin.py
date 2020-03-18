@@ -8,6 +8,12 @@ from core.admin import register_hidden_models
 from .models import SubComite, Operador
 
 #Definimos nuestros modelos administrables:
+class SubComiteAdmin(admin.ModelAdmin):
+    model = SubComite
+    search_fields = ['nombre',]
+    def has_delete_permission(self, request, obj=None):
+        return False
+
 class OperadorAdmin(admin.ModelAdmin):
     model = Operador
     list_filter = ['subcomite', 'nivel_acceso']
@@ -17,5 +23,5 @@ class OperadorAdmin(admin.ModelAdmin):
         return False
 
 # Register your models here.
-register_hidden_models(SubComite)
+admin.site.register(SubComite, SubComiteAdmin)
 admin.site.register(Operador, OperadorAdmin)

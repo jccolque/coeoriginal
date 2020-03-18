@@ -20,6 +20,8 @@ class SubComite(models.Model):
     descripcion = HTMLField()
     activo = models.BooleanField(default=True)
     class Meta:
+        verbose_name = 'Modulo'
+        verbose_name_plural = 'Modulos'
         ordering = ['nombre', ]
     def __str__(self):
         return self.nombre
