@@ -3,10 +3,10 @@
 {% block content %}
     <div class="beneficiario container">
         <div class="row">
-            <h2>Inventario General</h2>
+            <h2>Listado General de Documentos</h2>
             {% if perms.operadores.crear_operador %}
-                <a href="{% url 'inventario:crear_item' %}">
-                    Crear Item
+                <a href="{% url 'documentos:cargar_documento' %}">
+                    Cargar Nuevo Documento
                     <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo Usuario">
                 </a>
             {% endif %}
@@ -16,24 +16,21 @@
         <div class="col-md-12">
             <table class="listado">
                 <tr>
-                    <th colspan="2">Rubro</th>
-                    <th>Cantidad Disponible</th>
-                    <th>Cantidad Distribuida</th>
+                    <th>SubComite</th>
+                    <th>Nombre</th>
+                    <th>Tipo Autor</th>
+                    <th>Fecha Actualizacion</th>
+                    <th>Ver Historial</th>
+                    <th>Descargar Ultima Version</th>
                 </tr>
-                {% for subgrupo in subgrupos %}
+                {% for documento in documentos %}
                     <tr>
-                        <td>
-                            <a href={% url 'inventario:lista_rubro' rubro_id=subgrupo.rubro.id %}>
-                                {{subgrupo.rubro}}
-                            </a>
-                        </td>
-                        <td>
-                            <a href={% url 'inventario:lista_subgrupo' subgrupo_id=subgrupo.id %}>
-                                {{subgrupo}}
-                            </a>
-                        </td>
-                        <td>{{subgrupo.cantidad_disponible}}</td>
-                        <td>{{subgrupo.cantidad_distribuida}}</td>
+                        <td>{{documento.subcomite}}</td>
+                        <td>{{documento.nombre}}</td>
+                        <td>{{documento.autor}}</td>
+                        <td>{{documento.ultima_version.fecha}}</td>
+                        <td><a href="{% url 'documentos:ver_documento' documento_id=documento.id %}">Historial</a></td>
+                        <td><a href="{{documento.ultima_version.archivo.url}}">Descargar</a></td>
                     </tr>
                 {% endfor %}
             </table>

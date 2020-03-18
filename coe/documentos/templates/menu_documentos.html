@@ -7,11 +7,11 @@
         <section class="informacion_basica">
             <div class="container">
                 <div class="row">        
-                    <h1>Menu Inventario:</h1>
+                    <h1>Menu Documentos:</h1>
                     <div class="col-md-8">
                         <ul class="menu_botones">
                             {% if perms.operadores.cargar_documento %}
-                                <li><a href="{% url 'documentos:cargar_documento'  %}">Cargar Elemento</a></li>
+                                <li><a href="{% url 'documentos:cargar_documento'  %}">Cargar Documento Nuevo</a></li>
                             {% endif %}
                             {% if perms.operadores.ver_documento %}
                                 <li><a href="{% url 'documentos:lista_general'  %}">Ver Listado de Documentos</a></li>

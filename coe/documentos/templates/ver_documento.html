@@ -1,0 +1,51 @@
+{% extends 'base_informacion.html' %}
+
+{% load seguridad_tags%}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h2>{{documento.nombre}}</h2>
+                        <p>Subcomite: {{documento.subcomite}}</p>
+                        <p>Autor: {{item.autor}}</p>
+                        <p>Fecha Ultima Actualizacion: {{documento.ultima_version.fecha}}</p>
+                        <p>Operador Ultima Actualizacion: {{documento.ultima_version.operador}}</p>
+                        <hr>
+                        <h3>Versiones del Archivo</h3>
+                        {% if documento.versiones.all %}
+                            <table class="listado">
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Operador</th>
+                                    <th>Cambios</th>
+                                    <th>Descargar</th>
+                                </tr>
+                                {% for version in documento.versiones.all reversed %}
+                                    <tr>
+                                        <td>{{version.fecha}}</td>
+                                        <td>{{version.operador}}</td>
+                                        <td>{{version.cambios|safe}}</td>
+                                        <td><a href="{{version.archivo.url}}">Descargar</a></td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        {% else %}
+                            <a href="{% url 'documentos:cargar_actualizacion' documento_id=documento.id %}">
+                                <h1>CARGUE LA PRIMERA VERSION DEL ARCHIVO AQUI</h1>
+                            </a>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        <ul class="menu_botones">
+                            {% include 'users/info_user.html' %}
+                            <li><a href="{% url 'documentos:cargar_actualizacion' documento_id=documento.id %}">Cargar Nueva Version</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}

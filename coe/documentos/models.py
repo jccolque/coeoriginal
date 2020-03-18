@@ -1,6 +1,8 @@
 #Imports de django
 from django.db import models
 from django.utils import timezone
+#Imports extras
+from tinymce.models import HTMLField
 #Imports del proyecto
 from operadores.models import SubComite, Operador
 #Imports de la app
@@ -10,10 +12,18 @@ from .choices import TIPO_ARCHIVO
 class Documento(models.Model):
     subcomite = models.ForeignKey(SubComite, on_delete=models.CASCADE, null=True, related_name="documentos")
     nombre = models.CharField('Nombre', max_length=200)
-    tipo = models.CharField('Tipo Archivo', max_length=3, choices=TIPO_ARCHIVO)
+    tipo = models.CharField('Tipo Archivo', max_length=3, choices=TIPO_ARCHIVO, default='WRD')
     autor = models.CharField('Autor', max_length=100)
+    
+    def ultima_version(self):
+        if self.versiones.all():
+            return self.versiones.last()
+        else:
+            return None
 
 class Version(models.Model):
-    archivo = models.ForeignKey(Documento, on_delete=models.CASCADE, related_name='versiones')
+    documento = models.ForeignKey(Documento, on_delete=models.CASCADE, related_name='versiones')
+    archivo = models.FileField('Archivo', upload_to='archivos/', null=True, blank=True)
     operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name='versiones')
-    fecha = models.DateTimeField('Inicio', default=timezone.now)
+    cambios = HTMLField()
+    fecha = models.DateTimeField('Fecha Subido', default=timezone.now)

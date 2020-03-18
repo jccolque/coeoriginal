@@ -5,4 +5,5 @@ TIPO_ARCHIVO = (
     ('PDF', 'PDF'),
     ('EXC', 'Excel'),
     ('IMG', 'Imagen'),
+    ('ETC', 'Otros...')
 )

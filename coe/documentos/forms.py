@@ -7,7 +7,7 @@ from django import forms
 from dal import autocomplete
 #Imports del proyecto
 #Imports de la app
-from .models import Documento
+from .models import Documento, Version
 
 #Definimos nuestros forms
 class DocumentoForm(forms.ModelForm):
@@ -16,4 +16,14 @@ class DocumentoForm(forms.ModelForm):
         fields = '__all__'
         widgets = {
             'subcomite': autocomplete.ModelSelect2(url='operadores:subcomite-autocomplete'),
+        }
+
+class VersionForm(forms.ModelForm):
+    class Meta:
+        model = Version
+        fields = '__all__'
+        exclude = ('fecha', )
+        widgets = {
+            'documento': forms.HiddenInput(),
+            'operador': forms.HiddenInput(),
         }
