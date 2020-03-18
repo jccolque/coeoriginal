@@ -1,4 +1,5 @@
 #Imports Django
+from django.db.models import Q
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import permission_required
@@ -11,6 +12,8 @@ from .models import Archivo
 from .models import Vehiculo, Individuo, Origen
 from .forms import ArchivoForm, VehiculoForm, IndividuoForm
 from .forms import DomicilioForm, AtributoForm, SintomaForm
+from .forms import SearchIndividuoForm
+
 # Create your views here.
 @permission_required('operadores.menu_informacion')
 def menu(request):
@@ -64,8 +67,10 @@ def buscar_vehiculo(request):
     return render(request, "extras/generic_form.html", {'titulo': "Buscar Vehiculo", 'form': form, 'boton': "Buscar", })
 
 @permission_required('operadores.ver_vehiculo')
-def listar_vehiculos(request):
+def listar_vehiculos(request, tipo_id=None):
     vehiculos = Vehiculo.objects.all()
+    if tipo_id:
+        vehiculos = vehiculos.filter(tipo=tipo_id)
     vehiculos = paginador(request, vehiculos)
     return render(request, "lista_vehiculos.html", {'vehiculos': vehiculos, })
 
@@ -90,16 +95,18 @@ def cargar_vehiculo(request):
 #INDIVIDUOS
 @permission_required('operadores.ver_individuo')
 def buscar_individuo(request):
-    form = SearchForm()
+    form = SearchIndividuoForm()
     if request.method == "POST":
-        form = SearchForm(request.POST)
+        form = SearchIndividuoForm(request.POST)
         if form.is_valid():
-            search = form.cleaned_data['search']
-            try:
-                individuo = Individuo.objects.get(num_doc=search)
-                return redirect('informacion:ver_individuo', individuo_id=individuo.id)
-            except:
-                form.add_error('search', "No se Encontro individuo con ese Num de Documento/Pasaporte.")
+            individuos = Individuo.objects.all()
+            apellidos = form.cleaned_data['apellidos']
+            if apellidos:
+                individuos = Individuo.objects.filter(apellidos__icontains=apellidos)
+            num_doc = form.cleaned_data['num_doc']
+            if num_doc:
+                individuos = Individuo.objects.filter(num_doc=num_doc)
+            return render(request, "lista_individuos.html", {'individuos': individuos, })
     return render(request, "extras/generic_form.html", {'titulo': "Buscar Individuo", 'form': form, 'boton': "Buscar", })
 
 @permission_required('operadores.ver_individuo')

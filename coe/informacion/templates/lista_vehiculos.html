@@ -19,7 +19,11 @@
                 </tr>
                 {% for vehiculo in vehiculos %}
                     <tr>
-                        <td>{{vehiculo.get_tipo_display}}</td>
+                        <td>
+                            <a href="{% url 'informacion:vehiculos_tipo' tipo_id=vehiculo.tipo %}">
+                                {{vehiculo.get_tipo_display}}
+                            </a>
+                        </td>
                         <td>{{vehiculo.identificacion}}</td>
                         <td>{{vehiculo.cant_pasajeros}}</td>
                         <td>{{vehiculo.empresa}}</td>

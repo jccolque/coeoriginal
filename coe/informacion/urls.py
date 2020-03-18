@@ -1,7 +1,9 @@
 #imports django
+from django.conf.urls import url
 from django.urls import path
 #Import de modulos personales
 from . import views
+from . import autocomplete
 
 #Definimos paths de la app
 app_name = 'informacion'
@@ -16,6 +18,7 @@ urlpatterns = [
     #Vehiculos
     path('buscar/vehiculo/', views.buscar_vehiculo, name='buscar_vehiculo'),
     path('listar_vehiculos', views.listar_vehiculos, name='listar_vehiculos'),
+    path('vehiculos/tipo/<int:tipo_id>', views.listar_vehiculos, name='vehiculos_tipo'),
     path('ver_vehiculo/<int:vehiculo_id>', views.ver_vehiculo, name='ver_vehiculo'),
     path('cargar_vehiculo', views.cargar_vehiculo, name='cargar_vehiculo'),
     #Individuos
@@ -28,4 +31,7 @@ urlpatterns = [
     path('cargar/domicilio/<int:individuo_id>', views.cargar_domicilio, name='cargar_domicilio'),
     path('cargar/atributo/<int:individuo_id>', views.cargar_atributo, name='cargar_atributo'),
     path('cargar/sintoma/<int:individuo_id>', views.cargar_sintoma, name='cargar_sintoma'),
+    #Autocomplete
+    url(r'^sintomas-autocomplete/$', autocomplete.SintomaAutocomplete.as_view(), name='sintomas-autocomplete',),
+    url(r'^atributos-autocomplete/$', autocomplete.AtributoAutocomplete.as_view(), name='atributos-autocomplete',),
 ]

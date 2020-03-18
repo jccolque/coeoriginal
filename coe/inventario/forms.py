@@ -20,6 +20,7 @@ class ItemForm(forms.ModelForm):
         fields= '__all__'
         widgets = {
             'subgrupo': autocomplete.ModelSelect2(url='inventario:subgrupos-autocomplete'),
+            'responsable' : autocomplete.ModelSelect2(url='operadores:operadores-autocomplete'),
         }
 
 class EventoItemForm(forms.ModelForm):

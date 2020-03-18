@@ -4,6 +4,7 @@ from datetime import date
 from django.utils import timezone
 from django import forms
 #Imports extra
+from dal import autocomplete
 #Imports del proyecto
 #Imports de la app
 from .models import Tarea, Responsable, EventoTarea
@@ -13,6 +14,9 @@ class TareaForm(forms.ModelForm):
     class Meta:
         model = Tarea
         fields = '__all__'
+        widgets = {
+            'subcomite': autocomplete.ModelSelect2(url='operadores:subcomite-autocomplete'),
+        }
     def clean_endda(self):
         if self.cleaned_data['begda'] > self.cleaned_data['endda']:
             raise forms.ValidationError("No se puede ingresar una fecha de inicio posterior a la de finalizacion.")
@@ -25,6 +29,9 @@ class ResponsableForm(forms.ModelForm):
         model = Responsable
         fields = '__all__'
         exclude = ('fecha_asignacion', 'tarea')
+        widgets = {
+            'operador': autocomplete.ModelSelect2(url='operadores:operador-autocomplete'),
+        }
 
 class EventoTareaForm(forms.ModelForm):
     class Meta:

@@ -34,20 +34,33 @@ class IndividuoForm(forms.ModelForm):
         model = Individuo
         fields= '__all__'
 
+class SearchIndividuoForm(forms.Form):
+    num_doc = forms.IntegerField(required=False)
+    apellidos = forms.CharField(required=False)
+
 class DomicilioForm(forms.ModelForm):
     class Meta:
         model = Domicilio
         fields= '__all__'
         exclude = ('individuo', )
+        widgets = {
+            'localidad': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+        }
 
 class AtributoForm(forms.ModelForm):
     class Meta:
         model = Atributo
         fields= '__all__'
         exclude = ('individuo', 'fecha', 'activo', )
+        widgets = {
+            'tipo': autocomplete.ModelSelect2(url='informacion:atributos-autocomplete'),
+        }
 
 class SintomaForm(forms.ModelForm):
     class Meta:
         model = Sintoma
         fields= '__all__'
         exclude = ('individuo', 'fecha', )
+        widgets = {
+            'tipo': autocomplete.ModelSelect2(url='informacion:sintomas-autocomplete'),
+        }

@@ -26,7 +26,7 @@ def menu(request):
     return render(request, 'menu_operadores.html', {})
 
 #Manejo de SubComites
-@permission_required('operadores.ver_subcomite')
+@permission_required('operadores.ver_subcomites')
 def listar_subcomites(request):
     subcomites = SubComite.objects.all()
     if request.method == 'POST':
@@ -37,7 +37,7 @@ def listar_subcomites(request):
                 subcomites = subcomites.filter(nombre__icontains=search)
     return render(request, 'users/lista_subcomites.html', {'subcomites': subcomites, })
 
-@permission_required('operadores.ver_subcomite')
+@permission_required('operadores.ver_subcomites')
 def ver_subcomite(request, subco_id):
     subcomite = SubComite.objects.get(pk=subco_id)
     return render(request, 'users/ver_subcomite.html', {'subcomite': subcomite, })

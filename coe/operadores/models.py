@@ -16,9 +16,11 @@ from .choices import TIPO_EVENTO, NIVELES_SEGURIDAD
 
 # Create your models here.
 class SubComite(models.Model):
-    nombre = models.CharField('Nombre', max_length=50)
+    nombre = models.CharField('Nombre', max_length=50, unique=True)
     descripcion = HTMLField()
     activo = models.BooleanField(default=True)
+    class Meta:
+        ordering = ['nombre', ]
     def __str__(self):
         return self.nombre
     def as_dict(self):
@@ -36,7 +38,6 @@ class SubComite(models.Model):
         return self.tareas.exclude(eventos__accion="E").count()
 
 class Operador(models.Model):
-    #organismo = models.PositiveIntegerField(choices=obtener_organismos(), default=0)
     subcomite = models.ForeignKey(SubComite, on_delete=models.SET_NULL, null=True, blank=True, related_name="operadores")
     nivel_acceso = models.CharField("Acceso de Seguridad", max_length=1, choices=NIVELES_SEGURIDAD, default='B')
     usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="operadores")

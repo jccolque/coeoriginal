@@ -174,7 +174,8 @@ class Atributo(models.Model):#Origen del Dato
         return {
             "id": self.id,
             "individuo_id": self.individuo.id,
-            "sintoma_id": self.sintoma.id,
+            "tipo_id": self.tipo.id,
+            "tipo": str(self.tipo),
             "aclaracion": self.aclaracion,
             "fecha": self.fecha,
             "activo": self.activo,
@@ -182,16 +183,17 @@ class Atributo(models.Model):#Origen del Dato
 
 class Sintoma(models.Model):#Origen del Dato
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="sintomas")
-    sintoma = models.ForeignKey(TipoSintoma, on_delete=models.CASCADE, related_name="sintomas")
+    tipo = models.ForeignKey(TipoSintoma, on_delete=models.CASCADE, related_name="sintomas")
     aclaracion =  models.CharField('Aclaracion', max_length=200, null=True, blank=True)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     def __str__(self):
-        return str(self.sintoma) + ': ' + str(self.fecha)
+        return str(self.tipo) + ': ' + str(self.fecha)
     def as_dict(self):
         return {
             "id": self.id,
             "individuo_id": self.individuo.id,
-            "sintoma_id": self.sintoma.id,
+            "tipo_id": self.tipo.id,
+            "tipo": str(self.tipo),
             "aclaracion": self.aclaracion,
             "fecha": self.fecha,
         }

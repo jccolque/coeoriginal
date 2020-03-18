@@ -31,4 +31,5 @@ urlpatterns = [
     path('asistencia', views.registro_asistencia, name='registro_asistencia'),
     #Autocomplete
     url(r'^operadores-autocomplete/$', autocomplete.OperadoresAutocomplete.as_view(), name='operadores-autocomplete',),
+    url(r'^subcomite-autocomplete/$', autocomplete.SubComiteAutocomplete.as_view(), name='subcomite-autocomplete',),
 ]

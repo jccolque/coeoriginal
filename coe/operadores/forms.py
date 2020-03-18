@@ -37,6 +37,9 @@ class ModOperadorForm(forms.ModelForm):
         model = Operador
         fields= '__all__'
         exclude = ('qrpath', 'usuario',)
+        widgets = {
+            'subcomite': autocomplete.ModelSelect2(url='operadores:subcomite-autocomplete'),
+        }
     #Inicializacion
     def __init__(self, *args, **kwargs):
         #Obtenemos permisos
