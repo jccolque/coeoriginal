@@ -207,3 +207,10 @@ img.fotos {
 .info_user {
     padding-left: 10%;
 }
+
+.aclaracion {
+    width: 100%;
+    padding-left: 15%;
+    text-align: justify;
+    font-weight: bold;
+}

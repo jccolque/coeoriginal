@@ -14,7 +14,6 @@ class Documento(models.Model):
     nombre = models.CharField('Nombre', max_length=200)
     tipo = models.CharField('Tipo Archivo', max_length=3, choices=TIPO_ARCHIVO, default='WRD')
     autor = models.CharField('Autor', max_length=100)
-    
     def ultima_version(self):
         if self.versiones.all():
             return self.versiones.last()

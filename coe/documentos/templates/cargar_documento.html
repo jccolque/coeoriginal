@@ -1,0 +1,58 @@
+{% extends 'base/base.html' %}
+{% load form_tags %}
+
+{% block custom_head %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/generic_form.css' %}" />
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+
+            <h3>El archivo DEBE respetar la siguiente Nomenclatura:</h3>
+                <p>AREA-TIPO-SINTESIS-AUTOR.ext</p>
+                <p>Donde:<p>
+                <ul>
+                    <li>AREA:</li>
+                    <ul>
+                        <li>OP: Operaciones</li>
+                        <li>INFO: Informacion</li>
+                        <li>COM: Comunicaciones</li>
+                        <li>LOG: Logistica</li>
+                        <li>SIS: Sistemas</li>
+                        <li>LEG: Legales</li>
+                        <li>DC: Defensa Civil</li>
+                        <li>CC: Comando y Control</li>
+                        <li>MIN: Ministerios</li>
+                        <li>MEE: Mesa de Estudios Especiales</li>
+                        <li>PREN: Prensa</li>
+                        <li>AYU: Ayudantia</li>
+                    </ul>
+                    <li>TIPO:</li>
+                    <ul>
+                        <li>ACTA</li>
+                        <li>RES: Resolucion</li>
+                        <li>EXPO: Exposicion</li>
+                        <li>INSIT: Informe de situacion</li>
+                        <li>PLASEG: Planilla de Seguimiento</li>
+                        <li>ANALIS: Analisis</li>
+                        <li>EST: Estudio</li>
+                    </ul>
+                    <li>SINTESIS:</li>
+                    <ul>
+                        <li>Descripcion o Sintesis corta del motivo del documento</li>
+                    </ul>
+                    <li>AUTOR:</li>
+                    <ul>
+                        <li>Apellido del autor del documento.</li>
+                    </ul>
+                </ul>
+            </div>
+            <div class="col-sm-6">
+                {% include 'extras/generic_form-nobase.html' %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

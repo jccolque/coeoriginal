@@ -38,7 +38,7 @@ def cargar_documento(request):
         if form.is_valid():
             documento = form.save()
             return redirect('documentos:ver_documento', documento_id=documento.id)
-    return render(request, "extras/generic_form.html", {'titulo': "Cargar Documento", 'form': form, 'boton': "Agregar", })
+    return render(request, "cargar_documento.html", {'titulo': "Cargar Documento", 'form': form, 'boton': "Agregar", })
 
 @staff_member_required
 def cargar_actualizacion(request, documento_id):

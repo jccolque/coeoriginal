@@ -8,8 +8,6 @@ TIPO_PRIORIDAD = (
 
 TIPO_EVENTO_TAREA = (
     ('I', 'Inicializacion'),
-    ('M', 'Modificacion'),
     ('A', 'Avance'),
-    ('C', 'Cancelacion'),
     ('E', 'Estado Final'),
 )
