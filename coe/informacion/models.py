@@ -111,8 +111,8 @@ class Individuo(models.Model):
     telefono = models.CharField('Telefono', max_length=20, default='+549388', null=True, blank=True)
     email = models.EmailField('Correo Electronico', null=True, blank=True)#Enviar mails
     nacionalidad = models.CharField('Nacionalidad', max_length=100)
-    origen = models.CharField('Origen', max_length=200)
-    destino = models.CharField('Destino', max_length=200)
+    origen = models.CharField('Origen', max_length=200, null=True, blank=True)
+    destino = models.CharField('Destino', max_length=200, null=True, blank=True)
     particularidades = HTMLField(null=True, blank=True)
     def __str__(self):
         return str(self.num_doc) + ': ' + self.apellidos + ', ' + self.nombres
