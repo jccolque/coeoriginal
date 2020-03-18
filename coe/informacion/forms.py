@@ -33,6 +33,9 @@ class IndividuoForm(forms.ModelForm):
     class Meta:
         model = Individuo
         fields= '__all__'
+        widgets = {
+            'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
+        }
 
 class SearchIndividuoForm(forms.Form):
     num_doc = forms.IntegerField(required=False)

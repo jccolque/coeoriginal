@@ -25,7 +25,11 @@
                         <td>{{individuo.nacionalidad}}</td>
                         <td>{{individuo.origen}} - {{individuo.destino}}</td>
                         <td>{{individuo.particularidades|safe}}</td>
-                        <td>{{individuo.sintomas.all}}</td>
+                        <td>
+                            {% for sintoma in individuo.sintomas.all%}
+                                {{sintoma}},
+                            {% endfor %}
+                        </td>
                         <td><a href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">(Ver Detalle)</a></td>
                     </tr>
                 {% endfor %}

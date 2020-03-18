@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.gis import admin as gis_admin
 #Importamos modelos
 from .models import Provincia, Departamento, Localidad, Barrio
-
+from .models import Nacionalidad
 #Definimos inlines
 class DepartamentoInline(admin.TabularInline):
     model = Departamento
@@ -26,6 +26,10 @@ class BarrioInline(admin.TabularInline):
         return 1
 
 #Definimos modeficicaciones
+class NacionalidadAdmin(admin.ModelAdmin):
+    model = Nacionalidad
+    search_fields = ['nombre']
+
 class DepartamentoAdmin(admin.ModelAdmin):
     model = Departamento
     search_fields = ['nombre']
@@ -47,3 +51,4 @@ admin.site.register(Provincia, )
 admin.site.register(Departamento, DepartamentoAdmin)
 admin.site.register(Localidad, LocalidadAdmin)
 admin.site.register(Barrio, BarrioAdmin)
+admin.site.register(Nacionalidad, NacionalidadAdmin)

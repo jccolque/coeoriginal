@@ -9,7 +9,7 @@ from tinymce.models import HTMLField
 #Imports del proyecto:
 from core.choices import TIPO_DOCUMENTOS, TIPO_SEXO
 from operadores.models import Operador
-from georef.models import Localidad, Barrio
+from georef.models import Nacionalidad, Localidad, Barrio
 #Imports de la app
 from .choices import TIPO_IMPORTANCIA, TIPO_ARCHIVO, TIPO_VEHICULO
 
@@ -100,6 +100,8 @@ class Vehiculo(models.Model):
             'plan': self.plan,
         }
 
+
+
 class Individuo(models.Model):
     tipo_doc = models.IntegerField(choices=TIPO_DOCUMENTOS, default=2)
     num_doc = models.CharField('Numero de Documento/Pasaporte', max_length=20, unique=True)
@@ -109,7 +111,7 @@ class Individuo(models.Model):
     fecha_nacimiento = models.DateField(verbose_name="Fecha de Nacimiento")
     telefono = models.CharField('Telefono', max_length=20, default='+549388', null=True, blank=True)
     email = models.EmailField('Correo Electronico', null=True, blank=True)#Enviar mails
-    nacionalidad = models.CharField('Nacionalidad', max_length=100)
+    nacionalidad = models.ForeignKey(Nacionalidad, on_delete=models.CASCADE, related_name="individuos")
     origen = models.CharField('Origen', max_length=200, null=True, blank=True)
     destino = models.CharField('Destino', max_length=200, null=True, blank=True)
     observaciones = HTMLField(null=True, blank=True)

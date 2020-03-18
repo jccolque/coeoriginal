@@ -2,6 +2,7 @@
 from django.db import models
 #Imports de paquetes extras
 from auditlog.registry import auditlog
+from tinymce.models import HTMLField
 
 # Create your models here.
 class Provincia(models.Model):
@@ -65,6 +66,23 @@ class Barrio(models.Model):
             "localidad_id": self.localidad.id,
             "barrio_id": self.id,
             "nombre": self.nombre,
+        }
+
+class Nacionalidad(models.Model):
+    nombre = models.CharField('Nombre', max_length=100)
+    riesgo = models.BooleanField(default=False)
+    contacto = HTMLField(null=True, blank=True)
+    class Meta:
+        ordering = ['nombre', ]
+        verbose_name_plural = 'Nacionalidades'
+    def __str__(self):
+        return self.nombre
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "nombre": self.nombre,
+            "riesgo": self.riesgo,
+            "contacto": self.contacto,
         }
 
 #Auditoria

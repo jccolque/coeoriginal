@@ -4,6 +4,7 @@ from django.db.models import Q
 from dal import autocomplete
 #Imports de la app
 from .models import Departamento, Localidad, Barrio
+from .models import Nacionalidad
 
 class DepartamentoAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
@@ -34,4 +35,11 @@ class BarrioAutocomplete(autocomplete.Select2QuerySetView):
         
         if self.q:
             qs = qs.filter(nombre__istartswith=self.q)
+        return qs
+
+class NacionalidadAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = Nacionalidad.objects.all()
+        if self.q:
+            qs = qs.filter(istartswith=self.q)
         return qs

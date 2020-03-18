@@ -15,4 +15,5 @@ urlpatterns = [
     url(r'^departamento-autocomplete/$', autocomplete.DepartamentoAutocomplete.as_view(), name='departamento-autocomplete',),
     url(r'^localidad-autocomplete/$', autocomplete.LocalidadAutocomplete.as_view(), name='localidad-autocomplete',),
     url(r'^barrio-autocomplete/$', autocomplete.BarrioAutocomplete.as_view(), name='barrio-autocomplete',),
+    url(r'^nacionalidad-autocomplete/$', autocomplete.NacionalidadAutocomplete.as_view(), name='nacionalidad-autocomplete',),
 ]
