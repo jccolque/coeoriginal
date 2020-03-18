@@ -112,8 +112,8 @@ class Individuo(models.Model):
     telefono = models.CharField('Telefono', max_length=20, default='+549388', null=True, blank=True)
     email = models.EmailField('Correo Electronico', null=True, blank=True)#Enviar mails
     nacionalidad = models.ForeignKey(Nacionalidad, on_delete=models.CASCADE, related_name="individuos")
-    origen = models.CharField('Origen', max_length=200, null=True, blank=True)
-    destino = models.CharField('Destino', max_length=200, null=True, blank=True)
+    origen = models.ForeignKey(Nacionalidad, on_delete=models.CASCADE, null=True, blank=True, related_name="individuos_origen")
+    destino = models.ForeignKey(Localidad, on_delete=models.CASCADE, null=True, blank=True, related_name="individuos_destino")
     observaciones = HTMLField(null=True, blank=True)
     def __str__(self):
         return str(self.num_doc) + ': ' + self.apellidos + ', ' + self.nombres

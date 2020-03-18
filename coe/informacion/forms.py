@@ -35,6 +35,8 @@ class IndividuoForm(forms.ModelForm):
         fields= '__all__'
         widgets = {
             'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
+            'origen': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
+            'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
         }
 
 class SearchIndividuoForm(forms.Form):
