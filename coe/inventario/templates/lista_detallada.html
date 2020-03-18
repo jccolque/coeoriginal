@@ -3,7 +3,7 @@
 {% block content %}
     <div class="beneficiario container">
         <div class="row">
-            <h2>Inventario General</h2>
+            <h2>Inventario Detallado</h2>
             {% if perms.operadores.crear_operador %}
                 <a href="{% url 'inventario:crear_item' %}">
                     Crear Item

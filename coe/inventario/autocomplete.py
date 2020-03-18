@@ -3,10 +3,23 @@ from django.contrib.auth.models import User
 #Imports Extras
 from dal import autocomplete
 #Imports de la app
+from .models import Rubro, SubGrupo
 
-class UsuariosAutocomplete(autocomplete.Select2QuerySetView):
+class RubrosAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        qs = User.objects.all()
+        qs = Rubro.objects.all()
         if self.q:
-            qs = qs.filter(username__istartswith=self.q)
+            qs = qs.filter(nombre__icontains=self.q)
+        return qs
+
+class SubgruposAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = SubGrupo.objects.all()
+
+        rubro = self.forwarded.get('rubro', None)
+        if rubro:
+            qs = qs.filter(rubro=rubro)
+
+        if self.q:
+            qs = qs.filter(nombre__icontains=self.q)
         return qs

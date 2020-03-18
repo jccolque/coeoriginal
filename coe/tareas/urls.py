@@ -1,8 +1,11 @@
 #imports django
+from django.conf.urls import url
 from django.urls import path
 #Import de modulos personales
 from . import views
+from . import autocomplete
 
+#Definimos paths de la app
 app_name = 'tareas'
 urlpatterns = [
     path('', views.menu, name='menu'),
@@ -17,5 +20,6 @@ urlpatterns = [
     path('eliminar/responsable/<int:responsable_id>', views.eliminar_responsable, name='eliminar_responsable'),
     path('agregar/evento/<int:tarea_id>', views.agregar_evento, name='agregar_evento'),
     path('eliminar/evento/<int:evento_id>', views.eliminar_evento, name='eliminar_evento'),
-
+    #Autocomplete
+    url(r'^tareas-autocomplete/$', autocomplete.TareasAutocomplete.as_view(), name='tareas-autocomplete',),
 ]

@@ -1,7 +1,9 @@
 #imports django
+from django.conf.urls import url
 from django.urls import path
 #Import de modulos personales
 from . import views
+from . import autocomplete
 
 app_name = 'operadores'
 urlpatterns = [
@@ -27,4 +29,6 @@ urlpatterns = [
     path('ingreso/<int:operador_id>', views.ingreso, name='ingreso'),
     path('checkout/<int:operador_id>', views.checkout, name='checkout'),
     path('asistencia', views.registro_asistencia, name='registro_asistencia'),
+    #Autocomplete
+    url(r'^operadores-autocomplete/$', autocomplete.OperadoresAutocomplete.as_view(), name='operadores-autocomplete',),
 ]

@@ -14,7 +14,10 @@
                                 <li><a href="{% url 'inventario:crear_item'  %}">Cargar Elemento</a></li>
                             {% endif %}
                             {% if perms.operadores.ver_item %}
-                                <li><a href="{% url 'inventario:lista_items'  %}">Ver Listado Items</a></li>
+                                <li><a href="{% url 'inventario:lista_general'  %}">Ver Listado General</a></li>
+                            {% endif %}
+                            {% if perms.operadores.ver_item %}
+                                <li><a href="{% url 'inventario:lista_detallada'  %}">Ver Listado Detallado</a></li>
                             {% endif %}
                             {% if request.user.is_superuser %}
                                 <li><a href="{% url 'inventario:menu' %}">Opcion del Administrador</a></li>

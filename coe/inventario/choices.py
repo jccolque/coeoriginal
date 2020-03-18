@@ -1,7 +1,7 @@
 #Choice Fields
 TIPO_EVENTO_ITEM = (
     ('I', 'Ingreso'),
-    ('M', 'Modificacion'),
+#    ('M', 'Modificacion'),
     ('R', 'Retiro'),
-    ('A', 'Asignacion'),
+#    ('A', 'Asignacion'),
 )

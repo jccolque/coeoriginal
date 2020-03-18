@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import permission_required
 from core.forms import SearchForm
 from operadores.functions import obtener_operador
 #Imports app
+from .models import SubGrupo
 from .models import Item, EventoItem
 from .forms import ItemForm, EventoItemForm
 
@@ -18,7 +19,12 @@ def menu(request):
 
 #ITEMS:
 @permission_required('operadores.ver_item')
-def lista_items(request, rubro_id=None, subgrupo_id=None):
+def lista_general(request):
+    subgrupos = SubGrupo.objects.all()
+    return render(request, 'lista_general.html', {'subgrupos': subgrupos, })
+
+@permission_required('operadores.ver_item')
+def lista_detallada(request, rubro_id=None, subgrupo_id=None):
     items = Item.objects.all()
     if rubro_id:
         items = items.filter(subgrupo__rubro__id=rubro_id)
@@ -33,7 +39,7 @@ def lista_items(request, rubro_id=None, subgrupo_id=None):
                 Q(subgrupo__nombre__icontains=search) |
                 Q(subgrupo__rubro__nombre__icontains=search)
             )
-    return render(request, 'lista_items.html', {'items': items, })
+    return render(request, 'lista_detallada.html', {'items': items, })
 
 @permission_required('operadores.ver_item')
 def ver_item(request, item_id):

@@ -33,10 +33,14 @@ class SubGrupo(models.Model):
             'rubro':self.rubro.nombre,
             'nombre': self.nombre,
         }
+    def cantidad_disponible(self):
+        return sum([i.cantidad_disponible() for i in self.items.all()])
+    def cantidad_distribuida(self):
+        return sum([i.cantidad_distribuida() for i in self.items.all()])
 
 class Item(models.Model):
     subgrupo = models.ForeignKey(SubGrupo, on_delete=models.CASCADE, related_name="items")
-    nombre = models.CharField('Nombre', max_length=200, unique=True)
+    nombre = models.CharField('Identificacion', max_length=200, unique=True)
     responsable = models.ForeignKey(Operador, on_delete=models.CASCADE, null=True, blank=True, related_name="responsable_items")
     def __str__(self):
         return self.nombre

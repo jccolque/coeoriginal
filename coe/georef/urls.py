@@ -1,8 +1,11 @@
+#Imports Django
 from django.conf.urls import url
 from django.urls import path
+#Imports de la app
 from . import views
 from . import autocomplete
 
+#Definimos nuestros paths
 app_name = 'georef'
 urlpatterns = [
     #Administrador

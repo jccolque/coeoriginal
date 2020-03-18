@@ -86,7 +86,7 @@ def mod_operador(request, operador_id=None):
         #Si es para modificar conseguimos las bases
         operador = Operador.objects.get(pk=operador_id)
         usuario = operador.usuario
-        permisos_habilitados = [p for p in obtener_permisos(usuario=usuario)]
+        permisos_habilitados = [p for p in obtener_permisos(usuario=request.user)]
         id_permisos_habilitados = [p.id for p in obtener_permisos(usuario=usuario)]
         if usuario:
             #Generamos el form

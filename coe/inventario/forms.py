@@ -18,12 +18,17 @@ class ItemForm(forms.ModelForm):
     class Meta:
         model = Item
         fields= '__all__'
+        widgets = {
+            'subgrupo': autocomplete.ModelSelect2(url='inventario:subgrupos-autocomplete'),
+        }
 
 class EventoItemForm(forms.ModelForm):
     class Meta:
         model = EventoItem
         fields= '__all__'
         exclude = ('fecha', )
-    widgets = {
-        'item': forms.TextInput(attrs={'readonly': 'readonly'}),
-    }
+        widgets = {
+            'tarea' : autocomplete.ModelSelect2(url='tareas:tareas-autocomplete'),
+            'operador' : autocomplete.ModelSelect2(url='operadores:operadores-autocomplete'),
+            'item': forms.TextInput(attrs={'readonly': 'readonly'}),
+        }
