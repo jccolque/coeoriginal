@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'inventario.apps.InventarioConfig',
     'informacion.apps.InformacionConfig',
     'actas.apps.ActasConfig',
+    'documentos.apps.DocumentosConfig',
 ]
 
 MIDDLEWARE = [

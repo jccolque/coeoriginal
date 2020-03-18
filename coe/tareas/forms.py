@@ -30,7 +30,7 @@ class ResponsableForm(forms.ModelForm):
         fields = '__all__'
         exclude = ('fecha_asignacion', 'tarea')
         widgets = {
-            'operador': autocomplete.ModelSelect2(url='operadores:operador-autocomplete'),
+            'operador': autocomplete.ModelSelect2(url='operadores:operadores-autocomplete'),
         }
 
 class EventoTareaForm(forms.ModelForm):

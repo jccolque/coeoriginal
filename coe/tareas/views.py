@@ -1,6 +1,7 @@
 #Imports Django
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import permission_required
+from django.contrib.admin.views.decorators import staff_member_required
 #Imports del proyecto
 from core.functions import paginador
 from core.forms import SearchForm
@@ -10,12 +11,12 @@ from .models import Tarea, Responsable, EventoTarea
 from .forms import TareaForm, ResponsableForm, EventoTareaForm
 
 # Create your views here.
-@permission_required('operadores.menu_tareas')
+@staff_member_required
 def menu(request):
     return render(request, 'menu_tareas.html', {})
 
 #Manejo de Tareas
-@permission_required('operadores.ver_tarea')
+@staff_member_required
 def lista_tareas(request):
     tareas = Tarea.objects.all()
     tareas = tareas.select_related('subcomite')
@@ -29,7 +30,7 @@ def lista_tareas(request):
     tareas = paginador(request, tareas)
     return render(request, "lista_tareas.html", {'tareas': tareas, })
 
-@permission_required('operadores.ver_tarea')
+@staff_member_required
 def ver_tarea(request, tarea_id):
     tarea = Tarea.objects.get(pk=tarea_id)
     return render(request, "ver_tarea.html", {'tarea': tarea, })
