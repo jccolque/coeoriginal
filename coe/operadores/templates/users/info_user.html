@@ -14,7 +14,33 @@
         </p>
         {% for tarea in operador.tareas_asignadas %}
             {% if forloop.first %}
+                <hr>
                 <h3>Tareas Asignadas:</h3>
+            {% endif %}
+                {% with tarea.hrs_restantes as hrs %}
+                    <p class="
+                        {% if hrs < 0 %}
+                            tiempo_negativo
+                        {% elif hrs < 12 %}
+                            tiempo_limitado
+                        {% else %}
+                            tiempo_disponible
+                        {% endif %}
+                    ">
+                        <b>
+                            <a href="{% url 'tareas:ver_tarea' tarea_id=tarea.id %}">
+                                {{tarea.nombre}}
+                            </a>
+                        </b> | Limite: {{hrs}}hrs
+                    </p>
+                {% endwith %}
+            {% if forloop.last %}
+                <hr>
+            {% endif %}
+        {% endfor %}
+        {% for tarea in operador.subcomite.tareas.all %}
+            {% if forloop.first %}
+                <h3>Tareas del Subcomite:</h3>
             {% endif %}
                 {% with tarea.hrs_restantes as hrs %}
                     <p class="

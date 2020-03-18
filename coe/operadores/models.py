@@ -40,7 +40,7 @@ class SubComite(models.Model):
         return self.tareas.exclude(eventos__accion="E").count()
 
 class Operador(models.Model):
-    subcomite = models.ForeignKey(SubComite, on_delete=models.SET_NULL, null=True, blank=True, related_name="operadores")
+    subcomite = models.ForeignKey(SubComite, on_delete=models.SET_NULL, null=True, related_name="operadores")
     nivel_acceso = models.CharField("Acceso de Seguridad", max_length=1, choices=NIVELES_SEGURIDAD, default='B')
     usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="operadores")
     tipo_doc = models.IntegerField(choices=TIPO_DOCUMENTOS, default=2)
