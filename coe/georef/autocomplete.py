@@ -10,7 +10,7 @@ class DepartamentoAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = Departamento.objects.all()
         if self.q:
-            qs = qs.filter(istartswith=self.q)
+            qs = qs.filter(nombre__icontains=self.q)
         return qs
 
 class LocalidadAutocomplete(autocomplete.Select2QuerySetView):
@@ -22,7 +22,7 @@ class LocalidadAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.filter(departamento=departamento)
 
         if self.q:
-            qs = qs.filter(nombre__istartswith=self.q)
+            qs = qs.filter(nombre__icontains=self.q)
         return qs
 
 class BarrioAutocomplete(autocomplete.Select2QuerySetView):
@@ -34,12 +34,12 @@ class BarrioAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.filter(localidad=localidad)
         
         if self.q:
-            qs = qs.filter(nombre__istartswith=self.q)
+            qs = qs.filter(nombre__icontains=self.q)
         return qs
 
 class NacionalidadAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = Nacionalidad.objects.all()
         if self.q:
-            qs = qs.filter(istartswith=self.q)
+            qs = qs.filter(nombre__icontains=self.q)
         return qs
