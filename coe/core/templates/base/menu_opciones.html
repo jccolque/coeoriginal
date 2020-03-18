@@ -8,13 +8,16 @@
     {% ct_opciones request.user as opciones %}
     {% if opciones %}
         <li>
-            <a {% if user.is_staff %}href="{% url 'admin:index' %}"{% endif %}>{{user.username|title}}</a>
+            <li><a>{{user.username|title}}</a>
             <ul class="submenu">
                 {% for opcion in opciones %}
                     <li><a href="/{{opcion.1}}">{{opcion.0}}</a></li>
                 {% endfor %}
                 {% if request.user.is_superuser %}
                     <li><a href="{% url 'core:ws' %}">Web Services</a></li>
+                {% endif %}
+                {% if user.is_staff %}
+                    <li><a href="{% url 'admin:index' %}">Administrador</a></li>
                 {% endif %}
                 <li><a href="{% url 'core:home_logout' %}">Cerrar Sesion</a></li>
             </ul>
