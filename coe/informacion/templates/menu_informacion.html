@@ -32,6 +32,11 @@
                                 <hr>
                             {% endif %}
 
+                            {% if perms.operadores.reportes %}
+                                <li><a href="{% url 'informacion:csv_individuos'  %}">Descargar Individuos</a></li>
+                                <hr>
+                            {% endif %}
+
                             {% if request.user.is_superuser %}
                                 <li><a href="{% url 'informacion:menu' %}">Opcion del Administrador</a></li>
                             {% endif %}

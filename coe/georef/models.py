@@ -8,6 +8,7 @@ from tinymce.models import HTMLField
 class Provincia(models.Model):
     nombre = models.CharField('Nombre', max_length=100, unique=True)
     class Meta:
+        ordering = ['nombre', ]
         verbose_name_plural = 'Provincias'
     def __str__(self):
         return self.nombre
@@ -22,6 +23,7 @@ class Departamento(models.Model):#Departamento
     provincia = models.ForeignKey(Provincia, on_delete=models.CASCADE, related_name="departamentos")
     nombre = models.CharField('Nombre', max_length=100)
     class Meta:
+        ordering = ['nombre', ]
         verbose_name_plural = 'Departamentos'
         unique_together = ('provincia', 'nombre')
     def __str__(self):
@@ -39,6 +41,7 @@ class Localidad(models.Model):
     nombre = models.CharField('Nombre', max_length=100)
     codigo_postal = models.CharField('Codigo Postal', max_length=50, blank=True, null=True)
     class Meta:
+        ordering = ['nombre', ]
         verbose_name_plural = 'Localidades'
         unique_together = ('departamento', 'nombre')
     def __str__(self):
@@ -56,6 +59,7 @@ class Barrio(models.Model):
     localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="barrios")
     nombre = models.CharField('Nombre', max_length=100)
     class Meta:
+        ordering = ['nombre', ]
         unique_together = ('localidad', 'nombre')
         verbose_name_plural = 'Barrios'
     def __str__(self):

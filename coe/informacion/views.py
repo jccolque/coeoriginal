@@ -1,5 +1,7 @@
+import csv
 #Imports Django
 from django.db.models import Q
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import permission_required
@@ -179,3 +181,29 @@ def cargar_sintoma(request, individuo_id):
             sintoma.save()
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Sintoma", 'form': form, 'boton': "Cargar", })
+
+@permission_required('operadores.reportes')
+def csv_individuos(request):
+    individuos = Individuo.objects.all()
+    individuos = individuos.prefetch_related('atributos', 'sintomas')
+    #Iniciamos la creacion del csv
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="individuos.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['REPORTE DE INDIVIDUOS'])
+    writer.writerow(['TIPO DOC', 'NUM DOC', 'APELLIDO', 'NOMBRE', 'NACIONALIDAD', 'ORIGEN', 'DESTINO LOCAL', 'OBSERVACIONES', 'ATRIBUTOS','SINTOMAS'])
+    for individuo in individuos:
+        writer.writerow([
+            individuo.get_tipo_doc_display(),
+            individuo.num_doc,
+            individuo.apellidos,
+            individuo.nombres,
+            individuo.nacionalidad.nombre,
+            individuo.origen.nombre,
+            individuo.destino.nombre,
+            individuo.observaciones,
+            str([a.tipo.nombre for a in individuo.atributos.all()]),
+            str([s.tipo.nombre for s in individuo.sintomas.all()]),
+        ])
+    #Enviamos el archivo para descargar
+    return response

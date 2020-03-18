@@ -31,6 +31,8 @@ urlpatterns = [
     path('cargar/domicilio/<int:individuo_id>', views.cargar_domicilio, name='cargar_domicilio'),
     path('cargar/atributo/<int:individuo_id>', views.cargar_atributo, name='cargar_atributo'),
     path('cargar/sintoma/<int:individuo_id>', views.cargar_sintoma, name='cargar_sintoma'),
+    #Reportes
+    path('csv/individuos/', views.csv_individuos, name='csv_individuos'),
     #Autocomplete
     url(r'^sintomas-autocomplete/$', autocomplete.SintomaAutocomplete.as_view(), name='sintomas-autocomplete',),
     url(r'^atributos-autocomplete/$', autocomplete.AtributoAutocomplete.as_view(), name='atributos-autocomplete',),

@@ -91,7 +91,9 @@ class Operador(models.Model):
             ("menu_actas", "Puede Acceder al menu de Actas"),
             ("ver_acta", "Puede Ver Actas"),
             ("crear_acta", "Puede Crear Actas"),
-
+            #Reportes
+            ("reportes", "Acceso a todos los reportes del sistema"),
+            #Especiales
             ("administrador", "Puede administrar Usuarios."),
         )
     def __str__(self):

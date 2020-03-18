@@ -1,6 +1,8 @@
 #Imports Django
+import csv
 from django.utils import timezone
 from django.db.models import Q
+from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import permission_required
@@ -89,3 +91,24 @@ def devolver_item(request, evento_id):
     devuelto.fecha = timezone.now()
     devuelto.save()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+@permission_required('operadores.reportes')
+def csv_inventario(request):
+    items = Item.objects.all()
+    items = items.select_related('subgrupo', 'subgrupo__rubro')
+    #Iniciamos la creacion del csv
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="inventario.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['REPORTE DE INVENTARIO'])
+    writer.writerow(['RUBRO', 'SUBGRUPO', 'NOMBRE', 'CANTIDAD DISPONIBLE', 'CANTIDAD DISTRIBUIDA'])
+    for item in items:
+        writer.writerow([
+            item.subgrupo.rubro.nombre,
+            item.subgrupo.nombre,
+            item.nombre,
+            item.cantidad_disponible(),
+            item.cantidad_distribuida(),
+        ])
+    #Enviamos el archivo para descargar
+    return response

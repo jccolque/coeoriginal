@@ -22,6 +22,8 @@ urlpatterns = [
     #eventos:
     path('crear/evento/<int:item_id>', views.crear_evento, name='crear_evento'),
     path('devolver/<int:evento_id>', views.devolver_item, name='devolver'),
+    #Reportes
+    path('csv/', views.csv_inventario, name='csv_inventario'),
     #Autocomplete
     url(r'^rubros-autocomplete/$', autocomplete.RubrosAutocomplete.as_view(), name='rubros-autocomplete',),
     url(r'^subgrupos-autocomplete/$', autocomplete.SubgruposAutocomplete.as_view(), name='subgrupos-autocomplete',),

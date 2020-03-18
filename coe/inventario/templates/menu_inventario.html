@@ -19,6 +19,12 @@
                             {% if perms.operadores.ver_item %}
                                 <li><a href="{% url 'inventario:lista_detallada'  %}">Ver Listado Detallado</a></li>
                             {% endif %}
+
+                            {% if perms.operadores.reportes %}
+                                <li><a href="{% url 'inventario:csv_inventario'  %}">Descargar Inventario</a></li>
+                                <hr>
+                            {% endif %}
+
                             {% if request.user.is_superuser %}
                                 <li><a href="{% url 'inventario:menu' %}">Opcion del Administrador</a></li>
                             {% endif %}
