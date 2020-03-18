@@ -6,7 +6,7 @@
     <li><a href="{% url 'core:faqs' %}">¿Que es el COE?</a></li>
     <li><a href="{% url 'core:contacto' %}">Contacto</a></li>
     {% ct_opciones request.user as opciones %}
-    {% if opciones %}
+    {% if user.is_authenticated %}
         <li>
             <li><a>{{user.username|title}}</a>
             <ul class="submenu">

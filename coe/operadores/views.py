@@ -117,7 +117,7 @@ def mod_operador(request, operador_id=None):
                 usuario.email = operador.email
                 usuario.first_name = operador.nombres
                 usuario.last_name = operador.apellidos
-                usuario.is_staff=True                    
+                usuario.is_staff = True                    
                 usuario.save()
                 operador.usuario = usuario
             #Reiniciamos sus permisos:
