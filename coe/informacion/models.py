@@ -84,7 +84,7 @@ class Enfermedad(models.Model):#Origen del Dato
 class Vehiculo(models.Model):
     tipo = models.IntegerField(choices=TIPO_VEHICULO, default='1')
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
-    identificacion = models.CharField('Identificacion Patente/Codigo', max_length=200)
+    identificacion = models.CharField('Identificacion Patente/Codigo', max_length=200, unique=True)
     cant_pasajeros = models.IntegerField(default='1')
     empresa = models.CharField('Empresa (Si aplica)', max_length=200, null=True, blank=True)
     plan = HTMLField(verbose_name='Plan de Ruta')
@@ -103,7 +103,7 @@ class Vehiculo(models.Model):
 
 class Individuo(models.Model):
     tipo_doc = models.IntegerField(choices=TIPO_DOCUMENTOS, default=2)
-    num_doc = models.IntegerField('Numero de Documento/Pasaporte', unique=True)
+    num_doc = models.CharField('Numero de Documento/Pasaporte', max_length=20, unique=True)
     sexo = models.CharField('Sexo', max_length=1, choices=TIPO_SEXO, default='M')
     apellidos = models.CharField('Apellidos', max_length=100)
     nombres = models.CharField('Nombres', max_length=100)
@@ -165,7 +165,7 @@ class Domicilio(models.Model):
 class Atributo(models.Model):#Origen del Dato
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="atributos")
     tipo = models.ForeignKey(TipoAtributo, on_delete=models.CASCADE, related_name="atributos")
-    aclaracion =  models.CharField('Aclaracion', max_length=200)
+    aclaracion =  models.CharField('Aclaracion', max_length=200, null=True, blank=True)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     activo = models.BooleanField(default=True)
     def __str__(self):
@@ -183,7 +183,7 @@ class Atributo(models.Model):#Origen del Dato
 class Sintoma(models.Model):#Origen del Dato
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="sintomas")
     sintoma = models.ForeignKey(TipoSintoma, on_delete=models.CASCADE, related_name="sintomas")
-    aclaracion =  models.CharField('Aclaracion', max_length=200)
+    aclaracion =  models.CharField('Aclaracion', max_length=200, null=True, blank=True)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     def __str__(self):
         return str(self.sintoma) + ': ' + str(self.fecha)

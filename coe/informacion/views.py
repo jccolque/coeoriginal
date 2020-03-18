@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
 from core.functions import paginador
+from core.forms import SearchForm
 from operadores.functions import obtener_operador
 #imports de la app
 from .models import Archivo
@@ -48,6 +49,20 @@ def procesar_archivos(request, archivo_id):
     return redirect('informacion:ver_archivo', archivo_id=archivo.id)
 
 #VEHICULOS
+@permission_required('operadores.ver_individuo')
+def buscar_vehiculo(request):
+    form = SearchForm()
+    if request.method == "POST":
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            search = form.cleaned_data['search']
+            try:
+                vehiculo = Vehiculo.objects.get(identificacion=search)
+                return redirect('informacion:ver_vehiculo', vehiculo_id=vehiculo.id)
+            except:
+                form.add_error('search', "No se Encontro Vehiculo con esa identificacion.")
+    return render(request, "extras/generic_form.html", {'titulo': "Buscar Vehiculo", 'form': form, 'boton': "Buscar", })
+
 @permission_required('operadores.ver_vehiculo')
 def listar_vehiculos(request):
     vehiculos = Vehiculo.objects.all()
@@ -74,6 +89,20 @@ def cargar_vehiculo(request):
 
 #INDIVIDUOS
 @permission_required('operadores.ver_individuo')
+def buscar_individuo(request):
+    form = SearchForm()
+    if request.method == "POST":
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            search = form.cleaned_data['search']
+            try:
+                individuo = Individuo.objects.get(num_doc=search)
+                return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+            except:
+                form.add_error('search', "No se Encontro individuo con ese Num de Documento/Pasaporte.")
+    return render(request, "extras/generic_form.html", {'titulo': "Buscar Individuo", 'form': form, 'boton': "Buscar", })
+
+@permission_required('operadores.ver_individuo')
 def listar_individuos(request):
     individuos = Individuo.objects.all()
     individuos = paginador(request, individuos)
@@ -89,7 +118,6 @@ def cargar_individuo(request, vehiculo_id=None, individuo_id=None):
     individuo = None
     if individuo_id:#Si manda individuo es para modificar
         individuo = Individuo.objects.get(pk=individuo_id)
-
     form = IndividuoForm(instance=individuo)
     if request.method == "POST":
         form = IndividuoForm(request.POST, instance=individuo)

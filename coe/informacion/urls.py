@@ -14,10 +14,12 @@ urlpatterns = [
     path('procesar_archivos/<int:archivo_id>', views.procesar_archivos, name='procesar_archivos'),
     #Carga de datos
     #Vehiculos
+    path('buscar/vehiculo/', views.buscar_vehiculo, name='buscar_vehiculo'),
     path('listar_vehiculos', views.listar_vehiculos, name='listar_vehiculos'),
     path('ver_vehiculo/<int:vehiculo_id>', views.ver_vehiculo, name='ver_vehiculo'),
     path('cargar_vehiculo', views.cargar_vehiculo, name='cargar_vehiculo'),
     #Individuos
+    path('buscar/individuo/', views.buscar_individuo, name='buscar_individuo'),
     path('listar_individuos', views.listar_individuos, name='listar_individuos'),
     path('cargar_pasajero/<int:vehiculo_id>', views.cargar_individuo, name='cargar_pasajero'),
     path('ver_individuo/<int:individuo_id>', views.ver_individuo, name='ver_individuo'),
