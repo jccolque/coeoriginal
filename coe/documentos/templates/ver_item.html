@@ -1,0 +1,62 @@
+{% extends 'base_informacion.html' %}
+
+{% load seguridad_tags%}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-9">
+                        <h2>{{item.nombre}}</h2>
+                        <p>Rubro: {{item.subgrupo.rubro}}</p>
+                        <p>Subgrupo: {{item.subgrupo}}</p>
+                        <p>Responsable: {{item.responsable}}</p>
+                        <p>Datos de Contacto: {{item.responsable.telefono}} /  {{item.responsable.email}}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <!--{% include 'users/info_user.html' %}-->
+                        <ul class="menu_botones">
+                            <li><a href="{% url 'inventario:crear_evento' item_id=item.id %}">Cargar Evento</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <!--Tabla de Sintomas Registrados-->
+                        {% for evento in item.eventos.all %}
+                            {% if forloop.first %}
+                                <hr>
+                                <h3>Eventos:</h3>
+                                <table class="listado">
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Accion</th>
+                                        <th>Cantidad</th>
+                                        <th>Actuante</th>
+                                        <th>Tarea</th>
+                                        <th>Operador</th>
+                                        <th>Detalle</th>
+                                    </tr>
+                            {% endif %}
+
+                            <tr>
+                                <td>{{evento.fecha}}</td>
+                                <td>{{evento.get_accion_display}}</td>
+                                <td>{{evento.cantidad}}</td>
+                                <td>{{evento.actuante}}</td>
+                                <td>{{evento.tarea}}</td>
+                                <td>{{evento.operador}}</td>
+                                <td>{{evento.detalle|safe}}</td>
+                            </tr>
+                            
+                            {% if forloop.last %}
+                                </table>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}

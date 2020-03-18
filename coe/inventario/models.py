@@ -27,9 +27,10 @@ class SubGrupo(models.Model):
     rubro = models.ForeignKey(Rubro, on_delete=models.CASCADE, related_name="grupos")
     nombre = models.CharField('Nombre', max_length=200)
     class Meta:
+        unique_together = ['rubro', 'nombre']
         ordering = ['rubro', 'nombre', ]
     def __str__(self):
-        return self.nombre
+        return str(self.rubro) + ' ' + self.nombre
     def as_dict(self):
         return {
             'id': self.id,
@@ -44,9 +45,10 @@ class SubGrupo(models.Model):
 
 class Item(models.Model):
     subgrupo = models.ForeignKey(SubGrupo, on_delete=models.CASCADE, related_name="items")
-    nombre = models.CharField('Identificacion', max_length=200, unique=True)
+    nombre = models.CharField('Identificacion', max_length=200)
     responsable = models.ForeignKey(Operador, on_delete=models.CASCADE, null=True, blank=True, related_name="responsable_items")
     class Meta:
+        unique_together = ['subgrupo', 'nombre']
         ordering = ['subgrupo', 'nombre', ]
     def __str__(self):
         return self.nombre
