@@ -38,6 +38,8 @@ class SubComite(models.Model):
         return self.tareas.filter(eventos__accion="E").count()
     def cant_tareas_pendientes(self):
         return self.tareas.exclude(eventos__accion="E").count()
+    def tareas_pendientes(self):
+        return self.tareas.exclude(eventos__accion="E")
 
 class Operador(models.Model):
     subcomite = models.ForeignKey(SubComite, on_delete=models.SET_NULL, null=True, related_name="operadores")
@@ -123,8 +125,8 @@ class Operador(models.Model):
             self.qrpath = relative_path
             self.save()
             return self.qrpath
-    def tareas_asignadas(self):
-        return [r.tarea for r in self.responsables.all()]
+    def tareas_pendientes(self):
+        return [r.tarea for r in self.responsables.all().exclude(tarea__eventos__accion='E')]
 
 class EventoOperador(models.Model):
     operador = models.ForeignKey(Operador, on_delete=models.CASCADE, null=True, blank=True, related_name="asistencia")

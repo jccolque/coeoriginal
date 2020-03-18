@@ -12,7 +12,7 @@
                 </a>
             {% endif %}
         </p>
-        {% for tarea in operador.tareas_asignadas %}
+        {% for tarea in operador.tareas_pendientes %}
             {% if forloop.first %}
                 <hr>
                 <h3>Tareas Asignadas:</h3>
@@ -38,7 +38,7 @@
                 <hr>
             {% endif %}
         {% endfor %}
-        {% for tarea in operador.subcomite.tareas.all %}
+        {% for tarea in operador.subcomite.tareas_pendientes %}
             {% if forloop.first %}
                 <h3>Tareas del Subcomite:</h3>
             {% endif %}
