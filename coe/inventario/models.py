@@ -13,6 +13,8 @@ from .choices import TIPO_EVENTO_ITEM
 # Create your models here.
 class Rubro(models.Model):
     nombre = models.CharField('Nombre', max_length=200)
+    class Meta:
+        ordering = ['nombre', ]
     def __str__(self):
         return self.nombre
     def as_dict(self):
@@ -24,6 +26,8 @@ class Rubro(models.Model):
 class SubGrupo(models.Model):
     rubro = models.ForeignKey(Rubro, on_delete=models.CASCADE, related_name="grupos")
     nombre = models.CharField('Nombre', max_length=200)
+    class Meta:
+        ordering = ['rubro', 'nombre', ]
     def __str__(self):
         return self.nombre
     def as_dict(self):
@@ -42,6 +46,8 @@ class Item(models.Model):
     subgrupo = models.ForeignKey(SubGrupo, on_delete=models.CASCADE, related_name="items")
     nombre = models.CharField('Identificacion', max_length=200, unique=True)
     responsable = models.ForeignKey(Operador, on_delete=models.CASCADE, null=True, blank=True, related_name="responsable_items")
+    class Meta:
+        ordering = ['subgrupo', 'nombre', ]
     def __str__(self):
         return self.nombre
     def as_dict(self):

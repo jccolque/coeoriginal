@@ -50,6 +50,7 @@ class Operador(models.Model):
     qrpath = models.CharField('qrpath', max_length=100, null=True, blank=True)
     class Meta:
         verbose_name_plural = 'Operadores'
+        ordering = ['apellidos', 'nombres']
         permissions = (
             #Operadores:
             ("menu_operadores", "Puede Acceder al menu de Operadores"),
