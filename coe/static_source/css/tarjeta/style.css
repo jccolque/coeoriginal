@@ -1,12 +1,12 @@
 ﻿@media print {
     @page { 
-        size: 8.56cm 5.39cm landscape;
+        size: 8.60cm 5.20cm landscape;
         margin: 0 1mm 0 1mm;
     }
 
     body{
-        width: 8.56cm; 
-        height: 5.39cm;
+        width: 8.60cm; 
+        height: 5.20cm;
         margin: 0;
         break-before: avoid;
         break-after: avoid;

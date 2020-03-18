@@ -147,9 +147,10 @@ class Origen(models.Model):#Origen del Dato
 class Domicilio(models.Model):
     individuo = models.OneToOneField(Individuo, on_delete=models.CASCADE, related_name="domicilio")
     localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="domicilios_individuos")
-    barrio = models.ForeignKey(Barrio, on_delete=models.SET_NULL, null=True, blank=True, related_name="domicilios_individuos")
+    #barrio = models.ForeignKey(Barrio, on_delete=models.SET_NULL, null=True, blank=True, related_name="domicilios_individuos")
     calle = models.CharField('Calle', max_length=50, default='', blank=False)
     numero = models.CharField('Numero', max_length=50, default='', blank=False)
+    aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     def __str__(self):
         return self.calle + ' ' + self.numero + ', ' + str(self.localidad)
     def as_dict(self):
