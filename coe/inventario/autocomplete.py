@@ -1,4 +1,5 @@
 #Imports django
+from django.db.models import Q
 from django.contrib.auth.models import User
 #Imports Extras
 from dal import autocomplete
@@ -21,5 +22,8 @@ class SubgruposAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.filter(rubro=rubro)
 
         if self.q:
-            qs = qs.filter(nombre__icontains=self.q)
+            qs = qs.filter(
+                Q(nombre__icontains=self.q) |
+                Q(rubro__nombre__icontains=self.q)
+            )
         return qs

@@ -30,7 +30,7 @@ class SubGrupo(models.Model):
         unique_together = ['rubro', 'nombre']
         ordering = ['rubro', 'nombre', ]
     def __str__(self):
-        return str(self.rubro) + ' ' + self.nombre
+        return str(self.rubro) + ': ' + self.nombre
     def as_dict(self):
         return {
             'id': self.id,
