@@ -51,7 +51,7 @@ class AtributoForm(forms.ModelForm):
     class Meta:
         model = Atributo
         fields= '__all__'
-        exclude = ('individuo', 'fecha', 'activo', )
+        exclude = ('individuo', 'activo', )
         widgets = {
             'tipo': autocomplete.ModelSelect2(url='informacion:atributos-autocomplete'),
         }
@@ -60,7 +60,7 @@ class SintomaForm(forms.ModelForm):
     class Meta:
         model = Sintoma
         fields= '__all__'
-        exclude = ('individuo', 'fecha', )
+        exclude = ('individuo', )
         widgets = {
             'tipo': autocomplete.ModelSelect2(url='informacion:sintomas-autocomplete'),
         }

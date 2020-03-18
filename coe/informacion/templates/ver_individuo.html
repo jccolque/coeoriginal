@@ -83,7 +83,7 @@
                                 {% endfor %}
                             {% endif %}
                             <li><a href="{% url 'informacion:mod_individuo' individuo_id=individuo.id %}">Modificar Datos Basicos</a></li>
-                            <li><a href="{% url 'informacion:cargar_domicilio' individuo_id=individuo.id %}">Cargar Domicilio</a></li>
+                            <li><a href="{% url 'informacion:cargar_domicilio' individuo_id=individuo.id %}">Residencia Actual En La Provincia</a></li>
                             <li><a href="{% url 'informacion:cargar_atributo' individuo_id=individuo.id %}">Cargar Atributo de Control</a></li>
                             <li><a href="{% url 'informacion:cargar_sintoma' individuo_id=individuo.id  %}">Cargar Sintomas</a></li>
                             <li><a href="{% url 'informacion:listar_individuos' %}">Volver al Listado de Individuos</a></li>

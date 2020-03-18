@@ -113,7 +113,7 @@ class Individuo(models.Model):
     nacionalidad = models.CharField('Nacionalidad', max_length=100)
     origen = models.CharField('Origen', max_length=200, null=True, blank=True)
     destino = models.CharField('Destino', max_length=200, null=True, blank=True)
-    particularidades = HTMLField(null=True, blank=True)
+    observaciones = HTMLField(null=True, blank=True)
     def __str__(self):
         return str(self.num_doc) + ': ' + self.apellidos + ', ' + self.nombres
     def as_dict(self):
@@ -129,7 +129,7 @@ class Individuo(models.Model):
             'nacionalidad': self.nacionalidad,
             'origen': self.origen,
             'destino': self.destino,
-            'particularidades': self.particularidades,
+            'observaciones': self.observaciones,
         }
 
 class Origen(models.Model):#Origen del Dato
