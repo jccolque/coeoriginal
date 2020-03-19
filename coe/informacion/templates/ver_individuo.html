@@ -26,6 +26,9 @@
                             <a class="nolink" href="{% url 'informacion:historico_situacion' individuo_id=individuo.id %}">
                                 <img class="icons" src="{% static '/img/icons/history.png' %}">
                             </a>
+                            <a class="nolink" href="{% url 'informacion:cargar_situacion' individuo_id=individuo.id %}">
+                                <img class="icons" src="{% static '/img/icons/change.png' %}">
+                            </a>
                         </h3>
                         <hr>
                         {{individuo.particularidades|safe}}

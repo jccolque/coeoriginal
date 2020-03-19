@@ -30,7 +30,12 @@
                                         <td>{{version.operador}}</td>
                                         <td>{{version.cambios|safe}}</td>
                                         <td>
-                                            <a href="{{version.archivo.url}}">Descargar</a>
+                                            {% if version.archivo %}
+                                                <a href="{{version.archivo.url}}">Descargar</a>
+                                            {% else %}
+                                                <p>Version Eliminada</p>
+                                            {% endif %}
+                                            
                                             {% if request.user == version.operador.usuario %}
                                                 <a href="{% url 'documentos:eliminar_version' version_id=version.id %}">
                                                     <img class="icons" src="{% static 'img/icons/delete.png' %}" style="float:right;">

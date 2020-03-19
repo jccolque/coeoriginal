@@ -30,7 +30,11 @@
                         <td>{{documento.autor}}</td>
                         <td>{{documento.ultima_version.fecha}}</td>
                         <td><a href="{% url 'documentos:ver_documento' documento_id=documento.id %}">Historial</a></td>
-                        <td><a href="{{documento.ultima_version.archivo.url}}">Descargar</a></td>
+                        {% if documento.ultima_version %}
+                            <td><a href="{{documento.ultima_version.archivo.url}}">Descargar</a></td>
+                        {% else %}
+                            <td><p>Sin Archivos Cargados</p></td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </table>

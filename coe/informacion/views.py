@@ -128,10 +128,23 @@ def ver_individuo(request, individuo_id):
 
 @permission_required('operadores.cargar_individuo')
 def cargar_individuo(request, vehiculo_id=None, individuo_id=None):
-    individuo = None
     if individuo_id:#Si manda individuo es para modificar
         individuo = Individuo.objects.get(pk=individuo_id)
-    form = IndividuoForm(instance=individuo)
+        domicilio_actual = individuo.domicilio_actual()
+        form = IndividuoForm(
+            instance=individuo,
+            initial={
+                'dom_localidad': domicilio_actual.localidad,
+                'dom_calle': domicilio_actual.calle,
+                'dom_numero': domicilio_actual.numero,
+                'dom_aclaracion': domicilio_actual.aclaracion,
+                'atributos': [a.tipo.id for a in individuo.atributos.all()],
+                'sintomas': [s.tipo.id for s in individuo.sintomas.all()],
+            }
+        )
+    else:
+        form = IndividuoForm()
+    #Analizamos si mando informacion:
     if request.method == "POST":
         form = IndividuoForm(request.POST, instance=individuo)
         if form.is_valid():
@@ -150,6 +163,7 @@ def cargar_individuo(request, vehiculo_id=None, individuo_id=None):
             domicilio.save()
             #Creamos atributos
             atributos = form.cleaned_data['atributos']
+            individuo.atributos.all().delete()
             for atributo_id in atributos:
                 atributo = Atributo()
                 atributo.individuo = individuo
@@ -157,6 +171,7 @@ def cargar_individuo(request, vehiculo_id=None, individuo_id=None):
                 atributo.save()           
             #Creamos sintomas
             sintomas = form.cleaned_data['sintomas']
+            individuo.sintomas.all().delete()
             for sintoma_id in sintomas:
                 sintoma = Sintoma()
                 sintoma.individuo = individuo
@@ -189,7 +204,7 @@ def cargar_situacion(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
     form = SituacionForm(instance=individuo.situacion_actual())
     if request.method == "POST":
-        form = SituacionForm(request.POST)
+        form = SituacionForm(request.POST, initial={'individuo': individuo})
         if form.is_valid():
             form.save()
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)

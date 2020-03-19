@@ -28,6 +28,7 @@ urlpatterns = [
     path('ver_individuo/<int:individuo_id>', views.ver_individuo, name='ver_individuo'),
     path('cargar/individuo', views.cargar_individuo, name='cargar_individuo'),
     path('mod/individuo/<int:individuo_id>', views.cargar_individuo, name='mod_individuo'),
+    path('cargar/situacion/<int:individuo_id>', views.cargar_situacion, name='cargar_situacion'),
     path('cargar/domicilio/<int:individuo_id>', views.cargar_domicilio, name='cargar_domicilio'),
     path('cargar/atributo/<int:individuo_id>', views.cargar_atributo, name='cargar_atributo'),
     path('cargar/sintoma/<int:individuo_id>', views.cargar_sintoma, name='cargar_sintoma'),

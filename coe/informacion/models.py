@@ -136,6 +136,8 @@ class Individuo(models.Model):
         }
     def situacion_actual(self):
         return self.situaciones.last()
+    def domicilio_actual(self):
+        return self.domicilios.last()
 
 class Origen(models.Model):#Origen del Dato
     vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, related_name="origenes")
@@ -150,7 +152,7 @@ class Origen(models.Model):#Origen del Dato
         }
 
 class Domicilio(models.Model):
-    individuo = models.OneToOneField(Individuo, on_delete=models.CASCADE, related_name="domicilio")
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="domicilios")
     localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="domicilios_individuos")
     calle = models.CharField('Calle', max_length=50, default='', blank=False)
     numero = models.CharField('Numero', max_length=50, default='', blank=False)
