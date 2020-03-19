@@ -29,6 +29,8 @@ urlpatterns = [
     path('ingreso/<int:operador_id>', views.ingreso, name='ingreso'),
     path('checkout/<int:operador_id>', views.checkout, name='checkout'),
     path('asistencia', views.registro_asistencia, name='registro_asistencia'),
+    #Reportes
+    path('csv/', views.csv_operadores, name='csv_operadores'),
     #Autocomplete
     url(r'^operadores-autocomplete/$', autocomplete.OperadoresAutocomplete.as_view(), name='operadores-autocomplete',),
     url(r'^subcomite-autocomplete/$', autocomplete.SubComiteAutocomplete.as_view(), name='subcomite-autocomplete',),

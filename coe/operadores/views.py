@@ -1,4 +1,5 @@
 #Imports de Python
+import csv
 import pytz
 from datetime import timedelta
 #Imports Django
@@ -6,6 +7,7 @@ from django.db.models import Q
 from django.utils import timezone
 from django.shortcuts import render
 from django.shortcuts import redirect
+from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import permission_required
@@ -264,3 +266,36 @@ def auditoria(request, user_id=None):
                 'registros': registros,})
     #Lanzamos form basico
     return render(request, "extras/generic_form.html", {'titulo': "Auditoria Usuario", 'form': form, 'boton': "Auditar", })
+
+@permission_required('operadores.reportes')
+def csv_operadores(request):
+    operadores = Operador.objects.all()
+    operadores = operadores.select_related('usuario', 'subcomite')
+    #Iniciamos la creacion del csv
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="operadores.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['REPORTE DE INVENTARIO'])
+    writer.writerow(['SUBCOMITE', 'NIVEL DE ACCESO', 'TIPO DOC', 'NUM DOC', 'APELLIDO', 'NOMBRE', 'EMAIL', 'TELEFONO', 'USUARIO'])
+    for operador in operadores:
+        if operador.subcomite:
+            tmp_subcomite = operador.subcomite.nombre
+        else:
+            tmp_subcomite = 'NO ASIGNADO'
+        if operador.usuario:
+            tmp_usuario = operador.usuario.username
+        else:
+            tmp_usuario = 'NO POSEE'
+        writer.writerow([
+            tmp_subcomite,
+            operador.get_nivel_acceso_display(),
+            operador.tipo_doc,
+            operador.num_doc,
+            operador.apellidos,
+            operador.nombres,
+            operador.email,
+            operador.telefono,
+            tmp_usuario,
+        ])        
+    #Enviamos el archivo para descargar
+    return response

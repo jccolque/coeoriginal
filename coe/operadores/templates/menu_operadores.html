@@ -31,7 +31,10 @@
                                 <li><a href="{% url 'operadores:listado_presentes'  %}">Listado de Presentes</a></li>
                                 <li><a href="{% url 'operadores:registro_asistencia'  %}">Registro de Asistencia</a></li>
                             {% endif %}
-
+                            {% if perms.operadores.reportes %}
+                                <li><a href="{% url 'operadores:csv_operadores'  %}">Descargar Operadores</a></li>
+                                <hr>
+                            {% endif %}
                             {% if perms.beneficiarios.auditar_operadores %}
                                 <li><a href="{% url 'operadores:auditoria' %}">Ver Auditoria de Operadores</a></li>
                             {% else %}
