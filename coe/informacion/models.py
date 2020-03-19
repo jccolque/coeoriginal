@@ -171,13 +171,15 @@ class Situacion(models.Model):
     class Meta:
         ordering = ['fecha']
     def __str__(self):
-        return str(self.individuo) + ': ' + self.get_tipo_display() + ' ' + str(self.fecha)
+        return str(self.individuo) + ': ' + self.get_estado_display() + ' '  + self.get_conducta_display() + ' ' + str(self.fecha)
     def as_dict(self):
         return {
             "id": self.id,
             "individuo_id": self.individuo.id,
-            "tipo_id": self.tipo,
-            "tipo": str(self.tipo),
+            "estado_id": self.estado,
+            "estado": self.get_estado_display(),
+            "conducta_id": self.conducta,
+            "conducta": self.get_conducta_display(),
             "fecha": str(self.fecha),
         }
 
