@@ -2,18 +2,36 @@
 {% load static %}
 {% block content %}
     <div class="formulario container">
-        <div class="row">
-            <h2>Seleccione los filtros:</h2>
-        </div>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="row">
+                <h2>Seleccione los filtros:</h2>
                 <div class="col-md-4">
                     <h3 class="filter_name">Basicos:</h3>
+                    <h2>Fecha:</h2>
                     <ul>
                         <li>Desde: <input id="begda" type="date" value="2020-01-01"></li>
                         <li>Hasta: <input id="endda" type="date" value="2020-12-31"></li></li>
-                    </ul>                
+                    </ul>
+                    <hr>
+                    <h3 class="filter_name">Categorias</h3>
+                    <ul>
+                        {% for estado in estados %}
+                            <li>
+                                <input type="checkbox" id="estado" name="estado" value="{{estado.0}}" checked>
+                                <label>{{estado.1}}</label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <h3 class="filter_name">Conducta</h3>
+                    <ul>
+                        {% for conducta in conductas %}
+                            <li>
+                                <input type="checkbox" id="conducta" name="conducta" value="{{conducta.0}}" checked>
+                                <label>{{conducta.1}}</label>
+                            </li>
+                        {% endfor %}
+                    </ul>  
                 </div>
                 <div class="col-md-4">
                     <h3 class="filter_name">Sintomas</h3>

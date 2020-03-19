@@ -10,6 +10,7 @@ from core.functions import paginador
 from core.forms import SearchForm
 from operadores.functions import obtener_operador
 #imports de la app
+from .choices import TIPO_ESTADO, TIPO_CONDUCTA
 from .models import Archivo
 from .models import Vehiculo, Individuo, Origen
 from .models import TipoAtributo, TipoSintoma
@@ -203,16 +204,25 @@ def reporte_basico(request):
         atributos = 0
         sintomas = 0
 
+    estados = TIPO_ESTADO
+    conductas = TIPO_CONDUCTA
     atributos = TipoAtributo.objects.all()
     sintomas = TipoSintoma.objects.all()
     if request.method == "POST":
         reportados = {}
+        #Obtenemos todos los parametros
         #begda = request.POST['begda']
         #endda = request.POST['endda']
+        estados = request.POST.getlist('estado')
+        conductas = request.POST.getlist('conducta')
         atributos = request.POST.getlist('atributo')
         sintomas = request.POST.getlist('sintoma')
+        #Obtenemos todos los individuos que esten en ese estado
+        full_individuos = Individuo.objects.filter(
+            situaciones__estado__in=estados,
+            situaciones__conducta__in=conductas).distinct()
         for atributo in atributos:
-            individuos = Individuo.objects.filter(atributos__id=atributo)
+            individuos = full_individuos.filter(atributos__tipo=atributo)
             for individuo in individuos:
                 if individuo.id not in reportados:#Si no esta lo agregamos
                     reportado = Creportado()
@@ -221,7 +231,7 @@ def reporte_basico(request):
                 #Le sumamos 1 a ese atributo
                 reportados[individuo.id].atributos += 1
         for sintoma in sintomas:
-            individuos = Individuo.objects.filter(sintomas__id=sintoma)
+            individuos = full_individuos.filter(sintomas__tipo=sintoma)
             for individuo in individuos:
                 if individuo.id not in reportados:#Si no esta lo agregamos
                     reportado = Creportado()
@@ -229,9 +239,13 @@ def reporte_basico(request):
                     reportados[reportado.individuo.id] = reportado
                 #Le sumamos 1 a ese atributo
                 reportados[individuo.id].sintomas += 1
-        reportados = list(reportados.values()) 
+        #los volvemos una lista:
+        reportados = list(reportados.values())
+        reportados.sort(key=lambda x: x.sintomas, reverse=True)
         return render(request, "reporte_basico_mostrar.html", {'reportados': reportados, })
-    return render(request, "reporte_basico_buscar.html", {'atributos': atributos, 'sintomas': sintomas, })
+    return render(request, "reporte_basico_buscar.html", {
+        'estados': estados, 'conductas': conductas,
+        'atributos': atributos, 'sintomas': sintomas, })
 
 @permission_required('operadores.reportes')
 def csv_individuos(request):
