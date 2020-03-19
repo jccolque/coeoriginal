@@ -20,6 +20,13 @@ class SubComiteForm(forms.ModelForm):
         fields= '__all__'
         exclude = ('activo',)
 
+class BuscarOperadorForm(forms.Form):
+    operador = forms.ModelChoiceField(
+        label='',
+        queryset=Operador.objects.all(),
+        widget=autocomplete.ModelSelect2(url='operadores:operadores-autocomplete')
+    )
+
 class CrearOperadorForm(forms.ModelForm):
     class Meta:
         model = Operador

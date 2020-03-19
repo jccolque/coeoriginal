@@ -19,7 +19,7 @@ from core.forms import SearchForm, FechaForm
 #Imports de la app
 from .functions import obtener_permisos
 from .models import SubComite, Operador, EventoOperador
-from .forms import SubComiteForm, CrearOperadorForm
+from .forms import SubComiteForm, BuscarOperadorForm, CrearOperadorForm
 from .forms import ModOperadorForm, ModPassword, AuditoriaForm
 from .forms import AsistenciaForm
 # Create your views here.
@@ -42,7 +42,14 @@ def listar_subcomites(request):
 @permission_required('operadores.ver_subcomites')
 def ver_subcomite(request, subco_id):
     subcomite = SubComite.objects.get(pk=subco_id)
-    return render(request, 'users/ver_subcomite.html', {'subcomite': subcomite, })
+    form = BuscarOperadorForm()
+    if request.method == 'POST':
+        form = BuscarOperadorForm(request.POST)
+        if form.is_valid():
+            operador = form.cleaned_data['operador']
+            operador.subcomite = subcomite
+            operador.save()
+    return render(request, 'users/ver_subcomite.html', {'subcomite': subcomite, 'form': form, })
 
 @permission_required('operadores.crear_subcomite')
 def crear_subcomite(request):

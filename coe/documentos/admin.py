@@ -18,8 +18,6 @@ class DocumentoAdmin(admin.ModelAdmin):
     search_fields = ['nombre']
     list_filter = ['subcomite', ]
     inlines = [VersionInline]
-    def has_delete_permission(self, request, obj=None):
-        return False
 
 # Register your models here.
 admin.site.register(Documento, DocumentoAdmin)

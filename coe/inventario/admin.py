@@ -18,8 +18,6 @@ class EventoItemInline(admin.TabularInline):
     fk_name = 'item'
     readonly_fields = ('item',)
     extra = 0
-    def has_delete_permission(self, request, obj=None):
-        return False
 
 #Definimos nuestros modelos administrables:
 class RubroAdmin(admin.ModelAdmin):
@@ -33,8 +31,6 @@ class ItemAdmin(admin.ModelAdmin):
     model = Item
     search_fields = ['nombre', 'actuante', 'responsable']
     inlines = [EventoItemInline]
-    def has_delete_permission(self, request, obj=None):
-        return False
 
 # Register your models here.
 admin.site.register(Rubro, RubroAdmin)

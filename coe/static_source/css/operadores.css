@@ -33,3 +33,10 @@
     margin-left: 25px;
     font-size: 2em;
 }
+
+.buscar_operador{
+    font-size: 1.5em;
+    float: right;
+    margin-top: 15px;
+    margin-right: 25px;
+}
