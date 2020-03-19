@@ -128,6 +128,7 @@ def ver_individuo(request, individuo_id):
 
 @permission_required('operadores.cargar_individuo')
 def cargar_individuo(request, vehiculo_id=None, individuo_id=None):
+    individuo = None
     if individuo_id:#Si manda individuo es para modificar
         individuo = Individuo.objects.get(pk=individuo_id)
         domicilio_actual = individuo.domicilio_actual()

@@ -16,22 +16,12 @@ from .models import Atributo, TipoAtributo
 @receiver(post_save, sender=Individuo)
 def crear_situacion(created, instance, **kwargs):
     if created:
-        #Atributos:
-        #   Pais de Riesgo
-        paises = get_paises_riesgo()
-        if (instance.nacionalidad in paises) or (instance.origen in paises):
-            try:
-                atributo = Atributo()
-                atributo.individuo = instance
-                atributo.tipo = TipoAtributo.objects.get(nombre__icontains='Pais de Riesgo')
-            except TipoAtributo.DoesNotExist:
-                print('No existe Atributo de Pais de Riesgo')
         #   Vejez +60 años
         if instance.fecha_nacimiento < (timezone.now().date() - relativedelta(years=60)):
             try:
                 atributo = Atributo()
                 atributo.individuo = instance
-                atributo.tipo = TipoAtributo.objects.get(nombre__icontains='Poblacion de Riesgo')
+                atributo.tipo = TipoAtributo.objects.filter(nombre__icontains='poblacion').first()
             except TipoAtributo.DoesNotExist:
                 print('No existe Atributo de Poblacion de Riesgo')
         #Situacion:
