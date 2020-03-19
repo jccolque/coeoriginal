@@ -1,8 +1,9 @@
 #Imports Python
-from datetime import timedelta
+
 #Imports Django
 from django.core.cache import cache
 from django.utils import timezone
+from dateutil.relativedelta import relativedelta
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 #imports del proyecto
@@ -26,7 +27,7 @@ def crear_situacion(created, instance, **kwargs):
             except TipoAtributo.DoesNotExist:
                 print('No existe Atributo de Pais de Riesgo')
         #   Vejez +60 años
-        if instance.fecha_nacimiento < (timezone.now() - timedelta(years=60)):
+        if instance.fecha_nacimiento < (timezone.now() - relativedelta(years=60)):
             try:
                 atributo = Atributo()
                 atributo.individuo = instance
