@@ -186,11 +186,40 @@ def cargar_sintoma(request, individuo_id):
 #Reportes en el sistema
 @permission_required('operadores.reportes')
 def reporte_basico(request):
+    class Creportado(object):
+        individuo = Individuo()
+        atributos = 0
+        sintomas = 0
+
     atributos = TipoAtributo.objects.all()
     sintomas = TipoSintoma.objects.all()
     if request.method == "POST":
-        print(request.POST)
-    return render(request, "reporte_basico.html", {'atributos': atributos, 'sintomas': sintomas, })
+        reportados = {}
+        #begda = request.POST['begda']
+        #endda = request.POST['endda']
+        atributos = request.POST.getlist('atributo')
+        sintomas = request.POST.getlist('sintoma')
+        for atributo in atributos:
+            individuos = Individuo.objects.filter(atributos__id=atributo)
+            for individuo in individuos:
+                if individuo.id not in reportados:#Si no esta lo agregamos
+                    reportado = Creportado()
+                    reportado.individuo = individuo
+                    reportados[reportado.individuo.id] = reportado
+                #Le sumamos 1 a ese atributo
+                reportados[individuo.id].atributos += 1
+        for sintoma in sintomas:
+            individuos = Individuo.objects.filter(sintomas__id=sintoma)
+            for individuo in individuos:
+                if individuo.id not in reportados:#Si no esta lo agregamos
+                    reportado = Creportado()
+                    reportado.individuo = individuo
+                    reportados[reportado.individuo.id] = reportado
+                #Le sumamos 1 a ese atributo
+                reportados[individuo.id].sintomas += 1
+        reportados = list(reportados.values()) 
+        return render(request, "reporte_basico_mostrar.html", {'reportados': reportados, })
+    return render(request, "reporte_basico_buscar.html", {'atributos': atributos, 'sintomas': sintomas, })
 
 @permission_required('operadores.reportes')
 def csv_individuos(request):

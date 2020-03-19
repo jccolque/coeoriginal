@@ -1,0 +1,40 @@
+{% extends 'base_informacion.html' %}
+{% load static %}
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2>Individuos Registrados</h2>
+        </div>
+        <div class="row">
+        <div class="col-md-12">
+            <table class="listado">
+                <tr>
+                    <th colspan="2">Identificacion</th>
+                    <th>Fecha de Nacimiento</th>
+                    <th>Nacionalidad</th>
+                    <th>Origen - Destino</th>
+                    <th>Estado</th>
+                    <th>Atributos</th>
+                    <th>Sintomas</th>
+                    <th>Ver Detalle</th>
+                </tr>
+                {% for reportado in reportados %}
+                    {% with reportado.individuo as individuo %}
+                        <tr>
+                            <td>{{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</td>
+                            <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
+                            <td>{{individuo.fecha_nacimiento}}</td>
+                            <td>{{individuo.nacionalidad}}</td>
+                            <td>{{individuo.origen}} - {{individuo.destino}}</td>
+                            <td>{{individuo.ultimo_estado}}</td>
+                            <td>{{reportado.atributos}}</td>
+                            <td>{{reportado.sintomas}}</td>
+                            <td><a href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">(Ver Detalle)</a></td>
+                        </tr>
+                    {% endwith %}
+                {% endfor %}
+            </table>
+            {% include 'extras/paginador.html' with elementos=individuos %}
+        </div>
+    </div>
+{% endblock %}
