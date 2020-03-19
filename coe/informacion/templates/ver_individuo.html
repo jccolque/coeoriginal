@@ -1,5 +1,6 @@
 {% extends 'base_informacion.html' %}
 
+{% load static %}
 {% load seguridad_tags%}
 
 {% block content %}
@@ -16,12 +17,19 @@
                         <p>Email: {{individuo.email}}</p>
                         <p>Nacionalidad: {{individuo.nacionalidad}}</p>
                         {% if individuo.domicilio %}
-                            <p>Domicilio: {{individuo.domicilio.calle}} {{individuo.domicilio.numero}}, {{individuo.domicilio.barrio}} - {{individuo.domicilio.localidad}}</p>
+                            <p>Residencia Actual: {{individuo.domicilio.calle}} {{individuo.domicilio.numero}}, {{individuo.domicilio.barrio}} - {{individuo.domicilio.localidad}}</p>
+                        {% else %}
+                            <h4 class="alerta">NO REGISTRA RESIDENCIA ACTUAL EN LA PROVINCIA: <a href="{% url 'informacion:cargar_domicilio' individuo_id=individuo.id %}">CARGAR</a></h4>
                         {% endif %}
                         <p>Origen: {{individuo.origen}} - Destino:{{individuo.destino}}</p>
+                        <h3>ESTADO: <b>{{individuo.situacion_actual}}</b> 
+                            <a class="nolink" href="{% url 'informacion:historico_situacion' individuo_id=individuo.id %}">
+                                <img class="icons" src="{% static '/img/icons/history.png' %}">
+                            </a>
+                        </h3>
                         <hr>
                         {{individuo.particularidades|safe}}
-
+                        <hr>
                         <!--Tabla de Sintomas Registrados-->
                         {% for sintoma in individuo.sintomas.all %}
                             {% if forloop.first %}

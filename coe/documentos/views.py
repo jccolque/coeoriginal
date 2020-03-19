@@ -9,7 +9,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from core.forms import SearchForm
 from operadores.functions import obtener_operador
 #Imports app
-from .models import Documento
+from .models import Documento, Version
 from .forms import DocumentoForm, VersionForm
 
 # Create your views here.
@@ -54,6 +54,12 @@ def cargar_actualizacion(request, documento_id):
             form.save()
             return redirect('documentos:ver_documento', documento_id=documento.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Archivo", 'form': form, 'boton': "Agregar", })
+
+def eliminar_version(request, version_id):
+    version = Version.objects.get(pk=version_id)
+    documento = version.documento
+    version.delete()
+    return redirect('documentos:ver_documento', documento_id=documento.id)
 
 @staff_member_required
 def ver_documento(request, documento_id):

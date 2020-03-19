@@ -200,3 +200,32 @@ section.formulario .respuesta-container {
     font-weight: bold;
     font-size: 1em;
 }
+
+/* FORMULARIOS CUSTOM */
+.formulario_custom {
+    background: var(--color_claro);
+    margin: 35px;
+    border: 2px solid var(--color_oscuro);
+    border-radius: 15px;
+    color: rgb(7, 7, 7);
+    padding: 15px;
+}
+
+.formulario_custom h2 {
+
+}
+
+.formulario_custom p.campo {
+    width: 100%;
+
+}
+
+p.definicion {
+    font-size: 1em;
+}
+
+.grupo {
+    border: 1px solid var(--color_oscuro);
+    border-radius: 15px;
+    padding: 10px;
+}

@@ -38,7 +38,7 @@
                         <ul>
                             {% for sintoma in sintomas %}
                                 <li>
-                                    <input type="checkbox" id="sintoma" name="sintoma" value="{{sintoma.id}}">
+                                    <input type="checkbox" id="sintoma" name="sintoma" value="{{sintoma.id}}" checked>
                                     <label>{{sintoma.nombre}}</label>
                                 </li>
                             {% endfor %}
@@ -49,7 +49,7 @@
                     <ul>
                         {% for atributo in atributos %}
                             <li>
-                                <input type="checkbox" id="atributo" name="atributo" value="{{atributo.id}}">
+                                <input type="checkbox" id="atributo" name="atributo" value="{{atributo.id}}" checked>
                                 <label>{{atributo.nombre}}</label>
                             </li>
                         {% endfor %}

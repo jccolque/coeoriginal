@@ -13,4 +13,5 @@ urlpatterns = [
     path('lista', views.lista_general, name='lista_general'),
     path('lista/subco/<int:subco_id>', views.lista_general, name='lista_detallada'),
     path('ver/<int:documento_id>', views.ver_documento, name='ver_documento'),
+    path('del/ver/<int:version_id>', views.eliminar_version, name='eliminar_version'),
 ]

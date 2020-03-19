@@ -13,6 +13,7 @@ from operadores.functions import obtener_operador
 from .choices import TIPO_ESTADO, TIPO_CONDUCTA
 from .models import Archivo
 from .models import Vehiculo, Individuo, Origen
+from .models import Domicilio, Atributo, Sintoma
 from .models import TipoAtributo, TipoSintoma
 from .forms import ArchivoForm, VehiculoForm, IndividuoForm
 from .forms import DomicilioForm, AtributoForm, SintomaForm
@@ -138,13 +139,37 @@ def cargar_individuo(request, vehiculo_id=None, individuo_id=None):
             individuo = form.save(commit=False)
             individuo.operador = operador
             individuo.save()
+            #Generamos modelos externos:
+            #Creamos domicilio
+            domicilio = Domicilio()
+            domicilio.individuo = individuo
+            domicilio.localidad = form.cleaned_data['dom_localidad']
+            domicilio.calle = form.cleaned_data['dom_calle']
+            domicilio.numero = form.cleaned_data['dom_numero']
+            domicilio.aclaracion = form.cleaned_data['dom_aclaracion']
+            domicilio.save()
+            #Creamos atributos
+            atributos = form.cleaned_data['atributos']
+            for atributo_id in atributos:
+                atributo = Atributo()
+                atributo.individuo = individuo
+                atributo.tipo = TipoAtributo.objects.get(pk=atributo_id)
+                atributo.save()           
+            #Creamos sintomas
+            sintomas = form.cleaned_data['sintomas']
+            for sintoma_id in sintomas:
+                sintoma = Sintoma()
+                sintoma.individuo = individuo
+                sintoma.tipo = TipoSintoma.objects.get(pk=sintoma_id)
+                sintoma.save()  
+            #Si vino en un vehiculo
             if vehiculo_id:
                 vehiculo = Vehiculo.objects.get(pk=vehiculo_id)
                 origen = Origen(vehiculo=vehiculo, individuo=individuo)
                 origen.save()
                 return redirect('informacion:ver_vehiculo', vehiculo_id=vehiculo.id)
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
-    return render(request, "extras/generic_form.html", {'titulo': "Cargar Individuo", 'form': form, 'boton': "Cargar", })
+    return render(request, "cargar_individuo.html", {'titulo': "Cargar Individuo", 'form': form, 'boton': "Cargar", })
 
 @permission_required('operadores.cargar_individuo')
 def cargar_domicilio(request, individuo_id):
@@ -199,11 +224,12 @@ def cargar_sintoma(request, individuo_id):
 #Reportes en el sistema
 @permission_required('operadores.reportes')
 def reporte_basico(request):
+    #Definimos un objecto para jugar
     class Creportado(object):
         individuo = Individuo()
         atributos = 0
         sintomas = 0
-
+    #iniciamos la vista
     estados = TIPO_ESTADO
     conductas = TIPO_CONDUCTA
     atributos = TipoAtributo.objects.all()

@@ -1,6 +1,6 @@
 /* CONSTANTES */
 :root {
-    --color_claro: rgb(170, 194, 62);
-    --color_primario: rgb(214, 157, 52);
-    --color_oscuro: rgb(133, 81, 14);
+    --color_claro: rgba(149, 185, 119, 0.884);
+    --color_primario: rgba(61, 155, 42, 0.918);
+    --color_oscuro: rgba(60, 148, 25, 0.863);
   }

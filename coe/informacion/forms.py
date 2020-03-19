@@ -9,8 +9,9 @@ from django.forms.widgets import CheckboxSelectMultiple
 #Imports extra
 from dal import autocomplete
 #Imports del proyecto
-
+from georef.models import Localidad
 #Imports de la app
+from .models import TipoAtributo, TipoSintoma
 from .models import Archivo, Vehiculo
 from .models import Individuo, Domicilio, Atributo, Sintoma
 from .models import Situacion
@@ -20,9 +21,6 @@ class ArchivoForm(forms.ModelForm):
     class Meta:
         model = Archivo
         fields = ['tipo', 'nombre', 'archivo', ]
-        widgets = {
-            #'descripcion': forms.Textarea(attrs={'cols': 40, 'rows': 10}),
-        }
 
 class VehiculoForm(forms.ModelForm):
     class Meta:
@@ -31,6 +29,23 @@ class VehiculoForm(forms.ModelForm):
         exclude = ('fecha', 'usuario',)
 
 class IndividuoForm(forms.ModelForm):
+    dom_localidad = forms.ModelChoiceField(
+        queryset=Localidad.objects.all(),
+        widget=autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+    )
+    dom_calle = forms.CharField()
+    dom_numero = forms.IntegerField()
+    dom_aclaracion = forms.CharField()
+    atributos = forms.MultipleChoiceField(
+        choices=[(t.id, t.nombre) for t in TipoAtributo.objects.all()],
+        widget=CheckboxSelectMultiple(attrs={'class':'multiplechoice',}),
+        required=False
+    )
+    sintomas = forms.MultipleChoiceField(
+        choices=[(s.id, s.nombre) for s in TipoSintoma.objects.all()],
+        widget=CheckboxSelectMultiple(attrs={'class':'multiplechoice',}),
+        required=False
+    )
     class Meta:
         model = Individuo
         fields= '__all__'
@@ -38,7 +53,7 @@ class IndividuoForm(forms.ModelForm):
             'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
             'origen': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
             'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
-        }
+        }   
 
 class SearchIndividuoForm(forms.Form):
     num_doc = forms.IntegerField(required=False)

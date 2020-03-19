@@ -7,12 +7,17 @@ from django.forms import CheckboxSelectMultiple
 #Imports de la app
 from .models import Archivo
 from .models import Enfermedad
-from .models import Vehiculo, Individuo
+from .models import Vehiculo, Individuo, Domicilio
 from .models import Situacion
 from .models import TipoAtributo, Atributo
 from .models import TipoSintoma, Sintoma
 
 #Definimos los inlines:
+class DomicilioInline(admin.TabularInline):
+    model = Domicilio
+    fk_name = 'individuo'
+    extra = 0
+
 class SituacionInline(admin.TabularInline):
     model = Situacion
     fk_name = 'individuo'
@@ -53,7 +58,7 @@ class IndividuoAdmin(admin.ModelAdmin):
     model = Individuo
     search_fields = ['nombres', 'apellidos', 'num_doc', ]
     list_filter = ['nacionalidad']
-    inlines = [SituacionInline, AtributoInline, SintomaInline, ]
+    inlines = [SituacionInline, DomicilioInline, AtributoInline, SintomaInline, ]
 
 class VehiculoAdmin(admin.ModelAdmin):
     model = Vehiculo

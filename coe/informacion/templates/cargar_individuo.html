@@ -1,0 +1,66 @@
+{% extends 'base_informacion.html' %}
+{% load static %}
+
+{% block custom_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/generic_form.css' %}" />
+{% endblock %}
+
+
+{% block content %}
+    <section class="formulario_custom">
+        <div class="container">
+            <div class="row">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <!-- Mostramos errores -->
+                    {% for error in form.errors %}
+                        <p>{{error}}</p>
+                    {% endfor %}
+                    <!-- Formulario -->
+                    <h2>Cargar Individuo</h2>
+                    <div class="col-sm-5 col-sm-offset-1">
+                        <div class="grupo">
+                            <h3>Datos Personales</h3>
+                            <p class="campo">{{form.tipo_doc}} {{form.num_doc}}</p>
+                            <p class="campo">Apellido: {{form.apellidos}}</p>
+                            <p class="campo">Nombres: {{form.nombres}}</p>
+                            <p class="campo">Sexo: {{form.sexo}}</p>
+                            <p class="campo">Fecha Nacimiento: {{form.fecha_nacimiento}}</p>
+                            <p class="campo">Telefono: {{form.telefono}}</p>
+                            <p class="campo">Email: {{form.email}}</p>
+                            <p class="campo">Nacionalidad: {{form.nacionalidad}}</p>
+                            <p class="campo">Pais de Origen: {{form.origen}}</p>
+                            <p class="campo">Destino en la Provincia: {{form.destino}}</p>
+                        </div>
+                        <h3>Observaciones:</h3>
+                        {{form.observaciones}}
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="col-sm-6 col-sm-offset-3 grupo">
+                            <h3>Residencia Actual:</h3>
+                            <p>{{form.dom_localidad}}</p>
+                            <p>Calle:{{form.dom_calle}}</p>
+                            <p>Numero: {{form.dom_numero}}</p>
+                            <p>Aclaracion: {{form.dom_aclaracion}}</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <h3>Signos y Sintomas:</h3>
+                            {{form.sintomas}}
+                        </div>
+                        <div class="col-sm-6">
+                            <h3>Marcadores:</h3>
+                            <p class="definicion">Atributos Importantes</p>
+                            {{form.atributos}}
+                        </div>
+                        <div class="col-sm-3 col-sm-offset-6">
+                            <button type="submit">Cargar</button>
+                        </div>
+                    </div>
+                    <!-- Para el autocomplete -->
+                    <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+                    {{ form.media }}
+                </form>
+            </div>
+        </section>
+    </section>
+{% endblock %}

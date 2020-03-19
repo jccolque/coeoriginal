@@ -31,6 +31,7 @@ urlpatterns = [
     path('cargar/domicilio/<int:individuo_id>', views.cargar_domicilio, name='cargar_domicilio'),
     path('cargar/atributo/<int:individuo_id>', views.cargar_atributo, name='cargar_atributo'),
     path('cargar/sintoma/<int:individuo_id>', views.cargar_sintoma, name='cargar_sintoma'),
+    path('situ/hist/<int:individuo_id>', views.ver_individuo, name='historico_situacion'),#NO FUNCIONA> FALTA VISTA
     #Reportes
     path('reporte/basico', views.reporte_basico, name='reporte_basico'),
     path('csv/individuos/', views.csv_individuos, name='csv_individuos'),

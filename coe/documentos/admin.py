@@ -9,8 +9,6 @@ from .models import Documento, Version
 class VersionInline(admin.TabularInline):
     model = Version
     fk_name = 'documento'
-    def has_delete_permission(self, request, obj=None):
-        return False
 
 #Definimos nuestros modelos administrables:
 class DocumentoAdmin(admin.ModelAdmin):
