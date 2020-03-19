@@ -1,5 +1,4 @@
 {% extends 'base_informacion.html' %}
-
 {% load seguridad_tags%}
 
 {% block content %}
@@ -7,19 +6,19 @@
         <section class="informacion_basica">
             <div class="container">
                 <div class="row">        
-                    <h1>Archivo Subido con Exito!</h1>
                     <div class="col-md-8">
-
-                        <h2>{{archivo.tipo}} - {{archivo.nombre}}</h2>
+                        <h2><b>{{archivo.get_tipo_display}} - {{archivo.nombre}}</b></h2>
                         <p><b>Fecha de Recibido:</b> {{archivo.fecha}}</p>
                         <p><b>Usuario Emisor:</b> {{archivo.operador}}</p>
-                        <p><b>Procesado:</b> {{archivo.procesado}}</p>                
+                        <p><b>Procesado:</b> {{archivo.procesado}}</p>
+                        <hr>          
                         <img src="{{archivo.archivo.url}}">
 
                     </div>
                     <div class="col-md-4">
                         {% include 'users/info_user.html' %}
                         <ul class="menu_botones">
+                            <li><a href="{{archivo.archivo.url}}">Descargar</a></li>
                             <li><a href="{% url 'informacion:subir_archivos'  %}">Subir otro Archivos</a></li>
                             <li>
                                 <a href="{% url 'informacion:procesar_archivos' archivo_id=archivo.id  %}">
