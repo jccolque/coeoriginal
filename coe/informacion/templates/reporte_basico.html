@@ -1,0 +1,44 @@
+{% extends 'base_informacion.html' %}
+{% load static %}
+{% block content %}
+    <div class="formulario container">
+        <div class="row">
+            <h2>Seleccione los filtros:</h2>
+        </div>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-4">
+                    <h3 class="filter_name">Basicos:</h3>
+                    <ul>
+                        <li>Desde: <input id="begda" type="date" value="2020-01-01"></li>
+                        <li>Hasta: <input id="endda" type="date" value="2020-12-31"></li></li>
+                    </ul>                
+                </div>
+                <div class="col-md-4">
+                    <h3 class="filter_name">Sintomas</h3>
+                        <ul>
+                            {% for sintoma in sintomas %}
+                                <li>
+                                    <input type="checkbox" id="sintoma" name="sintoma" value="{{sintoma.id}}">
+                                    <label>{{sintoma.nombre}}</label>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                </div>
+                <div class="col-md-4">
+                    <h3 class="filter_name">Atributos</h3>
+                    <ul>
+                        {% for atributo in atributos %}
+                            <li>
+                                <input type="checkbox" id="atributo" name="atributo" value="{{atributo.id}}">
+                                <label>{{atributo.nombre}}</label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <button type="submit">Reporte</button>
+        </form>
+    </div>
+{% endblock %}

@@ -12,6 +12,7 @@ from operadores.functions import obtener_operador
 #imports de la app
 from .models import Archivo
 from .models import Vehiculo, Individuo, Origen
+from .models import TipoAtributo, TipoSintoma
 from .forms import ArchivoForm, VehiculoForm, IndividuoForm
 from .forms import DomicilioForm, AtributoForm, SintomaForm
 from .forms import SearchIndividuoForm
@@ -181,6 +182,15 @@ def cargar_sintoma(request, individuo_id):
             sintoma.save()
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Sintoma", 'form': form, 'boton': "Cargar", })
+
+#Reportes en el sistema
+@permission_required('operadores.reportes')
+def reporte_basico(request):
+    atributos = TipoAtributo.objects.all()
+    sintomas = TipoSintoma.objects.all()
+    if request.method == "POST":
+        print(request.POST)
+    return render(request, "reporte_basico.html", {'atributos': atributos, 'sintomas': sintomas, })
 
 @permission_required('operadores.reportes')
 def csv_individuos(request):

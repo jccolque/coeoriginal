@@ -155,7 +155,7 @@ def imprimir_tarjetas(request):
     if request.method == 'POST':
         form = ImprimirTarjetasForm(request.POST)
         if form.is_valid():
-            operadores = form.cleaned_data['operadores']
+            operadores = Operador.objects.filter(id__in=form.cleaned_data['operadores'])
         return render(request, 'tarjetas.html', {'operadores': operadores,})
     return render(request, "extras/generic_form.html", {'titulo': "Seleccione Credenciales", 'form': form, 'boton': "Imprimir", })
 
