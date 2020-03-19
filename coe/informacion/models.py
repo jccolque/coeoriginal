@@ -106,7 +106,8 @@ class Individuo(models.Model):
     tipo_doc = models.IntegerField(choices=TIPO_DOCUMENTOS, default=2)
     num_doc = models.CharField('Numero de Documento/Pasaporte', 
         max_length=20, unique=True,
-        validators=[RegexValidator('^[A-Z_\d]*$', 'Solo Mayusculas.')],)
+        validators=[RegexValidator('^[A-Z_\d]*$', 'Solo Mayusculas.')],
+    )
     sexo = models.CharField('Sexo', max_length=1, choices=TIPO_SEXO, default='M')
     apellidos = models.CharField('Apellidos', max_length=100)
     nombres = models.CharField('Nombres', max_length=100)

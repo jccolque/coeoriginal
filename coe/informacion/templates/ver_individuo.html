@@ -22,7 +22,7 @@
                             <h4 class="alerta">NO REGISTRA RESIDENCIA ACTUAL EN LA PROVINCIA: <a href="{% url 'informacion:cargar_domicilio' individuo_id=individuo.id %}">CARGAR</a></h4>
                         {% endif %}
                         <p>Origen: {{individuo.origen}} - Destino:{{individuo.destino}}</p>
-                        <h3>ESTADO: <b>{{individuo.situacion_actual}}</b> 
+                        <h3>Estado: <b>{{individuo.situacion_actual}}</b> 
                             <a class="nolink" href="{% url 'informacion:historico_situacion' individuo_id=individuo.id %}">
                                 <img class="icons" src="{% static '/img/icons/history.png' %}">
                             </a>
@@ -32,7 +32,6 @@
                         </h3>
                         <hr>
                         {{individuo.particularidades|safe}}
-                        <hr>
                         <!--Tabla de Sintomas Registrados-->
                         {% for sintoma in individuo.sintomas.all %}
                             {% if forloop.first %}
@@ -46,14 +45,12 @@
                                         <th>Aclaracion</th>
                                     </tr>
                             {% endif %}
-
                             <tr>
                                 <td>{{sintoma.fecha}}</td>
                                 <td>{{sintoma.tipo.nombre}}</td>
                                 <td>{{sintoma.tipo.get_importancia_display}}</td>
                                 <td>{{sintoma.aclaracion}}</td>
                             </tr>
-                            
                             {% if forloop.last %}
                                 </table>
                             {% endif %}
@@ -71,14 +68,12 @@
                                         <th>Aclaracion</th>
                                     </tr>
                             {% endif %}
-
                             <tr>
                                 <td>{{atributo.fecha}}</td>
                                 <td>{{atributo.tipo.nombre}}</td>
                                 <td>{{atributo.tipo.get_importancia_display}}</td>
                                 <td>{{atributo.aclaracion}}</td>
                             </tr>
-                            
                             {% if forloop.last %}
                                 </table>
                             {% endif %}

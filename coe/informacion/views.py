@@ -202,10 +202,13 @@ def cargar_domicilio(request, individuo_id):
 @permission_required('operadores.cargar_individuo')
 def cargar_situacion(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
-    form = SituacionForm(instance=individuo.situacion_actual())
+    form = SituacionForm(instance=individuo.situacion_actual(),)
     if request.method == "POST":
-        form = SituacionForm(request.POST, initial={'individuo': individuo})
+        form = SituacionForm(request.POST)
         if form.is_valid():
+            situacion = form.save(commit=False)
+            
+            situacion.individuo = individuo
             form.save()
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Situacion", 'form': form, 'boton': "Cargar", }) 
