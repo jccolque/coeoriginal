@@ -53,8 +53,9 @@
                     </div>
                     <div class="col-md-4">
                         <ul class="menu_botones">
-                            {% include 'users/info_user.html' %}
                             <li><a href="{% url 'documentos:cargar_actualizacion' documento_id=documento.id %}">ACTUALIZAR</a></li>
+                            <hr>
+                            {% include 'users/info_user.html' %}
                         </ul>
                     </div>
                 </div>

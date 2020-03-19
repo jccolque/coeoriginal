@@ -16,7 +16,6 @@
 
                     </div>
                     <div class="col-md-4">
-                        {% include 'users/info_user.html' %}
                         <ul class="menu_botones">
                             <li><a href="{{archivo.archivo.url}}">Descargar</a></li>
                             <li><a href="{% url 'informacion:subir_archivos'  %}">Subir otro Archivos</a></li>
@@ -31,6 +30,8 @@
                             </li>
                             <li><a href="{% url 'informacion:archivos_pendientes' %}">Volver al Listado de Pendientes</a></li>
                         </ul>
+                        <hr>
+                        {% include 'users/info_user.html' %}
                     </div>
                 </div>
             </div>

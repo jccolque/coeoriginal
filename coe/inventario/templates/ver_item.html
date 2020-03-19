@@ -7,18 +7,19 @@
         <section class="informacion_basica">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-9">
+                    <div class="col-md-8">
                         <h2>{{item.nombre}}</h2>
                         <p>Rubro: {{item.subgrupo.rubro}}</p>
                         <p>Subgrupo: {{item.subgrupo}}</p>
                         <p>Responsable: {{item.responsable}}</p>
                         <p>Datos de Contacto: {{item.responsable.telefono}} /  {{item.responsable.email}}</p>
                     </div>
-                    <div class="col-md-3">
-                        <!--{% include 'users/info_user.html' %}-->
+                    <div class="col-md-4">
                         <ul class="menu_botones">
                             <li><a href="{% url 'inventario:crear_evento' item_id=item.id %}">Cargar Evento</a></li>
                         </ul>
+                        <hr>
+                        {% include 'users/info_user.html' %}
                     </div>
                 </div>
                 <div class="row">
