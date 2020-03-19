@@ -14,6 +14,8 @@ class Documento(models.Model):
     nombre = models.CharField('Nombre', max_length=200)
     tipo = models.CharField('Tipo Archivo', max_length=3, choices=TIPO_ARCHIVO, default='WRD')
     autor = models.CharField('Autor', max_length=100)
+    def __str__(self):
+        return self.nombre + '-' + self.tipo + '-' + self.autor
     def ultima_version(self):
         if self.versiones.all():
             return self.versiones.last()
@@ -26,3 +28,5 @@ class Version(models.Model):
     operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name='versiones')
     cambios = HTMLField()
     fecha = models.DateTimeField('Fecha Subido', default=timezone.now)
+    def __str__(self):
+        return str(self.fecha)
