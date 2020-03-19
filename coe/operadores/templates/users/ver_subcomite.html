@@ -24,6 +24,9 @@
                             <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
                             {{ form.media }}
                         </form>
+                        <ul class="menu_botones">
+                            <li><a href="{% url 'inventario:mod_subcomite' subcomite_id=subcomite.id %}">Cargar Evento</a></li>
+                        </ul>
                     </div>
                 </div>
                 <hr>

@@ -12,6 +12,7 @@ urlpatterns = [
     path('listar/subco', views.listar_subcomites, name='listar_subcomites'),
     path('ver/subco/<int:subco_id>', views.ver_subcomite, name='ver_subcomite'),
     path('crear/subco', views.crear_subcomite, name='crear_subcomite'),
+    path('mod/subco/<int:subco_id>', views.crear_subcomite, name='mod_subcomite'),
     #ABM Operadores
     path('listar/op', views.listar_operadores, name='listar_operadores'),
     path('crear/op', views.crear_operador, name='crear_operador'),
@@ -20,6 +21,7 @@ urlpatterns = [
     path('desactivar/op/<int:operador_id>', views.desactivar_usuario, name='desactivar_usuario'),
     path('activar/op/<int:operador_id>', views.activar_usuario, name='activar_usuario'),
     path('credencial/op/<int:operador_id>', views.ver_credencial, name='ver_credencial'),
+    path('imprimir', views.imprimir_tarjetas, name='imprimir_tarjetas'),
     #Auditoria
     path('auditoria', views.auditoria, name='auditoria'),
     path('auditoria/<int:user_id>', views.auditoria, name='auditoria_propia'),

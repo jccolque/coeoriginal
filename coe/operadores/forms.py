@@ -66,6 +66,13 @@ class ModOperadorForm(forms.ModelForm):
             raise forms.ValidationError("El mail indicado ya esta en uso, si el usuario tiene mas de una funcion, contacte al administrador")
         return self.cleaned_data['email']
 
+class ImprimirTarjetasForm(forms.Form):
+    operadores = forms.MultipleChoiceField(
+        label='Seleccione Operadores',
+        choices=[(o.id, o.apellidos+', '+o.nombres ) for o in Operador.objects.all()],
+        widget=CheckboxSelectMultiple(attrs={'class':'multiplechoice',}),
+    )
+
 class ModPassword(forms.Form):
     username = forms.CharField(label='Usuario', widget=forms.TextInput(attrs={'readonly':'readonly'}))
     passwd1 = forms.CharField(label="Password", max_length=32, widget=forms.PasswordInput)

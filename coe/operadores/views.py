@@ -21,7 +21,8 @@ from .functions import obtener_permisos
 from .models import SubComite, Operador, EventoOperador
 from .forms import SubComiteForm, BuscarOperadorForm, CrearOperadorForm
 from .forms import ModOperadorForm, ModPassword, AuditoriaForm
-from .forms import AsistenciaForm
+from .forms import AsistenciaForm, ImprimirTarjetasForm
+
 # Create your views here.
 @permission_required('operadores.menu_operadores')
 def menu(request):
@@ -52,10 +53,13 @@ def ver_subcomite(request, subco_id):
     return render(request, 'users/ver_subcomite.html', {'subcomite': subcomite, 'form': form, })
 
 @permission_required('operadores.crear_subcomite')
-def crear_subcomite(request):
-    form = SubComiteForm()
+def crear_subcomite(request, subco_id=None):
+    subcomite = None
+    if subco_id:
+        subcomite = SubComite.objects.get(pk=subco_id)
+    form = SubComiteForm(instance=subcomite)
     if request.method == "POST":
-        form = SubComiteForm(request.POST, request.FILES)
+        form = SubComiteForm(request.POST, instance=subcomite)
         if form.is_valid():
             subcomite = form.save(commit=False)
             subcomite.save()
@@ -144,6 +148,16 @@ def mod_operador(request, operador_id=None):
 def ver_credencial(request, operador_id):
     operador = Operador.objects.get(id=operador_id)
     return render(request, 'credencial.html', {'operador': operador,})
+
+@permission_required('operadores.ver_credencial')
+def imprimir_tarjetas(request):
+    form = ImprimirTarjetasForm()
+    if request.method == 'POST':
+        form = ImprimirTarjetasForm(request.POST)
+        if form.is_valid():
+            operadores = form.cleaned_data['operadores']
+        return render(request, 'tarjetas.html', {'operadores': operadores,})
+    return render(request, "extras/generic_form.html", {'titulo': "Seleccione Credenciales", 'form': form, 'boton': "Imprimir", })
 
 @permission_required('operadores.modificar_operador')
 def cambiar_password(request, operador_id):

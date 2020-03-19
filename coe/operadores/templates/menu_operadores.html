@@ -10,19 +10,20 @@
                     <h1>Menu Operadores:</h1>
                     <div class="col-md-8">
                         <ul class="menu_botones">
-                            {% if perms.operadores.ver_subcomites %}
-                                <li><a href="{% url 'operadores:listar_subcomites'  %}">Ver Listado de SubComites</a></li>
-                            {% endif %}
                             {% if perms.operadores.crear_subcomite %}
                                 <li><a href="{% url 'operadores:crear_subcomite'  %}">Crear Subcomite</a></li>
                             {% endif %}
-
-                            {% if perms.operadores.listar_operadores %}
-                                <hr>
-                                <li><a href="{% url 'operadores:listar_operadores'  %}">Ver Listado de Operadores</a></li>
+                            {% if perms.operadores.ver_subcomites %}
+                                <li><a href="{% url 'operadores:listar_subcomites'  %}">Ver Listado de SubComites</a></li>
                             {% endif %}
+
                             {% if perms.operadores.crear_operador %}
+                                <hr>
                                 <li><a href="{% url 'operadores:crear_operador'  %}">Crear Operador</a></li>
+                            {% endif %}
+                            {% if perms.operadores.listar_operadores %}
+                                <li><a href="{% url 'operadores:listar_operadores'  %}">Ver Listado de Operadores</a></li>
+                                <li><a href="{% url 'operadores:imprimir_tarjetas'  %}">Imprimir Credenciales</a></li>
                             {% endif %}
 
                             {% if perms.operadores.control_asistencia %}
