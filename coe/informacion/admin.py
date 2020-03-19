@@ -38,8 +38,6 @@ class IndividuoInline(admin.TabularInline):
     model = Individuo
     fk_name = 'individuo'
     extra = 1
-    def has_delete_permission(self, request, obj=None):
-        return False
 
 #Definimos nuestros modelos administrables:
 class ArchivoAdmin(admin.ModelAdmin):

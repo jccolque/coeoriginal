@@ -6,6 +6,7 @@ from django.utils import timezone
 #Imports de paquetes extras
 from auditlog.registry import auditlog
 from tinymce.models import HTMLField
+from django.core.validators import RegexValidator
 #Imports del proyecto:
 from core.choices import TIPO_DOCUMENTOS, TIPO_SEXO
 from operadores.models import Operador
@@ -103,7 +104,9 @@ class Vehiculo(models.Model):
 
 class Individuo(models.Model):
     tipo_doc = models.IntegerField(choices=TIPO_DOCUMENTOS, default=2)
-    num_doc = models.CharField('Numero de Documento/Pasaporte', max_length=20, unique=True)
+    num_doc = models.CharField('Numero de Documento/Pasaporte', 
+        max_length=20, unique=True,
+        validators=[RegexValidator('^[A-Z_]*$', 'Solo Mayusculas.')],)
     sexo = models.CharField('Sexo', max_length=1, choices=TIPO_SEXO, default='M')
     apellidos = models.CharField('Apellidos', max_length=100)
     nombres = models.CharField('Nombres', max_length=100)
