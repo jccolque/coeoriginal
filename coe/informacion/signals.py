@@ -27,7 +27,7 @@ def crear_situacion(created, instance, **kwargs):
             except TipoAtributo.DoesNotExist:
                 print('No existe Atributo de Pais de Riesgo')
         #   Vejez +60 años
-        if instance.fecha_nacimiento < (timezone.now() - relativedelta(years=60)):
+        if instance.fecha_nacimiento < (timezone.now().date() - relativedelta(years=60)):
             try:
                 atributo = Atributo()
                 atributo.individuo = instance
