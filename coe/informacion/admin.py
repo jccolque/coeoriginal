@@ -61,7 +61,7 @@ class EnfermedadAdmin(admin.ModelAdmin):
 
 class IndividuoAdmin(admin.ModelAdmin):
     model = Individuo
-    search_fields = ['nombres', 'apellidos', 'num_dic', ]
+    search_fields = ['nombres', 'apellidos', 'num_doc', ]
     list_filter = ['nacionalidad']
     inlines = [SituacionInline, AtributoInline, SintomaInline, ]
     def has_delete_permission(self, request, obj=None):

@@ -171,7 +171,7 @@ class Situacion(models.Model):
     class Meta:
         ordering = ['fecha']
     def __str__(self):
-        return str(self.individuo) + ': ' + self.get_estado_display() + ' '  + self.get_conducta_display() + ' ' + str(self.fecha)
+        return self.get_estado_display() + '-'  + self.get_conducta_display()
     def as_dict(self):
         return {
             "id": self.id,
@@ -189,6 +189,8 @@ class Atributo(models.Model):#Origen del Dato
     aclaracion =  models.CharField('Aclaracion', max_length=200, null=True, blank=True)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     activo = models.BooleanField(default=True)
+    class Meta:
+        ordering = ['fecha']
     def __str__(self):
         return str(self.individuo) + ': ' + str(self.tipo) + ' ' + str(self.fecha)
     def as_dict(self):
@@ -207,6 +209,8 @@ class Sintoma(models.Model):#Origen del Dato
     tipo = models.ForeignKey(TipoSintoma, on_delete=models.CASCADE, related_name="sintomas")
     aclaracion =  models.CharField('Aclaracion', max_length=200, null=True, blank=True)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    class Meta:
+        ordering = ['fecha']
     def __str__(self):
         return str(self.tipo) + ': ' + str(self.fecha)
     def as_dict(self):

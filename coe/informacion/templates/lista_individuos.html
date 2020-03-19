@@ -13,7 +13,8 @@
                     <th>Fecha de Nacimiento</th>
                     <th>Nacionalidad</th>
                     <th>Origen - Destino</th>
-                    <th>Particularidades</th>
+                    <th>Situacion</th>
+                    <th>Atributo</th>
                     <th>Sintomas</th>
                     <th>Ver Detalle</th>
                 </tr>
@@ -24,10 +25,15 @@
                         <td>{{individuo.fecha_nacimiento}}</td>
                         <td>{{individuo.nacionalidad}}</td>
                         <td>{{individuo.origen}} - {{individuo.destino}}</td>
-                        <td>{{individuo.particularidades|safe}}</td>
+                        <td>{{individuo.situacion_actual}}</td>
+                        <td>
+                            {% for atributo in individuo.atributos.all%}
+                                <li>{{atributo.tipo}}</li>
+                            {% endfor %}
+                        </td>
                         <td>
                             {% for sintoma in individuo.sintomas.all%}
-                                {{sintoma}},
+                                <li>{{sintoma.tipo}}</li>
                             {% endfor %}
                         </td>
                         <td><a href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">(Ver Detalle)</a></td>
