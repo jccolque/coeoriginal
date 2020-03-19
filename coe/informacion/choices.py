@@ -20,3 +20,24 @@ TIPO_VEHICULO = (
     (4, 'Comercial Pequeño'),
     (5, 'Avion'),
 )
+
+TIPO_ESTADO = (
+    (1, 'Dudoso'),
+    (2, 'Sano'),
+    (31, 'Contacto Bajo Riesgo'),
+    (32, 'Contacto Alto Riesgo'),
+    (4, 'Sospechoso'),
+    (5, 'Confirmado'),
+    (6, 'Curado'),
+    (71, 'Fallecido en Morgue'),
+    (72, 'Fallecido Cremado'),
+    (73, 'Fallecido Enterrado'),
+)
+
+TIPO_CONDUCTA = (
+    ('A', 'Nada'),
+    ('B', 'Evaluar'),
+    ('C', 'Cuarentena Voluntaria'),
+    ('D', 'Cuarentena Obligatoria'),
+    ('C', 'Aislado'),
+)

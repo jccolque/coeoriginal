@@ -13,6 +13,7 @@ from dal import autocomplete
 #Imports de la app
 from .models import Archivo, Vehiculo
 from .models import Individuo, Domicilio, Atributo, Sintoma
+from .models import Situacion
 
 #Definimos nuestros forms
 class ArchivoForm(forms.ModelForm):
@@ -51,6 +52,12 @@ class DomicilioForm(forms.ModelForm):
         widgets = {
             'localidad': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
         }
+
+class SituacionForm(forms.ModelForm):
+    class Meta:
+        model = Situacion
+        fields= '__all__'
+        exclude = ('individuo', )
 
 class AtributoForm(forms.ModelForm):
     class Meta:

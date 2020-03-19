@@ -15,6 +15,7 @@ from .models import Vehiculo, Individuo, Origen
 from .models import TipoAtributo, TipoSintoma
 from .forms import ArchivoForm, VehiculoForm, IndividuoForm
 from .forms import DomicilioForm, AtributoForm, SintomaForm
+from .forms import SituacionForm
 from .forms import SearchIndividuoForm
 
 # Create your views here.
@@ -156,6 +157,17 @@ def cargar_domicilio(request, individuo_id):
             domicilio.save()
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Domicilio", 'form': form, 'boton': "Cargar", })
+
+@permission_required('operadores.cargar_individuo')
+def cargar_situacion(request, individuo_id):
+    individuo = Individuo.objects.get(pk=individuo_id)
+    form = SituacionForm(instance=individuo.situacion_actual())
+    if request.method == "POST":
+        form = SituacionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Situacion", 'form': form, 'boton': "Cargar", }) 
 
 @permission_required('operadores.cargar_individuo')
 def cargar_atributo(request, individuo_id):

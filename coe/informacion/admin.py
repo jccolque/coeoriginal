@@ -8,10 +8,18 @@ from django.forms import CheckboxSelectMultiple
 from .models import Archivo
 from .models import Enfermedad
 from .models import Vehiculo, Individuo
+from .models import Situacion
 from .models import TipoAtributo, Atributo
 from .models import TipoSintoma, Sintoma
 
 #Definimos los inlines:
+class SituacionInline(admin.TabularInline):
+    model = Situacion
+    fk_name = 'individuo'
+    extra = 0
+    def has_delete_permission(self, request, obj=None):
+        return False
+
 class AtributoInline(admin.TabularInline):
     model = Atributo
     fk_name = 'individuo'
@@ -55,7 +63,7 @@ class IndividuoAdmin(admin.ModelAdmin):
     model = Individuo
     search_fields = ['nombres', 'apellidos', 'num_dic', ]
     list_filter = ['nacionalidad']
-    inlines = [AtributoInline, SintomaInline, ]
+    inlines = [SituacionInline, AtributoInline, SintomaInline, ]
     def has_delete_permission(self, request, obj=None):
         return False
 

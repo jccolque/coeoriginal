@@ -11,7 +11,8 @@ from core.choices import TIPO_DOCUMENTOS, TIPO_SEXO
 from operadores.models import Operador
 from georef.models import Nacionalidad, Localidad, Barrio
 #Imports de la app
-from .choices import TIPO_IMPORTANCIA, TIPO_ARCHIVO, TIPO_VEHICULO
+from .choices import TIPO_IMPORTANCIA, TIPO_ARCHIVO
+from .choices import TIPO_VEHICULO, TIPO_ESTADO, TIPO_CONDUCTA
 
 #Tipo Definition
 class TipoAtributo(models.Model):#Origen del Dato
@@ -100,8 +101,6 @@ class Vehiculo(models.Model):
             'plan': self.plan,
         }
 
-
-
 class Individuo(models.Model):
     tipo_doc = models.IntegerField(choices=TIPO_DOCUMENTOS, default=2)
     num_doc = models.CharField('Numero de Documento/Pasaporte', max_length=20, unique=True)
@@ -132,6 +131,8 @@ class Individuo(models.Model):
             'destino': self.destino,
             'observaciones': self.observaciones,
         }
+    def situacion_actual(self):
+        return self.situaciones.last()
 
 class Origen(models.Model):#Origen del Dato
     vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, related_name="origenes")
@@ -160,6 +161,24 @@ class Domicilio(models.Model):
             "localidad": str(self.localidad),
             "calle": self.calle,
             "numero": self.numero,
+        }
+
+class Situacion(models.Model):
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="situaciones")
+    estado = models.IntegerField('Estado de Seguimiento', choices=TIPO_ESTADO, default='1')
+    conducta = models.CharField('Conducta', max_length=1, choices=TIPO_CONDUCTA, default='A')
+    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    class Meta:
+        ordering = ['fecha']
+    def __str__(self):
+        return str(self.individuo) + ': ' + self.get_tipo_display() + ' ' + str(self.fecha)
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "individuo_id": self.individuo.id,
+            "tipo_id": self.tipo,
+            "tipo": str(self.tipo),
+            "fecha": str(self.fecha),
         }
 
 class Atributo(models.Model):#Origen del Dato
@@ -197,6 +216,9 @@ class Sintoma(models.Model):#Origen del Dato
             "aclaracion": self.aclaracion,
             "fecha": str(self.fecha),
         }
+
+#Señales
+from .signals import crear_situacion
 
 #Auditoria
 auditlog.register(Archivo)
