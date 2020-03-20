@@ -5,6 +5,7 @@ from django.apps import apps
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.mail import EmailMessage
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth import login, logout
 from django.template.loader import render_to_string
