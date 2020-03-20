@@ -205,6 +205,7 @@ class Situacion(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="situaciones")
     estado = models.IntegerField('Estado de Seguimiento', choices=TIPO_ESTADO, default='1')
     conducta = models.CharField('Conducta', max_length=1, choices=TIPO_CONDUCTA, default='A')
+    aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     class Meta:
         ordering = ['fecha']
