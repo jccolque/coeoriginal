@@ -19,10 +19,10 @@ def menu(request):
 
 #ITEMS:
 @staff_member_required
-def lista_general(request, subcomite_id=None):
+def lista_general(request, subco_id=None):
     documentos = Documento.objects.all()
-    if subcomite_id:
-        documentos = documentos.filter(subcomite__id=subcomite_id)
+    if subco_id:
+        documentos = documentos.filter(subcomite__id=subco_id)
     if request.method == "POST":
         form = SearchForm(request.POST)
         if form.is_valid():
