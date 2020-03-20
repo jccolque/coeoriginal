@@ -13,8 +13,10 @@ from operadores.functions import obtener_operador
 from .choices import TIPO_ESTADO, TIPO_CONDUCTA
 from .models import Archivo
 from .models import Vehiculo, Individuo, Origen
-from .models import Domicilio, Atributo, Sintoma
 from .models import Seguimiento
+from .models import Domicilio, GeoPosicion
+from .models import Atributo, Sintoma
+
 from .models import TipoAtributo, TipoSintoma
 from .forms import ArchivoForm, VehiculoForm, IndividuoForm
 from .forms import DomicilioForm, AtributoForm, SintomaForm
@@ -298,6 +300,23 @@ def cargar_sintoma(request, individuo_id):
             sintoma.save()
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Sintoma", 'form': form, 'boton': "Cargar", })
+
+@permission_required('operadores.ver_individuo')
+def cargar_geoposicion(request, domicilio_id):
+    domicilio = Domicilio.objects.get(pk=domicilio_id)
+    if request.method == "POST":
+        if hasattr(domicilio,'geoposicion'):
+            geoposicion = domicilio.geoposicion
+        else:
+            geoposicion = GeoPosicion()
+            geoposicion.domicilio = domicilio
+        #cargamos los datos del form:
+        geoposicion.latitud = request.POST['latitud']
+        geoposicion.longitud = request.POST['longitud']
+        geoposicion.observaciones = request.POST['observaciones']
+        geoposicion.save()
+        return redirect('informacion:ver_individuo', individuo_id=domicilio.individuo.id)
+    return render(request, "extras/gmap_form.html", {'domicilio': domicilio, })
 
 #Reportes en el sistema
 @permission_required('operadores.reportes')

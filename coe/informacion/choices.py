@@ -39,7 +39,6 @@ TIPO_CONDUCTA = (
     ('C', 'Cuarentena Voluntaria'),
     ('D', 'Cuarentena Obligatoria'),
     ('E', 'Aislado'),
-
     ('F', 'En Morgue'),
     ('G', 'Cremado'),
     ('H', 'Enterrado'),

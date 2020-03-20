@@ -35,6 +35,8 @@ urlpatterns = [
     path('cargar/relacion/<int:individuo_id>', views.cargar_relacion, name='cargar_relacion'),
     path('cargar/atributo/<int:individuo_id>', views.cargar_atributo, name='cargar_atributo'),
     path('cargar/sintoma/<int:individuo_id>', views.cargar_sintoma, name='cargar_sintoma'),
+    path('cargar/geopos/<int:domicilio_id>', views.cargar_geoposicion, name='cargar_geoposicion'),
+
     #Reportes
     path('reporte/basico', views.reporte_basico, name='reporte_basico'),
     path('csv/individuos/', views.csv_individuos, name='csv_individuos'),

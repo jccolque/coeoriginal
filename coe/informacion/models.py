@@ -201,6 +201,24 @@ class Domicilio(models.Model):
             "numero": self.numero,
         }
 
+class GeoPosicion(models.Model):
+    domicilio = models.OneToOneField(Domicilio, on_delete=models.CASCADE, related_name="geoposicion")
+    latitud = models.DecimalField('latitud', max_digits=12, decimal_places=10)
+    longitud = models.DecimalField('longitud', max_digits=12, decimal_places=10)
+    aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
+    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    def __str__(self):
+        return str(self.domicilios) + ': ' + str(self.latitud) + '|' + str(self.longitud)
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "domicilio_id": self.domicilio.id,
+            "latitud": str(self.latitud),
+            "longitud": str(self.longitud),
+            "aclaracion": self.aclaracion,
+            "fecha": str(self.fecha),
+        }
+
 class Situacion(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="situaciones")
     estado = models.IntegerField('Estado de Seguimiento', choices=TIPO_ESTADO, default='1')

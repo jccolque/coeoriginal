@@ -23,6 +23,12 @@
                                 <p>
                                     Residencia Actual: {{domicilio.calle}} {{domicilio.numero}}, {{domicilio.localidad}} ({{domicilio.aclaracion}})
                                     <a href="javascript:PopUp(2);" ><img class="icons" src="{% static '/img/icons/history.png' %}"></a>
+                                    {% if domicilio.geoposicion %}
+                                        <a href="https://www.google.com/maps?q={{domicilio.geoposicion.latitud|stringformat:".5f"}},{{domicilio.geoposicion.longitud|stringformat:".5f"}}" target="_blank" ><img class="icons" src="{% static '/img/icons/map.png' %}"></a>
+                                    {% endif %}
+                                    <a href="{% url 'informacion:cargar_geoposicion' domicilio_id=domicilio.id %}" >
+                                        <img class="icons" src="{% static '/img/icons/change.png' %}">
+                                    </a>
                                 </p>
                             {% endwith %}
                             <div class="popup-overlay"></div>

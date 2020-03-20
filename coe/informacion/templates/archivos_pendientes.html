@@ -7,15 +7,20 @@
         </div>
         <div class="row">
         <div class="col-md-12">
-            <table class="listado">
-                <tr>
-                    <th>Tipo</th>
-                    <th>Titulo</th>
-                    <th>Fecha Subido</th>
-                    <th>Operador</th>
-                    <th>Ver Documento</th>
-                </tr>
-                {% for archivo in archivos %}
+            <able width = 100% class="listado" aling= center id ="archivospend_table">
+                
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Titulo</th>
+                        <th>Fecha Subido</th>
+                        <th>Operador</th>
+                        <th>Ver Documento</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for archivo in archivos %}
                     <tr>
                         <td>{{archivo.get_tipo_display}}</td>
                         <td>{{archivo.nombre}}</td>
@@ -24,6 +29,8 @@
                         <td><a href="{% url 'informacion:ver_archivo' archivo_id=archivo.id %}" target="_blank">(Ver Documento)</a></td>
                     </tr>
                 {% endfor %}
+                </tbody>
+                
             </table>
             {% include 'extras/paginador.html' with elementos=archivos %}
         </div>
