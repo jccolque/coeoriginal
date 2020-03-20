@@ -55,8 +55,8 @@
                         <ul class="menu_botones">
                             <li><a href="{% url 'documentos:cargar_actualizacion' documento_id=documento.id %}">ACTUALIZAR</a></li>
                             <hr>
-                            {% include 'users/info_user.html' %}
                         </ul>
+                        {% include 'users/info_user.html' %}
                     </div>
                 </div>
             </div>

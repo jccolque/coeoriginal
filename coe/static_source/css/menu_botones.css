@@ -37,3 +37,7 @@
     cursor: pointer;
     text-decoration: none;
 }
+
+.info_user {
+    color: black;
+}
