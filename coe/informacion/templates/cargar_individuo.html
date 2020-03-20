@@ -13,9 +13,13 @@
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <!-- Mostramos errores -->
-                    {% for error in form.errors %}
-                        <p>{{error}}</p>
-                    {% endfor %}
+                    {% for field in form %}
+					    {% if field.errors %}
+                            <li>
+                                {{ field.label }}: {{ field.errors|striptags }}
+                            </li>
+                        {% endif %}
+				    {% endfor %}
                     <!-- Formulario -->
                     <h2>Cargar Individuo</h2>
                     <div class="col-sm-5 col-sm-offset-1">

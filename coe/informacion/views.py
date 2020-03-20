@@ -166,11 +166,12 @@ def cargar_individuo(request, vehiculo_id=None, individuo_id=None):
             #Creamos domicilio
             domicilio = Domicilio()
             domicilio.individuo = individuo
-            domicilio.localidad = form.cleaned_data['dom_localidad']
-            domicilio.calle = form.cleaned_data['dom_calle']
-            domicilio.numero = form.cleaned_data['dom_numero']
-            domicilio.aclaracion = form.cleaned_data['dom_aclaracion']
-            domicilio.save()
+            if form.cleaned_data['dom_localidad']:
+                domicilio.localidad = form.cleaned_data['dom_localidad']
+                domicilio.calle = form.cleaned_data['dom_calle']
+                domicilio.numero = form.cleaned_data['dom_numero']
+                domicilio.aclaracion = form.cleaned_data['dom_aclaracion']
+                domicilio.save()
             #Creamos atributos
             atributos = form.cleaned_data['atributos']
             individuo.atributos.all().delete()

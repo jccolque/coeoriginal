@@ -32,10 +32,11 @@ class IndividuoForm(forms.ModelForm):
     dom_localidad = forms.ModelChoiceField(
         queryset=Localidad.objects.all(),
         widget=autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+        required=False,
     )
-    dom_calle = forms.CharField()
-    dom_numero = forms.IntegerField()
-    dom_aclaracion = forms.CharField()
+    dom_calle = forms.CharField(required=False, )
+    dom_numero = forms.IntegerField(required=False, )
+    dom_aclaracion = forms.CharField(required=False, )
     atributos = forms.MultipleChoiceField(
         choices=[(t.id, t.nombre) for t in TipoAtributo.objects.all()],
         widget=CheckboxSelectMultiple(attrs={'class':'multiplechoice',}),
@@ -56,7 +57,7 @@ class IndividuoForm(forms.ModelForm):
         }   
 
 class SearchIndividuoForm(forms.Form):
-    num_doc = forms.IntegerField(required=False)
+    num_doc = forms.CharField(required=False)
     apellidos = forms.CharField(required=False)
 
 class DomicilioForm(forms.ModelForm):
