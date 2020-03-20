@@ -8,18 +8,23 @@ from django.forms import CheckboxSelectMultiple
 from .models import Archivo
 from .models import Enfermedad
 from .models import Vehiculo, Individuo, Domicilio
-from .models import Situacion
+from .models import Situacion, Relacion
 from .models import TipoAtributo, Atributo
 from .models import TipoSintoma, Sintoma
 
 #Definimos los inlines:
-class DomicilioInline(admin.TabularInline):
-    model = Domicilio
+class SituacionInline(admin.TabularInline):
+    model = Situacion
     fk_name = 'individuo'
     extra = 0
 
-class SituacionInline(admin.TabularInline):
-    model = Situacion
+class RelacionInline(admin.TabularInline):
+    model = Relacion
+    fk_name = 'individuo'
+    extra = 0
+
+class DomicilioInline(admin.TabularInline):
+    model = Domicilio
     fk_name = 'individuo'
     extra = 0
 
@@ -58,7 +63,7 @@ class IndividuoAdmin(admin.ModelAdmin):
     model = Individuo
     search_fields = ['nombres', 'apellidos', 'num_doc', ]
     list_filter = ['nacionalidad']
-    inlines = [SituacionInline, DomicilioInline, AtributoInline, SintomaInline, ]
+    inlines = [SituacionInline, RelacionInline, DomicilioInline, AtributoInline, SintomaInline, ]
 
 class VehiculoAdmin(admin.ModelAdmin):
     model = Vehiculo

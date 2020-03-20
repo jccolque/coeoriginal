@@ -14,6 +14,7 @@ from georef.models import Nacionalidad, Localidad, Barrio
 #Imports de la app
 from .choices import TIPO_IMPORTANCIA, TIPO_ARCHIVO
 from .choices import TIPO_VEHICULO, TIPO_ESTADO, TIPO_CONDUCTA
+from .choices import TIPO_RELACION
 
 #Tipo Definition
 class TipoAtributo(models.Model):#Origen del Dato
@@ -145,6 +146,25 @@ class Individuo(models.Model):
         else:
             return None
 
+class Relacion(models.Model):#Origen del Dato
+    tipo = models.CharField('Tipo Relacion', choices=TIPO_RELACION, max_length=2, default='F')
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="relaciones")
+    relacionado = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="relacionado")
+    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    def __str__(self):
+        return str(self.individuo) + ' ' + self.get_tipo_display() + ' con ' + str(self.relacionado)
+    def as_dict(self):
+        return {
+            "tipo": self.get_tipo_display(),
+            "individuo_id": self.individuo.id,
+            "relacionado_id": self.relacionado.id,
+        }
+    def inversa(self):
+        try:
+            return Relacion.objects.get(tipo=self.tipo, individuo=self.relacionado, relacionado=self.individuo)
+        except Relacion.DoesNotExist:
+            return None
+
 class Origen(models.Model):#Origen del Dato
     vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, related_name="origenes")
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="origenes")
@@ -237,6 +257,7 @@ class Sintoma(models.Model):#Origen del Dato
 
 #Señales
 from .signals import crear_situacion
+from .signals import invertir_relacion
 
 #Auditoria
 auditlog.register(Archivo)

@@ -43,3 +43,10 @@ TIPO_CONDUCTA = (
     ('G', 'Cremado'),
     ('H', 'Enterrado'),
 )
+
+TIPO_RELACION = (
+    ('F', 'Familiar'),
+    ('CE', 'Contacto Bajo Riesgo'),
+    ('CA', 'Contacto Alto Riesgo'),
+    ('O', 'Otro...'),
+)

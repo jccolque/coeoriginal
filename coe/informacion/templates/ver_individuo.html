@@ -75,17 +75,17 @@
                                 <h3>Sintomas:</h3>
                                 <table class="listado">
                                     <tr>
-                                        <th>Fecha</th>
                                         <th>Sintoma</th>
                                         <th>Importancia</th>
                                         <th>Aclaracion</th>
+                                        <th>Fecha</th>
                                     </tr>
                             {% endif %}
                             <tr>
-                                <td>{{sintoma.fecha}}</td>
                                 <td>{{sintoma.tipo.nombre}}</td>
                                 <td>{{sintoma.tipo.get_importancia_display}}</td>
                                 <td>{{sintoma.aclaracion}}</td>
+                                <td>{{sintoma.fecha}}</td>
                             </tr>
                             {% if forloop.last %}
                                 </table>
@@ -98,23 +98,46 @@
                                 <h3>Atributos Registrados:</h3>
                                 <table class="listado">
                                     <tr>
-                                        <th>Fecha</th>
                                         <th>Atributo</th>
                                         <th>Importancia</th>
                                         <th>Aclaracion</th>
+                                        <th>Fecha</th>
                                     </tr>
                             {% endif %}
                             <tr>
-                                <td>{{atributo.fecha}}</td>
                                 <td>{{atributo.tipo.nombre}}</td>
                                 <td>{{atributo.tipo.get_importancia_display}}</td>
                                 <td>{{atributo.aclaracion}}</td>
+                                <td>{{atributo.fecha}}</td>
                             </tr>
                             {% if forloop.last %}
                                 </table>
                             {% endif %}
                         {% endfor %}
 
+                        <!--Tabla de Relaciones Registradas-->
+                        {% for relacion in individuo.relaciones.all %}
+                            {% if forloop.first %}
+                                <hr>
+                                <h3>Relaciones Registradas:</h3>
+                                <table class="listado">
+                                    <tr>
+                                        <th>Tipo</th>
+                                        <th>Individuo</th>
+                                        <th>Estado</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                            {% endif %}
+                            <tr>
+                                <td>{{relacion.get_tipo_display}}</td>
+                                <td>{{relacion.relacionado}}</td>
+                                <td>{{relacion.relacionado.situacion_actual}}</td>
+                                <td>{{relacion.fecha}}</td>
+                            </tr>
+                            {% if forloop.last %}
+                                </table>
+                            {% endif %}
+                        {% endfor %}
                     </div>
                     <div class="col-md-4">
                         <ul class="menu_botones">
@@ -125,6 +148,7 @@
                             {% endif %}
                             <li><a href="{% url 'informacion:mod_individuo' individuo_id=individuo.id %}">Modificar Datos Basicos</a></li>
                             <li><a href="{% url 'informacion:cargar_domicilio' individuo_id=individuo.id %}">Residencia Actual En La Provincia</a></li>
+                            <li><a href="{% url 'informacion:cargar_relacion' individuo_id=individuo.id %}">Cargar Relacion</a></li>
                             <li><a href="{% url 'informacion:cargar_atributo' individuo_id=individuo.id %}">Cargar Atributo de Control</a></li>
                             <li><a href="{% url 'informacion:cargar_sintoma' individuo_id=individuo.id  %}">Cargar Sintomas</a></li>
                             <li><a href="{% url 'informacion:listar_individuos' %}">Volver al Listado de Individuos</a></li>

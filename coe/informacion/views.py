@@ -17,7 +17,7 @@ from .models import Domicilio, Atributo, Sintoma
 from .models import TipoAtributo, TipoSintoma
 from .forms import ArchivoForm, VehiculoForm, IndividuoForm
 from .forms import DomicilioForm, AtributoForm, SintomaForm
-from .forms import SituacionForm
+from .forms import SituacionForm, RelacionForm
 from .forms import SearchIndividuoForm
 
 # Create your views here.
@@ -213,7 +213,7 @@ def cargar_domicilio(request, individuo_id):
 @permission_required('operadores.cargar_individuo')
 def cargar_situacion(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
-    form = SituacionForm()
+    form = SituacionForm(initial={'individuo': individuo, })
     if request.method == "POST":
         form = SituacionForm(request.POST)
         if form.is_valid():
@@ -222,6 +222,20 @@ def cargar_situacion(request, individuo_id):
             form.save()
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Situacion", 'form': form, 'boton': "Cargar", }) 
+
+@permission_required('operadores.cargar_individuo')
+def cargar_relacion(request, individuo_id):
+    individuo = Individuo.objects.get(pk=individuo_id)
+    form = RelacionForm(initial={'individuo': individuo, })
+    if request.method == "POST":
+        form = RelacionForm(request.POST)
+        if form.is_valid():
+            relacion = form.save(commit=False)
+            relacion.individuo = individuo
+            form.save()
+            return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Situacion", 'form': form, 'boton': "Cargar", }) 
+
 
 @permission_required('operadores.cargar_individuo')
 def cargar_atributo(request, individuo_id):
