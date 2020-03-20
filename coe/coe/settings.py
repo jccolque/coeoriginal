@@ -117,6 +117,7 @@ except ImportError:
 import sys
 DEBUG = (len(sys.argv) > 1 and sys.argv[1] == 'runserver')
 DEBUG = True
+
 #Definicion de permisos para subida de archivos:
 FILE_UPLOAD_PERMISSIONS = 0o644
 

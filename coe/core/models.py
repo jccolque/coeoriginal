@@ -63,5 +63,5 @@ class Consulta(models.Model):
 #Auditoria
 auditlog.register(Faq)
 #Señales
-if not DEBUG:
-    from core.signals import enviar_mail_new_user
+#if not DEBUG:
+from core.signals import enviar_mail_new_user
