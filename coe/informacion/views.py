@@ -66,7 +66,7 @@ def buscar_vehiculo(request):
         if form.is_valid():
             search = form.cleaned_data['search']
             try:
-                vehiculo = Vehiculo.objects.get(identificacion=search)
+                vehiculo = Vehiculo.objects.get(identificacion__icontains=search)
                 return redirect('informacion:ver_vehiculo', vehiculo_id=vehiculo.id)
             except:
                 form.add_error('search', "No se Encontro Vehiculo con esa identificacion.")
@@ -111,7 +111,7 @@ def buscar_individuo(request):
                 individuos = Individuo.objects.filter(apellidos__icontains=apellidos)
             num_doc = form.cleaned_data['num_doc']
             if num_doc:
-                individuos = Individuo.objects.filter(num_doc=num_doc)
+                individuos = Individuo.objects.filter(num_doc__icontains=num_doc)
             return render(request, "lista_individuos.html", {'individuos': individuos, })
     return render(request, "extras/generic_form.html", {'titulo': "Buscar Individuo", 'form': form, 'boton': "Buscar", })
 
