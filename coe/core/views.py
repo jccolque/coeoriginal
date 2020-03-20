@@ -71,6 +71,20 @@ def home_logout(request):
     logout(request)
     return home(request)
 
+#Activar mails
+def activar_usuario_mail(request, usuario_id, token):
+    try:
+        usuario = User.objects.get(pk=usuario_id)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        usuario = None
+    if usuario and account_activation_token.check_token(usuario, token):
+        usuario.is_active = True
+        usuario.save()
+        texto = 'Excelente! Su correo electronico fue validada.'
+    else:
+        texto = 'El link de activacion es invalido!'
+    return render(request, 'extras/resultado.html', {'texto': texto, })
+
 #activa consultas
 def activar_consulta(request, consulta_id, token):
     try:
