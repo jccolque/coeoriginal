@@ -258,7 +258,7 @@ class Sintoma(models.Model):#Origen del Dato
 #Señales
 from .signals import crear_situacion
 from .signals import invertir_relacion
-
+from .signals import relacion_vehiculo
 #Auditoria
 auditlog.register(Archivo)
 auditlog.register(Vehiculo)

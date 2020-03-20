@@ -9,6 +9,7 @@ from django.db.models.signals import post_save
 #imports del proyecto
 from georef.functions import get_paises_riesgo
 #Imports de la app
+from .models import Origen
 from .models import Individuo, Situacion, Relacion
 from .models import Atributo, TipoAtributo
 
@@ -32,8 +33,17 @@ def crear_situacion(created, instance, **kwargs):
                 atributo.save()
             except TipoAtributo.DoesNotExist:
                 print('No existe Atributo de Poblacion de Riesgo')
-        #Aca deberiamos meterle atributos a partir de relaciones preexistentes:
-        
+
+@receiver(post_save, sender=Origen)
+def relacion_vehiculo(created, instance, **kwargs):
+    if created:
+        origenes = Origen.objects.filter(vehiculo=instance.vehiculo)
+        for individuo in [o.individuo for o in origenes]:
+            relacion = Relacion()
+            relacion.tipo = 'CE'
+            relacion.individuo = instance.individuo
+            relacion.relacionado = individuo
+            relacion.save()
 
 @receiver(post_save, sender=Relacion)
 def invertir_relacion(created, instance, **kwargs):
