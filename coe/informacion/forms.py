@@ -14,7 +14,7 @@ from georef.models import Localidad
 from .models import TipoAtributo, TipoSintoma
 from .models import Archivo, Vehiculo
 from .models import Individuo, Domicilio, Atributo, Sintoma
-from .models import Situacion, Relacion
+from .models import Situacion, Relacion, Seguimiento
 
 #Definimos nuestros forms
 class ArchivoForm(forms.ModelForm):
@@ -75,11 +75,20 @@ class SituacionForm(forms.ModelForm):
         fields= '__all__'
         exclude = ('individuo', 'fecha' )
 
+class SeguimientoForm(forms.ModelForm):
+    class Meta:
+        model = Seguimiento
+        fields= '__all__'
+        exclude = ('individuo', 'fecha' )
+
 class RelacionForm(forms.ModelForm):
     class Meta:
         model = Relacion
         fields= '__all__'
         exclude = ('individuo', 'fecha')
+        widgets = {
+            'relacionado': autocomplete.ModelSelect2(url='informacion:individuos-autocomplete'),
+        }
 
 class AtributoForm(forms.ModelForm):
     class Meta:

@@ -7,10 +7,9 @@ from dateutil.relativedelta import relativedelta
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 #imports del proyecto
-from georef.functions import get_paises_riesgo
 #Imports de la app
 from .models import Origen
-from .models import Individuo, Situacion, Relacion
+from .models import Individuo, Situacion, Relacion, Seguimiento
 from .models import Atributo, TipoAtributo
 
 #Definimos nuestra señales
@@ -57,3 +56,14 @@ def invertir_relacion(created, instance, **kwargs):
         relacion.aclaracion = instance.aclaracion
         relacion.save()
     #Aca deberiamos meterle atributos a partir de origen > destino
+
+@receiver(post_save, sender=Atributo)
+def poner_en_seguimiento(created, instance, **kwargs):
+    #Aca deberiamos meterle atributos a partir de origen > destino
+    if created:
+        print(instance.tipo.nombre)
+        if "vigilancia" in instance.tipo.nombre.lower():
+            seguimiento = Seguimiento()
+            seguimiento.individuo = instance.individuo
+            seguimiento.aclaracion = "Agregado Atributo en el sistema"
+            seguimiento.save()

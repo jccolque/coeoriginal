@@ -23,21 +23,23 @@ urlpatterns = [
     path('cargar_vehiculo', views.cargar_vehiculo, name='cargar_vehiculo'),
     #Individuos
     path('buscar/individuo/', views.buscar_individuo, name='buscar_individuo'),
-    path('listar_individuos', views.listar_individuos, name='listar_individuos'),
+    path('listar/individuos', views.lista_individuos, name='listar_individuos'),
+    path('listar/seguimiento', views.lista_seguimiento, name='lista_seguimiento'),
     path('cargar_pasajero/<int:vehiculo_id>', views.cargar_individuo, name='cargar_pasajero'),
     path('ver_individuo/<int:individuo_id>', views.ver_individuo, name='ver_individuo'),
     path('cargar/individuo', views.cargar_individuo, name='cargar_individuo'),
     path('mod/individuo/<int:individuo_id>', views.cargar_individuo, name='mod_individuo'),
-    path('cargar/situacion/<int:individuo_id>', views.cargar_situacion, name='cargar_situacion'),
     path('cargar/domicilio/<int:individuo_id>', views.cargar_domicilio, name='cargar_domicilio'),
+    path('cargar/seguimiento/<int:individuo_id>', views.cargar_seguimiento, name='cargar_seguimiento'),
+    path('cargar/situacion/<int:individuo_id>', views.cargar_situacion, name='cargar_situacion'),
     path('cargar/relacion/<int:individuo_id>', views.cargar_relacion, name='cargar_relacion'),
     path('cargar/atributo/<int:individuo_id>', views.cargar_atributo, name='cargar_atributo'),
     path('cargar/sintoma/<int:individuo_id>', views.cargar_sintoma, name='cargar_sintoma'),
-    path('situ/hist/<int:individuo_id>', views.ver_individuo, name='historico_situacion'),#NO FUNCIONA> FALTA VISTA
     #Reportes
     path('reporte/basico', views.reporte_basico, name='reporte_basico'),
     path('csv/individuos/', views.csv_individuos, name='csv_individuos'),
     #Autocomplete
     url(r'^sintomas-autocomplete/$', autocomplete.SintomaAutocomplete.as_view(), name='sintomas-autocomplete',),
     url(r'^atributos-autocomplete/$', autocomplete.AtributoAutocomplete.as_view(), name='atributos-autocomplete',),
+    url(r'^individuos-autocomplete/$', autocomplete.IndividuosAutocomplete.as_view(), name='individuos-autocomplete',),
 ]

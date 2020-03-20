@@ -146,7 +146,7 @@ class Individuo(models.Model):
         else:
             return None
     def ultimo_seguimiento(self):
-        if self.seguimientos():
+        if self.seguimientos.all():
             return self.seguimientos.last()
         else:
             return None
@@ -270,7 +270,7 @@ class Seguimiento(models.Model):
     class Meta:
         ordering = ['fecha']
     def __str__(self):
-        return self.get_tipo_display() + ': ' + self.aclaracion
+        return str(self.fecha)[0:16] + ': ' + self.get_tipo_display() + ': ' + self.aclaracion
     def as_dict(self):
         return {
             "id": self.id,
@@ -284,6 +284,7 @@ class Seguimiento(models.Model):
 from .signals import crear_situacion
 from .signals import invertir_relacion
 from .signals import relacion_vehiculo
+from .signals import poner_en_seguimiento
 #Auditoria
 auditlog.register(Archivo)
 auditlog.register(Vehiculo)
