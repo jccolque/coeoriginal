@@ -150,6 +150,7 @@ class Relacion(models.Model):#Origen del Dato
     tipo = models.CharField('Tipo Relacion', choices=TIPO_RELACION, max_length=2, default='F')
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="relaciones")
     relacionado = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="relacionado")
+    aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     def __str__(self):
         return str(self.individuo) + ' ' + self.get_tipo_display() + ' con ' + str(self.relacionado)

@@ -43,6 +43,7 @@ def relacion_vehiculo(created, instance, **kwargs):
             relacion.tipo = 'CE'
             relacion.individuo = instance.individuo
             relacion.relacionado = individuo
+            relacion.aclaracion = "Viajo en el mismo Vehiculo"
             relacion.save()
 
 @receiver(post_save, sender=Relacion)
@@ -53,5 +54,6 @@ def invertir_relacion(created, instance, **kwargs):
         relacion.tipo = instance.tipo
         relacion.individuo = instance.relacionado
         relacion.relacionado = instance.individuo
+        relacion.aclaracion = instance.aclaracion
         relacion.save()
     #Aca deberiamos meterle atributos a partir de origen > destino
