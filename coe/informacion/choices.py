@@ -30,6 +30,7 @@ TIPO_ESTADO = (
     (5, 'Confirmado'),
     (6, 'Curado'),
     (71, 'Fallecido'),
+    (9, 'Fuera del Territorio'),
 )
 
 TIPO_CONDUCTA = (
@@ -42,6 +43,12 @@ TIPO_CONDUCTA = (
     ('F', 'En Morgue'),
     ('G', 'Cremado'),
     ('H', 'Enterrado'),
+)
+
+TIPO_SEGUIMIENTO = (
+    ('I', 'Inclusion al Sistema'),
+    ('L', 'Llamada Telefonica'),
+    ('M', 'Reporte Medico'),
 )
 
 TIPO_RELACION = (

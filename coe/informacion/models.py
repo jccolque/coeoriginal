@@ -14,7 +14,7 @@ from georef.models import Nacionalidad, Localidad, Barrio
 #Imports de la app
 from .choices import TIPO_IMPORTANCIA, TIPO_ARCHIVO
 from .choices import TIPO_VEHICULO, TIPO_ESTADO, TIPO_CONDUCTA
-from .choices import TIPO_RELACION
+from .choices import TIPO_RELACION, TIPO_SEGUIMIENTO
 
 #Tipo Definition
 class TipoAtributo(models.Model):#Origen del Dato
@@ -145,6 +145,11 @@ class Individuo(models.Model):
             return self.domicilio_actual().localidad
         else:
             return None
+    def ultimo_seguimiento(self):
+        if self.seguimientos():
+            return self.seguimientos.last()
+        else:
+            return None
 
 class Relacion(models.Model):#Origen del Dato
     tipo = models.CharField('Tipo Relacion', choices=TIPO_RELACION, max_length=2, default='F')
@@ -252,6 +257,24 @@ class Sintoma(models.Model):#Origen del Dato
             "individuo_id": self.individuo.id,
             "tipo_id": self.tipo.id,
             "tipo": str(self.tipo),
+            "aclaracion": self.aclaracion,
+            "fecha": str(self.fecha),
+        }
+
+class Seguimiento(models.Model):
+    tipo = models.CharField('Tipo Seguimiento', choices=TIPO_SEGUIMIENTO, max_length=1, default='I')
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="seguimientos")
+    aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
+    fecha = models.DateTimeField('Fecha del Seguimiento', default=timezone.now)
+    class Meta:
+        ordering = ['fecha']
+    def __str__(self):
+        return self.get_tipo_display() + ': ' + self.aclaracion
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "individuo_id": self.individuo.id,
+            "tipo_id": self.tipo,
             "aclaracion": self.aclaracion,
             "fecha": str(self.fecha),
         }
