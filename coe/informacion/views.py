@@ -132,17 +132,26 @@ def cargar_individuo(request, vehiculo_id=None, individuo_id=None):
     if individuo_id:#Si manda individuo es para modificar
         individuo = Individuo.objects.get(pk=individuo_id)
         domicilio_actual = individuo.domicilio_actual()
-        form = IndividuoForm(
-            instance=individuo,
-            initial={
-                'dom_localidad': domicilio_actual.localidad,
-                'dom_calle': domicilio_actual.calle,
-                'dom_numero': domicilio_actual.numero,
-                'dom_aclaracion': domicilio_actual.aclaracion,
-                'atributos': [a.tipo.id for a in individuo.atributos.all()],
-                'sintomas': [s.tipo.id for s in individuo.sintomas.all()],
-            }
-        )
+        if domicilio_actual:
+            form = IndividuoForm(
+                instance=individuo,
+                initial={
+                    'dom_localidad': individuo.localidad_actual,
+                    'dom_calle': domicilio_actual.calle,
+                    'dom_numero': domicilio_actual.numero,
+                    'dom_aclaracion': domicilio_actual.aclaracion,
+                    'atributos': [a.tipo.id for a in individuo.atributos.all()],
+                    'sintomas': [s.tipo.id for s in individuo.sintomas.all()],
+                }
+            )
+        else:
+            form = IndividuoForm(
+                instance=individuo,
+                initial={
+                    'atributos': [a.tipo.id for a in individuo.atributos.all()],
+                    'sintomas': [s.tipo.id for s in individuo.sintomas.all()],
+                }
+            )
     else:
         form = IndividuoForm()
     #Analizamos si mando informacion:

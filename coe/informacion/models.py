@@ -139,6 +139,11 @@ class Individuo(models.Model):
         return self.situaciones.last()
     def domicilio_actual(self):
         return self.domicilios.last()
+    def localidad_actual(self):
+        if self.domicilio_actual():
+            return self.domicilio_actual().localidad
+        else:
+            return None
 
 class Origen(models.Model):#Origen del Dato
     vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, related_name="origenes")

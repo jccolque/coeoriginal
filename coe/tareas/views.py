@@ -19,6 +19,7 @@ def menu(request):
 @staff_member_required
 def lista_tareas(request):
     tareas = Tarea.objects.all()
+    tareas = tareas.exclude(eventos__accion="E")
     tareas = tareas.select_related('subcomite')
     tareas = tareas.prefetch_related('responsables', 'eventos')
     #Si utilizo el buscador filtramos

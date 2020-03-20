@@ -16,17 +16,7 @@
                         <p>Cantidad de Tareas Pendientes: {{subcomite.cant_tareas_pendientes}}</p>
                     </div>
                     <div class="col-sm-4">
-                        <p class="buscar_operador">Agregar Operador desde Otro Comite</p>
-                        <form class="buscador" method="post" action="" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            {{form}}
-                            <button type="submit">Agregar</button>
-                            <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
-                            {{ form.media }}
-                        </form>
-                        <ul class="menu_botones">
-                            <li><a href="{% url 'inventario:mod_subcomite' subcomite_id=subcomite.id %}">Cargar Evento</a></li>
-                        </ul>
+                        
                     </div>
                 </div>
                 <hr>
