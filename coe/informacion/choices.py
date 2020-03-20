@@ -49,6 +49,7 @@ TIPO_SEGUIMIENTO = (
     ('I', 'Inclusion al Sistema'),
     ('L', 'Llamada Telefonica'),
     ('M', 'Reporte Medico'),
+    ('F', 'Fin del Seguimiento'),
 )
 
 TIPO_RELACION = (

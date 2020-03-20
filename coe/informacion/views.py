@@ -210,10 +210,12 @@ def lista_individuos(request):
 @permission_required('operadores.ver_individuo')
 def lista_seguimiento(request):
     individuos = {}
-    seguimientos = Seguimiento.objects.all()
+    seguimientos = [s for s in Seguimiento.objects.all().exclude(tipo='F')]
+    seguimientos_terminados = [s.individuo for s in Seguimiento.objects.filter(tipo='F')]
     for seguimiento in seguimientos:
         if seguimiento.individuo.id not in individuos:
-            individuos[seguimiento.individuo.id] = seguimiento.individuo
+            if not seguimiento.individuo in seguimientos_terminados:
+                individuos[seguimiento.individuo.id] = seguimiento.individuo
     individuos = list(individuos.values())
     individuos = paginador(request, individuos)
     return render(request, "listado_seguimiento.html", {'individuos': individuos, })

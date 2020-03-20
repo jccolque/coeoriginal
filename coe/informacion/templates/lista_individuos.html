@@ -17,6 +17,8 @@
                     <th>Situacion</th>
                     <th>Atributo</th>
                     <th>Sintomas</th>
+                    <th>Ultima Actualizacion</th>
+                    <th>Relaciones</th>
                     <th>Ver Detalle</th>
                 </tr>
                 {% for individuo in individuos %}
@@ -37,6 +39,8 @@
                                 <li>{{sintoma.tipo}}</li>
                             {% endfor %}
                         </td>
+                        <td>{{individuo.ultima_actualizacion}}</td>
+                        <td>{{individuo.relaciones.all|length}}</td>
                         <td><a href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">(Ver Detalle)</a></td>
                     </tr>
                 {% endfor %}
