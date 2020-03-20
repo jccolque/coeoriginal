@@ -163,6 +163,7 @@ class Domicilio(models.Model):
     calle = models.CharField('Calle', max_length=50, default='', blank=False)
     numero = models.CharField('Numero', max_length=50, default='', blank=False)
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
+    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     def __str__(self):
         return self.calle + ' ' + self.numero + ', ' + str(self.localidad)
     def as_dict(self):

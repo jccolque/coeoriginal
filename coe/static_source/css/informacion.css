@@ -12,3 +12,7 @@ button {
 ul, li {
     list-style-type: none;
 }
+
+.history {
+    font-size: 0.5em;
+}

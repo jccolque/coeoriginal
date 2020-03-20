@@ -95,7 +95,6 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        {% include 'users/info_user.html' %}
                         <ul class="menu_botones">
                             <li><a href="{% url 'tareas:mod_tarea' tarea_id=tarea.id  %}">Modificar Tarea</a></li>
                             <li><a href="{% url 'tareas:agregar_responsable' tarea_id=tarea.id  %}">Agregar Responsable</a></li>

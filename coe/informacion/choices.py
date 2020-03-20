@@ -29,9 +29,7 @@ TIPO_ESTADO = (
     (4, 'Sospechoso'),
     (5, 'Confirmado'),
     (6, 'Curado'),
-    (71, 'Fallecido en Morgue'),
-    (72, 'Fallecido Cremado'),
-    (73, 'Fallecido Enterrado'),
+    (71, 'Fallecido'),
 )
 
 TIPO_CONDUCTA = (
@@ -39,5 +37,9 @@ TIPO_CONDUCTA = (
     ('B', 'Evaluar'),
     ('C', 'Cuarentena Voluntaria'),
     ('D', 'Cuarentena Obligatoria'),
-    ('C', 'Aislado'),
+    ('E', 'Aislado'),
+
+    ('F', 'En Morgue'),
+    ('G', 'Cremado'),
+    ('H', 'Enterrado'),
 )

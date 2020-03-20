@@ -214,3 +214,10 @@ img.fotos {
     text-align: justify;
     font-weight: bold;
 }
+
+.alerta {
+    width: 100%;
+    text-align: center;
+    color: tomato;
+    font-weight: bold;
+}

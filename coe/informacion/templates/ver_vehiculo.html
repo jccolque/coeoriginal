@@ -41,7 +41,6 @@
                         </table>
                     </div>
                     <div class="col-md-4">
-                        {% include 'users/info_user.html' %}
                         <ul class="menu_botones">
                             <li><a href="{% url 'informacion:cargar_pasajero' vehiculo_id=vehiculo.id  %}">Cargar Pasajero</a></li>
                             <li><a href="{% url 'informacion:menu' %}">Volver al Menu</a></li>

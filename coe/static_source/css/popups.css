@@ -11,17 +11,15 @@
   
   /* The actual popup */
   .popup .popuptext {
-    width: 250px;
     visibility: hidden;
-    background-color: rgb(46, 46, 46);
+    background-color: rgba(90, 88, 88, 0.911);
     color: #fff;
-    text-align: center;
-    border-radius: 6px;
+    border-radius: 10px;
     padding: 8px 0;
     position: absolute;
     z-index: 1;
     bottom: 125%;
-    margin-left: -240px;
+    width: 600px;
   }
   
   /* Popup arrow */
@@ -35,10 +33,20 @@
     border-color: #555 transparent transparent transparent;
   }
 
-  .popup .popuptext>a {
-    width: 80%;
-    white-space: nowrap;
-  }
+.close_icon {
+    float: right;
+    width: 15px;
+    margin-right: 5px;
+}
+
+.history_tittle {
+    margin: 1px;
+    margin-left: 15px;
+}
+
+.minibar {
+    margin: 1px;
+}
 
   /* Toggle this class - hide and show the popup */
   .popup .show {
