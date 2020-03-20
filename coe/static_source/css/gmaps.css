@@ -1,0 +1,30 @@
+.gmaps {
+    padding: 10px;
+    background: var(--color_claro);
+    border-radius: 10px;
+    color: rgb(7, 7, 7);
+    width: 800px;
+    margin: auto;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.map_window {
+    height: 450px;
+    width: 100%;
+}
+
+.textbox {
+    width: 100%;
+    height: 2em;
+}
+
+.field_tittle {
+    margin-top: 10px;
+}
+
+.gmboton {
+    float: right;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}

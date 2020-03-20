@@ -1,0 +1,38 @@
+{% extends 'base_informacion.html' %}
+{% load static %}
+
+{% block custom_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/gmaps.css' %}" />
+{% endblock %}
+
+{% block content %}
+    <section class="formulario">
+        <section class="formulario-container container">
+            <div class="row gmaps">
+                <div class="col-sm-12">
+                    <h2><b>Seleccione la GeoLocalizacion:</b></h2>
+                    <p><b>Individuo:</b> {{domicilio.individuo}}</p>
+                    <p><b>Domicilio Actual:</b> {{domicilio}}</p>
+                    <hr>
+                    <form id="frmPadron" name="frmPadron" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="map_window" id="minimap"></div>
+                        <p class="field_tittle" >Observaciones</p>
+                        <input class="textbox" name="observaciones" type="text">
+                        <input name="latitud" type="hidden" readonly>
+                        <input name="longitud" type="hidden" readonly>
+                        <button class="gmboton" type="submit" class="btn btn-primary">Guardar</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    <!-- Para el autocomplete -->
+    {{ form.media }}
+{% endblock %}
+
+{% block custom_script %}
+    <script type="text/javascript" src="{% static 'js/google_api.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/gmap_form.js' %}"></script>
+{% endblock %}
