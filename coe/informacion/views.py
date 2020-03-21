@@ -113,11 +113,11 @@ def buscar_individuo(request):
                 individuo = Individuo.objects.get(num_doc=num_doc)
                 return redirect('informacion:mod_individuo', individuo_id=individuo.id)
             except Individuo.DoesNotExist:
-                return redirect('informacion:cargar_individuo')
+                return redirect('informacion:cargar_individuo', num_doc=num_doc)
     return render(request, "extras/generic_form.html", {'titulo': "Indicar Documento de Individuo", 'form': form, 'boton': "Buscar", })
 
 @permission_required('operadores.individuos')
-def cargar_individuo(request, vehiculo_id=None, individuo_id=None):
+def cargar_individuo(request, vehiculo_id=None, individuo_id=None, num_doc=None):
     individuo = None
     if individuo_id:#Si manda individuo es para modificar
         individuo = Individuo.objects.get(pk=individuo_id)
@@ -143,7 +143,7 @@ def cargar_individuo(request, vehiculo_id=None, individuo_id=None):
                 }
             )
     else:
-        form = IndividuoForm()
+        form = IndividuoForm(initial={"num_doc":num_doc})
     #Analizamos si mando informacion:
     if request.method == "POST":
         form = IndividuoForm(request.POST, instance=individuo)

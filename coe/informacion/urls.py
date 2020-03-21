@@ -27,7 +27,7 @@ urlpatterns = [
     path('listar/seguimiento', views.lista_seguimiento, name='lista_seguimiento'),
     path('cargar_pasajero/<int:vehiculo_id>', views.cargar_individuo, name='cargar_pasajero'),
     path('ver_individuo/<int:individuo_id>', views.ver_individuo, name='ver_individuo'),
-    path('cargar/individuo', views.cargar_individuo, name='cargar_individuo'),
+    path('cargar/individuo/<str:num_doc>', views.cargar_individuo, name='cargar_individuo'),
     path('mod/individuo/<int:individuo_id>', views.cargar_individuo, name='mod_individuo'),
     path('cargar/domicilio/<int:individuo_id>', views.cargar_domicilio, name='cargar_domicilio'),
     path('cargar/seguimiento/<int:individuo_id>', views.cargar_seguimiento, name='cargar_seguimiento'),
@@ -36,7 +36,6 @@ urlpatterns = [
     path('cargar/atributo/<int:individuo_id>', views.cargar_atributo, name='cargar_atributo'),
     path('cargar/sintoma/<int:individuo_id>', views.cargar_sintoma, name='cargar_sintoma'),
     path('cargar/geopos/<int:domicilio_id>', views.cargar_geoposicion, name='cargar_geoposicion'),
-
     #Reportes
     path('reporte/basico', views.reporte_basico, name='reporte_basico'),
     path('csv/individuos/', views.csv_individuos, name='csv_individuos'),
