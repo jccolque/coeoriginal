@@ -10,10 +10,8 @@
                     <h1>Menu Tareas:</h1>
                     <div class="col-md-8">
                         <ul class="menu_botones">
-                            {% if perms.operadores.ver_tarea %}
-                                <li><a href="{% url 'tareas:lista_tareas'  %}">Lista de Tareas</a></li>
-                            {% endif %}
-                            {% if perms.operadores.crear_tarea %}
+                            <li><a href="{% url 'tareas:lista_tareas'  %}">Lista de Tareas</a></li>
+                            {% if perms.operadores.menu_tareas %}
                                 <li><a href="{% url 'tareas:crear_tarea'  %}">Crear Tarea</a></li>
                             {% endif %}
                         </ul>

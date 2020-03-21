@@ -13,7 +13,7 @@ from .forms import CrearActaForm
 def menu(request):
     return render(request, 'menu_actas.html', {})
 
-@permission_required('operadores.ver_acta')
+@permission_required('operadores.menu_actas')
 def listar_actas(request):
     actas = Acta.objects.all()
     form = SearchForm()
@@ -23,12 +23,12 @@ def listar_actas(request):
             actas = actas.filter(titulo__icontains=form.cleaned_data['search'])
     return render(request, 'lista_actas.html', {'actas': actas, })
 
-@permission_required('operadores.ver_acta')
+@permission_required('operadores.menu_actas')
 def ver_acta(request, acta_id):
     acta = Acta.objects.get(id=acta_id)
     return render(request, 'ver_acta.html', {'acta': acta, })
 
-@permission_required('operadores.crear_acta')
+@permission_required('operadores.menu_actas')
 def crear_acta(request, acta_id=None):
     acta = None
     participes = []

@@ -7,7 +7,7 @@
                 <div class="row">        
                     <h1>Listado de Subcomites:</h1>
                     <p style="float:right;">
-                        {% if perms.operadores.crear_subcomite %}
+                        {% if perms.operadores.subcomites %}
                             <a href="{% url 'operadores:crear_subcomite' %}">
                                 Crear Subcomite
                                 <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Subcomite">

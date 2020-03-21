@@ -6,11 +6,9 @@
         <p>Num Doc: {{operador.num_doc}}</p>
         <p><b>Grupo de Tareas:</b> {{operador.subcomite}}</p>
         <p><b>Usuario:</b> {{request.user.username}}</b>
-            {% if perms.operadores.auditar_operadores %}
-                <a href="{% url 'operadores:auditoria_propia' user_id=operador.usuario.id %}">
-                    <img class="icons" src="/static/img/icons/audit.png" alt="Crear Nuevo Usuario">
-                </a>
-            {% endif %}
+            <a href="{% url 'operadores:auditoria_propia' user_id=operador.usuario.id %}">
+                <img class="icons" src="/static/img/icons/audit.png" alt="Crear Nuevo Usuario">
+            </a>
         </p>
         {% for tarea in operador.tareas_pendientes %}
             {% if forloop.first %}

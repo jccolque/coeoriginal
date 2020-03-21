@@ -10,10 +10,10 @@
                     <h1>Menu Actas:</h1>
                     <div class="col-md-8">
                         <ul class="menu_botones">
-                            {% if perms.operadores.crear_acta %}
+                            {% if perms.operadores.menu_actas %}
                                 <li><a href="{% url 'actas:listar_actas'  %}">Listar Actas</a></li>
                             {% endif %}
-                            {% if perms.operadores.crear_acta %}
+                            {% if perms.operadores.menu_actas %}
                                 <li><a href="{% url 'actas:crear_acta'  %}">Cargar Acta</a></li>
                             {% endif %}
                         </ul>

@@ -59,38 +59,24 @@ class Operador(models.Model):
         permissions = (
             #Operadores:
             ("menu_operadores", "Puede Acceder al menu de Operadores"),
-            ("ver_subcomites", "Puede ver SubComites"),
-            ("crear_subcomite", "Puede Crear Subcomites"),
-            ("listar_operadores", "Puede ver el Listado de Operadores"),
-            ("crear_operador", "Puede Crear Operadores"),
-            ("modificar_operador", "Puede Modificar Operadores"),
-            ("ver_credencial", "Ver Credencial de Operador"),
-            ("control_asistencia", "Control de Ingreso Fisico de los Operadores"),
-            ("auditar_operadores", "Auditar Acciones de otros Operadores"),
+            ("subcomites", "Puede ver SubComites"),
+            ("operadores", "Puede Crear/Modificar Operadores"),
+            ("auditar_operadores", "Puede Auditar Operadores"),
             #Inventario
             ("menu_inventario", "Puede Acceder al menu Inventario"),
-            ("ver_item", "Puede ver Items"),
-            ("crear_item", "Puede Crear/Modificar Items"),
             #Tareas:
             ("menu_tareas", "Puede Acceder al menu de Tareas"),
-            ("ver_tarea", "Puede ver listado de Tareas"),
-            ("crear_tarea", "Puede crear Tareas"),
-            ("asignar_responsable", "Puede Agregar Responsables a las Tareas"),
-            ("cargar_evento", "Puede cargar_evento a las Tareas"),
             #Informacion:
             ("menu_informacion", "Puede Acceder al menu de Informacion"),
-            ("archivos_pendientes", "Puede ver listado archivos pendientes."),
-            ("ver_archivos", "Puede ver archivos."),
-            ("subir_archivos", "Puede subir archivos."),
-            ("procesar_archivos", "Puede Marcar Archivos como Procesado."),
-            ("ver_vehiculo", "Puede Ver Informacion de Vehiculo."),
-            ("cargar_vehiculo", "Puede Cargar Informacion de Vehiculo."),
-            ("ver_individuo", "Puede Ver Informacion de Individuos."),
-            ("cargar_individuo", "Puede Cargar Informacion de Individuos."),
+            ("archivos", "Puede Crear Archivos."),
+            ("vehiculos", "Puede Crear Informacion de Vehiculo."),
+            ("individuos", "Puede Crear Informacion de Individuos."),
             #Actas:
             ("menu_actas", "Puede Acceder al menu de Actas"),
-            ("ver_acta", "Puede Ver Actas"),
-            ("crear_acta", "Puede Crear Actas"),
+            #Documentos
+            ("menu_documentos", "Puede Acceder al menu de Documentos"),
+            #Inscripciones:
+            ("menu_inscripciones", "Puede Acceder al menu de Inscripciones"),
             #Reportes
             ("reportes", "Acceso a todos los reportes del sistema"),
             #Especiales

@@ -4,7 +4,7 @@
     <div class="beneficiario container">
         <div class="row">
             <h2>Inventario Detallado</h2>
-            {% if perms.operadores.crear_operador %}
+            {% if perms.operadores.menu_inventario %}
                 <a href="{% url 'inventario:crear_item' %}">
                     Crear Item
                     <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo Usuario">

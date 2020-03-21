@@ -10,22 +10,20 @@
                     <h1>Menu Informacion:</h1>
                     <div class="col-md-8">
                         <ul class="menu_botones">
-                            {% if perms.operadores.subir_archivos %}
+                            {% if perms.operadores.archivos %}
                                 <li><a href="{% url 'informacion:subir_archivos'  %}">Subir Archivos</a></li>
-                            {% endif %}
-                            {% if perms.operadores.archivos_pendientes %}
                                 <li><a href="{% url 'informacion:archivos_pendientes'  %}">Ver Listado de Archivos sin Procesar</a></li>
                                 <hr>
                             {% endif %}
 
-                            {% if perms.operadores.cargar_vehiculo %}
+                            {% if perms.operadores.vehiculos %}
                                 <li><a href="{% url 'informacion:cargar_vehiculo'  %}">Cargar Vehiculo</a></li>
                                 <li><a href="{% url 'informacion:listar_vehiculos' %}">Listar Vehiculos</a></li>
                                 <li><a href="{% url 'informacion:buscar_vehiculo'  %}">Buscar Vehiculos</a></li>
                                 <hr>
                             {% endif %}
 
-                            {% if perms.operadores.cargar_individuo %}
+                            {% if perms.operadores.individuos %}
                                 <li><a href="{% url 'informacion:cargar_individuo'  %}">Cargar Individuo</a></li>
                                 <li><a href="{% url 'informacion:listar_individuos'  %}">Listar Individuos</a></li>
                                 <li><a href="{% url 'informacion:lista_seguimiento'  %}">Listar Individuos en Seguimiento</a></li>

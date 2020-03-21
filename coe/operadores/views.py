@@ -28,7 +28,7 @@ def menu(request):
     return render(request, 'menu_operadores.html', {})
 
 #Manejo de SubComites
-@permission_required('operadores.ver_subcomites')
+@permission_required('operadores.subcomites')
 def listar_subcomites(request):
     subcomites = SubComite.objects.all()
     if request.method == 'POST':
@@ -39,7 +39,7 @@ def listar_subcomites(request):
                 subcomites = subcomites.filter(nombre__icontains=search)
     return render(request, 'users/lista_subcomites.html', {'subcomites': subcomites, })
 
-@permission_required('operadores.ver_subcomites')
+@permission_required('operadores.subcomites')
 def ver_subcomite(request, subco_id):
     subcomite = SubComite.objects.get(pk=subco_id)
     form = BuscarOperadorForm()
@@ -51,7 +51,7 @@ def ver_subcomite(request, subco_id):
             operador.save()
     return render(request, 'users/ver_subcomite.html', {'subcomite': subcomite, 'form': form, })
 
-@permission_required('operadores.crear_subcomite')
+@permission_required('operadores.subcomites')
 def crear_subcomite(request, subco_id=None):
     subcomite = None
     if subco_id:
@@ -66,7 +66,7 @@ def crear_subcomite(request, subco_id=None):
     return render(request, "extras/generic_form.html", {'titulo': "Subir Archivo para Carga", 'form': form, 'boton': "Subir", })
 
 #Manejo de Operadores
-@permission_required('operadores.listar_operadores')
+@permission_required('operadores.operadores')
 def listar_operadores(request):
     operadores = Operador.objects.all()
     if request.method == 'POST':
@@ -90,7 +90,7 @@ def crear_operador(request):
             return redirect('operadores:listar_operadores')
     return render(request, "extras/generic_form.html", {'titulo': "Subir Archivo para Carga", 'form': form, 'boton': "Subir", })
 
-@permission_required('operadores.crear_operador')
+@permission_required('operadores.operadores')
 def mod_operador(request, operador_id=None):
     operador = None
     form = ModOperadorForm(permisos_list=obtener_permisos(),)
@@ -143,12 +143,12 @@ def mod_operador(request, operador_id=None):
             return redirect('operadores:listar_operadores')
     return render(request, "extras/generic_form.html", {'titulo': "Subir Archivo para Carga", 'form': form, 'boton': "Subir", })
 
-@permission_required('operadores.ver_credencial')
+@permission_required('operadores.operadores')
 def ver_credencial(request, operador_id):
     operador = Operador.objects.get(id=operador_id)
     return render(request, 'credencial.html', {'operador': operador,})
 
-@permission_required('operadores.ver_credencial')
+@permission_required('operadores.operadores')
 def imprimir_tarjetas(request):
     form = ImprimirTarjetasForm()
     if request.method == 'POST':
@@ -158,7 +158,7 @@ def imprimir_tarjetas(request):
         return render(request, 'tarjetas.html', {'operadores': operadores,})
     return render(request, "extras/generic_form.html", {'titulo': "Seleccione Credenciales", 'form': form, 'boton': "Imprimir", })
 
-@permission_required('operadores.modificar_operador')
+@permission_required('operadores.operadores')
 def cambiar_password(request, operador_id):
     operador = Operador.objects.get(pk=operador_id)
     usuario = operador.usuario
@@ -172,7 +172,7 @@ def cambiar_password(request, operador_id):
     #Sea por ingreso o por salida:
     return render(request, "extras/generic_form.html", {'titulo': "Modificar Usuario", 'form': form, 'boton': "Modificar", })
 
-@permission_required('operadores.modificar_operador')
+@permission_required('operadores.operadores')
 def desactivar_usuario(request, operador_id):
     operador = Operador.objects.get(pk=operador_id)
     usuario = operador.usuario
@@ -180,7 +180,7 @@ def desactivar_usuario(request, operador_id):
     usuario.save()
     return redirect('operadores:listar_operadores')
 
-@permission_required('operadores.modificar_operador')
+@permission_required('operadores.operadores')
 def activar_usuario(request, operador_id):
     operador = Operador.objects.get(pk=operador_id)
     usuario = operador.usuario
@@ -189,7 +189,7 @@ def activar_usuario(request, operador_id):
     return redirect('operadores:listar_operadores')
 
 #Ingreso y Egreso
-@permission_required('operadores.control_asistencia')
+@permission_required('operadores.auditar_operadores')
 def registro_asistencia(request):
     form = FechaForm()
     if request.method == 'POST':
@@ -210,7 +210,7 @@ def registro_asistencia(request):
                 })
     return render(request, "extras/generic_form.html", {'titulo': "Registro de Asistencia", 'form': form, 'boton': "Generar Reporte", })
 
-@permission_required('operadores.control_asistencia')
+@permission_required('operadores.auditar_operadores')
 def listado_presentes(request):
     asistentes = EventoOperador.objects.all()#Traemos todos los eventos
     asistentes = asistentes.select_related('operador', 'operador__usuario')#Traemos operador para evitar consultas db
@@ -240,7 +240,7 @@ def listado_presentes(request):
             presentes.append(ingreso)
     return render(request, 'listar_presentes.html', {'presentes': presentes,})
 
-@permission_required('operadores.control_asistencia')
+@permission_required('operadores.auditar_operadores')
 def checkin(request):
     form = AsistenciaForm()
     if request.method == 'POST':
@@ -251,12 +251,12 @@ def checkin(request):
             return redirect('operadores:ingreso', operador_id=evento.operador.id)
     return render(request, "extras/generic_form.html", {'titulo': "Modificar Usuario", 'form': form, 'boton': "Modificar", })
 
-@permission_required('operadores.control_asistencia')
+@permission_required('operadores.auditar_operadores')
 def ingreso(request, operador_id):
     operador = Operador.objects.get(id=operador_id)
     return render(request, 'users/ingreso_operador.html', {'operador': operador,})
 
-@permission_required('operadores.control_asistencia')
+@permission_required('operadores.auditar_operadores')
 def checkout(request, operador_id):
     operador = Operador.objects.get(id=operador_id)
     evento = EventoOperador(operador=operador, tipo='E')
@@ -287,7 +287,7 @@ def auditoria(request, user_id=None):
     #Lanzamos form basico
     return render(request, "extras/generic_form.html", {'titulo': "Auditoria Usuario", 'form': form, 'boton': "Auditar", })
 
-@permission_required('operadores.reportes')
+@permission_required('operadores.operadores')
 def csv_operadores(request):
     operadores = Operador.objects.all()
     operadores = operadores.select_related('usuario', 'subcomite')

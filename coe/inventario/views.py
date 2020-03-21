@@ -20,12 +20,12 @@ def menu(request):
     return render(request, 'menu_inventario.html', {})
 
 #ITEMS:
-@permission_required('operadores.ver_item')
+@permission_required('operadores.menu_inventario')
 def lista_general(request):
     subgrupos = SubGrupo.objects.all()
     return render(request, 'lista_general.html', {'subgrupos': subgrupos, })
 
-@permission_required('operadores.ver_item')
+@permission_required('operadores.menu_inventario')
 def lista_detallada(request, rubro_id=None, subgrupo_id=None):
     items = Item.objects.all()
     if rubro_id:
@@ -43,12 +43,12 @@ def lista_detallada(request, rubro_id=None, subgrupo_id=None):
             )
     return render(request, 'lista_detallada.html', {'items': items, })
 
-@permission_required('operadores.ver_item')
+@permission_required('operadores.menu_inventario')
 def ver_item(request, item_id):
     item = Item.objects.get(pk=item_id)
     return render(request, 'ver_item.html', {'item': item, })
 
-@permission_required('operadores.crear_item')
+@permission_required('operadores.menu_inventario')
 def crear_item(request, item_id=None):
     item = None
     if item_id:
@@ -69,7 +69,7 @@ def crear_item(request, item_id=None):
             return redirect('inventario:ver_item', item_id=item.id)
     return render(request, "extras/generic_form.html", {'titulo': "Crear Item", 'form': form, 'boton': "Agregar", })
 
-@permission_required('operadores.crear_item')
+@permission_required('operadores.menu_inventario')
 def crear_evento(request, item_id=None):
     item = Item.objects.get(pk=item_id)
     form = EventoItemForm(initial={'item':item})
@@ -80,7 +80,7 @@ def crear_evento(request, item_id=None):
             return redirect('inventario:ver_item', item_id=item.id)
     return render(request, "extras/generic_form.html", {'titulo': "Crear Evento del Item", 'form': form, 'boton': "Agregar", })
 
-@permission_required('operadores.crear_item')
+@permission_required('operadores.menu_inventario')
 def devolver_item(request, evento_id):
     evento = EventoItem.objects.get(pk=evento_id)
     evento.devuelto = True
@@ -92,7 +92,7 @@ def devolver_item(request, evento_id):
     devuelto.save()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-@permission_required('operadores.reportes')
+@permission_required('operadores.menu_inventario')
 def csv_inventario(request):
     items = Item.objects.all()
     items = items.select_related('subgrupo', 'subgrupo__rubro')

@@ -32,7 +32,7 @@
                     </div>
                     <div class="col-sm-4">
                         <ul class="menu_botones">
-                            {% if perms.operadores.control_asistencia %}
+                            {% if perms.operadores.auditar_operadores %}
                                 <li><a href="{% url 'operadores:checkin'  %}">Ingresar Otro Operador</a></li>
                                 <li><a href="{% url 'operadores:listado_presentes'  %}">Listado de Operadores Presentes</a></li>
                             {% endif %}

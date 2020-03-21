@@ -29,18 +29,18 @@ def menu(request):
     return render(request, 'menu_informacion.html', {})
 
 #ARCHIVOS
-@permission_required('operadores.archivos_pendientes')
+@permission_required('operadores.archivos')
 def archivos_pendientes(request):
     archivos = Archivo.objects.filter(procesado=False)
     archivos = paginador(request, archivos)
     return render(request, 'archivos_pendientes.html', {'archivos': archivos,})
 
-@permission_required('operadores.ver_archivos')
+@permission_required('operadores.archivos')
 def ver_archivo(request, archivo_id):
     archivo = Archivo.objects.get(id=archivo_id)
     return render(request, 'ver_archivo.html', {'archivo': archivo,})
 
-@permission_required('operadores.subir_archivos')
+@permission_required('operadores.archivos')
 def subir_archivos(request):
     form = ArchivoForm()
     if request.method == "POST":
@@ -53,7 +53,7 @@ def subir_archivos(request):
             return redirect('informacion:ver_archivo', archivo_id=archivo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Subir Archivo para Carga", 'form': form, 'boton': "Subir", })
 
-@permission_required('operadores.procesar_archivos')
+@permission_required('operadores.archivos')
 def procesar_archivos(request, archivo_id):
     archivo = Archivo.objects.get(id=archivo_id)
     archivo.procesado = not archivo.procesado
@@ -75,7 +75,7 @@ def buscar_vehiculo(request):
                 form.add_error('search', "No se Encontro Vehiculo con esa identificacion.")
     return render(request, "extras/generic_form.html", {'titulo': "Buscar Vehiculo", 'form': form, 'boton': "Buscar", })
 
-@permission_required('operadores.ver_vehiculo')
+@permission_required('operadores.vehiculos')
 def listar_vehiculos(request, tipo_id=None):
     vehiculos = Vehiculo.objects.all()
     if tipo_id:
@@ -83,12 +83,12 @@ def listar_vehiculos(request, tipo_id=None):
     vehiculos = paginador(request, vehiculos)
     return render(request, "lista_vehiculos.html", {'vehiculos': vehiculos, })
 
-@permission_required('operadores.ver_vehiculo')
+@permission_required('operadores.vehiculos')
 def ver_vehiculo(request, vehiculo_id):
     vehiculo = Vehiculo.objects.get(pk=vehiculo_id)
     return render(request, "ver_vehiculo.html", {'vehiculo': vehiculo, })
 
-@permission_required('operadores.cargar_vehiculo')
+@permission_required('operadores.vehiculos')
 def cargar_vehiculo(request):
     form = VehiculoForm()
     if request.method == "POST":
@@ -102,7 +102,7 @@ def cargar_vehiculo(request):
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Vehiculo", 'form': form, 'boton': "Cargar", })
 
 #INDIVIDUOS
-@permission_required('operadores.ver_individuo')
+@permission_required('operadores.individuos')
 def buscar_individuo(request):
     form = SearchIndividuoForm()
     if request.method == "POST":
@@ -118,7 +118,7 @@ def buscar_individuo(request):
             return render(request, "lista_individuos.html", {'individuos': individuos, })
     return render(request, "extras/generic_form.html", {'titulo': "Buscar Individuo", 'form': form, 'boton': "Buscar", })
 
-@permission_required('operadores.cargar_individuo')
+@permission_required('operadores.individuos')
 def cargar_individuo(request, vehiculo_id=None, individuo_id=None):
     individuo = None
     if individuo_id:#Si manda individuo es para modificar
@@ -189,13 +189,13 @@ def cargar_individuo(request, vehiculo_id=None, individuo_id=None):
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "cargar_individuo.html", {'titulo': "Cargar Individuo", 'form': form, 'boton': "Cargar", })
 
-@permission_required('operadores.ver_individuo')
+@permission_required('operadores.individuos')
 def ver_individuo(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
     return render(request, "ver_individuo.html", {'individuo': individuo, })
 
 #LISTAS
-@permission_required('operadores.ver_individuo')
+@permission_required('operadores.individuos')
 def lista_individuos(request):
     individuos = Individuo.objects.all()
     if request.method == "POST":
@@ -209,7 +209,7 @@ def lista_individuos(request):
     individuos = paginador(request, individuos)
     return render(request, "lista_individuos.html", {'individuos': individuos, })
 
-@permission_required('operadores.ver_individuo')
+@permission_required('operadores.individuos')
 def lista_seguimiento(request):
     individuos = {}
     seguimientos = [s for s in Seguimiento.objects.all().exclude(tipo='F')]
@@ -223,7 +223,7 @@ def lista_seguimiento(request):
     return render(request, "listado_seguimiento.html", {'individuos': individuos, })
 
 #CARGA DE ELEMENTOS
-@permission_required('operadores.cargar_individuo')
+@permission_required('operadores.individuos')
 def cargar_domicilio(request, individuo_id):
     form = DomicilioForm()
     if request.method == "POST":
@@ -236,7 +236,7 @@ def cargar_domicilio(request, individuo_id):
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Domicilio", 'form': form, 'boton': "Cargar", })
 
-@permission_required('operadores.cargar_individuo')
+@permission_required('operadores.individuos')
 def cargar_situacion(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
     form = SituacionForm(initial={'individuo': individuo, })
@@ -249,7 +249,7 @@ def cargar_situacion(request, individuo_id):
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Situacion", 'form': form, 'boton': "Cargar", }) 
 
-@permission_required('operadores.cargar_individuo')
+@permission_required('operadores.individuos')
 def cargar_seguimiento(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
     form = SeguimientoForm(initial={'individuo': individuo, })
@@ -262,7 +262,7 @@ def cargar_seguimiento(request, individuo_id):
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Seguimiento", 'form': form, 'boton': "Cargar", }) 
 
-@permission_required('operadores.cargar_individuo')
+@permission_required('operadores.individuos')
 def cargar_relacion(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
     form = RelacionForm(initial={'individuo': individuo, })
@@ -275,7 +275,7 @@ def cargar_relacion(request, individuo_id):
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Relacion", 'form': form, 'boton': "Cargar", }) 
 
-@permission_required('operadores.cargar_individuo')
+@permission_required('operadores.individuos')
 def cargar_atributo(request, individuo_id):
     form = AtributoForm()
     if request.method == "POST":
@@ -288,7 +288,7 @@ def cargar_atributo(request, individuo_id):
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Atributo", 'form': form, 'boton': "Cargar", })
 
-@permission_required('operadores.cargar_individuo')
+@permission_required('operadores.individuos')
 def cargar_sintoma(request, individuo_id):
     form = SintomaForm()
     if request.method == "POST":
@@ -301,7 +301,7 @@ def cargar_sintoma(request, individuo_id):
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Sintoma", 'form': form, 'boton': "Cargar", })
 
-@permission_required('operadores.ver_individuo')
+@permission_required('operadores.individuos')
 def cargar_geoposicion(request, domicilio_id):
     domicilio = Domicilio.objects.get(pk=domicilio_id)
     if request.method == "POST":

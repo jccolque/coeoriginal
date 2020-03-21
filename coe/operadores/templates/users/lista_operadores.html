@@ -7,7 +7,7 @@
                 <div class="row">        
                     <h1>Listado de Usuarios: <b>{{app_name}}</b></h1>
                     <p style="float:right;">
-                        {% if perms.operadores.crear_operador %}
+                        {% if perms.operadores.operadores %}
                             <a href="{% url 'operadores:crear_operador' %}">
                                 Crear Usuario
                                 <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo Usuario">

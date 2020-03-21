@@ -34,7 +34,7 @@ def contacto(request):
             #enviar email de validacion
             to_email = consulta_form.cleaned_data.get('email')#Obtenemos el correo
             #Preparamos el correo electronico
-            mail_subject = 'Confirma tu correo de respuesta por la Consultas Realizada al begup.'
+            mail_subject = 'Confirma tu correo de respuesta por la Consultas Realizada al COE2020.'
             message = render_to_string('emails/acc_active_consulta.html', {
                     'consulta': consulta,
                     'token':account_activation_token.make_token(consulta),
@@ -42,7 +42,7 @@ def contacto(request):
             #Instanciamos el objeto mail con destinatario
             email = EmailMessage(mail_subject, message, to=[to_email])
             #Enviamos el correo
-            #email.send()
+            email.send()
             return render(request, 'contacto.html', {})
     else:
         consulta_form = ConsultaForm()

@@ -10,36 +10,31 @@
                     <h1>Menu Operadores:</h1>
                     <div class="col-md-8">
                         <ul class="menu_botones">
-                            {% if perms.operadores.crear_subcomite %}
+                            {% if perms.operadores.subcomites %}
                                 <li><a href="{% url 'operadores:crear_subcomite'  %}">Crear Subcomite</a></li>
-                            {% endif %}
-                            {% if perms.operadores.ver_subcomites %}
                                 <li><a href="{% url 'operadores:listar_subcomites'  %}">Ver Listado de SubComites</a></li>
                             {% endif %}
 
-                            {% if perms.operadores.crear_operador %}
+                            {% if perms.operadores.operadores %}
                                 <hr>
                                 <li><a href="{% url 'operadores:crear_operador'  %}">Crear Operador</a></li>
-                            {% endif %}
-                            {% if perms.operadores.listar_operadores %}
                                 <li><a href="{% url 'operadores:listar_operadores'  %}">Ver Listado de Operadores</a></li>
                                 <li><a href="{% url 'operadores:imprimir_tarjetas'  %}">Imprimir Credenciales</a></li>
                             {% endif %}
 
-                            {% if perms.operadores.control_asistencia %}
+                            {% if perms.operadores.auditar_operadores %}
                                 <hr>
                                 <li><a href="{% url 'operadores:checkin'  %}">Ingreso Operador</a></li>
                                 <li><a href="{% url 'operadores:listado_presentes'  %}">Listado de Presentes</a></li>
                                 <li><a href="{% url 'operadores:registro_asistencia'  %}">Registro de Asistencia</a></li>
-                            {% endif %}
-                            {% if perms.operadores.reportes %}
-                                <li><a href="{% url 'operadores:csv_operadores'  %}">Descargar Operadores</a></li>
-                                <hr>
-                            {% endif %}
-                            {% if perms.beneficiarios.auditar_operadores %}
                                 <li><a href="{% url 'operadores:auditoria' %}">Ver Auditoria de Operadores</a></li>
                             {% else %}
                                 <li><a href="{% url 'operadores:auditoria_propia' user_id=request.user.id %}">Ver Mis Acciones</a></li>
+                            {% endif %}      
+                      
+                            {% if perms.operadores.reportes %}
+                                <li><a href="{% url 'operadores:csv_operadores'  %}">Descargar Operadores</a></li>
+                                <hr>
                             {% endif %}
 
                             {% if request.user.is_superuser %}

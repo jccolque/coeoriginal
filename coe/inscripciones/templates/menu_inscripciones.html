@@ -10,8 +10,8 @@
                     <h1>Menu Documentos:</h1>
                     <div class="col-md-8">
                         <ul class="menu_botones">
-                            <li><a href="{% url 'documentos:cargar_documento'  %}">Cargar Documento Nuevo</a></li>
-                            <li><a href="{% url 'documentos:lista_general'  %}">Ver Listado de Documentos</a></li>
+                            <li><a href="{% url 'inscripciones:cargar_inscripcion'  %}">Inscribir a Alguien</a></li>
+                            <li><a href="{% url 'inscripciones:lista_inscriptos'  %}">Ver Listado de Inscriptos</a></li>
                             {% if request.user.is_superuser %}
                                 <li><a href="{% url 'documentos:menu' %}">Opcion del Administrador</a></li>
                             {% endif %}

@@ -4,7 +4,7 @@
     <div class="beneficiario container">
         <div class="row">
             <h2>Listado General de Documentos</h2>
-            {% if perms.operadores.crear_operador %}
+            {% if perms.operadores.menu_documentos %}
                 <a href="{% url 'documentos:cargar_documento' %}">
                     Cargar Nuevo Documento
                     <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo Usuario">

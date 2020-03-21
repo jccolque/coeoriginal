@@ -74,11 +74,9 @@
                                             <img class="icons" src="/static/img/icons/check.png" alt="Activar">
                                         </a>
                                     {% endif %}
-                                    {% if perms.operadores.auditar_operadores %}
-                                        <a href="{% url 'operadores:auditoria_propia' user_id=operador.usuario.id %}">
-                                            <img class="icons" src="/static/img/icons/audit.png" alt="Crear Nuevo Usuario">
-                                        </a>
-                                    {% endif %}
+                                    <a href="{% url 'operadores:auditoria_propia' user_id=operador.usuario.id %}">
+                                        <img class="icons" src="/static/img/icons/audit.png" alt="Crear Nuevo Usuario">
+                                    </a>
                                 {% endif %}
                             </td>
                         </tr>
