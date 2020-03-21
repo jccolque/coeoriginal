@@ -16,7 +16,7 @@ section.formulario .formulario-container {
 
 section.formulario .formulario-container h2 {
     color: white;
-    background: var(--color_claro);
+    background: var(--color_oscuro);
     padding: 10px;
     text-align: center;
     font-size: 1.5em;
@@ -174,7 +174,7 @@ section.formulario .respuesta-container {
 
 /* Multiple Choice */
 .multiplechoice {
-    margin-left: 0;
+    margin-left: -50px;
     padding: 0!important;
     list-style: none;
 

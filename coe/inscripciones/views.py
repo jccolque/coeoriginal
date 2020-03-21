@@ -35,7 +35,7 @@ def cargar_inscripcion(request):
             #Enviamos el correo
             email.send()
             return render(request, 'inscripto_exito.html', {'inscripto': inscripto, })
-    return render(request, "extras/generic_form.html", {'titulo': "Crear Tarea", 'form': form, 'boton': "Crear", })
+    return render(request, "extras/generic_form.html", {'titulo': "Inscribite", 'form': form, 'boton': "Inscribirse", })
 
 @permission_required('operadores.menu_inscripciones')
 def lista_inscriptos(request, profesion_id=None):
