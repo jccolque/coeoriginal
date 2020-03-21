@@ -108,13 +108,12 @@ def buscar_individuo(request):
     if request.method == "POST":
         form = SearchIndividuoForm(request.POST)
         if form.is_valid():
-            individuos = Individuo.objects.all()
-            apellidos = form.cleaned_data['apellidos']
-            if apellidos:
-                individuos = Individuo.objects.filter(apellidos__icontains=apellidos)
             num_doc = form.cleaned_data['num_doc']
-            if num_doc:
-                individuos = Individuo.objects.filter(num_doc__icontains=num_doc)
+            try:
+                individuos = Individuo.objects.get(num_doc=num_doc)
+                return redirect('informacion:mod_individuo', {'individuo_id': individuos.id, })
+            except Individuo.DoesNotExist:
+                return redirect('informacion:cargar_individuo')
             return render(request, "lista_individuos.html", {'individuos': individuos, })
     return render(request, "extras/generic_form.html", {'titulo': "Buscar Individuo", 'form': form, 'boton': "Buscar", })
 
