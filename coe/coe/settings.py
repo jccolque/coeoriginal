@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'taggit',
     'tinymce',
     'auditlog',
-    'geoposition',
     'nested_inline',
     #Apps Propias
     'core.apps.CoreConfig',
@@ -102,16 +101,12 @@ except ImportError:
 try:
     from .credenciales import DATABASES
 except ImportError:
-    SPATIALITE_LIBRARY_PATH = 'mod_spatialite.so'
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.contrib.gis.db.backends.spatialite',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        },
-        'connect_args':{'timeout': 15
-        },
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
-
+}
 
 # SECURITY WARNING: don't run with debug turned on in production!
 import sys
