@@ -15,3 +15,4 @@ class InscriptoForm(forms.ModelForm):
         model = Inscripto
         fields= '__all__'
         exclude = ('fecha', 'valido', 'disponible')
+        

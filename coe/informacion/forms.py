@@ -9,6 +9,7 @@ from django.forms.widgets import CheckboxSelectMultiple
 #Imports extra
 from dal import autocomplete
 #Imports del proyecto
+from core.choices import TIPO_DOCUMENTOS
 from georef.models import Localidad
 #Imports de la app
 from .models import TipoAtributo, TipoSintoma
@@ -57,8 +58,7 @@ class IndividuoForm(forms.ModelForm):
         }   
 
 class SearchIndividuoForm(forms.Form):
-    num_doc = forms.CharField(required=False)
-    apellidos = forms.CharField(required=False)
+    num_doc = forms.CharField(label="Documento/Pasaporte", required=True)
 
 class DomicilioForm(forms.ModelForm):
     class Meta:

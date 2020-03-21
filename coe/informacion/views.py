@@ -110,12 +110,11 @@ def buscar_individuo(request):
         if form.is_valid():
             num_doc = form.cleaned_data['num_doc']
             try:
-                individuos = Individuo.objects.get(num_doc=num_doc)
-                return redirect('informacion:mod_individuo', {'individuo_id': individuos.id, })
+                individuo = Individuo.objects.get(num_doc=num_doc)
+                return redirect('informacion:mod_individuo', individuo_id=individuo.id)
             except Individuo.DoesNotExist:
                 return redirect('informacion:cargar_individuo')
-            return render(request, "lista_individuos.html", {'individuos': individuos, })
-    return render(request, "extras/generic_form.html", {'titulo': "Buscar Individuo", 'form': form, 'boton': "Buscar", })
+    return render(request, "extras/generic_form.html", {'titulo': "Indicar Documento de Individuo", 'form': form, 'boton': "Buscar", })
 
 @permission_required('operadores.individuos')
 def cargar_individuo(request, vehiculo_id=None, individuo_id=None):
