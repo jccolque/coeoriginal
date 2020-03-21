@@ -186,8 +186,7 @@ section.formulario .respuesta-container {
 }
 
 .multiplechoice li label{
-    width: auto!important;
-    min-width: 90%;
+    min-width: 50%;
     overflow: initial;
     text-overflow: initial;
     margin-bottom: 0px;

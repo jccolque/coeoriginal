@@ -59,7 +59,7 @@ class Operador(models.Model):
         permissions = (
             #Operadores:
             ("menu_operadores", "Puede Acceder al menu de Operadores"),
-            ("subcomites", "Puede ver SubComites"),
+            ("subcomites", "Puede Crear/Modificar SubComites"),
             ("operadores", "Puede Crear/Modificar Operadores"),
             ("auditar_operadores", "Puede Auditar Operadores"),
             #Inventario
@@ -69,8 +69,8 @@ class Operador(models.Model):
             #Informacion:
             ("menu_informacion", "Puede Acceder al menu de Informacion"),
             ("archivos", "Puede Crear Archivos."),
-            ("vehiculos", "Puede Crear Informacion de Vehiculo."),
-            ("individuos", "Puede Crear Informacion de Individuos."),
+            ("vehiculos", "Puede Crear/Modificar Informacion de Vehiculo."),
+            ("individuos", "Puede Crear/Modificar Informacion de Individuos."),
             #Actas:
             ("menu_actas", "Puede Acceder al menu de Actas"),
             #Documentos
