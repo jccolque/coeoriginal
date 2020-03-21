@@ -10,7 +10,7 @@ def obtener_operador(request):
         return None
 
 def obtener_permisos(usuario=None):
-    if usuario:
+    if usuario and not usuario.is_superuser:
         return Permission.objects.filter(user=usuario)
     else:
         return Permission.objects.filter(
