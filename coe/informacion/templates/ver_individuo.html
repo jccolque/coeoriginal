@@ -169,14 +169,33 @@
                             {% endif %}
                         {% endfor %}
                         
+                        <!--Tabla de Controles -->
+                        {% for origen in individuo.origenes.all %}
+                            {% if forloop.first %}
+                                <hr>
+                                <h3>Controles Vehiculares Registrados:</h3>
+                                <table class="listado">
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Vehiculo</th>
+                                        <th>Aclaracion</th>
+                                        <th>Ver Detalle</th>
+                                    </tr>
+                            {% endif %}
+                            <tr>
+                                <td>{{origen.control.fecha}}</td>
+                                <td>{{origen.control.vehiculo}}</td>
+                                <td>{{origen.control.aclaracion}}</td>
+                                <td><a href="{% url 'informacion:ver_vehiculo' vehiculo_id=origen.control.vehiculo.id %}">Ver Vehiculo</a></li>
+                            </tr>
+                            {% if forloop.last %}
+                                </table>
+                            {% endif %}
+                        {% endfor %}
+
                     </div>
                     <div class="col-md-4">
                         <ul class="menu_botones">
-                            {% if individuo.origenes %}
-                                {% for origen in individuo.origenes.all %}
-                                    <li><a href="{% url 'informacion:ver_vehiculo' vehiculo_id=origen.vehiculo.id %}">Volver al Vehiculos {{origen.vehiculo}}</a></li>
-                                {% endfor %}
-                            {% endif %}
                             <li><a href="{% url 'informacion:mod_individuo' individuo_id=individuo.id %}">Modificar Datos Basicos</a></li>
                             <li><a href="{% url 'informacion:cargar_domicilio' individuo_id=individuo.id %}">Residencia Actual En La Provincia</a></li>
                             <li><a href="{% url 'informacion:cargar_seguimiento' individuo_id=individuo.id %}">Cargar Seguimiento</a></li>

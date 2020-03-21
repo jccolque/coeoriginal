@@ -14,7 +14,7 @@
                         {% for control in vehiculo.controles.all %}
                             <hr>
                             <h3>Control: {{control.fecha}} - {{control.aclaracion}}</h3>
-                            <a class="botoncito" href="{% url 'informacion:cargar_pasajero' control_id=control.id  %}">Cargar Pasajero</a>
+                            <a class="botoncito" href="{% url 'informacion:buscar_pasajero' control_id=control.id  %}">Cargar Pasajero</a>
                             <h4>Listado de Pasajeros:</h4>
                             <table class="listado">
                                 <tr>

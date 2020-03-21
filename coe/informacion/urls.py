@@ -25,11 +25,15 @@ urlpatterns = [
     path('cargar/control/<int:vehiculo_id>', views.cargar_control, name='cargar_control'),
     #Individuos
     path('buscar/individuo/', views.buscar_individuo, name='buscar_individuo'),
+    path('ver/individuo/<int:individuo_id>', views.ver_individuo, name='ver_individuo'),
     path('lista/individuos', views.lista_individuos, name='listar_individuos'),
     path('lista/seguimiento', views.lista_seguimiento, name='lista_seguimiento'),
-    path('cargar/pasajero/<int:control_id>', views.cargar_individuo, name='cargar_pasajero'),
-    path('ver/individuo/<int:individuo_id>', views.ver_individuo, name='ver_individuo'),
+
     path('cargar/individuo/<str:num_doc>', views.cargar_individuo, name='cargar_individuo'),
+    path('cargar/pasajero/<int:control_id>', views.buscar_individuo, name='buscar_pasajero'),
+    path('cargar/pasajero/<int:control_id>/nuevo/<int:individuo_id>/', views.cargar_individuo, name='cargar_pasajero'),
+    path('cargar/pasajero/<int:control_id>/nuevo/<str:num_doc>/', views.cargar_individuo, name='cargar_pasajero_nuevo'),
+    
     path('mod/individuo/<int:individuo_id>', views.cargar_individuo, name='mod_individuo'),
     path('cargar/domicilio/<int:individuo_id>', views.cargar_domicilio, name='cargar_domicilio'),
     path('cargar/seguimiento/<int:individuo_id>', views.cargar_seguimiento, name='cargar_seguimiento'),
