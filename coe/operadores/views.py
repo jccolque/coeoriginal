@@ -1,6 +1,5 @@
 #Imports de Python
 import csv
-import pytz
 from datetime import timedelta
 #Imports Django
 from django.db.models import Q

@@ -15,8 +15,15 @@
                         <p>Cantidad de Tareas Terminadas: {{subcomite.cant_tareas_terminadas}}</p>
                         <p>Cantidad de Tareas Pendientes: {{subcomite.cant_tareas_pendientes}}</p>
                     </div>
-                    <div class="col-sm-4">
-                        
+                    <div class="col-sm-4" style="padding: 20px;">
+                        <form method="post" action="" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <p>Asignar Operador a este Comite:</p>
+                            {{form}}
+                            <button type="submit">Agregar</button>
+                        </form>
+                        <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+                        {{ form.media }}
                     </div>
                 </div>
                 <hr>
