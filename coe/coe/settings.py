@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'georef.apps.GeorefConfig',
     'noticias.apps.NoticiasConfig',
     'operadores.apps.OperadoresConfig',
+    'inscripciones.apps.InscripcionesConfig',
     'tareas.apps.TareasConfig',
     'inventario.apps.InventarioConfig',
     'informacion.apps.InformacionConfig',

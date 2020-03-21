@@ -1,0 +1,27 @@
+{% extends 'base_inventario.html' %}
+
+{% load seguridad_tags%}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">        
+                    <h1>Menu Documentos:</h1>
+                    <div class="col-md-8">
+                        <ul class="menu_botones">
+                            <li><a href="{% url 'documentos:cargar_documento'  %}">Cargar Documento Nuevo</a></li>
+                            <li><a href="{% url 'documentos:lista_general'  %}">Ver Listado de Documentos</a></li>
+                            {% if request.user.is_superuser %}
+                                <li><a href="{% url 'documentos:menu' %}">Opcion del Administrador</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        {% include 'users/info_user.html' %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}
