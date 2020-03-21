@@ -13,9 +13,9 @@ from core.choices import TIPO_DOCUMENTOS
 from georef.models import Localidad
 #Imports de la app
 from .models import TipoAtributo, TipoSintoma
-from .models import Archivo, Vehiculo
+from .models import Vehiculo, ControlVehiculo
 from .models import Individuo, Domicilio, Atributo, Sintoma
-from .models import Situacion, Relacion, Seguimiento
+from .models import Situacion, Archivo, Relacion, Seguimiento
 
 #Definimos nuestros forms
 class ArchivoForm(forms.ModelForm):
@@ -28,6 +28,12 @@ class VehiculoForm(forms.ModelForm):
         model = Vehiculo
         fields= '__all__'
         exclude = ('fecha', 'usuario',)
+
+class ControlVehiculoForm(forms.ModelForm):
+    class Meta:
+        model = ControlVehiculo
+        fields= '__all__'
+        exclude = ('vehiculo', 'fecha', )
 
 class IndividuoForm(forms.ModelForm):
     dom_localidad = forms.ModelChoiceField(
@@ -56,6 +62,9 @@ class IndividuoForm(forms.ModelForm):
             'origen': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
             'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
         }   
+
+class SearchVehiculoForm(forms.Form):
+    identificacion = forms.CharField(label="Patente/Identificacion", required=True)
 
 class SearchIndividuoForm(forms.Form):
     num_doc = forms.CharField(label="Documento/Pasaporte", required=True)
@@ -94,7 +103,7 @@ class AtributoForm(forms.ModelForm):
     class Meta:
         model = Atributo
         fields= '__all__'
-        exclude = ('individuo', 'activo', )
+        exclude = ('individuo', 'activo', 'newtipo', )
         widgets = {
             'tipo': autocomplete.ModelSelect2(url='informacion:atributos-autocomplete'),
         }
@@ -103,7 +112,7 @@ class SintomaForm(forms.ModelForm):
     class Meta:
         model = Sintoma
         fields= '__all__'
-        exclude = ('individuo', )
+        exclude = ('individuo', 'newtipo', )
         widgets = {
             'tipo': autocomplete.ModelSelect2(url='informacion:sintomas-autocomplete'),
         }

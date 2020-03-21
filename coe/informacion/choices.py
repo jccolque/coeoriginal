@@ -57,3 +57,38 @@ TIPO_RELACION = (
     ('CA', 'Contacto Alto Riesgo'),
     ('O', 'Otro...'),
 )
+
+TIPO_ATRIBUTO = (
+    ('PR', 'Poblacion de Riesgo/Comorbilidades'),
+    ('DE', 'Denuncia Externa'),
+    ('IP', 'Informado Por'),
+    ('ER', 'Esperando Resultados'),
+    ('VE', 'Vigilancia Epidemiologica'),
+    ('AS', 'Es Agente de Salud'),
+    ('PS', 'Es Personal de Seguridad'),
+    ('PD', 'Se encuentra Presos/Detenidos'),
+)
+
+TIPO_SINTOMA = (
+    ('DPR', 'Dificultad para Respirar'),
+    ('DM', 'Dolor Muscular'),
+    ('DRO', 'Dolor RetroOcular'),
+    ('ART', 'Dolor de Articulaciones'),
+    ('DC', 'Dolor de Cabeza'),
+    ('DG', 'Dolor de Garganta'),
+    ('DSV', 'Dolor parte Superior del Vientre'),
+    ('FAT', 'Fatiga'),
+    ('FIE', 'Fiebre'),
+    ('HEP', 'Hemorragia Profusa'),
+    ('IO', 'Inflamacion de los Ojos'),
+    ('MAR', 'Mareos'),
+    ('NAS', 'Nauseas'),
+    ('PAL', 'Palidez'),
+    ('PDA', 'Perdida de Apetito'),
+    ('RCA', 'Ritmo Cardiaco Acelerado'),
+    ('SAR', 'Sarpullido'),
+    ('SRM', 'Sarpullido Rojo con Manchas en la Piel'),
+    ('SN', 'Secrecion Nasal'),
+    ('TOS', 'Tos'),
+    ('VOM', 'Vomitos'),
+)

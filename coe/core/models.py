@@ -39,29 +39,9 @@ class Consulta(models.Model):
     def __str__(self):
         return self.autor + ": " + self.asunto + '(' + str(self.fecha_consulta.date()) + ')'
 
-# Create your models here.
-    # Matricula del Vehiculo
-    # Tipo de Vehiculo (Definir listado finito y abarcativo de tipos de vehiculos)
-    # En caso de ser un viaje comercial: EMPRESA
-    # Certificado de Desinfeccion (Bool)
-    # Origen
-    # Destino
-    # De ser posible datos del Alojamiento
-    # Plan de Ruta (En caso de no ser un viaje directo)
-    # Numero de Pasajeros
-    # Datos de CADA UNO de los pasajeros  (Aqui se definira en el COE si solo los pasajeros de riesgo, los aledaños o TODOS) 
-    # Nacionalidad
-    # Documento de Identidad/Pasaporte(En caso de Extranjeros)
-    # Apellidos
-    # Nombres
-    # Listado de paises visitados (Con fecha de egreso de cada pais)
-    # Numero Telefonico ACTIVO o Correo Electronico
-    # Observaciones particulares del Pasajero
-    # Fecha y Hora del Registro
-    # Inspector a cargo del registro
+
 
 #Auditoria
 auditlog.register(Faq)
 #Señales
-#if not DEBUG:
 from core.signals import enviar_mail_new_user

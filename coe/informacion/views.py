@@ -12,16 +12,18 @@ from operadores.functions import obtener_operador
 #imports de la app
 from .choices import TIPO_ESTADO, TIPO_CONDUCTA
 from .models import Archivo
-from .models import Vehiculo, Individuo, Origen
+from .models import Vehiculo, ControlVehiculo, Origen
+from .models import Individuo
 from .models import Seguimiento
 from .models import Domicilio, GeoPosicion
 from .models import Atributo, Sintoma
-
 from .models import TipoAtributo, TipoSintoma
-from .forms import ArchivoForm, VehiculoForm, IndividuoForm
+from .forms import ArchivoForm
+from .forms import VehiculoForm, ControlVehiculoForm
+from .forms import IndividuoForm
 from .forms import DomicilioForm, AtributoForm, SintomaForm
 from .forms import SituacionForm, RelacionForm, SeguimientoForm
-from .forms import SearchIndividuoForm
+from .forms import SearchIndividuoForm, SearchVehiculoForm
 
 # Create your views here.
 @permission_required('operadores.menu_informacion')
@@ -63,16 +65,16 @@ def procesar_archivos(request, archivo_id):
 #VEHICULOS
 @permission_required('operadores.ver_individuo')
 def buscar_vehiculo(request):
-    form = SearchForm()
+    form = SearchVehiculoForm()
     if request.method == "POST":
-        form = SearchForm(request.POST)
+        form = SearchVehiculoForm(request.POST)
         if form.is_valid():
-            search = form.cleaned_data['search']
+            identificacion = form.cleaned_data['identificacion']
             try:
-                vehiculo = Vehiculo.objects.get(identificacion__icontains=search)
+                vehiculo = Vehiculo.objects.get(identificacion=identificacion)
                 return redirect('informacion:ver_vehiculo', vehiculo_id=vehiculo.id)
-            except:
-                form.add_error('search', "No se Encontro Vehiculo con esa identificacion.")
+            except Vehiculo.DoesNotExist:
+                return redirect('informacion:cargar_vehiculo', identificacion=identificacion)
     return render(request, "extras/generic_form.html", {'titulo': "Buscar Vehiculo", 'form': form, 'boton': "Buscar", })
 
 @permission_required('operadores.vehiculos')
@@ -89,10 +91,17 @@ def ver_vehiculo(request, vehiculo_id):
     return render(request, "ver_vehiculo.html", {'vehiculo': vehiculo, })
 
 @permission_required('operadores.vehiculos')
-def cargar_vehiculo(request):
-    form = VehiculoForm()
+def cargar_vehiculo(request, vehiculo_id=None, identificacion=None):
+    vehiculo = None
+    if vehiculo_id:
+        vehiculo = Vehiculo.objects.get(pk=vehiculo_id)
+    #Cargamos Form Inicial
+    form = VehiculoForm(
+        instance=vehiculo,
+        initial={'identificacion': identificacion, }
+    )
     if request.method == "POST":
-        form = VehiculoForm(request.POST)
+        form = VehiculoForm(request.POST, instance=vehiculo)
         if form.is_valid():
             operador = obtener_operador(request)
             vehiculo = form.save(commit=False)
@@ -100,6 +109,19 @@ def cargar_vehiculo(request):
             vehiculo.save()
             return redirect('informacion:ver_vehiculo', vehiculo_id=vehiculo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Vehiculo", 'form': form, 'boton': "Cargar", })
+
+@permission_required('operadores.vehiculos')
+def cargar_control(request, vehiculo_id):
+    vehiculo = Vehiculo.objects.get(pk=vehiculo_id)
+    form = ControlVehiculoForm()
+    if request.method == "POST":
+        form = ControlVehiculoForm(request.POST)
+        if form.is_valid():
+            control = form.save(commit=False)
+            control.vehiculo = vehiculo
+            form.save()
+            return redirect('informacion:ver_vehiculo', vehiculo_id=vehiculo.id)
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Control Vehicular", 'form': form, 'boton': "Cargar", }) 
 
 #INDIVIDUOS
 @permission_required('operadores.individuos')
@@ -117,7 +139,7 @@ def buscar_individuo(request):
     return render(request, "extras/generic_form.html", {'titulo': "Indicar Documento de Individuo", 'form': form, 'boton': "Buscar", })
 
 @permission_required('operadores.individuos')
-def cargar_individuo(request, vehiculo_id=None, individuo_id=None, num_doc=None):
+def cargar_individuo(request, control_id=None, individuo_id=None, num_doc=None):
     individuo = None
     if individuo_id:#Si manda individuo es para modificar
         individuo = Individuo.objects.get(pk=individuo_id)
@@ -179,11 +201,11 @@ def cargar_individuo(request, vehiculo_id=None, individuo_id=None, num_doc=None)
                 sintoma.tipo = TipoSintoma.objects.get(pk=sintoma_id)
                 sintoma.save()  
             #Si vino en un vehiculo
-            if vehiculo_id:
-                vehiculo = Vehiculo.objects.get(pk=vehiculo_id)
-                origen = Origen(vehiculo=vehiculo, individuo=individuo)
+            if control_id:
+                control = ControlVehiculo.objects.get(pk=control_id)
+                origen = Origen(control=control, individuo=individuo)
                 origen.save()
-                return redirect('informacion:ver_vehiculo', vehiculo_id=vehiculo.id)
+                return redirect('informacion:ver_vehiculo', vehiculo_id=control.vehiculo.id)
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "cargar_individuo.html", {'titulo': "Cargar Individuo", 'form': form, 'boton': "Cargar", })
 

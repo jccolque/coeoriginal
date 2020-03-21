@@ -36,13 +36,13 @@ def crear_situacion(created, instance, **kwargs):
 @receiver(post_save, sender=Origen)
 def relacion_vehiculo(created, instance, **kwargs):
     if created:
-        origenes = Origen.objects.filter(vehiculo=instance.vehiculo)
+        origenes = Origen.objects.filter(control=instance.control)
         for individuo in [o.individuo for o in origenes]:
             relacion = Relacion()
             relacion.tipo = 'CE'
             relacion.individuo = instance.individuo
             relacion.relacionado = individuo
-            relacion.aclaracion = "Viajo en el mismo Vehiculo"
+            relacion.aclaracion = "Mismo Vehiculo-Mismo Control"
             relacion.save()
 
 @receiver(post_save, sender=Relacion)

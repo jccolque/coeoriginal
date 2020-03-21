@@ -10,11 +10,12 @@ from django.core.validators import RegexValidator
 #Imports del proyecto:
 from core.choices import TIPO_DOCUMENTOS, TIPO_SEXO
 from operadores.models import Operador
-from georef.models import Nacionalidad, Localidad, Barrio
+from georef.models import Nacionalidad, Localidad
 #Imports de la app
 from .choices import TIPO_IMPORTANCIA, TIPO_ARCHIVO
 from .choices import TIPO_VEHICULO, TIPO_ESTADO, TIPO_CONDUCTA
 from .choices import TIPO_RELACION, TIPO_SEGUIMIENTO
+from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
 
 #Tipo Definition
 class TipoAtributo(models.Model):#Origen del Dato
@@ -87,7 +88,6 @@ class Vehiculo(models.Model):
     tipo = models.IntegerField(choices=TIPO_VEHICULO, default='1')
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     identificacion = models.CharField('Identificacion Patente/Codigo', max_length=200, unique=True)
-    cant_pasajeros = models.IntegerField(default='1')
     empresa = models.CharField('Empresa (Si aplica)', max_length=200, null=True, blank=True)
     plan = HTMLField(verbose_name='Plan de Ruta')
     def __str__(self):
@@ -102,6 +102,21 @@ class Vehiculo(models.Model):
             'empresa': self.empresa,
             'plan': self.plan,
         }
+
+class ControlVehiculo(models.Model):
+    vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, related_name="controles")
+    aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
+    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    def __str__(self):
+        return str(self.vehiculo) + ': ' + self.aclaracion + ' | ' + str(self.fecha)
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'vehiculo_id': self.vehiculo.id,
+            'fecha': str(self.vehiculo),
+            'aclaracion': self.aclaracion,
+            'fecha': str(self.fecha),
+        }    
 
 class Individuo(models.Model):
     tipo_doc = models.IntegerField(choices=TIPO_DOCUMENTOS, default=2)
@@ -172,10 +187,10 @@ class Relacion(models.Model):#Origen del Dato
             return None
 
 class Origen(models.Model):#Origen del Dato
-    vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, related_name="origenes")
+    control = models.ForeignKey(ControlVehiculo, on_delete=models.CASCADE, related_name="origenes")
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="origenes")
     def __str__(self):
-        return str(self.vehiculo) + ': ' + str(self.individuo)
+        return str(self.control.vehiculo) + ': ' + str(self.individuo)
     def as_dict(self):
         return {
             "id": self.id,
@@ -240,9 +255,10 @@ class Situacion(models.Model):
             "fecha": str(self.fecha),
         }
 
-class Atributo(models.Model):#Origen del Dato
+class Atributo(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="atributos")
     tipo = models.ForeignKey(TipoAtributo, on_delete=models.CASCADE, related_name="atributos")
+    newtipo = models.CharField('Tipo', choices=TIPO_ATRIBUTO, max_length=2, null=True)
     aclaracion =  models.CharField('Aclaracion', max_length=200, null=True, blank=True)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     activo = models.BooleanField(default=True)
@@ -261,9 +277,10 @@ class Atributo(models.Model):#Origen del Dato
             "activo": self.activo,
         }
 
-class Sintoma(models.Model):#Origen del Dato
+class Sintoma(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="sintomas")
     tipo = models.ForeignKey(TipoSintoma, on_delete=models.CASCADE, related_name="sintomas")
+    newtipo = models.CharField('Tipo', choices=TIPO_SINTOMA, max_length=3, null=True)
     aclaracion =  models.CharField('Aclaracion', max_length=200, null=True, blank=True)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     class Meta:

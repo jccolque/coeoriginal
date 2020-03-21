@@ -221,3 +221,15 @@ img.fotos {
     color: tomato;
     font-weight: bold;
 }
+
+.botoncito {
+    float: right;
+    padding: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border: 1px solid var(--color_oscuro);
+    background-color: var(--color_primario);
+    border-radius: 5px;
+    font-weight: bold;
+    color: white;
+}
