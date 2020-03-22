@@ -10,6 +10,7 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 #Imports del proyecto
 from coe.constantes import NOMAIL
+from coe.settings import SEND_MAIL
 #Imports de la app
 from .apps import CoreConfig
 from .tokens import account_activation_token
@@ -35,4 +36,5 @@ def enviar_mail_new_user(instance, created, **kwargs):
         #Instanciamos el objeto mail con destinatario
         email = EmailMessage(mail_subject, message, to=[to_email])
         #Enviamos el correo
-        email.send()
+        if SEND_MAIL:
+            email.send()

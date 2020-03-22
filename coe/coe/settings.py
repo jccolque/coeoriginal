@@ -67,7 +67,7 @@ MIDDLEWARE = [
     #Auditoria:
     'auditlog.middleware.AuditlogMiddleware',
     #DEBUG:
-    #'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'coe.urls'
@@ -90,19 +90,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'coe.wsgi.application'
 
-
-#Intentamos pisar SECRET_KEY
-try:
-    from .credenciales import SECRET_KEY
-except ImportError:
-    pass
-
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-try:
-    from .credenciales import DATABASES
-except ImportError:
-    DATABASES = {
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
@@ -112,7 +102,6 @@ except ImportError:
 # SECURITY WARNING: don't run with debug turned on in production!
 import sys
 DEBUG = (len(sys.argv) > 1 and sys.argv[1] == 'runserver')
-DEBUG = True
 
 #Definicion de permisos para subida de archivos:
 FILE_UPLOAD_PERMISSIONS = 0o644
@@ -141,19 +130,6 @@ STATICFILES_DIRS = [
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 LOGIN_REDIRECT_URL = '/'
-
-#Configuracion de Mail
-try:
-    from .credenciales import *
-except ImportError:#Si no logramos importar:
-    SERVER_EMAIL = 'user@domain.com'
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = 'hostname.com'
-    EMAIL_PORT = 587
-    EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = 'user@domain.com'
-    EMAIL_HOST_PASSWORD = ''
-    DEFAULT_FROM_EMAIL = 'user@domain.com'
 
 #Actualizar Statics, no solo nuevas
 AWS_PRELOAD_METADATA = True
@@ -186,5 +162,22 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.redirects.RedirectsPanel',
 ]
 
+#Se evita que se envien mails
 if DEBUG:
+    SEND_MAIL = False
     INTERNAL_IPS = ['127.0.0.1',]#Comentar esta linea para no usar!
+else:
+    SEND_MAIL = True
+
+#Configuracion de Mail
+try:
+    from .credenciales import *
+except ImportError:#Si no logramos importar:
+    SERVER_EMAIL = 'user@domain.com'
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'hostname.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = 'user@domain.com'
+    EMAIL_HOST_PASSWORD = ''
+    DEFAULT_FROM_EMAIL = 'user@domain.com'

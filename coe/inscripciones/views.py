@@ -4,6 +4,7 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
+from coe.settings import SEND_MAIL
 from core.forms import SearchForm
 from core.functions import paginador
 #Impors de la app
@@ -33,7 +34,8 @@ def cargar_inscripcion(request):
             #Instanciamos el objeto mail con destinatario
             email = EmailMessage(mail_subject, message, to=[to_email])
             #Enviamos el correo
-            email.send()
+            if SEND_MAIL:
+                email.send()
             return render(request, 'inscripto_exito.html', {'inscripto': inscripto, })
     return render(request, "extras/generic_form.html", {'titulo': "Inscribite", 'form': form, 'boton': "Inscribirse", })
 

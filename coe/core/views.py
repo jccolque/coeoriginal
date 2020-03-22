@@ -10,6 +10,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login, logout
 from django.template.loader import render_to_string
 from django.contrib.auth.forms import AuthenticationForm
+#Imports del proyecto
+from coe.settings import SEND_MAIL
 #Imports de la app
 from .models import Faq, Consulta
 from .tokens import account_activation_token
@@ -42,7 +44,8 @@ def contacto(request):
             #Instanciamos el objeto mail con destinatario
             email = EmailMessage(mail_subject, message, to=[to_email])
             #Enviamos el correo
-            email.send()
+            if SEND_MAIL:
+                email.send()
             return render(request, 'contacto.html', {})
     else:
         consulta_form = ConsultaForm()
