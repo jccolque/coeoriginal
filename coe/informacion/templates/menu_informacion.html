@@ -25,6 +25,7 @@
                             {% if perms.operadores.individuos %}
                                 <li><a href="{% url 'informacion:buscar_individuo'  %}">Buscar/Cargar Individuos</a></li>
                                 <li><a href="{% url 'informacion:listar_individuos'  %}">Listar Individuos</a></li>
+                                <li><a href="{% url 'informacion:lista_evaluar'  %}">Individuos Esperando Evaluacion</a></li>
                                 <li><a href="{% url 'informacion:lista_seguimiento'  %}">Listar Individuos en Seguimiento</a></li>
                                 <hr>
                             {% endif %}

@@ -14,7 +14,7 @@ from .models import Atributo, TipoAtributo
 
 #Definimos nuestra señales
 @receiver(post_save, sender=Individuo)
-def crear_situacion(created, instance, **kwargs):
+def estado_inicial(created, instance, **kwargs):
     if created:
         #Situacion Inicial:
         situacion = Situacion()
@@ -85,3 +85,30 @@ def poner_en_seguimiento(created, instance, **kwargs):
             seguimiento.individuo = instance.individuo
             seguimiento.aclaracion = "Agregado Atributo en el sistema"
             seguimiento.save()
+
+#Evolucionamos Estado segun relaciones
+@receiver(post_save, sender=Situacion)
+def afectar_situacion(created, instance, **kwargs):
+    individuo = instance.individuo
+    for relacion in individuo.relaciones.all():
+        sit = relacion.relacionado.situacion_actual()
+        if not sit:#Si no tenia estado le creamos inicial
+            sit = Situacion()
+            sit.individuo = relacion.relacionado
+            sit.aclaracion = "Inicializado por el sistema"
+            sit.estado = 1
+        #Procesamos lo que nos importa
+        if instance.estado > sit.estado:
+            #Tramos situacion actual del relacionado
+            sit.id = None
+            #Generamos situ nueva segun caso
+            if instance.estado == 32:#Contacto Alto Riesgo            
+                sit.estado = 31
+            if instance.estado == 4:#Sospechoso
+                sit.estado = 32
+            if instance.estado == 5:#Confirmado
+                sit.estado = 32
+            #Agregamos descripcion y guardamos
+            sit.conducta = 'B'
+            sit.aclaracion = "Detectado por sistema, Relacionado con: " + individuo.num_doc
+            sit.save()

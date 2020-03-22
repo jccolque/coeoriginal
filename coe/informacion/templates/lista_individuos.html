@@ -26,7 +26,11 @@
                         <td>{{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</td>
                         <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
                         <td>{{individuo.fecha_nacimiento}}</td>
-                        <td>{{individuo.nacionalidad}}</td>
+                        <td>
+                            <a href="{% url 'informacion:listar_nacionalidad' nacionalidad_id=individuo.nacionalidad.id %}">    
+                                {{individuo.nacionalidad}}
+                            </a>
+                        </td>
                         <td>{{individuo.origen}} - {{individuo.destino}}</td>
                         <td>{{individuo.situacion_actual}}</td>
                         <td>

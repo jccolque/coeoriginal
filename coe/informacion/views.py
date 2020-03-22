@@ -230,18 +230,34 @@ def ver_individuo(request, individuo_id):
 
 #LISTAS
 @permission_required('operadores.individuos')
-def lista_individuos(request):
+def lista_individuos(request, nacionalidad_id=None):
     individuos = Individuo.objects.all()
+    if nacionalidad_id:#Filtramos por nacionalidad
+        individuos = individuos.filter(nacionalidad__id=nacionalidad_id)
     if request.method == "POST":
         form = SearchForm(request.POST)
         if form.is_valid():
             search = form.cleaned_data['search']
             individuos = individuos.filter(
                 Q(num_doc=search) |
-                Q(apellidos__icontains=search)
+                Q(apellidos__icontains=search) |
+                Q(nacionalidad__nombre__icontains=search)
             )
+    else:#Si no filtro traemos solo 1000 (20 * 50 paginador)
+        individuos = individuos[0:1000]
+    #Paginamos
     individuos = paginador(request, individuos)
     return render(request, "lista_individuos.html", {'individuos': individuos, })
+
+@permission_required('operadores.individuos')
+def lista_evaluar(request):
+    evaluar = []
+    individuos = Individuo.objects.filter(situaciones__conducta='B')
+    for individuo in individuos:
+        if individuo.situacion_actual().conducta == 'B':
+            evaluar.append(individuo)
+    evaluar = paginador(request, evaluar)
+    return render(request, "lista_individuos.html", {'individuos': evaluar, })
 
 @permission_required('operadores.individuos')
 def lista_seguimiento(request):
@@ -279,7 +295,7 @@ def cargar_situacion(request, individuo_id):
         if form.is_valid():
             situacion = form.save(commit=False)
             situacion.individuo = individuo
-            form.save()
+            situacion.save()
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Situacion", 'form': form, 'boton': "Cargar", }) 
 

@@ -18,6 +18,7 @@
                         <p>Nacionalidad: {{individuo.nacionalidad}}</p>
                         <p>Origen: {{individuo.origen}}</p>
                         <p>Destino:{{individuo.destino}}</p>
+                        
                         {% if individuo.domicilios.all %}
                             {% with individuo.domicilio_actual as domicilio %}
                                 <p>
@@ -49,28 +50,36 @@
                         {% else %}
                             <h4 class="alerta">NO REGISTRA RESIDENCIA ACTUAL EN LA PROVINCIA: <a href="{% url 'informacion:cargar_domicilio' individuo_id=individuo.id %}">CARGAR</a></h4>
                         {% endif %}
-                        <h3>Estado: <b>{{individuo.situacion_actual}}</b> 
-                            <a class="nolink" href="{% url 'informacion:cargar_situacion' individuo_id=individuo.id %}">
-                                <img class="icons" src="{% static '/img/icons/change.png' %}">
-                            </a>
-                            <a href="javascript:PopUp(1);" ><img class="icons" src="{% static '/img/icons/history.png' %}"></a>
-                        </h3>
-
-                        <div class="popup-overlay"></div>
-                        <div class="popup">
-                            <div class="popuptext" id="myPopup-1">
-                                <a href="javascript:PopUp(1);" >
-                                    <img class="close_icon" src="{% static 'img/icons/close.png' %}">
+                        
+                        {% if individuo.situacion_actual %}
+                            <h3>Estado: <b>{{individuo.situacion_actual}}</b> 
+                                <a class="nolink" href="{% url 'informacion:cargar_situacion' individuo_id=individuo.id %}">
+                                    <img class="icons" src="{% static '/img/icons/change.png' %}">
                                 </a>
-                                <p class="history_tittle">HISTORIAL:</p>
-                                <hr class="minibar">
-                                <ul>
-                                    {% for sit in individuo.situaciones.all reversed %}
-                                        <li>{{sit}} ({{sit.fecha}})</li>
-                                    {% endfor %}
-                                </ul>
+                                <a href="javascript:PopUp(1);" ><img class="icons" src="{% static '/img/icons/history.png' %}"></a>
+                            </h3>
+                            <div class="popup-overlay"></div>
+                            <div class="popup">
+                                <div class="popuptext" id="myPopup-1">
+                                    <a href="javascript:PopUp(1);" >
+                                        <img class="close_icon" src="{% static 'img/icons/close.png' %}">
+                                    </a>
+                                    <p class="history_tittle">HISTORIAL:</p>
+                                    <hr class="minibar">
+                                    <ul>
+                                        {% for sit in individuo.situaciones.all reversed %}
+                                            <li>{{sit}} ({{sit.fecha}})</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
+                        {% else %}
+                            <h4 class="alerta">EL INDIVIDUO NO REGISTRA ESTADO ACTUAL: 
+                                <a class="nolink" href="{% url 'informacion:cargar_situacion' individuo_id=individuo.id %}">
+                                    CARGAR
+                                </a>
+                            </h4>
+                        {% endif %}
                         
                         <hr>
                         {{individuo.particularidades|safe}}
@@ -137,7 +146,11 @@
                             {% endif %}
                             <tr>
                                 <td>{{relacion.get_tipo_display}}</td>
-                                <td>{{relacion.relacionado}}</td>
+                                <td>
+                                    <a href="{% url 'informacion:ver_individuo' individuo_id=relacion.relacionado.id %}" target="_blank">
+                                        {{relacion.relacionado}}
+                                    </a>
+                                </td>
                                 <td>{{relacion.aclaracion}}</td>
                                 <td>{{relacion.relacionado.situacion_actual}}</td>
                                 <td>{{relacion.fecha}}</td>

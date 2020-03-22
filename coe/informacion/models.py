@@ -241,7 +241,7 @@ class GeoPosicion(models.Model):
 
 class Situacion(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="situaciones")
-    estado = models.IntegerField('Estado de Seguimiento', choices=TIPO_ESTADO, default='1')
+    estado = models.IntegerField('Estado de Seguimiento', choices=TIPO_ESTADO, default=1)
     conducta = models.CharField('Conducta', max_length=1, choices=TIPO_CONDUCTA, default='A')
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
@@ -321,11 +321,12 @@ class Seguimiento(models.Model):
         }
 
 #Señales
-from .signals import crear_situacion
+from .signals import estado_inicial
 from .signals import invertir_relacion
 from .signals import relacion_vehiculo
 from .signals import relacion_domicilio
 from .signals import poner_en_seguimiento
+from .signals import afectar_situacion
 #Auditoria
 auditlog.register(Archivo)
 auditlog.register(Vehiculo)
