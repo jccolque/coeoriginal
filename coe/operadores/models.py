@@ -16,7 +16,7 @@ from .choices import TIPO_EVENTO, NIVELES_SEGURIDAD
 
 # Create your models here.
 class SubComite(models.Model):
-    nombre = models.CharField('Nombre', max_length=50, unique=True)
+    nombre = models.CharField('Nombre', max_length=100, unique=True)
     descripcion = HTMLField()
     activo = models.BooleanField(default=True)
     class Meta:
@@ -47,8 +47,8 @@ class Operador(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="operadores")
     tipo_doc = models.IntegerField(choices=TIPO_DOCUMENTOS, default=2)
     num_doc = models.IntegerField('Numero de Documento', unique=True)
-    apellidos = models.CharField('Apellidos', max_length=50)
-    nombres  = models.CharField('Nombres', max_length=50)
+    apellidos = models.CharField('Apellidos', max_length=100)
+    nombres  = models.CharField('Nombres', max_length=100)
     email = models.EmailField('Correo Electronico')
     telefono = models.CharField('Telefono', max_length=20, default='+549388')
     fotografia = models.FileField('Fotografia', upload_to='operadores/', null=True, blank=True)

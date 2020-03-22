@@ -12,13 +12,13 @@ from .choices import TIPO_PROFESIONAL
 # Create your models here.
 class Inscripto(models.Model):
     tipo_doc = models.IntegerField(choices=TIPO_DOCUMENTOS, default=2)
-    num_doc = models.CharField('Numero de Documento/Pasaporte', 
+    num_doc = models.CharField('Documento/Pasaporte', 
         max_length=20,
         validators=[RegexValidator('^[A-Z_\d]*$', 'Solo Mayusculas.')],
         unique=True,
     )
-    apellidos = models.CharField('Apellidos', max_length=50)
-    nombres = models.CharField('Nombres', max_length=50)
+    apellidos = models.CharField('Apellidos', max_length=100)
+    nombres = models.CharField('Nombres', max_length=100)
     fecha_nacimiento = models.DateField(verbose_name="Fecha de Nacimiento")
     profesion = models.IntegerField('Profesion', choices=TIPO_PROFESIONAL)
     matricula = models.CharField(max_length=20)
@@ -27,7 +27,7 @@ class Inscripto(models.Model):
     localidad = models.CharField('Localidad', max_length=200)
     telefono = models.CharField('Telefono', max_length=20, default='+549388')
     archivo_dni = models.FileField('Foto DNI', upload_to='inscripciones/dni/')
-    archivo_titulo = models.FileField('Foto Titulo', upload_to='archivos/titulo/')
+    archivo_titulo = models.FileField('Foto Titulo', upload_to='inscripciones/titulo/')
     info_extra = HTMLField(null=True, blank=True)
     fecha = models.DateTimeField('Fecha Subido', default=timezone.now)
     valido = models.BooleanField(default=False)

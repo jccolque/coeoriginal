@@ -31,7 +31,7 @@ class Faq(models.Model):
 class Consulta(models.Model):
     autor = models.CharField('Nombre y Apellido', max_length=100)
     email = models.EmailField('Correo Electronico Personal')
-    telefono = models.CharField('Telefono', max_length=50, blank=True, null=True)
+    telefono = models.CharField('Telefono', max_length=100, blank=True, null=True)
     asunto = models.CharField('Asunto', max_length=100)
     descripcion = HTMLField()
     fecha_consulta = models.DateTimeField(auto_now_add=True)

@@ -14,7 +14,7 @@ from auditlog.registry import auditlog
 class Noticia(models.Model):
     titulo = models.CharField('Titulo', max_length=200)
     portada = models.FileField(upload_to='noticias/', default='/static/img/noimage.png')
-    epigrafe = models.CharField('Epigrafe', default='imagen' ,max_length=50)
+    epigrafe = models.CharField('Epigrafe', default='imagen' ,max_length=100)
     etiquetas = TaggableManager()
     cuerpo = HTMLField()
     fecha = models.DateTimeField('Fecha', default=timezone.now)

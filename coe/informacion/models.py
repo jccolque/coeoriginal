@@ -108,7 +108,7 @@ class ControlVehiculo(models.Model):
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     def __str__(self):
-        return str(self.vehiculo) + ': ' + self.aclaracion + ' | ' + str(self.fecha)
+        return self.aclaracion + ': ' + str(self.fecha)
     def as_dict(self):
         return {
             'id': self.id,
@@ -191,7 +191,7 @@ class Origen(models.Model):#Origen del Dato
     control = models.ForeignKey(ControlVehiculo, on_delete=models.CASCADE, related_name="origenes")
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="origenes")
     def __str__(self):
-        return str(self.control.vehiculo) + ': ' + str(self.individuo)
+        return str(self.control) + ': ' + str(self.individuo)
     def as_dict(self):
         return {
             "id": self.id,
@@ -202,8 +202,8 @@ class Origen(models.Model):#Origen del Dato
 class Domicilio(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="domicilios")
     localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="domicilios_individuos")
-    calle = models.CharField('Calle', max_length=50, default='', blank=False)
-    numero = models.CharField('Numero', max_length=50, default='', blank=False)
+    calle = models.CharField('Calle', max_length=100, default='', blank=False)
+    numero = models.CharField('Numero', max_length=100, default='', blank=False)
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     def __str__(self):

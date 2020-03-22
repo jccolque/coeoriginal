@@ -39,7 +39,7 @@ class Departamento(models.Model):#Departamento
 class Localidad(models.Model):
     departamento = models.ForeignKey(Departamento, on_delete=models.CASCADE, related_name="localidades")
     nombre = models.CharField('Nombre', max_length=100)
-    codigo_postal = models.CharField('Codigo Postal', max_length=50, blank=True, null=True)
+    codigo_postal = models.CharField('Codigo Postal', max_length=100, blank=True, null=True)
     class Meta:
         ordering = ['nombre', ]
         verbose_name_plural = 'Localidades'
