@@ -69,14 +69,9 @@ class ModOperadorForm(forms.ModelForm):
 class ImprimirTarjetasForm(forms.Form):
     operadores = forms.MultipleChoiceField(
         label='Seleccione Operadores',
-        choices=[],
+        choices=[(o.id, o.apellidos+', '+o.nombres ) for o in Operador.objects.all()],
         widget=CheckboxSelectMultiple(attrs={'class':'multiplechoice',}),
     )
-    #Inicializacion
-    def __init__(self, *args, **kwargs):
-        #Obtenemos permisos
-        self.base_fields['operadores'].choices = [(o.id, o.apellidos+', '+o.nombres ) for o in Operador.objects.all()]
-        super(ImprimirTarjetasForm, self).__init__(*args, **kwargs)
 
 class ModPassword(forms.Form):
     username = forms.CharField(label='Usuario', widget=forms.TextInput(attrs={'readonly':'readonly'}))
