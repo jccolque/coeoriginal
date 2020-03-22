@@ -11,5 +11,4 @@ class UpperCharField(with_metaclass(models.SubfieldBase, models.CharField)):
         value = super(UpperCharField, self).get_prep_value(value)
         if self.is_uppercase:
             return value.upper()
-
         return value

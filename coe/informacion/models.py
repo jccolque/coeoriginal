@@ -89,7 +89,7 @@ class Vehiculo(models.Model):
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     identificacion = models.CharField('Identificacion Patente/Codigo', max_length=200, unique=True)
     empresa = models.CharField('Empresa (Si aplica)', max_length=200, null=True, blank=True)
-    plan = HTMLField(verbose_name='Plan de Ruta')
+    plan = HTMLField(verbose_name='Plan de Ruta', null=True, blank=True)
     def __str__(self):
         return self.get_tipo_display() + ': ' + self.identificacion
     def as_dict(self):

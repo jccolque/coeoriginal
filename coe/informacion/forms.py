@@ -45,12 +45,12 @@ class IndividuoForm(forms.ModelForm):
     dom_numero = forms.IntegerField(required=False, )
     dom_aclaracion = forms.CharField(required=False, )
     atributos = forms.MultipleChoiceField(
-        choices=[(t.id, t.nombre) for t in TipoAtributo.objects.all()],
+        choices=[],
         widget=CheckboxSelectMultiple(attrs={'class':'multiplechoice',}),
         required=False
     )
     sintomas = forms.MultipleChoiceField(
-        choices=[(s.id, s.nombre) for s in TipoSintoma.objects.all()],
+        choices=[],
         widget=CheckboxSelectMultiple(attrs={'class':'multiplechoice',}),
         required=False
     )
@@ -61,7 +61,13 @@ class IndividuoForm(forms.ModelForm):
             'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
             'origen': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
             'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
-        }   
+        }
+    #Inicializacion
+    def __init__(self, *args, **kwargs):
+        #Obtenemos permisos
+        self.base_fields['atributos'].choices = [(a.id, a.nombre) for a in TipoAtributo.objects.all()]
+        self.base_fields['sintomas'].choices = [(s.id, s.nombre) for s in TipoSintoma.objects.all()]
+        super(IndividuoForm, self).__init__(*args, **kwargs)
 
 class SearchVehiculoForm(forms.Form):
     identificacion = forms.CharField(label="Patente/Identificacion", required=True)
