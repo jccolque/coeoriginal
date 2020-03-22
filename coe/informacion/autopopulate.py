@@ -7,6 +7,7 @@ from .models import Individuo, Domicilio
 def upload_padron(filename):
     print("Carga Masiva de Padron: ", timezone.now())
     num_lines = sum(1 for line in open(filename))
+    print("Cantidad de Lineas: ", num_lines)
     with open(filename, encoding="utf8") as lines:
         #Limpiamos la base de datos:
         print("Eliminamos cargados de ultimo Padron: ", timezone.now())
