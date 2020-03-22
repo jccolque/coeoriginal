@@ -84,6 +84,8 @@ class Enfermedad(models.Model):#Origen del Dato
             'importancia': self.get_importancia_display(),
         }
 
+
+#Vehiculos
 class Vehiculo(models.Model):
     tipo = models.IntegerField(choices=TIPO_VEHICULO, default='1')
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
@@ -103,21 +105,7 @@ class Vehiculo(models.Model):
             'plan': self.plan,
         }
 
-class ControlVehiculo(models.Model):
-    vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, related_name="controles")
-    aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
-    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
-    def __str__(self):
-        return self.aclaracion + ': ' + str(self.fecha)
-    def as_dict(self):
-        return {
-            'id': self.id,
-            'vehiculo_id': self.vehiculo.id,
-            'vehiculo': str(self.vehiculo),
-            'aclaracion': self.aclaracion,
-            'fecha': str(self.fecha),
-        }    
-
+#Individuos
 class Individuo(models.Model):
     tipo_doc = models.IntegerField(choices=TIPO_DOCUMENTOS, default=2)
     num_doc = models.CharField('Numero de Documento/Pasaporte', 
@@ -186,6 +174,22 @@ class Relacion(models.Model):#Origen del Dato
             return Relacion.objects.get(tipo=self.tipo, individuo=self.relacionado, relacionado=self.individuo)
         except Relacion.DoesNotExist:
             return None
+
+#Relacion vehicular
+class ControlVehiculo(models.Model):
+    vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, related_name="controles")
+    aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
+    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    def __str__(self):
+        return self.aclaracion + ': ' + str(self.fecha)
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'vehiculo_id': self.vehiculo.id,
+            'vehiculo': str(self.vehiculo),
+            'aclaracion': self.aclaracion,
+            'fecha': str(self.fecha),
+        }    
 
 class Origen(models.Model):#Origen del Dato
     control = models.ForeignKey(ControlVehiculo, on_delete=models.CASCADE, related_name="origenes")
