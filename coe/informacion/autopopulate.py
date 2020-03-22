@@ -21,12 +21,12 @@ def upload_padron(filename):
         #GEneramos todos los elementos nuevos
         individuos = []
         print("Inicio de Procesamiento: ", timezone.now())
-        mod = num_lines / 100
+        mod = int(num_lines / 100)
         count = 0
         for linea in lines:
             count += 1
             if count % mod == 0:
-                print("Procesado: ", count/mod, "%")
+                print("Procesado: ", int(count/mod), "%")
             linea = linea.split(',')
             if linea[0]:
             #Instanciamos individuos
