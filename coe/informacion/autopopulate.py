@@ -19,7 +19,12 @@ def upload_padron(request):
         #GEneramos todos los elementos nuevos
         individuos = []
         print("Inicio de Procesamiento: ", timezone.now())
+        mod = len(lines) / 100
+        count = 0
         for linea in lines:
+            count += 1
+            if count % mod == 0:
+                print("Procesado: ", count/mod, "%")
             linea = linea.split(',')
             if linea[0]:
             #Instanciamos individuos
@@ -52,7 +57,11 @@ def upload_padron(request):
         #Cargamos domicilios
         print("Comenzamos a cargar Domicilios", timezone.now())
         domicilios = []
+        count = 0
         for linea in lines:#Agregamos los domicilios
+            count += 1
+            if count % mod == 0:
+                print("Procesado: ", count/mod, "%")
             linea = linea.split(',')
             if linea[0]:
                 domicilio = Domicilio()
