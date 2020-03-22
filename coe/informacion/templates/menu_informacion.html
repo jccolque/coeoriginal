@@ -36,7 +36,7 @@
                             {% endif %}
 
                             {% if request.user.is_superuser %}
-                                <li><a href="{% url 'informacion:menu' %}">Opcion del Administrador</a></li>
+                                <li><a href="{% url 'informacion:upload_padron' %}">Cargar Padron Electoral</a></li>
                             {% endif %}
                         </ul>
                     </div>

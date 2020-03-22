@@ -10,4 +10,9 @@ TIPO_PROFESIONAL = (
     (5, 'Técnicos de laboratorio'),
     (6, 'Bioquímicos'),
     (7, 'Kinesiólogos especializados en pacientes respiratorios'),
+    (81, 'Educadores de la salud'),
+    (82, 'Trabajador Social'),
+    (91, 'Psicologos'),
+    (92, 'Psiquiatra'),
+    (99, 'Estudiantes de Carreras de Ciencias de la Salud'),
 )

@@ -1,4 +1,5 @@
 import csv
+from datetime import date
 #Imports Django
 from django.db.models import Q
 from django.http import HttpResponse
@@ -6,8 +7,10 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
+from core.decoradores import superuser_required
 from core.functions import paginador
-from core.forms import SearchForm
+from core.forms import SearchForm, UploadCsvWithPass
+from georef.models import Nacionalidad, Departamento, Provincia, Localidad
 from operadores.functions import obtener_operador
 #imports de la app
 from .choices import TIPO_ESTADO, TIPO_CONDUCTA
@@ -419,3 +422,68 @@ def csv_individuos(request):
         ])
     #Enviamos el archivo para descargar
     return response
+
+# Create your views here.
+@superuser_required
+def upload_padron(request):
+    titulo = "Carga Masiva de Padron"
+    form = UploadCsvWithPass()
+    if request.method == "POST":
+        form = UploadCsvWithPass(request.POST, request.FILES)
+        if form.is_valid():
+            file_data = form.cleaned_data['csvfile'].read().decode("utf-8")
+            lines = file_data.split("\n")
+            #Limpiamos la base de datos:
+            Individuo.objects.filter(observaciones="PADRON").delete()
+            num_docs_existentes = [i.num_doc for i in Individuo.objects.all()]
+            #Generamos elementos basicos:
+            nac = Nacionalidad.objects.get_or_create(nombre="Argentina")[0]
+            #Indexamos todas las localidades:
+            localidades = {l.nombre: l for l in Localidad.objects.all()}
+            #GEneramos todos los elementos nuevos
+            individuos = []
+            print("Inicio de Procesamiento")
+            for linea in lines:
+                linea = linea.split(',')
+                if linea[0]:
+                #Instanciamos individuos
+                    individuo = Individuo()                        
+                    individuo.tipo_doc = 2
+                    individuo.num_doc = linea[0]
+                    individuo.apellidos = linea[1]
+                    individuo.nombres = linea[2]
+                    individuo.nacionalidad = nac#TODOS ARGENTINOS
+                    individuo.observaciones = "PADRON"
+                    #Cacheamos localidades inexistentes:
+                    if linea[4] not in localidades:
+                        print("Se creo: ", linea[4], '| Hay que Corregir el Departamento.')
+                        localidad = Localidad()
+                        localidad.departamento = Departamento.objects.first()
+                        localidad.nombre = linea[4]
+                        localidad.save()
+                        localidades[localidad.nombre] = localidad
+                    #Lo agregamos a la lista
+                    if individuo.num_doc not in num_docs_existentes:
+                        num_docs_existentes.append(individuo.num_doc)
+                        individuos.append(individuo)
+            #Guardamos y generamos ids
+            Individuo.objects.bulk_create(individuos)
+            print("Cantidad de Individuos Procesados:", len(individuos))
+            #Indexamos id:individuos en un dict
+            individuos = {i.num_doc: i for i in Individuo.objects.all()}
+            #Cargamos domicilios
+            domicilios = []
+            for linea in lines:#Agregamos los domicilios
+                linea = linea.split(',')
+                if linea[0]:
+                    domicilio = Domicilio()
+                    domicilio.individuo = individuos[linea[0]]
+                    domicilio.localidad = localidades[linea[4]]
+                    domicilio.calle = linea[3]
+                    domicilio.aclaracion = "PADRON"
+                    domicilios.append(domicilio)
+            Domicilio.objects.bulk_create(domicilios)
+            #Mandamos respuesta
+            return render(request, 'extras/upload_csv.html', {'count': len(lines), })
+    #Inicial o por error
+    return render(request, "extras/upload_csv.html", {'titulo': titulo, 'form': form, })

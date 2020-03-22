@@ -49,4 +49,6 @@ urlpatterns = [
     url(r'^sintomas-autocomplete/$', autocomplete.SintomaAutocomplete.as_view(), name='sintomas-autocomplete',),
     url(r'^atributos-autocomplete/$', autocomplete.AtributoAutocomplete.as_view(), name='atributos-autocomplete',),
     url(r'^individuos-autocomplete/$', autocomplete.IndividuosAutocomplete.as_view(), name='individuos-autocomplete',),
+    #Upload Masivos
+    path('upload/padron/', views.upload_padron, name='upload_padron'),
 ]
