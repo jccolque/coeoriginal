@@ -45,7 +45,7 @@ class Responsable(models.Model):
     fecha_asignacion = models.DateTimeField('Fecha de Asignacion', default=timezone.now)
     obligaciones = HTMLField()
     def __str__(self):
-        return 'Tarea'
+        return str(self.operador)
     def as_dict(self):
         return {
             'id': self.id,

@@ -14,15 +14,15 @@
                             <li class="noticia">
                                 <div class=row>
                                     <div class="col-sm-3 foto">
-                                        <a class="novedad-link" href="{{noticia.id}}">
-                                                <img src="{{noticia.portada.url}}">
+                                        <a class="novedad-link" href="{% url 'noticias:ver_noticia' noticia_id=noticia.id %}">
+                                            <img src="{{noticia.portada.url}}">
                                         </a>
                                     </div>
                                     <div class="col-sm-8 info">
                                         <h2 class="titulo">{{noticia.titulo}}</h2>
                                         <p>{{ noticia.cuerpo|truncatewords:40|safe }}</p>
                                         <p style="text-align: right;">
-                                            <a href="{{noticia.id}}">
+                                            <a class="novedad-link" href="{% url 'noticias:ver_noticia' noticia_id=noticia.id %}">
                                                 &lt;Leer Nota&gt;
                                             </a>
                                         </p>
