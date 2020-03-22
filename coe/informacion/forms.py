@@ -42,7 +42,7 @@ class IndividuoForm(forms.ModelForm):
         required=False,
     )
     dom_calle = forms.CharField(required=False, )
-    dom_numero = forms.IntegerField(required=False, )
+    dom_numero = forms.CharField(required=False, )
     dom_aclaracion = forms.CharField(required=False, )
     atributos = forms.MultipleChoiceField(
         choices=[],

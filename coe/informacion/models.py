@@ -324,6 +324,7 @@ class Seguimiento(models.Model):
 from .signals import crear_situacion
 from .signals import invertir_relacion
 from .signals import relacion_vehiculo
+from .signals import relacion_domicilio
 from .signals import poner_en_seguimiento
 #Auditoria
 auditlog.register(Archivo)

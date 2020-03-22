@@ -9,7 +9,7 @@ from django.db.models.signals import post_save
 #imports del proyecto
 #Imports de la app
 from .models import Origen
-from .models import Individuo, Situacion, Relacion, Seguimiento
+from .models import Individuo, Domicilio, Situacion, Relacion, Seguimiento
 from .models import Atributo, TipoAtributo
 
 #Definimos nuestra señales
@@ -44,6 +44,24 @@ def relacion_vehiculo(created, instance, **kwargs):
             relacion.relacionado = individuo
             relacion.aclaracion = "Mismo Vehiculo-Mismo Control"
             relacion.save()
+
+@receiver(post_save, sender=Domicilio)
+def relacion_domicilio(created, instance, **kwargs):
+    if created:
+        domicilios = Domicilio.objects.filter(
+            localidad=instance.localidad,
+            calle=instance.calle,
+            numero=instance.numero,
+        )
+        for domicilio in domicilios.exclude(pk=instance.pk):
+            relacion = Relacion()
+            relacion.tipo = 'CE'
+            relacion.individuo = instance.individuo
+            relacion.relacionado = domicilio.individuo
+            relacion.aclaracion = "Mismo Domicilio"
+            relacion.save()
+        #Los que estan a menos de 100 metros
+        #Hasta no acomodar la DB esto no se puede hacer
 
 @receiver(post_save, sender=Relacion)
 def invertir_relacion(created, instance, **kwargs):

@@ -27,6 +27,13 @@ def upload_padron(filename):
             count += 1
             if count % mod == 0:
                 print("Procesado: ", int(count/mod), "%")
+                #Guardamos y generamos ids
+                if (count % (mod * 5)) == 0:
+                    print("Se guardaran:", len(individuos), "Individuos.")
+                    Individuo.objects.bulk_create(individuos)#Guardamos de a fragmentos para que no explote
+                    individuos = []
+                    print("Guardando Fragmento: ", timezone.now())
+            #procesamos cada linea
             linea = linea.split(',')
             if linea[0]:
             #Instanciamos individuos
@@ -50,9 +57,6 @@ def upload_padron(filename):
                     num_docs_existentes.append(individuo.num_doc)
                     individuos.append(individuo)
         print("Se termino de crear la lista inicial de individuos")
-        print("Guardando: ", timezone.now())
-        #Guardamos y generamos ids
-        Individuo.objects.bulk_create(individuos)
         print("Cantidad de Individuos Procesados:", len(individuos))
         #Indexamos id:individuos en un dict
         individuos = {i.num_doc: i for i in Individuo.objects.all()}
@@ -63,7 +67,13 @@ def upload_padron(filename):
         for linea in lines:#Agregamos los domicilios
             count += 1
             if count % mod == 0:
-                print("Procesado: ", count/mod, "%")
+                print("Procesado: ", int(count/mod), "%")
+                #Guardamos y generamos ids
+                if (count % (mod * 5)) == 0:
+                    Domicilio.objects.bulk_create(domicilios)#Guardamos de a fragmentos para que no explote
+                    domicilios = []#limpiamos lo ya guardado
+                    print("Guardando Fragmento: ", timezone.now())
+            #procesamos cada linea
             linea = linea.split(',')
             if linea[0]:
                 domicilio = Domicilio()
@@ -72,7 +82,6 @@ def upload_padron(filename):
                 domicilio.calle = linea[3]
                 domicilio.aclaracion = "PADRON"
                 domicilios.append(domicilio)
-        print("Guardando: ", timezone.now())
-        Domicilio.objects.bulk_create(domicilios)
+        
         #Mandamos respuesta
         print("Fin del proceso de carga!")
