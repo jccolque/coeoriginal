@@ -134,6 +134,7 @@ def buscar_individuo(request, control_id=None):
         form = SearchIndividuoForm(request.POST)
         if form.is_valid():
             num_doc = form.cleaned_data['num_doc']
+            num_doc = num_doc.upper()
             try:
                 individuo = Individuo.objects.get(num_doc=num_doc)
                 if control_id:#Se carga en un vehiculo:
@@ -141,7 +142,10 @@ def buscar_individuo(request, control_id=None):
                 else:#Se carga simplemente
                     return redirect('informacion:mod_individuo', individuo_id=individuo.id)
             except Individuo.DoesNotExist:
-                return redirect('informacion:cargar_pasajero_nuevo', num_doc=num_doc, control_id=control_id)
+                if control_id:#Se carga en un vehiculo:
+                    return redirect('informacion:cargar_pasajero_nuevo', num_doc=num_doc, control_id=control_id)
+                else:
+                    return redirect('informacion:cargar_individuo', num_doc=num_doc)
     return render(request, "extras/generic_form.html", {'titulo': "Indicar Documento de Individuo", 'form': form, 'boton': "Buscar", })
 
 @permission_required('operadores.individuos')
