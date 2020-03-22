@@ -8,9 +8,13 @@
         <div class="row">
             <br>
             <div class="col-sm-7">
+                <br><br>
                 {% include "carousel.html" %}
             </div>
             <div class="col-sm-5">
+                <a href="http://salud.jujuy.gob.ar/coronavirus/">
+                    <img class="fotos" src="{% static 'img/link_salud.png' %}">
+                </a>
                 <a href="{% url 'inscripciones:cargar_inscripcion' %}">
                     <img class="fotos" src="{% static 'img/reclutamiento.jpeg' %}">
                 </a>
