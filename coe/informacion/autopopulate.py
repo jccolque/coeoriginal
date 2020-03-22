@@ -4,9 +4,9 @@ from georef.models import Nacionalidad, Departamento, Localidad
 #Imports de la app
 from .models import Individuo, Domicilio
 
-def upload_padron(request):
+def upload_padron(filename):
     print("Carga Masiva de Padron: ", timezone.now())
-    with open("PADRON_BASIC.csv", encoding="utf8") as lines:
+    with open(filename, encoding="utf8") as lines:
         #Limpiamos la base de datos:
         print("Eliminamos cargados de ultimo Padron: ", timezone.now())
         Individuo.objects.filter(observaciones="PADRON").delete()
