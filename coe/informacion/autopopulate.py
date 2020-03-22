@@ -6,6 +6,7 @@ from .models import Individuo, Domicilio
 
 def upload_padron(filename):
     print("Carga Masiva de Padron: ", timezone.now())
+    num_lines = sum(1 for line in open(filename))
     with open(filename, encoding="utf8") as lines:
         #Limpiamos la base de datos:
         print("Eliminamos cargados de ultimo Padron: ", timezone.now())
@@ -19,7 +20,7 @@ def upload_padron(filename):
         #GEneramos todos los elementos nuevos
         individuos = []
         print("Inicio de Procesamiento: ", timezone.now())
-        mod = len(lines) / 100
+        mod = num_lines / 100
         count = 0
         for linea in lines:
             count += 1
