@@ -1,3 +1,4 @@
+#Imports de Python
 #Imports django
 from django.utils import timezone
 from georef.models import Nacionalidad, Departamento, Localidad

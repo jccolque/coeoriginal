@@ -74,6 +74,7 @@ def listar_operadores(request):
         if form.is_valid():
             search = form.cleaned_data['search']
             operadores = operadores.filter(
+                Q(num_doc__contains=search) |
                 Q(apellidos__icontains=search) |
                 Q(subcomite__nombre__icontains=search)
             )
