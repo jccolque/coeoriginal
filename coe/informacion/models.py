@@ -113,7 +113,7 @@ class ControlVehiculo(models.Model):
         return {
             'id': self.id,
             'vehiculo_id': self.vehiculo.id,
-            'fecha': str(self.vehiculo),
+            'vehiculo': str(self.vehiculo),
             'aclaracion': self.aclaracion,
             'fecha': str(self.fecha),
         }    
@@ -195,7 +195,7 @@ class Origen(models.Model):#Origen del Dato
     def as_dict(self):
         return {
             "id": self.id,
-            "vehiculo_id": self.vehiculo.id,
+            "control_id": self.control.id,
             "individuo_id": self.individuo.id,
         }
 
