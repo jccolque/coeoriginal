@@ -27,7 +27,7 @@ class Inscripto(models.Model):
     localidad = models.CharField('Localidad', max_length=200)
     telefono = models.CharField('Telefono', max_length=20, default='+549388')
     archivo_dni = models.FileField('Foto DNI', upload_to='inscripciones/dni/')
-    archivo_título = models.FileField('Foto Titulo', upload_to='archivos/titulo/')
+    archivo_titulo = models.FileField('Foto Titulo', upload_to='archivos/titulo/')
     info_extra = HTMLField(null=True, blank=True)
     fecha = models.DateTimeField('Fecha Subido', default=timezone.now)
     valido = models.BooleanField(default=False)

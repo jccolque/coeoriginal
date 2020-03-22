@@ -7,7 +7,7 @@ from .models import Inscripto
 class InscriptoAdmin(admin.ModelAdmin):
     model = Inscripto
     search_fields = ['num_doc', 'apellidos', 'nombres',]
-    list_filter = ['profesion']
+    list_filter = ['profesion', 'valido', 'disponible']
 
 # Register your models here.
 admin.site.register(Inscripto, InscriptoAdmin)

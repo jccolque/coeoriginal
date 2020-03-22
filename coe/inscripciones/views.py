@@ -51,6 +51,11 @@ def lista_inscriptos(request, profesion_id=None):
     inscriptos = paginador(request, inscriptos)
     return render(request, 'lista_inscripciones.html', {'inscriptos': inscriptos, })
 
+@permission_required('operadores.menu_inscripciones')
+def ver_inscripto(request, inscripto_id=None):
+    inscripto = Inscripto.objects.get(pk=inscripto_id)
+    return render(request, 'ver_inscripto.html', {'inscripto': inscripto, })
+
 #Activar:
 def activar_inscripcion_mail(request, inscripcion_id, token):
     try:

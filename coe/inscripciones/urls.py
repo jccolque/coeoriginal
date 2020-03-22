@@ -12,6 +12,8 @@ urlpatterns = [
 
     path('cargar', views.cargar_inscripcion, name='cargar_inscripcion'),
     path('lista', views.lista_inscriptos, name='lista_inscriptos'),
+    path('lista/prof/<int:profesion_id>', views.lista_inscriptos, name='lista_filtrada'),
+    path('ver/<int:inscripto_id>', views.ver_inscripto, name='ver_inscripto'),
 
     #Activacion:
     url(r'^act/(?P<inscripcion_id>[0-9]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', views.activar_inscripcion_mail, name='activar_inscripcion_mail'),

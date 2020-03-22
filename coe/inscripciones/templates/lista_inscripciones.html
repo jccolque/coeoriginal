@@ -1,54 +1,40 @@
-{% extends 'base_inventario.html' %}
+{% extends 'base_inscripciones.html' %}
 {% load static %}
 {% block content %}
     <div class="beneficiario container">
         <div class="row">
-            <h2>Listado General de Documentos</h2>
-            {% if perms.operadores.menu_documentos %}
-                <a href="{% url 'documentos:cargar_documento' %}">
-                    Cargar Nuevo Documento
-                    <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo Usuario">
-                </a>
-            {% endif %}
+            <h2>Listado de Inscriptos</h2>
             <p>{% include 'extras/buscador.html' %}</h3>
         </div>
         <div class="row">
         <div class="col-md-12">
             <table class="listado">
                 <tr>
-                    <th>SubComite</th>
+                    <th>Profesion</th>
+                    <th>Apellido</th>
                     <th>Nombre</th>
-                    <th>Tipo</th>
-                    <th>Autor</th>
-                    <th>Fecha Actualizacion</th>
-                    <th>Ver Historial</th>
-                    <th>Descargar Ultima Version</th>
+                    <th>Localidad</th>
+                    <th>Telefono</th>
+                    <th>Fecha Inscripcion</th>
+                    <th>Ver Detalle</th>
                 </tr>
-                {% for documento in documentos %}
+                {% for inscripto in inscriptos %}
                     <tr>
                         <td>
-                            <a href="{% url 'documentos:lista_subcomite' subco_id=documento.subcomite.id %}">
-                                {{documento.subcomite}}
+                            <a href="{% url 'inscripciones:lista_filtrada' profesion_id=inscripto.profesion %}">
+                                {{inscripto.get_profesion_display}}
                             </a>
                         </td>
-                        <td>{{documento.nombre}}</td>
-                        <td>{{documento.get_tipo_display}}</td>
-                        <td>{{documento.autor}}</td>
-                        <td>{{documento.ultima_version.fecha}}</td>
-                        <td><a href="{% url 'documentos:ver_documento' documento_id=documento.id %}">Historial</a></td>
-                        {% if documento.ultima_version %}
-                            {% if documento.ultima_version.archivo %}
-                                <td><a href="{{documento.ultima_version.archivo.url}}">Descargar</a></td>
-                            {% else %}
-                                <td><p>Sin Archivos Cargados</p></td>
-                            {% endif %}
-                        {% else %}
-                            <td><p>Sin Archivos Cargados</p></td>
-                        {% endif %}
+                        <td>{{inscripto.apellidos}}</td>
+                        <td>{{inscripto.nombres}}</td>
+                        <td>{{inscripto.localidad}}</td>
+                        <td>{{inscripto.telefono}}</td>
+                        <td>{{inscripto.fecha}}</td>
+                        <td><a href="{% url 'inscripciones:ver_inscripto' inscripto_id=inscripto.id %}">Ver Resumen</a></td>
                     </tr>
                 {% endfor %}
             </table>
-            {% include 'extras/paginador.html' with elementos=documentos %}
+            {% include 'extras/paginador.html' with elementos=inscriptos %}
         </div>
     </div>
 {% endblock %}
