@@ -137,10 +137,13 @@ def buscar_individuo(request, control_id=None):
             num_doc = num_doc.upper()
             try:
                 individuo = Individuo.objects.get(num_doc=num_doc)
-                if control_id:#Se carga en un vehiculo:
-                    return redirect('informacion:cargar_pasajero', individuo_id=individuo.id, control_id=control_id)
-                else:#Se carga simplemente
-                    return redirect('informacion:mod_individuo', individuo_id=individuo.id)
+                if control_id:#lo cargamos en el vehiculo y volvemos al vehiculo:
+                    control = ControlVehiculo.objects.get(pk=control_id)
+                    origen = Origen(control=control, individuo=individuo)
+                    origen.save()
+                    return redirect('informacion:ver_vehiculo', vehiculo_id=control.vehiculo.id)
+                else:#Se va a la planilla simplemente
+                    return redirect('informacion:ver_individuo', individuo_id=individuo.id)
             except Individuo.DoesNotExist:
                 if control_id:#Se carga en un vehiculo:
                     return redirect('informacion:cargar_pasajero_nuevo', num_doc=num_doc, control_id=control_id)
