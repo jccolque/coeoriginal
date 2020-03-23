@@ -8,7 +8,6 @@ from django.utils import timezone
 from django.db.models import Q
 #Imports del proyecto
 from georef.models import Nacionalidad, Departamento, Localidad
-from background.models import Progress_Links
 #Import Personales
 from .models import Archivo
 from .models import Individuo, Domicilio
@@ -18,7 +17,7 @@ from .models import Sintoma, Atributo
 from .choices import TIPO_SINTOMA
 
 @background(schedule=1)
-def subir_same(lineas, archivo_id):
+def guardar_same(lineas, archivo_id):
     archivo = Archivo.objects.get(pk=archivo_id)
     if not archivo.descripcion:
         archivo.descripcion = "<h3>Inicia la carga Background: "+str(timezone.now())+"</h3>"
@@ -94,39 +93,24 @@ def subir_same(lineas, archivo_id):
     archivo.procesado = True
     archivo.save()
 
-@background(schedule=60)
-def upload_padron(lineas, archivo_id):
-    log = "Carga Masiva SAME: "+str(timezone.now())
-    log+= "Cantidad Lineas: "+str(len(lineas))
-    log+= "<ul>"
-    log+= "<li> Carga Masiva de Padron: "+ str(timezone.now())
-    num_lines = len(lineas)
-    log+= "<li> Cantidad de Lineas: "+ str(num_lines)
-    #Limpiamos la base de datos:
-    log+= "<li> Eliminamos cargados de ultimo Padron: "+ str(timezone.now())
-    Individuo.objects.filter(observaciones="PADRON").delete()
-    log+= "<li> Generando Individuos Existentes: "+ str(timezone.now())
+@background(schedule=1)
+def guardar_padron_individuos(lineas, archivo_id):
+    archivo = Archivo.objects.get(pk=archivo_id)
+    if not archivo.descripcion:
+        archivo.descripcion = "<h3>Inicia la carga Masiva del Padron: "+str(timezone.now())+"</h3>"
+        #Limpiamos la base de datos:
+        archivo.descripcion += "<li> Eliminamos cargados de ultimo Padron: "+ str(timezone.now())
+        Individuo.objects.filter(observaciones="PADRON").delete()
+        archivo.save()
+    #Obtenemos dni existentes
     num_docs_existentes = [i.num_doc for i in Individuo.objects.all()]
     #Generamos elementos basicos:
     nac = Nacionalidad.objects.get_or_create(nombre="Argentina")[0]
-    #Indexamos todas las localidades:
-    localidades = {l.nombre: l for l in Localidad.objects.all()}
     #GEneramos todos los elementos nuevos
     individuos = []
-    log+= "<li> Inicio de Procesamiento: "+ str(timezone.now())
-    mod = int(num_lines / 100)
-    count = 0
+    archivo.descripcion += "<li> Inicio de Procesamiento: "+ str(timezone.now())
+    archivo.descripcion += "<p>Cantidad Lineas: "+str(len(lineas))+"</p>"
     for linea in lineas:
-        count += 1
-        if count % mod == 0:
-            log+= "<li> Procesado: "+ str(int(count/mod), "%")
-            #Guardamos y generamos ids
-            if (count % (mod * 5)) == 0:
-                log+= "<li> Se guardaran:"+ str(len(individuos), "Individuos.")
-                bulkcreate_2_db(Individuo, individuos, queue="SubirPadron:Individuos")
-                individuos = []
-                log+= "<li> Guardando Fragmento: "+ str(timezone.now())
-        #procesamos cada linea
         linea = linea.split(',')
         if linea[0]:
         #Instanciamos individuos
@@ -137,47 +121,52 @@ def upload_padron(lineas, archivo_id):
             individuo.nombres = linea[2]
             individuo.nacionalidad = nac #Todos Argentinos
             individuo.observaciones = "PADRON"
-            #Cacheamos localidades inexistentes:
-            if linea[4] not in localidades:
+            #Lo agregamos a la lista
+            if individuo.num_doc not in num_docs_existentes:
+                num_docs_existentes.append(individuo.num_doc)
+                individuos.append(individuo)    
+    #Creamos este bloque
+    Individuo.objects.bulk_create(individuos)
+    archivo.descripcion += "<li>Guardando Fragmento: "+ str(timezone.now())
+    archivo.save()
+        
+@background(schedule=1)
+def guardar_padron_domicilios(lineas, archivo_id):
+    archivo = Archivo.objects.get(pk=archivo_id)
+    if not archivo.descripcion:
+        archivo.descripcion = "<h3>Inicia la carga Masiva de Domicilios del Padron: "+str(timezone.now())+"</h3>"
+        #Limpiamos la base de datos:
+        archivo.descripcion += "<li> Eliminamos cargados de ultimo Padron: "+ str(timezone.now())
+        archivo.save()
+    #Agregamos info al doc
+    archivo.descripcion += "<p>Cantidad Lineas: "+str(len(lineas))+"</p>"    
+    #Generamos listado de individuos para matchear
+    individuos = {i.num_doc: i for i in Individuo.objects.all()}
+    #Generamos lista de localidades para matchear
+    localidades = {l.nombre: l for l in Localidad.objects.all()}
+    #Cargamos domicilios
+    domicilios = []
+    for linea in lineas:#Agregamos los domicilios
+        linea = linea.split(',')
+        if linea[0]:
+            #Si no existe la localidad la creamos
+            if linea[2] not in localidades:
                 log+= "<li> Se creo: ", linea[4]+ str('| Hay que Corregir el Departamento.')
                 localidad = Localidad()
                 localidad.departamento = Departamento.objects.first()
                 localidad.nombre = linea[4]
                 localidad.save()
                 localidades[localidad.nombre] = localidad
-            #Lo agregamos a la lista
-            if individuo.num_doc not in num_docs_existentes:
-                num_docs_existentes.append(individuo.num_doc)
-                individuos.append(individuo)
-    bulkcreate_2_db(Individuo, individuos, queue="SubirPadron:Individuos")
-    log+= "<li> Guardando Ultimo Fragmento: "+ str(timezone.now())
-    log+= "<li> Se termino de crear la lista inicial de individuos"
-    log+= "<li> Cantidad de Individuos Procesados:"+ str(len(individuos))
-    #Indexamos id:individuos en un dict
-    individuos = {i.num_doc: i for i in Individuo.objects.all()}
-    #Cargamos domicilios
-    log+= "<li> Comenzamos a cargar Domicilios"+ str(timezone.now())
-    domicilios = []
-    count = 0
-    for linea in lines:#Agregamos los domicilios
-        count += 1
-        if count % mod == 0:
-            log+= "<li> Procesado: "+ str(int(count/mod), "%")
-            #Guardamos y generamos ids
-            if (count % (mod * 5)) == 0:
-                bulkcreate_2_db(Domicilio, domicilios, queue="SubirPadron:Domicilios")
-                domicilios = []#limpiamos lo ya guardado
-                log+= "<li> Guardando Fragmento: "+ str(timezone.now())
-        #procesamos cada linea
-        linea = linea.split(',')
-        if linea[0]:
-            domicilio = Domicilio()
-            domicilio.individuo = individuos[linea[0]]
-            domicilio.localidad = localidades[linea[4]]
-            domicilio.calle = linea[3]
-            domicilio.aclaracion = "PADRON"
-            domicilios.append(domicilio)
-    bulkcreate_2_db(Domicilio, domicilios, queue="SubirPadron:Domicilios")
-    log+= "<li> Guardando Ultimo Fragmento: "+ str(timezone.now())
-    #Mandamos respuesta
-    log+= "<li> Fin del proceso de carga!"
+            #Si existe el individuo en nuestra base de datos
+            if linea[0] in individuos:
+                domicilio = Domicilio()
+                domicilio.individuo = individuos[linea[0]]
+                domicilio.localidad = localidades[linea[2]]
+                domicilio.calle = linea[1]
+                domicilio.aclaracion = "PADRON"
+                domicilios.append(domicilio)
+    #Creamos este bloque
+    Domicilio.objects.bulk_create(domicilios)
+    archivo.descripcion += "<li>Guardando Fragmento Domicilios: "+ str(timezone.now())
+    archivo.save()
+            

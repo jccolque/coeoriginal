@@ -38,7 +38,8 @@
                             {% endif %}
 
                             {% if request.user.is_superuser %}
-                                <li><a href="{% url 'informacion:menu' %}">Opciones Administrador</a></li>
+                                <li><a href="{% url 'informacion:upload_padron_individuos' %}">Upload Padron Individuos</a></li>
+                                <li><a href="{% url 'informacion:upload_padron_domicilios' %}">Upload Padron Domicilios</a></li>
                             {% endif %}
                         </ul>
                     </div>

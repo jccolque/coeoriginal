@@ -13,6 +13,7 @@ TIPO_ARCHIVO = (
     (4, 'Denuncia'),
     (5, 'Carga Masiva Same'),
     (6, 'Carga Masiva Epidemiologia'),
+    (7, 'Carga Masiva Padron'),
 )
 
 TIPO_VEHICULO = (

@@ -9,6 +9,7 @@ from django.forms.widgets import CheckboxSelectMultiple
 #Imports extra
 from dal import autocomplete
 #Imports del proyecto
+from coe.credenciales import SECRET_KEY
 from core.choices import TIPO_DOCUMENTOS
 from georef.models import Localidad
 #Imports de la app
@@ -22,6 +23,17 @@ class ArchivoForm(forms.ModelForm):
     class Meta:
         model = Archivo
         fields = ['tipo', 'nombre', 'archivo', ]
+
+class ArchivoFormWithPass(forms.ModelForm):
+    passwd = forms.CharField(label="Password de Administrador", max_length=100, widget=forms.PasswordInput)
+    class Meta:
+        model = Archivo
+        fields = ['tipo', 'nombre', 'archivo', ]
+    def clean(self):
+        if self.cleaned_data['passwd'] == SECRET_KEY:
+            return self.cleaned_data
+        else:
+            raise forms.ValidationError("La contraseña ingresada es incorrecta.")
 
 class VehiculoForm(forms.ModelForm):
     class Meta:

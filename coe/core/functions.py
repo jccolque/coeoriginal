@@ -1,9 +1,6 @@
 #Imports de python
 import re
-import json
-import requests
 #Imports django
-from django.core.cache import cache
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 #Imports de la app
 from .apps import CoreConfig
@@ -14,7 +11,7 @@ def agregar_menu(app):
 
 def paginador(request, queryset):
     page = request.GET.get('page', 1)
-    paginator = Paginator(queryset, 50)
+    paginator = Paginator(queryset, 100)
     try:
         return paginator.page(page)
     except PageNotAnInteger:

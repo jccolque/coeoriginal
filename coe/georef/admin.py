@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.contrib.gis import admin as gis_admin
 #Importamos modelos
 from .models import Provincia, Departamento, Localidad, Barrio
 from .models import Nacionalidad

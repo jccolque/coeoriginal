@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
+from core.decoradores import superuser_required
 from core.functions import paginador
 from core.forms import SearchForm, UploadCsvWithPass
 from operadores.functions import obtener_operador
@@ -19,13 +20,13 @@ from .models import Seguimiento
 from .models import Domicilio, GeoPosicion
 from .models import Atributo, Sintoma
 from .models import TipoAtributo, TipoSintoma
-from .forms import ArchivoForm
+from .forms import ArchivoForm, ArchivoFormWithPass
 from .forms import VehiculoForm, ControlVehiculoForm
 from .forms import IndividuoForm
 from .forms import DomicilioForm, AtributoForm, SintomaForm
 from .forms import SituacionForm, RelacionForm, SeguimientoForm
 from .forms import SearchIndividuoForm, SearchVehiculoForm
-from .tasks import subir_same
+from .tasks import guardar_same, guardar_padron_individuos, guardar_padron_domicilios
 
 # Create your views here.
 @permission_required('operadores.menu_informacion')
@@ -76,7 +77,7 @@ def upload_same(request):
             frag_size = 25
             segmentos = [lines[x:x+frag_size] for x in range(0, len(lines), frag_size)]
             for segmento in segmentos:
-                subir_same(segmento, archivo_id=archivo.id, queue=tarea)
+                guardar_same(segmento, archivo_id=archivo.id, queue=tarea)
             return redirect('informacion:ver_archivo', archivo_id=archivo.id)
     return render(request, "extras/generic_form.html", {'titulo': "CARGA MASIVA SAME", 'form': form, 'boton': "Subir", })
 
@@ -467,3 +468,47 @@ def csv_individuos(request):
         ])
     #Enviamos el archivo para descargar
     return response
+
+@superuser_required
+def upload_padron_individuos(request):
+    form = ArchivoFormWithPass()
+    if request.method == "POST":
+        form = ArchivoFormWithPass(request.POST, request.FILES)
+        if form.is_valid():
+            operador = obtener_operador(request)
+            archivo = form.save(commit=False)
+            archivo.operador = operador
+            archivo.save()
+            csv = archivo.archivo
+            file_data = csv.read().decode("utf-8")
+            lines = file_data.split("\n")
+            tarea = crear_progress_link("SUBIR_PADRON:"+str(timezone.now()))
+            #Dividimos en fragmentos
+            frag_size = 10000
+            segmentos = [lines[x:x+frag_size] for x in range(0, len(lines), frag_size)]
+            for segmento in segmentos:
+                guardar_padron_individuos(segmento, archivo_id=archivo.id, queue=tarea)
+            return redirect('informacion:ver_archivo', archivo_id=archivo.id)
+    return render(request, "extras/generic_form.html", {'titulo': "CARGA MASIVA PADRON INDIVIDUOS", 'form': form, 'boton': "Subir", })
+
+@superuser_required
+def upload_padron_domicilios(request):
+    form = ArchivoFormWithPass()
+    if request.method == "POST":
+        form = ArchivoFormWithPass(request.POST, request.FILES)
+        if form.is_valid():
+            operador = obtener_operador(request)
+            archivo = form.save(commit=False)
+            archivo.operador = operador
+            archivo.save()
+            csv = archivo.archivo
+            file_data = csv.read().decode("utf-8")
+            lines = file_data.split("\n")
+            tarea = crear_progress_link("SUBIR_PADRON:"+str(timezone.now()))
+            #Dividimos en fragmentos
+            frag_size = 10000
+            segmentos = [lines[x:x+frag_size] for x in range(0, len(lines), frag_size)]
+            for segmento in segmentos:
+                guardar_padron_domicilios(segmento, archivo_id=archivo.id, queue=tarea)
+            return redirect('informacion:ver_archivo', archivo_id=archivo.id)
+    return render(request, "extras/generic_form.html", {'titulo': "CARGA MASIVA PADRON DOMICILIOS", 'form': form, 'boton': "Subir", })
