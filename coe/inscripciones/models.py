@@ -42,7 +42,7 @@ class Inscripto(models.Model):
             'apellidos': self.apellidos,
             'nombres': self.nombres,
             'profesion': self.get_profesion_display(),
-            'matrícula': self.endda,
+            'matrícula': self.matricula,
             'email': self.email,
             'telefono': self.telefono,
             'archivo_dni': self.archivo_dni,

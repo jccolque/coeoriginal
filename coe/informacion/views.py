@@ -1,17 +1,15 @@
-import csv
-from datetime import date
 #Imports Django
 from django.db.models import Q
+from django.utils import timezone
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
-from core.decoradores import superuser_required
 from core.functions import paginador
 from core.forms import SearchForm, UploadCsvWithPass
-from georef.models import Nacionalidad, Departamento, Provincia, Localidad
 from operadores.functions import obtener_operador
+from background.tasks import crear_progress_link
 #imports de la app
 from .choices import TIPO_ESTADO, TIPO_CONDUCTA
 from .models import Archivo
@@ -27,6 +25,7 @@ from .forms import IndividuoForm
 from .forms import DomicilioForm, AtributoForm, SintomaForm
 from .forms import SituacionForm, RelacionForm, SeguimientoForm
 from .forms import SearchIndividuoForm, SearchVehiculoForm
+from .tasks import subir_same
 
 # Create your views here.
 @permission_required('operadores.menu_informacion')
@@ -46,7 +45,7 @@ def ver_archivo(request, archivo_id):
     return render(request, 'ver_archivo.html', {'archivo': archivo,})
 
 @permission_required('operadores.archivos')
-def subir_archivos(request):
+def upload_archivos(request):
     form = ArchivoForm()
     if request.method == "POST":
         form = ArchivoForm(request.POST, request.FILES)
@@ -57,6 +56,29 @@ def subir_archivos(request):
             archivo.save()
             return redirect('informacion:ver_archivo', archivo_id=archivo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Subir Archivo para Carga", 'form': form, 'boton': "Subir", })
+
+@permission_required('operadores.archivos')
+def upload_same(request):
+    form = ArchivoForm(initial={'tipo':5, 'nombre': str(timezone.now())[0:16]})
+    if request.method == "POST":
+        form = ArchivoForm(request.POST, request.FILES)
+        if form.is_valid():
+            operador = obtener_operador(request)
+            archivo = form.save(commit=False)
+            archivo.operador = operador
+            archivo.save()
+            csv = archivo.archivo
+            file_data = csv.read().decode("utf-8")
+            lines = file_data.split("\n")
+            lines = lines[1:]
+            tarea = crear_progress_link("SUBIR_SAME:"+str(timezone.now()))
+            #Dividimos en fragmentos de 25
+            frag_size = 25
+            segmentos = [lines[x:x+frag_size] for x in range(0, len(lines), frag_size)]
+            for segmento in segmentos:
+                subir_same(segmento, archivo_id=archivo.id, queue=tarea)
+            return redirect('informacion:ver_archivo', archivo_id=archivo.id)
+    return render(request, "extras/generic_form.html", {'titulo': "CARGA MASIVA SAME", 'form': form, 'boton': "Subir", })
 
 @permission_required('operadores.archivos')
 def procesar_archivos(request, archivo_id):

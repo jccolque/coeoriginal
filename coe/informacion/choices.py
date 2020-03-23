@@ -11,6 +11,8 @@ TIPO_ARCHIVO = (
     (2, 'Informe Externo'),
     (3, 'Informe Particular'),
     (4, 'Denuncia'),
+    (5, 'Carga Masiva Same'),
+    (6, 'Carga Masiva Epidemiologia'),
 )
 
 TIPO_VEHICULO = (
@@ -76,6 +78,7 @@ TIPO_SINTOMA = (
     ('ART', 'Dolor de Articulaciones'),
     ('DC', 'Dolor de Cabeza'),
     ('DG', 'Dolor de Garganta'),
+    ('DP', 'Dolor de Pecho'),
     ('DSV', 'Dolor parte Superior del Vientre'),
     ('FAT', 'Fatiga'),
     ('FIE', 'Fiebre'),
@@ -91,4 +94,5 @@ TIPO_SINTOMA = (
     ('SN', 'Secrecion Nasal'),
     ('TOS', 'Tos'),
     ('VOM', 'Vomitos'),
+    ('ESC', 'Escalofrios')
 )

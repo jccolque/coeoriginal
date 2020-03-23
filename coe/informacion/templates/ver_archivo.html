@@ -11,9 +11,11 @@
                         <p><b>Fecha de Recibido:</b> {{archivo.fecha}}</p>
                         <p><b>Usuario Emisor:</b> {{archivo.operador}}</p>
                         <p><b>Procesado:</b> {{archivo.procesado}}</p>
-                        <hr>          
-                        <img src="{{archivo.archivo.url}}">
-
+                        <a href="{{archivo.archivo.url}}">
+                            <b>Descargar</b>
+                        </a>
+                        <hr>
+                        {{archivo.descripcion|safe}}
                     </div>
                     <div class="col-md-4">
                         <ul class="menu_botones">

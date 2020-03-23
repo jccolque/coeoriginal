@@ -12,6 +12,7 @@
                         <ul class="menu_botones">
                             {% if perms.operadores.archivos %}
                                 <li><a href="{% url 'informacion:subir_archivos'  %}">Subir Archivos</a></li>
+                                <li><a href="{% url 'informacion:subir_same'  %}">Carga Masiva SAME</a></li>
                                 <li><a href="{% url 'informacion:archivos_pendientes'  %}">Ver Listado de Archivos sin Procesar</a></li>
                                 <hr>
                             {% endif %}

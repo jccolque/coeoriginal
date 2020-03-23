@@ -1,4 +1,5 @@
 #Imports de python
+import re
 import json
 import requests
 #Imports django
@@ -20,3 +21,8 @@ def paginador(request, queryset):
         return paginator.page(1)
     except EmptyPage:
         return paginator.page(paginator.num_pages)
+
+def delete_tags(texto):
+  cleanr = re.compile('<.*?>')
+  cleantext = re.sub(cleanr, '', texto)
+  return cleantext

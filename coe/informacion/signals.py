@@ -1,12 +1,13 @@
 #Imports Python
-from django.db.models import Q
+
 #Imports Django
+from django.db.models import Q
 from django.core.cache import cache
 from django.utils import timezone
-from dateutil.relativedelta import relativedelta
 from django.dispatch import receiver
 from django.db.models.signals import post_save
-#imports del proyecto
+#imports Extras
+from dateutil.relativedelta import relativedelta
 #Imports de la app
 from .models import Origen
 from .models import Individuo, Domicilio, Situacion, Relacion, Seguimiento
@@ -29,6 +30,7 @@ def estado_inicial(created, instance, **kwargs):
                     Q(nombre__icontains='poblacion') & 
                     Q(nombre__icontains='riesgo')
                 )
+                atributo.newtipo = 'PR'
                 atributo.save()
             except TipoAtributo.DoesNotExist:
                 print('No existe Atributo de Poblacion de Riesgo')

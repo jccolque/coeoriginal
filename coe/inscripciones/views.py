@@ -1,4 +1,8 @@
+#imports de Python
+import csv
 #Imports de Django
+from django.http import HttpResponse
+from django.utils import timezone
 from django.shortcuts import render
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
@@ -6,7 +10,7 @@ from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
 from coe.settings import SEND_MAIL
 from core.forms import SearchForm
-from core.functions import paginador
+from core.functions import paginador, delete_tags
 #Impors de la app
 from .tokens import account_activation_token
 from .models import Inscripto
@@ -57,6 +61,33 @@ def lista_inscriptos(request, profesion_id=None):
 def ver_inscripto(request, inscripto_id=None):
     inscripto = Inscripto.objects.get(pk=inscripto_id)
     return render(request, 'ver_inscripto.html', {'inscripto': inscripto, })
+
+@permission_required('operadores.menu_inscripciones')
+def download_inscriptos(request):
+    inscriptos = Inscripto.objects.all()
+    #Iniciamos la creacion del csv
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Inscriptos.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['REPORTE DE INSCRIPTOS'])
+    writer.writerow(['FECHA:', timezone.now()])
+    writer.writerow(['ID', 'TIPO_DOC', 'NUM_DOC', 'APELLIDOS', 'NOMBRES', 'PROFESION', 'MATRÍCULA', 'EMAIL', 'TELEFONO', 'INFO_EXTRA', 'VALIDO'])
+    for item in inscriptos:
+        writer.writerow([
+            item.id,
+            item.get_tipo_doc_display(),
+            item.num_doc,
+            item.apellidos,
+            item.nombres,
+            item.get_profesion_display(),
+            item.matricula,
+            item.email,
+            item.telefono,
+            delete_tags(item.info_extra),
+            item.valido,
+        ])
+    #Enviamos el archivo para descargar
+    return response
 
 #Activar:
 def activar_inscripcion_mail(request, inscripcion_id, token):

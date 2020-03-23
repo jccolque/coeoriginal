@@ -12,6 +12,7 @@
                         <ul class="menu_botones">
                             <li><a href="{% url 'inscripciones:cargar_inscripcion'  %}">Inscribir a Alguien</a></li>
                             <li><a href="{% url 'inscripciones:lista_inscriptos'  %}">Ver Listado de Inscriptos</a></li>
+                            <li><a href="{% url 'inscripciones:download_inscriptos'  %}">Descargar Listado de Inscriptos</a></li>
                             {% if request.user.is_superuser %}
                                 <li><a href="{% url 'documentos:menu' %}">Opcion del Administrador</a></li>
                             {% endif %}

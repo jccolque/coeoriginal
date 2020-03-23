@@ -56,6 +56,7 @@ class Archivo(models.Model):
     fecha = models.DateTimeField('Fecha del evento', default=timezone.now)
     operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="archivos")
     procesado = models.BooleanField(default=False)
+    descripcion = HTMLField(verbose_name='Descripcion', null=True, blank=True)
     def __str__(self):
         return self.get_tipo_display() + ': ' + self.nombre
     def as_dict(self):

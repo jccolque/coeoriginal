@@ -1,0 +1,36 @@
+{% extends 'base_informacion.html' %}
+{% load static %}
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2>Tareas</h2>
+            <p>{% include 'extras/buscador.html' %}</p>
+        </div>
+        <div class="row">
+        <div class="col-md-12">
+            <table class="listado">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Fecha de Inicio</th>
+                    <th>Cantidad Hilos</th>
+                    <th>En Progreso</th>
+                    <th>Terminado</th>
+                    <th>Avance</th>
+                    <th>Ver Tarea</th>
+                </tr>
+                {% for task in tasks %}
+                    <tr>
+                        <td>{{task.tarea}}</td>
+                        <td>{{task.inicio}}</td>
+                        <td>{{task.total}}</td>
+                        <td>{{task.en_cola | length}}</td>
+                        <td>{{task.terminadas | length}}</td>
+                        <td>{{task.estado}}</td>
+                        <td><a href="{% url 'background:ver_background' task_id=task.id %}" target="_blank">(Ver Detalle)</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+            {% include 'extras/paginador.html' with elementos=tasks %}
+        </div>
+    </div>
+{% endblock %}

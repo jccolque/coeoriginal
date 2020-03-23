@@ -43,6 +43,7 @@ urlpatterns = [
     path('informacion/', include('informacion.urls')),
     path('documentos/', include('documentos.urls')),
     path('inscripciones/', include('inscripciones.urls')),
+    path('background/', include('background.urls')),
 ]
 #Agregamos destinos de Archivos Estaticos
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

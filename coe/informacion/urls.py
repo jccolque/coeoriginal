@@ -12,7 +12,8 @@ urlpatterns = [
     #Archivos
     path('archivos_pendientes/', views.archivos_pendientes, name='archivos_pendientes'),
     path('ver_archivo/<int:archivo_id>', views.ver_archivo, name='ver_archivo'),
-    path('subir_archivos', views.subir_archivos, name='subir_archivos'),
+    path('subir_archivos', views.upload_archivos, name='subir_archivos'),
+    path('subir_same', views.upload_same, name='subir_same'),
     path('procesar_archivos/<int:archivo_id>', views.procesar_archivos, name='procesar_archivos'),
     #Carga de datos
     #Vehiculos

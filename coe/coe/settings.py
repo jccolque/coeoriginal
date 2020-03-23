@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'tinymce',
     'auditlog',
     'nested_inline',
+    'background_task',
 #    'debug_toolbar',
     #Apps Propias
     'core.apps.CoreConfig',
@@ -55,6 +56,7 @@ INSTALLED_APPS = [
     'informacion.apps.InformacionConfig',
     'actas.apps.ActasConfig',
     'documentos.apps.DocumentosConfig',
+    'background.apps.BackgroundConfig',
 ]
 
 MIDDLEWARE = [
