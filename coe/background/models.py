@@ -3,7 +3,7 @@ from django.db import models
 from django.utils import timezone
 #Imports extras
 from background_task.models import Task as bg_Tasks
-from background_task.models_completed import CompletedTask as bg_CompletedTask
+from background_task.models import CompletedTask as bg_CompletedTask
 
 # Create your models here.
 class Progress_Links(models.Model):
