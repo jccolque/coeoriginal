@@ -5,19 +5,19 @@
     <li><a href="{% url 'noticias:ver_noticias' %}">Noticias</a></li>
     <li><a href="{% url 'core:faqs' %}">¿Que es el COE?</a></li>
     <li><a href="{% url 'core:contacto' %}">Contacto</a></li>
-    {% ct_opciones request.user as opciones %}
     {% if user.is_authenticated %}
+        {% ct_opciones request.user as opciones %}
         <li>
-            <li><a>{{user.username|title}}</a>
+            <li><a href="{% url 'core:main_menu' %}">{{user.username|title}}</a>
             <ul class="submenu">
                 {% for opcion in opciones %}
                     <li><a href="/{{opcion.1}}">{{opcion.0}}</a></li>
                 {% endfor %}
-                {% if request.user.is_superuser %}
-                    <li><a href="{% url 'core:ws' %}">Web Services</a></li>
-                {% endif %}
                 {% if user.is_staff %}
                     <li><a href="{% url 'admin:index' %}">Administrador</a></li>
+                {% endif %}
+                {% if request.user.is_superuser %}
+                    <li><a href="{% url 'core:ws' %}">Web Services</a></li>
                 {% endif %}
                 <li><a href="{% url 'core:home_logout' %}">Cerrar Sesion</a></li>
             </ul>

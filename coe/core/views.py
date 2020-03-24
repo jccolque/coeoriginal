@@ -58,7 +58,12 @@ def contacto(request):
     return render(request, 'contacto.html', {"form": consulta_form,
                 'titulo': "Envianos una consulta:", 'boton': "Enviar"})
 
-#Administracion
+#Menu Principal
+
+def main_menu(request):
+    return render(request, 'main_menu.html', {})
+
+#Administracion Core
 @permission_required('operadores.menu_core')
 def menu(request):
     return render(request, 'menu_core.html', {})

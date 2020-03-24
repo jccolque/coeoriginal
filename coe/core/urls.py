@@ -13,6 +13,7 @@ urlpatterns = [
     path('contacto', views.contacto, name='contacto'),
 
     #Administracion
+    path('main', views.main_menu, name='main_menu'),
     path('core', views.menu, name='menu'),
     path('lista/consultas', views.lista_consultas, name='lista_consultas'),
     path('lista/respondidas', views.lista_respondidas, name='lista_respondidas'),

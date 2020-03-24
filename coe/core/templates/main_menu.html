@@ -1,0 +1,37 @@
+{% extends 'base/base.html' %}
+{% load menu_tags %}
+{% load seguridad_tags%}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">        
+                    <h1>Menu Principal:</h1>
+                    <div class="col-md-8">
+                        <ul class="menu_botones">
+                            {% ct_opciones request.user as opciones %}
+                            <!--Opciones Dinamicas-->
+                            {% for opcion in opciones %}
+                                <li><a href="/{{opcion.1}}">{{opcion.0}}</a></li>
+                            {% endfor %}
+
+                            {% if user.is_staff %}
+                                <li><a href="{% url 'admin:index' %}">Administrador</a></li>
+                            {% endif %}
+
+                            {% if request.user.is_superuser %}
+                                <li><a href="{% url 'core:ws' %}">Web Services</a></li>
+                            {% endif %}
+
+                            <li><a href="{% url 'core:home_logout' %}">Cerrar Sesion</a></li>                            
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        {% include 'users/info_user.html' %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}
