@@ -6,10 +6,11 @@ from django import forms
 from django.contrib.auth.models import User
 #Imports extra
 from dal import autocomplete
+from tinymce.widgets import TinyMCE
 #Imports del proyecto
 from coe.settings import SECRET_KEY
 #Imports de la app
-from .models import Consulta
+from .models import Consulta, Respuesta
 
 #Definimos nuestros formularios
 class SearchForm(forms.Form):
@@ -22,6 +23,11 @@ class ConsultaForm(forms.ModelForm):
         widgets = {
             'descripcion': forms.Textarea(attrs={'cols': 40, 'rows': 10}),
         }
+
+class RespuestaForm(forms.ModelForm):
+    class Meta:
+        model = Respuesta
+        fields = ['respuesta', ]
 
 class UploadCsv(forms.Form):
     csvfile = forms.FileField(widget=forms.FileInput(attrs={'accept': ".csv"}))

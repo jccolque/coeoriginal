@@ -165,6 +165,16 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.redirects.RedirectsPanel',
 ]
 
+#Email config
+SERVER_EMAIL = 'user@domain.com'
+EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
+EMAIL_HOST = 'hostname.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'user@domain.com'
+EMAIL_HOST_PASSWORD = ''
+DEFAULT_FROM_EMAIL = 'user@domain.com'
+
 #Se evita que se envien mails
 if DEBUG:
     SEND_MAIL = False
@@ -172,18 +182,12 @@ if DEBUG:
 else:
     SEND_MAIL = True
 
+
 #Configuracion de Mail
 try:
     from .credenciales import *
 except ImportError:#Si no logramos importar:
-    SERVER_EMAIL = 'user@domain.com'
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = 'hostname.com'
-    EMAIL_PORT = 587
-    EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = 'user@domain.com'
-    EMAIL_HOST_PASSWORD = ''
-    DEFAULT_FROM_EMAIL = 'user@domain.com'
+    pass
 
-#Activamos debug aqui para que envie mails
+#Activamos debug aqui para que igual envie mails
 DEBUG = True

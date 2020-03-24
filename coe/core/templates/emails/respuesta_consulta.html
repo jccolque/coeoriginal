@@ -1,0 +1,12 @@
+{% autoescape off %}
+    Bienvenido {{ consulta.autor }},
+
+    Nos realizaste la siguiente pregunta:
+    Asunto: {{ consulta.asunto }}
+    Detalle: {{ consulta.descripcion|safe }}
+
+    Nuestra respuesta es:
+    {{respuesta.respuesta|safe}}
+
+    Espero que te sea de utilidad, en caso de tener mas dudas puedes dejarnos otra consulta.
+{% endautoescape %}

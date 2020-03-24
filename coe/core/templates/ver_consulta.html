@@ -1,0 +1,43 @@
+{% extends 'base_informacion.html' %}
+
+{% load static %}
+{% load seguridad_tags%}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">        
+                    <div class="col-md-8">
+
+                        <h2><b>{{consulta.asunto}}</b></h2>
+                        <p><b>Autor:</b> {{consulta.autor}}</p>
+                        <p><b>Fecha de Recepcion:</b> {{consulta.fecha_consulta}}</p>
+                        <p><b>Contacto:</b></p>
+                        <p>Email: {{consulta.email}}</p>
+                        <p>Telefono: {{consulta.telefono}}</p>
+                        <hr>
+                        <p><b>Consulta:</b></p>
+                        {{consulta.descripcion|safe}}
+                        <hr>    
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <p><b>Respuesta:</b></p>
+                            {{form.respuesta}}
+                            <button type="submit">Responder</button>
+                            <!-- Para el autocomplete -->
+                            <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+                            {{ form.media }}
+                        </form>
+                    </div>
+                    <div class="col-md-4">
+                        <ul class="menu_botones">
+                            <li><a href="{% url 'core:consulta_respondida' consulta_id=consulta.id %}">Marcar Como Respondida</a></li>
+                            <li><a href="{% url 'core:lista_consultas' %}">Volver al Listado de Consultas</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}

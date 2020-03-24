@@ -150,6 +150,7 @@ a.nolink:hover {
     border-radius: 15px;
     border: 1px solid var(--color_oscuro);
     padding: 10px;
+    margin: 25px;
 }
 
 /* Confirmar */

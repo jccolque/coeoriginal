@@ -6,6 +6,7 @@ from tinymce.models import HTMLField
 from auditlog.registry import auditlog
 #Imports del proyecto
 from coe.settings import DEBUG
+from operadores.models import Operador
 #Imports de la app
 from .choices import TIPO_LOG
 
@@ -16,7 +17,7 @@ class Faq(models.Model):
     pregunta = models.CharField('Titulo', max_length=200)
     respuesta = HTMLField()
     class Meta:
-        ordering = ['orden']
+        ordering = ['orden', ]
     def __str__(self):
         return self.pregunta
     def as_dict(self):
@@ -35,10 +36,19 @@ class Consulta(models.Model):
     descripcion = HTMLField()
     fecha_consulta = models.DateTimeField(auto_now_add=True)
     valida = models.BooleanField('Email Validado', default=False)
+    respondida = models.BooleanField('Respondida', default=False)
+    class Meta:
+        ordering = ['fecha_consulta', ]
     def __str__(self):
         return self.autor + ": " + self.asunto + '(' + str(self.fecha_consulta.date()) + ')'
 
-
+class Respuesta(models.Model):
+    consulta = models.ForeignKey(Consulta, on_delete=models.CASCADE, related_name="respuestas")
+    operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="respuestas")
+    respuesta = HTMLField()
+    fecha = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.consulta + ": " + self.respuesta
 
 #Auditoria
 auditlog.register(Faq)

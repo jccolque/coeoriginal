@@ -2,7 +2,7 @@
 import json
 #Imports de Django
 from django.apps import apps
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.core.mail import EmailMessage
 from django.contrib.auth.models import User
@@ -10,13 +10,16 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login, logout
 from django.template.loader import render_to_string
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
 from coe.settings import SEND_MAIL
+from operadores.functions import obtener_operador
 #Imports de la app
 from .models import Faq, Consulta
 from .tokens import account_activation_token
 from .decoradores import superuser_required, generic_permission_required
-from .forms import ConsultaForm
+from .forms import ConsultaForm, RespuestaForm
+from .functions import paginador
 
 # Create your views here.
 
@@ -28,6 +31,7 @@ def faqs(request):
     faqs_list = Faq.objects.all().order_by('orden')
     return render(request, 'faqs.html', {'faqs': faqs_list, })
 
+#Consultas
 def contacto(request):
     if request.method == 'POST': #En caso de que se haya realizado una busqueda
         consulta_form = ConsultaForm(request.POST)
@@ -51,6 +55,52 @@ def contacto(request):
         consulta_form = ConsultaForm()
     return render(request, 'contacto.html', {"form": consulta_form,
                 'titulo': "Envianos una consulta:", 'boton': "Enviar"})
+
+#Operador de Consultas
+@permission_required('operadores.consultas')
+def lista_consultas(request):
+    consultas = Consulta.objects.filter(valida=True, respondida=False)
+    consultas = paginador(request, consultas)
+    return render(request, 'lista_consultas.html', {"consultas": consultas, })
+
+@permission_required('operadores.consultas')
+def ver_consulta(request, consulta_id):
+    form = RespuestaForm()
+    consulta = Consulta.objects.get(pk=consulta_id)
+    if request.method == "POST":
+        form = RespuestaForm(request.POST)
+        if form.is_valid():
+            #Preparamos el objeto respuesta
+            respuesta = form.save(commit=False)
+            respuesta.operador = obtener_operador(request)
+            respuesta.consulta = consulta
+            #enviar email de respuesta
+            to_email = consulta.email
+            #Preparamos el correo electronico
+            mail_subject = 'COE2020: Respondimos tu Consulta ' + consulta.asunto
+            message = render_to_string('emails/respuesta_consulta.html', {
+                    'consulta': consulta,
+                    'respuesta':respuesta,
+                })
+            #Instanciamos el objeto mail con destinatario
+            email = EmailMessage(mail_subject, message, to=[to_email])
+            #Enviamos el correo
+            if SEND_MAIL or True:
+                email.send()
+                #La marcamos como respondida
+                consulta.respondida = True
+                consulta.save()
+                #Guardamos la respuesta
+                consulta.save()
+            return redirect('core:lista_consultas')
+    return render(request, 'ver_consulta.html', {"consulta": consulta, 'form': form, })
+
+@permission_required('operadores.consultas')
+def consulta_respondida(request, consulta_id):
+    consulta = Consulta.objects.get(pk=consulta_id)
+    consulta.respondida = True
+    consulta.save()
+    return redirect('core:lista_consultas')
 
 #Manejo de sesiones de Usuarios
 def home_login(request):
