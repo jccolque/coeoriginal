@@ -162,6 +162,8 @@ class Relacion(models.Model):#Origen del Dato
     relacionado = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="relacionado")
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    class Meta:
+        unique_together = ['tipo', 'individuo', 'relacionado']
     def __str__(self):
         return str(self.individuo) + ' ' + self.get_tipo_display() + ' con ' + str(self.relacionado)
     def as_dict(self):
@@ -170,9 +172,13 @@ class Relacion(models.Model):#Origen del Dato
             "individuo_id": self.individuo.id,
             "relacionado_id": self.relacionado.id,
             "aclaracion": self.aclaracion,
+            "fecha": str(self.fecha),
         }
     def inversa(self):
-        return Relacion.objects.filter(tipo=self.tipo, individuo=self.relacionado, relacionado=self.individuo).first()
+        try:
+            return Relacion.objects.get(tipo=self.tipo, individuo=self.relacionado, relacionado=self.individuo)
+        except Relacion.DoesNotExist:
+            return None
 
 #Relacion vehicular
 class ControlVehiculo(models.Model):

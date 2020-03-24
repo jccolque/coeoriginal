@@ -75,13 +75,10 @@ def invertir_relacion(created, instance, **kwargs):
         relacion.relacionado = instance.individuo
         relacion.aclaracion = instance.aclaracion
         relacion.save()
-    #Aca deberiamos meterle atributos a partir de origen > destino
 
 @receiver(post_save, sender=Atributo)
 def poner_en_seguimiento(created, instance, **kwargs):
-    #Aca deberiamos meterle atributos a partir de origen > destino
     if created:
-        print(instance.tipo.nombre)
         if "vigilancia" in instance.tipo.nombre.lower():
             seguimiento = Seguimiento()
             seguimiento.individuo = instance.individuo
