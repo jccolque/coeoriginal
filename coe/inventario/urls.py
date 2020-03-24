@@ -22,10 +22,11 @@ urlpatterns = [
     #eventos:
     path('crear/evento/<int:item_id>', views.crear_evento, name='crear_evento'),
     path('devolver/<int:evento_id>', views.devolver_item, name='devolver'),
+    path('transferir/<int:item_id>', views.transferir_item, name='transferir_item'),
     #Reportes
     path('csv/', views.csv_inventario, name='csv_inventario'),
     #Autocomplete
     url(r'^rubros-autocomplete/$', autocomplete.RubrosAutocomplete.as_view(), name='rubros-autocomplete',),
     url(r'^subgrupos-autocomplete/$', autocomplete.SubgruposAutocomplete.as_view(), name='subgrupos-autocomplete',),
+    url(r'^items-autocomplete/$', autocomplete.ItemsAutocomplete.as_view(), name='items-autocomplete',),
 ]
-

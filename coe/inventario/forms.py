@@ -6,6 +6,7 @@ from django import forms
 from django.forms.widgets import CheckboxSelectMultiple
 #Imports extra
 from dal import autocomplete
+from tinymce.widgets import TinyMCE
 #Imports del proyecto
 #Imports de la app
 from .models import Item, EventoItem
@@ -33,3 +34,13 @@ class EventoItemForm(forms.ModelForm):
             'operador' : autocomplete.ModelSelect2(url='operadores:operadores-autocomplete'),
             'item': forms.TextInput(attrs={'readonly': 'readonly'}),
         }
+
+class TransferirForm(forms.Form):
+    destino = forms.ModelChoiceField(
+        queryset=Item.objects.all(),
+        widget=autocomplete.ModelSelect2(url='inventario:items-autocomplete'),
+        required=True,
+    )
+    cantidad = forms.IntegerField()
+    actuante = forms.CharField()
+    detalle = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 30}))

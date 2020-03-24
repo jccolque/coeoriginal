@@ -13,10 +13,12 @@
                         <p>Subgrupo: {{item.subgrupo}}</p>
                         <p>Responsable: {{item.responsable}}</p>
                         <p>Datos de Contacto: {{item.responsable.telefono}} /  {{item.responsable.email}}</p>
+                        <p>Cantidad Disponible: {{item.cantidad_disponible}}</p>
                     </div>
                     <div class="col-md-4">
                         <ul class="menu_botones">
                             <li><a href="{% url 'inventario:crear_evento' item_id=item.id %}">Cargar Evento</a></li>
+                            <li><a href="{% url 'inventario:transferir_item' item_id=item.id %}">Transferir Recursos</a></li>
                         </ul>
                     </div>
                 </div>

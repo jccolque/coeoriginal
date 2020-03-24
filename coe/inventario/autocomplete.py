@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 #Imports Extras
 from dal import autocomplete
 #Imports de la app
-from .models import Rubro, SubGrupo
+from .models import Rubro, SubGrupo, Item
 
 class RubrosAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
@@ -26,4 +26,11 @@ class SubgruposAutocomplete(autocomplete.Select2QuerySetView):
                 Q(nombre__icontains=self.q) |
                 Q(rubro__nombre__icontains=self.q)
             )
+        return qs
+
+class ItemsAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = Item.objects.all()
+        if self.q:
+            qs = qs.filter(nombre__icontains=self.q)
         return qs

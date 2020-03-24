@@ -51,7 +51,7 @@ class Item(models.Model):
         unique_together = ['subgrupo', 'nombre']
         ordering = ['subgrupo', 'nombre', ]
     def __str__(self):
-        return self.nombre
+        return str(self.subgrupo)+':'+self.nombre
     def as_dict(self):
         return {
             'id': self.id,

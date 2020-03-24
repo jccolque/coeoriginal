@@ -13,6 +13,7 @@ from operadores.functions import obtener_operador
 from .models import SubGrupo
 from .models import Item, EventoItem
 from .forms import ItemForm, EventoItemForm
+from .forms import TransferirForm
 
 # Create your views here.
 @permission_required('operadores.menu_inventario')
@@ -93,6 +94,35 @@ def devolver_item(request, evento_id):
     devuelto.fecha = timezone.now()
     devuelto.save()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+@permission_required('operadores.menu_inventario')
+def transferir_item(request, item_id):
+    item = Item.objects.get(pk=item_id)
+    form = TransferirForm()
+    if request.method == "POST":
+        form = TransferirForm(request.POST)
+        if form.is_valid():
+            operador = obtener_operador(request)
+            #Retiramos el item
+            evento_retiro = EventoItem()
+            evento_retiro.item = item
+            evento_retiro.accion = 'R'
+            evento_retiro.cantidad = form.cleaned_data['cantidad']
+            evento_retiro.actuante = form.cleaned_data['actuante']
+            evento_retiro.detalle = form.cleaned_data['detalle']
+            evento_retiro.operador = operador
+            evento_retiro.save()
+            #Ingresamos el item
+            evento_ingreso = EventoItem()
+            evento_ingreso.item = form.cleaned_data['destino']
+            evento_ingreso.accion = 'I'
+            evento_ingreso.cantidad = form.cleaned_data['cantidad']
+            evento_ingreso.actuante = form.cleaned_data['actuante']
+            evento_ingreso.detalle = form.cleaned_data['detalle']
+            evento_ingreso.operador = operador
+            evento_ingreso.save()
+            return redirect('inventario:ver_item', item_id=evento_ingreso.item.id)
+    return render(request, "extras/generic_form.html", {'titulo': "Transferir "+str(item), 'form': form, 'boton': "Transferir", })
 
 @permission_required('operadores.menu_inventario')
 def csv_inventario(request):
