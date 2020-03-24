@@ -21,13 +21,13 @@ def guardar_same(lineas, archivo_id, ultimo=False):
     archivo = Archivo.objects.get(pk=archivo_id)
     if not archivo.descripcion:
         archivo.descripcion = "<h3>Inicia la carga Background SAME: "+str(timezone.now())+"</h3>"
-        archivo.save()
     #Contadores
     cant_subidos = 0
     cant_fallos = 0
     #Obtenemos datos necesarios
-    nac = Nacionalidad.objects.get_or_create(nombre="Argentina")[0]
+    nac = Nacionalidad.objects.filter(nombre__icontains="Argentina").first()
     #Procesamos todas las lineas
+    archivo.descripcion += "<p>INICIO BLOQUE</p><ul>"
     for linea in lineas:
         #0Fecha	1Hora	2Paciente	3Síntomas	4Edad	5DNI	6Domicilio	7Telefono	8Desenlace	9Motivo	10Observaciones
         linea = linea.split(';')#La spliteamos
@@ -48,9 +48,6 @@ def guardar_same(lineas, archivo_id, ultimo=False):
                 individuo.telefono = linea[7]
             individuo.observaciones = "<p>"+linea[10]+"</p><p>Domicilio: "+linea[6]+"</p><p>Desenlace:"+linea[8]+"</p>"
             individuo.save()
-            cant_subidos += 1
-            archivo.descripcion += "<li>"+str(individuo)+"</li>"
-            archivo.save()
             #Cargamos Situacion
             situacion = Situacion()
             situacion.individuo = individuo
@@ -88,14 +85,17 @@ def guardar_same(lineas, archivo_id, ultimo=False):
                     atributo.newtipo = 'PR'
                     atributo.aclaracion = "SAME: "+linea[3]
                     atributo.save()
+            #Lista la linea
+            cant_subidos += 1
+            archivo.descripcion += "<li>"+str(individuo)+"</li>"
         else:
             cant_fallos += 1
             archivo.descripcion += "<li><b>No se Proceso:</b>"+str(linea[0:4])+"...</li>"
-            archivo.save()
     #Resultado final
     archivo.descripcion += "</ul>"
-    archivo.descripcion += "<p>FIN BLOQUE</p>"
     archivo.descripcion += "<p>Subidos: "+str(cant_subidos)+"- Fallidos: "+str(cant_fallos)+"</p></p>"
+    archivo.descripcion += "<p>FIN BLOQUE</p>"
+    archivo.save()
     if ultimo:
         archivo.descripcion += "<p>FIN ARCHIVO</p>"
         archivo.procesado = True
@@ -106,55 +106,60 @@ def guardar_epidemiologia(lineas, archivo_id, ultimo=False):
     archivo = Archivo.objects.get(pk=archivo_id)
     if not archivo.descripcion:
         archivo.descripcion = "<h3>Inicia la carga Background Epidemiologia: "+str(timezone.now())+"</h3>"
-        archivo.save()
     #Contadores
     cant_subidos = 0
     cant_fallos = 0
     #Obtenemos datos necesarios
-    nac = Nacionalidad.objects.get_or_create(nombre="Argentina")[0]
+    nac = Nacionalidad.objects.filter(nombre__icontains="Argentina").first()
+    san_salvador = Localidad.objects.filter(nombre__icontains="SAN SALVADOR").first()
     #Procesamos todas las lineas
+    archivo.descripcion += "<p>INICIO BLOQUE</p><ul>"
     for linea in lineas:
         linea = linea.split(';')#La spliteamos
         #0DNI	1APELLIDO	2NOMBRE
         if linea[0]:
             linea[0] = linea[0].replace('.','')
             try:#Si lo encontramos ya tenemos todos los datos basicos
-                individuo = Individuo.objects.get(num_doc=linea[5])
+                individuo = Individuo.objects.get(num_doc=linea[0])
             except Individuo.DoesNotExist:#Si no lo agregamos
                 individuo = Individuo()
                 individuo.num_doc = linea[0]
                 individuo.apellidos = linea[1]
                 individuo.nombres = linea[2]
                 individuo.nacionalidad = nac
-            #Agregamos domicilio si no lo tiene:
-            #3DOMICILIO	4CODIGOPOSTAL	5CELULAR
-            if not individuo.domicilio_actual():
-                domicilio = Domicilio()
-                domicilio.individuo = individuo
-                domicilio.calle = linea[3]
-                domicilio.numero = 'CORREGIR'
-                try:
-                    domicilio.localidad = Localidad.objects.get(codigo_postal=linea[4])
-                except:
-                    domicilio.localidad = Localidad.objects.get(codigo_postal=4600)
-                domicilio.aclaracion = "CARGA MASIVA EPIDEMIOLOGIA"
-                domicilio.save()
             #Cargamos telefono
-            if linea[5]:
-                individuo.telefono = linea[5]
+            if linea[6]:
+                individuo.telefono = linea[6]
             #Agregamos Datos utiles:   
             if not individuo.fecha_nacimiento:
                 individuo.fecha_nacimiento = timezone.now().date()
-            if not individuo.telefono:
-                individuo.telefono = linea[5]
             individuo.observaciones = "<p> Cargado desde Excel de Epidemiologia</p>"
-            if linea[6]:#Viajo A
+            if linea[7]:#Viajo A
                 individuo.observaciones += "<p> Viajo a: "+linea[6]+"</p>" 
             #Listo el individuo
             individuo.save()
-            cant_subidos += 1
-            archivo.descripcion += "<li>"+str(individuo)+"</li>"
-            archivo.save()
+            #Agregamos domicilio si no lo tiene:
+            #3CODIGOPOSTAL	4DOMICILIO 5NUMERO	6CELULAR
+            if linea[4]:
+                domicilio = Domicilio()
+                domicilio.individuo = individuo
+                domicilio.calle = linea[4]
+                if linea[5]:
+                    domicilio.numero = linea[5]
+                else:
+                    domicilio.numero = 'CORREGIR'
+                #Le metemos localidad
+                if linea[3]:
+                    domicilio.localidad = Localidad.objects.filter(codigo_postal=linea[3]).first()
+                if not hasattr(domicilio, 'localidad'):
+                    domicilio.localidad = san_salvador
+                domicilio.aclaracion = "CARGA MASIVA EPIDEMIOLOGIA"
+                domicilio.save()
+            #Cargamos seguimiento> Llamado al same
+            seguimiento = Seguimiento()
+            seguimiento.individuo = individuo
+            seguimiento.aclaracion = "CARGA MASIVA EPIDEMIOLOGIA"
+            seguimiento.save()
             #Cargamos Situacion
             situacion = Situacion()
             situacion.individuo = individuo
@@ -162,12 +167,7 @@ def guardar_epidemiologia(lineas, archivo_id, ultimo=False):
             situacion.conducta = 'C'
             situacion.aclaracion = "Carga Seguimiento Epidemiologia"
             situacion.save()
-            # DIA 1 a 14 (del 7 al 20)
-            #Cargamos seguimiento> Llamado al same
-            seguimiento = Seguimiento()
-            seguimiento.individuo = individuo
-            seguimiento.aclaracion = "CARGA MASIVA EPIDEMIOLOGIA"
-            seguimiento.save()
+            # DIA 1 a 14 (del 8 al 21)
             #Intentamos procesar sintomas:
             for dia in linea[7:]:
                 if dia:
@@ -183,14 +183,17 @@ def guardar_epidemiologia(lineas, archivo_id, ultimo=False):
                             sintoma.newtipo = tsintoma[0]
                             sintoma.aclaracion = "SEGUIMIENTO: "+dia
                             sintoma.save()
+            #Lista la linea
+            cant_subidos += 1
+            archivo.descripcion += "<li>"+str(individuo)+"</li>"
         else:
             cant_fallos += 1
             archivo.descripcion += "<li><b>No se Proceso:</b>"+str(linea[0:4])+"...</li>"
-            archivo.save()
     #Resultado final
     archivo.descripcion += "</ul>"
+    archivo.descripcion += "<p>Subidos: "+str(cant_subidos)+"- Fallidos: "+str(cant_fallos)+"</p>"
     archivo.descripcion += "<p>FIN BLOQUE</p>"
-    archivo.descripcion += "<p>Subidos: "+str(cant_subidos)+"- Fallidos: "+str(cant_fallos)+"</p></p>"
+    archivo.save()
     if ultimo:
         archivo.descripcion += "<p>FIN ARCHIVO</p>"
         archivo.procesado = True
@@ -204,11 +207,10 @@ def guardar_padron_individuos(lineas, archivo_id, ultimo=False):
         #Limpiamos la base de datos:
         archivo.descripcion += "<li> Eliminamos cargados de ultimo Padron: "+ str(timezone.now())
         Individuo.objects.filter(observaciones="PADRON").delete()
-        archivo.save()
     #Obtenemos dni existentes
     num_docs_existentes = [i.num_doc for i in Individuo.objects.all()]
     #Generamos elementos basicos:
-    nac = Nacionalidad.objects.get_or_create(nombre="Argentina")[0]
+    nac = Nacionalidad.objects.filter(nombre__icontains="Argentina").first()
     #GEneramos todos los elementos nuevos
     individuos = []
     archivo.descripcion += "<li> Inicio de Procesamiento: "+ str(timezone.now())
@@ -230,7 +232,7 @@ def guardar_padron_individuos(lineas, archivo_id, ultimo=False):
                 individuos.append(individuo)    
     #Creamos este bloque
     Individuo.objects.bulk_create(individuos)
-    archivo.descripcion += "<li>Guardando Fragmento: "+ str(timezone.now())
+    archivo.descripcion += "<li>Guardado Fragmento: "+ str(timezone.now())
     archivo.save()
     if ultimo:
         archivo.descripcion += "<p>FIN ARCHIVO</p>"
@@ -244,7 +246,7 @@ def guardar_padron_domicilios(lineas, archivo_id, ultimo=False):
         archivo.descripcion = "<h3>Inicia la carga Masiva de Domicilios del Padron: "+str(timezone.now())+"</h3>"
         #Limpiamos la base de datos:
         archivo.descripcion += "<li> Eliminamos cargados de ultimo Padron: "+ str(timezone.now())
-        archivo.save()
+        Domicilio.objects.filter(aclaracion="PADRON").delete()
     #Agregamos info al doc
     archivo.descripcion += "<p>Cantidad Lineas: "+str(len(lineas))+"</p>"    
     #Generamos listado de individuos para matchear
@@ -258,7 +260,7 @@ def guardar_padron_domicilios(lineas, archivo_id, ultimo=False):
         if linea[0]:
             #Si no existe la localidad la creamos
             if linea[2] not in localidades:
-                log+= "<li> Se creo: ", linea[4]+ str('| Hay que Corregir el Departamento.')
+                archivo.descripcion += "<li> Se creo: ", linea[4]+ str('| Hay que Corregir el Departamento.')
                 localidad = Localidad()
                 localidad.departamento = Departamento.objects.first()
                 localidad.nombre = linea[4]
@@ -274,7 +276,7 @@ def guardar_padron_domicilios(lineas, archivo_id, ultimo=False):
                 domicilios.append(domicilio)
     #Creamos este bloque
     Domicilio.objects.bulk_create(domicilios)
-    archivo.descripcion += "<li>Guardando Fragmento Domicilios: "+ str(timezone.now())
+    archivo.descripcion += "<li>Guardado Fragmento Domicilios: "+ str(timezone.now())
     archivo.save()
     if ultimo:
         archivo.descripcion += "<p>FIN ARCHIVO</p>"

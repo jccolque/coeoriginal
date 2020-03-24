@@ -169,12 +169,10 @@ class Relacion(models.Model):#Origen del Dato
             "tipo": self.get_tipo_display(),
             "individuo_id": self.individuo.id,
             "relacionado_id": self.relacionado.id,
+            "aclaracion": self.aclaracion,
         }
     def inversa(self):
-        try:
-            return Relacion.objects.get(tipo=self.tipo, individuo=self.relacionado, relacionado=self.individuo)
-        except Relacion.DoesNotExist:
-            return None
+        return Relacion.objects.filter(tipo=self.tipo, individuo=self.relacionado, relacionado=self.individuo).first()
 
 #Relacion vehicular
 class ControlVehiculo(models.Model):
