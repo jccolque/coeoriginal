@@ -109,7 +109,7 @@ def transferir_item(request, item_id):
             evento_retiro.accion = 'R'
             evento_retiro.cantidad = form.cleaned_data['cantidad']
             evento_retiro.actuante = form.cleaned_data['actuante']
-            evento_retiro.detalle = form.cleaned_data['detalle']
+            evento_retiro.detalle = form.cleaned_data['detalle'] + " A " + str(form.cleaned_data['destino'])
             evento_retiro.operador = operador
             evento_retiro.save()
             #Ingresamos el item
@@ -118,7 +118,7 @@ def transferir_item(request, item_id):
             evento_ingreso.accion = 'I'
             evento_ingreso.cantidad = form.cleaned_data['cantidad']
             evento_ingreso.actuante = form.cleaned_data['actuante']
-            evento_ingreso.detalle = form.cleaned_data['detalle']
+            evento_ingreso.detalle = form.cleaned_data['detalle'] + " Deste " + str(item)
             evento_ingreso.operador = operador
             evento_ingreso.save()
             return redirect('inventario:ver_item', item_id=evento_ingreso.item.id)
