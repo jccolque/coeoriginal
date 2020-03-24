@@ -8,7 +8,10 @@ from django.contrib.auth.models import User
 from dal import autocomplete
 from tinymce.widgets import TinyMCE
 #Imports del proyecto
-from coe.settings import SECRET_KEY
+try:
+    from coe.credenciales import SECRET_KEY
+except ImportError:
+    SECRET_KEY = ''
 #Imports de la app
 from .models import Consulta, Respuesta
 

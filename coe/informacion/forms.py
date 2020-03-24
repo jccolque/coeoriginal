@@ -9,7 +9,10 @@ from django.forms.widgets import CheckboxSelectMultiple
 #Imports extra
 from dal import autocomplete
 #Imports del proyecto
-from coe.credenciales import SECRET_KEY
+try:
+    from coe.credenciales import SECRET_KEY
+except ImportError:
+    SECRET_KEY = ''
 from core.choices import TIPO_DOCUMENTOS
 from georef.models import Localidad
 #Imports de la app

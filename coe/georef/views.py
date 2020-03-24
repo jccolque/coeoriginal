@@ -3,7 +3,10 @@
 from django.shortcuts import render
 from django.contrib.admin.views.decorators import staff_member_required
 #Imports del proyecto
-from coe.settings import SECRET_KEY
+try:
+    from coe.credenciales import SECRET_KEY
+except ImportError:
+    SECRET_KEY = ''
 from core.forms import UploadCsvWithPass
 #Imports de la app
 from .models import Provincia, Departamento, Localidad
