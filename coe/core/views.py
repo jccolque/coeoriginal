@@ -85,7 +85,7 @@ def ver_consulta(request, consulta_id):
             #Instanciamos el objeto mail con destinatario
             email = EmailMessage(mail_subject, message, to=[to_email])
             #Enviamos el correo
-            if SEND_MAIL or True:
+            if SEND_MAIL:
                 email.send()
                 #La marcamos como respondida
                 consulta.respondida = True
