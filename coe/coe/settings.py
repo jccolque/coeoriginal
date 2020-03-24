@@ -31,7 +31,7 @@ INSTALLED_APPS = [
     #Autocomplete
     'dal',
     'dal_select2',
-    #Django bases    
+    #Django bases
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -105,7 +105,6 @@ DATABASES = {
 # SECURITY WARNING: don't run with debug turned on in production!
 import sys
 DEBUG = (len(sys.argv) > 1 and sys.argv[1] == 'runserver')
-DEBUG = True
 
 #Definicion de permisos para subida de archivos:
 FILE_UPLOAD_PERMISSIONS = 0o644
@@ -169,7 +168,7 @@ DEBUG_TOOLBAR_PANELS = [
 #Se evita que se envien mails
 if DEBUG:
     SEND_MAIL = False
-    INTERNAL_IPS = ['127.0.0.1',]#Comentar esta linea para no usar!
+    #INTERNAL_IPS = ['127.0.0.1',]#Comentar esta linea para no usar!
 else:
     SEND_MAIL = True
 
@@ -185,3 +184,6 @@ except ImportError:#Si no logramos importar:
     EMAIL_HOST_USER = 'user@domain.com'
     EMAIL_HOST_PASSWORD = ''
     DEFAULT_FROM_EMAIL = 'user@domain.com'
+
+#Activamos debug aqui para que envie mails
+DEBUG = True
