@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'auditlog',
     'nested_inline',
     'background_task',
-#    'debug_toolbar',
+#   'debug_toolbar',
     #Apps Propias
     'core.apps.CoreConfig',
     'georef.apps.GeorefConfig',

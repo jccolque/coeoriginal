@@ -13,14 +13,14 @@ from .models import Archivo
 from .models import Individuo, Domicilio
 from .models import Seguimiento
 from .models import TipoSintoma, TipoAtributo
-from .models import Sintoma, Atributo
+from .models import Situacion, Sintoma, Atributo
 from .choices import TIPO_SINTOMA
 
 @background(schedule=1)
-def guardar_same(lineas, archivo_id):
+def guardar_same(lineas, archivo_id, ultimo=False):
     archivo = Archivo.objects.get(pk=archivo_id)
     if not archivo.descripcion:
-        archivo.descripcion = "<h3>Inicia la carga Background: "+str(timezone.now())+"</h3>"
+        archivo.descripcion = "<h3>Inicia la carga Background SAME: "+str(timezone.now())+"</h3>"
         archivo.save()
     #Contadores
     cant_subidos = 0
@@ -51,6 +51,13 @@ def guardar_same(lineas, archivo_id):
             cant_subidos += 1
             archivo.descripcion += "<li>"+str(individuo)+"</li>"
             archivo.save()
+            #Cargamos Situacion
+            situacion = Situacion()
+            situacion.individuo = individuo
+            situacion.estado = 1
+            situacion.conducta = 'B'
+            situacion.aclaracion = "CARGA SAME"
+            situacion.save()
             #Cargamos seguimiento> Llamado al same
             seguimiento = Seguimiento()
             seguimiento.individuo = individuo
@@ -87,14 +94,110 @@ def guardar_same(lineas, archivo_id):
             archivo.save()
     #Resultado final
     archivo.descripcion += "</ul>"
-    archivo.descripcion += "<p>FIN DEL PROCESAMIENTO</p>"
-    archivo.descripcion += "<p>Subidos: "+str(cant_subidos)+"</p>"
-    archivo.descripcion += "<p>Fallidos: "+str(cant_fallos)+"</p>"
-    archivo.procesado = True
-    archivo.save()
+    archivo.descripcion += "<p>FIN BLOQUE</p>"
+    archivo.descripcion += "<p>Subidos: "+str(cant_subidos)+"- Fallidos: "+str(cant_fallos)+"</p></p>"
+    if ultimo:
+        archivo.descripcion += "<p>FIN ARCHIVO</p>"
+        archivo.procesado = True
+        archivo.save()
 
 @background(schedule=1)
-def guardar_padron_individuos(lineas, archivo_id):
+def guardar_epidemiologia(lineas, archivo_id, ultimo=False):
+    archivo = Archivo.objects.get(pk=archivo_id)
+    if not archivo.descripcion:
+        archivo.descripcion = "<h3>Inicia la carga Background Epidemiologia: "+str(timezone.now())+"</h3>"
+        archivo.save()
+    #Contadores
+    cant_subidos = 0
+    cant_fallos = 0
+    #Obtenemos datos necesarios
+    nac = Nacionalidad.objects.get_or_create(nombre="Argentina")[0]
+    #Procesamos todas las lineas
+    for linea in lineas:
+        linea = linea.split(';')#La spliteamos
+        #0DNI	1APELLIDO	2NOMBRE
+        if linea[0]:
+            linea[0] = linea[0].replace('.','')
+            try:#Si lo encontramos ya tenemos todos los datos basicos
+                individuo = Individuo.objects.get(num_doc=linea[5])
+            except Individuo.DoesNotExist:#Si no lo agregamos
+                individuo = Individuo()
+                individuo.num_doc = linea[0]
+                individuo.apellidos = linea[1]
+                individuo.nombres = linea[2]
+                individuo.nacionalidad = nac
+            #Agregamos domicilio si no lo tiene:
+            #3DOMICILIO	4CODIGOPOSTAL	5CELULAR
+            if not individuo.domicilio_actual():
+                domicilio = Domicilio()
+                domicilio.individuo = individuo
+                domicilio.calle = linea[3]
+                domicilio.numero = 'CORREGIR'
+                try:
+                    domicilio.localidad = Localidad.objects.get(codigo_postal=linea[4])
+                except:
+                    domicilio.localidad = Localidad.objects.get(codigo_postal=4600)
+                domicilio.aclaracion = "CARGA MASIVA EPIDEMIOLOGIA"
+                domicilio.save()
+            #Cargamos telefono
+            if linea[5]:
+                individuo.telefono = linea[5]
+            #Agregamos Datos utiles:   
+            if not individuo.fecha_nacimiento:
+                individuo.fecha_nacimiento = timezone.now().date()
+            if not individuo.telefono:
+                individuo.telefono = linea[5]
+            individuo.observaciones = "<p> Cargado desde Excel de Epidemiologia</p>"
+            if linea[6]:#Viajo A
+                individuo.observaciones += "<p> Viajo a: "+linea[6]+"</p>" 
+            #Listo el individuo
+            individuo.save()
+            cant_subidos += 1
+            archivo.descripcion += "<li>"+str(individuo)+"</li>"
+            archivo.save()
+            #Cargamos Situacion
+            situacion = Situacion()
+            situacion.individuo = individuo
+            situacion.estado = 1
+            situacion.conducta = 'C'
+            situacion.aclaracion = "Carga Seguimiento Epidemiologia"
+            situacion.save()
+            # DIA 1 a 14 (del 7 al 20)
+            #Cargamos seguimiento> Llamado al same
+            seguimiento = Seguimiento()
+            seguimiento.individuo = individuo
+            seguimiento.aclaracion = "CARGA MASIVA EPIDEMIOLOGIA"
+            seguimiento.save()
+            #Intentamos procesar sintomas:
+            for dia in linea[7:]:
+                if dia:
+                    seguimiento = Seguimiento()
+                    seguimiento.individuo = individuo
+                    seguimiento.aclaracion = dia
+                    seguimiento.save()
+                    for tsintoma in TIPO_SINTOMA:
+                        if tsintoma[0] in dia.upper():
+                            sintoma = Sintoma()
+                            sintoma.individuo = individuo
+                            sintoma.tipo = TipoSintoma.objects.first()
+                            sintoma.newtipo = tsintoma[0]
+                            sintoma.aclaracion = "SEGUIMIENTO: "+dia
+                            sintoma.save()
+        else:
+            cant_fallos += 1
+            archivo.descripcion += "<li><b>No se Proceso:</b>"+str(linea[0:4])+"...</li>"
+            archivo.save()
+    #Resultado final
+    archivo.descripcion += "</ul>"
+    archivo.descripcion += "<p>FIN BLOQUE</p>"
+    archivo.descripcion += "<p>Subidos: "+str(cant_subidos)+"- Fallidos: "+str(cant_fallos)+"</p></p>"
+    if ultimo:
+        archivo.descripcion += "<p>FIN ARCHIVO</p>"
+        archivo.procesado = True
+        archivo.save()
+
+@background(schedule=1)
+def guardar_padron_individuos(lineas, archivo_id, ultimo=False):
     archivo = Archivo.objects.get(pk=archivo_id)
     if not archivo.descripcion:
         archivo.descripcion = "<h3>Inicia la carga Masiva del Padron: "+str(timezone.now())+"</h3>"
@@ -129,9 +232,13 @@ def guardar_padron_individuos(lineas, archivo_id):
     Individuo.objects.bulk_create(individuos)
     archivo.descripcion += "<li>Guardando Fragmento: "+ str(timezone.now())
     archivo.save()
+    if ultimo:
+        archivo.descripcion += "<p>FIN ARCHIVO</p>"
+        archivo.procesado = True
+        archivo.save()
         
 @background(schedule=1)
-def guardar_padron_domicilios(lineas, archivo_id):
+def guardar_padron_domicilios(lineas, archivo_id, ultimo=False):
     archivo = Archivo.objects.get(pk=archivo_id)
     if not archivo.descripcion:
         archivo.descripcion = "<h3>Inicia la carga Masiva de Domicilios del Padron: "+str(timezone.now())+"</h3>"
@@ -169,4 +276,7 @@ def guardar_padron_domicilios(lineas, archivo_id):
     Domicilio.objects.bulk_create(domicilios)
     archivo.descripcion += "<li>Guardando Fragmento Domicilios: "+ str(timezone.now())
     archivo.save()
-            
+    if ultimo:
+        archivo.descripcion += "<p>FIN ARCHIVO</p>"
+        archivo.procesado = True
+        archivo.save()        

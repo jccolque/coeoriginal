@@ -10,10 +10,12 @@ app_name = 'informacion'
 urlpatterns = [
     path('', views.menu, name='menu'),
     #Archivos
-    path('archivos_pendientes/', views.archivos_pendientes, name='archivos_pendientes'),
+    path('lista/archivos/pendientes', views.archivos_pendientes, name='archivos_pendientes'),
+    path('lista/archivos/procesados/<int:procesado>', views.archivos_pendientes, name='archivos_procesados'),
     path('ver_archivo/<int:archivo_id>', views.ver_archivo, name='ver_archivo'),
-    path('subir_archivos', views.upload_archivos, name='subir_archivos'),
-    path('subir_same', views.upload_same, name='subir_same'),
+    path('subir/archivos', views.upload_archivos, name='subir_archivos'),
+    path('subir/same', views.subir_same, name='subir_same'),
+    path('subir/epidemiologia', views.subir_epidemiologia, name='subir_epidemiologia'),
     path('procesar_archivos/<int:archivo_id>', views.procesar_archivos, name='procesar_archivos'),
     #Carga de datos
     #Vehiculos
@@ -51,6 +53,8 @@ urlpatterns = [
     url(r'^atributos-autocomplete/$', autocomplete.AtributoAutocomplete.as_view(), name='atributos-autocomplete',),
     url(r'^individuos-autocomplete/$', autocomplete.IndividuosAutocomplete.as_view(), name='individuos-autocomplete',),
     #Carga Masiva
+    
+    path('upload/epidemiologia', views.subir_epidemiologia, name='subir_epidemiologia'),
     path('upload/padron/individuos/', views.upload_padron_individuos, name='upload_padron_individuos'),
     path('upload/padron/domicilios/', views.upload_padron_domicilios, name='upload_padron_domicilios'),
 ]

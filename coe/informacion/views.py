@@ -26,7 +26,8 @@ from .forms import IndividuoForm
 from .forms import DomicilioForm, AtributoForm, SintomaForm
 from .forms import SituacionForm, RelacionForm, SeguimientoForm
 from .forms import SearchIndividuoForm, SearchVehiculoForm
-from .tasks import guardar_same, guardar_padron_individuos, guardar_padron_domicilios
+from .tasks import guardar_same, guardar_epidemiologia
+from .tasks import guardar_padron_individuos, guardar_padron_domicilios
 
 # Create your views here.
 @permission_required('operadores.menu_informacion')
@@ -35,8 +36,20 @@ def menu(request):
 
 #ARCHIVOS
 @permission_required('operadores.archivos')
-def archivos_pendientes(request):
-    archivos = Archivo.objects.filter(procesado=False)
+def archivos_pendientes(request, procesado=None):
+    form = SearchForm()
+    archivos = Archivo.objects.all()
+    #Si busco, filtramos
+    if request.method == "POST":
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            search = form.cleaned_data['search']
+            archivos = archivos.filter(nombre__icontains=search)
+    else:#Si no busco traemos segun corresponda
+        if procesado:
+            archivos = archivos.filter(procesado=True)
+        else: 
+            archivos = archivos.filter(procesado=False)
     archivos = paginador(request, archivos)
     return render(request, 'archivos_pendientes.html', {'archivos': archivos,})
 
@@ -59,7 +72,7 @@ def upload_archivos(request):
     return render(request, "extras/generic_form.html", {'titulo': "Subir Archivo para Carga", 'form': form, 'boton': "Subir", })
 
 @permission_required('operadores.archivos')
-def upload_same(request):
+def subir_same(request):
     form = ArchivoForm(initial={'tipo':5, 'nombre': str(timezone.now())[0:16]})
     if request.method == "POST":
         form = ArchivoForm(request.POST, request.FILES)
@@ -73,11 +86,11 @@ def upload_same(request):
             lines = file_data.split("\n")
             lines = lines[1:]
             tarea = crear_progress_link("SUBIR_SAME:"+str(timezone.now()))
-            #Dividimos en fragmentos de 25
-            frag_size = 25
+            frag_size = 25#Dividimos en fragmentos de 25
             segmentos = [lines[x:x+frag_size] for x in range(0, len(lines), frag_size)]
-            for segmento in segmentos:
+            for segmento in segmentos[0:-1]:
                 guardar_same(segmento, archivo_id=archivo.id, queue=tarea)
+            guardar_same(segmentos[-1], archivo_id=archivo.id, queue=tarea, ultimo=True)
             return redirect('informacion:ver_archivo', archivo_id=archivo.id)
     return render(request, "extras/generic_form.html", {'titulo': "CARGA MASIVA SAME", 'form': form, 'boton': "Subir", })
 
@@ -176,7 +189,6 @@ def buscar_individuo(request, control_id=None):
 
 @permission_required('operadores.individuos')
 def cargar_individuo(request, control_id=None, individuo_id=None, num_doc=None):
-    print("Trajo control?", control_id)
     individuo = None
     if individuo_id:#Si manda individuo es para modificar
         individuo = Individuo.objects.get(pk=individuo_id)
@@ -469,6 +481,7 @@ def csv_individuos(request):
     #Enviamos el archivo para descargar
     return response
 
+#CARGAS MASIVAS
 @superuser_required
 def upload_padron_individuos(request):
     form = ArchivoFormWithPass()
@@ -486,8 +499,10 @@ def upload_padron_individuos(request):
             #Dividimos en fragmentos
             frag_size = 10000
             segmentos = [lines[x:x+frag_size] for x in range(0, len(lines), frag_size)]
-            for segmento in segmentos:
+            for segmento in segmentos[0:-1]:#Procesamos todos menos el ultimo
                 guardar_padron_individuos(segmento, archivo_id=archivo.id, queue=tarea)
+            #Para que marque el archivo como terminado
+            guardar_padron_individuos(segmentos[-1], archivo_id=archivo.id, queue=tarea, ultimo=True)
             return redirect('informacion:ver_archivo', archivo_id=archivo.id)
     return render(request, "extras/generic_form.html", {'titulo': "CARGA MASIVA PADRON INDIVIDUOS", 'form': form, 'boton': "Subir", })
 
@@ -508,7 +523,32 @@ def upload_padron_domicilios(request):
             #Dividimos en fragmentos
             frag_size = 10000
             segmentos = [lines[x:x+frag_size] for x in range(0, len(lines), frag_size)]
-            for segmento in segmentos:
+            for segmento in segmentos[0:-1]:#Procesamos todos menos el ultimo
                 guardar_padron_domicilios(segmento, archivo_id=archivo.id, queue=tarea)
+            #Para que marque el archivo como terminado
+            guardar_padron_domicilios(segmentos[-1], archivo_id=archivo.id, queue=tarea, ultimo=True)
             return redirect('informacion:ver_archivo', archivo_id=archivo.id)
     return render(request, "extras/generic_form.html", {'titulo': "CARGA MASIVA PADRON DOMICILIOS", 'form': form, 'boton': "Subir", })
+
+@superuser_required
+def subir_epidemiologia(request):
+    form = ArchivoFormWithPass(initial={'tipo':6, 'nombre': str(timezone.now())[0:16]})
+    if request.method == "POST":
+        form = ArchivoFormWithPass(request.POST, request.FILES)
+        if form.is_valid():
+            operador = obtener_operador(request)
+            archivo = form.save(commit=False)
+            archivo.operador = operador
+            archivo.save()
+            csv = archivo.archivo
+            file_data = csv.read().decode("utf-8")
+            lines = file_data.split("\n")
+            lines = lines[1:]
+            tarea = crear_progress_link("SUBIR_EPIDEMIOLOGIA:"+str(timezone.now()))
+            frag_size = 100#Dividimos en fragmentos de 100
+            segmentos = [lines[x:x+frag_size] for x in range(0, len(lines), frag_size)]
+            for segmento in segmentos[0:-1]:
+                guardar_epidemiologia(segmento, archivo_id=archivo.id, queue=tarea)
+            guardar_epidemiologia(segmentos[-1], archivo_id=archivo.id, queue=tarea, ultimo=True)
+            return redirect('informacion:ver_archivo', archivo_id=archivo.id)
+    return render(request, "extras/generic_form.html", {'titulo': "CARGA MASIVA EPIDEMIOLOGIA", 'form': form, 'boton': "Subir", })

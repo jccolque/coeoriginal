@@ -4,33 +4,40 @@
     <div class="beneficiario container">
         <div class="row">
             <h2>Archivos Sin Procesar</h2>
+            <p>{% include 'extras/buscador.html' %}</p>
         </div>
         <div class="row">
-        <div class="col-md-12">
-            <table class="listado" id="archivospend_table">
-                <thead>
-                    <tr>
-                        <th>Tipo</th>
-                        <th>Titulo</th>
-                        <th>Fecha Subido</th>
-                        <th>Operador</th>
-                        <th>Ver Documento</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {% for archivo in archivos %}
+            <div class="col-md-9">
+                <table class="listado" id="archivospend_table">
+                    <thead>
                         <tr>
-                            <td>{{archivo.get_tipo_display}}</td>
-                            <td>{{archivo.nombre}}</td>
-                            <td>{{archivo.fecha}}</td>
-                            <td>{{archivo.operador}}</td>
-                            <td><a href="{% url 'informacion:ver_archivo' archivo_id=archivo.id %}" target="_blank">(Ver Documento)</a></td>
+                            <th>Tipo</th>
+                            <th>Titulo</th>
+                            <th>Fecha Subido</th>
+                            <th>Operador</th>
+                            <th>Ver Documento</th>
                         </tr>
-                    {% endfor %}
-                </tbody>  
-            </table>
-            {% include 'extras/paginador.html' with elementos=archivos %}
+                    </thead>
+
+                    <tbody>
+                        {% for archivo in archivos %}
+                            <tr>
+                                <td>{{archivo.get_tipo_display}}</td>
+                                <td>{{archivo.nombre}}</td>
+                                <td>{{archivo.fecha}}</td>
+                                <td>{{archivo.operador}}</td>
+                                <td><a href="{% url 'informacion:ver_archivo' archivo_id=archivo.id %}" target="_blank">(Ver Documento)</a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>  
+                </table>
+                {% include 'extras/paginador.html' with elementos=archivos %}
+            </div>
+            <div class="col-md-3">
+                <ul class="menu_botones">
+                    <li><a href="{% url 'informacion:archivos_procesados' procesado=1 %}">Ver Archivos Procesados</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 {% endblock %}
