@@ -1,0 +1,30 @@
+{% extends 'base/base.html' %}
+
+{% load seguridad_tags%}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">        
+                    <h1>Menu Principal:</h1>
+                    <div class="col-md-8">
+                        <ul class="menu_botones">
+                            {% if perms.operadores.consultas %}
+                                <li><a href="{% url 'core:lista_consultas' %}">Ver Consultas Sin Responder</a></li>
+                            {% endif %}
+
+                            {% if request.user.is_superuser %}
+                                <hr>
+                                <li><a href="{% url 'operadores:menu' %}">Opcion del Administrador</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        {% include 'users/info_user.html' %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}

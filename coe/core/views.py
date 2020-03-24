@@ -56,6 +56,11 @@ def contacto(request):
     return render(request, 'contacto.html', {"form": consulta_form,
                 'titulo': "Envianos una consulta:", 'boton': "Enviar"})
 
+#Administracion
+@permission_required('operadores.menu_core')
+def menu(request):
+    return render(request, 'menu_core.html', {})
+
 #Operador de Consultas
 @permission_required('operadores.consultas')
 def lista_consultas(request):
