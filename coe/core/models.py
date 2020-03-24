@@ -1,5 +1,4 @@
 #Imports de python
-
 #Imports django
 from django.db import models
 #Extra modules import

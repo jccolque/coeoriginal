@@ -213,7 +213,7 @@ def guardar_padron_individuos(lineas, archivo_id, ultimo=False):
     nac = Nacionalidad.objects.filter(nombre__icontains="Argentina").first()
     #GEneramos todos los elementos nuevos
     individuos = []
-    archivo.descripcion += "<li> Inicio de Procesamiento: "+ str(timezone.now())
+    archivo.descripcion += "<li> Inicio de Procesamiento: "+ str(timezone.now())+"</li>"
     archivo.descripcion += "<p>Cantidad Lineas: "+str(len(lineas))+"</p>"
     for linea in lineas:
         linea = linea.split(',')
@@ -232,7 +232,7 @@ def guardar_padron_individuos(lineas, archivo_id, ultimo=False):
                 individuos.append(individuo)    
     #Creamos este bloque
     Individuo.objects.bulk_create(individuos)
-    archivo.descripcion += "<li>Guardado Fragmento: "+ str(timezone.now())
+    archivo.descripcion += "<li>Guardado Fragmento: "+ str(timezone.now())+"</li>"
     archivo.save()
     if ultimo:
         archivo.descripcion += "<p>FIN ARCHIVO</p>"
@@ -245,7 +245,7 @@ def guardar_padron_domicilios(lineas, archivo_id, ultimo=False):
     if not archivo.descripcion:
         archivo.descripcion = "<h3>Inicia la carga Masiva de Domicilios del Padron: "+str(timezone.now())+"</h3>"
         #Limpiamos la base de datos:
-        archivo.descripcion += "<li> Eliminamos cargados de ultimo Padron: "+ str(timezone.now())
+        archivo.descripcion += "<li> Eliminamos cargados de ultimo Padron: "+ str(timezone.now())+"</li>"
         Domicilio.objects.filter(aclaracion="PADRON").delete()
     #Agregamos info al doc
     archivo.descripcion += "<p>Cantidad Lineas: "+str(len(lineas))+"</p>"    
@@ -260,11 +260,11 @@ def guardar_padron_domicilios(lineas, archivo_id, ultimo=False):
         if linea[0]:
             #Si no existe la localidad la creamos
             if linea[2] not in localidades:
-                archivo.descripcion += "<li> Se creo: ", linea[4]+ str('| Hay que Corregir el Departamento.')
                 localidad = Localidad()
                 localidad.departamento = Departamento.objects.first()
-                localidad.nombre = linea[4]
+                localidad.nombre = linea[2]
                 localidad.save()
+                archivo.descripcion += "<li><b> Se creo: "+linea[2]+"| Hay que Corregirle el Departamento.</b></li>"
                 localidades[localidad.nombre] = localidad
             #Si existe el individuo en nuestra base de datos
             if linea[0] in individuos:
