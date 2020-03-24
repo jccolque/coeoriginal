@@ -7,7 +7,7 @@ from background_task.models import CompletedTask as bg_CompletedTask
 
 # Create your models here.
 class Progress_Links(models.Model):
-    tarea = models.CharField('Tarea', max_length=50)
+    tarea = models.CharField('Tarea', max_length=100)
     inicio = models.DateTimeField(default=timezone.now)
     progress_url = models.URLField('Web', blank=True, null=True)
     def __str__(self):
