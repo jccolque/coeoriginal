@@ -55,13 +55,20 @@ def relacion_domicilio(created, instance, **kwargs):
             calle=instance.calle,
             numero=instance.numero,
         )
-        for domicilio in domicilios.exclude(pk=instance.pk):
-            relacion = Relacion()
-            relacion.tipo = 'CE'
-            relacion.individuo = instance.individuo
-            relacion.relacionado = domicilio.individuo
-            relacion.aclaracion = "Mismo Domicilio"
-            relacion.save()
+        domicilios = domicilios.exclude(individuo=instance.individuo)
+        for domicilio in domicilios:
+            #Evitamos repetir relaciones
+            try:
+                relacion = Relacion.objects.get(tipo='CE', individuo=instance.individuo, relacionado=domicilio.individuo)
+                relacion.aclaracion = "Mismo Domicilio"
+                relacion.save()
+            except Relacion.DoesNotExist:
+                relacion = Relacion()
+                relacion.tipo = 'CE'
+                relacion.individuo = instance.individuo
+                relacion.relacionado = domicilio.individuo
+                relacion.aclaracion = "Mismo Domicilio"
+                relacion.save()
         #Los que estan a menos de 100 metros
         #Hasta no acomodar la DB esto no se puede hacer
 
