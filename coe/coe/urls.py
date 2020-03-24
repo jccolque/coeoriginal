@@ -20,6 +20,8 @@ from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from django.conf import settings
+#Imports Extras
+import debug_toolbar
 
 #Path
 urlpatterns = [
@@ -30,7 +32,7 @@ urlpatterns = [
     #Extras
     url(r'^tinymce/', include('tinymce.urls')),
     #Debug:
-    #path('__debug__/', include(debug_toolbar.urls)),
+    path('__debug__/', include(debug_toolbar.urls)),
 
     #Apps:
     path('', include('core.urls')),

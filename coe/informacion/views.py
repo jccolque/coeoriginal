@@ -267,6 +267,9 @@ def ver_individuo(request, individuo_id):
 @permission_required('operadores.individuos')
 def lista_individuos(request, nacionalidad_id=None):
     individuos = Individuo.objects.all()
+    individuos = individuos.select_related('nacionalidad', 'origen', 'destino', )
+    individuos = individuos.prefetch_related('atributos', 'sintomas', 'situaciones', 'relaciones')
+    individuos = individuos.prefetch_related('atributos__tipo', 'sintomas__tipo')
     if nacionalidad_id:#Filtramos por nacionalidad
         individuos = individuos.filter(nacionalidad__id=nacionalidad_id)
     if request.method == "POST":
@@ -288,6 +291,9 @@ def lista_individuos(request, nacionalidad_id=None):
 def lista_evaluar(request):
     evaluar = []
     individuos = Individuo.objects.filter(situaciones__conducta='B')
+    individuos = individuos.select_related('nacionalidad', 'origen', 'destino', )
+    individuos = individuos.prefetch_related('atributos', 'sintomas', 'situaciones', 'relaciones')
+    individuos = individuos.prefetch_related('atributos__tipo', 'sintomas__tipo')
     for individuo in individuos:
         if individuo.situacion_actual().conducta == 'B':
             evaluar.append(individuo)
@@ -297,13 +303,18 @@ def lista_evaluar(request):
 @permission_required('operadores.individuos')
 def lista_seguimiento(request):
     individuos = {}
-    seguimientos = [s for s in Seguimiento.objects.all().exclude(tipo='F')]
+    seguimientos = Seguimiento.objects.all().exclude(tipo='F')
+    seguimientos = seguimientos.select_related('individuo', 'individuo__nacionalidad')
+    seguimientos = seguimientos.prefetch_related('individuo__atributos', 'individuo__sintomas')
+    seguimientos = seguimientos.prefetch_related('individuo__atributos__tipo', 'individuo__sintomas__tipo')
+    seguimientos = [s for s in seguimientos]
     seguimientos_terminados = [s.individuo for s in Seguimiento.objects.filter(tipo='F')]
     for seguimiento in seguimientos:
         if seguimiento.individuo.id not in individuos:
             if not seguimiento.individuo in seguimientos_terminados:
                 individuos[seguimiento.individuo.id] = seguimiento.individuo
     individuos = list(individuos.values())
+ 
     individuos = paginador(request, individuos)
     return render(request, "listado_seguimiento.html", {'individuos': individuos, })
 

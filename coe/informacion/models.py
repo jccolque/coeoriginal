@@ -110,7 +110,7 @@ class Vehiculo(models.Model):
 class Individuo(models.Model):
     tipo_doc = models.IntegerField(choices=TIPO_DOCUMENTOS, default=2)
     num_doc = models.CharField('Numero de Documento/Pasaporte', 
-        max_length=20,
+        max_length=50,
         validators=[RegexValidator('^[A-Z_\d]*$', 'Solo Mayusculas.')],
         unique=True,
     )
@@ -118,7 +118,7 @@ class Individuo(models.Model):
     apellidos = models.CharField('Apellidos', max_length=100)
     nombres = models.CharField('Nombres', max_length=100)
     fecha_nacimiento = models.DateField(verbose_name="Fecha de Nacimiento", null=True, blank=True)
-    telefono = models.CharField('Telefono', max_length=20, default='+549388', null=True, blank=True)
+    telefono = models.CharField('Telefono', max_length=50, default='+549388', null=True, blank=True)
     email = models.EmailField('Correo Electronico', null=True, blank=True)#Enviar mails
     nacionalidad = models.ForeignKey(Nacionalidad, on_delete=models.CASCADE, related_name="individuos")
     origen = models.ForeignKey(Nacionalidad, on_delete=models.CASCADE, null=True, blank=True, related_name="individuos_origen")

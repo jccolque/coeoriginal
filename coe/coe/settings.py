@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'auditlog',
     'nested_inline',
     'background_task',
-#   'debug_toolbar',
+    'debug_toolbar',
     #Apps Propias
     'core.apps.CoreConfig',
     'georef.apps.GeorefConfig',
@@ -70,7 +70,7 @@ MIDDLEWARE = [
     #Auditoria:
     'auditlog.middleware.AuditlogMiddleware',
     #DEBUG:
- #   'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'coe.urls'

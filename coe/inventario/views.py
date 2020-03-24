@@ -28,6 +28,7 @@ def lista_general(request):
 @permission_required('operadores.menu_inventario')
 def lista_detallada(request, rubro_id=None, subgrupo_id=None):
     items = Item.objects.all()
+    items = items.select_related('subgrupo', 'subgrupo__rubro', 'responsable', )
     if rubro_id:
         items = items.filter(subgrupo__rubro__id=rubro_id)
     if subgrupo_id:
