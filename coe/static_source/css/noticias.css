@@ -31,11 +31,12 @@
     font-weight: bold;
     color: white;
     display: inline;
+    font-size: 2em;
 }
 
 .carousel-cuerpo {
     position: absolute;
-    width: 45%;
+    width: 55%;
     bottom: 10px;
     right: 10px;
     background: rgba(0, 0, 0, 0.5);
@@ -45,9 +46,10 @@
 
 .carousel-cuerpo p {
     display: inline;
-    padding: 0.5rem;
+    padding: 0.5em;
     text-align: justify;
     color: #fff;
+    font-size: 1.2em;
 }
 
 .carousel-img {

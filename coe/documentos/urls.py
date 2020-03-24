@@ -13,5 +13,10 @@ urlpatterns = [
     path('lista', views.lista_general, name='lista_general'),
     path('lista/subco/<int:subco_id>', views.lista_general, name='lista_subcomite'),
     path('ver/<int:documento_id>', views.ver_documento, name='ver_documento'),
+    #Manejo docs
+    path('estado/<int:documento_id>', views.cambiar_estado, name='cambiar_estado'),
+    path('del/doc/<int:documento_id>', views.eliminar_doc, name='eliminar_doc'),
     path('del/ver/<int:version_id>', views.eliminar_version, name='eliminar_version'),
+    #PUBLICO
+    path('lista/publica', views.lista_publica, name='ver_publicos'),
 ]

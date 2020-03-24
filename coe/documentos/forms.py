@@ -14,6 +14,7 @@ class DocumentoForm(forms.ModelForm):
     class Meta:
         model = Documento
         fields = '__all__'
+        exclude = ('publico', )
         widgets = {
             'subcomite': autocomplete.ModelSelect2(url='operadores:subcomite-autocomplete'),
         }

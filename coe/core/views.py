@@ -14,10 +14,11 @@ from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
 from coe.settings import SEND_MAIL
 from operadores.functions import obtener_operador
+from documentos.functions import ver_publicadas
 #Imports de la app
 from .models import Faq, Consulta
 from .tokens import account_activation_token
-from .decoradores import superuser_required, generic_permission_required
+from .decoradores import superuser_required
 from .forms import ConsultaForm, RespuestaForm
 from .functions import paginador
 
@@ -25,7 +26,8 @@ from .functions import paginador
 
 #PUBLICAS:
 def home(request):
-    return render(request, 'home.html', {})
+    versiones = ver_publicadas(limit=5)
+    return render(request, 'home.html', {'versiones': versiones, })
 
 def faqs(request):
     faqs_list = Faq.objects.all().order_by('orden')
@@ -67,6 +69,12 @@ def lista_consultas(request):
     consultas = Consulta.objects.filter(valida=True, respondida=False)
     consultas = paginador(request, consultas)
     return render(request, 'lista_consultas.html', {"consultas": consultas, })
+
+@permission_required('operadores.consultas')
+def lista_respondidas(request):
+    consultas = Consulta.objects.filter(respondida=True)
+    consultas = paginador(request, consultas)
+    return render(request, 'lista_respondidas.html', {"consultas": consultas, })
 
 @permission_required('operadores.consultas')
 def ver_consulta(request, consulta_id):

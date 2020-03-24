@@ -41,7 +41,7 @@ class RespuestaInline(admin.TabularInline):
 class ConsultaAdmin(admin.ModelAdmin):
     model = Consulta
     search_fields = ['autor', 'asunto']
-    list_filter = ['valida',]
+    list_filter = ['valida', 'respondida', ]
     inlines = [RespuestaInline, ]
 
 class PermissionAdmin(admin.ModelAdmin):

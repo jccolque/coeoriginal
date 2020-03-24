@@ -12,6 +12,7 @@
                         <ul class="menu_botones">
                             {% if perms.operadores.consultas %}
                                 <li><a href="{% url 'core:lista_consultas' %}">Ver Consultas Sin Responder</a></li>
+                                <li><a href="{% url 'core:lista_respondidas' %}">Ver Consultas Respondidas</a></li>
                             {% endif %}
 
                             {% if request.user.is_superuser %}

@@ -108,6 +108,37 @@ a.nolink:hover {
 
 }
 
+/* Documentos Publicos */
+.main_documentos {
+    margin: 15px;
+    border: 1px solid var(--color_oscuro);
+    border-radius: 15px;
+    background-color: var(--color_primario);
+    color: white;
+    padding: 0px;
+}
+
+.main_documentos h2 {
+    text-align: center;
+    background-color: var(--color_oscuro);
+    margin: 0px;
+    border-radius: 15px 15px 0 0;
+    padding: 5px;
+}
+
+.main_documentos ul {
+    padding: 10px;
+}
+
+.main_documentos li {
+    padding: 5px;
+    color: white;
+}
+
+.main_documentos a {
+    color: white;
+}
+
  /* Utilitarios */
 .volver {
      padding: 10px;
@@ -119,9 +150,7 @@ a.nolink:hover {
      color: white;
 }
 
- 
-
-/* Finanzas */
+/* Tablas */
 .listado {
   width: 100%;
   border-collapse: collapse;
@@ -203,6 +232,10 @@ img.fotos {
 
 .buscador input {
     width: 250px;
+}
+
+.buscador .btn_buscador {
+    margin: 0!important;
 }
 
 .info_user {

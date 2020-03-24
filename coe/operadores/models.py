@@ -78,6 +78,7 @@ class Operador(models.Model):
             ("menu_actas", "Puede Acceder al menu de Actas"),
             #Documentos
             ("menu_documentos", "Puede Acceder al menu de Documentos"),
+            ("documentos", "Puede Administrar Documentos"),
             #Inscripciones:
             ("menu_inscripciones", "Puede Acceder al menu de Inscripciones"),
             #Reportes

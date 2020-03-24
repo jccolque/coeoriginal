@@ -20,5 +20,27 @@
                 </a>
             </div>
         </div>
+        <div class="row">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6 main_documentos">
+                    {% for version in versiones %}
+                        {% if forloop.first %}
+                            <h2><b>Ultimos Documentos Publicados</b></h2>
+                            <ul>
+                        {% endif %}
+                        <li>
+                            <a href="{{version.archivo.url}}">
+                                {{version.documento.nombre}} | Subido: {{version.fecha}}
+                            </a>
+                        </li>
+                        {% if forloop.last %}
+                                <li>
+                                    <a class="botoncito" href="{% url 'documentos:ver_publicos' %}">Ver Todos</a>
+                                </li>
+                            </ul>
+                        {% endif %}                        
+                    {% endfor %}
+            </div>
+        </div>
     </div>
 {% endblock %}

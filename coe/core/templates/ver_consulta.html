@@ -19,10 +19,21 @@
                         <hr>
                         <p><b>Consulta:</b></p>
                         {{consulta.descripcion|safe}}
-                        <hr>    
+                        <hr>
+                        {% for respuesta in consulta.respuestas.all %}
+                            {% if forloop.first %}
+                                <h3>Respuestas:</h3>
+                                <ul>
+                            {% endif %}
+                            <li>{{respuesta.operador}}|{{respuesta.fecha}}:{{respuesta.respuesta|safe}}<li>
+                            {% if forloop.last %}
+                                </ul>
+                                <hr>
+                            {% endif %}
+                        {% endfor %}
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
-                            <p><b>Respuesta:</b></p>
+                            <p><b>Enviar Respuesta:</b></p>
                             {{form.respuesta}}
                             <button type="submit">Responder</button>
                             <!-- Para el autocomplete -->

@@ -21,7 +21,7 @@
                     <th>Tipo</th>
                     <th>Autor</th>
                     <th>Fecha Actualizacion</th>
-                    <th>Ver Historial</th>
+                    <th>Administrar</th>
                     <th>Descargar Ultima Version</th>
                 </tr>
                 {% for documento in documentos %}
@@ -31,11 +31,16 @@
                                 {{documento.subcomite}}
                             </a>
                         </td>
-                        <td>{{documento.nombre}}</td>
+                        <td>
+                            {% if documento.publico %}
+                                <img class="icons" src="/static/img/icons/public.png" alt="Es Publico">
+                            {% endif %}                        
+                            {{documento.nombre}}
+                        </td>
                         <td>{{documento.get_tipo_display}}</td>
                         <td>{{documento.autor}}</td>
                         <td>{{documento.ultima_version.fecha}}</td>
-                        <td><a href="{% url 'documentos:ver_documento' documento_id=documento.id %}">Historial</a></td>
+                        <td><a href="{% url 'documentos:ver_documento' documento_id=documento.id %}">Documento</a></td>
                         {% if documento.ultima_version %}
                             {% if documento.ultima_version.archivo %}
                                 <td><a href="{{documento.ultima_version.archivo.url}}">Descargar</a></td>

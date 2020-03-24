@@ -48,7 +48,7 @@ class Respuesta(models.Model):
     respuesta = HTMLField()
     fecha = models.DateTimeField(auto_now_add=True)
     def __str__(self):
-        return self.consulta + ": " + self.respuesta
+        return str(self.consulta) + ": " + self.respuesta
 
 #Auditoria
 auditlog.register(Faq)

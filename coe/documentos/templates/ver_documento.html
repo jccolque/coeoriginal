@@ -1,6 +1,7 @@
 {% extends 'base_informacion.html' %}
 
 {% load static %}
+{% load operadores_tags %}
 {% load seguridad_tags%}
 
 {% block content %}
@@ -9,9 +10,14 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-8">
-                        <h2>{{documento.nombre}}</h2>
+                        <h2>
+                            {{documento.nombre}}
+                            {% if documento.publico %}
+                                <img class="icons" src="/static/img/icons/public.png" alt="Es Publico">
+                            {% endif %}
+                        </h2>
                         <p>Subcomite: {{documento.subcomite}}</p>
-                        <p>Autor: {{item.autor}}</p>
+                        <p>Autor: {{documento.autor}}</p>
                         <p>Fecha Ultima Actualizacion: {{documento.ultima_version.fecha}}</p>
                         <p>Operador Ultima Actualizacion: {{documento.ultima_version.operador}}</p>
                         <hr>
@@ -53,7 +59,15 @@
                     </div>
                     <div class="col-md-4">
                         <ul class="menu_botones">
-                            <li><a href="{% url 'documentos:cargar_actualizacion' documento_id=documento.id %}">ACTUALIZAR</a></li>
+                            <li><a href="{% url 'documentos:cargar_actualizacion' documento_id=documento.id %}">Actualizar Version</a></li>
+                            {% if perms.operadores.documentos %}       
+                                {% if documento.publico %}
+                                    <li><a href="{% url 'documentos:cambiar_estado' documento_id=documento.id %}">Volver Privado</a></li>
+                                {% else %}
+                                    <li><a href="{% url 'documentos:cambiar_estado' documento_id=documento.id %}">Hacer Publico</a></li>
+                                {% endif %}
+                                <li><a href="{% url 'documentos:eliminar_doc' documento_id=documento.id %}">Eliminar</a></li>
+                            {% endif %}
                             <hr>
                         </ul>
                     </div>
