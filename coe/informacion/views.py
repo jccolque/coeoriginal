@@ -412,7 +412,7 @@ def cargar_geoposicion(request, domicilio_id):
         geoposicion.observaciones = request.POST['observaciones']
         geoposicion.save()
         return redirect('informacion:ver_individuo', individuo_id=domicilio.individuo.id)
-    return render(request, "extras/gmap_form.html", {'domicilio': domicilio, })
+    return render(request, "extras/gmap_form.html", {'objetivo': domicilio.individuo, })
 
 #Reportes en el sistema
 @permission_required('operadores.reportes')

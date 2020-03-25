@@ -12,8 +12,9 @@ from operadores.functions import obtener_operador
 #Imports app
 from .models import SubGrupo
 from .models import Item, EventoItem
-from .forms import ItemForm, EventoItemForm
-from .forms import TransferirForm
+from .models import GeoPosicion
+from .forms import ItemForm, ModItemForm
+from .forms import EventoItemForm, TransferirForm
 
 # Create your views here.
 @permission_required('operadores.menu_inventario')
@@ -58,22 +59,48 @@ def crear_item(request, item_id=None):
     item = None
     if item_id:
         item = Item.objects.get(pk=item_id)
-    form = ItemForm(instance=item)
+        form = ModItemForm(instance=item)
+    else:
+        form = ItemForm()
     if request.method == "POST":
-        form = ItemForm(request.POST)
-        if form.is_valid():
-            item = form.save()
-            evento = EventoItem()
-            evento.item = item
-            evento.accion = 'I'
-            evento.cantidad = form.cleaned_data['cantidad']
-            evento.actuante = form.cleaned_data['actuante']
-            evento.operador = obtener_operador(request)
-            evento.detalle = 'Carga inicial en el Sistema'
-            evento.save()
-            return redirect('inventario:ver_item', item_id=item.id)
+        if item_id:
+            form = ModItemForm(request.POST, instance=item)
+            if form.is_valid():
+                item = form.save()
+                return redirect('inventario:ver_item', item_id=item.id)
+        else:
+            form = ItemForm(request.POST)
+            if form.is_valid():
+                item = form.save()
+                evento = EventoItem()
+                evento.item = item
+                evento.accion = 'I'
+                evento.cantidad = form.cleaned_data['cantidad']
+                evento.actuante = form.cleaned_data['actuante']
+                evento.operador = obtener_operador(request)
+                evento.detalle = 'Carga inicial en el Sistema'
+                evento.save()
+                return redirect('inventario:ver_item', item_id=item.id)
     return render(request, "extras/generic_form.html", {'titulo': "Crear Item", 'form': form, 'boton': "Agregar", })
 
+@permission_required('operadores.menu_inventario')
+def cargar_geoposicion(request, item_id=None):
+    item = Item.objects.get(pk=item_id)
+    if request.method == "POST":
+        if hasattr(item,'geoposicion'):
+            geoposicion = item.geoposicion
+        else:
+            geoposicion = GeoPosicion()
+            geoposicion.item = item
+        #cargamos los datos del form:
+        geoposicion.latitud = request.POST['latitud']
+        geoposicion.longitud = request.POST['longitud']
+        geoposicion.observaciones = request.POST['observaciones']
+        geoposicion.save()
+        return redirect('inventario:ver_item', item_id=item.id)
+    return render(request, "extras/gmap_form.html", {'objetivo': item, })
+
+#Administracion de items
 @permission_required('operadores.menu_inventario')
 def crear_evento(request, item_id=None):
     item = Item.objects.get(pk=item_id)

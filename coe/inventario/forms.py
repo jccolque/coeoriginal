@@ -24,6 +24,15 @@ class ItemForm(forms.ModelForm):
             'responsable' : autocomplete.ModelSelect2(url='operadores:operadores-autocomplete'),
         }
 
+class ModItemForm(forms.ModelForm):
+    class Meta:
+        model = Item
+        fields= '__all__'
+        widgets = {
+            'subgrupo': autocomplete.ModelSelect2(url='inventario:subgrupos-autocomplete'),
+            'responsable' : autocomplete.ModelSelect2(url='operadores:operadores-autocomplete'),
+        }
+
 class EventoItemForm(forms.ModelForm):
     class Meta:
         model = EventoItem

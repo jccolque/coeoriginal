@@ -69,6 +69,24 @@ class Item(models.Model):
     def cantidad_distribuida(self):
         return sum(e.cantidad for e in self.retiros())
 
+class GeoPosicion(models.Model):
+    item = models.OneToOneField(Item, on_delete=models.CASCADE, related_name="geoposicion")
+    latitud = models.DecimalField('latitud', max_digits=12, decimal_places=10)
+    longitud = models.DecimalField('longitud', max_digits=12, decimal_places=10)
+    aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
+    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    def __str__(self):
+        return str(self.domicilios) + ': ' + str(self.latitud) + '|' + str(self.longitud)
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "item_id": self.item.id,
+            "latitud": str(self.latitud),
+            "longitud": str(self.longitud),
+            "aclaracion": self.aclaracion,
+            "fecha": str(self.fecha),
+        }
+
 class EventoItem(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="eventos")
     accion = models.CharField('Accion', max_length=1 ,choices=TIPO_EVENTO_ITEM, default='I')

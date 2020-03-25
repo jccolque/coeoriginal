@@ -19,6 +19,7 @@ urlpatterns = [
     path('ver/<int:item_id>', views.ver_item, name='ver_item'),
     path('crear', views.crear_item, name='crear_item'),
     path('mod/<int:item_id>', views.crear_item, name='mod_item'),
+    path('cargar/geoposicion/<int:item_id>', views.cargar_geoposicion, name='cargar_geoposicion'),
     #eventos:
     path('crear/evento/<int:item_id>', views.crear_evento, name='crear_evento'),
     path('devolver/<int:evento_id>', views.devolver_item, name='devolver'),

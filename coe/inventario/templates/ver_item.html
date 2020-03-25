@@ -17,7 +17,9 @@
                     </div>
                     <div class="col-md-4">
                         <ul class="menu_botones">
-                            <li><a href="{% url 'inventario:crear_evento' item_id=item.id %}">Cargar Evento</a></li>
+                            <li><a href="{% url 'inventario:mod_item' item_id=item.id %}">Modificar Datos Basicos</a></li>
+                            <li><a href="{% url 'inventario:cargar_geoposicion' item_id=item.id %}">Cargar GeoPosicion</a></li>
+                            <li><a href="{% url 'inventario:crear_evento' item_id=item.id %}">Cargar Movimiento</a></li>
                             <li><a href="{% url 'inventario:transferir_item' item_id=item.id %}">Transferir Recursos</a></li>
                         </ul>
                     </div>
