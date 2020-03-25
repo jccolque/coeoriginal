@@ -24,6 +24,8 @@ def menu(request):
 @permission_required('operadores.menu_inventario')
 def lista_general(request):
     subgrupos = SubGrupo.objects.all()
+    subgrupos = subgrupos.select_related('rubro')
+    subgrupos = subgrupos.prefetch_related('items', 'items__eventos')
     return render(request, 'lista_general.html', {'subgrupos': subgrupos, })
 
 @permission_required('operadores.menu_inventario')

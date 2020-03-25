@@ -142,9 +142,12 @@ class Individuo(models.Model):
             'observaciones': self.observaciones,
         }
     def situacion_actual(self):
-        return self.situaciones.last()
+        return [s for s in self.situaciones.all()][-1]
     def domicilio_actual(self):
-        return self.domicilios.last()
+        if self.domicilios.all():
+            return [d for d in self.domicilios.all()][-1]
+        else:
+            return None
     def localidad_actual(self):
         if self.domicilio_actual():
             return self.domicilio_actual().localidad
@@ -215,6 +218,8 @@ class Domicilio(models.Model):
     numero = models.CharField('Numero', max_length=100, default='', blank=False)
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    class Meta:
+        ordering = ['fecha', ]
     def __str__(self):
         return self.calle + ' ' + self.numero + ', ' + str(self.localidad)
     def as_dict(self):
@@ -251,7 +256,7 @@ class Situacion(models.Model):
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     class Meta:
-        ordering = ['fecha']
+        ordering = ['fecha', ]
     def __str__(self):
         return self.get_estado_display() + '-'  + self.get_conducta_display()
     def as_dict(self):
@@ -273,7 +278,7 @@ class Atributo(models.Model):
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     activo = models.BooleanField(default=True)
     class Meta:
-        ordering = ['fecha']
+        ordering = ['fecha', ]
     def __str__(self):
         return str(self.individuo) + ': ' + str(self.tipo) + ' ' + str(self.fecha)
     def as_dict(self):
@@ -294,7 +299,7 @@ class Sintoma(models.Model):
     aclaracion =  models.CharField('Aclaracion', max_length=200, null=True, blank=True)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     class Meta:
-        ordering = ['fecha']
+        ordering = ['fecha', ]
     def __str__(self):
         return str(self.tipo) + ': ' + str(self.fecha)
     def as_dict(self):
@@ -313,7 +318,7 @@ class Seguimiento(models.Model):
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Seguimiento', default=timezone.now)
     class Meta:
-        ordering = ['fecha']
+        ordering = ['fecha', ]
     def __str__(self):
         return str(self.fecha)[0:16] + ': ' + self.get_tipo_display() + ': ' + self.aclaracion
     def as_dict(self):

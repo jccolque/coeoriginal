@@ -59,7 +59,7 @@ class Operador(models.Model):
         permissions = (
             #Home
             ("menu_core", "Puede Acceder al Sistema Principal"),
-            ("consultas", "Puede Acceder al Sistema de Consultas Web"),
+            ("consultas", "Puede Acceder al Sistema de Consultas"),
             #Operadores:
             ("menu_operadores", "Puede Acceder al menu de Operadores"),
             ("subcomites", "Puede Crear/Modificar SubComites"),

@@ -178,7 +178,7 @@ DEFAULT_FROM_EMAIL = 'user@domain.com'
 #Se evita que se envien mails
 if DEBUG:
     SEND_MAIL = False
-    #INTERNAL_IPS = ['127.0.0.1',]#Comentar esta linea para no usar!
+    INTERNAL_IPS = ['127.0.0.1',]#Comentar esta linea para no usar!
 else:
     SEND_MAIL = True
 

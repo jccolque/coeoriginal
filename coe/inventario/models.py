@@ -39,9 +39,9 @@ class SubGrupo(models.Model):
             'nombre': self.nombre,
         }
     def cantidad_disponible(self):
-        return sum([i.cantidad_disponible() for i in self.items.all()])
+        return sum(i.cantidad_disponible() for i in self.items.all())
     def cantidad_distribuida(self):
-        return sum([i.cantidad_distribuida() for i in self.items.all()])
+        return sum(i.cantidad_distribuida() for i in self.items.all())
 
 class Item(models.Model):
     subgrupo = models.ForeignKey(SubGrupo, on_delete=models.CASCADE, related_name="items")
@@ -60,13 +60,14 @@ class Item(models.Model):
             'nombre': self.nombre,
             'responsable': str(self.responsable),
         }
+    def ingresos(self):
+        return (e for e in self.eventos.all() if e.accion=='I')
+    def retiros(self):
+        return (e for e in self.eventos.all() if e.accion=='R')
     def cantidad_disponible(self):
-        eventos = self.eventos.all()
-        ingresos = sum([e.cantidad for e in eventos.filter(accion='I')])
-        retiros = sum([e.cantidad for e in eventos.filter(accion='R')])
-        return ingresos - retiros
+        return sum(e.cantidad for e in self.ingresos()) - sum(e.cantidad for e in self.retiros())
     def cantidad_distribuida(self):
-        return sum([e.cantidad for e in self.eventos.filter(accion='R')])
+        return sum(e.cantidad for e in self.retiros())
 
 class EventoItem(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="eventos")
