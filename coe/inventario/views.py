@@ -99,7 +99,7 @@ def cargar_geoposicion(request, item_id=None):
         geoposicion.save()
         return redirect('inventario:ver_item', item_id=item.id)
     return render(request, "extras/gmap_form.html", {
-        'objetivo': domicilio.individuo, 
+        'objetivo': item, 
         'gkey': GEOPOSITION_GOOGLE_MAPS_API_KEY,
     })
 
