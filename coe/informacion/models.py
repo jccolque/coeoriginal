@@ -142,7 +142,10 @@ class Individuo(models.Model):
             'observaciones': self.observaciones,
         }
     def situacion_actual(self):
-        return [s for s in self.situaciones.all()][-1]
+        if self.situaciones.all():
+            return [s for s in self.situaciones.all()][-1]
+        else:
+            return None
     def domicilio_actual(self):
         if self.domicilios.all():
             return [d for d in self.domicilios.all()][-1]
