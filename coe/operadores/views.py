@@ -13,7 +13,6 @@ from django.contrib.auth.decorators import permission_required
 #Imports extras
 from auditlog.models import LogEntry
 #Import del proyecto
-from core.functions import paginador
 from core.forms import SearchForm, FechaForm
 #Imports de la app
 from .functions import obtener_permisos
@@ -37,7 +36,10 @@ def listar_subcomites(request):
             search = form.cleaned_data['search']
             if search:
                 subcomites = subcomites.filter(nombre__icontains=search)
-    return render(request, 'users/lista_subcomites.html', {'subcomites': subcomites, })
+    return render(request, 'users/lista_subcomites.html', {
+        'subcomites': subcomites,     
+        'has_table': True,
+    })
 
 @permission_required('operadores.subcomites')
 def ver_subcomite(request, subco_id):
@@ -78,8 +80,10 @@ def listar_operadores(request):
                 Q(apellidos__icontains=search) |
                 Q(subcomite__nombre__icontains=search)
             )
-    operadores = paginador(request, operadores)
-    return render(request, 'users/lista_operadores.html', {'operadores': operadores,})
+    return render(request, 'users/lista_operadores.html', {
+        'operadores': operadores,    
+        'has_table': True,
+    })
 
 def crear_operador(request):
     form = CrearOperadorForm()
@@ -239,7 +243,10 @@ def listado_presentes(request):
             presentes.append(ingreso)
         elif egresos[operador_id].fecha < ingreso.fecha:
             presentes.append(ingreso)
-    return render(request, 'listar_presentes.html', {'presentes': presentes,})
+    return render(request, 'listar_presentes.html', {
+        'presentes': presentes,
+        'has_table': True,
+    })
 
 @permission_required('operadores.auditar_operadores')
 def checkin(request):

@@ -1,4 +1,4 @@
-{% extends 'base_informacion.html' %}
+{% extends 'base_actas.html' %}
 {% load static %}
 {% block content %}
     <div class="beneficiario container">
@@ -7,7 +7,7 @@
         </div>
         <div class="row">
         <div class="col-md-12">
-            <table class="listado">
+            <table class="listado" id="table">
                 <thead>
                     <tr>
                         <th>Titulo</th>
@@ -29,7 +29,6 @@
                     {% endfor %}
                 </tbody>
             </table>
-            {% include 'extras/paginador.html' with elementos=actas %}
         </div>
     </div>
 {% endblock %}

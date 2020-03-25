@@ -8,8 +8,8 @@ from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
 from coe.settings import GEOPOSITION_GOOGLE_MAPS_API_KEY
 from core.decoradores import superuser_required
-from core.functions import paginador
 from core.forms import SearchForm, UploadCsvWithPass
+from core.functions import paginador
 from operadores.functions import obtener_operador
 from background.tasks import crear_progress_link
 #imports de la app
@@ -51,7 +51,6 @@ def archivos_pendientes(request, procesado=None):
             archivos = archivos.filter(procesado=True)
         else: 
             archivos = archivos.filter(procesado=False)
-    archivos = paginador(request, archivos)
     return render(request, 'archivos_pendientes.html', {'archivos': archivos,})
 
 @permission_required('operadores.archivos')
@@ -122,8 +121,10 @@ def listar_vehiculos(request, tipo_id=None):
     vehiculos = Vehiculo.objects.all()
     if tipo_id:
         vehiculos = vehiculos.filter(tipo=tipo_id)
-    vehiculos = paginador(request, vehiculos)
-    return render(request, "lista_vehiculos.html", {'vehiculos': vehiculos, })
+    return render(request, "lista_vehiculos.html", {
+        'vehiculos': vehiculos,    
+        'has_table': True,
+    })
 
 @permission_required('operadores.vehiculos')
 def ver_vehiculo(request, vehiculo_id):
@@ -282,11 +283,11 @@ def lista_individuos(request, nacionalidad_id=None):
                 Q(apellidos__icontains=search) |
                 Q(nacionalidad__nombre__icontains=search)
             )
-    else:#Si no filtro traemos solo 1000 (20 * 50 paginador)
-        individuos = individuos[0:1000]
-    #Paginamos
     individuos = paginador(request, individuos)
-    return render(request, "lista_individuos.html", {'individuos': individuos, })
+    return render(request, "lista_individuos.html", {
+        'individuos': individuos,
+        'has_table': True,
+    })
 
 @permission_required('operadores.individuos')
 def lista_evaluar(request):
@@ -298,15 +299,18 @@ def lista_evaluar(request):
     for individuo in individuos:
         if individuo.situacion_actual().conducta == 'B':
             evaluar.append(individuo)
-    evaluar = paginador(request, evaluar)
-    return render(request, "lista_individuos.html", {'individuos': evaluar, })
+    return render(request, "lista_individuos.html", {
+        'individuos': evaluar,
+        'has_table': True,
+    })
 
 @permission_required('operadores.individuos')
 def lista_seguimiento(request):
     individuos = {}
-    seguimientos = Seguimiento.objects.all().exclude(tipo='F')
+    seguimientos = Seguimiento.objects.all().exclude(tipo='F')#Eliminamos los que terminaron el seguimiento
     seguimientos = seguimientos.select_related('individuo', 'individuo__nacionalidad')
     seguimientos = seguimientos.prefetch_related('individuo__atributos', 'individuo__sintomas')
+    seguimientos = seguimientos.prefetch_related('individuo__situaciones', 'individuo__seguimientos')
     seguimientos = seguimientos.prefetch_related('individuo__atributos__tipo', 'individuo__sintomas__tipo')
     seguimientos = [s for s in seguimientos]
     seguimientos_terminados = [s.individuo for s in Seguimiento.objects.filter(tipo='F')]
@@ -315,9 +319,10 @@ def lista_seguimiento(request):
             if not seguimiento.individuo in seguimientos_terminados:
                 individuos[seguimiento.individuo.id] = seguimiento.individuo
     individuos = list(individuos.values())
- 
-    individuos = paginador(request, individuos)
-    return render(request, "listado_seguimiento.html", {'individuos': individuos, })
+    return render(request, "listado_seguimiento.html", {
+        'individuos': individuos,
+        'has_table': True,
+    })
 
 #CARGA DE ELEMENTOS
 @permission_required('operadores.individuos')

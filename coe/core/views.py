@@ -20,10 +20,8 @@ from .models import Faq, Consulta
 from .tokens import account_activation_token
 from .decoradores import superuser_required
 from .forms import ConsultaForm, RespuestaForm
-from .functions import paginador
 
 # Create your views here.
-
 #PUBLICAS:
 def home(request):
     versiones = ver_publicadas(limit=5)
@@ -59,7 +57,6 @@ def contacto(request):
                 'titulo': "Envianos una consulta:", 'boton': "Enviar"})
 
 #Menu Principal
-
 def main_menu(request):
     return render(request, 'main_menu.html', {})
 
@@ -72,14 +69,19 @@ def menu(request):
 @permission_required('operadores.consultas')
 def lista_consultas(request):
     consultas = Consulta.objects.filter(valida=True, respondida=False)
-    consultas = paginador(request, consultas)
-    return render(request, 'lista_consultas.html', {"consultas": consultas, })
+    return render(request, 'lista_consultas.html', {
+        "consultas": consultas, 
+        "has_table": True,
+        "refresh": True,
+    })
 
 @permission_required('operadores.consultas')
 def lista_respondidas(request):
     consultas = Consulta.objects.filter(respondida=True)
-    consultas = paginador(request, consultas)
-    return render(request, 'lista_respondidas.html', {"consultas": consultas, })
+    return render(request, 'lista_respondidas.html', {
+        "consultas": consultas,
+        "has_table": True,
+    })
 
 @permission_required('operadores.consultas')
 def ver_consulta(request, consulta_id):

@@ -28,7 +28,10 @@ def lista_general(request):
     subgrupos = SubGrupo.objects.all()
     subgrupos = subgrupos.select_related('rubro')
     subgrupos = subgrupos.prefetch_related('items', 'items__eventos')
-    return render(request, 'lista_general.html', {'subgrupos': subgrupos, })
+    return render(request, 'lista_general.html', {
+        'subgrupos': subgrupos,
+        'has_table': True,
+    })
 
 @permission_required('operadores.menu_inventario')
 def lista_detallada(request, rubro_id=None, subgrupo_id=None):
@@ -48,7 +51,10 @@ def lista_detallada(request, rubro_id=None, subgrupo_id=None):
                 Q(subgrupo__nombre__icontains=search) |
                 Q(subgrupo__rubro__nombre__icontains=search)
             )
-    return render(request, 'lista_detallada.html', {'items': items, })
+    return render(request, 'lista_detallada.html', {
+        'items': items,
+        'has_table': True,
+    })
 
 @permission_required('operadores.menu_inventario')
 def ver_item(request, item_id):

@@ -7,33 +7,36 @@
         </div>
         <div class="row">
         <div class="col-md-12">
-            <table class="listado">
-                <tr>
-                    <th>Tipo</th>
-                    <th>Identificacion</th>
-                    <th>Cant Pasajeros</th>
-                    <th>Empresa</th>
-                    <th>Plan de Ruta</th>
-                    <th>Fecha Registro</th>
-                    <th>Ver Detalle</th>
-                </tr>
-                {% for vehiculo in vehiculos %}
+            <table class="listado" id="table">
+                <thead>
                     <tr>
-                        <td>
-                            <a href="{% url 'informacion:vehiculos_tipo' tipo_id=vehiculo.tipo %}">
-                                {{vehiculo.get_tipo_display}}
-                            </a>
-                        </td>
-                        <td>{{vehiculo.identificacion}}</td>
-                        <td>{{vehiculo.cant_pasajeros}}</td>
-                        <td>{{vehiculo.empresa}}</td>
-                        <td>{{vehiculo.plan}}</td>
-                        <td>{{vehiculo.fecha}}</td>
-                        <td><a href="{% url 'informacion:ver_vehiculo' vehiculo_id=vehiculo.id %}" target="_blank">(Ver Detalle)</a></td>
+                        <th>Tipo</th>
+                        <th>Identificacion</th>
+                        <th>Cant Pasajeros</th>
+                        <th>Empresa</th>
+                        <th>Plan de Ruta</th>
+                        <th>Fecha Registro</th>
+                        <th>Ver Detalle</th>
                     </tr>
-                {% endfor %}
+                </thead>
+                <tbody>
+                    {% for vehiculo in vehiculos %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'informacion:vehiculos_tipo' tipo_id=vehiculo.tipo %}">
+                                    {{vehiculo.get_tipo_display}}
+                                </a>
+                            </td>
+                            <td>{{vehiculo.identificacion}}</td>
+                            <td>{{vehiculo.cant_pasajeros}}</td>
+                            <td>{{vehiculo.empresa}}</td>
+                            <td>{{vehiculo.plan}}</td>
+                            <td>{{vehiculo.fecha}}</td>
+                            <td><a href="{% url 'informacion:ver_vehiculo' vehiculo_id=vehiculo.id %}" target="_blank">(Ver Detalle)</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
             </table>
-            {% include 'extras/paginador.html' with elementos=vehiculos %}
         </div>
     </div>
 {% endblock %}

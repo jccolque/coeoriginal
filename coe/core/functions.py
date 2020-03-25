@@ -11,7 +11,7 @@ def agregar_menu(app):
 
 def paginador(request, queryset):
     page = request.GET.get('page', 1)
-    paginator = Paginator(queryset, 100)
+    paginator = Paginator(queryset, 1000)
     try:
         return paginator.page(page)
     except PageNotAnInteger:

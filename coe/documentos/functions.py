@@ -9,7 +9,7 @@ def ver_publicadas(limit=None):
     documentos = Documento.objects.filter(publico=True)
     documentos = documentos.prefetch_related('versiones')
     for doc in documentos:
-        version =  doc.ultima_version()
+        version = doc.ultima_version()
         if version:
             if hasattr(version, 'archivo'):
                 versiones.append(version)

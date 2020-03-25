@@ -4,39 +4,41 @@
     <div class="beneficiario container">
         <div class="row">
             <h2>Consultas Validas:</h2>
-            <p>{% include 'extras/buscador.html' %}</h3>
         </div>
         <div class="row">
         <div class="col-md-12">
-            <table class="listado">
-                <tr>
-                    <th>Asunto</th>
-                    <th>Descripcion</th>
-                    <th>Respuesta</th>
-                    <th>fecha_consulta</th>
-                    <th>Ver Detalle</th>
-                </tr>
-                {% for consulta in consultas %}
+            <table class="listado" id="table">
+                <thead>
                     <tr>
-                        <td>{{consulta.asunto}}</td>
-                        <td>{{consulta.descripcion|safe}}</td>
-                        <td>
-                            {% for respuesta in consulta.respuestas.all %}
-                                {% if forloop.first %}
-                                    <ul>
-                                {% endif %}
-                                <li>{{respuesta.respuesta|safe}}<li>
-                                {% if forloop.last %}
-                                    </ul>
-                                {% endif %}
-                            {% endfor %}
-                        </td>
-                        <td>{{consulta.fecha_consulta}}</td>
-                        <td><a href="{% url 'core:ver_consulta' consulta_id=consulta.id %}" target="_blank">(Ver Detalle)</a></td>
+                        <th>Asunto</th>
+                        <th>Descripcion</th>
+                        <th>Respuesta</th>
+                        <th>fecha_consulta</th>
+                        <th>Ver Detalle</th>
                     </tr>
-                {% endfor %}
+                </thead>
+                <tbody>
+                    {% for consulta in consultas %}
+                        <tr>
+                            <td>{{consulta.asunto}}</td>
+                            <td>{{consulta.descripcion|safe}}</td>
+                            <td>
+                                {% for respuesta in consulta.respuestas.all %}
+                                    {% if forloop.first %}
+                                        <ul>
+                                    {% endif %}
+                                    <li>{{respuesta.respuesta|safe}}<li>
+                                    {% if forloop.last %}
+                                        </ul>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>{{consulta.fecha_consulta}}</td>
+                            <td><a href="{% url 'core:ver_consulta' consulta_id=consulta.id %}" target="_blank">(Ver Detalle)</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
             </table>
-            {% include 'extras/paginador.html' with elementos=consultas %}
         </div>
     </div>
 {% endblock %}

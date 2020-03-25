@@ -4,37 +4,39 @@
     <div class="beneficiario container">
         <div class="row">
             <h2>Listado de Inscriptos</h2>
-            <p>{% include 'extras/buscador.html' %}</h3>
         </div>
         <div class="row">
         <div class="col-md-12">
-            <table class="listado">
-                <tr>
-                    <th>Profesion</th>
-                    <th>Apellido</th>
-                    <th>Nombre</th>
-                    <th>Localidad</th>
-                    <th>Telefono</th>
-                    <th>Fecha Inscripcion</th>
-                    <th>Ver Detalle</th>
-                </tr>
-                {% for inscripto in inscriptos %}
+            <table class="listado" id="table">
+                <thead>
                     <tr>
-                        <td>
-                            <a href="{% url 'inscripciones:lista_filtrada' profesion_id=inscripto.profesion %}">
-                                {{inscripto.get_profesion_display}}
-                            </a>
-                        </td>
-                        <td>{{inscripto.apellidos}}</td>
-                        <td>{{inscripto.nombres}}</td>
-                        <td>{{inscripto.localidad}}</td>
-                        <td>{{inscripto.telefono}}</td>
-                        <td>{{inscripto.fecha}}</td>
-                        <td><a href="{% url 'inscripciones:ver_inscripto' inscripto_id=inscripto.id %}">Ver Resumen</a></td>
+                        <th>Profesion</th>
+                        <th>Apellido</th>
+                        <th>Nombre</th>
+                        <th>Localidad</th>
+                        <th>Telefono</th>
+                        <th>Fecha Inscripcion</th>
+                        <th>Ver Detalle</th>
                     </tr>
-                {% endfor %}
+                </thead>
+                <tbody>
+                    {% for inscripto in inscriptos %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'inscripciones:lista_filtrada' profesion_id=inscripto.profesion %}">
+                                    {{inscripto.get_profesion_display}}
+                                </a>
+                            </td>
+                            <td>{{inscripto.apellidos}}</td>
+                            <td>{{inscripto.nombres}}</td>
+                            <td>{{inscripto.localidad}}</td>
+                            <td>{{inscripto.telefono}}</td>
+                            <td>{{inscripto.fecha}}</td>
+                            <td><a href="{% url 'inscripciones:ver_inscripto' inscripto_id=inscripto.id %}">Ver Resumen</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
             </table>
-            {% include 'extras/paginador.html' with elementos=inscriptos %}
         </div>
     </div>
 {% endblock %}

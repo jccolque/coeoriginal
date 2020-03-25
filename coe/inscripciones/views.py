@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
 from coe.settings import SEND_MAIL
 from core.forms import SearchForm
-from core.functions import paginador, delete_tags
+from core.functions import delete_tags
 #Impors de la app
 from .tokens import account_activation_token
 from .models import Inscripto
@@ -54,8 +54,10 @@ def lista_inscriptos(request, profesion_id=None):
         if form.is_valid():
             search = form.cleaned_data['search']
             inscriptos = inscriptos.filter(apellidos__icontains=search)
-    inscriptos = paginador(request, inscriptos)
-    return render(request, 'lista_inscripciones.html', {'inscriptos': inscriptos, })
+    return render(request, 'lista_inscripciones.html', {
+        'inscriptos': inscriptos,
+        'has_table': True,
+    })
 
 @permission_required('operadores.menu_inscripciones')
 def ver_inscripto(request, inscripto_id=None):

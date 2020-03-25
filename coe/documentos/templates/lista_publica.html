@@ -4,31 +4,33 @@
     <div class="beneficiario container">
         <div class="row">
             <h2>Listado de Documentos Publicos</h2>
-            <p>{% include 'extras/buscador.html' %}</h3>
         </div>
         <div class="row">
         <div class="col-md-12">
-            <table class="listado">
-                <tr>
-                    <th>Tipo</th>
-                    <th>SubComite</th>
-                    <th>Nombre</th>
-                    <th>Autor</th>
-                    <th>Fecha Publicacion</th>
-                    <th>Descargar</th>
-                </tr>
-                {% for documento in documentos %}
+            <table class="listado" id="table">
+                <thead>
                     <tr>
-                        <td>{{documento.get_tipo_display}}</td>
-                        <td>{{documento.subcomite}}</td>
-                        <td>{{documento.nombre}}</td>
-                        <td>{{documento.autor}}</td>
-                        <td>{{documento.ultima_version.fecha}}</td>
-                        <td><a href="{{documento.ultima_version.archivo.url}}">Descargar</a></td>
+                        <th>Tipo</th>
+                        <th>SubComite</th>
+                        <th>Nombre</th>
+                        <th>Autor</th>
+                        <th>Fecha Publicacion</th>
+                        <th>Descargar</th>
                     </tr>
-                {% endfor %}
+                </thead>
+                <tbody>
+                    {% for documento in documentos %}
+                        <tr>
+                            <td>{{documento.get_tipo_display}}</td>
+                            <td>{{documento.subcomite}}</td>
+                            <td>{{documento.nombre}}</td>
+                            <td>{{documento.autor}}</td>
+                            <td>{{documento.ultima_version.fecha}}</td>
+                            <td><a href="{{documento.ultima_version.archivo.url}}">Descargar</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
             </table>
-            {% include 'extras/paginador.html' with elementos=documentos %}
         </div>
     </div>
 {% endblock %}

@@ -10,34 +10,36 @@
                     <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo Usuario">
                 </a>
             {% endif %}
-            <p>{% include 'extras/buscador.html' %}</h3>
         </div>
         <div class="row">
         <div class="col-md-12">
-            <table class="listado">
-                <tr>
-                    <th colspan="2">Rubro</th>
-                    <th>Cantidad Disponible</th>
-                    <th>Cantidad Distribuida</th>
-                </tr>
-                {% for subgrupo in subgrupos %}
+            <table class="listado" id="table">
+                <thead>
                     <tr>
-                        <td>
-                            <a href={% url 'inventario:lista_rubro' rubro_id=subgrupo.rubro.id %}>
-                                {{subgrupo.rubro}}
-                            </a>
-                        </td>
-                        <td>
-                            <a href={% url 'inventario:lista_subgrupo' subgrupo_id=subgrupo.id %}>
-                                {{subgrupo}}
-                            </a>
-                        </td>
-                        <td>{{subgrupo.cantidad_disponible}}</td>
-                        <td>{{subgrupo.cantidad_distribuida}}</td>
+                        <th colspan="2">Rubro</th>
+                        <th>Cantidad Disponible</th>
+                        <th>Cantidad Distribuida</th>
                     </tr>
-                {% endfor %}
+                </thead>
+                <tbody>
+                    {% for subgrupo in subgrupos %}
+                        <tr>
+                            <td>
+                                <a href={% url 'inventario:lista_rubro' rubro_id=subgrupo.rubro.id %}>
+                                    {{subgrupo.rubro}}
+                                </a>
+                            </td>
+                            <td>
+                                <a href={% url 'inventario:lista_subgrupo' subgrupo_id=subgrupo.id %}>
+                                    {{subgrupo}}
+                                </a>
+                            </td>
+                            <td>{{subgrupo.cantidad_disponible}}</td>
+                            <td>{{subgrupo.cantidad_distribuida}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
             </table>
-            {% include 'extras/paginador.html' with elementos=subgrupos %}
         </div>
     </div>
 {% endblock %}

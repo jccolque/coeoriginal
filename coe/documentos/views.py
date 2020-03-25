@@ -20,7 +20,10 @@ def lista_publica(request):
         if form.is_valid():
             search = form.cleaned_data['search']
             documentos = documentos.filter(nombre__icontains=search)
-    return render(request, 'lista_publica.html', {'documentos': documentos, })    
+    return render(request, 'lista_publica.html', {
+        'documentos': documentos,
+        'has_table': True,
+    })    
 
 #Privado.
 @permission_required('operadores.menu_documentos')
@@ -40,7 +43,10 @@ def lista_general(request, subco_id=None):
         if form.is_valid():
             search = form.cleaned_data['search']
             documentos = documentos.filter(nombre__icontains=search)
-    return render(request, 'lista_documentos.html', {'documentos': documentos, })
+    return render(request, 'lista_documentos.html', {
+        'documentos': documentos,    
+        'has_table': True,
+    })
 
 @permission_required('operadores.menu_documentos')
 def cargar_documento(request):

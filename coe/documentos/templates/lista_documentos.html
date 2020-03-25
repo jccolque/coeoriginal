@@ -10,50 +10,52 @@
                     <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo Usuario">
                 </a>
             {% endif %}
-            <p>{% include 'extras/buscador.html' %}</h3>
         </div>
         <div class="row">
         <div class="col-md-12">
-            <table class="listado">
-                <tr>
-                    <th>SubComite</th>
-                    <th>Nombre</th>
-                    <th>Tipo</th>
-                    <th>Autor</th>
-                    <th>Fecha Actualizacion</th>
-                    <th>Administrar</th>
-                    <th>Descargar Ultima Version</th>
-                </tr>
-                {% for documento in documentos %}
+            <table class="listado" id="table">
+                <thead>
                     <tr>
-                        <td>
-                            <a href="{% url 'documentos:lista_subcomite' subco_id=documento.subcomite.id %}">
-                                {{documento.subcomite}}
-                            </a>
-                        </td>
-                        <td>
-                            {% if documento.publico %}
-                                <img class="icons" src="/static/img/icons/public.png" alt="Es Publico">
-                            {% endif %}                        
-                            {{documento.nombre}}
-                        </td>
-                        <td>{{documento.get_tipo_display}}</td>
-                        <td>{{documento.autor}}</td>
-                        <td>{{documento.ultima_version.fecha}}</td>
-                        <td><a href="{% url 'documentos:ver_documento' documento_id=documento.id %}">Documento</a></td>
-                        {% if documento.ultima_version %}
-                            {% if documento.ultima_version.archivo %}
-                                <td><a href="{{documento.ultima_version.archivo.url}}">Descargar</a></td>
+                        <th>SubComite</th>
+                        <th>Nombre</th>
+                        <th>Tipo</th>
+                        <th>Autor</th>
+                        <th>Fecha Actualizacion</th>
+                        <th>Administrar</th>
+                        <th>Descargar Ultima Version</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for documento in documentos %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'documentos:lista_subcomite' subco_id=documento.subcomite.id %}">
+                                    {{documento.subcomite}}
+                                </a>
+                            </td>
+                            <td>
+                                {% if documento.publico %}
+                                    <img class="icons" src="/static/img/icons/public.png" alt="Es Publico">
+                                {% endif %}                        
+                                {{documento.nombre}}
+                            </td>
+                            <td>{{documento.get_tipo_display}}</td>
+                            <td>{{documento.autor}}</td>
+                            <td>{{documento.ultima_version.fecha}}</td>
+                            <td><a href="{% url 'documentos:ver_documento' documento_id=documento.id %}">Documento</a></td>
+                            {% if documento.ultima_version %}
+                                {% if documento.ultima_version.archivo %}
+                                    <td><a href="{{documento.ultima_version.archivo.url}}">Descargar</a></td>
+                                {% else %}
+                                    <td><p>Sin Archivos Cargados</p></td>
+                                {% endif %}
                             {% else %}
                                 <td><p>Sin Archivos Cargados</p></td>
                             {% endif %}
-                        {% else %}
-                            <td><p>Sin Archivos Cargados</p></td>
-                        {% endif %}
-                    </tr>
-                {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
             </table>
-            {% include 'extras/paginador.html' with elementos=documentos %}
         </div>
     </div>
 {% endblock %}

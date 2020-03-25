@@ -9,7 +9,8 @@ def lista_background(request):
     tasks = Progress_Links.objects.all()
     return render(request, 'lista_background.html', {
         'tasks': tasks,
-        "refresh": True 
+        "refresh": True,
+        'has_table': True,
         }
     )
 

@@ -158,7 +158,7 @@ class Individuo(models.Model):
             return None
     def ultimo_seguimiento(self):
         if self.seguimientos.all():
-            return self.seguimientos.last()
+            return [d for d in self.seguimientos.all()][-1]
         else:
             return None
 

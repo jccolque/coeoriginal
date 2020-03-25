@@ -1,16 +1,12 @@
 {% extends 'base_tareas.html' %}
 
-{% block custom_head %}
-    <meta http-equiv="refresh" content="60" />
-{% endblock %}
-
 {% load static %}
+
 {% block content %}
     <div class="beneficiario container">
         <div class="row">
             <div class="col-sm-8">
                 <h2>Tareas Creadas</h2>
-                {% include 'extras/buscador.html' %}
             </div>
             <div class="col-sm-4">
                 <ul class="menu_botones">
@@ -25,43 +21,46 @@
         </div>
         <div class="row">
         <div class="col-md-12">
-            <table class="listado">
-                <tr>
-                    <th>Subcomite</th>
-                    <th>Nombre</th>
-                    <th>Prioridad</th>
-                    <th>Inicio</th>
-                    <th>Fecha Limite</th>
-                    <th>Horas Restantes</th>
-                    <th>Ultimo Cambio</th>
-                    <th>Ver Detalle</th>
-                </tr>
-                {% for tarea in tareas %}
+            <table class="listado" id="table">
+                <thead>
                     <tr>
-                        <td>{{tarea.subcomite}}</td>
-                        <td>{{tarea.nombre}}</td>
-                        <td>{{tarea.get_prioridad_display}}</td>
-                        <td>{{tarea.begda}}</td>
-                        <td>{{tarea.endda}}</td>
-                        {% with tarea.hrs_restantes as hrs %}
-                            <td class="
-                                {% if hrs < 0 %}
-                                    tiempo_negativo
-                                {% elif hrs < 12 %}
-                                    tiempo_limitado
-                                {% else %}
-                                    tiempo_disponible
-                                {% endif %} 
-                                "> 
-                                {{hrs}} Horas
-                            </td>
-                        {% endwith %}
-                        <td>{{tarea.get_last_event}}</td>
-                        <td><a href="{% url 'tareas:ver_tarea' tarea_id=tarea.id %}" target="_blank">(Ver Detalle)</a></td>
+                        <th>Subcomite</th>
+                        <th>Nombre</th>
+                        <th>Prioridad</th>
+                        <th>Inicio</th>
+                        <th>Fecha Limite</th>
+                        <th>Horas Restantes</th>
+                        <th>Ultimo Cambio</th>
+                        <th>Ver Detalle</th>
                     </tr>
-                {% endfor %}
+                </thead>
+                <tbody>
+                    {% for tarea in tareas %}
+                        <tr>
+                            <td>{{tarea.subcomite}}</td>
+                            <td>{{tarea.nombre}}</td>
+                            <td>{{tarea.get_prioridad_display}}</td>
+                            <td>{{tarea.begda}}</td>
+                            <td>{{tarea.endda}}</td>
+                            {% with tarea.hrs_restantes as hrs %}
+                                <td class="
+                                    {% if hrs < 0 %}
+                                        tiempo_negativo
+                                    {% elif hrs < 12 %}
+                                        tiempo_limitado
+                                    {% else %}
+                                        tiempo_disponible
+                                    {% endif %} 
+                                    "> 
+                                    {{hrs}} Horas
+                                </td>
+                            {% endwith %}
+                            <td>{{tarea.get_last_event}}</td>
+                            <td><a href="{% url 'tareas:ver_tarea' tarea_id=tarea.id %}" target="_blank">(Ver Detalle)</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
             </table>
-            {% include 'extras/paginador.html' with elementos=tareas %}
         </div>
     </div>
 {% endblock %}

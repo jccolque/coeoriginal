@@ -3,7 +3,6 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import permission_required
 from django.contrib.admin.views.decorators import staff_member_required
 #Imports del proyecto
-from core.functions import paginador
 from core.forms import SearchForm
 from operadores.functions import obtener_operador
 #Imports de la app
@@ -28,9 +27,9 @@ def lista_tareas(request):
         if form.is_valid():
             search = form.cleaned_data['search']
             tareas = tareas.filter(nombre__icontains=search)
-    tareas = paginador(request, tareas)
     return render(request, "lista_tareas.html", {
         'tareas': tareas,
+        'has_table': True,
     })
 
 @staff_member_required
@@ -44,9 +43,9 @@ def lista_terminadas(request):
         if form.is_valid():
             search = form.cleaned_data['search']
             tareas = tareas.filter(nombre__icontains=search)
-    tareas = paginador(request, tareas)
     return render(request, "lista_tareas.html", {
         'tareas': tareas,
+        'has_table': True,
         'terminada': True,
     })
 

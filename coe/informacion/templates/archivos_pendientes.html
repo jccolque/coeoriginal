@@ -4,11 +4,10 @@
     <div class="beneficiario container">
         <div class="row">
             <h2>Archivos Sin Procesar</h2>
-            <p>{% include 'extras/buscador.html' %}</p>
         </div>
         <div class="row">
             <div class="col-md-9">
-                <table class="listado" id="archivospend_table">
+                <table class="listado"  id="table">
                     <thead>
                         <tr>
                             <th>Tipo</th>
@@ -18,7 +17,6 @@
                             <th>Ver Documento</th>
                         </tr>
                     </thead>
-
                     <tbody>
                         {% for archivo in archivos %}
                             <tr>
@@ -31,7 +29,6 @@
                         {% endfor %}
                     </tbody>  
                 </table>
-                {% include 'extras/paginador.html' with elementos=archivos %}
             </div>
             <div class="col-md-3">
                 <ul class="menu_botones">

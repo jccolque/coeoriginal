@@ -21,7 +21,10 @@ def listar_actas(request):
         form = SearchForm(request.POST)
         if form.is_valid():
             actas = actas.filter(titulo__icontains=form.cleaned_data['search'])
-    return render(request, 'lista_actas.html', {'actas': actas, })
+    return render(request, 'lista_actas.html', {
+        'actas': actas,
+        'has_table': True,
+    })
 
 @permission_required('operadores.menu_actas')
 def ver_acta(request, acta_id):
