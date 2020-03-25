@@ -16,4 +16,5 @@ def ct_opciones(usuario):
                 listado.append(app)
         else:
             listado.append(app)
+    listado.sort(key=lambda x: x[0])
     return listado
