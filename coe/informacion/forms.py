@@ -81,6 +81,28 @@ class IndividuoForm(forms.ModelForm):
         self.base_fields['sintomas'].choices = [(s.id, s.nombre) for s in TipoSintoma.objects.all()]
         super(IndividuoForm, self).__init__(*args, **kwargs)
 
+class BuscadorIndividuosForm(forms.Form):
+    nombre = forms.CharField(label="Nombre", required=False)
+    apellido = forms.CharField(label="Apellido", required=False)
+    calle = forms.CharField(label="Calle", required=False)
+    localidad = forms.ModelChoiceField(
+        queryset=Localidad.objects.all(),
+        widget=autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+        required=False,
+    )
+    def clean(self):
+        cant = 0
+        #Vemos si aportaron datos
+        if self.cleaned_data['nombre']: cant+=1
+        if self.cleaned_data['apellido']: cant+=1
+        if self.cleaned_data['calle']: cant+=1
+        if self.cleaned_data['localidad']: cant+=1
+        #Exigimos al menos 2 datos
+        if cant < 2:
+            raise forms.ValidationError("Debe ingresar al menos dos datos.")
+        else:
+            return self.cleaned_data
+
 class SearchVehiculoForm(forms.Form):
     identificacion = forms.CharField(label="Patente/Identificacion", required=True)
 

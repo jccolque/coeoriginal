@@ -71,6 +71,7 @@ def crear_subcomite(request, subco_id=None):
 @permission_required('operadores.operadores')
 def listar_operadores(request):
     operadores = Operador.objects.all()
+    operadores = operadores.select_related('subcomite', 'usuario')
     if request.method == 'POST':
         form = SearchForm(request.POST)
         if form.is_valid():

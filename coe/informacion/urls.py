@@ -29,8 +29,7 @@ urlpatterns = [
     #Individuos
     path('buscar/individuo/', views.buscar_individuo, name='buscar_individuo'),
     path('ver/individuo/<int:individuo_id>', views.ver_individuo, name='ver_individuo'),
-    path('lista/individuos', views.lista_individuos, name='listar_individuos'),
-    path('lista/individuos/nac/<int:nacionalidad_id>', views.lista_individuos, name='listar_nacionalidad'),
+    path('buscador/individuos', views.buscador_individuos, name='buscador_individuos'),
     path('lista/evaluar', views.lista_evaluar, name='lista_evaluar'),
     path('lista/seguimiento', views.lista_seguimiento, name='lista_seguimiento'),
     path('cargar/individuo/<str:num_doc>', views.cargar_individuo, name='cargar_individuo'),

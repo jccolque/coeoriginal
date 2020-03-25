@@ -8,8 +8,7 @@ from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
 from coe.settings import GEOPOSITION_GOOGLE_MAPS_API_KEY
 from core.decoradores import superuser_required
-from core.forms import SearchForm, UploadCsvWithPass
-from core.functions import paginador
+from core.forms import SearchForm
 from operadores.functions import obtener_operador
 from background.tasks import crear_progress_link
 #imports de la app
@@ -23,7 +22,7 @@ from .models import Atributo, Sintoma
 from .models import TipoAtributo, TipoSintoma
 from .forms import ArchivoForm, ArchivoFormWithPass
 from .forms import VehiculoForm, ControlVehiculoForm
-from .forms import IndividuoForm
+from .forms import IndividuoForm, BuscadorIndividuosForm
 from .forms import DomicilioForm, AtributoForm, SintomaForm
 from .forms import SituacionForm, RelacionForm, SeguimientoForm
 from .forms import SearchIndividuoForm, SearchVehiculoForm
@@ -267,27 +266,34 @@ def ver_individuo(request, individuo_id):
 
 #LISTAS
 @permission_required('operadores.individuos')
-def lista_individuos(request, nacionalidad_id=None):
-    individuos = Individuo.objects.all()
-    individuos = individuos.select_related('nacionalidad', 'origen', 'destino', )
-    individuos = individuos.prefetch_related('atributos', 'sintomas', 'situaciones', 'relaciones')
-    individuos = individuos.prefetch_related('atributos__tipo', 'sintomas__tipo')
-    if nacionalidad_id:#Filtramos por nacionalidad
-        individuos = individuos.filter(nacionalidad__id=nacionalidad_id)
+def buscador_individuos(request):
+    form = BuscadorIndividuosForm()   
     if request.method == "POST":
-        form = SearchForm(request.POST)
+        form = BuscadorIndividuosForm(request.POST)
         if form.is_valid():
-            search = form.cleaned_data['search']
-            individuos = individuos.filter(
-                Q(num_doc=search) |
-                Q(apellidos__icontains=search) |
-                Q(nacionalidad__nombre__icontains=search)
-            )
-    individuos = paginador(request, individuos)
-    return render(request, "lista_individuos.html", {
-        'individuos': individuos,
-        'has_table': True,
-    })
+            #Tramos todos los individuos:
+            individuos = Individuo.objects.all()
+            #Aplicamos los filtros
+            if form.cleaned_data['nombre']:
+                individuos = individuos.filter(nombres__icontains=form.cleaned_data['nombre'])
+            if  form.cleaned_data['apellido']:
+                individuos = individuos.filter(apellidos__icontains=form.cleaned_data['apellido'])
+            if form.cleaned_data['calle']:
+                individuos = individuos.filter(domicilios__calle=form.cleaned_data['calle'])
+            if form.cleaned_data['localidad']:
+                individuos = individuos.filter(domicilios__localidad=form.cleaned_data['localidad'])
+            #Optimizamos las busquedas a la db
+            individuos = individuos.select_related('nacionalidad', 'origen', 'destino', )
+            individuos = individuos.prefetch_related('atributos', 'sintomas', 'situaciones', 'relaciones')
+            individuos = individuos.prefetch_related('atributos__tipo', 'sintomas__tipo')
+            #Eliminamos repetidos
+            individuos = individuos.distinct()
+            #Mandamos el listado
+            return render(request, "lista_individuos.html", {
+                'individuos': individuos,
+                'has_table': True,
+            })
+    return render(request, "extras/generic_form.html", {'titulo': "Buscador de Individuos", 'form': form, 'boton': "Buscar", })
 
 @permission_required('operadores.individuos')
 def lista_evaluar(request):
