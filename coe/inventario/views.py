@@ -7,6 +7,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
+from coe.settings import GEOPOSITION_GOOGLE_MAPS_API_KEY
 from core.forms import SearchForm
 from operadores.functions import obtener_operador
 #Imports app
