@@ -82,7 +82,7 @@ def crear_tarea(request, tarea_id=None):
                 evento.save()
             else:#Si estamos modificando
                 evento = EventoTarea()
-                evento.accion = 'M'
+                evento.accion = 'A'
                 evento.tarea = tarea
                 evento.responsable = Responsable.objects.filter(operador=obtener_operador(request), tarea=tarea).first()
                 evento.detalle = "Modifico la Tarea"

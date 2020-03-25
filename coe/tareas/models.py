@@ -31,7 +31,10 @@ class Tarea(models.Model):
             'endda': str(self.endda),
         }
     def get_last_event(self):
-        return [e for e in self.eventos.all()][-1]
+        if self.eventos.all():
+            return [e for e in self.eventos.all()][-1]
+        else:
+            return None
     def hrs_restantes(self):
         ahora = timezone.now()
         restante = self.endda - ahora
