@@ -6,4 +6,48 @@
         <script type="text/javascript" src="{% static 'js/masonry.pkgd.min.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/lightbox.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/popups.js' %}"></script>
+
+
+    <!-- Se agrega datatables -->
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.20/datatables.min.js"></script>
+    
+    <script type ="text/javascript">
+            $(document).ready(function () {
+                    $("#table").DataTable();                                                         
+            } );
+    </script>
+
+    <script>
+            function mostrar() {
+            document.getElementById("sidebar").style.width = "222px";
+            document.getElementById("contenido").style.marginLeft = "222px";
+            document.getElementById("abrir").style.display = "none";
+            document.getElementById("cerrar").style.display = "inline";
+            }
+    
+            function ocultar() {
+            document.getElementById("sidebar").style.width = "0";
+            document.getElementById("contenido").style.marginLeft = "0";
+            document.getElementById("abrir").style.display = "inline";
+            ocument.getElementById("cerrar").style.display = "none";
+            }
+    </script>
+
+    <script>
+            var coll = document.getElementsByClassName("collapsible");
+            var i;
+            
+            for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block"){
+                content.style.display = "none";
+                } else {
+                content.style.display = "block";
+                } 
+            });
+            }
+    </script>
+
 {% endblock %}

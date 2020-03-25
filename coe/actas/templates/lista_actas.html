@@ -4,27 +4,30 @@
     <div class="beneficiario container">
         <div class="row">
             <h2>Actas Cargadas</h2>
-            <p>{% include 'extras/buscador.html' %}</p>
         </div>
         <div class="row">
         <div class="col-md-12">
             <table class="listado">
-                <tr>
-                    <th>Titulo</th>
-                    <th>Tipo</th>
-                    <th>Fecha</th>
-                    <th>Publica</th>
-                    <th>Ver Acta</th>
-                </tr>
-                {% for acta in actas %}
+                <thead>
                     <tr>
-                        <td>{{acta.titulo}}</td>
-                        <td>{{acta.get_tipo_display}}</td>
-                        <td>{{acta.fecha}}</td>
-                        <td>{{acta.publica}}</td>
-                        <td><a href="{% url 'actas:ver_acta' acta_id=acta.id %}" target="_blank">(Ver Acta)</a></td>
+                        <th>Titulo</th>
+                        <th>Tipo</th>
+                        <th>Fecha</th>
+                        <th>Publica</th>
+                        <th>Ver Acta</th>
                     </tr>
-                {% endfor %}
+                </thead>
+                <tbody>
+                    {% for acta in actas %}
+                        <tr>
+                            <td>{{acta.titulo}}</td>
+                            <td>{{acta.get_tipo_display}}</td>
+                            <td>{{acta.fecha}}</td>
+                            <td>{{acta.publica}}</td>
+                            <td><a href="{% url 'actas:ver_acta' acta_id=acta.id %}" target="_blank">(Ver Acta)</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
             </table>
             {% include 'extras/paginador.html' with elementos=actas %}
         </div>
