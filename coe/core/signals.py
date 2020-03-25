@@ -19,7 +19,7 @@ from .tokens import account_activation_token
 @receiver(post_save, sender=User)
 def enviar_mail_new_user(instance, created, **kwargs):
     if created and instance.email != NOMAIL:
-        raw_password = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+        raw_password = ''.join(random.sample(string.ascii_uppercase + string.digits, k=8))
         usuario = instance
         usuario.set_password(raw_password)
         usuario.is_active = False
