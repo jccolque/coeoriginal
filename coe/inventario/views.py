@@ -98,7 +98,10 @@ def cargar_geoposicion(request, item_id=None):
         geoposicion.observaciones = request.POST['observaciones']
         geoposicion.save()
         return redirect('inventario:ver_item', item_id=item.id)
-    return render(request, "extras/gmap_form.html", {'objetivo': item, })
+    return render(request, "extras/gmap_form.html", {
+        'objetivo': domicilio.individuo, 
+        'gkey': GEOPOSITION_GOOGLE_MAPS_API_KEY,
+    })
 
 #Administracion de items
 @permission_required('operadores.menu_inventario')

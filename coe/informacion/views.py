@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
+from coe.settings import GEOPOSITION_GOOGLE_MAPS_API_KEY
 from core.decoradores import superuser_required
 from core.functions import paginador
 from core.forms import SearchForm, UploadCsvWithPass
@@ -412,7 +413,10 @@ def cargar_geoposicion(request, domicilio_id):
         geoposicion.observaciones = request.POST['observaciones']
         geoposicion.save()
         return redirect('informacion:ver_individuo', individuo_id=domicilio.individuo.id)
-    return render(request, "extras/gmap_form.html", {'objetivo': domicilio.individuo, })
+    return render(request, "extras/gmap_form.html", {
+        'objetivo': domicilio.individuo, 
+        'gkey': GEOPOSITION_GOOGLE_MAPS_API_KEY,
+    })
 
 #Reportes en el sistema
 @permission_required('operadores.reportes')

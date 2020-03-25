@@ -175,6 +175,9 @@ EMAIL_HOST_USER = 'user@domain.com'
 EMAIL_HOST_PASSWORD = ''
 DEFAULT_FROM_EMAIL = 'user@domain.com'
 
+#APIS
+GEOPOSITION_GOOGLE_MAPS_API_KEY = ''
+
 #Se evita que se envien mails
 if DEBUG:
     SEND_MAIL = False
@@ -182,8 +185,7 @@ if DEBUG:
 else:
     SEND_MAIL = True
 
-
-#Configuracion de Mail
+#Obtenemos todas nuestras credenciales secretas
 try:
     from .credenciales import *
 except ImportError:#Si no logramos importar:
