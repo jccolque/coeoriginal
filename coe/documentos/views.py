@@ -31,6 +31,8 @@ def menu(request):
 @permission_required('operadores.menu_documentos')
 def lista_general(request, subco_id=None):
     documentos = Documento.objects.all()
+    documentos = documentos.select_related('subcomite')
+    documentos = documentos.prefetch_related('versiones')
     if subco_id:
         documentos = documentos.filter(subcomite__id=subco_id)
     if request.method == "POST":

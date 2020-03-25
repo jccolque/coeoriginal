@@ -37,8 +37,12 @@
                     </div>
                 {% else %}
                     <div class="aviso_faltadata">
-                        <h2>No se han cargado noticias destacadas</h2>
-                        <p>Por favor comience a agregar contenido <a href="{% url 'admin:noticias_noticia_add' %}">aqui</a></p>
+                        {% if request.user.is_staff %}
+                            <h2>No se han cargado noticias destacadas</h2>
+                            <p>Por favor comience a agregar contenido <a href="{% url 'admin:noticias_noticia_add' %}">aqui</a></p>
+                        {% else %}
+                            <h2>No se han encontorado noticias con esas palabras claves</h2>
+                        {% endif %}
                     </div>
                 {% endif %}
             </div>

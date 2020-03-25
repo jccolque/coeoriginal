@@ -31,7 +31,7 @@ class Tarea(models.Model):
             'endda': str(self.endda),
         }
     def get_last_event(self):
-        return self.eventos.order_by('fecha').last()
+        return [e for e in self.eventos.all()][-1]
     def hrs_restantes(self):
         ahora = timezone.now()
         restante = self.endda - ahora
@@ -63,8 +63,10 @@ class EventoTarea(models.Model):
     accion = models.CharField(max_length=1, choices=TIPO_EVENTO_TAREA, default='I')
     fecha = models.DateTimeField('Fecha del evento', default=timezone.now)
     detalle = HTMLField(null=True, blank=True)
+    class Meta:
+        ordering = ['fecha', ]
     def __str__(self):
-        return self.get_accion_display() + ': ' + str(self.fecha)
+        return self.get_accion_display() + ': ' + str(self.fecha)[0:16]
     def as_dict(self):
         return {
             'id': self.id,

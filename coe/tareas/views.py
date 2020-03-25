@@ -29,7 +29,26 @@ def lista_tareas(request):
             search = form.cleaned_data['search']
             tareas = tareas.filter(nombre__icontains=search)
     tareas = paginador(request, tareas)
-    return render(request, "lista_tareas.html", {'tareas': tareas, })
+    return render(request, "lista_tareas.html", {
+        'tareas': tareas,
+    })
+
+@staff_member_required
+def lista_terminadas(request):
+    tareas = Tarea.objects.filter(eventos__accion="E")
+    tareas = tareas.select_related('subcomite')
+    tareas = tareas.prefetch_related('responsables', 'eventos')
+    #Si utilizo el buscador filtramos
+    if request.method == 'POST':
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            search = form.cleaned_data['search']
+            tareas = tareas.filter(nombre__icontains=search)
+    tareas = paginador(request, tareas)
+    return render(request, "lista_tareas.html", {
+        'tareas': tareas,
+        'terminada': True,
+    })
 
 @staff_member_required
 def ver_tarea(request, tarea_id):

@@ -11,6 +11,7 @@ urlpatterns = [
     path('', views.menu, name='menu'),
     #Basicas:
     path('lista', views.lista_tareas, name='lista_tareas'),
+    path('lista/terminadas', views.lista_terminadas, name='lista_terminadas'),
     path('ver/<int:tarea_id>', views.ver_tarea, name='ver_tarea'),
     path('crear', views.crear_tarea, name='crear_tarea'),
     path('mod/<int:tarea_id>', views.crear_tarea, name='mod_tarea'),
