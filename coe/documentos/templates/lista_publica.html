@@ -13,8 +13,6 @@
                         <th>Tipo</th>
                         <th>SubComite</th>
                         <th>Nombre</th>
-                        <th>Autor</th>
-                        <th>Fecha Publicacion</th>
                         <th>Descargar</th>
                     </tr>
                 </thead>
@@ -24,8 +22,6 @@
                             <td>{{documento.get_tipo_display}}</td>
                             <td>{{documento.subcomite}}</td>
                             <td>{{documento.nombre}}</td>
-                            <td>{{documento.autor}}</td>
-                            <td>{{documento.ultima_version.fecha}}</td>
                             <td><a href="{{documento.ultima_version.archivo.url}}">Descargar</a></td>
                         </tr>
                     {% endfor %}

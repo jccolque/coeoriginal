@@ -107,3 +107,9 @@ TIPO_PERMISO = (
     ('F', 'Salida Temporal por Compras de Farmacia'),
     ('P', 'Salida Temporal por Personas a Cargo'),
 )
+
+TIPO_TRIAJE = (
+    ('V', 'Verde'),
+    ('A', 'Amarillo'),
+    ('R', 'Rojo'),
+)

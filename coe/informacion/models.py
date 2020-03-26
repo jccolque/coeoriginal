@@ -17,6 +17,7 @@ from .choices import TIPO_IMPORTANCIA, TIPO_ARCHIVO
 from .choices import TIPO_VEHICULO, TIPO_ESTADO, TIPO_CONDUCTA
 from .choices import TIPO_RELACION, TIPO_SEGUIMIENTO
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA, TIPO_PERMISO
+from .choices import TIPO_TRIAJE
 
 #Tipo Definition
 class TipoAtributo(models.Model):#Origen del Dato
@@ -368,6 +369,12 @@ class Permiso(models.Model):
             return "Aprobado"
         else:
             return "En Espera"
+
+class AppData(models.Model):
+    individuo = models.OneToOneField(Individuo, on_delete=models.CASCADE, related_name="appdata")
+    telefono = models.CharField('Telefono', max_length=50, default='+549388')
+    estado = models.CharField('Estado', choices=TIPO_TRIAJE, max_length=1, default='V')
+    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
 
 #Señales
 from .signals import estado_inicial

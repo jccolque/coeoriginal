@@ -58,7 +58,6 @@ urlpatterns = [
     url(r'^atributos-autocomplete/$', autocomplete.AtributoAutocomplete.as_view(), name='atributos-autocomplete',),
     url(r'^individuos-autocomplete/$', autocomplete.IndividuosAutocomplete.as_view(), name='individuos-autocomplete',),
     #Carga Masiva
-    
     path('upload/epidemiologia', views.subir_epidemiologia, name='subir_epidemiologia'),
     path('upload/padron/individuos/', views.upload_padron_individuos, name='upload_padron_individuos'),
     path('upload/padron/domicilios/', views.upload_padron_domicilios, name='upload_padron_domicilios'),
