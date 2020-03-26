@@ -61,7 +61,7 @@ def guardar_same(lineas, archivo_id, ultimo=False):
             seguimiento.aclaracion = "CARGA SAME"
             d = linea[0].split('/')
             h = linea[1].split(':')
-            seguimiento.fecha = timezone.datetime(int(d[2]),int(d[0]),int(d[1]), int(h[0]), int(h[1]))
+            seguimiento.fecha = timezone.datetime(int(d[2]),int(d[1]),int(d[0]), int(h[0]), int(h[1]))
             seguimiento.save()
             #Intentamos procesar sintomas:
             for tsintoma in TIPO_SINTOMA:
