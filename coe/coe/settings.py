@@ -191,6 +191,3 @@ try:
     from .credenciales import *
 except ImportError:#Si no logramos importar:
     pass
-
-#Activamos debug aqui para que igual envie mails
-DEBUG = True
