@@ -43,7 +43,7 @@ def lista_terminadas(request):
         if form.is_valid():
             search = form.cleaned_data['search']
             tareas = tareas.filter(nombre__icontains=search)
-    return render(request, "lista_tareas.html", {
+    return render(request, "lista_terminadas.html", {
         'tareas': tareas,
         'has_table': True,
         'terminada': True,

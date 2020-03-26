@@ -1,0 +1,50 @@
+{% extends 'base_tareas.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <div class="col-sm-8">
+                <h2>Tareas Creadas</h2>
+            </div>
+            <div class="col-sm-4">
+                <ul class="menu_botones">
+                    <li><a href="{% url 'tareas:crear_tarea' %}">Crear Tarea</a></li>
+                    {% if terminada %}
+                        <li><a href="{% url 'tareas:lista_tareas' %}">Ver Tareas en Progreso</a></li>
+                    {% else %}
+                        <li><a href="{% url 'tareas:lista_terminadas' %}">Ver Tareas Terminadas</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+        <div class="col-md-12">
+            <table class="listado" id="table">
+                <thead>
+                    <tr>
+                        <th>Subcomite</th>
+                        <th>Nombre</th>
+                        <th>Prioridad</th>
+                        <th>Inicio</th>
+                        <th>Finalizacion</th>
+                        <th>Ver Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tarea in tareas %}
+                        <tr>
+                            <td>{{tarea.subcomite}}</td>
+                            <td>{{tarea.nombre}}</td>
+                            <td>{{tarea.get_prioridad_display}}</td>
+                            <td>{{tarea.begda}}</td>
+                            <td>{{tarea.get_last_event.fecha}}</td>
+                            <td><a href="{% url 'tareas:ver_tarea' tarea_id=tarea.id %}" target="_blank">(Ver Detalle)</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
