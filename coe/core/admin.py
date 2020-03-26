@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin, User
 from django.contrib.auth.models import Permission
 #Imports de la app
-from .models import Faq, Consulta, Respuesta
+from .models import Faq
 #Models Ocultos
 def register_hidden_models(*model_names):
     for m in model_names:
@@ -31,19 +31,6 @@ class NewUserAdmin(UserAdmin):
                 field.widget.attrs['disabled'] = True
         return field
 
-#Definimos inline:
-class RespuestaInline(admin.TabularInline):
-    model = Respuesta
-    fk_name = 'consulta'
-    extras = 0
-
-#Definimos nuestros modelos
-class ConsultaAdmin(admin.ModelAdmin):
-    model = Consulta
-    search_fields = ['autor', 'asunto']
-    list_filter = ['valida', 'respondida', ]
-    inlines = [RespuestaInline, ]
-
 class PermissionAdmin(admin.ModelAdmin):
     model = Permission
     search_fields = ['name', 'codename', ]
@@ -56,4 +43,3 @@ admin.site.unregister(User)
 admin.site.register(User, NewUserAdmin)
 #registramos nuestros admins
 admin.site.register(Faq)
-admin.site.register(Consulta, ConsultaAdmin)

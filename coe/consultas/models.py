@@ -2,6 +2,7 @@
 from django.db import models
 #Imports Extras
 from tinymce.models import HTMLField
+from auditlog.registry import auditlog
 #Imports del proyecto
 from operadores.models import Operador
 
@@ -27,3 +28,7 @@ class Respuesta(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return str(self.consulta) + ": " + self.respuesta
+
+#Auditoria
+auditlog.register(Consulta)
+auditlog.register(Respuesta)

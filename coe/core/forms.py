@@ -9,8 +9,6 @@ from dal import autocomplete
 from tinymce.widgets import TinyMCE
 #Imports del proyecto
 from coe.settings import SECRET_KEY
-#Imports de la app
-from .models import Consulta, Respuesta
 
 #Definimos nuestros formularios
 class SearchForm(forms.Form):

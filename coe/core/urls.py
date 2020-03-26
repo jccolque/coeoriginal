@@ -20,7 +20,6 @@ urlpatterns = [
 
     #Validaciones:
     url(r'^act_usuario/(?P<usuario_id>[0-9]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', views.activar_usuario_mail, name='activar_usuario_mail'),
-    url(r'^act_consulta/(?P<consulta_id>[0-9]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', views.activar_consulta, name='activar_consulta'),
     #Autocomplete
     url(r'^usuarios-autocomplete/$', autocomplete.UsuariosAutocomplete.as_view(), name='usuarios-autocomplete',),
     url(r'^organismos-autocomplete/$', autocomplete.OrganismosAutocomplete.as_view(), name='organismos-autocomplete',),

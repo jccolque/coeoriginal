@@ -25,28 +25,6 @@ class Faq(models.Model):
             "respuesta": self.respuesta,
         }
 
-class Consulta(models.Model):
-    autor = models.CharField('Nombre y Apellido', max_length=100)
-    email = models.EmailField('Correo Electronico Personal')
-    telefono = models.CharField('Telefono', max_length=100, blank=True, null=True)
-    asunto = models.CharField('Asunto', max_length=100)
-    descripcion = HTMLField()
-    fecha_consulta = models.DateTimeField(auto_now_add=True)
-    valida = models.BooleanField('Email Validado', default=False)
-    respondida = models.BooleanField('Respondida', default=False)
-    class Meta:
-        ordering = ['fecha_consulta', ]
-    def __str__(self):
-        return self.autor + ": " + self.asunto + '(' + str(self.fecha_consulta.date()) + ')'
-
-class Respuesta(models.Model):
-    consulta = models.ForeignKey(Consulta, on_delete=models.CASCADE, related_name="respuestas2")
-    operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="respuestas2")
-    respuesta = HTMLField()
-    fecha = models.DateTimeField(auto_now_add=True)
-    def __str__(self):
-        return str(self.consulta) + ": " + self.respuesta
-
 #Auditoria
 auditlog.register(Faq)
 #Señales

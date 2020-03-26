@@ -97,3 +97,17 @@ def consulta_respondida(request, consulta_id):
     consulta.respondida = True
     consulta.save()
     return redirect('consultas:lista_consultas')
+
+#activa consultas
+def activar_consulta(request, consulta_id, token):
+    try:
+        consulta = Consulta.objects.get(pk=consulta_id)
+    except(TypeError, ValueError, OverflowError, Consulta.DoesNotExist):
+        consulta = None
+    if consulta and account_activation_token.check_token(consulta, token):
+        consulta.valida = True
+        consulta.save()
+        texto = 'Excelente! Su correo electronico fue validada.'
+    else:
+        texto = 'El link de activacion es invalido!'
+    return render(request, 'extras/resultado.html', {'texto': texto, })
