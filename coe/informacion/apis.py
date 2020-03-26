@@ -30,7 +30,7 @@ def registro_covidapp(request):
             individuo.nombres = data["nombre"]
             individuo.nacionalidad = nac
             individuo.save()
-        #Si es su primer ingreso
+        #PROCESAMOS INFO DE APP
         if not hasattr(individuo,'appdata'):
             appdata = AppData()
             appdata.individuo = individuo
@@ -39,6 +39,7 @@ def registro_covidapp(request):
             individuo.telefono = data["telefono"]
         else:
             appdata.telefono = data["telefono"]
+        appdata.save()
         #Cargamos un nuevo domicilio:
         domicilio = Domicilio()
         domicilio.individuo = individuo
