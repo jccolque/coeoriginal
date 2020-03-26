@@ -15,6 +15,11 @@
                             {% if documento.publico %}
                                 <img class="icons" src="/static/img/icons/public.png" alt="Es Publico">
                             {% endif %}
+                            {% if perms.operadores.documentos %}
+                                <a href="{% url 'documentos:mod_documento' documento_id=documento.id %}">
+                                    <img class="icons" src="{% static 'img/icons/change.png' %}" style="float:right;">
+                                </a>
+                            {% endif %}
                         </h2>
                         <p>Subcomite: {{documento.subcomite}}</p>
                         <p>Autor: {{documento.autor}}</p>
@@ -60,13 +65,18 @@
                     <div class="col-md-4">
                         <ul class="menu_botones">
                             <li><a href="{% url 'documentos:cargar_actualizacion' documento_id=documento.id %}">Actualizar Version</a></li>
-                            {% if perms.operadores.documentos %}       
+                            {% if perms.operadores.documentos %}
                                 {% if documento.publico %}
                                     <li><a href="{% url 'documentos:cambiar_estado' documento_id=documento.id %}">Volver Privado</a></li>
                                 {% else %}
                                     <li><a href="{% url 'documentos:cambiar_estado' documento_id=documento.id %}">Hacer Publico</a></li>
                                 {% endif %}
-                                <li><a href="{% url 'documentos:eliminar_doc' documento_id=documento.id %}">Eliminar</a></li>
+                                <li>
+                                    <a href="{% url 'documentos:eliminar_doc' documento_id=documento.id %}">
+                                        Eliminar
+                                        <img class="icons" src="{% static 'img/icons/delete.png' %}" style="float:right;">
+                                    </a>
+                                </li>
                             {% endif %}
                             <hr>
                         </ul>

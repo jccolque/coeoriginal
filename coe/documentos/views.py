@@ -49,10 +49,13 @@ def lista_general(request, subco_id=None):
     })
 
 @permission_required('operadores.menu_documentos')
-def cargar_documento(request):
-    form = DocumentoForm()
+def cargar_documento(request, documento_id=None):
+    documento = None
+    if documento_id:
+        documento = Documento.objects.get(pk=documento_id)
+    form = DocumentoForm(instance=documento)
     if request.method == 'POST':
-        form = DocumentoForm(request.POST)
+        form = DocumentoForm(request.POST, instance=documento)
         if form.is_valid():
             documento = form.save()
             return redirect('documentos:ver_documento', documento_id=documento.id)

@@ -9,6 +9,7 @@ app_name = 'documentos'
 urlpatterns = [
     path('', views.menu, name='menu'),
     path('cargar', views.cargar_documento, name='cargar_documento'),
+    path('mod/<int:documento_id>', views.cargar_documento, name='mod_documento'),
     path('cargar/file/<int:documento_id>', views.cargar_actualizacion, name='cargar_actualizacion'),
     path('lista', views.lista_general, name='lista_general'),
     path('lista/subco/<int:subco_id>', views.lista_general, name='lista_subcomite'),
