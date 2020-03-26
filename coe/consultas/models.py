@@ -1,30 +1,11 @@
-#Imports de python
-#Imports django
+#Imports de Django
 from django.db import models
-#Extra modules import
+#Imports Extras
 from tinymce.models import HTMLField
-from auditlog.registry import auditlog
 #Imports del proyecto
 from operadores.models import Operador
 
-#Modelos
 # Create your models here.
-class Faq(models.Model):
-    orden = models.IntegerField()
-    pregunta = models.CharField('Titulo', max_length=200)
-    respuesta = HTMLField()
-    class Meta:
-        ordering = ['orden', ]
-    def __str__(self):
-        return self.pregunta
-    def as_dict(self):
-        return {
-            "id": int(self.id),
-            "orden": int(self.orden),
-            "pregunta": self.pregunta,
-            "respuesta": self.respuesta,
-        }
-
 class Consulta(models.Model):
     autor = models.CharField('Nombre y Apellido', max_length=100)
     email = models.EmailField('Correo Electronico Personal')
@@ -40,14 +21,9 @@ class Consulta(models.Model):
         return self.autor + ": " + self.asunto + '(' + str(self.fecha_consulta.date()) + ')'
 
 class Respuesta(models.Model):
-    consulta = models.ForeignKey(Consulta, on_delete=models.CASCADE, related_name="respuestas2")
-    operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="respuestas2")
+    consulta = models.ForeignKey(Consulta, on_delete=models.CASCADE, related_name="respuestas")
+    operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="respuestas")
     respuesta = HTMLField()
     fecha = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return str(self.consulta) + ": " + self.respuesta
-
-#Auditoria
-auditlog.register(Faq)
-#Señales
-from core.signals import enviar_mail_new_user

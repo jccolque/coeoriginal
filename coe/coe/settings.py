@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     #Apps Propias
     'core.apps.CoreConfig',
+    'consultas.apps.ConsultasConfig',
     'georef.apps.GeorefConfig',
     'noticias.apps.NoticiasConfig',
     'operadores.apps.OperadoresConfig',

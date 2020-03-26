@@ -5,7 +5,7 @@
         <div class="row">
             <h2>Inventario Detallado</h2>
             {% if perms.operadores.menu_inventario %}
-                <a href="{% url 'inventario:crear_item' %}">
+                <a class="nuevo_item" href="{% url 'inventario:crear_item' %}">
                     Crear Item
                     <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo Usuario">
                 </a>

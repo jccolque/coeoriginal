@@ -140,6 +140,10 @@ a.nolink:hover {
 }
 
  /* Utilitarios */
+ .nuevo_item {
+    float: right;
+ }
+
 .volver {
      padding: 10px;
      float: right;

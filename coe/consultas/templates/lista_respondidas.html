@@ -10,11 +10,9 @@
             <table class="listado" id="table">
                 <thead>
                     <tr>
-                        <th>autor</th>
-                        <th>email</th>
-                        <th>telefono</th>
-                        <th>asunto</th>
-                        <th>descripcion</th>
+                        <th>Asunto</th>
+                        <th>Descripcion</th>
+                        <th>Respuesta</th>
                         <th>fecha_consulta</th>
                         <th>Ver Detalle</th>
                     </tr>
@@ -22,13 +20,21 @@
                 <tbody>
                     {% for consulta in consultas %}
                         <tr>
-                            <td>{{consulta.autor}}</td>
-                            <td>{{consulta.email}}</td>
-                            <td>{{consulta.telefono}}</td>
                             <td>{{consulta.asunto}}</td>
                             <td>{{consulta.descripcion|safe}}</td>
+                            <td>
+                                {% for respuesta in consulta.respuestas.all %}
+                                    {% if forloop.first %}
+                                        <ul>
+                                    {% endif %}
+                                    <li>{{respuesta.respuesta|safe}}<li>
+                                    {% if forloop.last %}
+                                        </ul>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
                             <td>{{consulta.fecha_consulta}}</td>
-                            <td><a href="{% url 'core:ver_consulta' consulta_id=consulta.id %}" target="_blank">(Ver Detalle)</a></td>
+                            <td><a href="{% url 'consultas:ver_consulta' consulta_id=consulta.id %}" target="_blank">(Ver Detalle)</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>

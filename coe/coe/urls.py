@@ -36,6 +36,7 @@ urlpatterns = [
 
     #Apps:
     path('', include('core.urls')),
+    path('consultas/', include('consultas.urls')),
     path('georef/', include('georef.urls')),
     path('noticias/', include('noticias.urls')),
     path('operadores/', include('operadores.urls')),

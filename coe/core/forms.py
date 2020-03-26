@@ -16,19 +16,6 @@ from .models import Consulta, Respuesta
 class SearchForm(forms.Form):
     search = forms.CharField(label="", required=True)
 
-class ConsultaForm(forms.ModelForm):
-    class Meta:
-        model = Consulta
-        fields = ['autor', 'email', 'telefono', 'asunto', 'descripcion']
-        widgets = {
-            'descripcion': forms.Textarea(attrs={'cols': 40, 'rows': 10}),
-        }
-
-class RespuestaForm(forms.ModelForm):
-    class Meta:
-        model = Respuesta
-        fields = ['respuesta', ]
-
 class UploadCsv(forms.Form):
     csvfile = forms.FileField(widget=forms.FileInput(attrs={'accept': ".csv"}))
 

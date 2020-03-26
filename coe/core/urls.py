@@ -10,15 +10,10 @@ urlpatterns = [
     #Home
     url(r'^$', views.home, name='home'),
     path('faqs', views.faqs, name='faqs'),
-    path('contacto', views.contacto, name='contacto'),
 
     #Administracion
-    path('main', views.main_menu, name='main_menu'),
     path('core', views.menu, name='menu'),
-    path('lista/consultas', views.lista_consultas, name='lista_consultas'),
-    path('lista/respondidas', views.lista_respondidas, name='lista_respondidas'),
-    path('ver/consulta/<int:consulta_id>', views.ver_consulta, name='ver_consulta'),
-    path('consulta/respondida/<int:consulta_id>', views.consulta_respondida, name='consulta_respondida'), 
+
     #Acceso de usuarios
     path('login', views.home_login, name='home_login'),
     path('logout', views.home_logout, name='home_logout'),

@@ -4,11 +4,11 @@
     <li><a href="{% url 'core:home' %}">Inicio</a></li>
     <li><a href="{% url 'noticias:ver_noticias' %}">Noticias</a></li>
     <li><a href="{% url 'core:faqs' %}">¿Que es el COE?</a></li>
-    <li><a href="{% url 'core:contacto' %}">Contacto</a></li>
+    <li><a href="{% url 'consultas:consultas' %}">Contacto</a></li>
     {% if user.is_authenticated %}
         {% ct_opciones request.user as opciones %}
         <li>
-            <li><a href="{% url 'core:main_menu' %}">{{user.username|title}}</a>
+            <li><a href="{% url 'core:menu' %}">{{user.username|title}}</a>
             <ul class="submenu">
                 {% for opcion in opciones %}
                     <li><a href="/{{opcion.1}}">{{opcion.0}}</a></li>
