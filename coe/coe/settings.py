@@ -176,6 +176,26 @@ EMAIL_HOST_USER = 'user@domain.com'
 EMAIL_HOST_PASSWORD = ''
 DEFAULT_FROM_EMAIL = 'user@domain.com'
 
+#Loggin
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/apis.log',
+        },
+    },
+    'loggers': {
+        'apis': {
+            'handlers': ['file', ],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
+
 #APIS
 GEOPOSITION_GOOGLE_MAPS_API_KEY = ''
 

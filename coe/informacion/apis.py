@@ -1,5 +1,6 @@
 #Imports de python
 import json
+import logging
 #Imports de Django
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -12,9 +13,12 @@ from .models import Individuo, AppData, Domicilio
 @csrf_exempt
 @require_http_methods(["POST"])
 def registro_covidapp(request):
+    #Sistema de loggin
+    logger = logging.getLogger('apis')
     try:
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
+        logger.info('registro_covidapp:'+str(data))
         #Obtenemos datos basicos:
         nac = Nacionalidad.objects.filter(nombre__icontains="Argentina").first()
         #Agarramos el dni
