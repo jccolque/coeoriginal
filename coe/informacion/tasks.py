@@ -70,7 +70,7 @@ def guardar_same(lineas, archivo_id, ultimo=False):
                     sintoma.individuo = individuo
                     sintoma.tipo = TipoSintoma.objects.first()
                     sintoma.newtipo = tsintoma[0]
-                    sintoma.aclaracion = "SAME: "+linea[3]
+                    sintoma.aclaracion = "SAME: "+linea[3][0:190]
                     sintoma.save()
             #Poblacion de riesgo:
             riesgos = ['HTA', 'DBT', 'EMBAR', 'INMUN', 'ASMA', 'BRONQ', 'CARDIA', 'RENAL']
@@ -83,7 +83,7 @@ def guardar_same(lineas, archivo_id, ultimo=False):
                         Q(nombre__icontains='riesgo')
                     )
                     atributo.newtipo = 'PR'
-                    atributo.aclaracion = "SAME: "+linea[3]
+                    atributo.aclaracion = "SAME: "+linea[3][0:190]
                     atributo.save()
             #Lista la linea
             cant_subidos += 1
@@ -173,7 +173,7 @@ def guardar_epidemiologia(lineas, archivo_id, ultimo=False):
                 if dia:
                     seguimiento = Seguimiento()
                     seguimiento.individuo = individuo
-                    seguimiento.aclaracion = dia
+                    seguimiento.aclaracion = dia[0:190]
                     seguimiento.save()
                     for tsintoma in TIPO_SINTOMA:
                         if tsintoma[0] in dia.upper():
@@ -181,7 +181,7 @@ def guardar_epidemiologia(lineas, archivo_id, ultimo=False):
                             sintoma.individuo = individuo
                             sintoma.tipo = TipoSintoma.objects.first()
                             sintoma.newtipo = tsintoma[0]
-                            sintoma.aclaracion = "SEGUIMIENTO: "+dia
+                            sintoma.aclaracion = "SEGUIMIENTO: "+dia[0:190]
                             sintoma.save()
             #Lista la linea
             cant_subidos += 1
