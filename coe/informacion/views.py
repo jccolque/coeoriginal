@@ -41,23 +41,26 @@ def buscar_permiso(request):
                 apellidos__icontains=form.cleaned_data['apellido'])
             if individuo:
                 individuo = individuo.first()
-                return redirect('informacion:pedir_permiso', individuo_id=individuo.id)
+                return redirect('informacion:pedir_permiso', individuo_id=individuo.id, num_doc=individuo.num_doc)
             else:
                 form.add_error(None, "No se ha encontrado a Nadie con esos Datos.")
     return render(request, "permisos/buscar_permiso.html", {'form': form, })
 
-def pedir_permiso(request, individuo_id):
-    individuo = Individuo.objects.get(pk=individuo_id)
-    form = PermisoForm(initial={'individuo': individuo, })
-    if request.method == 'POST':
-        form = PermisoForm(request.POST, initial={'individuo': individuo, })
-        if form.is_valid():
-            permiso = form.save(commit=False)
-            permiso.individuo = individuo
-            permiso.save()
-            #Enviar email
-            return render(request, "permisos/permiso_entregado.html", {'permiso': permiso, })
-    return render(request, "permisos/pedir_permiso.html", {'form': form, 'individuo': individuo, })
+def pedir_permiso(request, individuo_id, num_doc):
+    try:
+        individuo = Individuo.objects.get(pk=individuo_id, num_doc=num_doc)
+        form = PermisoForm(initial={'individuo': individuo, })
+        if request.method == 'POST':
+            form = PermisoForm(request.POST, initial={'individuo': individuo, })
+            if form.is_valid():
+                permiso = form.save(commit=False)
+                permiso.individuo = individuo
+                permiso.save()
+                #Enviar email
+                return render(request, "permisos/permiso_entregado.html", {'permiso': permiso, })
+        return render(request, "permisos/pedir_permiso.html", {'form': form, 'individuo': individuo, })
+    except Individuo.DoesNotExist:
+        return redirect('informacion:buscar_permiso')
 
 def completar_datos(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)

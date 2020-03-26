@@ -10,7 +10,7 @@ app_name = 'informacion'
 urlpatterns = [
     #Publico
     path('buscar/', views.buscar_permiso, name='buscar_permiso'),
-    path('permiso/<int:individuo_id>', views.pedir_permiso, name='pedir_permiso'),
+    path('permiso/<int:individuo_id>/<int:num_doc>/', views.pedir_permiso, name='pedir_permiso'),
     path('completar/datos/<int:individuo_id>', views.completar_datos, name='completar_datos'),
     path('subir/foto/<int:individuo_id>', views.subir_foto, name='subir_foto'),
     #Administrador
