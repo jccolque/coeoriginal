@@ -108,6 +108,11 @@ a.nolink:hover {
 
 }
 
+.over_imagen {
+    margin-bottom: 0px;
+    padding: 0px;
+}
+
 /* Documentos Publicos */
 .main_documentos {
     margin: 15px;

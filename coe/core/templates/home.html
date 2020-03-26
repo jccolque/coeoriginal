@@ -12,16 +12,32 @@
                 {% include "carousel.html" %}
             </div>
             <div class="col-sm-5">
-                <a href="http://salud.jujuy.gob.ar/coronavirus/">
-                    <img class="fotos" src="{% static 'img/link_salud.png' %}">
-                </a>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <a href="https://file.io/YcmSd1">
+                            <img class="fotos"  src="{% static 'img/circular.jpeg' %}">
+                        </a>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="over_imagen">Info Provincial:</p>
+                        <a href="http://salud.jujuy.gob.ar/coronavirus/" target="_blank">
+                            <img class="fotos" src="{% static 'img/link_salud.png' %}">
+                        </a>
+                        <p class="over_imagen">Info Nacional:</p>
+                        <a href="https://www.argentina.gob.ar/salud/coronavirus-COVID-19" target="_blank">
+                            <img class="fotos" src="{% static 'img/coronacional.jpeg' %}">
+                        </a>
+                    </div>
+                </div>
                 <a href="{% url 'inscripciones:cargar_inscripcion' %}">
                     <img class="fotos" src="{% static 'img/reclutamiento.jpeg' %}">
                 </a>
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-3"></div>
+            <div class="col-sm-3">
+                <!-- Nada Aun -->
+            </div>
             <div class="col-sm-6 main_documentos">
                 {% for version in versiones %}
                     {% if forloop.first %}
