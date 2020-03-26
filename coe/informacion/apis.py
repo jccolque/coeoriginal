@@ -8,7 +8,7 @@ from django.views.decorators.http import require_http_methods
 #Imports del proyecto
 from georef.models import Nacionalidad, Localidad
 #Imports de la app
-from .models import Individuo, AppData, Domicilio
+from .models import Individuo, AppData, Domicilio, Situacion
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -33,8 +33,17 @@ def registro_covidapp(request):
             individuo.apellidos = data["apellido"]
             individuo.nombres = data["nombre"]
             individuo.nacionalidad = nac
-            individuo.aclaracion = "APPDATA"
+            individuo.aclaracion = "AUTODIAGNOSTICO"
             individuo.save()
+        #Le creamos el estado Sospechoso-Evaluar (4-B)
+        sit_actual = individuo.situacion_actual()
+        if not sit_actual or (sit_actual and sit_actual.estado < 4):
+            situacion = Situacion()
+            situacion.individuo = individuo
+            situacion.estado = 4
+            situacion.conducta = 'B'
+            situacion.aclaracion = "AUTODIAGNOSTICO"
+            situacion.save()
         #PROCESAMOS INFO DE APP
         if not hasattr(individuo,'appdata'):
             appdata = AppData()
@@ -54,7 +63,7 @@ def registro_covidapp(request):
         domicilio.numero = data["direccion_numero"]
         #domicilio.localidad = data["localidad"]
         domicilio.localidad = Localidad.objects.first()
-        domicilio.aclaracion = "CARGADO DESDE APP"
+        domicilio.aclaracion = "AUTODIAGNOSTICO"
         domicilio.save()
         #Respondemos que fue procesado
         return JsonResponse(

@@ -375,6 +375,8 @@ class AppData(models.Model):
     telefono = models.CharField('Telefono', max_length=50, default='+549388')
     estado = models.CharField('Estado', choices=TIPO_TRIAJE, max_length=1, default='V')
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    def __str__(self):
+        return str(self.individuo) + self.get_estado_display()
 
 #Señales
 from .signals import estado_inicial

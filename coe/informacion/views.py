@@ -19,6 +19,7 @@ from .models import Individuo
 from .models import Seguimiento
 from .models import Domicilio, GeoPosicion
 from .models import Atributo, Sintoma
+from .models import AppData
 from .models import TipoAtributo, TipoSintoma
 from .forms import ArchivoForm, ArchivoFormWithPass
 from .forms import VehiculoForm, ControlVehiculoForm
@@ -315,7 +316,7 @@ def cargar_individuo(request, control_id=None, individuo_id=None, num_doc=None):
 
 @permission_required('operadores.individuos')
 def ver_individuo(request, individuo_id):
-    individuo = Individuo.objects.get(pk=individuo_id)
+    individuo = Individuo.objects.prefetch_related('domicilios', 'domicilios__localidad').get(pk=individuo_id)
     return render(request, "ver_individuo.html", {'individuo': individuo, })
 
 #LISTAS
@@ -380,6 +381,19 @@ def lista_seguimiento(request):
                 individuos[seguimiento.individuo.id] = seguimiento.individuo
     individuos = list(individuos.values())
     return render(request, "listado_seguimiento.html", {
+        'individuos': individuos,
+        'has_table': True,
+    })
+
+@permission_required('operadores.individuos')
+def lista_autodiagnosticos(request):
+    individuos = []
+    appdatas = AppData.objects.all().order_by('-estado')
+    appdatas = appdatas.select_related('individuo')
+    appdatas = appdatas.prefetch_related('individuo__situaciones')
+    for appdata in appdatas:
+        individuos.append(appdata.individuo)
+    return render(request, "lista_autodiagnosticos.html", {
         'individuos': individuos,
         'has_table': True,
     })

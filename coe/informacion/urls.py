@@ -38,6 +38,7 @@ urlpatterns = [
     path('buscador/individuos', views.buscador_individuos, name='buscador_individuos'),
     path('lista/evaluar', views.lista_evaluar, name='lista_evaluar'),
     path('lista/seguimiento', views.lista_seguimiento, name='lista_seguimiento'),
+    path('lista/autodiagnosticos', views.lista_autodiagnosticos, name='lista_autodiagnosticos'),
     path('cargar/individuo/<str:num_doc>', views.cargar_individuo, name='cargar_individuo'),
     path('cargar/pasajero/<int:control_id>', views.buscar_individuo, name='buscar_pasajero'),
     path('cargar/pasajero/<int:control_id>/nuevo/<int:individuo_id>/', views.cargar_individuo, name='cargar_pasajero'),

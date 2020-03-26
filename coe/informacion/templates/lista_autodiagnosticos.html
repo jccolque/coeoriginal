@@ -1,0 +1,35 @@
+{% extends 'base_informacion.html' %}
+{% load static %}
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2>Individuos Registrados en la APP</h2>
+        </div>
+        <div class="row">
+        <div class="col-md-12">
+            <table class="listado" id="table">
+                <thead>
+                    <tr>
+                        <th colspan="2">Identificacion</th>
+                        <th>Triaje</th>
+                        <th>Fecha Autodiagnostico</th>
+                        <th>Estado</th>
+                        <th>Ver Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for individuo in individuos %}
+                        <tr>
+                            <td>{{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</td>
+                            <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
+                            <td>{{individuo.appdata.get_estado_display}}</td>
+                            <td>{{individuo.appdata.fecha}}</td>
+                            <td>{{individuo.situacion_actual}}</td>
+                            <td><a href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">(Ver Detalle)</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

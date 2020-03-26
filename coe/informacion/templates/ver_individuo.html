@@ -11,14 +11,23 @@
                     <br>
                     <h2>Individuo: {{individuo.apellidos}}, {{individuo.nombres}}</h2>
                     <div class="col-md-8">
-                        <p>Documento: {{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</p>
-                        <p>Fecha de Nacimiento: {{individuo.fecha_nacimiento}}</p>
-                        <p>Telefono: {{individuo.telefono}}</p>
-                        <p>Email: {{individuo.email}}</p>
-                        <p>Nacionalidad: {{individuo.nacionalidad}}</p>
-                        <p>Origen: {{individuo.origen}}</p>
-                        <p>Destino:{{individuo.destino}}</p>
-                        
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <p>Documento: {{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</p>
+                                <p>Fecha de Nacimiento: {{individuo.fecha_nacimiento}}</p>
+                                <p>Telefono: {{individuo.telefono}}</p>
+                                <p>Email: {{individuo.email}}</p>
+                                <p>Nacionalidad: {{individuo.nacionalidad}}</p>
+                                <p>Origen: {{individuo.origen}}</p>
+                                <p>Destino:{{individuo.destino}}</p>
+                            </div>
+                            <div class="col-sm-4">
+                                {% if individuo.appdata %}
+                                    <h4>Autodiagnostico</h4>
+                                    <p>{{individuo.appdata.get_estado_display}}</p>
+                                {% endif %}
+                            </div>
+                        </div>
                         {% if individuo.domicilios.all %}
                             {% with individuo.domicilio_actual as domicilio %}
                                 <p>

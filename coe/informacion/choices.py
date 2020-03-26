@@ -25,7 +25,7 @@ TIPO_VEHICULO = (
 )
 
 TIPO_ESTADO = (
-    (1, 'Dudoso'),
+    (1, 'Asintomatico'),
     (2, 'Sano'),
     (31, 'Contacto Bajo Riesgo'),
     (32, 'Contacto Alto Riesgo'),
