@@ -11,7 +11,7 @@ from .models import Individuo, AppData, Domicilio
 
 @csrf_exempt
 @require_http_methods(["POST"])
-def inscribir_covidapp(request):
+def registro_covidapp(request):
     try:
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
