@@ -9,6 +9,7 @@ from auditlog.registry import auditlog
 from tinymce.models import HTMLField
 #Imports del proyecto:
 from coe.settings import MEDIA_ROOT
+from coe.constantes import NOIMAGE
 from core.choices import TIPO_DOCUMENTOS
 #from core.api import obtener_organismos
 #improts de la app
@@ -104,7 +105,7 @@ class Operador(models.Model):
         if self.fotografia:
             return self.fotografia.url
         else:
-            return 'NOIMAGE'
+            return NOIMAGE
     def get_qrimage(self):
         if self.qrpath:
             return self.qrpath

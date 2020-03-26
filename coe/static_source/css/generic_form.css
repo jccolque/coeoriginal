@@ -221,7 +221,8 @@ section.formulario .respuesta-container {
 }
 
 .campo label {
-    width: 35%;
+    width: 30%;
+    font-weight: normal;
 }
 
 .campo select {
@@ -229,7 +230,7 @@ section.formulario .respuesta-container {
 }
 
 .campo input {
-    width: 50%;
+    width: 60%;
 }
 
 p.definicion {

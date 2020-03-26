@@ -233,6 +233,11 @@ img.fotos {
     padding: 5%;
 }
 
+img.foto_padding {
+    width: 90%;
+    padding: 10%;
+}
+
 /* BUSCADOR */
 .buscador {
     float: right;

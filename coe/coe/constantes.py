@@ -8,3 +8,4 @@ MAX_PASAJES = 46
 NOMAIL = 'sinemail@nomail.com'
 NODOM = 'SINDOMICILIO'
 NOTEL = 'SINTELEFONO'
+NOIMAGE = '/static/img/subir_foto.png'

@@ -1,6 +1,8 @@
 #Imports Python
+from datetime import timedelta
 #Imports Django
 from django import forms
+from django.utils import timezone
 from django.forms.widgets import CheckboxSelectMultiple
 #Imports extra
 from dal import autocomplete
@@ -77,6 +79,20 @@ class IndividuoForm(forms.ModelForm):
         self.base_fields['atributos'].choices = [(a.id, a.nombre) for a in TipoAtributo.objects.all()]
         self.base_fields['sintomas'].choices = [(s.id, s.nombre) for s in TipoSintoma.objects.all()]
         super(IndividuoForm, self).__init__(*args, **kwargs)
+
+class DatosForm(forms.ModelForm):
+    class Meta:
+        model = Individuo
+        fields= ('apellidos', 'nombres', 'fecha_nacimiento', 'telefono', 'email')
+        widgets = {
+            'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
+            'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
+        }
+
+class FotoForm(forms.ModelForm):
+    class Meta:
+        model = Individuo
+        fields= ('fotografia', )
 
 class BuscadorIndividuosForm(forms.Form):
     nombre = forms.CharField(label="Nombre", required=False)
@@ -156,12 +172,33 @@ class SintomaForm(forms.ModelForm):
             'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
         }
 
+class BuscarPermiso(forms.Form):
+    num_doc = forms.CharField(label="Num Doc", required=True)
+    apellido = forms.CharField(label="Apellido", required=True)
+
 class PermisoForm(forms.ModelForm):
     class Meta:
         model = Permiso
         fields= '__all__'
-        exclude = ('individuo', 'tipo', 'habilitado')
+        exclude = ('habilitado',)
         widgets = {
-            'begda': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
-            'endda': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
+            'individuo': forms.HiddenInput(),
+            'begda': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}, ),
+            'endda': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}, ),
         }
+    def clean(self):
+        individuo = self.cleaned_data['individuo']
+        begda = self.cleaned_data['begda']
+        endda = self.cleaned_data['endda']
+        diff = endda - begda
+        ultimo_permiso = individuo.permisos.last()
+        #Validamos que no haya pedido permiso esta semana
+        if diff > timedelta(hours=24):
+            raise forms.ValidationError("No puede pedirse un Permiso Temporal de mas de 24 horas.")
+        if begda > endda:
+            raise forms.ValidationError("La fecha de inicio No puede ser mayor a la de fin.")
+        if ultimo_permiso.endda > timezone.now() - timedelta(days=6):
+            raise forms.ValidationError("No puede Pedir Permiso de Salida en menos de una semana.")
+
+        #devolvemos el pedido
+        return self.cleaned_data

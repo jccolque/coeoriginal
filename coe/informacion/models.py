@@ -8,6 +8,7 @@ from auditlog.registry import auditlog
 from tinymce.models import HTMLField
 from django.core.validators import RegexValidator
 #Imports del proyecto:
+from coe.constantes import NOIMAGE
 from core.choices import TIPO_DOCUMENTOS, TIPO_SEXO
 from operadores.models import Operador
 from georef.models import Nacionalidad, Localidad
@@ -124,6 +125,7 @@ class Individuo(models.Model):
     origen = models.ForeignKey(Nacionalidad, on_delete=models.CASCADE, null=True, blank=True, related_name="individuos_origen")
     destino = models.ForeignKey(Localidad, on_delete=models.CASCADE, null=True, blank=True, related_name="individuos_destino")
     observaciones = HTMLField(null=True, blank=True)
+    fotografia = models.FileField('Fotografia', upload_to='individuos/', null=True, blank=True)
     def __str__(self):
         return str(self.num_doc) + ': ' + self.apellidos + ', ' + self.nombres
     def as_dict(self):
@@ -161,6 +163,11 @@ class Individuo(models.Model):
             return [d for d in self.seguimientos.all()][-1]
         else:
             return None
+    def get_foto(self):
+        if self.fotografia:
+            return self.fotografia.url
+        else:
+            return NOIMAGE
 
 class Relacion(models.Model):#Origen del Dato
     tipo = models.CharField('Tipo Relacion', choices=TIPO_RELACION, max_length=2, default='F')
@@ -343,7 +350,7 @@ class Permiso(models.Model):
     aclaracion = HTMLField(null=True, blank=True)
     habilitado = models.BooleanField(default=True)
     def __str__(self):
-        return str(self.fecha)[0:16] + ': ' + self.get_tipo_display() + ': ' + self.aclaracion
+        return self.get_tipo_display() + str(self.begda)[0:16]
     def as_dict(self):
         return {
             "id": self.id,
@@ -355,7 +362,12 @@ class Permiso(models.Model):
             "endda": str(self.fecha),
             "aclaracion": self.aclaracion,
             "habilitado": self.habilitado,
-        }    
+        }
+    def estado(self):
+        if self.habilitado:
+            return "Aprobado"
+        else:
+            return "En Espera"
 
 #Señales
 from .signals import estado_inicial

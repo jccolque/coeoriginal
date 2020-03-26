@@ -1,0 +1,72 @@
+{% extends 'base_informacion.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <div class="row formulario_custom">
+            <div class="col-sm-7 col-sm-offset-1">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <a class="nolink" href="{% url 'informacion:completar_datos' individuo_id=individuo.id %}">
+                            <p class="botoncito">
+                                Completar/Corregir Datos
+                            </p>
+                        </a>
+                    </div>
+                    <div class="col-sm-8">
+                        <h3><b>{{individuo.apellidos}}, {{individuo.nombres}}</b></h3>
+                        <p>{{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</p>
+                        <p>Fecha Nacimiento: {{individuo.fecha_nacimiento}}</p>
+                        <p>Nacionalidad: {{individuo.nacionalidad}}</p>
+                        <p>Telefono: 
+                            {% if not individuo.telefono %}
+                                <b>DEBE COMPLETAR SUS DATOS</b>
+                            {% else %}
+                                {{individuo.telefono}}
+                            {% endif %}
+                        </p>
+                        <p>Email:
+                            {% if not individuo.email %}
+                                <b>DEBE COMPLETAR SUS DATOS</b>
+                            {% else %}
+                                {{individuo.email}}
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-sm-4">
+                        <a href="{% url 'informacion:subir_foto' individuo_id=individuo.id %}">
+                            <img class="fotos" src="{{individuo.get_foto}}">
+                        </a>
+                    </div>
+                </div>
+                <hr>
+                <form method="post" enctype="multipart/form-data">
+                    <h2>Datos del Permiso</h2>
+                    {% csrf_token %}
+                    <!-- Mostramos errores -->
+                    <p>{{ form.non_field_errors }}</p>
+                    <!-- hidden fields -->
+                    {{form.individuo}}
+                    <!-- Formulario -->
+                    <p class="campo"><label>Tipo de Permiso Temporal:</label> {{form.tipo}}</p>
+                    <p class="campo"><label>Domicilio de Origen:</label> {{form.origen}}</p>
+                    <p class="campo"><label>Inicio del Permiso:</label> {{form.begda}}</p>
+                    <p class="campo"><label>Destino de la Salida:</label> {{form.destino}}</p>
+                    <p class="campo"><label>Vencimiento del Permiso:</label> {{form.endda}}</p>
+                    <p class="campo"><label>Aclaraciones/Justificativos:</label> {{form.aclaracion}}</p>
+                    <br>
+                    <button type="submit">Pedir</button>
+                </form>
+            </div>
+            <div class="col-sm-4">
+                <h3>Ultimos Permisos Pedidos</h3>
+                <ul>
+                    {% for permiso in individuo.permisos.all reversed %}
+                        <li>{{permiso.get_tipo_display}}: {{permiso.begda}} a {{permiso.endda}} ({{permiso.estado}})</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
