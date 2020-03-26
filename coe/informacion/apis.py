@@ -61,11 +61,16 @@ def registro_covidapp(request):
             {
                 "action":"registro",
                 "realizado": True,
-            },safe=False)
+            },
+            safe=False
+        )
     except Exception as e: 
         return JsonResponse(
             {
                 "action":"registro",
                 "realizado": False,
                 "error": str(e),
-            },safe=False)
+            },
+            status=400,
+            safe=False
+        )
