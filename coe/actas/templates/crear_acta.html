@@ -1,20 +1,4 @@
 {% extends 'base_informacion.html' %}
-{% load static %}
-
-{% block custom_head %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/generic_form.css' %}" />
-    <style>
-        textarea {
-            width: 100%;
-            height: 550px;
-        }
-
-        button {
-            float: right;
-        }
-    </style>
-    {{ form.media }}
-{% endblock %}
 
 {% block content %}
     <section class="resumen">

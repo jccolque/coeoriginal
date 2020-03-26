@@ -114,11 +114,13 @@ def cargar_geoposicion(request, item_id=None):
 @permission_required('operadores.menu_inventario')
 def crear_evento(request, item_id=None):
     item = Item.objects.get(pk=item_id)
-    form = EventoItemForm(initial={'item':item})
+    form = EventoItemForm()
     if request.method == "POST":
         form = EventoItemForm(request.POST)
         if form.is_valid():
-            form.save()
+            evento = form.save(commit=False)
+            evento.item = item
+            evento.save()
             return redirect('inventario:ver_item', item_id=item.id)
     return render(request, "extras/generic_form.html", {'titulo': "Crear Evento del Item", 'form': form, 'boton': "Agregar", })
 

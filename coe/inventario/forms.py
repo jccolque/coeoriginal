@@ -1,9 +1,6 @@
 #Imports Python
-from datetime import date
 #Imports Django
-from django.utils import timezone
 from django import forms
-from django.forms.widgets import CheckboxSelectMultiple
 #Imports extra
 from dal import autocomplete
 from tinymce.widgets import TinyMCE
@@ -37,11 +34,10 @@ class EventoItemForm(forms.ModelForm):
     class Meta:
         model = EventoItem
         fields= '__all__'
-        exclude = ('fecha', )
+        exclude = ('item', 'fecha', )
         widgets = {
             'tarea' : autocomplete.ModelSelect2(url='tareas:tareas-autocomplete'),
             'operador' : autocomplete.ModelSelect2(url='operadores:operadores-autocomplete'),
-            'item': forms.TextInput(attrs={'readonly': 'readonly'}),
         }
 
 class TransferirForm(forms.Form):

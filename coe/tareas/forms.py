@@ -1,11 +1,11 @@
 #Imports Python
-from datetime import date
 #Imports Django
 from django.utils import timezone
 from django import forms
 #Imports extra
 from dal import autocomplete
 #Imports del proyecto
+from core.widgets import XDSoftDateTimePickerInput
 #Imports de la app
 from .models import Tarea, Responsable, EventoTarea
 
@@ -16,6 +16,8 @@ class TareaForm(forms.ModelForm):
         fields = '__all__'
         widgets = {
             'subcomite': autocomplete.ModelSelect2(url='operadores:subcomite-autocomplete'),
+            'begda': XDSoftDateTimePickerInput(),
+            'endda': XDSoftDateTimePickerInput(),
         }
     def clean_endda(self):
         if self.cleaned_data['begda'] > self.cleaned_data['endda']:

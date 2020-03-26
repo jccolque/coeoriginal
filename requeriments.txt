@@ -12,3 +12,4 @@ django-autocomplete-light==3.5.1
 django-auditlog==0.4.7
 django-background-tasks==1.2.5
 django-debug-toolbar==2.2
+django-tempus-dominus==5.1.2.13

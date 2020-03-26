@@ -26,10 +26,20 @@ from .forms import IndividuoForm, BuscadorIndividuosForm
 from .forms import DomicilioForm, AtributoForm, SintomaForm
 from .forms import SituacionForm, RelacionForm, SeguimientoForm
 from .forms import SearchIndividuoForm, SearchVehiculoForm
+from .forms import PermisoForm
 from .tasks import guardar_same, guardar_epidemiologia
 from .tasks import guardar_padron_individuos, guardar_padron_domicilios
 
-# Create your views here.
+#Publico
+def pedir_permiso(request, individuo_id):
+    individuo = Individuo.objects.get(pk=individuo_id)
+    form = PermisoForm(
+        initial={
+            'individuo':individuo, 
+        })
+    return render(request, "pedir_permiso.html", {'form': form, 'individuo': individuo, })
+
+#Administrar
 @permission_required('operadores.menu_informacion')
 def menu(request):
     return render(request, 'menu_informacion.html', {})

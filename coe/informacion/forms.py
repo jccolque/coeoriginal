@@ -1,22 +1,18 @@
 #Imports Python
-from datetime import date
 #Imports Django
-from django.utils import timezone
 from django import forms
-from django.contrib.auth.models import User
-from django.contrib.auth.models import Group
 from django.forms.widgets import CheckboxSelectMultiple
 #Imports extra
 from dal import autocomplete
 #Imports del proyecto
 from coe.settings import SECRET_KEY
-from core.choices import TIPO_DOCUMENTOS
+from core.widgets import XDSoftDatePickerInput, XDSoftDateTimePickerInput
 from georef.models import Localidad
 #Imports de la app
 from .models import TipoAtributo, TipoSintoma
 from .models import Vehiculo, ControlVehiculo
 from .models import Individuo, Domicilio, Atributo, Sintoma
-from .models import Situacion, Archivo, Relacion, Seguimiento
+from .models import Situacion, Archivo, Relacion, Seguimiento, Permiso
 
 #Definimos nuestros forms
 class ArchivoForm(forms.ModelForm):
@@ -70,6 +66,7 @@ class IndividuoForm(forms.ModelForm):
         model = Individuo
         fields= '__all__'
         widgets = {
+            'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
             'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
             'origen': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
             'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
@@ -128,7 +125,7 @@ class SeguimientoForm(forms.ModelForm):
     class Meta:
         model = Seguimiento
         fields= '__all__'
-        exclude = ('individuo', 'fecha' )
+        exclude = ('individuo', 'fecha')
 
 class RelacionForm(forms.ModelForm):
     class Meta:
@@ -146,6 +143,7 @@ class AtributoForm(forms.ModelForm):
         exclude = ('individuo', 'activo', 'newtipo', )
         widgets = {
             'tipo': autocomplete.ModelSelect2(url='informacion:atributos-autocomplete'),
+            'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
         }
 
 class SintomaForm(forms.ModelForm):
@@ -155,4 +153,15 @@ class SintomaForm(forms.ModelForm):
         exclude = ('individuo', 'newtipo', )
         widgets = {
             'tipo': autocomplete.ModelSelect2(url='informacion:sintomas-autocomplete'),
+            'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
+        }
+
+class PermisoForm(forms.ModelForm):
+    class Meta:
+        model = Permiso
+        fields= '__all__'
+        exclude = ('individuo', 'tipo', 'habilitado')
+        widgets = {
+            'begda': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
+            'endda': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
         }

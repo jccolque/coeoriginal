@@ -1,0 +1,45 @@
+{% extends 'base_informacion.html' %}
+
+{% block content %}
+    <section class="formulario_custom">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-7 col-sm-offset-1">
+                    <h3>Datos Personales</h3>
+                    <p>{{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</p>
+                    <p>{{individuo.apellidos}}, {{individuo.nombres}}</p>
+                    <p>Fecha Nacimiento: {{individuo.fecha_nacimiento}}</p>
+                    <p>Nacionalidad: {{individuo.nacionalidad}}</p>
+                    <p>Telefono: {{individuo.telefono}}</p>
+                    <p>Email: {{individuo.email}}</p>
+                    <hr>
+                    <form method="post" enctype="multipart/form-data">
+                        <h2>Cargar Datos del Permiso</h2>
+                        {% csrf_token %}
+                        <!-- Mostramos errores -->
+                        {% for field in form %}
+                            {% if field.errors %}
+                                <li>
+                                    {{ field.label }}: {{ field.errors|striptags }}
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        <!-- Formulario -->
+                        <h3>Datos del Permiso:</h3>
+                        <p>Tipo de Permiso Temporal:{{form.tipo}}</p>
+                        <p>Domicilio de Origen: {{form.origen}}</p>
+                        <p>Inicio del Permiso: {{form.begda}}</p>
+                        <p>Destino de la Salida: {{form.destino}}</p>
+                        <p>Vencimiento del Permiso: {{form.endda}}</p>
+                        <p>Aclaraciones: {{form.aclaracion}}</p>
+                        <br>
+                        <button type="submit">Pedir</button>
+                    </form>
+                </div>
+                <div class="col-sm-4">
+                    <h3>Historial de Permisos</h3>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}

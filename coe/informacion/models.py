@@ -15,7 +15,7 @@ from georef.models import Nacionalidad, Localidad
 from .choices import TIPO_IMPORTANCIA, TIPO_ARCHIVO
 from .choices import TIPO_VEHICULO, TIPO_ESTADO, TIPO_CONDUCTA
 from .choices import TIPO_RELACION, TIPO_SEGUIMIENTO
-from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
+from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA, TIPO_PERMISO
 
 #Tipo Definition
 class TipoAtributo(models.Model):#Origen del Dato
@@ -333,6 +333,30 @@ class Seguimiento(models.Model):
             "fecha": str(self.fecha),
         }
 
+class Permiso(models.Model):
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="permisos")
+    tipo = models.CharField('Tipo Permiso', choices=TIPO_PERMISO, max_length=1, default='C')
+    origen = models.CharField('Origen', max_length=200, default='', blank=False)
+    destino = models.CharField('Destino', max_length=200, default='', blank=False)
+    begda = models.DateTimeField('Inicio Permiso', default=timezone.now)
+    endda = models.DateTimeField('Fin Permiso', default=timezone.now)
+    aclaracion = HTMLField(null=True, blank=True)
+    habilitado = models.BooleanField(default=True)
+    def __str__(self):
+        return str(self.fecha)[0:16] + ': ' + self.get_tipo_display() + ': ' + self.aclaracion
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "individuo_id": self.individuo.id,
+            "tipo_id": self.tipo,
+            "origen": self.origen,
+            "destino": self.destino,
+            "begda": str(self.fecha),
+            "endda": str(self.fecha),
+            "aclaracion": self.aclaracion,
+            "habilitado": self.habilitado,
+        }    
+
 #Señales
 from .signals import estado_inicial
 from .signals import invertir_relacion
@@ -346,3 +370,4 @@ auditlog.register(Vehiculo)
 auditlog.register(Individuo)
 auditlog.register(Origen)
 auditlog.register(Sintoma)
+auditlog.register(Permiso)

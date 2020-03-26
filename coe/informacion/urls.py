@@ -8,6 +8,9 @@ from . import autocomplete
 #Definimos paths de la app
 app_name = 'informacion'
 urlpatterns = [
+    #Publico
+    path('permiso/<int:individuo_id>', views.pedir_permiso, name='pedir_permiso'),
+    #Administrador
     path('', views.menu, name='menu'),
     #Archivos
     path('lista/archivos/pendientes', views.archivos_pendientes, name='archivos_pendientes'),

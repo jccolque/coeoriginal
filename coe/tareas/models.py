@@ -13,10 +13,10 @@ from .choices import TIPO_PRIORIDAD, TIPO_EVENTO_TAREA
 class Tarea(models.Model):
     subcomite = models.ForeignKey(SubComite, on_delete=models.CASCADE, null=True, related_name="tareas")
     nombre = models.CharField('Nombre', max_length=200)
-    descripcion = HTMLField()
     prioridad = models.IntegerField(choices=TIPO_PRIORIDAD, default=0)
     begda = models.DateTimeField('Inicio', default=timezone.now)
     endda = models.DateTimeField('Limite', default=timezone.now)
+    descripcion = HTMLField()
     class Meta:
         ordering = ('-prioridad', 'endda')
     def __str__(self):

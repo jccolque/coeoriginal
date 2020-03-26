@@ -10,6 +10,8 @@
                     <h1>Menu Informacion:</h1>
                     <div class="col-md-8">
                         <ul class="menu_botones">
+                            <li><a href="{% url 'informacion:pedir_permiso' individuo_id=557419 %}">Pedir Permiso de Circulacion</a></li>
+
                             {% if perms.operadores.archivos %}
                                 <li><a href="{% url 'informacion:subir_archivos'  %}">Subir Archivos</a></li>
                                 <li><a href="{% url 'informacion:subir_same'  %}">Carga Masiva SAME</a></li>

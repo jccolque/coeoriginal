@@ -97,3 +97,13 @@ TIPO_SINTOMA = (
     ('VOM', 'Vomitos'),
     ('ESC', 'Escalofrios')
 )
+
+TIPO_PERMISO = (
+    ('L', 'Autoridades/Funcionarios Publicos'),
+    ('S', 'Trabajador de la Salud/Seguridad'),
+    ('T', 'Trabajador de Industria Estrategica'),
+    ('A', 'Trabajador de Abastecimiento'),
+    ('C', 'Salida Temporal por Compras de Primera Necesidad'),
+    ('F', 'Salida Temporal por Compras de Farmacia'),
+    ('P', 'Salida Temporal por Personas a Cargo'),
+)

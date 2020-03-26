@@ -1,10 +1,4 @@
 {% extends 'base_informacion.html' %}
-{% load static %}
-
-{% block custom_head %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/generic_form.css' %}" />
-{% endblock %}
-
 
 {% block content %}
     <section class="formulario_custom">
@@ -26,15 +20,15 @@
                         <div class="grupo">
                             <h3>Datos Personales</h3>
                             <p class="campo">{{form.tipo_doc}} {{form.num_doc}}</p>
-                            <p class="campo">Apellido: {{form.apellidos}}</p>
-                            <p class="campo">Nombres: {{form.nombres}}</p>
-                            <p class="campo">Sexo: {{form.sexo}}</p>
-                            <p class="campo">Fecha Nacimiento: {{form.fecha_nacimiento}}</p>
-                            <p class="campo">Telefono: {{form.telefono}}</p>
-                            <p class="campo">Email: {{form.email}}</p>
-                            <p class="campo">Nacionalidad: {{form.nacionalidad}}</p>
-                            <p class="campo">Pais de Origen: {{form.origen}}</p>
-                            <p class="campo">Destino en la Provincia: {{form.destino}}</p>
+                            <p class="campo"><label>Apellido:</label> {{form.apellidos}}</p>
+                            <p class="campo"><label>Nombres:</label> {{form.nombres}}</p>
+                            <p class="campo"><label>Sexo:</label> {{form.sexo}}</p>
+                            <p class="campo"><label>Fecha Nacimiento:</label> {{form.fecha_nacimiento}}</p>
+                            <p class="campo"><label>Telefono:</label> {{form.telefono}}</p>
+                            <p class="campo"><label>Email:</label> {{form.email}}</p>
+                            <p class="campo"><label>Nacionalidad:</label> {{form.nacionalidad}}</p>
+                            <p class="campo"><label>Pais de Origen:</label> {{form.origen}}</p>
+                            <p class="campo"><label>Destino en la Provincia:</label> {{form.destino}}</p>
                         </div>
                         <h3>Observaciones:</h3>
                         {{form.observaciones}}
@@ -42,10 +36,10 @@
                     <div class="col-sm-6">
                         <div class="col-sm-6 col-sm-offset-3 grupo">
                             <h3>Residencia Actual:</h3>
-                            <p>{{form.dom_localidad}}</p>
-                            <p>Calle:{{form.dom_calle}}</p>
-                            <p>Numero: {{form.dom_numero}}</p>
-                            <p>Aclaracion: {{form.dom_aclaracion}}</p>
+                            <p class="campo">{{form.dom_localidad}}</p>
+                            <p class="campo"><label>Calle:</label> {{form.dom_calle}}</p>
+                            <p class="campo"><label>Numero:</label> {{form.dom_numero}}</p>
+                            <p class="campo"><label>Aclaracion:</label> {{form.dom_aclaracion}}</p>
                         </div>
                         <div class="col-sm-6">
                             <h3>Signos y Sintomas:</h3>
@@ -60,9 +54,6 @@
                             <button type="submit">Cargar</button>
                         </div>
                     </div>
-                    <!-- Para el autocomplete -->
-                    <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
-                    {{ form.media }}
                 </form>
             </div>
         </section>

@@ -7,7 +7,9 @@
     <title>{% block title %}Comite Operativo de Emergencias 2020 - Jujuy{% endblock %}</title>
     <link rel="icon" href="{% static 'img/icons/favicon.ico' %}">
 
-    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui.css' %}">
+
     <link rel="stylesheet" type="text/css" href="{% static 'css/screen.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/constantes.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
@@ -17,9 +19,20 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/menu_botones.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/popups.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/tareas.css' %}" />
-    
+
+    <!-- Datatables -->
     {% if has_table %}
-        <!-- Datatables -->
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.20/datatables.min.css"/>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/datatables.min.css' %}" />
     {% endif %}
+
+    <!-- Forms -->
+    {% if form %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/generic_form.css' %}" />
+        <link rel="stylesheet" type="text/css" href="{% static 'css/jquery.datetimepicker.min.css' %}" />
+        <!-- Javascripts -->
+        <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/jquery-ui-1.12.1.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/jquery.datetimepicker.full.min.js' %}"></script>
+    {% endif %}
+
 {% endblock %}

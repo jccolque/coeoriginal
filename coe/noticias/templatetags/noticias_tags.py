@@ -11,7 +11,6 @@ register = template.Library()
 def get_destacadas():
     return Noticia.objects.filter(destacada=True)[:5]
 
-
 @register.simple_tag
 def get_etiquetas():
     return Noticia.etiquetas.most_common()[:10]
