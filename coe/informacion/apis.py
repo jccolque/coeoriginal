@@ -29,11 +29,14 @@ def registro_covidapp(request):
             individuo.apellidos = data["apellido"]
             individuo.nombres = data["nombre"]
             individuo.nacionalidad = nac
+            individuo.aclaracion = "APPDATA"
             individuo.save()
         #PROCESAMOS INFO DE APP
         if not hasattr(individuo,'appdata'):
             appdata = AppData()
             appdata.individuo = individuo
+        else:
+            appdata = individuo.appdata
         #Procesamos los datos que si nos importan
         if not hasattr(individuo, 'telefono'):
             individuo.telefono = data["telefono"]
