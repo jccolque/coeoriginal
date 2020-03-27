@@ -13,6 +13,7 @@ from operadores.functions import obtener_operador
 from background.tasks import crear_progress_link
 #imports de la app
 from .choices import TIPO_ESTADO, TIPO_CONDUCTA
+from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
 from .models import Archivo
 from .models import Vehiculo, ControlVehiculo, Origen
 from .models import Individuo, Relacion
@@ -339,7 +340,7 @@ def buscador_individuos(request):
             #Optimizamos las busquedas a la db
             individuos = individuos.select_related('nacionalidad', 'origen', 'destino', )
             individuos = individuos.prefetch_related('atributos', 'sintomas', 'situaciones', 'relaciones')
-            individuos = individuos.prefetch_related('atributos__tipo', 'sintomas__tipo')
+            individuos = individuos.prefetch_related('atributos', 'sintomas')
             #Eliminamos repetidos
             individuos = individuos.distinct()
             #Mandamos el listado
@@ -355,7 +356,7 @@ def lista_evaluar(request):
     individuos = Individuo.objects.filter(situaciones__conducta='B')
     individuos = individuos.select_related('nacionalidad', 'origen', 'destino', )
     individuos = individuos.prefetch_related('atributos', 'sintomas', 'situaciones', 'relaciones')
-    individuos = individuos.prefetch_related('atributos__tipo', 'sintomas__tipo')
+    individuos = individuos.prefetch_related('atributos', 'sintomas')
     for individuo in individuos:
         if individuo.situacion_actual().conducta == 'B':
             evaluar.append(individuo)
@@ -371,7 +372,7 @@ def lista_seguimiento(request):
     seguimientos = seguimientos.select_related('individuo', 'individuo__nacionalidad')
     seguimientos = seguimientos.prefetch_related('individuo__atributos', 'individuo__sintomas')
     seguimientos = seguimientos.prefetch_related('individuo__situaciones', 'individuo__seguimientos')
-    seguimientos = seguimientos.prefetch_related('individuo__atributos__tipo', 'individuo__sintomas__tipo')
+    seguimientos = seguimientos.prefetch_related('individuo__atributos', 'individuo__sintomas')
     seguimientos = [s for s in seguimientos]
     seguimientos_terminados = [s.individuo for s in Seguimiento.objects.filter(tipo='F')]
     for seguimiento in seguimientos:
@@ -550,8 +551,8 @@ def reporte_basico(request):
     #iniciamos la vista
     estados = TIPO_ESTADO
     conductas = TIPO_CONDUCTA
-    atributos = TipoAtributo.objects.all()
-    sintomas = TipoSintoma.objects.all()
+    atributos = [a[0] for a in TIPO_ATRIBUTO]
+    sintomas = [s[0] for s in TIPO_SINTOMA]
     if request.method == "POST":
         reportados = {}
         #Obtenemos todos los parametros

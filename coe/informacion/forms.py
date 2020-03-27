@@ -155,7 +155,6 @@ class AtributoForm(forms.ModelForm):
         fields= '__all__'
         exclude = ('individuo', 'activo', 'newtipo', )
         widgets = {
-            'tipo': autocomplete.ModelSelect2(url='informacion:atributos-autocomplete'),
             'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
         }
 
@@ -165,7 +164,6 @@ class SintomaForm(forms.ModelForm):
         fields= '__all__'
         exclude = ('individuo', 'newtipo', )
         widgets = {
-            'tipo': autocomplete.ModelSelect2(url='informacion:sintomas-autocomplete'),
             'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
         }
 
