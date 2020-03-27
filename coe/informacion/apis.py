@@ -15,6 +15,11 @@ from .models import Individuo, AppData, Domicilio, Situacion
 @require_http_methods(["POST"])
 def registro_covidapp(request):
     data = None
+    #Registramos ingreso de info
+    logger = logging.getLogger('apis')
+    logger.info('\nREGISTRO: '+str(timezone.now())[0:16])
+    logger.info(request.body)
+
     try:
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
@@ -57,6 +62,7 @@ def registro_covidapp(request):
         domicilio.aclaracion = "AUTODIAGNOSTICO"
         domicilio.save()
         #Respondemos que fue procesado
+        logger.info('EXITO!')
         return JsonResponse(
             {
                 "action":"registro",
@@ -66,9 +72,7 @@ def registro_covidapp(request):
         )
     except Exception as e:
         #Sistema de loggin - Guardamos error
-        logger = logging.getLogger('apis')
-        logger.info('\nregistro_covidapp: '+str(timezone.now())[0:16])
-        logger.info(request.body)
+        logger.info('Fallo por:')
         logger.info(e)
         #Devolvemos falla
         return JsonResponse(
