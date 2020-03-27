@@ -36,11 +36,11 @@ def registro_covidapp(request):
             individuo.save()
         #Le creamos el estado Sospechoso-Evaluar (4-B)
         sit_actual = individuo.situacion_actual()
-        if not sit_actual or (sit_actual and sit_actual.estado < 4):
+        if not sit_actual or (sit_actual and sit_actual.estado < 40):
             situacion = Situacion()
             situacion.individuo = individuo
-            situacion.estado = 4
-            situacion.conducta = 'B'
+            situacion.estado = 40
+            situacion.conducta = 'C'
             situacion.aclaracion = "AUTODIAGNOSTICO"
             situacion.save()
         #PROCESAMOS INFO DE APP
