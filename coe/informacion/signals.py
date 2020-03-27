@@ -22,11 +22,12 @@ def estado_inicial(created, instance, **kwargs):
         situacion.individuo = instance
         situacion.save()
         #   Vejez +60 años
-        if instance.fecha_nacimiento < (timezone.now().date() - relativedelta(years=60)):
-            atributo = Atributo()
-            atributo.individuo = instance
-            atributo.tipo = 'PR'
-            atributo.save()
+        if instance.fecha_nacimiento:
+            if instance.fecha_nacimiento < (timezone.now().date() - relativedelta(years=60)):
+                atributo = Atributo()
+                atributo.individuo = instance
+                atributo.tipo = 'PR'
+                atributo.save()
 
 @receiver(post_save, sender=Origen)
 def relacion_vehiculo(created, instance, **kwargs):
