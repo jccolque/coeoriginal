@@ -25,15 +25,15 @@ TIPO_VEHICULO = (
 )
 
 TIPO_ESTADO = (
-    (1, 'Asintomatico'),
-    (2, 'Sano'),
+    (0, 'Asintomatico'),
+    (10, 'Sano'),
     (31, 'Contacto Bajo Riesgo'),
     (32, 'Contacto Alto Riesgo'),
-    (4, 'Sospechoso'),
-    (5, 'Confirmado'),
-    (6, 'Curado'),
-    (71, 'Fallecido'),
-    (9, 'Fuera del Territorio'),
+    (40, 'Sospechoso'),
+    (50, 'Confirmado'),
+    (2, 'Curado'),
+    (1, 'Fallecido'),
+    (3, 'Fuera del Territorio'),
 )
 
 TIPO_CONDUCTA = (
