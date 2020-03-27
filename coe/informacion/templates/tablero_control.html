@@ -1,0 +1,36 @@
+{% extends 'base_informacion.html' %}
+{% load static %}
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2>Tablero de Situacion</h2>
+        </div>
+        <div class="row">
+        <div class="col-md-12">
+            <div class="col-sm-4">
+                <!--NACIONALIDAD -->
+                <table class="listado">
+                    <thead>
+                        <tr>
+                            <th>Nacionalidad</th>
+                            <th>Cantidad</th>
+                            <th>Ver Detalle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for nac in nacionalidades %}
+                                <td>{{nac.nombre}}</th>
+                                <td>{{nac.cantidad}}</th>
+                                <td><a href="{% url 'informacion:tablero_control' %}" target="_blank">(Ver Detalle)</a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-sm-8">
+                
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

@@ -29,20 +29,12 @@ def registro_covidapp(request):
         except Individuo.DoesNotExist:
             individuo = Individuo()
             individuo.individuo = individuo
+            individuo.num_doc = num_doc
             individuo.apellidos = data["apellido"]
             individuo.nombres = data["nombre"]
             individuo.nacionalidad = nac
             individuo.aclaracion = "AUTODIAGNOSTICO"
             individuo.save()
-        #Le creamos el estado Sospechoso-Evaluar (4-B)
-        sit_actual = individuo.situacion_actual()
-        if not sit_actual or (sit_actual and sit_actual.estado < 40):
-            situacion = Situacion()
-            situacion.individuo = individuo
-            situacion.estado = 40
-            situacion.conducta = 'C'
-            situacion.aclaracion = "AUTODIAGNOSTICO"
-            situacion.save()
         #PROCESAMOS INFO DE APP
         if not hasattr(individuo,'appdata'):
             appdata = AppData()
@@ -88,3 +80,14 @@ def registro_covidapp(request):
             status=400,
             safe=False
         )
+
+
+#        #Le creamos el estado Sospechoso-Evaluar (4-B)
+#        sit_actual = individuo.situacion_actual()
+#        if not sit_actual or (sit_actual and sit_actual.estado < 40):
+#            situacion = Situacion()
+#            situacion.individuo = individuo
+#            situacion.estado = 40
+#            situacion.conducta = 'C'
+#            situacion.aclaracion = "AUTODIAGNOSTICO"
+#            situacion.save()

@@ -542,6 +542,14 @@ def cargar_geoposicion(request, domicilio_id):
 
 #Reportes en el sistema
 @permission_required('operadores.reportes')
+def tablero_control(request):
+    individuos = Individuo.objects.all()
+
+    return render(request, "tablero_control.html", {
+    })
+
+#IMPORTANTE: CORREGIR QUE SOLO IMPORTE EL ULTIMO ESTADO
+@permission_required('operadores.reportes')
 def reporte_basico(request):
     #Definimos un objecto para jugar
     class Creportado(object):
@@ -551,8 +559,8 @@ def reporte_basico(request):
     #iniciamos la vista
     estados = TIPO_ESTADO
     conductas = TIPO_CONDUCTA
-    atributos = [a[0] for a in TIPO_ATRIBUTO]
-    sintomas = [s[0] for s in TIPO_SINTOMA]
+    atributos = TIPO_ATRIBUTO
+    sintomas = TIPO_SINTOMA
     if request.method == "POST":
         reportados = {}
         #Obtenemos todos los parametros
@@ -566,6 +574,7 @@ def reporte_basico(request):
         full_individuos = Individuo.objects.filter(
             situaciones__estado__in=estados,
             situaciones__conducta__in=conductas).distinct()
+        full_individuos = full_individuos.prefetch_related('domicilios', 'situaciones', 'atributos', 'sintomas')
         for atributo in atributos:
             individuos = full_individuos.filter(atributos__tipo=atributo)
             for individuo in individuos:

@@ -66,6 +66,7 @@ urlpatterns = [
 
     path('cargar/geopos/<int:domicilio_id>', views.cargar_geoposicion, name='cargar_geoposicion'),
     #Reportes
+    path('tablero', views.tablero_control, name='tablero_control'),
     path('reporte/basico', views.reporte_basico, name='reporte_basico'),
     #Autocomplete
     #url(r'^sintomas-autocomplete/$', autocomplete.SintomaAutocomplete.as_view(), name='sintomas-autocomplete',),

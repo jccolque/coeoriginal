@@ -10,6 +10,12 @@
                     <h1>Menu Informacion:</h1>
                     <div class="col-md-8">
                         <ul class="menu_botones">
+                            {% if perms.operadores.reportes %}
+                                <li><a href="{% url 'informacion:tablero_control'  %}">Tablero de Situacion</a></li>
+                                <li><a href="{% url 'informacion:reporte_basico'  %}">Reporte Basico</a></li>
+                                <hr>
+                            {% endif %}
+
                             {% if perms.operadores.individuos %}
                                 <li><a href="{% url 'informacion:buscar_individuo'  %}">Cargar Individuos</a></li>
                                 <li><a href="{% url 'informacion:buscador_individuos' %}">Buscador Ambiguo</a></li>
@@ -29,11 +35,6 @@
                                 <li><a href="{% url 'informacion:subir_archivos'  %}">Subir Archivos</a></li>
                                 <li><a href="{% url 'informacion:subir_same'  %}">Carga Masiva SAME</a></li>
                                 <li><a href="{% url 'informacion:archivos_pendientes' %}">Ver Listado de Archivos sin Procesar</a></li>
-                                <hr>
-                            {% endif %}
-
-                            {% if perms.operadores.reportes %}
-                                <li><a href="{% url 'informacion:reporte_basico'  %}">Reporte Basico</a></li>
                                 <hr>
                             {% endif %}
 
