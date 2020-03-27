@@ -83,6 +83,26 @@ def invertir_relacion(created, instance, **kwargs):
         relacion.aclaracion = instance.aclaracion
         relacion.save()
 
+@receiver(post_save, sender=Relacion)
+def invertir_relacion(created, instance, **kwargs):
+    #Creamos la relacion inversa
+    if created:
+        individuo = instance.individuo
+        situ_actual = individuo.situacion_actual()
+        relacionado = instance.relacionado
+        if situ_actual.estado > relacionado.situacion_actual().estado:
+            sit = Situacion()
+            sit.individuo = relacionado
+            if situ_actual.estado == 32:#Contacto Alto Riesgo            
+                sit.estado = 31
+            if situ_actual.estado == 40:#Sospechoso
+                sit.estado = 32
+            if situ_actual.estado == 50:#Confirmado
+                sit.estado = 32
+            sit.conducta = 'B'
+            sit.aclaracion = "Relacion Detectada por el sistema"
+            sit.save()
+
 @receiver(post_save, sender=Atributo)
 def poner_en_seguimiento(created, instance, **kwargs):
     if created:
@@ -95,26 +115,27 @@ def poner_en_seguimiento(created, instance, **kwargs):
 #Evolucionamos Estado segun relaciones
 @receiver(post_save, sender=Situacion)
 def afectar_situacion(created, instance, **kwargs):
-    individuo = instance.individuo
-    for relacion in individuo.relaciones.all():
-        sit = relacion.relacionado.situacion_actual()
-        if not sit:#Si no tenia estado le creamos inicial
-            sit = Situacion()
-            sit.individuo = relacion.relacionado
-            sit.aclaracion = "Inicializado por el sistema"
-            sit.estado = 1
-        #Procesamos lo que nos importa
-        if instance.estado > sit.estado:
-            #Tramos situacion actual del relacionado
-            sit.id = None
-            #Generamos situ nueva segun caso
-            if instance.estado == 32:#Contacto Alto Riesgo            
-                sit.estado = 31
-            if instance.estado == 4:#Sospechoso
-                sit.estado = 32
-            if instance.estado == 5:#Confirmado
-                sit.estado = 32
-            #Agregamos descripcion y guardamos
-            sit.conducta = 'B'
-            sit.aclaracion = "Detectado por sistema, Relacionado con: " + individuo.num_doc
-            sit.save()
+    if created:
+        individuo = instance.individuo
+        for relacion in individuo.relaciones.all():
+            sit = relacion.relacionado.situacion_actual()
+            if not sit:#Si no tenia estado le creamos inicial
+                sit = Situacion()
+                sit.individuo = relacion.relacionado
+                sit.aclaracion = "Inicializado por el sistema"
+                sit.estado = 1
+            #Procesamos lo que nos importa
+            if instance.estado > sit.estado:
+                #Tramos situacion actual del relacionado
+                sit.id = None
+                #Generamos situ nueva segun caso
+                if instance.estado == 32:#Contacto Alto Riesgo            
+                    sit.estado = 31
+                if instance.estado == 40:#Sospechoso
+                    sit.estado = 32
+                if instance.estado == 50:#Confirmado
+                    sit.estado = 32
+                #Agregamos descripcion y guardamos
+                sit.conducta = 'B'
+                sit.aclaracion = "Detectado por sistema, Relacionado con: " + individuo.num_doc
+                sit.save()

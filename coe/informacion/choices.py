@@ -25,7 +25,7 @@ TIPO_VEHICULO = (
 )
 
 TIPO_ESTADO = (
-    (0, 'Asintomatico'),
+    (11, 'Asintomatico'),
     (10, 'Sano'),
     (31, 'Contacto Bajo Riesgo'),
     (32, 'Contacto Alto Riesgo'),
@@ -33,7 +33,7 @@ TIPO_ESTADO = (
     (50, 'Confirmado'),
     (2, 'Curado'),
     (1, 'Fallecido'),
-    (3, 'Fuera del Territorio'),
+    (0, 'Fuera del Territorio'),
 )
 
 TIPO_CONDUCTA = (
@@ -51,6 +51,7 @@ TIPO_SEGUIMIENTO = (
     ('I', 'Inclusion al Sistema'),
     ('L', 'Llamada Telefonica'),
     ('M', 'Reporte Medico'),
+    ('C', 'Cronologia'),
     ('F', 'Fin del Seguimiento/Alta'),
 )
 
