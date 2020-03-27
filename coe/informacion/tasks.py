@@ -12,7 +12,6 @@ from georef.models import Nacionalidad, Departamento, Localidad
 from .models import Archivo
 from .models import Individuo, Domicilio
 from .models import Seguimiento
-from .models import TipoSintoma, TipoAtributo
 from .models import Situacion, Sintoma, Atributo
 from .choices import TIPO_SINTOMA
 
@@ -68,8 +67,7 @@ def guardar_same(lineas, archivo_id, ultimo=False):
                 if tsintoma[0] in linea[3].upper():
                     sintoma = Sintoma()
                     sintoma.individuo = individuo
-                    sintoma.tipo = TipoSintoma.objects.first()
-                    sintoma.newtipo = tsintoma[0]
+                    sintoma.tipo = tsintoma[0]
                     sintoma.aclaracion = "SAME: "+linea[3][0:190]
                     sintoma.save()
             #Poblacion de riesgo:
@@ -78,11 +76,7 @@ def guardar_same(lineas, archivo_id, ultimo=False):
                 if riesgo in linea[3].upper():
                     atributo = Atributo()
                     atributo.individuo = individuo
-                    atributo.tipo = TipoAtributo.objects.get(
-                        Q(nombre__icontains='poblacion') & 
-                        Q(nombre__icontains='riesgo')
-                    )
-                    atributo.newtipo = 'PR'
+                    atributo.tipo = 'PR'
                     atributo.aclaracion = "SAME: "+linea[3][0:190]
                     atributo.save()
             #Lista la linea
@@ -179,8 +173,7 @@ def guardar_epidemiologia(lineas, archivo_id, ultimo=False):
                         if tsintoma[0] in dia.upper():
                             sintoma = Sintoma()
                             sintoma.individuo = individuo
-                            sintoma.tipo = TipoSintoma.objects.first()
-                            sintoma.newtipo = tsintoma[0]
+                            sintoma.tipo = tsintoma[0]
                             sintoma.aclaracion = "SEGUIMIENTO: "+dia[0:190]
                             sintoma.save()
             #Lista la linea

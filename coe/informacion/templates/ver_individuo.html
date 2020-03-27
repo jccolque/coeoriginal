@@ -100,15 +100,13 @@
                                 <table class="listado">
                                     <tr>
                                         <th>Sintoma</th>
-                                        <th>Importancia</th>
                                         <th>Aclaracion</th>
                                         <th>Fecha</th>
                                         <th>Acciones</th>
                                     </tr>
                             {% endif %}
                             <tr>
-                                <td>{{sintoma.tipo.nombre}}</td>
-                                <td>{{sintoma.tipo.get_importancia_display}}</td>
+                                <td>{{sintoma.get_tipo_display}}</td>
                                 <td>{{sintoma.aclaracion}}</td>
                                 <td>{{sintoma.fecha}}</td>
                                 <td>
@@ -132,15 +130,13 @@
                                 <table class="listado">
                                     <tr>
                                         <th>Atributo</th>
-                                        <th>Importancia</th>
                                         <th>Aclaracion</th>
                                         <th>Fecha</th>
                                         <th>Acciones</th>
                                     </tr>
                             {% endif %}
                             <tr>
-                                <td>{{atributo.tipo.nombre}}</td>
-                                <td>{{atributo.tipo.get_importancia_display}}</td>
+                                <td>{{atributo.get_tipo_display}}</td>
                                 <td>{{atributo.aclaracion}}</td>
                                 <td>{{atributo.fecha}}</td>
                                 <td>

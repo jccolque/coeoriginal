@@ -67,10 +67,9 @@ urlpatterns = [
     path('cargar/geopos/<int:domicilio_id>', views.cargar_geoposicion, name='cargar_geoposicion'),
     #Reportes
     path('reporte/basico', views.reporte_basico, name='reporte_basico'),
-    path('csv/individuos/', views.csv_individuos, name='csv_individuos'),
     #Autocomplete
-    url(r'^sintomas-autocomplete/$', autocomplete.SintomaAutocomplete.as_view(), name='sintomas-autocomplete',),
-    url(r'^atributos-autocomplete/$', autocomplete.AtributoAutocomplete.as_view(), name='atributos-autocomplete',),
+    #url(r'^sintomas-autocomplete/$', autocomplete.SintomaAutocomplete.as_view(), name='sintomas-autocomplete',),
+    #url(r'^atributos-autocomplete/$', autocomplete.AtributoAutocomplete.as_view(), name='atributos-autocomplete',),
     url(r'^individuos-autocomplete/$', autocomplete.IndividuosAutocomplete.as_view(), name='individuos-autocomplete',),
     #Carga Masiva
     path('upload/epidemiologia', views.subir_epidemiologia, name='subir_epidemiologia'),

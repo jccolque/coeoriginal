@@ -11,7 +11,7 @@ from dateutil.relativedelta import relativedelta
 #Imports de la app
 from .models import Origen
 from .models import Individuo, Domicilio, Situacion, Relacion, Seguimiento
-from .models import Atributo, TipoAtributo
+from .models import Atributo
 
 #Definimos nuestra señales
 @receiver(post_save, sender=Individuo)
@@ -23,17 +23,10 @@ def estado_inicial(created, instance, **kwargs):
         situacion.save()
         #   Vejez +60 años
         if instance.fecha_nacimiento < (timezone.now().date() - relativedelta(years=60)):
-            try:
-                atributo = Atributo()
-                atributo.individuo = instance
-                atributo.tipo = TipoAtributo.objects.get(
-                    Q(nombre__icontains='poblacion') & 
-                    Q(nombre__icontains='riesgo')
-                )
-                atributo.newtipo = 'PR'
-                atributo.save()
-            except TipoAtributo.DoesNotExist:
-                print('No existe Atributo de Poblacion de Riesgo')
+            atributo = Atributo()
+            atributo.individuo = instance
+            atributo.tipo = 'PR'
+            atributo.save()
 
 @receiver(post_save, sender=Origen)
 def relacion_vehiculo(created, instance, **kwargs):
@@ -107,12 +100,11 @@ def relacionar_situacion(created, instance, **kwargs):
 
 @receiver(post_save, sender=Atributo)
 def poner_en_seguimiento(created, instance, **kwargs):
-    if created:
-        if "vigilancia" in instance.tipo.nombre.lower():
-            seguimiento = Seguimiento()
-            seguimiento.individuo = instance.individuo
-            seguimiento.aclaracion = "Agregado Atributo en el sistema"
-            seguimiento.save()
+    if created and (instance.tipo == "VE"):
+        seguimiento = Seguimiento()
+        seguimiento.individuo = instance.individuo
+        seguimiento.aclaracion = "Agregado Atributo en el sistema"
+        seguimiento.save()
 
 #Evolucionamos Estado segun relaciones
 @receiver(post_save, sender=Situacion)

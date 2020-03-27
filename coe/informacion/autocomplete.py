@@ -5,21 +5,20 @@ from django.db.models import Q
 from dal import autocomplete
 #Imports de la app
 from .models import Individuo
-from .models import TipoSintoma, TipoAtributo
 
-class SintomaAutocomplete(autocomplete.Select2QuerySetView):
-    def get_queryset(self):
-        qs = TipoSintoma.objects.all()
-        if self.q:
-            qs = qs.filter(nombre__icontains=self.q)
-        return qs
+#class SintomaAutocomplete(autocomplete.Select2QuerySetView):
+#    def get_queryset(self):
+#        qs = TipoSintoma.objects.all()
+#        if self.q:
+#            qs = qs.filter(nombre__icontains=self.q)
+#        return qs
 
-class AtributoAutocomplete(autocomplete.Select2QuerySetView):
-    def get_queryset(self):
-        qs = TipoAtributo.objects.all()
-        if self.q:
-            qs = qs.filter(nombre__icontains=self.q)
-        return qs
+#class AtributoAutocomplete(autocomplete.Select2QuerySetView):
+#    def get_queryset(self):
+#        qs = TipoAtributo.objects.all()
+#        if self.q:
+#            qs = qs.filter(nombre__icontains=self.q)
+#        return qs
 
 class IndividuosAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):

@@ -11,7 +11,7 @@ from coe.settings import SECRET_KEY
 from core.widgets import XDSoftDatePickerInput, XDSoftDateTimePickerInput
 from georef.models import Localidad
 #Imports de la app
-from .models import TipoAtributo, TipoSintoma
+from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
 from .models import Vehiculo, ControlVehiculo
 from .models import Individuo, Domicilio, Atributo, Sintoma
 from .models import Situacion, Archivo, Relacion, Seguimiento, Permiso
@@ -55,12 +55,12 @@ class IndividuoForm(forms.ModelForm):
     dom_numero = forms.CharField(required=False, )
     dom_aclaracion = forms.CharField(required=False, )
     atributos = forms.MultipleChoiceField(
-        choices=[],
+        choices=TIPO_ATRIBUTO,
         widget=CheckboxSelectMultiple(attrs={'class':'multiplechoice',}),
         required=False
     )
     sintomas = forms.MultipleChoiceField(
-        choices=[],
+        choices=TIPO_SINTOMA,
         widget=CheckboxSelectMultiple(attrs={'class':'multiplechoice',}),
         required=False
     )
@@ -73,12 +73,6 @@ class IndividuoForm(forms.ModelForm):
             'origen': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
             'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
         }
-    #Inicializacion
-    def __init__(self, *args, **kwargs):
-        #Obtenemos permisos
-        self.base_fields['atributos'].choices = [(a.id, a.nombre) for a in TipoAtributo.objects.all()]
-        self.base_fields['sintomas'].choices = [(s.id, s.nombre) for s in TipoSintoma.objects.all()]
-        super(IndividuoForm, self).__init__(*args, **kwargs)
 
 class DatosForm(forms.ModelForm):
     class Meta:

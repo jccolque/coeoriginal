@@ -19,37 +19,6 @@ from .choices import TIPO_RELACION, TIPO_SEGUIMIENTO
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA, TIPO_PERMISO
 from .choices import TIPO_TRIAJE
 
-#Tipo Definition
-class TipoAtributo(models.Model):#Origen del Dato
-    nombre = models.CharField('Nombre', max_length=100, unique=True)
-    importancia = models.IntegerField(choices=TIPO_IMPORTANCIA, default='1')
-    class Meta:
-        ordering = ['nombre']
-    def __str__(self):
-        return self.nombre
-    def as_dict(self):
-        return {
-            'id': self.id,
-            'nombre': self.nombre,
-            'importancia': self.get_importancia_display(),
-        }
-
-class TipoSintoma(models.Model):#Origen del Dato
-    nombre = models.CharField('Nombre', max_length=100, unique=True)
-    descripcion = HTMLField(verbose_name='Descripcion', null=True, blank=True)
-    importancia = models.IntegerField(choices=TIPO_IMPORTANCIA, default='1')
-    class Meta:
-        ordering = ['nombre']
-    def __str__(self):
-        return self.nombre
-    def as_dict(self):
-        return {
-            'id': self.id,
-            'nombre': self.nombre,
-            'descripcion': self.descripcion,
-            'importancia': self.get_importancia_display(),
-        }
-
 # Create your models here.
 class Archivo(models.Model):
     tipo = models.IntegerField(choices=TIPO_ARCHIVO, default='1')
@@ -76,7 +45,7 @@ class Enfermedad(models.Model):#Origen del Dato
     nombre = models.CharField('Nombre', max_length=100)
     descripcion = HTMLField(verbose_name='Descripcion', null=True, blank=True)
     importancia = models.IntegerField(choices=TIPO_IMPORTANCIA, default='1')
-    sintomas = models.ManyToManyField(TipoSintoma)
+    #sintomas = models.ManyToManyField(TipoSintoma)
     def __str__(self):
         return self.nombre
     def as_dict(self):
@@ -86,7 +55,6 @@ class Enfermedad(models.Model):#Origen del Dato
             'descripcion': self.descripcion,
             'importancia': self.get_importancia_display(),
         }
-
 
 #Vehiculos
 class Vehiculo(models.Model):
@@ -230,6 +198,7 @@ class Domicilio(models.Model):
     calle = models.CharField('Calle', max_length=100, default='', blank=False)
     numero = models.CharField('Numero', max_length=100, default='', blank=False)
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
+    aislamiento = models.BooleanField(default=True)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     class Meta:
         ordering = ['fecha', ]
@@ -285,21 +254,20 @@ class Situacion(models.Model):
 
 class Atributo(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="atributos")
-    tipo = models.ForeignKey(TipoAtributo, on_delete=models.CASCADE, related_name="atributos")
-    newtipo = models.CharField('Tipo', choices=TIPO_ATRIBUTO, max_length=2, null=True)
+    tipo = models.CharField('Tipo', choices=TIPO_ATRIBUTO, max_length=2, null=True)
     aclaracion =  models.CharField('Aclaracion', max_length=200, null=True, blank=True)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     activo = models.BooleanField(default=True)
     class Meta:
         ordering = ['fecha', ]
     def __str__(self):
-        return str(self.individuo) + ': ' + str(self.tipo) + ' ' + str(self.fecha)
+        return str(self.individuo) + ': ' + self.get_tipo_display() + ' ' + str(self.fecha)
     def as_dict(self):
         return {
             "id": self.id,
             "individuo_id": self.individuo.id,
-            "tipo_id": self.tipo.id,
-            "tipo": str(self.tipo),
+            "tipo_id": self.tipo,
+            "tipo": self.get_tipo_display(),
             "aclaracion": self.aclaracion,
             "fecha": str(self.fecha),
             "activo": self.activo,
@@ -307,20 +275,19 @@ class Atributo(models.Model):
 
 class Sintoma(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="sintomas")
-    tipo = models.ForeignKey(TipoSintoma, on_delete=models.CASCADE, related_name="sintomas")
-    newtipo = models.CharField('Tipo', choices=TIPO_SINTOMA, max_length=3, null=True)
+    tipo = models.CharField('Tipo', choices=TIPO_SINTOMA, max_length=3, null=True)
     aclaracion =  models.CharField('Aclaracion', max_length=200, null=True, blank=True)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     class Meta:
         ordering = ['fecha', ]
     def __str__(self):
-        return str(self.tipo) + ': ' + str(self.fecha)
+        return self.get_tipo_display() + ': ' + str(self.fecha)
     def as_dict(self):
         return {
             "id": self.id,
             "individuo_id": self.individuo.id,
-            "tipo_id": self.tipo.id,
-            "tipo": str(self.tipo),
+            "tipo_id": self.tipo,
+            "tipo": self.get_tipo_display(),
             "aclaracion": self.aclaracion,
             "fecha": str(self.fecha),
         }

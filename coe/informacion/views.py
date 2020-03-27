@@ -20,7 +20,6 @@ from .models import Seguimiento
 from .models import Domicilio, GeoPosicion
 from .models import Atributo, Sintoma
 from .models import AppData
-from .models import TipoAtributo, TipoSintoma
 from .forms import ArchivoForm, ArchivoFormWithPass
 from .forms import VehiculoForm, ControlVehiculoForm
 from .forms import IndividuoForm, BuscadorIndividuosForm
@@ -257,16 +256,16 @@ def cargar_individuo(request, control_id=None, individuo_id=None, num_doc=None):
                     'dom_calle': domicilio_actual.calle,
                     'dom_numero': domicilio_actual.numero,
                     'dom_aclaracion': domicilio_actual.aclaracion,
-                    'atributos': [a.tipo.id for a in individuo.atributos.all()],
-                    'sintomas': [s.tipo.id for s in individuo.sintomas.all()],
+                    'atributos': [a.tipo for a in individuo.atributos.all()],
+                    'sintomas': [s.tipo for s in individuo.sintomas.all()],
                 }
             )
         else:
             form = IndividuoForm(
                 instance=individuo,
                 initial={
-                    'atributos': [a.tipo.id for a in individuo.atributos.all()],
-                    'sintomas': [s.tipo.id for s in individuo.sintomas.all()],
+                    'atributos': [a.tipo for a in individuo.atributos.all()],
+                    'sintomas': [s.tipo for s in individuo.sintomas.all()],
                 }
             )
     else:
@@ -295,7 +294,7 @@ def cargar_individuo(request, control_id=None, individuo_id=None, num_doc=None):
             for atributo_id in atributos:
                 atributo = Atributo()
                 atributo.individuo = individuo
-                atributo.tipo = TipoAtributo.objects.get(pk=atributo_id)
+                atributo.tipo = atributo_id
                 atributo.save()           
             #Creamos sintomas
             sintomas = form.cleaned_data['sintomas']
@@ -303,7 +302,7 @@ def cargar_individuo(request, control_id=None, individuo_id=None, num_doc=None):
             for sintoma_id in sintomas:
                 sintoma = Sintoma()
                 sintoma.individuo = individuo
-                sintoma.tipo = TipoSintoma.objects.get(pk=sintoma_id)
+                sintoma.tipo = sintoma_id
                 sintoma.save()  
             #Si vino en un vehiculo
             if control_id:
@@ -591,32 +590,6 @@ def reporte_basico(request):
     return render(request, "reporte_basico_buscar.html", {
         'estados': estados, 'conductas': conductas,
         'atributos': atributos, 'sintomas': sintomas, })
-
-@permission_required('operadores.reportes')
-def csv_individuos(request):
-    individuos = Individuo.objects.all()
-    individuos = individuos.prefetch_related('atributos', 'sintomas')
-    #Iniciamos la creacion del csv
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="individuos.csv"'
-    writer = csv.writer(response)
-    writer.writerow(['REPORTE DE INDIVIDUOS'])
-    writer.writerow(['TIPO DOC', 'NUM DOC', 'APELLIDO', 'NOMBRE', 'NACIONALIDAD', 'ORIGEN', 'DESTINO LOCAL', 'OBSERVACIONES', 'ATRIBUTOS','SINTOMAS'])
-    for individuo in individuos:
-        writer.writerow([
-            individuo.get_tipo_doc_display(),
-            individuo.num_doc,
-            individuo.apellidos,
-            individuo.nombres,
-            individuo.nacionalidad.nombre,
-            str(individuo.origen),
-            str(individuo.destino),
-            individuo.observaciones,
-            str([a.tipo.nombre for a in individuo.atributos.all()]),
-            str([s.tipo.nombre for s in individuo.sintomas.all()]),
-        ])
-    #Enviamos el archivo para descargar
-    return response
 
 #CARGAS MASIVAS
 @superuser_required

@@ -9,8 +9,8 @@ from .models import Archivo
 from .models import Enfermedad
 from .models import Vehiculo, Individuo, Domicilio
 from .models import Situacion, Relacion
-from .models import TipoAtributo, Atributo
-from .models import TipoSintoma, Sintoma
+from .models import Atributo
+from .models import Sintoma
 
 #Definimos los inlines:
 class SituacionInline(admin.TabularInline):
@@ -52,7 +52,6 @@ class ArchivoAdmin(admin.ModelAdmin):
 class EnfermedadAdmin(admin.ModelAdmin):
     model = Individuo
     search_fields = ['nombres', 'sintomas__nombre', ]
-    list_filter = ['sintomas']
     def has_delete_permission(self, request, obj=None):
         return False
     formfield_overrides = {
@@ -71,8 +70,6 @@ class VehiculoAdmin(admin.ModelAdmin):
     list_filter = ['tipo']
 
 # Register your models here.
-admin.site.register(TipoSintoma)
-admin.site.register(TipoAtributo)
 admin.site.register(Archivo, ArchivoAdmin)
 admin.site.register(Enfermedad, EnfermedadAdmin)
 admin.site.register(Individuo, IndividuoAdmin)
