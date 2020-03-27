@@ -184,7 +184,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': 'archivos/logs/apis.log',
+            'filename': 'archivos/logs/apis.txt',
         },
     },
     'loggers': {
