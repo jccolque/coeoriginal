@@ -4,12 +4,11 @@ from datetime import date
 from django.utils import timezone
 from django import forms
 from django.contrib.auth.models import User
-from django.contrib.auth.models import Group
 from django.forms.widgets import CheckboxSelectMultiple
 #Imports extra
 from dal import autocomplete
 #Imports del proyecto
-from core.api import org_id_from_name, org_from_from_id
+from core.widgets import XDSoftDateTimePickerInput
 #Imports de la app
 from .models import SubComite, Operador
 
@@ -95,8 +94,8 @@ class AuditoriaForm(forms.Form):
         queryset=User.objects.all(),
         widget=autocomplete.ModelSelect2(url='core:usuarios-autocomplete'),
         required=True)
-    begda = forms.DateField(label='Inicio', initial=timezone.now(), widget=forms.SelectDateWidget())
-    endda = forms.DateField(label='Fin',initial=timezone.now(), widget=forms.SelectDateWidget())
+    begda = forms.DateField(label='Inicio', initial=timezone.now(), widget=XDSoftDateTimePickerInput())
+    endda = forms.DateField(label='Fin',initial=timezone.now(), widget=XDSoftDateTimePickerInput())
     def __init__(self, *args, **kwargs):
         super(AuditoriaForm, self).__init__(*args, **kwargs)
         if kwargs.get('initial', None):

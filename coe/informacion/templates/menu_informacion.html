@@ -10,10 +10,12 @@
                     <h1>Menu Informacion:</h1>
                     <div class="col-md-8">
                         <ul class="menu_botones">
-                            {% if perms.operadores.archivos %}
-                                <li><a href="{% url 'informacion:subir_archivos'  %}">Subir Archivos</a></li>
-                                <li><a href="{% url 'informacion:subir_same'  %}">Carga Masiva SAME</a></li>
-                                <li><a href="{% url 'informacion:archivos_pendientes' %}">Ver Listado de Archivos sin Procesar</a></li>
+                            {% if perms.operadores.individuos %}
+                                <li><a href="{% url 'informacion:buscar_individuo'  %}">Cargar Individuos</a></li>
+                                <li><a href="{% url 'informacion:buscador_individuos' %}">Buscador Ambiguo</a></li>
+                                <li><a href="{% url 'informacion:lista_evaluar'  %}">Individuos Esperando Evaluacion</a></li>
+                                <li><a href="{% url 'informacion:lista_seguimiento'  %}">Listar Individuos en Seguimiento</a></li>
+                                <li><a href="{% url 'informacion:lista_autodiagnosticos'  %}">Listar Autodiagnosticos</a></li>
                                 <hr>
                             {% endif %}
 
@@ -23,12 +25,10 @@
                                 <hr>
                             {% endif %}
 
-                            {% if perms.operadores.individuos %}
-                                <li><a href="{% url 'informacion:buscar_individuo'  %}">Cargar Individuos</a></li>
-                                <li><a href="{% url 'informacion:buscador_individuos' %}">Buscador Ambiguo</a></li>
-                                <li><a href="{% url 'informacion:lista_evaluar'  %}">Individuos Esperando Evaluacion</a></li>
-                                <li><a href="{% url 'informacion:lista_seguimiento'  %}">Listar Individuos en Seguimiento</a></li>
-                                <li><a href="{% url 'informacion:lista_autodiagnosticos'  %}">Listar Autodiagnosticos</a></li>
+                            {% if perms.operadores.archivos %}
+                                <li><a href="{% url 'informacion:subir_archivos'  %}">Subir Archivos</a></li>
+                                <li><a href="{% url 'informacion:subir_same'  %}">Carga Masiva SAME</a></li>
+                                <li><a href="{% url 'informacion:archivos_pendientes' %}">Ver Listado de Archivos sin Procesar</a></li>
                                 <hr>
                             {% endif %}
 
