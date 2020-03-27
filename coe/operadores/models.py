@@ -36,9 +36,19 @@ class SubComite(models.Model):
     def cant_miembros(self):
         return self.operadores.count()
     def cant_tareas_terminadas(self):
-        return self.tareas.filter(eventos__accion="E").count()
+        cant = 0
+        for tarea in self.tareas.all():
+            evento = [t for t in tarea.eventos.all()][-1]
+            if evento.accion == 'E':
+                    cant+=1
+        return cant
     def cant_tareas_pendientes(self):
-        return self.tareas.exclude(eventos__accion="E").count()
+        cant = 0
+        for tarea in self.tareas.all():
+            evento = [t for t in tarea.eventos.all()][-1]
+            if not evento.accion == 'E':
+                    cant+=1
+        return cant
     def tareas_pendientes(self):
         return self.tareas.exclude(eventos__accion="E")
 

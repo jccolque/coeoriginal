@@ -28,7 +28,8 @@
                 <h3>Operadores Asignados</h3>
                 <table class="listado">
                     <tr>
-                        <th colspan="3">usuario</th>
+                        <th>Usuario</th>
+                        <th>Operador</th>
                         <th>Grupo</th>
                         <th>Nivel Autorizacion</th>
                         <th>Telefono</th>
@@ -39,8 +40,7 @@
                     {% for operador in subcomite.operadores.all %}
                         <tr class="fila_usuario">
                             <td>{{operador.usuario.username}}</td>
-                            <td>{{operador.nombres}}</td>
-                            <td>{{operador.apellidos}}</td>
+                            <td>{{operador.apellidos}}, {{operador.nombres}}</td>
                             <td>{{operador.subcomite}}</td>
                             <td>{{operador.get_nivel_acceso_display}}</td>
                             <td>{{operador.telefono}}</td>

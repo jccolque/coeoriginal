@@ -30,6 +30,7 @@ def menu(request):
 @permission_required('operadores.subcomites')
 def listar_subcomites(request):
     subcomites = SubComite.objects.all()
+    subcomites = subcomites.prefetch_related('operadores', 'tareas', 'tareas__eventos')
     if request.method == 'POST':
         form = SearchForm(request.POST)
         if form.is_valid():
@@ -43,7 +44,10 @@ def listar_subcomites(request):
 
 @permission_required('operadores.subcomites')
 def ver_subcomite(request, subco_id):
-    subcomite = SubComite.objects.get(pk=subco_id)
+    subcomite = SubComite.objects.prefetch_related(
+        'operadores', 'operadores__usuario',
+        'tareas', 'tareas__eventos'
+        ).get(pk=subco_id)
     form = BuscarOperadorForm()
     if request.method == 'POST':
         form = BuscarOperadorForm(request.POST)
