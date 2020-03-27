@@ -84,22 +84,24 @@ def invertir_relacion(created, instance, **kwargs):
         relacion.save()
 
 @receiver(post_save, sender=Relacion)
-def invertir_relacion(created, instance, **kwargs):
+def relacionar_situacion(created, instance, **kwargs):
     #Creamos la relacion inversa
     if created:
         individuo = instance.individuo
         situ_actual = individuo.situacion_actual()
         relacionado = instance.relacionado
-        if not relacionado.situacion_actual() or situ_actual.estado > relacionado.situacion_actual().estado:
+        if situ_actual.estado > relacionado.situacion_actual().estado:
             sit = Situacion()
             sit.individuo = relacionado
+            sit.conducta = 'C'
             if situ_actual.estado == 32:#Contacto Alto Riesgo            
                 sit.estado = 31
             if situ_actual.estado == 40:#Sospechoso
                 sit.estado = 32
+                sit.conducta = 'D'
             if situ_actual.estado == 50:#Confirmado
-                sit.estado = 32
-            sit.conducta = 'B'
+                sit.estado = 40
+                sit.conducta = 'D'
             sit.aclaracion = "Relacion Detectada por el sistema"
             sit.save()
 

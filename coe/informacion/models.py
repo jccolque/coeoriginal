@@ -148,7 +148,9 @@ class Individuo(models.Model):
         if self.situaciones.all():
             return [s for s in self.situaciones.all()][-1]
         else:
-            return None
+            sit = Situacion(individuo=self, aclaracion="Generada por falta de Situacion")
+            sit.save()
+            return sit
     def domicilio_actual(self):
         if self.domicilios.all():
             return [d for d in self.domicilios.all()][-1]
@@ -262,7 +264,7 @@ class GeoPosicion(models.Model):
 
 class Situacion(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="situaciones")
-    estado = models.IntegerField('Estado de Seguimiento', choices=TIPO_ESTADO, default=1)
+    estado = models.IntegerField('Estado de Seguimiento', choices=TIPO_ESTADO, default=11)
     conducta = models.CharField('Conducta', max_length=1, choices=TIPO_CONDUCTA, default='A')
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
@@ -381,6 +383,7 @@ class AppData(models.Model):
 #Señales
 from .signals import estado_inicial
 from .signals import invertir_relacion
+from .signals import relacionar_situacion
 from .signals import relacion_vehiculo
 from .signals import relacion_domicilio
 from .signals import poner_en_seguimiento
