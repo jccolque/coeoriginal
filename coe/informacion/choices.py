@@ -71,6 +71,7 @@ TIPO_ATRIBUTO = (
     ('AS', 'Es Agente de Salud'),
     ('PS', 'Es Personal de Seguridad'),
     ('PD', 'Se encuentra Presos/Detenidos'),
+    ('CE', 'Visito Pais de Riesgo/Contacto con Extranjeros'),
 )
 
 TIPO_SINTOMA = (
