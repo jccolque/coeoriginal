@@ -103,6 +103,7 @@
                                         <th>Importancia</th>
                                         <th>Aclaracion</th>
                                         <th>Fecha</th>
+                                        <th>Acciones</th>
                                     </tr>
                             {% endif %}
                             <tr>
@@ -110,6 +111,14 @@
                                 <td>{{sintoma.tipo.get_importancia_display}}</td>
                                 <td>{{sintoma.aclaracion}}</td>
                                 <td>{{sintoma.fecha}}</td>
+                                <td>
+                                    <a href="{% url 'informacion:mod_sintoma' individuo_id=individuo.id sintoma_id=sintoma.id %}">
+                                        <img class="icons" src="{% static '/img/icons/change.png' %}">
+                                    </a>
+                                    <a href="{% url 'informacion:del_sintoma' sintoma_id=sintoma.id %}">
+                                        <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                    </a>
+                                </td>
                             </tr>
                             {% if forloop.last %}
                                 </table>
@@ -126,6 +135,7 @@
                                         <th>Importancia</th>
                                         <th>Aclaracion</th>
                                         <th>Fecha</th>
+                                        <th>Acciones</th>
                                     </tr>
                             {% endif %}
                             <tr>
@@ -133,6 +143,14 @@
                                 <td>{{atributo.tipo.get_importancia_display}}</td>
                                 <td>{{atributo.aclaracion}}</td>
                                 <td>{{atributo.fecha}}</td>
+                                <td>
+                                    <a href="{% url 'informacion:mod_atributo' individuo_id=individuo.id atributo_id=atributo.id %}">
+                                        <img class="icons" src="{% static '/img/icons/change.png' %}">
+                                    </a>
+                                    <a href="{% url 'informacion:del_atributo' atributo_id=atributo.id %}">
+                                        <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                    </a>
+                                </td>
                             </tr>
                             {% if forloop.last %}
                                 </table>
@@ -151,6 +169,7 @@
                                         <th>Aclaracion</th>
                                         <th>Estado</th>
                                         <th>Fecha</th>
+                                        <th>Acciones</th>
                                     </tr>
                             {% endif %}
                             <tr>
@@ -163,6 +182,14 @@
                                 <td>{{relacion.aclaracion}}</td>
                                 <td>{{relacion.relacionado.situacion_actual}}</td>
                                 <td>{{relacion.fecha}}</td>
+                                <td>
+                                    <a href="{% url 'informacion:mod_relacion' individuo_id=individuo.id relacion_id=relacion.id %}">
+                                        <img class="icons" src="{% static '/img/icons/change.png' %}">
+                                    </a>
+                                    <a href="{% url 'informacion:del_relacion' relacion_id=relacion.id %}">
+                                        <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                    </a>
+                                </td>
                             </tr>
                             {% if forloop.last %}
                                 </table>
@@ -179,12 +206,21 @@
                                         <th>Tipo</th>
                                         <th>Aclaracion</th>
                                         <th>Fecha</th>
+                                        <th>Acciones</th>
                                     </tr>
                             {% endif %}
                             <tr>
                                 <td>{{seguimiento.get_tipo_display}}</td>
                                 <td>{{seguimiento.aclaracion}}</td>
                                 <td>{{seguimiento.fecha}}</td>
+                                <td>
+                                    <a href="{% url 'informacion:mod_seguimiento' individuo_id=individuo.id seguimiento_id=seguimiento.id %}">
+                                        <img class="icons" src="{% static '/img/icons/change.png' %}">
+                                    </a>
+                                    <a href="{% url 'informacion:del_seguimiento' seguimiento_id=seguimiento.id %}">
+                                        <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                    </a>
+                                </td>
                             </tr>
                             {% if forloop.last %}
                                 </table>
@@ -221,9 +257,9 @@
                             <li><a href="{% url 'informacion:mod_individuo' individuo_id=individuo.id %}">Modificar Datos Basicos</a></li>
                             <li><a href="{% url 'informacion:cargar_domicilio' individuo_id=individuo.id %}">Residencia Actual En La Provincia</a></li>
                             <li><a href="{% url 'informacion:cargar_seguimiento' individuo_id=individuo.id %}">Cargar Seguimiento</a></li>
-                            <li><a href="{% url 'informacion:cargar_relacion' individuo_id=individuo.id %}">Cargar Relacion</a></li>
-                            <li><a href="{% url 'informacion:cargar_atributo' individuo_id=individuo.id %}">Cargar Atributo de Control</a></li>
                             <li><a href="{% url 'informacion:cargar_sintoma' individuo_id=individuo.id  %}">Cargar Sintomas</a></li>
+                            <li><a href="{% url 'informacion:cargar_atributo' individuo_id=individuo.id %}">Cargar Atributo de Control</a></li>
+                            <li><a href="{% url 'informacion:cargar_relacion' individuo_id=individuo.id %}">Cargar Relacion</a></li>
                         </ul>
                     </div>
                 </div>

@@ -44,12 +44,26 @@ urlpatterns = [
     path('cargar/pasajero/<int:control_id>/nuevo/<int:individuo_id>/', views.cargar_individuo, name='cargar_pasajero'),
     path('cargar/pasajero/<int:control_id>/nuevo/<str:num_doc>/', views.cargar_individuo, name='cargar_pasajero_nuevo'),
     path('mod/individuo/<int:individuo_id>', views.cargar_individuo, name='mod_individuo'),
+    
     path('cargar/domicilio/<int:individuo_id>', views.cargar_domicilio, name='cargar_domicilio'),
+    
     path('cargar/seguimiento/<int:individuo_id>', views.cargar_seguimiento, name='cargar_seguimiento'),
+    path('mod/seguimiento/<int:individuo_id>/<int:seguimiento_id>', views.cargar_seguimiento, name='mod_seguimiento'),
+    path('del/seguimiento/<int:seguimiento_id>', views.del_seguimiento, name='del_seguimiento'),
     path('cargar/situacion/<int:individuo_id>', views.cargar_situacion, name='cargar_situacion'),
+    
     path('cargar/relacion/<int:individuo_id>', views.cargar_relacion, name='cargar_relacion'),
+    path('mod/relacion/<int:individuo_id>/<int:relacion_id>', views.cargar_relacion, name='mod_relacion'),
+    path('del/relacion/<int:relacion_id>', views.del_relacion, name='del_relacion'),
+    
     path('cargar/atributo/<int:individuo_id>', views.cargar_atributo, name='cargar_atributo'),
+    path('mod/atributo/<int:individuo_id>/<int:atributo_id>', views.cargar_atributo, name='mod_atributo'),
+    path('del/atributo/<int:atributo_id>', views.del_atributo, name='del_atributo'),
+
     path('cargar/sintoma/<int:individuo_id>', views.cargar_sintoma, name='cargar_sintoma'),
+    path('mod/sintoma/<int:individuo_id>/<int:sintoma_id>', views.cargar_sintoma, name='mod_sintoma'),
+    path('del/sintoma/<int:sintoma_id>', views.del_sintoma, name='del_sintoma'),
+
     path('cargar/geopos/<int:domicilio_id>', views.cargar_geoposicion, name='cargar_geoposicion'),
     #Reportes
     path('reporte/basico', views.reporte_basico, name='reporte_basico'),

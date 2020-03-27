@@ -141,7 +141,10 @@ class SeguimientoForm(forms.ModelForm):
     class Meta:
         model = Seguimiento
         fields= '__all__'
-        exclude = ('individuo', 'fecha')
+        exclude = ('individuo', )
+        widgets = {
+            'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
+        }
 
 class RelacionForm(forms.ModelForm):
     class Meta:

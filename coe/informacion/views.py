@@ -15,7 +15,7 @@ from background.tasks import crear_progress_link
 from .choices import TIPO_ESTADO, TIPO_CONDUCTA
 from .models import Archivo
 from .models import Vehiculo, ControlVehiculo, Origen
-from .models import Individuo
+from .models import Individuo, Relacion
 from .models import Seguimiento
 from .models import Domicilio, GeoPosicion
 from .models import Atributo, Sintoma
@@ -426,11 +426,14 @@ def cargar_situacion(request, individuo_id):
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Situacion", 'form': form, 'boton': "Cargar", }) 
 
 @permission_required('operadores.individuos')
-def cargar_seguimiento(request, individuo_id):
+def cargar_seguimiento(request, individuo_id, seguimiento_id=None):
+    seguimiento = None
+    if seguimiento_id:
+        seguimiento = Seguimiento.objects.get(pk=seguimiento_id)
     individuo = Individuo.objects.get(pk=individuo_id)
-    form = SeguimientoForm(initial={'individuo': individuo, })
+    form = SeguimientoForm(instance=seguimiento, initial={'individuo': individuo, })
     if request.method == "POST":
-        form = SeguimientoForm(request.POST)
+        form = SeguimientoForm(request.POST, instance=seguimiento)
         if form.is_valid():
             seguimiento = form.save(commit=False)
             seguimiento.individuo = individuo
@@ -439,11 +442,21 @@ def cargar_seguimiento(request, individuo_id):
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Seguimiento", 'form': form, 'boton': "Cargar", }) 
 
 @permission_required('operadores.individuos')
-def cargar_relacion(request, individuo_id):
+def del_seguimiento(request, seguimiento_id=None):
+    seguimiento = Seguimiento.objects.get(pk=seguimiento_id)
+    individuo = seguimiento.individuo
+    seguimiento.delete()
+    return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+
+@permission_required('operadores.individuos')
+def cargar_relacion(request, individuo_id, relacion_id=None):
+    relacion = None
+    if relacion_id:
+        relacion = Relacion.objects.get(pk=relacion_id)
     individuo = Individuo.objects.get(pk=individuo_id)
-    form = RelacionForm(initial={'individuo': individuo, })
+    form = RelacionForm(instance=relacion, initial={'individuo': individuo, })
     if request.method == "POST":
-        form = RelacionForm(request.POST)
+        form = RelacionForm(request.POST, instance=relacion)
         if form.is_valid():
             relacion = form.save(commit=False)
             relacion.individuo = individuo
@@ -452,10 +465,21 @@ def cargar_relacion(request, individuo_id):
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Relacion", 'form': form, 'boton': "Cargar", }) 
 
 @permission_required('operadores.individuos')
-def cargar_atributo(request, individuo_id):
-    form = AtributoForm()
+def del_relacion(request, relacion_id):
+    relacion = Relacion.objects.get(pk=relacion_id)
+    individuo = relacion.individuo
+    relacion.delete()
+    return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+
+#Atributos
+@permission_required('operadores.individuos')
+def cargar_atributo(request, individuo_id, atributo_id=None):
+    atributo = None
+    if atributo_id:
+        atributo = Atributo.objects.get(pk=atributo_id)
+    form = AtributoForm(instance=atributo)
     if request.method == "POST":
-        form = AtributoForm(request.POST)
+        form = AtributoForm(request.POST, instance=atributo)
         if form.is_valid():
             individuo = Individuo.objects.get(pk=individuo_id)
             sintoma = form.save(commit=False)
@@ -465,10 +489,21 @@ def cargar_atributo(request, individuo_id):
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Atributo", 'form': form, 'boton': "Cargar", })
 
 @permission_required('operadores.individuos')
-def cargar_sintoma(request, individuo_id):
-    form = SintomaForm()
+def del_atributo(request, atributo_id):
+    atributo = Atributo.objects.get(pk=atributo_id)
+    individuo = atributo.individuo
+    atributo.delete()
+    return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+
+#Sintomas
+@permission_required('operadores.individuos')
+def cargar_sintoma(request, individuo_id, sintoma_id=None):
+    sintoma = None
+    if sintoma_id:
+        sintoma = Sintoma.objects.get(pk=sintoma_id)
+    form = SintomaForm(instance=sintoma)
     if request.method == "POST":
-        form = SintomaForm(request.POST)
+        form = SintomaForm(request.POST, instance=sintoma)
         if form.is_valid():
             individuo = Individuo.objects.get(pk=individuo_id)
             sintoma = form.save(commit=False)
@@ -477,6 +512,14 @@ def cargar_sintoma(request, individuo_id):
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Sintoma", 'form': form, 'boton': "Cargar", })
 
+@permission_required('operadores.individuos')
+def del_sintoma(request, sintoma_id):
+    sintoma = Sintoma.objects.get(pk=sintoma_id)
+    individuo = sintoma.individuo
+    sintoma.delete()
+    return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+
+#GEOPOS
 @permission_required('operadores.individuos')
 def cargar_geoposicion(request, domicilio_id):
     domicilio = Domicilio.objects.get(pk=domicilio_id)
