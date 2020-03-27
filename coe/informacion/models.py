@@ -195,11 +195,11 @@ class Origen(models.Model):#Origen del Dato
 class Domicilio(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="domicilios")
     localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="domicilios_individuos")
-    calle = models.CharField('Calle', max_length=100, default='', blank=False)
-    numero = models.CharField('Numero', max_length=100, default='', blank=False)
-    aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
-    aislamiento = models.BooleanField(default=True)
+    calle = models.CharField('Calle', max_length=200)
+    numero = models.CharField('Numero', max_length=100)
+    aclaracion = models.CharField('Aclaraciones', max_length=1000, default='')
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    aislamiento = models.BooleanField('Separado/Aislamiento', default=False)
     class Meta:
         ordering = ['fecha', ]
     def __str__(self):

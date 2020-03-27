@@ -120,7 +120,7 @@ class DomicilioForm(forms.ModelForm):
     class Meta:
         model = Domicilio
         fields= '__all__'
-        exclude = ('individuo', 'fecha')
+        exclude = ('individuo', )
         widgets = {
             'localidad': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
         }
@@ -129,7 +129,10 @@ class SituacionForm(forms.ModelForm):
     class Meta:
         model = Situacion
         fields= '__all__'
-        exclude = ('individuo', 'fecha' )
+        exclude = ('individuo', )
+        widgets = {
+            'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
+        }
 
 class SeguimientoForm(forms.ModelForm):
     class Meta:
@@ -144,7 +147,7 @@ class RelacionForm(forms.ModelForm):
     class Meta:
         model = Relacion
         fields= '__all__'
-        exclude = ('individuo', 'fecha')
+        exclude = ('individuo', )
         widgets = {
             'relacionado': autocomplete.ModelSelect2(url='informacion:individuos-autocomplete'),
         }
@@ -153,7 +156,7 @@ class AtributoForm(forms.ModelForm):
     class Meta:
         model = Atributo
         fields= '__all__'
-        exclude = ('individuo', 'activo', 'newtipo', )
+        exclude = ('individuo', 'activo', )
         widgets = {
             'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
         }
@@ -162,7 +165,7 @@ class SintomaForm(forms.ModelForm):
     class Meta:
         model = Sintoma
         fields= '__all__'
-        exclude = ('individuo', 'newtipo', )
+        exclude = ('individuo', )
         widgets = {
             'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
         }

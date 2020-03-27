@@ -41,7 +41,7 @@ def relacion_vehiculo(created, instance, **kwargs):
 
 @receiver(post_save, sender=Domicilio)
 def relacion_domicilio(created, instance, **kwargs):
-    if created:
+    if created and not instance.aislamiento:#Que no sea sitio de aislamiento
         domicilios = Domicilio.objects.filter(
             localidad=instance.localidad,
             calle=instance.calle,
