@@ -90,7 +90,7 @@ def invertir_relacion(created, instance, **kwargs):
         individuo = instance.individuo
         situ_actual = individuo.situacion_actual()
         relacionado = instance.relacionado
-        if situ_actual.estado > relacionado.situacion_actual().estado:
+        if not relacionado.situacion_actual() or situ_actual.estado > relacionado.situacion_actual().estado:
             sit = Situacion()
             sit.individuo = relacionado
             if situ_actual.estado == 32:#Contacto Alto Riesgo            
