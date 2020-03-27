@@ -20,18 +20,18 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/popups.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/tareas.css' %}" />
 
+    <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
     <!-- Datatables -->
     {% if has_table %}
         <link rel="stylesheet" type="text/css" href="{% static 'css/datatables.min.css' %}" />
     {% endif %}
     
-    <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
-    <!-- Forms -->
     
+    <!-- Forms -->
     {% if form %}
         <link rel="stylesheet" type="text/css" href="{% static 'css/generic_form.css' %}" />
+        <!-- Date Picker -->
         <link rel="stylesheet" type="text/css" href="{% static 'css/jquery.datetimepicker.min.css' %}" />
-        <!-- Javascripts -->
         <script type="text/javascript" src="{% static 'js/jquery-ui-1.12.1.min.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/jquery.datetimepicker.full.min.js' %}"></script>
     {% endif %}
