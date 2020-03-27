@@ -1,8 +1,6 @@
 #Imports Python
 
 #Imports Django
-from django.db.models import Q
-from django.core.cache import cache
 from django.utils import timezone
 from django.dispatch import receiver
 from django.db.models.signals import post_save

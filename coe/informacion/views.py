@@ -353,7 +353,7 @@ def buscador_individuos(request):
 @permission_required('operadores.individuos')
 def lista_evaluar(request):
     evaluar = []
-    individuos = Individuo.objects.filter(situaciones__conducta='B')
+    individuos = Individuo.objects.filter(situaciones__conducta='B').distinct()
     individuos = individuos.select_related('nacionalidad', 'origen', 'destino', )
     individuos = individuos.prefetch_related('atributos', 'sintomas', 'situaciones', 'relaciones')
     individuos = individuos.prefetch_related('atributos', 'sintomas')

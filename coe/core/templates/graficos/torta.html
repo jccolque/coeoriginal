@@ -1,0 +1,32 @@
+{% load finanza_tags %}
+
+{% block content %}
+    <div id="piechart" style="width: 600px; height: 500px;"></div>
+{% endblock %}
+
+{% block custom_script %}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+
+        var data = google.visualization.arrayToDataTable([
+          ['Origen', 'Cantidad'],
+            {% agrupar_origenes asientos as origenes %}
+            {% for key, values in origenes.items %}
+                ['{{key}}', {{values}}],
+            {% endfor %}
+        ]);
+
+        var options = {
+          title: 'Detalle'
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+        chart.draw(data, options);
+      }
+    </script>
+{% endblock %}

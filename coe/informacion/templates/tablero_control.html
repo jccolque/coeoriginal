@@ -6,31 +6,62 @@
             <h2>Tablero de Situacion</h2>
         </div>
         <div class="row">
-        <div class="col-md-12">
-            <div class="col-sm-4">
-                <!--NACIONALIDAD -->
-                <table class="listado">
-                    <thead>
-                        <tr>
-                            <th>Nacionalidad</th>
-                            <th>Cantidad</th>
-                            <th>Ver Detalle</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for nac in nacionalidades %}
-                                <td>{{nac.nombre}}</th>
-                                <td>{{nac.cantidad}}</th>
-                                <td><a href="{% url 'informacion:tablero_control' %}" target="_blank">(Ver Detalle)</a></td>
+            <div class="col-md-12">
+                <div class="col-sm-4 nacionalidades">
+                    <!--NACIONALIDAD -->
+                    <table class="listado">
+                        <thead>
+                            <tr>
+                                <th>Nacionalidad</th>
+                                <th>Cantidad</th>
+                                <th>Ver Detalle</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {% for nac in nacionalidades %}
+                                    <td>{{nac.nombre}}</th>
+                                    <td>{{nac.cantidad}}</th>
+                                    <td><a href="{% url 'informacion:tablero_control' %}" target="_blank">(Ver Detalle)</a></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Situacion -->
+                <div class="col-sm-8">
+                    <div class="col-sm-4">
+                        <table class="listado">
+                            <thead>
+                                <tr>
+                                    <th>Estado</th>
+                                    <th>Cantidad</th>
+                                    <th>Ver Detalle</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for estado in estados %}
+                                        <td>{{estado.nombre}}</th>
+                                        <td>{{estado.cantidad}}</th>
+                                        <td><a href="{% url 'informacion:tablero_control' %}" target="_blank">(Ver Detalle)</a></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class"col-sm-8">
+                        {% include 'graficos/lineas.html' %}
+                    </div>
+                </div>
             </div>
-            <div class="col-sm-8">
-                
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <p>Llamados SAME: </p>
+                <p>seguimiento Epidemiologia: </p>
+                <p>Cuarentena Voluntaria: </p>
+                <p>Cuarentena Obligatoria: </p>
+                <p>Fallecidos: </p>
             </div>
-
         </div>
     </div>
 {% endblock %}
