@@ -544,7 +544,7 @@ def cargar_geoposicion(request, domicilio_id):
 @permission_required('operadores.reportes')
 def tablero_control(request):
     individuos = Individuo.objects.all()
-
+    
     return render(request, "tablero_control.html", {
     })
 
