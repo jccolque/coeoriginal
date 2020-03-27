@@ -90,9 +90,14 @@ def crear_tarea(request, tarea_id=None):
     return render(request, "extras/generic_form.html", {'titulo': "Crear Tarea", 'form': form, 'boton': "Crear", })
 
 @permission_required('operadores.menu_tareas')
-def eliminar_tarea(request, tarea_id):
+def cancelar_tarea(request, tarea_id):
     tarea = Tarea.objects.get(pk=tarea_id)
-    tarea.delete()
+    evento = EventoTarea()
+    evento.tarea = tarea
+    evento.accion = 'E'
+    evento.responsable = Responsable.objects.filter(operador=obtener_operador(request), tarea=tarea).first()
+    evento.detalle = "Se Cancelo la Tarea"
+    evento.save()
     return redirect('tareas:lista_tareas', )
 
 #Responsable

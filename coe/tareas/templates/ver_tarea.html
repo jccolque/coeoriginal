@@ -99,7 +99,7 @@
                             <li><a href="{% url 'tareas:mod_tarea' tarea_id=tarea.id  %}">Modificar Tarea</a></li>
                             <li><a href="{% url 'tareas:agregar_responsable' tarea_id=tarea.id  %}">Agregar Responsable</a></li>
                             <li><a href="{% url 'tareas:agregar_evento' tarea_id=tarea.id  %}">Agregar Evento</a></li>
-                            <li><a href="{% url 'tareas:eliminar_tarea' tarea_id=tarea.id  %}"><b>Eliminar Tarea</b></a></li>
+                            <li><a href="{% url 'tareas:cancelar_tarea' tarea_id=tarea.id  %}"><b>Cancelar Tarea</b></a></li>
                             <li><a href="{% url 'tareas:lista_tareas' %}">Volver a Lista de Tareas</a></li>
                             <li><a href="{% url 'tareas:menu' %}">Volver al Menu</a></li>
                         </ul>
