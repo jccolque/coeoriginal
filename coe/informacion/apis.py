@@ -2,6 +2,7 @@
 import json
 import logging
 #Imports de Django
+from django.utils import timezone
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
@@ -13,12 +14,10 @@ from .models import Individuo, AppData, Domicilio, Situacion
 @csrf_exempt
 @require_http_methods(["POST"])
 def registro_covidapp(request):
-    #Sistema de loggin
-    logger = logging.getLogger('apis')
+    data = None
     try:
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info('registro_covidapp:'+str(data))
         #Obtenemos datos basicos:
         nac = Nacionalidad.objects.filter(nombre__icontains="Argentina").first()
         #Agarramos el dni
@@ -73,7 +72,13 @@ def registro_covidapp(request):
             },
             safe=False
         )
-    except Exception as e: 
+    except Exception as e:
+        #Sistema de loggin - Guardamos error
+        logger = logging.getLogger('apis')
+        logger.info('\nregistro_covidapp: '+str(timezone.now())[0:16])
+        logger.info(request.body)
+        logger.info(e)
+        #Devolvemos falla
         return JsonResponse(
             {
                 "action":"registro",
