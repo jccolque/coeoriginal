@@ -14,14 +14,14 @@ class Grafico(models.Model):
     publico = models.BooleanField(default=False)
     def __str__(self):
         return self.nombre + ': ' + str(self.update)
-    def agregar_dato(self, update_date, nombre, ref, valor):
+    def agregar_dato(self, update_date, columna, fila, valor):
         #Eliminamos si tenemos que remplazar
-        self.datos.filter(nombre=nombre, ref=ref).delete()
+        self.datos.filter(columna=columna, fila=fila).delete()
         #Agregamos el dato:
         dato = Dato()
         dato.grafico = self
-        dato.nombre = nombre
-        dato.ref = ref
+        dato.columna = columna
+        dato.fila = fila
         dato.valor = valor
         dato.save()
         #Informamos que fue Actualizado
@@ -32,29 +32,29 @@ class Grafico(models.Model):
         if self.columnas:
             return ['Fecha'] + self.columnas.split(';')
         else:
-            return ['Fecha'] + list(self.datos.values_list('nombre', flat=True).distinct())
+            return ['Fecha'] + list(self.datos.values_list('columna', flat=True).distinct())
     def obtener_datos(self):
         #Obtenemos todo lo necesario para procesar
-        nombres = self.cabecera()[1:]
+        columnas = self.cabecera()[1:]
         #Referencias disponibles
-        refs = list(self.datos.values_list('ref', flat=True).distinct())
+        filas = list(self.datos.values_list('fila', flat=True).distinct())
         #Traemos todo el bloque de datos ya indexado
-        dict_datos = {(d.nombre,d.ref):d for d in self.datos.all()}
+        dict_datos = {(d.columna,d.fila):d for d in self.datos.all()}
         #Creamos nuestro vector
         datos = []
-        for ref in refs:#Por cada Fecha
+        for fila in filas:#Por cada Fecha
             #Generamos cada linea
             dato = []
-            for nombre in nombres:
-                dato.append(dict_datos[(nombre, ref)])
+            for columna in columnas:
+                dato.append(dict_datos[(columna, fila)])
             #Agregamos la linea
             datos.append(dato)
         return datos
 
 class Dato(models.Model):
     grafico = models.ForeignKey(Grafico, on_delete=models.CASCADE, related_name="datos")
-    nombre = models.CharField('Nombre', max_length=50)
-    ref = models.CharField('Referencia', max_length=100, null=True)
+    columna = models.CharField('columna', max_length=50)
+    fila = models.CharField('Fila', max_length=100, null=True)
     valor = models.DecimalField('Valor', max_digits=12, decimal_places=2)
     def __str__(self):
         return self.nombre + ' ref: ' + self.ref + ' Cant: ' + str(self.valor) 
