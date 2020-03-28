@@ -130,6 +130,7 @@ def encuesta_covidapp(request):
         geopos.domicilio = individuo.domicilio_actual
         geopos.latitud = data["latitud"]
         geopos.longitud = data["longitud"]
+        geopos.aclaracion = "AUTODIAGNOSTICO"
         geopos.save()
     logger.info('EXITO!')
     return JsonResponse(
