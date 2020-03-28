@@ -49,6 +49,7 @@ urlpatterns = [
     path('background/', include('background.urls')),
     #Apis
     path('covid19/registro', info_apis.registro_covidapp, name='registro_covidapp'),
+    path('covid19/encuesta', info_apis.encuesta_covidapp, name='encuesta_covidapp'),
 ]
 #Agregamos destinos de Archivos Estaticos
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

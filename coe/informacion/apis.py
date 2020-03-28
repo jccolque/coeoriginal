@@ -9,7 +9,8 @@ from django.views.decorators.http import require_http_methods
 #Imports del proyecto
 from georef.models import Nacionalidad, Localidad
 #Imports de la app
-from .models import Individuo, AppData, Domicilio, Situacion
+from .models import Individuo, AppData, Domicilio, GeoPosicion
+from .models import Atributo, Sintoma, Situacion
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -19,7 +20,6 @@ def registro_covidapp(request):
     logger = logging.getLogger('apis')
     logger.info('\nREGISTRO: '+str(timezone.now())[0:16])
     logger.info(request.body)
-
     try:
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
@@ -85,13 +85,78 @@ def registro_covidapp(request):
             safe=False
         )
 
-
-#        #Le creamos el estado Sospechoso-Evaluar (4-B)
-#        sit_actual = individuo.situacion_actual()
-#        if not sit_actual or (sit_actual and sit_actual.estado < 40):
-#            situacion = Situacion()
-#            situacion.individuo = individuo
-#            situacion.estado = 40
-#            situacion.conducta = 'C'
-#            situacion.aclaracion = "AUTODIAGNOSTICO"
-#            situacion.save()
+@csrf_exempt
+@require_http_methods(["POST"])
+def encuesta_covidapp(request):
+    data = None
+    #Registramos ingreso de info
+    logger = logging.getLogger('apis')
+    logger.info('\nENCUESTA: '+str(timezone.now())[0:16])
+    logger.info(request.body)
+    try:
+        #Recibimos el json
+        data = json.loads(request.body.decode("utf-8"))
+        #Agarramos el dni
+        num_doc = str(data["dni"]).upper()
+        #Buscamos al individuo en la db
+        individuo = Individuo.objects.get(num_doc=num_doc)
+        #Cargamos datos importantes:
+        #Atributos
+        Atributo.objects.filter(individuo=individuo, aclaracion="ENCUESTAAPP").delete()
+        if data["pais_riesgo"] or data["contacto_extranjero"]:
+            atributo = Atributo(individuo=individuo)
+            atributo.tipo = "CE"
+            atributo.aclaracion = "ENCUESTAAPP"
+            atributo.save()
+        #Sintomas
+        Sintoma.objects.filter(individuo=individuo, aclaracion="ENCUESTAAPP").delete()
+        if data["fiebre"]:
+            sintoma = Sintoma(individuo=individuo, tipo='FIE', aclaracion="ENCUESTAAPP")
+            sintoma.save()
+        if data["tos"]:
+            sintoma = Sintoma(individuo=individuo, tipo='TOS', aclaracion="ENCUESTAAPP")
+            sintoma.save()
+        if data["dif_respirar"]:
+            sintoma = Sintoma(individuo=individuo, tipo='DPR', aclaracion="ENCUESTAAPP")
+            sintoma.save()
+        #Resultado
+        individuo.appdata.estado = [0,'V','A','R'][data["riesgo"]]
+        individuo.appdata.save()
+        if not individuo.situacion_actual or (individuo.situacion_actual.estado < 40):
+            if individuo.appdata.estado in ['A', 'R']:
+                situacion = Situacion()
+                situacion.individuo = individuo
+                situacion.estado = 40
+                situacion.conducta = 'C'
+                situacion.aclaracion = "AUTODIAGNOSTICO"
+                situacion.save()
+        #Geoposicion
+        if data["latitud"] and data["longitud"]:
+            GeoPosicion.objects.filter(domicilio=individuo.domicilio_actual).delete()
+            geopos = GeoPosicion()
+            geopos.domicilio = individuo.domicilio_actual
+            geopos.latitud = data["latitud"]
+            geopos.longitud = data["longitud"]
+            geopos.save()
+        logger.info('EXITO!')
+        return JsonResponse(
+            {
+                "action":"encuesta",
+                "realizado": True,
+            },
+            safe=False
+        )
+    except Exception as e:
+        #Sistema de loggin - Guardamos error
+        logger.info('Fallo por:')
+        logger.info(e)
+        #Devolvemos falla
+        return JsonResponse(
+            {
+                "action":"encuesta",
+                "realizado": False,
+                "error": str(e),
+            },
+            status=400,
+            safe=False
+        )
