@@ -582,14 +582,25 @@ def tablero_control(request):
     for estado in TIPO_ESTADO:
         cant = Individuo.objects.filter(situacion_actual__estado=estado[0]).count()
         if cant > 0:
-            estados.append([estado[0], estado[1], cant])
+            #Obtenemos cant ultimas 24 horas
+            last_24 = Individuo.objects.filter(
+                situacion_actual__estado=estado[0],
+                situacion_actual__fecha__gt=timezone.now()-timedelta(hours=24)
+                ).count()
+            #Agregamos registro
+            estados.append([estado[0], estado[1], cant, last_24])
     #Conteo Conductas
     conductas = []
     for conducta in TIPO_CONDUCTA:
         cant = Individuo.objects.filter(situacion_actual__conducta=conducta[0]).count()
         if cant > 0:
-            conductas.append([conducta[0], conducta[1], cant])
-    
+            #Obtenemos cant ultimas 24 horas
+            last_24 = Individuo.objects.filter(
+                situacion_actual__conducta=conducta[0],
+                situacion_actual__fecha__gt=timezone.now()-timedelta(hours=24)
+                ).count()
+            #Agregamos registro
+            conductas.append([conducta[0], conducta[1], cant, last_24])
     #Fechas del Grafico
     dias = [timezone.now() - timedelta(days=x) for x in range(0,15)]
     dias = [dia.date() for dia in dias]
