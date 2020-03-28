@@ -121,6 +121,11 @@ class Individuo(models.Model):
             return [d for d in self.seguimientos.all()][-1]
         else:
             return None
+    def localidad_actual(self):
+        if self.domicilio_actual:
+            return self.domicilio_actual.localidad
+        else:
+            return None
     def get_foto(self):
         if self.fotografia:
             return self.fotografia.url
