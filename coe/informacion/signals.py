@@ -135,13 +135,15 @@ def afectar_situacion(created, instance, **kwargs):
                 sit.save()
 
 @receiver(post_save, sender=Domicilio)
-def domicilio_actual(instance, **kwargs):
-    if instance.actual:
+def domicilio_actual(created, instance, **kwargs):
+    if created:
         individuo = instance.individuo
-        Domicilio.objects.filter(individuo=individuo).exclude(pk=instance.id).update(actual=False)
+        individuo.domicilio_actual = instance
+        individuo.save()
 
 @receiver(post_save, sender=Situacion)
-def situacion_actual(instance, **kwargs):
-    if instance.actual:
+def situacion_actual(created, instance, **kwargs):
+    if created:
         individuo = instance.individuo
-        Situacion.objects.filter(individuo=individuo).exclude(pk=instance.id).update(actual=False)
+        individuo.situacion_actual = instance
+        individuo.save()

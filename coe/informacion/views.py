@@ -561,6 +561,8 @@ def cargar_geoposicion(request, domicilio_id):
     })
 
 #Reportes en el sistema
+from datetime import timedelta
+from django.utils import timezone
 from django.db.models import Count
 from georef.models import Nacionalidad
 from informacion.models import Situacion
@@ -583,6 +585,8 @@ def tablero_control(request):
         cant = Individuo.objects.filter(situacion_actual__conducta=conducta[0]).count()
         if cant > 0:
             conductas.append([conducta[0], conducta[1], cant])
+    #Grafico de Estados:
+    days = [timezone.now().date() -timedelta(days=x) for x in range(0,7)]
     #Entregamos el reporte
     return render(request, "tablero_control.html", {
         "nacionalidades": nacionalidades,

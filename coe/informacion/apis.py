@@ -48,15 +48,15 @@ def registro_covidapp(request):
             appdata = individuo.appdata
         #Procesamos los datos que si nos importan
         if not hasattr(individuo, 'telefono'):
-            individuo.telefono = data["telefono"]
+            individuo.telefono = str(data["telefono"])
         else:
-            appdata.telefono = data["telefono"]
+            appdata.telefono = str(data["telefono"])
         appdata.save()
         #Cargamos un nuevo domicilio:
         domicilio = Domicilio()
         domicilio.individuo = individuo
         domicilio.calle = data["direccion_calle"]
-        domicilio.numero = data["direccion_numero"]
+        domicilio.numero = str(data["direccion_numero"])
         #domicilio.localidad = data["localidad"]
         domicilio.localidad = Localidad.objects.first()
         domicilio.aclaracion = "AUTODIAGNOSTICO"

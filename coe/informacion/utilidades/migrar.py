@@ -1,15 +1,16 @@
-from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
-from .models import Atributo, TipoAtributo
-from .models import Sintoma, TipoSintoma
-from .models import Seguimiento
+from informacion.choices import TIPO_ATRIBUTO, TIPO_SINTOMA
+from informacion.models import Atributo, TipoAtributo
+from informacion.models import Sintoma, TipoSintoma
+from informacion.models import Seguimiento
 
 def unificar_atributos():
     old = TipoAtributo.objects.get(nombre='Mantener Seguimiento')
     new = TipoAtributo.objects.get(nombre='Vigilancia Epidemiologica')
+    #Cambiamos los que no van:
     for atrib in Atributo.objects.filter(tipo=old):
         atrib.tipo = new
         atrib.save()    
-
+    #Borramos los ingreso a la provincia, ahora son seguimientos > Cronologia
     for a in Atributo.objects.filter(tipo__nombre="Ingreso a la Provincia"):
         seg = Seguimiento()
         seg.individuo = a.individuo

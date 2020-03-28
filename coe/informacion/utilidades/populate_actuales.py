@@ -1,5 +1,5 @@
-from .models import Individuo
-from .models import Domicilio, Situacion
+from informacion.models import Individuo
+from informacion.models import Domicilio, Situacion
 
 def actuales():
     individuos_to_update = []
