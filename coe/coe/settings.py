@@ -181,15 +181,25 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
-        'file': {
+        'api_file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': 'archivos/logs/apis.txt',
         },
+        'signals_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'archivos/logs/signals.txt',
+        },
     },
     'loggers': {
         'apis': {
-            'handlers': ['file', ],
+            'handlers': ['api_file', ],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'signals': {
+            'handlers': ['signals_file', ],
             'level': 'INFO',
             'propagate': True,
         },

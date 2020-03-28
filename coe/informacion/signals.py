@@ -1,5 +1,5 @@
 #Imports Python
-
+import logging
 #Imports Django
 from django.utils import timezone
 from django.dispatch import receiver
@@ -10,6 +10,9 @@ from dateutil.relativedelta import relativedelta
 from .models import Origen
 from .models import Individuo, Domicilio, Situacion, Relacion, Seguimiento
 from .models import Atributo
+
+#Logger
+logger = logging.getLogger('signals')
 
 #Definimos nuestra señales
 @receiver(post_save, sender=Individuo)
@@ -38,6 +41,13 @@ def relacion_vehiculo(created, instance, **kwargs):
             relacion.relacionado = individuo
             relacion.aclaracion = "Mismo Vehiculo-Mismo Control"
             relacion.save()
+
+@receiver(post_save, sender=Domicilio)
+def domicilio_actual(created, instance, **kwargs):
+    if created:
+        individuo = instance.individuo
+        individuo.domicilio_actual = instance
+        individuo.save()
 
 @receiver(post_save, sender=Domicilio)
 def relacion_domicilio(created, instance, **kwargs):
@@ -75,29 +85,6 @@ def invertir_relacion(created, instance, **kwargs):
         relacion.aclaracion = instance.aclaracion
         relacion.save()
 
-@receiver(post_save, sender=Relacion)
-def relacionar_situacion(created, instance, **kwargs):
-    #Creamos la relacion inversa
-    if created:
-        individuo = instance.individuo
-        situ_actual = individuo.situacion_actual
-        relacionado = instance.relacionado
-        #Si no tenia le creamos
-        if not relacionado.situacion_actual or (situ_actual.estado > relacionado.situacion_actual.estado):
-            sit = Situacion()
-            sit.individuo = relacionado
-            sit.conducta = 'C'
-            if situ_actual.estado == 32:#Contacto Alto Riesgo            
-                sit.estado = 31
-            if situ_actual.estado == 40:#Sospechoso
-                sit.estado = 32
-                sit.conducta = 'D'
-            if situ_actual.estado == 50:#Confirmado
-                sit.estado = 40
-                sit.conducta = 'D'
-            sit.aclaracion = "Relacion Detectada por el sistema"
-            sit.save()
-
 @receiver(post_save, sender=Atributo)
 def poner_en_seguimiento(created, instance, **kwargs):
     if created and (instance.tipo == "VE"):
@@ -105,6 +92,13 @@ def poner_en_seguimiento(created, instance, **kwargs):
         seguimiento.individuo = instance.individuo
         seguimiento.aclaracion = "Agregado Atributo en el sistema"
         seguimiento.save()
+
+@receiver(post_save, sender=Situacion)
+def situacion_actual(created, instance, **kwargs):
+    if created:
+        individuo = instance.individuo
+        individuo.situacion_actual = instance
+        individuo.save()
 
 #Evolucionamos Estado segun relaciones
 @receiver(post_save, sender=Situacion)
@@ -134,16 +128,25 @@ def afectar_situacion(created, instance, **kwargs):
                 sit.aclaracion = "Detectado por sistema, Relacionado con: " + individuo.num_doc
                 sit.save()
 
-@receiver(post_save, sender=Domicilio)
-def domicilio_actual(created, instance, **kwargs):
+@receiver(post_save, sender=Relacion)
+def relacionar_situacion(created, instance, **kwargs):
+    #Creamos la relacion inversa
     if created:
         individuo = instance.individuo
-        individuo.domicilio_actual = instance
-        individuo.save()
-
-@receiver(post_save, sender=Situacion)
-def situacion_actual(created, instance, **kwargs):
-    if created:
-        individuo = instance.individuo
-        individuo.situacion_actual = instance
-        individuo.save()
+        situ_actual = individuo.situacion_actual
+        relacionado = instance.relacionado
+        #Si no tenia le creamos
+        if not relacionado.situacion_actual or (situ_actual.estado > relacionado.situacion_actual.estado):
+            sit = Situacion()
+            sit.individuo = relacionado
+            sit.conducta = 'C'
+            if situ_actual.estado == 32:#Contacto Alto Riesgo            
+                sit.estado = 31
+            if situ_actual.estado == 40:#Sospechoso
+                sit.estado = 32
+                sit.conducta = 'D'
+            if situ_actual.estado == 50:#Confirmado
+                sit.estado = 40
+                sit.conducta = 'D'
+            sit.aclaracion = "Relacion Detectada por el sistema"
+            sit.save()

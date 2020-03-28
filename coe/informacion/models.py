@@ -90,14 +90,14 @@ class Individuo(models.Model):
     fecha_nacimiento = models.DateField(verbose_name="Fecha de Nacimiento", null=True, blank=True)
     telefono = models.CharField('Telefono', max_length=50, default='+549388', null=True, blank=True)
     email = models.EmailField('Correo Electronico', null=True, blank=True)#Enviar mails
-    nacionalidad = models.ForeignKey(Nacionalidad, on_delete=models.CASCADE, related_name="individuos")
-    origen = models.ForeignKey(Nacionalidad, on_delete=models.CASCADE, null=True, blank=True, related_name="individuos_origen")
-    destino = models.ForeignKey(Localidad, on_delete=models.CASCADE, null=True, blank=True, related_name="individuos_destino")
+    nacionalidad = models.ForeignKey(Nacionalidad, on_delete=models.SET_NULL, related_name="individuos")
+    origen = models.ForeignKey(Nacionalidad, on_delete=models.SET_NULL, null=True, blank=True, related_name="individuos_origen")
+    destino = models.ForeignKey(Localidad, on_delete=models.SET_NULL, null=True, blank=True, related_name="individuos_destino")
     observaciones = HTMLField(null=True, blank=True)
     fotografia = models.FileField('Fotografia', upload_to='individuos/', null=True, blank=True)
     #Actuales
-    situacion_actual = models.OneToOneField('Situacion', on_delete=models.CASCADE, related_name="situacion_actual", null=True, blank=True)
-    domicilio_actual = models.OneToOneField('Domicilio', on_delete=models.CASCADE, related_name="domicilio_actual", null=True, blank=True)
+    situacion_actual = models.OneToOneField('Situacion', on_delete=models.SET_NULL, related_name="situacion_actual", null=True, blank=True)
+    domicilio_actual = models.OneToOneField('Domicilio', on_delete=models.SET_NULL, related_name="domicilio_actual", null=True, blank=True)
     #Funciones
     def __str__(self):
         return str(self.num_doc) + ': ' + self.apellidos + ', ' + self.nombres
@@ -191,6 +191,7 @@ class GeoPosicion(models.Model):
             "fecha": str(self.fecha),
         }
 
+#Extras
 class Situacion(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="situaciones")
     estado = models.IntegerField('Estado de Seguimiento', choices=TIPO_ESTADO, default=11)
@@ -338,15 +339,14 @@ class Permiso(models.Model):
 
 #Señales
 from .signals import estado_inicial
+from .signals import poner_en_seguimiento
+from .signals import situacion_actual
 from .signals import domicilio_actual
 from .signals import relacion_domicilio
 from .signals import invertir_relacion
 from .signals import relacion_vehiculo
-from .signals import situacion_actual
 from .signals import relacionar_situacion
 from .signals import afectar_situacion
-from .signals import poner_en_seguimiento
-
 
 #Auditoria
 auditlog.register(Archivo)
