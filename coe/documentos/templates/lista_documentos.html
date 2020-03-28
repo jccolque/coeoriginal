@@ -17,6 +17,7 @@
                 <thead>
                     <tr>
                         <th>SubComite</th>
+                        <th>Estado</th>
                         <th>Nombre</th>
                         <th>Tipo</th>
                         <th>Autor</th>
@@ -35,10 +36,12 @@
                             </td>
                             <td>
                                 {% if documento.publico %}
-                                    <img class="icons" src="/static/img/icons/public.png" alt="Es Publico">
-                                {% endif %}                        
-                                {{documento.nombre}}
+                                    <img class="iconsx2" src="/static/img/icons/public.png" alt="Es Publico">
+                                {% else %}
+                                    <img class="iconsx2" src="/static/img/icons/private.png" alt="Es Privado">
+                                {% endif %}
                             </td>
+                            <td>{{documento.nombre}}</td>
                             <td>{{documento.get_tipo_display}}</td>
                             <td>{{documento.autor}}</td>
                             <td>{{documento.ultima_version.fecha}}</td>
