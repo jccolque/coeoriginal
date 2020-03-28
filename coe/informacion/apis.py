@@ -112,7 +112,7 @@ def encuesta_covidapp(request):
         sintoma = Sintoma(individuo=individuo, tipo='DPR', aclaracion="ENCUESTAAPP")
         sintoma.save()
     #Resultado
-    individuo.appdata.estado = [0,'V','A','R'][data["riesgo"]]
+    individuo.appdata.estado = [0,'R','A','V'][data["riesgo"]]
     individuo.appdata.save()
     #Cargamos nueva situacion
     if data["riesgo"] > 1:
