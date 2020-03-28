@@ -1,5 +1,5 @@
 {% block content %}
-    <div id="piechart" style="width: 600px; height: 500px;"></div>
+    <div id="{{graf_datos.nombre}}" style="width: 600px; height: 500px;"></div>
 {% endblock %}
 
 {% block custom_script %}
@@ -11,19 +11,19 @@
       function drawChart() {
 
         var data = google.visualization.arrayToDataTable([
-          ['Origen', 'Cantidad'],
-            {% agrupar_origenes asientos as origenes %}
-            {% for key, values in origenes.items %}
-                ['{{key}}', {{values}}],
-            {% endfor %}
+          ['Task', 'Hours per Day'],
+          ['Work',     11],
+          ['Eat',      2],
+          ['Commute',  2],
+          ['Watch TV', 2],
+          ['Sleep',    7]
         ]);
 
         var options = {
-          title: 'Detalle'
+          title: '{{graf_datos.nombre}}'
         };
 
-        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-
+        var chart = new google.visualization.PieChart(document.getElementById('{{graf_datos.nombre}}'));
         chart.draw(data, options);
       }
     </script>

@@ -4,6 +4,7 @@ from django.urls import path
 #Import de modulos personales
 from . import views
 from . import autocomplete
+from . import apis as info_apis
 
 #Definimos paths de la app
 app_name = 'informacion'
@@ -75,12 +76,12 @@ urlpatterns = [
     #Reportes
     path('tablero', views.tablero_control, name='tablero_control'),
     path('reporte/basico', views.reporte_basico, name='reporte_basico'),
-    #Autocomplete
-    #url(r'^sintomas-autocomplete/$', autocomplete.SintomaAutocomplete.as_view(), name='sintomas-autocomplete',),
-    #url(r'^atributos-autocomplete/$', autocomplete.AtributoAutocomplete.as_view(), name='atributos-autocomplete',),
-    url(r'^individuos-autocomplete/$', autocomplete.IndividuosAutocomplete.as_view(), name='individuos-autocomplete',),
     #Carga Masiva
     path('upload/epidemiologia', views.subir_epidemiologia, name='subir_epidemiologia'),
     path('upload/padron/individuos/', views.upload_padron_individuos, name='upload_padron_individuos'),
     path('upload/padron/domicilios/', views.upload_padron_domicilios, name='upload_padron_domicilios'),
+    #Autocomplete
+    #url(r'^sintomas-autocomplete/$', autocomplete.SintomaAutocomplete.as_view(), name='sintomas-autocomplete',),
+    #url(r'^atributos-autocomplete/$', autocomplete.AtributoAutocomplete.as_view(), name='atributos-autocomplete',),
+    url(r'^individuos-autocomplete/$', autocomplete.IndividuosAutocomplete.as_view(), name='individuos-autocomplete',),
 ]

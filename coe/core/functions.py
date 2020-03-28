@@ -23,3 +23,6 @@ def delete_tags(texto):
   cleanr = re.compile('<.*?>')
   cleantext = re.sub(cleanr, '', texto)
   return cleantext
+
+def date2str(fecha):
+    return str(fecha)[8:10] + '/' + str(fecha)[5:7]

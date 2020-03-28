@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'actas.apps.ActasConfig',
     'documentos.apps.DocumentosConfig',
     'background.apps.BackgroundConfig',
+    'graficos.apps.GraficosConfig',
 ]
 
 MIDDLEWARE = [

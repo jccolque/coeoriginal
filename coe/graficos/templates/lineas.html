@@ -1,0 +1,36 @@
+{% block content %}
+    <div id="chart-{{graf_datos.nombre}}" style="width: 95%%;"></div>
+{% endblock %}
+
+{% block custom_script %}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                
+                {{graf_datos.cabecera}}
+                
+                ['21/03',  10000, 15,  5,  10,  1],
+                ['22/03',  1700, 30,  9,  50,  1],
+                ['23/03',  1500, 70,  16,  200,  3],
+                ['24/03',  1350, 100,  24,  500,  4],
+                ['25/03',  1000, 150,  37,  1000,  9],
+                ['26/03',  900, 200,  55,  1900,  17],
+                ['27/03',  1390, 450,  89,  4000,  55]
+            ]);
+
+            var options = {
+                title: 'Company Performance',
+                curveType: 'function',
+                legend: { position: 'bottom' 
+            }
+        };
+
+            var chart = new google.visualization.LineChart(document.getElementById('chart-{{graf_datos.nombre}}'));
+            chart.draw(data, options);
+        }
+    </script>
+{% endblock %}

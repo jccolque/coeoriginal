@@ -7,8 +7,8 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                <div class="col-sm-4 nacionalidades">
-                    <!--NACIONALIDAD -->
+                <div class="col-sm-3 nacionalidades">
+                    <h3>Individuos por Nacionalidad:</h3>
                     <table class="listado">
                         <thead>
                             <tr>
@@ -28,46 +28,60 @@
                     </table>
                 </div>
                 <!-- Situacion -->
-                <div class="col-sm-8">
-                    <!--ESTADO -->
-                    <div class="col-sm-6">
-                        <table class="listado">
-                            <thead>
-                                <tr>
-                                    <th>Estado</th>
-                                    <th>Cantidad</th>
-                                    <th>Ver Detalle</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for estado in estados %}
-                                        <td>{{estado.1}}</th>
-                                        <td>{{estado.2}}</th>
-                                        <td><a href="{% url 'informacion:lista_estado' estado=estado.0 %}" target="_blank">(Ver Detalle)</a></td>
+                <div class="col-sm-9">
+                    <h3>Individuos por Estados:</h3>
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <table class="listado">
+                                <thead>
+                                    <tr>
+                                        <th>Estado</th>
+                                        <th>Cantidad</th>
+                                        <th>Ultimas 24hrs</th>
+                                        <th>Ver Detalle</th>
                                     </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {% for estado in estados %}
+                                            <td>{{estado.1}}</th>
+                                            <td>{{estado.2}}</th>
+                                            <td>{{estado.3}}</th>
+                                            <td><a href="{% url 'informacion:lista_estado' estado=estado.0 %}" target="_blank">(Ver Detalle)</a></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-sm-7">
+                            {% include 'lineas.html' with graf_datos=graf_estados %}
+                        </div>
                     </div>
-                    <!-- CONDUCTA -->
-                    <div class="col-sm-6">
-                        <table class="listado">
-                            <thead>
-                                <tr>
-                                    <th>Estado</th>
-                                    <th>Cantidad</th>
-                                    <th>Ver Detalle</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for conducta in conductas %}
-                                        <td>{{conducta.1}}</th>
-                                        <td>{{conducta.2}}</th>
-                                        <td><a href="{% url 'informacion:lista_conducta' conducta=conducta.0 %}" target="_blank">(Ver Detalle)</a></td>
+                    <div class="row">
+                        <h3>Individuos por Conductas:</h3>
+                        <div class="col-sm-5">
+                            <table class="listado">
+                                <thead>
+                                    <tr>
+                                        <th>Estado</th>
+                                        <th>Total</th>
+                                        <th>Ultimas 24hrs</th>
+                                        <th>Ver Detalle</th>
                                     </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {% for conducta in conductas %}
+                                            <td>{{conducta.1}}</th>
+                                            <td>{{conducta.2}}</th>
+                                            <td>{{conducta.3}}</th>
+                                            <td><a href="{% url 'informacion:lista_conducta' conducta=conducta.0 %}" target="_blank">(Ver Detalle)</a></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-sm-7">
+                            {% include 'lineas.html' with graf_datos=graf_conductas %}
+                        </div>
                     </div>
                 </div>
             </div>

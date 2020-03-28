@@ -22,8 +22,7 @@ from django.contrib.auth import views as auth_views
 from django.conf import settings
 #Imports Extras
 import debug_toolbar
-#Imports del proyecto
-from informacion import apis as info_apis
+
 #Path
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -47,9 +46,8 @@ urlpatterns = [
     path('documentos/', include('documentos.urls')),
     path('inscripciones/', include('inscripciones.urls')),
     path('background/', include('background.urls')),
-    #Apis
-    path('covid19/registro', info_apis.registro_covidapp, name='registro_covidapp'),
-    path('covid19/encuesta', info_apis.encuesta_covidapp, name='encuesta_covidapp'),
+    #APIS:
+    path('covid19/', include('informacion.api_urls')),
 ]
 #Agregamos destinos de Archivos Estaticos
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

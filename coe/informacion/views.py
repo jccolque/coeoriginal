@@ -562,10 +562,13 @@ def cargar_geoposicion(request, domicilio_id):
 
 #Reportes en el sistema
 from datetime import timedelta
-from django.utils import timezone
 from django.db.models import Count
+
+from core.functions import date2str
 from georef.models import Nacionalidad
-from informacion.models import Situacion
+from graficos.functions import obtener_grafico
+
+from .models import Situacion
 @permission_required('operadores.reportes')
 def tablero_control(request):
     #Conteo por Nacionalidades
@@ -585,13 +588,30 @@ def tablero_control(request):
         cant = Individuo.objects.filter(situacion_actual__conducta=conducta[0]).count()
         if cant > 0:
             conductas.append([conducta[0], conducta[1], cant])
-    #Grafico de Estados:
-    days = [timezone.now().date() -timedelta(days=x) for x in range(0,7)]
+    
+    #Fechas del Grafico
+    dias = [timezone.now() - timedelta(days=x) for x in range(0,15)]
+    dias = [dia.date() for dia in dias]
+    dias.reverse()
+    #Obtenemos o Generamos Grafico de Estados:
+    graf_estados = obtener_grafico('graf_estados', 'LIN')
+    for dia in dias:
+        if not graf_estados.update or ( graf_estados.update < dia ):
+            for estado in TIPO_ESTADO:
+                cant = Individuo.objects.filter(situacion_actual__estado=estado[0]).count()
+                graf_estados.agregar_dato(estado[1], date2str(dia), cant)
+    #Obtenemos o generamos grafico de Conductas
+    graf_conductas = obtener_grafico('graf_conductas', 'LIN')
+    for dia in dias:
+        if not graf_conductas.update or ( graf_conductas.update < dia ):
+            for conducta in TIPO_CONDUCTA:
+                cant = Individuo.objects.filter(situacion_actual__conducta=conducta[0]).count()
+                graf_conductas.agregar_dato(conducta[1], date2str(dia), cant)
     #Entregamos el reporte
     return render(request, "tablero_control.html", {
         "nacionalidades": nacionalidades,
-        "estados": estados,
-        "conductas": conductas,
+        "estados": estados, "graf_estados": graf_estados,
+        "conductas": conductas, "graf_conductas": graf_conductas,
     })
 
 #IMPORTANTE: CORREGIR QUE SOLO IMPORTE EL ULTIMO ESTADO

@@ -10,7 +10,7 @@ from django.views.decorators.http import require_http_methods
 from georef.models import Nacionalidad, Localidad
 #Imports de la app
 from .models import Individuo, AppData, Domicilio, GeoPosicion
-from .models import Atributo, Sintoma, Situacion
+from .models import Atributo, Sintoma, Situacion, Seguimiento
 #Definimos logger
 logger = logging.getLogger('apis')
 
@@ -136,6 +136,45 @@ def encuesta_covidapp(request):
     return JsonResponse(
         {
             "action":"encuesta",
+            "realizado": True,
+        },
+        safe=False
+    )
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def temperatura_covidapp(request):
+    data = None
+    #Registramos ingreso de info
+    logger.info('\nENCUESTA: '+str(timezone.now())[0:16])
+    logger.info(request.body)
+    #Recibimos el json
+    data = json.loads(request.body.decode("utf-8"))
+    #Agarramos el dni
+    num_doc = str(data["dni"]).upper()
+    #Buscamos al individuo en la db
+    try:
+        individuo = Individuo.objects.get(num_doc=num_doc)
+    except Individuo.DoesNotExist:
+        return JsonResponse(
+        {
+            "action":"temperatura",
+            "realizado": False,
+            "error": "No existe el Individuo",
+        },
+        safe=False,
+        status=400,
+    )
+    #Cargamos datos importantes:
+    seguimiento = Seguimiento()
+    seguimiento.individuo = individuo
+    seguimiento.tipo = 'A'
+    seguimiento.aclaracion = "AUTODIAGNOSTICO - Temp:" + str(data["temperatura"])
+    seguimiento.save()
+    logger.info('EXITO!')
+    return JsonResponse(
+        {
+            "action":"temperatura",
             "realizado": True,
         },
         safe=False
