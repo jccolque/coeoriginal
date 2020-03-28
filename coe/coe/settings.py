@@ -207,6 +207,7 @@ LOGGING = {
     },
 }
 
+
 #APIS
 GEOPOSITION_GOOGLE_MAPS_API_KEY = ''
 

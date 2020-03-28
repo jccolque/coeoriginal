@@ -85,6 +85,8 @@ class Operador(models.Model):
             ("archivos", "Puede Crear Archivos."),
             ("vehiculos", "Puede Crear/Modificar Informacion de Vehiculo."),
             ("individuos", "Puede Crear/Modificar Informacion de Individuos."),
+            #Graficos:
+            ("menu_graficos", "Puede Administrar los Graficos"),
             #Actas:
             ("menu_actas", "Puede Acceder al menu de Actas"),
             #Documentos

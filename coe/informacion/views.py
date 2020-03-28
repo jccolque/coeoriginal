@@ -1,4 +1,6 @@
 #Imports Django
+from datetime import timedelta
+from django.db.models import Count
 from django.db.models import Q
 from django.utils import timezone
 from django.http import HttpResponse
@@ -8,15 +10,19 @@ from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
 from coe.settings import GEOPOSITION_GOOGLE_MAPS_API_KEY
 from core.decoradores import superuser_required
+from core.functions import date2str
+from georef.models import Nacionalidad
 from core.forms import SearchForm
 from operadores.functions import obtener_operador
 from background.tasks import crear_progress_link
+from graficos.functions import obtener_grafico
 #imports de la app
 from .choices import TIPO_ESTADO, TIPO_CONDUCTA
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
 from .models import Archivo
 from .models import Vehiculo, ControlVehiculo, Origen
 from .models import Individuo, Relacion
+from .models import Situacion
 from .models import Seguimiento
 from .models import Domicilio, GeoPosicion
 from .models import Atributo, Sintoma
@@ -105,7 +111,10 @@ def archivos_pendientes(request, procesado=None):
             archivos = archivos.filter(procesado=True)
         else: 
             archivos = archivos.filter(procesado=False)
-    return render(request, 'archivos_pendientes.html', {'archivos': archivos,})
+    return render(request, 'archivos_pendientes.html', {
+        'archivos': archivos,
+        'has_table': True,
+    })
 
 @permission_required('operadores.archivos')
 def ver_archivo(request, archivo_id):
@@ -561,14 +570,6 @@ def cargar_geoposicion(request, domicilio_id):
     })
 
 #Reportes en el sistema
-from datetime import timedelta
-from django.db.models import Count
-
-from core.functions import date2str
-from georef.models import Nacionalidad
-from graficos.functions import obtener_grafico
-
-from .models import Situacion
 @permission_required('operadores.reportes')
 def tablero_control(request):
     #Conteo por Nacionalidades
@@ -594,19 +595,27 @@ def tablero_control(request):
     dias = [dia.date() for dia in dias]
     dias.reverse()
     #Obtenemos o Generamos Grafico de Estados:
-    graf_estados = obtener_grafico('graf_estados', 'LIN')
+    #Traemos inviduos con optimizacion de campos
+    individuos = Individuo.objects.exclude(situacion_actual=None)
+    individuos = individuos.select_related('situacion_actual')
+    #Procesamos info
+    graf_estados = obtener_grafico('graf_estados', 'Grafico Acumulativo de Estados', 'L')
     for dia in dias:
         if not graf_estados.update or ( graf_estados.update < dia ):
             for estado in TIPO_ESTADO:
-                cant = Individuo.objects.filter(situacion_actual__estado=estado[0]).count()
-                graf_estados.agregar_dato(estado[1], date2str(dia), cant)
+                cant = individuos.filter(
+                    situacion_actual__estado=estado[0],
+                    situacion_actual__fecha__date__lt=dia).count()
+                graf_estados.agregar_dato(dia, estado[1], date2str(dia), cant)
     #Obtenemos o generamos grafico de Conductas
-    graf_conductas = obtener_grafico('graf_conductas', 'LIN')
+    graf_conductas = obtener_grafico('graf_conductas', 'Grafico Acumulativo de Conductas', 'L')
     for dia in dias:
         if not graf_conductas.update or ( graf_conductas.update < dia ):
             for conducta in TIPO_CONDUCTA:
-                cant = Individuo.objects.filter(situacion_actual__conducta=conducta[0]).count()
-                graf_conductas.agregar_dato(conducta[1], date2str(dia), cant)
+                cant = individuos.filter(
+                    situacion_actual__conducta=conducta[0],
+                    situacion_actual__fecha__date__lt=dia).count()
+                graf_conductas.agregar_dato(dia, conducta[1], date2str(dia), cant)
     #Entregamos el reporte
     return render(request, "tablero_control.html", {
         "nacionalidades": nacionalidades,

@@ -1,0 +1,24 @@
+{% extends 'base_graficos.html' %}
+
+{% load seguridad_tags%}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">        
+                    <h1>Menu Graficos:</h1>
+                    <div class="col-md-8">
+                        <ul class="menu_botones">
+                            <li><a href="{% url 'graficos:lista_graficos'  %}">Lista de Graficos</a></li>
+                            <li><a href="{% url 'graficos:crear_grafico'  %}">Crear Grafico</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        {% include 'users/info_user.html' %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}
