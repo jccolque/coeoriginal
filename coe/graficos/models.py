@@ -37,7 +37,7 @@ class Grafico(models.Model):
         #Obtenemos todo lo necesario para procesar
         columnas = self.cabecera()[1:]
         #Referencias disponibles
-        filas = list(self.datos.values_list('fila', flat=True).distinct())
+        filas = list(self.datos.order_by('id').values_list('fila', flat=True).distinct())
         #Traemos todo el bloque de datos ya indexado
         dict_datos = {(d.columna,d.fila):d for d in self.datos.all()}
         #Creamos nuestro vector
@@ -57,5 +57,5 @@ class Dato(models.Model):
     fila = models.CharField('Fila', max_length=100, null=True)
     valor = models.DecimalField('Valor', max_digits=12, decimal_places=2)
     def __str__(self):
-        return self.nombre + ' ref: ' + self.ref + ' Cant: ' + str(self.valor) 
+        return self.fila + '-' + self.columna + ' Cant: ' + str(self.valor) 
 
