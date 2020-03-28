@@ -248,7 +248,7 @@ def cargar_individuo(request, control_id=None, individuo_id=None, num_doc=None):
     individuo = None
     if individuo_id:#Si manda individuo es para modificar
         individuo = Individuo.objects.get(pk=individuo_id)
-        domicilio_actual = individuo.domicilio_actual()
+        domicilio_actual = individuo.domicilio_actual
         if domicilio_actual:
             form = IndividuoForm(
                 instance=individuo,
@@ -350,18 +350,27 @@ def buscador_individuos(request):
             })
     return render(request, "extras/generic_form.html", {'titulo': "Buscador de Individuos", 'form': form, 'boton': "Buscar", })
 
+#Listas:
 @permission_required('operadores.individuos')
-def lista_evaluar(request):
-    evaluar = []
-    individuos = Individuo.objects.filter(situaciones__conducta='B').distinct()
+def lista_nacionalidad(request, nacionalidad_id):
+    individuos = Individuo.objects.filter(nacionalidad__id=nacionalidad_id)
     individuos = individuos.select_related('nacionalidad', 'origen', 'destino', )
     individuos = individuos.prefetch_related('atributos', 'sintomas', 'situaciones', 'relaciones')
     individuos = individuos.prefetch_related('atributos', 'sintomas')
-    for individuo in individuos:
-        if individuo.situacion_actual().conducta == 'B':
-            evaluar.append(individuo)
     return render(request, "lista_individuos.html", {
-        'individuos': evaluar,
+        'individuos': individuos,
+        'has_table': True,
+    })
+
+@permission_required('operadores.individuos')
+def lista_evaluar(request):
+    evaluar = []
+    individuos = Individuo.objects.filter(situacion_actual__conducta='B')
+    individuos = individuos.select_related('nacionalidad', 'origen', 'destino', )
+    individuos = individuos.prefetch_related('atributos', 'sintomas', 'situaciones', 'relaciones')
+    individuos = individuos.prefetch_related('atributos', 'sintomas')
+    return render(request, "lista_individuos.html", {
+        'individuos': individuos,
         'has_table': True,
     })
 
@@ -541,11 +550,33 @@ def cargar_geoposicion(request, domicilio_id):
     })
 
 #Reportes en el sistema
+from django.db.models import Count
+from georef.models import Nacionalidad
+from informacion.models import Situacion
 @permission_required('operadores.reportes')
 def tablero_control(request):
-    individuos = Individuo.objects.all()
-    
+    #Conteo por Nacionalidades
+    nacionalidades = Nacionalidad.objects.annotate(cantidad=Count('individuos'))
+    nacionalidades = nacionalidades.exclude(cantidad=0)
+    nacionalidades = nacionalidades.order_by('-cantidad')
+    nacionalidades = nacionalidades[:10]
+    #Conteo de estados
+    estados = []
+    for estado in TIPO_ESTADO:
+        cant = Individuo.objects.filter(situacion_actual__estado=estado[0]).count()
+        if cant > 0:
+            estados.append([estado[1], cant])
+    #Conteo Conductas
+    conductas = []
+    for conducta in TIPO_CONDUCTA:
+        cant = Individuo.objects.filter(situacion_actual__conducta=conducta[0]).count()
+        if cant > 0:
+            conductas.append([conducta[1], cant])
+    #Entregamos el reporte
     return render(request, "tablero_control.html", {
+        "nacionalidades": nacionalidades,
+        "estados": estados,
+        "conductas": conductas,
     })
 
 #IMPORTANTE: CORREGIR QUE SOLO IMPORTE EL ULTIMO ESTADO

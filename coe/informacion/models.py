@@ -95,6 +95,10 @@ class Individuo(models.Model):
     destino = models.ForeignKey(Localidad, on_delete=models.CASCADE, null=True, blank=True, related_name="individuos_destino")
     observaciones = HTMLField(null=True, blank=True)
     fotografia = models.FileField('Fotografia', upload_to='individuos/', null=True, blank=True)
+    #Actuales
+    situacion_actual = models.OneToOneField('Situacion', on_delete=models.CASCADE, related_name="situacion_actual", null=True, blank=True)
+    domicilio_actual = models.OneToOneField('Domicilio', on_delete=models.CASCADE, related_name="domicilio_actual", null=True, blank=True)
+    #Funciones
     def __str__(self):
         return str(self.num_doc) + ': ' + self.apellidos + ', ' + self.nombres
     def as_dict(self):
@@ -112,23 +116,6 @@ class Individuo(models.Model):
             'destino': self.destino,
             'observaciones': self.observaciones,
         }
-    def situacion_actual(self):
-        if self.situaciones.all():
-            return [s for s in self.situaciones.all()][-1]
-        else:
-            sit = Situacion(individuo=self, aclaracion="Generada por falta de Situacion")
-            sit.save()
-            return sit
-    def domicilio_actual(self):
-        if self.domicilios.all():
-            return [d for d in self.domicilios.all()][-1]
-        else:
-            return None
-    def localidad_actual(self):
-        if self.domicilio_actual():
-            return self.domicilio_actual().localidad
-        else:
-            return None
     def ultimo_seguimiento(self):
         if self.seguimientos.all():
             return [d for d in self.seguimientos.all()][-1]
@@ -164,34 +151,7 @@ class Relacion(models.Model):#Origen del Dato
         except Relacion.DoesNotExist:
             return None
 
-#Relacion vehicular
-class ControlVehiculo(models.Model):
-    vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, related_name="controles")
-    aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
-    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
-    def __str__(self):
-        return self.aclaracion + ': ' + str(self.fecha)
-    def as_dict(self):
-        return {
-            'id': self.id,
-            'vehiculo_id': self.vehiculo.id,
-            'vehiculo': str(self.vehiculo),
-            'aclaracion': self.aclaracion,
-            'fecha': str(self.fecha),
-        }    
-
-class Origen(models.Model):#Origen del Dato
-    control = models.ForeignKey(ControlVehiculo, on_delete=models.CASCADE, related_name="origenes")
-    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="origenes")
-    def __str__(self):
-        return str(self.control) + ': ' + str(self.individuo)
-    def as_dict(self):
-        return {
-            "id": self.id,
-            "control_id": self.control.id,
-            "individuo_id": self.individuo.id,
-        }
-
+#Datos del individuo
 class Domicilio(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="domicilios")
     localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="domicilios_individuos")
@@ -310,6 +270,43 @@ class Seguimiento(models.Model):
             "fecha": str(self.fecha),
         }
 
+class AppData(models.Model):
+    individuo = models.OneToOneField(Individuo, on_delete=models.CASCADE, related_name="appdata")
+    telefono = models.CharField('Telefono', max_length=50, default='+549388')
+    estado = models.CharField('Estado', choices=TIPO_TRIAJE, max_length=1, default='V')
+    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    def __str__(self):
+        return str(self.individuo) + self.get_estado_display()
+
+#Controles vehiculares
+class ControlVehiculo(models.Model):
+    vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, related_name="controles")
+    aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
+    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    def __str__(self):
+        return self.aclaracion + ': ' + str(self.fecha)
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'vehiculo_id': self.vehiculo.id,
+            'vehiculo': str(self.vehiculo),
+            'aclaracion': self.aclaracion,
+            'fecha': str(self.fecha),
+        }    
+
+class Origen(models.Model):
+    control = models.ForeignKey(ControlVehiculo, on_delete=models.CASCADE, related_name="origenes")
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="origenes")
+    def __str__(self):
+        return str(self.control) + ': ' + str(self.individuo)
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "control_id": self.control.id,
+            "individuo_id": self.individuo.id,
+        }
+
+#Permisos
 class Permiso(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="permisos")
     tipo = models.CharField('Tipo Permiso', choices=TIPO_PERMISO, max_length=1, default='C')
@@ -339,22 +336,18 @@ class Permiso(models.Model):
         else:
             return "En Espera"
 
-class AppData(models.Model):
-    individuo = models.OneToOneField(Individuo, on_delete=models.CASCADE, related_name="appdata")
-    telefono = models.CharField('Telefono', max_length=50, default='+549388')
-    estado = models.CharField('Estado', choices=TIPO_TRIAJE, max_length=1, default='V')
-    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
-    def __str__(self):
-        return str(self.individuo) + self.get_estado_display()
-
 #Señales
 from .signals import estado_inicial
-from .signals import invertir_relacion
-from .signals import relacionar_situacion
-from .signals import relacion_vehiculo
+from .signals import domicilio_actual
 from .signals import relacion_domicilio
-from .signals import poner_en_seguimiento
+from .signals import invertir_relacion
+from .signals import relacion_vehiculo
+from .signals import situacion_actual
+from .signals import relacionar_situacion
 from .signals import afectar_situacion
+from .signals import poner_en_seguimiento
+
+
 #Auditoria
 auditlog.register(Archivo)
 auditlog.register(Vehiculo)

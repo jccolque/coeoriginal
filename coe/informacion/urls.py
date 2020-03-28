@@ -36,9 +36,15 @@ urlpatterns = [
     path('buscar/individuo/', views.buscar_individuo, name='buscar_individuo'),
     path('ver/individuo/<int:individuo_id>', views.ver_individuo, name='ver_individuo'),
     path('buscador/individuos', views.buscador_individuos, name='buscador_individuos'),
+    
+    #Listados
     path('lista/evaluar', views.lista_evaluar, name='lista_evaluar'),
     path('lista/seguimiento', views.lista_seguimiento, name='lista_seguimiento'),
     path('lista/autodiagnosticos', views.lista_autodiagnosticos, name='lista_autodiagnosticos'),
+    #Por parametro
+    path('lista/nac/<int:nacionalidad_id>', views.lista_nacionalidad, name='lista_nacionalidad'),
+
+    #ABMS
     path('cargar/individuo/<str:num_doc>', views.cargar_individuo, name='cargar_individuo'),
     path('cargar/pasajero/<int:control_id>', views.buscar_individuo, name='buscar_pasajero'),
     path('cargar/pasajero/<int:control_id>/nuevo/<int:individuo_id>/', views.cargar_individuo, name='cargar_pasajero'),
@@ -46,7 +52,7 @@ urlpatterns = [
     path('mod/individuo/<int:individuo_id>', views.cargar_individuo, name='mod_individuo'),
     
     path('cargar/domicilio/<int:individuo_id>', views.cargar_domicilio, name='cargar_domicilio'),
-    
+
     path('cargar/seguimiento/<int:individuo_id>', views.cargar_seguimiento, name='cargar_seguimiento'),
     path('mod/seguimiento/<int:individuo_id>/<int:seguimiento_id>', views.cargar_seguimiento, name='mod_seguimiento'),
     path('del/seguimiento/<int:seguimiento_id>', views.del_seguimiento, name='del_seguimiento'),

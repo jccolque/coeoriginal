@@ -21,7 +21,7 @@
                             {% for nac in nacionalidades %}
                                     <td>{{nac.nombre}}</th>
                                     <td>{{nac.cantidad}}</th>
-                                    <td><a href="{% url 'informacion:tablero_control' %}" target="_blank">(Ver Detalle)</a></td>
+                                    <td><a href="{% url 'informacion:lista_nacionalidad' nacionalidad_id=nac.id %}" target="_blank">(Ver Detalle)</a></td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -29,7 +29,8 @@
                 </div>
                 <!-- Situacion -->
                 <div class="col-sm-8">
-                    <div class="col-sm-4">
+                    <!--ESTADO -->
+                    <div class="col-sm-6">
                         <table class="listado">
                             <thead>
                                 <tr>
@@ -40,27 +41,35 @@
                             </thead>
                             <tbody>
                                 {% for estado in estados %}
-                                        <td>{{estado.nombre}}</th>
-                                        <td>{{estado.cantidad}}</th>
+                                        <td>{{estado.0}}</th>
+                                        <td>{{estado.1}}</th>
                                         <td><a href="{% url 'informacion:tablero_control' %}" target="_blank">(Ver Detalle)</a></td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                     </div>
-                    <div class"col-sm-8">
-                        {% include 'graficos/lineas.html' %}
+                    <!-- CONDUCTA -->
+                    <div class="col-sm-6">
+                        <table class="listado">
+                            <thead>
+                                <tr>
+                                    <th>Estado</th>
+                                    <th>Cantidad</th>
+                                    <th>Ver Detalle</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for conducta in conductas %}
+                                        <td>{{conducta.0}}</th>
+                                        <td>{{conducta.1}}</th>
+                                        <td><a href="{% url 'informacion:tablero_control' %}" target="_blank">(Ver Detalle)</a></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12">
-                <p>Llamados SAME: </p>
-                <p>seguimiento Epidemiologia: </p>
-                <p>Cuarentena Voluntaria: </p>
-                <p>Cuarentena Obligatoria: </p>
-                <p>Fallecidos: </p>
             </div>
         </div>
     </div>

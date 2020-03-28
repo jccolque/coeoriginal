@@ -120,7 +120,7 @@ class DomicilioForm(forms.ModelForm):
     class Meta:
         model = Domicilio
         fields= '__all__'
-        exclude = ('individuo', )
+        exclude = ('individuo', 'actual', )
         widgets = {
             'localidad': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
         }
@@ -129,7 +129,7 @@ class SituacionForm(forms.ModelForm):
     class Meta:
         model = Situacion
         fields= '__all__'
-        exclude = ('individuo', )
+        exclude = ('individuo', 'actual', )
         widgets = {
             'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
         }

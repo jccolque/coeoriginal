@@ -80,9 +80,10 @@ def relacionar_situacion(created, instance, **kwargs):
     #Creamos la relacion inversa
     if created:
         individuo = instance.individuo
-        situ_actual = individuo.situacion_actual()
+        situ_actual = individuo.situacion_actual
         relacionado = instance.relacionado
-        if situ_actual.estado > relacionado.situacion_actual().estado:
+        #Si no tenia le creamos
+        if not relacionado.situacion_actual or (situ_actual.estado > relacionado.situacion_actual.estado):
             sit = Situacion()
             sit.individuo = relacionado
             sit.conducta = 'C'
@@ -111,7 +112,7 @@ def afectar_situacion(created, instance, **kwargs):
     if created:
         individuo = instance.individuo
         for relacion in individuo.relaciones.all():
-            sit = relacion.relacionado.situacion_actual()
+            sit = relacion.relacionado.situacion_actual
             if not sit:#Si no tenia estado le creamos inicial
                 sit = Situacion()
                 sit.individuo = relacion.relacionado
@@ -132,3 +133,15 @@ def afectar_situacion(created, instance, **kwargs):
                 sit.conducta = 'B'
                 sit.aclaracion = "Detectado por sistema, Relacionado con: " + individuo.num_doc
                 sit.save()
+
+@receiver(post_save, sender=Domicilio)
+def domicilio_actual(instance, **kwargs):
+    if instance.actual:
+        individuo = instance.individuo
+        Domicilio.objects.filter(individuo=individuo).exclude(pk=instance.id).update(actual=False)
+
+@receiver(post_save, sender=Situacion)
+def situacion_actual(instance, **kwargs):
+    if instance.actual:
+        individuo = instance.individuo
+        Situacion.objects.filter(individuo=individuo).exclude(pk=instance.id).update(actual=False)
