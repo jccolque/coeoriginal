@@ -352,8 +352,19 @@ def buscador_individuos(request):
 
 #Listas:
 @permission_required('operadores.individuos')
-def lista_nacionalidad(request, nacionalidad_id):
-    individuos = Individuo.objects.filter(nacionalidad__id=nacionalidad_id)
+def lista_individuos(request,
+        nacionalidad_id=None,
+        estado=None,
+        conducta=None
+    ):
+    #Filtramos segun corresponda
+    if nacionalidad_id:
+        individuos = Individuo.objects.filter(nacionalidad__id=nacionalidad_id)
+    elif estado:
+        individuos = Individuo.objects.filter(situacion_actual__estado=estado)
+    elif conducta:
+        individuos = Individuo.objects.filter(situacion_actual__conducta=conducta)
+    #Optimizamos
     individuos = individuos.select_related('nacionalidad', 'origen', 'destino', )
     individuos = individuos.prefetch_related('atributos', 'sintomas', 'situaciones', 'relaciones')
     individuos = individuos.prefetch_related('atributos', 'sintomas')
@@ -565,13 +576,13 @@ def tablero_control(request):
     for estado in TIPO_ESTADO:
         cant = Individuo.objects.filter(situacion_actual__estado=estado[0]).count()
         if cant > 0:
-            estados.append([estado[1], cant])
+            estados.append([estado[0], estado[1], cant])
     #Conteo Conductas
     conductas = []
     for conducta in TIPO_CONDUCTA:
         cant = Individuo.objects.filter(situacion_actual__conducta=conducta[0]).count()
         if cant > 0:
-            conductas.append([conducta[1], cant])
+            conductas.append([conducta[0], conducta[1], cant])
     #Entregamos el reporte
     return render(request, "tablero_control.html", {
         "nacionalidades": nacionalidades,

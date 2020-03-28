@@ -42,8 +42,9 @@ urlpatterns = [
     path('lista/seguimiento', views.lista_seguimiento, name='lista_seguimiento'),
     path('lista/autodiagnosticos', views.lista_autodiagnosticos, name='lista_autodiagnosticos'),
     #Por parametro
-    path('lista/nac/<int:nacionalidad_id>', views.lista_nacionalidad, name='lista_nacionalidad'),
-
+    path('lista/nac/<int:nacionalidad_id>', views.lista_individuos, name='lista_nacionalidad'),
+    path('lista/estado/<int:estado>', views.lista_individuos, name='lista_estado'),
+    path('lista/conducta/<str:conducta>', views.lista_individuos, name='lista_conducta'),
     #ABMS
     path('cargar/individuo/<str:num_doc>', views.cargar_individuo, name='cargar_individuo'),
     path('cargar/pasajero/<int:control_id>', views.buscar_individuo, name='buscar_pasajero'),

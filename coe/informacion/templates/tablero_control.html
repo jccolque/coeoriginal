@@ -41,9 +41,9 @@
                             </thead>
                             <tbody>
                                 {% for estado in estados %}
-                                        <td>{{estado.0}}</th>
                                         <td>{{estado.1}}</th>
-                                        <td><a href="{% url 'informacion:tablero_control' %}" target="_blank">(Ver Detalle)</a></td>
+                                        <td>{{estado.2}}</th>
+                                        <td><a href="{% url 'informacion:lista_estado' estado=estado.0 %}" target="_blank">(Ver Detalle)</a></td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -61,9 +61,9 @@
                             </thead>
                             <tbody>
                                 {% for conducta in conductas %}
-                                        <td>{{conducta.0}}</th>
                                         <td>{{conducta.1}}</th>
-                                        <td><a href="{% url 'informacion:tablero_control' %}" target="_blank">(Ver Detalle)</a></td>
+                                        <td>{{conducta.2}}</th>
+                                        <td><a href="{% url 'informacion:lista_conducta' conducta=conducta.0 %}" target="_blank">(Ver Detalle)</a></td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
