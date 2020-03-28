@@ -28,22 +28,30 @@ class BarrioInline(admin.TabularInline):
 class NacionalidadAdmin(admin.ModelAdmin):
     model = Nacionalidad
     search_fields = ['nombre']
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 class DepartamentoAdmin(admin.ModelAdmin):
     model = Departamento
     search_fields = ['nombre']
     inlines = [LocalidadInline]
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 class LocalidadAdmin(admin.ModelAdmin):
     model = Localidad
     search_fields = ['nombre']
     list_filter = ['departamento']
     inlines = [BarrioInline]
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 class BarrioAdmin(admin.ModelAdmin):
     model = Barrio
     search_fields = ['nombre']
     list_filter = ['localidad']
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 # Register your models here.
 admin.site.register(Provincia, )
