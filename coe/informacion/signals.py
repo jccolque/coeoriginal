@@ -111,7 +111,7 @@ def afectar_situacion(created, instance, **kwargs):
                 sit = Situacion()
                 sit.individuo = relacion.relacionado
                 sit.aclaracion = "Inicializado por el sistema"
-                sit.estado = 1
+                sit.estado = 11
             #Procesamos lo que nos importa
             if instance.estado > sit.estado:
                 #Tramos situacion actual del relacionado

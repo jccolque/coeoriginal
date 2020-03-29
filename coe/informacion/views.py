@@ -375,6 +375,7 @@ def lista_individuos(request,
         individuos = Individuo.objects.filter(situacion_actual__conducta=conducta)
     #Optimizamos
     individuos = individuos.select_related('nacionalidad', 'origen', 'destino', )
+    individuos = individuos.select_related('domicilio_actual', 'situacion_actual')
     individuos = individuos.prefetch_related('atributos', 'sintomas', 'situaciones', 'relaciones')
     individuos = individuos.prefetch_related('atributos', 'sintomas')
     return render(request, "lista_individuos.html", {
@@ -387,6 +388,7 @@ def lista_evaluar(request):
     evaluar = []
     individuos = Individuo.objects.filter(situacion_actual__conducta='B')
     individuos = individuos.select_related('nacionalidad', 'origen', 'destino', )
+    individuos = individuos.select_related('domicilio_actual', 'situacion_actual')
     individuos = individuos.prefetch_related('atributos', 'sintomas', 'situaciones', 'relaciones')
     individuos = individuos.prefetch_related('atributos', 'sintomas')
     return render(request, "lista_individuos.html", {
@@ -399,6 +401,7 @@ def lista_seguimiento(request):
     individuos = {}
     seguimientos = Seguimiento.objects.all().exclude(tipo='F')#Eliminamos los que terminaron el seguimiento
     seguimientos = seguimientos.select_related('individuo', 'individuo__nacionalidad')
+    seguimientos = seguimientos.select_related('individuo__domicilio_actual', 'individuo__situacion_actual')
     seguimientos = seguimientos.prefetch_related('individuo__atributos', 'individuo__sintomas')
     seguimientos = seguimientos.prefetch_related('individuo__situaciones', 'individuo__seguimientos')
     seguimientos = seguimientos.prefetch_related('individuo__atributos', 'individuo__sintomas')
