@@ -8,29 +8,37 @@
         <div class="row">
             <br>
             <div class="col-sm-7">
-                <br><br>
                 {% include "carousel.html" %}
             </div>
             <div class="col-sm-5">
                 <div class="row">
                     <div class="col-sm-6">
-                        <a href="https://drive.google.com/uc?export=download&id=1SvTh9prm3WuSB_g1Beto2dzdmLoB_RxT">
-                            <img class="fotos"  src="{% static 'img/circular.jpeg' %}">
-                        </a>
+                        <div class="elem">
+                            <a href="https://drive.google.com/uc?export=download&id=1SvTh9prm3WuSB_g1Beto2dzdmLoB_RxT">
+                                <img class="fotos"  src="{% static 'img/circular.jpeg' %}">
+                            </a>
+                        </div>
                     </div>
                     <div class="col-sm-6">
-                        <a href="http://salud.jujuy.gob.ar/coronavirus/" target="_blank">
-                            <img class="fotos" src="{% static 'img/link_salud.png' %}">
-                        </a>
-                        <br>
-                        <a href="https://www.argentina.gob.ar/salud/coronavirus-COVID-19" target="_blank">
-                            <img class="fotos" src="{% static 'img/coronacional.jpeg' %}">
+                        <div class="elem small">
+                            <a href="http://salud.jujuy.gob.ar/coronavirus/" target="_blank">
+                                <img class="fotos" src="{% static 'img/link_salud.png' %}">
+                            </a>
+                        </div>
+                        <div class="elem small full-size-img">
+                            <a href="https://www.argentina.gob.ar/salud/coronavirus-COVID-19" target="_blank">
+                                <img class="fotos" src="{% static 'img/coronacional.jpeg' %}">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="elem big">
+                        <a href="{% url 'inscripciones:cargar_inscripcion' %}">
+                            <img class="fotos" src="{% static 'img/reclutamiento.jpeg' %}">
                         </a>
                     </div>
                 </div>
-                <a href="{% url 'inscripciones:cargar_inscripcion' %}">
-                    <img class="fotos" src="{% static 'img/reclutamiento.jpeg' %}">
-                </a>
             </div>
         </div>
         <div class="row">

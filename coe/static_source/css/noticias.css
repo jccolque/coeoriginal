@@ -22,16 +22,17 @@
     position: absolute;
     top: 15px;
     left: 15px;
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 30px;
-    padding: 20px;
+    background: rgba(0, 0, 0, 0.34);
+    padding: 12px 25px;
+    border-radius: 5px;
 }
 
 .carousel-titulo h1 {
     font-weight: bold;
     color: white;
     display: inline;
-    font-size: 2em;
+    font-size: 1.5em;
+    font-family: Montserrat;
 }
 
 .carousel-cuerpo {
@@ -39,8 +40,8 @@
     width: 55%;
     bottom: 10px;
     right: 10px;
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 5px;
     padding: 20px;
 }
 
@@ -48,8 +49,9 @@
     display: inline;
     padding: 0.5em;
     text-align: justify;
-    color: #fff;
+    color: #000;
     font-size: 1.2em;
+    font-family: Roboto;
 }
 
 .carousel-img {

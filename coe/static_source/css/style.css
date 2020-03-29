@@ -121,6 +121,8 @@ a.nolink:hover {
     background-color: var(--color_primario);
     color: white;
     padding: 0px;
+    position: relative;
+    top: 40px;
 }
 
 .main_documentos h2 {
@@ -129,10 +131,17 @@ a.nolink:hover {
     margin: 0px;
     border-radius: 15px 15px 0 0;
     padding: 5px;
+    font-size: 1.5em;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    font-family: Montserrat;
 }
 
 .main_documentos ul {
-    padding: 10px;
+    padding: 10px;   
+    font-family: Roboto;
+    font-size: 1.2em;
+    text-align: center;
 }
 
 .main_documentos li {
@@ -276,9 +285,72 @@ img.foto_padding {
     padding: 5px;
     padding-left: 15px;
     padding-right: 15px;
-    border: 1px solid var(--color_oscuro);
-    background-color: var(--color_primario);
+    background-color: var(--color_oscuro);
     border-radius: 5px;
     font-weight: bold;
     color: white;
+}
+
+.botoncito:hover
+{
+    text-decoration:none;
+    opacity: 0.9;
+}
+
+.elem
+{
+    box-shadow: 0px 0px 10px #00000008;
+    border-radius: 5px;
+    background: #fff;
+    display: inline-block;
+    margin: 10px;
+}
+
+.elem.small
+{
+    min-height: 115px;
+    background: none;
+    box-shadow: none;
+}
+
+.elem.small img
+{
+    box-shadow: 0px 0px 10px #00000008;
+    border-radius: 5px;
+    background: #fff;
+    padding: 0px;
+    min-height: 101px;
+    object-fit: contain;
+    margin-top: 10px;
+}
+
+.elem.big
+{
+    background: none;
+    box-shadow: none;
+    width: 100%;
+}
+
+.elem.big img.fotos
+{
+    padding: 0px;
+    height: 340px;
+    width: auto;
+    margin: auto;
+    display: block;
+    text-align: center;
+    position: relative;
+    top: 10px;
+    box-shadow: 0px 0px 10px #00000008;
+}
+
+/* CARRUSEL */
+
+#myCarousel
+{
+    position: relative;
+    top: 11px;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0px 0px 10px #0000001f;
 }
