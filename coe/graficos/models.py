@@ -10,18 +10,20 @@ class Grafico(models.Model):
     verbose_name = models.CharField('Nombre Para Mostrar', max_length=100)
     tipo = models.CharField('Tipo Grafico', choices=TIPO_GRAFICO, max_length=1, default='L')
     update = models.DateField('Ultimo Dato Cargado', null=True)
+    cant_datos = models.IntegerField('Cantidad de Datos a Mostrar', default=15)
     publico = models.BooleanField(default=False)
     def __str__(self):
         return self.nombre + ': ' + str(self.update)
     def agregar_dato(self, update_date, columna_nombre, fila, valor):
-        #Eliminamos si tenemos que remplazar
-        self.datos.filter(columna__nombre=columna_nombre, fila=fila).delete()
         #Buscamos/Creamos la columna
         try:
             columna = self.columnas.get(nombre=columna_nombre)
-        except self.columnas.DoesNotExist:
+        except Columna.DoesNotExist:
             cant = self.columnas.count() + 1
-            #columna = Columna(grafico=self, orden=cant, nombre=columna_nombre).save()
+            columna = Columna(grafico=self, orden=cant, nombre=columna_nombre)
+            columna.save()
+        #Eliminamos si habia un dato en esa "celda"
+        columna.datos.filter(fila=fila).delete()
         #Agregamos el dato:
         dato = Dato()
         dato.grafico = self
@@ -34,35 +36,42 @@ class Grafico(models.Model):
         self.save()
     def cabecera(self):
         #Obtenemos todo lo necesario para procesar
-        return ['Fecha'] + [c.nombre for c in self.columnas.all()]
+        return ['Fecha'] + [c.nombre for c in self.columnas.filter(mostrar=True)]
     def obtener_datos(self):
-        #Obtenemos todo lo necesario para procesar
-        columnas = self.cabecera()[1:]
-        #Referencias disponibles
-        filas = list(self.datos.order_by('id').values_list('fila', flat=True).distinct())
         #Traemos todo el bloque de datos ya indexado
-        dict_datos = {(d.columna.nombre,d.fila):d for d in self.datos.all().select_related('columna')}
+        dict_datos = {}
+        for columna in self.columnas.filter(mostrar=True):
+            for dato in columna.datos.all():
+                dict_datos[dato.columna.nombre,dato.fila] = dato
+        #Referencias disponibles
+        filas = [d.fila for d in  self.columnas.first().datos.all()]
         #Creamos nuestro vector
         datos = []
         for fila in filas:#Por cada Fecha
             #Generamos cada linea
             dato = []
-            for columna in columnas:
-                dato.append(dict_datos[(columna, fila)])
+            for columna in self.cabecera()[1:]:
+                dato.append(dict_datos[columna,fila])
             #Agregamos la linea
             datos.append(dato)
-        return datos
+        return datos[:self.cant_datos]
 
-class Columnas(models.Model):
+class Columna(models.Model):
     grafico = models.ForeignKey(Grafico, on_delete=models.CASCADE, related_name="columnas")
     orden = models.IntegerField('Orden')
     nombre = models.CharField('columna', max_length=50)
-    mostrar = models.BooleanField(default=False)
+    mostrar = models.BooleanField(default=True)
+    class Meta:
+        ordering = ['-mostrar', 'orden']
+    def __str__(self):
+        return self.nombre
 
 class Dato(models.Model):
-    columna = models.ForeignKey(Columnas, on_delete=models.CASCADE, related_name="datos")
+    columna = models.ForeignKey(Columna, on_delete=models.CASCADE, related_name="datos")
     fila = models.CharField('Fila', max_length=100, null=True)
     valor = models.DecimalField('Valor', max_digits=12, decimal_places=2)
+    class Meta:
+        ordering = ['pk', ]
     def __str__(self):
-        return self.fila + '-' + self.columna + ' Cant: ' + str(self.valor) 
+        return self.fila + '-' + self.columna.nombre + ' Cant: ' + str(self.valor) 
 

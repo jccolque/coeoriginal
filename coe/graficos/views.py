@@ -4,8 +4,8 @@ from django.contrib.auth.decorators import permission_required
 #Imports del Proyecto
 
 #Imports de la app
-from .models import Grafico, Dato
-from .forms import GraficoForm, DatoForm
+from .models import Grafico, Columna, Dato
+from .forms import GraficoForm, ColumnaForm, DatoForm
 
 # Create your views here.
 @permission_required('operadores.menu_graficos')
@@ -64,6 +64,24 @@ def cambiar_estado(request, grafico_id):
     grafico.publico = not grafico.publico
     grafico.save()
     return redirect('graficos:ver_grafico', grafico_id=grafico.id)
+
+
+@permission_required('operadores.menu_graficos')
+def crear_columna(request, grafico_id, columna_id=None):
+    grafico = Grafico.objects.get(pk=grafico_id)
+    columna = None
+    if columna_id:
+        columna = Columna.objects.get(pk=columna_id)
+    form = ColumnaForm(instance=columna)
+    if request.method == "POST":
+        form = ColumnaForm(request.POST, instance=columna)
+        if form.is_valid():
+            columna = form.save(commit=False)
+            columna.grafico = grafico
+            columna.save()
+            return redirect('graficos:ver_grafico', grafico_id=grafico.id)
+    return render(request, "extras/generic_form.html", {'titulo': "Crear/Modificar Dato", 'form': form, 'boton': "Confirmar", })
+
 
 @permission_required('operadores.menu_graficos')
 def crear_dato(request, grafico_id, dato_id=None):
