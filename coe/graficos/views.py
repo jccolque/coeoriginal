@@ -52,7 +52,7 @@ def crear_grafico(request, grafico_id=None):
 def reniciar_datos(request, grafico_id):
     grafico = Grafico.objects.get(pk=grafico_id)
     #Eliminamos todos sus datos
-    grafico.datos.all().delete()
+    grafico.columnas.all().delete()
     #Quitamos su ultima actualizacion
     grafico.update = None
     grafico.save()
