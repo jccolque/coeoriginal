@@ -15,6 +15,16 @@ body {
     width: 100%;
     display: inline-block;
     text-align: justify!important;
+    padding-top: 30px;
+}
+.noticia h1 {
+    text-align: center;
+    background-color: #ffffff;
+    color: var(--color_primario);
+    font-size: 2em;
+    margin: 0;
+    font-family: Roboto;
+    margin-top: 20px;
 }
 
 .noticia h1.titulo {
@@ -68,11 +78,24 @@ hr {
 }
 
 /* Etiquetas */
+
+.etiquetas 
+{
+    float: left;
+}
+
 .etiqueta {
-    width: 100%;
-    text-align: center;
+    color: var(--color_primario);
+    list-style-type:none;
+    display: inline;
+    font-size: 1.2em;
+    font-family: Roboto;
 }
 
 .etiqueta a {
-    color: white;
+    color: var(--color_primario);
+}
+
+.etiqueta:last-child span{
+    display: none;
 }

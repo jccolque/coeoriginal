@@ -149,16 +149,6 @@
     position: relative;
 }
 
-.noticia h1 {
-    text-align: center;
-    background-color: #ffffff;
-    color: var(--color_primario);
-    font-size: 4em;
-    font-family: 'Courier New', Courier, monospace;
-    margin: 0;
-    margin-top: 10px;
-}
-
 .noticia .noticia-cuerpo {
     width: 70%;
     text-align: justify;
@@ -178,11 +168,23 @@
 .noticia .epigrafe {
     text-align: center;
     color: gray;
+    font-family: Roboto;
 }
 
 .noticia .info {
     width: 60%;
     float: right;
+}
+
+.noticia-single .noticia .info
+{
+    width: 100%;
+}
+
+.noticia-single .noticia img {
+    max-width: 700px;
+    margin: auto;
+    display: block;
 }
 
 .noticia .info>p {
@@ -218,6 +220,16 @@
     background-color: #54884a;
     color: white;
     text-decoration: none;
+}
+
+.noticia .buscador-noticias ul
+{
+    float: left;
+}
+
+.noticia .etiquetas
+{
+    float: left;
 }
 
 /* Etiquetas */

@@ -1,26 +1,23 @@
 {% extends 'base_noticias.html' %} 
 
 {% block content %}
-    <div class="noticias container">
+    <div class="noticias container noticia-single" style="background: #fff;box-shadow: 0px 0px 20px #0000001f;margin-top: 35px;">
         <div class="row">
-            <div class="col-sm-10">
-                <div class="noticia">
-                    <br>
+            <div class="col-sm-12">
+                <div class="noticia" style="padding-top: 30px;">
                     <h1><b>{{noticia.titulo}}</b></h1>
+                    <hr>
+                    <div class="col-sm-12 mt-">
+                            {% include 'extras/buscador_noticias.html' with etiquetas=noticia.etiquetas.all %}
+                    </div>
                     <div class="noticia-cuerpo row">
                         <br>
-                        <div class="foto col-sm-4">
                             <img src="{{noticia.portada.url}}">
                             <p class="epigrafe">{{noticia.epigrafe}}</p>
-                        </div>
-                        <div class="info col-sm-8">
+                        <div class="info col-sm-12">
                             {{ noticia.cuerpo|safe }}
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="col-sm-2">
-                    {% include 'extras/buscador_noticias.html' with etiquetas=noticia.etiquetas.all %}
                 </div>
             </div>
         </div>
