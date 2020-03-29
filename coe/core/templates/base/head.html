@@ -30,7 +30,7 @@
     
     
     <!-- Forms -->
-    {% if form %}
+    {% if form or has_form %}
         <link rel="stylesheet" type="text/css" href="{% static 'css/generic_form.css' %}" />
         <!-- Date Picker -->
         <link rel="stylesheet" type="text/css" href="{% static 'css/jquery.datetimepicker.min.css' %}" />

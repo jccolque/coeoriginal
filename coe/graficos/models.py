@@ -44,22 +44,31 @@ class Grafico(models.Model):
             for dato in columna.datos.all():
                 dict_datos[dato.columna.nombre,dato.fila] = dato
         #Referencias disponibles
-        filas = [d.fila for d in  self.columnas.first().datos.all()]
-        #Creamos nuestro vector
-        datos = []
-        for fila in filas:#Por cada Fecha
-            #Generamos cada linea
-            dato = []
-            for columna in self.cabecera()[1:]:
-                dato.append(dict_datos[columna,fila])
-            #Agregamos la linea
-            datos.append(dato)
-        return datos[:self.cant_datos]
+        if self.columnas.all():#Si tiene columnas
+            filas = [d.fila for d in  self.columnas.first().datos.all()]
+            #Creamos nuestro vector
+            datos = []
+            for fila in filas:#Por cada Fecha
+                #Generamos cada linea
+                dato = []
+                for columna in self.cabecera()[1:]:
+                    try:
+                        dato.append(dict_datos[columna,fila])
+                    except KeyError:#Si faltan datos por columna vacia
+                        new = Dato()#Lo creamos con valor 0
+                        new.columna = self.columnas.get(nombre=columna)
+                        new.fila = fila
+                        new.valor = 0
+                        new.save()
+                        dato.append(new)
+                #Agregamos la linea
+                datos.append(dato)
+            return datos[:self.cant_datos]
 
 class Columna(models.Model):
     grafico = models.ForeignKey(Grafico, on_delete=models.CASCADE, related_name="columnas")
+    nombre = models.CharField('Nombre', max_length=50)
     orden = models.IntegerField('Orden')
-    nombre = models.CharField('columna', max_length=50)
     mostrar = models.BooleanField(default=True)
     class Meta:
         ordering = ['-mostrar', 'orden']

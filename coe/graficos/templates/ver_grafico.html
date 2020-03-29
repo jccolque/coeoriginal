@@ -21,9 +21,13 @@
                             {% endif %}
                         </p>
                         <p><b>Columnas a Mostrar:</b>
-                            {% for columna in grafico.columnas.all %}
-                                <li>{{columna.orden}} {{columna.nombre}}</li>
-                            {% endfor %}
+                            <ul>
+                                {% for columna in grafico.columnas.all %}
+                                    {% if columna.mostrar %}
+                                        <li>{{columna.nombre}}</li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
                         </p>
                         <hr>
                         {% include 'lineas.html' with graf_datos=grafico %}
@@ -38,8 +42,9 @@
                             {% endif %}
                             <hr>
                             <li><a href="{% url 'graficos:crear_columna' grafico_id=grafico.id  %}">Agregar Columna</a></li>
-                            <li><a href="{% url 'graficos:crear_dato' grafico_id=grafico.id  %}">Agregar Dato</a></li>
+                            <li><a href="{% url 'graficos:agregar_fila' grafico_id=grafico.id  %}">Agregar Fila de Datos</a></li>
                             <li><a href="{% url 'graficos:reniciar_datos' grafico_id=grafico.id  %}">Reiniciar Datos</a></li>
+                            <li><a href="{% url 'graficos:eliminar_grafico' grafico_id=grafico.id  %}">Eliminar</a></li>
                         </ul>
                     </div>
                 </div>
@@ -48,6 +53,11 @@
                         <br>
                         <h4>
                             <b>Columna:</b> {{columna.nombre}}
+                            {% if columna.mostrar %}
+                                <img class="icons" src="/static/img/icons/public.png" alt="Es Publico">
+                            {% else %}
+                                <img class="icons" src="/static/img/icons/private.png" alt="Oculto">
+                            {% endif %}
                             <a href="{% url 'graficos:mod_columna' grafico_id=grafico.id columna_id=columna.id %}">
                                 <img class="icons" src="{% static '/img/icons/change.png' %}">
                             </a>
@@ -67,7 +77,7 @@
                                             <td>{{dato.fila}}</td>
                                             <td>{{dato.valor}}</td>
                                             <td>
-                                                <a href="{% url 'graficos:mod_dato' grafico_id=grafico.id dato_id=dato.id %}">
+                                                <a href="{% url 'graficos:mod_dato' dato_id=dato.id %}">
                                                     <img class="icons" src="{% static '/img/icons/change.png' %}">
                                                 </a>
                                             </td>

@@ -67,12 +67,21 @@ def cambiar_estado(request, grafico_id):
 
 
 @permission_required('operadores.menu_graficos')
+def eliminar_grafico(request, grafico_id):
+    grafico = Grafico.objects.get(pk=grafico_id)
+    grafico.delete()
+    return redirect('graficos:lista_graficos') 
+
+@permission_required('operadores.menu_graficos')
 def crear_columna(request, grafico_id, columna_id=None):
     grafico = Grafico.objects.get(pk=grafico_id)
     columna = None
     if columna_id:
         columna = Columna.objects.get(pk=columna_id)
-    form = ColumnaForm(instance=columna)
+    form = ColumnaForm(instance=columna,
+        initial={
+            'grafico': grafico,
+        })
     if request.method == "POST":
         form = ColumnaForm(request.POST, instance=columna)
         if form.is_valid():
@@ -82,19 +91,29 @@ def crear_columna(request, grafico_id, columna_id=None):
             return redirect('graficos:ver_grafico', grafico_id=grafico.id)
     return render(request, "extras/generic_form.html", {'titulo': "Crear/Modificar Dato", 'form': form, 'boton': "Confirmar", })
 
+@permission_required('operadores.menu_graficos')
+def agregar_fila(request, grafico_id):
+    grafico = Grafico.objects.get(pk=grafico_id)
+    if request.method == 'POST':
+        for columna in grafico.columnas.all():
+            dato = Dato()
+            dato.columna = columna
+            dato.fila = request.POST['nombre']
+            dato.valor = request.POST[str(columna.id)]
+            dato.save()
+        return redirect('graficos:ver_grafico', grafico_id=grafico.id)
+    return render(request, "agregar_fila.html", {
+        'grafico': grafico, 
+        'has_form': True,
+    })
 
 @permission_required('operadores.menu_graficos')
-def crear_dato(request, grafico_id, dato_id=None):
-    grafico = Grafico.objects.get(pk=grafico_id)
-    dato = None
-    if dato_id:
-        dato = Dato.objects.get(pk=dato_id)
+def mod_dato(request, dato_id):
+    dato = Dato.objects.get(pk=dato_id)
     form = DatoForm(instance=dato)
     if request.method == "POST":
         form = DatoForm(request.POST, instance=dato)
         if form.is_valid():
-            dato = form.save(commit=False)
-            dato.grafico = grafico
-            dato.save()
-            return redirect('graficos:ver_grafico', grafico_id=grafico.id)
+            form.save()
+            return redirect('graficos:ver_grafico', grafico_id=dato.columna.grafico.id)
     return render(request, "extras/generic_form.html", {'titulo': "Crear/Modificar Dato", 'form': form, 'boton': "Confirmar", })

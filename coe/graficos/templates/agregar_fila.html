@@ -1,0 +1,40 @@
+{% extends 'base_informacion.html' %}
+
+{% load seguridad_tags%}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="formulario_custom col-sm-8">
+                <h2>Agregar Fila de Datos a {{grafico.nombre}}</h2>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <!-- Mostramos errores -->
+                    {% for field in form %}
+					    {% if field.errors %}
+                            <li>
+                                {{ field.label }}: {{ field.errors|striptags }}
+                            </li>
+                        {% endif %}
+				    {% endfor %}
+                    <!-- Formulario -->
+                    <div class="grupo">
+                        <p class="campo">
+                            <label>Nombre Fila</label>
+                            <input type="text" id="nombre" name="nombre">
+                        </p>
+                        {% for columna in grafico.columnas.all %}
+                            <p class="campo">
+                                <label>
+                                    {{columna.nombre}}
+                                </label>
+                                <input id="{{columna.id}}" name="{{columna.id}}" type="number" value=0 />
+                            </p>
+                        {% endfor %}
+                        <button type="submit">Cargar Linea</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

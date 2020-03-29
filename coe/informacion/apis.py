@@ -145,9 +145,6 @@ def encuesta_covidapp(request):
 @require_http_methods(["POST"])
 def temperatura_covidapp(request):
     data = None
-    #Registramos ingreso de info
-    logger.info('\nENCUESTA: '+str(timezone.now())[0:16])
-    logger.info(request.body)
     #Recibimos el json
     data = json.loads(request.body.decode("utf-8"))
     #Agarramos el dni
@@ -171,7 +168,6 @@ def temperatura_covidapp(request):
     seguimiento.tipo = 'A'
     seguimiento.aclaracion = "AUTODIAGNOSTICO - Temp:" + str(data["temperatura"])
     seguimiento.save()
-    logger.info('EXITO!')
     return JsonResponse(
         {
             "action":"temperatura",

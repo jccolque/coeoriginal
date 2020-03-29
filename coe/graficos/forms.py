@@ -15,9 +15,10 @@ class GraficoForm(forms.ModelForm):
         model = Grafico
         fields= '__all__'
         exclude = ('publico', 'update')
-        widgets = {
-            'nombre': forms.TextInput(attrs={'readonly':'readonly'}),
-        }
+    def __init__(self, *args, **kwargs):
+        super(GraficoForm, self).__init__(*args, **kwargs)
+        if self.instance.pk:
+            self.fields['nombre'].widget.attrs['readonly'] = True
 
 class ColumnaForm(forms.ModelForm):
     class Meta:
@@ -26,11 +27,15 @@ class ColumnaForm(forms.ModelForm):
         widgets = {
             'grafico': forms.TextInput(attrs={'readonly':'readonly'}),
         }
+    def __init__(self, *args, **kwargs):
+        super(ColumnaForm, self).__init__(*args, **kwargs)
+        if self.instance.pk:
+            self.fields['nombre'].widget.attrs['readonly'] = True
 
 class DatoForm(forms.ModelForm):
     class Meta:
         model = Dato
         fields= '__all__'
         widgets = {
-            'columna': forms.TextInput(attrs={'readonly':'readonly'}),
+            'columna': forms.HiddenInput(),
         }
