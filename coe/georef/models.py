@@ -3,9 +3,29 @@ from django.db import models
 #Imports de paquetes extras
 from auditlog.registry import auditlog
 from tinymce.models import HTMLField
+#Imports de la app
+from .choices import TIPO_UBICACION
 
 # Create your models here.
+class Nacionalidad(models.Model):
+    nombre = models.CharField('Nombre', max_length=100)
+    riesgo = models.BooleanField(default=True)
+    contacto = HTMLField(null=True, blank=True)
+    class Meta:
+        ordering = ['nombre', ]
+        verbose_name_plural = 'Nacionalidades'
+    def __str__(self):
+        return self.nombre
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "nombre": self.nombre,
+            "riesgo": self.riesgo,
+            "contacto": self.contacto,
+        }
+
 class Provincia(models.Model):
+    nacion = models.ForeignKey(Nacionalidad, on_delete=models.CASCADE, related_name="provincias")
     nombre = models.CharField('Nombre', max_length=100, unique=True)
     class Meta:
         ordering = ['nombre', ]
@@ -72,24 +92,37 @@ class Barrio(models.Model):
             "nombre": self.nombre,
         }
 
-class Nacionalidad(models.Model):
+#Particularidades:
+class Ubicacion(models.Model):
+    tipo = models.CharField('Tipo de Ubicacion', max_length=2, choices=TIPO_UBICACION,  default='SU')
+    localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="ubicaciones")
+    barrio = models.ForeignKey(Barrio, on_delete=models.CASCADE, related_name="ubicaciones", null=True, blank=True)
     nombre = models.CharField('Nombre', max_length=100)
-    riesgo = models.BooleanField(default=False)
-    contacto = HTMLField(null=True, blank=True)
-    class Meta:
-        ordering = ['nombre', ]
-        verbose_name_plural = 'Nacionalidades'
+    max_individuos = models.IntegerField('Poblacion Maxima Permitida', default=50)
+    calle = models.CharField('Calle', max_length=200)
+    numero = models.CharField('Numero', max_length=100)
+    aclaracion = HTMLField()
+    latitud = models.DecimalField('latitud', max_digits=12, decimal_places=10, null=True)
+    longitud = models.DecimalField('longitud', max_digits=12, decimal_places=10, null=True)
     def __str__(self):
-        return self.nombre
+        return self.get_tipo_display() + ':' + self.nombre + ", " + str(self.localidad)
     def as_dict(self):
         return {
             "id": self.id,
+            "tipo_id": self.tipo,
+            "tipo": self.get_tipo_display(),
             "nombre": self.nombre,
-            "riesgo": self.riesgo,
-            "contacto": self.contacto,
+            "localidad_id": self.localidad.id,
+            "calle": self.calle,
+            "numero": self.numero,
+            "aclaracion": self.aclaracion,
+            "latitud": self.latitud,
+            "longitud": self.longitud,
+            "max_individuos": self.max_individuos,
         }
 
 #Auditoria
+auditlog.register(Nacionalidad)
 auditlog.register(Provincia)
 auditlog.register(Departamento)
 auditlog.register(Localidad)

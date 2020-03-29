@@ -337,13 +337,14 @@ def buscador_individuos(request):
         if form.is_valid():
             #Tramos todos los individuos:
             individuos = Individuo.objects.all()
+            individuos = individuos.prefetch_related('domicilios')
             #Aplicamos los filtros
             if form.cleaned_data['nombre']:
                 individuos = individuos.filter(nombres__icontains=form.cleaned_data['nombre'])
             if  form.cleaned_data['apellido']:
                 individuos = individuos.filter(apellidos__icontains=form.cleaned_data['apellido'])
             if form.cleaned_data['calle']:
-                individuos = individuos.filter(domicilios__calle=form.cleaned_data['calle'])
+                individuos = individuos.filter(domicilios__calle__icontains=form.cleaned_data['calle'])
             if form.cleaned_data['localidad']:
                 individuos = individuos.filter(domicilios__localidad=form.cleaned_data['localidad'])
             #Optimizamos las busquedas a la db

@@ -1,0 +1,34 @@
+{% extends 'base_georef.html' %}
+
+{% load seguridad_tags%}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">        
+                    <h1>Menu GeoReferencias:</h1>
+                    <div class="col-md-8">
+                        <ul class="menu_botones">
+                            {% if perms.operadores.menu_georef %}
+                                <li><a href="{% url 'georef:lista_nacionalidades'  %}">Listado Nacionalidades</a></li>
+                                <li><a href="{% url 'georef:lista_provincias'  %}">Listado Provincias</a></li>
+                                <li><a href="{% url 'georef:lista_departamentos'  %}">Listado Departamentos</a></li>
+                                <li><a href="{% url 'georef:lista_localidades'  %}">Listado Localidades</a></li>
+                                <li><a href="{% url 'georef:lista_barrios'  %}">Listado Barrios</a></li>
+                                <li><a href="{% url 'georef:lista_ubicaciones' %}">Listado Ubicaciones Estrategicas</a></li>
+                            {% endif %}
+                            <hr>
+                            {% if request.user.is_superuser %}
+                                <li><a href="{% url 'georef:upload_localidades' %}">Upload CSV Masivo</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        {% include 'users/info_user.html' %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}

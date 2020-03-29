@@ -351,7 +351,8 @@ from .signals import relacion_domicilio
 from .signals import invertir_relacion
 from .signals import relacion_vehiculo
 from .signals import relacionar_situacion
-from .signals import afectar_situacion
+from .signals import afectar_relacionados
+from .signals import aislados
 
 #Auditoria
 auditlog.register(Archivo)

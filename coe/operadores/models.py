@@ -76,6 +76,8 @@ class Operador(models.Model):
             ("subcomites", "Puede Crear/Modificar SubComites"),
             ("operadores", "Puede Crear/Modificar Operadores"),
             ("auditar_operadores", "Puede Auditar Operadores"),
+            #Georef
+            ("menu_georef", "Puede Administrar Informacion Geografica"),
             #Inventario
             ("menu_inventario", "Puede Acceder al menu Inventario"),
             #Tareas:

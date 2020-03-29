@@ -56,13 +56,12 @@ def relacion_domicilio(created, instance, **kwargs):
             localidad=instance.localidad,
             calle=instance.calle,
             numero=instance.numero,
-        )
-        domicilios = domicilios.exclude(individuo=instance.individuo)
+            ).exclude(individuo=instance.individuo)#Excluyendolo a el
         for domicilio in domicilios:
             #Evitamos repetir relaciones
             try:
-                relacion = Relacion.objects.get(tipo='CE', individuo=instance.individuo, relacionado=domicilio.individuo)
-                relacion.aclaracion = "Mismo Domicilio"
+                relacion = Relacion.objects.get(individuo=instance.individuo, relacionado=domicilio.individuo)
+                relacion.aclaracion = relacion.aclaracion + " - Mismo Domicilio(AutoDetectado)"
                 relacion.save()
             except Relacion.DoesNotExist:
                 relacion = Relacion()
@@ -71,8 +70,27 @@ def relacion_domicilio(created, instance, **kwargs):
                 relacion.relacionado = domicilio.individuo
                 relacion.aclaracion = "Mismo Domicilio"
                 relacion.save()
-        #Los que estan a menos de 100 metros
-        #Hasta no acomodar la DB esto no se puede hacer
+
+#Evolucionamos Estado segun relaciones
+@receiver(post_save, sender=Domicilio)
+def aislados(created, instance, **kwargs):
+    if created and instance.aislamiento:#Si creamos nueva posicion
+        individuo = instance.individuo
+        #Creamos una nueva situacion
+        if individuo.situacion_actual:
+            situacion = individuo.situacion_actual
+            situacion.pk = None
+        else:
+            situacion = Situacion(individuo=individuo)
+            situacion.estado = 40
+        situacion.conducta = 'E'
+        situacion.aclaracion = "Aislado por cambio a locacion de AISLAMIENTO"
+        situacion.save()
+        #Creamos seguimiento
+        seguimiento = Seguimiento(individuo=individuo)
+        seguimiento.aclaracion = "Fue Puesto en Aislamiento."
+        seguimiento.save()
+
 
 @receiver(post_save, sender=Relacion)
 def invertir_relacion(created, instance, **kwargs):
@@ -88,8 +106,7 @@ def invertir_relacion(created, instance, **kwargs):
 @receiver(post_save, sender=Atributo)
 def poner_en_seguimiento(created, instance, **kwargs):
     if created and (instance.tipo == "VE"):
-        seguimiento = Seguimiento()
-        seguimiento.individuo = instance.individuo
+        seguimiento = Seguimiento(individuo=instance.individuo)
         seguimiento.aclaracion = "Agregado Atributo en el sistema"
         seguimiento.save()
 
@@ -102,7 +119,7 @@ def situacion_actual(created, instance, **kwargs):
 
 #Evolucionamos Estado segun relaciones
 @receiver(post_save, sender=Situacion)
-def afectar_situacion(created, instance, **kwargs):
+def afectar_relacionados(created, instance, **kwargs):
     if created:
         individuo = instance.individuo
         for relacion in individuo.relaciones.all():

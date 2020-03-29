@@ -2,6 +2,7 @@ from django.contrib import admin
 #Importamos modelos
 from .models import Provincia, Departamento, Localidad, Barrio
 from .models import Nacionalidad
+from .models import Ubicacion
 #Definimos inlines
 class DepartamentoInline(admin.TabularInline):
     model = Departamento
@@ -50,6 +51,15 @@ class BarrioAdmin(admin.ModelAdmin):
     model = Barrio
     search_fields = ['nombre']
     list_filter = ['localidad']
+    autocomplete_fields = ['localidad',]
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+class UbicacionAdmin(admin.ModelAdmin):
+    model = Ubicacion
+    search_fields = ['nombre', 'localidad']
+    list_filter = ['tipo', 'localidad']
+    autocomplete_fields = ['localidad',]
     def has_delete_permission(self, request, obj=None):
         return False
 
@@ -59,3 +69,4 @@ admin.site.register(Departamento, DepartamentoAdmin)
 admin.site.register(Localidad, LocalidadAdmin)
 admin.site.register(Barrio, BarrioAdmin)
 admin.site.register(Nacionalidad, NacionalidadAdmin)
+admin.site.register(Ubicacion, UbicacionAdmin)
