@@ -19,6 +19,7 @@
     margin-top: 50px;
     margin-bottom: 50px;
     text-align: center;
+    background: #fff;
 }
 
 .quees .preguntas-frecuentes {
@@ -42,5 +43,14 @@
     margin-bottom: 10px;
     margin-top: 10px;
     text-align: center;
+    font-family: Montserrat;
+    font-weight: bold;
+    font-size: 1.2em;
 }
+
+.quees p
+{
+    font-family: Roboto;
+}
+
 /* FIN QUE ES */

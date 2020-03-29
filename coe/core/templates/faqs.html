@@ -15,7 +15,7 @@
                         <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#{{ faq.id }}" aria-expanded="false" aria-controls="collapseExample">
                         {{ faq.pregunta }}
                         </button>
-                        <div id="{{ faq.id }}" class="collapse texto-explicativo">{{ faq.respuesta | safe }}</div>
+                        <div id="{{ faq.id }}" class="collapse in texto-explicativo">{{ faq.respuesta | safe }}</div>
                     </li>
                     {% endfor %}
                 </ul>

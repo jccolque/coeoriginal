@@ -1,5 +1,5 @@
 {% block content %}
-    <br>
+<div class="buscador-noticias container">
     <form method="post" action="/noticias/buscar" enctype="multipart/form-data">
         {% csrf_token %}
         {% for field in form %}
@@ -7,11 +7,11 @@
         {% endfor %}
         <button type="submit">Buscar</button>
     </form>
-    <hr>
-    <p><b>Etiquetas:</b></p>    
+    <p class="etiquetas"><b>Etiquetas:</b></p>    
     <ul>
         {% for etiqueta in etiquetas %}
-            <li class="etiqueta"><a href="{% url 'noticias:buscar_etiqueta' tag_id=etiqueta.id %}">{{etiqueta.name|title}}</a></li>
+            <li class="etiqueta"><a href="{% url 'noticias:buscar_etiqueta' tag_id=etiqueta.id %}">{{etiqueta.name|title}}<span>,</span> </a></li>
         {% endfor %}
     </ul>
+</div>
 {% endblock %}

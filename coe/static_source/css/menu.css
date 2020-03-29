@@ -32,6 +32,7 @@ menu {
 .navbar-nav {
     float: right;
     padding-top: 10px;
+    font-family: Roboto;
 }
 
 ul.nav li {

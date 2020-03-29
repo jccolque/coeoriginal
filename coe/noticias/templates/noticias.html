@@ -3,11 +3,15 @@
 {% block content %}
     <div class="noticias container">
         <div class="row">
-            <div class="col-sm-9">
+            <div class="col-sm-12">
                 {% if noticias %}
                     <br>
                     <h1><b>Ultimas Noticias</b></h1>
                     <hr>
+            
+                    <div class="col-sm-12">
+                        {% include 'extras/buscador_noticias.html' %}
+                    </div>
                     <div class="lista-noticias container">
                         <ul>
                             {% for noticia in noticias %}
@@ -21,15 +25,15 @@
                                     <div class="col-sm-8 info">
                                         <h2 class="titulo"><b>{{noticia.titulo}}</b></h2>
                                         <p>{{ noticia.cuerpo|truncatewords:40|safe }}</p>
-                                        <p style="text-align: right;">
-                                            <a class="novedad-link" href="{% url 'noticias:ver_noticia' noticia_id=noticia.id %}">
-                                                &lt;Leer Nota&gt;
-                                            </a>
-                                        </p>
                                     </div>
                                 </div>
                             
                             
+                                <div class="leer-mas">
+                                    <a class="novedad-link" href="{% url 'noticias:ver_noticia' noticia_id=noticia.id %}">
+                                        Leer Nota
+                                    </a>
+                                </div>
                             </li>
                             <br>
                             {% endfor %}
@@ -45,9 +49,6 @@
                         {% endif %}
                     </div>
                 {% endif %}
-            </div>
-            <div class="col-sm-3">
-                {% include 'extras/buscador_noticias.html' %}
             </div>
         </div>
     </div> 
