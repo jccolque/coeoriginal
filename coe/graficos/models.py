@@ -18,9 +18,10 @@ class Grafico(models.Model):
         self.datos.filter(columna__nombre=columna_nombre, fila=fila).delete()
         #Buscamos/Creamos la columna
         try:
-            columna = self, nombre=columna_nombre)
-        except Columna.DoesNotExist:
-            columna = Columna(grafico=self)
+            columna = self.columnas.get(nombre=columna_nombre)
+        except self.columnas.DoesNotExist:
+            cant = self.columnas.count() + 1
+            #columna = Columna(grafico=self, orden=cant, nombre=columna_nombre).save()
         #Agregamos el dato:
         dato = Dato()
         dato.grafico = self
