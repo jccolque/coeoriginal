@@ -9,7 +9,7 @@ from dateutil.relativedelta import relativedelta
 #Imports de la app
 from .models import Origen
 from .models import Individuo, Domicilio, Situacion, Relacion, Seguimiento
-from .models import Atributo
+from .models import Atributo, SignosVitales, Documento
 
 #Logger
 logger = logging.getLogger('signals')
@@ -167,3 +167,20 @@ def relacionar_situacion(created, instance, **kwargs):
                 sit.conducta = 'D'
             sit.aclaracion = "Relacion Detectada por el sistema"
             sit.save()
+
+
+@receiver(post_save, sender=SignosVitales)
+def cargo_signosvitales(created, instance, **kwargs):
+    if created:
+        seguimiento = Seguimiento(individuo=instance.individuo)
+        seguimiento.tipo = 'E'
+        seguimiento.aclaracion = "Se Informaron Signos vitales"
+        seguimiento.save()
+
+@receiver(post_save, sender=Documento)
+def cargo_documento(created, instance, **kwargs):
+    if created:
+        seguimiento = Seguimiento(individuo=instance.individuo)
+        seguimiento.tipo = 'M'
+        seguimiento.aclaracion = "Se Cargo Documento " + instance.get_tipo_display()
+        seguimiento.save()

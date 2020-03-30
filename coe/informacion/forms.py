@@ -13,8 +13,9 @@ from georef.models import Localidad
 #Imports de la app
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
 from .models import Vehiculo, ControlVehiculo
-from .models import Individuo, Domicilio, Atributo, Sintoma
+from .models import Individuo, Domicilio, SignosVitales, Atributo, Sintoma
 from .models import Situacion, Archivo, Relacion, Seguimiento, Permiso
+from .models import Documento
 
 #Definimos nuestros forms
 class ArchivoForm(forms.ModelForm):
@@ -119,8 +120,8 @@ class SearchIndividuoForm(forms.Form):
 class DomicilioForm(forms.ModelForm):
     class Meta:
         model = Domicilio
-        fields= '__all__'
-        exclude = ('individuo', 'actual', )
+        fields = '__all__'
+        exclude = ('individuo', )
         widgets = {
             'localidad': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
         }
@@ -128,11 +129,24 @@ class DomicilioForm(forms.ModelForm):
 class SituacionForm(forms.ModelForm):
     class Meta:
         model = Situacion
-        fields= '__all__'
-        exclude = ('individuo', 'actual', )
+        fields = '__all__'
+        exclude = ('individuo', )
         widgets = {
             'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
         }
+
+class SignosVitalesForm(forms.ModelForm):
+    class Meta:
+        model = SignosVitales
+        fields = '__all__'
+        exclude = ('individuo', )
+        widgets = {
+            'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
+        }
+    def __init__(self, *args, **kwargs):
+        self.nolabel = ['', ]
+        self.alinear = [('tension_diastolica', 'tension_sistolica'), ]
+        super(SignosVitalesForm, self).__init__(*args, **kwargs)
 
 class SeguimientoForm(forms.ModelForm):
     class Meta:
@@ -200,3 +214,12 @@ class PermisoForm(forms.ModelForm):
 
         #devolvemos el pedido
         return self.cleaned_data
+
+class DocumentoForm(forms.ModelForm):
+    class Meta:
+        model = Documento
+        fields= '__all__'
+        exclude = ('individuo', )
+        widgets = {
+            'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
+        }

@@ -22,11 +22,12 @@ from .choices import TIPO_ESTADO, TIPO_CONDUCTA
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
 from .models import Archivo
 from .models import Vehiculo, ControlVehiculo, Origen
-from .models import Individuo, Relacion
+from .models import Individuo, SignosVitales, Relacion
 from .models import Situacion
 from .models import Seguimiento
 from .models import Domicilio, GeoPosicion
 from .models import Atributo, Sintoma
+from .models import Documento
 from .models import AppData
 from .forms import ArchivoForm, ArchivoFormWithPass
 from .forms import VehiculoForm, ControlVehiculoForm
@@ -35,6 +36,7 @@ from .forms import DomicilioForm, AtributoForm, SintomaForm
 from .forms import SituacionForm, RelacionForm, SeguimientoForm
 from .forms import SearchIndividuoForm, SearchVehiculoForm
 from .forms import PermisoForm, BuscarPermiso, DatosForm, FotoForm
+from .forms import DocumentoForm, SignosVitalesForm
 from .tasks import guardar_same, guardar_epidemiologia
 from .tasks import guardar_padron_individuos, guardar_padron_domicilios
 
@@ -485,6 +487,7 @@ def trasladar(request, individuo_id, ubicacion_id):
     seguimiento.save()
     return redirect('informacion:ver_individuo', individuo_id=individuo.id)
 
+#Situacion
 @permission_required('operadores.individuos')
 def cargar_situacion(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
@@ -498,6 +501,31 @@ def cargar_situacion(request, individuo_id):
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Situacion", 'form': form, 'boton': "Cargar", }) 
 
+#Signos Vitales
+@permission_required('operadores.individuos')
+def cargar_signosvitales(request, individuo_id, signosvitales_id=None):
+    signosvitales = None
+    if signosvitales_id:
+        signosvitales = SignosVitales.objects.get(pk=signosvitales_id)
+    form = SignosVitalesForm(instance=signosvitales)
+    if request.method == "POST":
+        form = SignosVitalesForm(request.POST, instance=signosvitales)
+        if form.is_valid():
+            individuo = Individuo.objects.get(pk=individuo_id)
+            signosvitales = form.save(commit=False)
+            signosvitales.individuo = individuo
+            form.save()
+            return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Signos Vitales", 'form': form, 'boton': "Cargar", })
+
+@permission_required('operadores.individuos')
+def del_signosvitales(request, signosvitales_id):
+    signosvitales = SignosVitales.objects.get(pk=signosvitales_id)
+    individuo = signosvitales.individuo
+    signosvitales.delete()
+    return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+
+#Seguimiento
 @permission_required('operadores.individuos')
 def cargar_seguimiento(request, individuo_id, seguimiento_id=None):
     seguimiento = None
@@ -512,7 +540,7 @@ def cargar_seguimiento(request, individuo_id, seguimiento_id=None):
             seguimiento.individuo = individuo
             form.save()
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
-    return render(request, "extras/generic_form.html", {'titulo': "Cargar Seguimiento", 'form': form, 'boton': "Cargar", }) 
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Seguimiento", 'form': form, 'boton': "Cargar", })
 
 @permission_required('operadores.individuos')
 def del_seguimiento(request, seguimiento_id=None):
@@ -521,6 +549,7 @@ def del_seguimiento(request, seguimiento_id=None):
     seguimiento.delete()
     return redirect('informacion:ver_individuo', individuo_id=individuo.id)
 
+#Relacion
 @permission_required('operadores.individuos')
 def cargar_relacion(request, individuo_id, relacion_id=None):
     relacion = None
@@ -590,6 +619,30 @@ def del_sintoma(request, sintoma_id):
     sintoma = Sintoma.objects.get(pk=sintoma_id)
     individuo = sintoma.individuo
     sintoma.delete()
+    return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+
+#Documento
+@permission_required('operadores.individuos')
+def cargar_documento(request, individuo_id, documento_id=None):
+    documento = None
+    if documento_id:
+        documento = Documento.objects.get(pk=documento_id)
+    form = DocumentoForm(instance=documento)
+    if request.method == "POST":
+        form = DocumentoForm(request.POST, request.FILES, instance=documento)
+        if form.is_valid():
+            individuo = Individuo.objects.get(pk=individuo_id)
+            documento = form.save(commit=False)
+            documento.individuo = individuo
+            documento.save()
+            return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Documento", 'form': form, 'boton': "Cargar", })
+
+@permission_required('operadores.individuos')
+def del_documento(request, documento_id):
+    documento = Documento.objects.get(pk=documento_id)
+    individuo = documento.individuo
+    documento.delete()
     return redirect('informacion:ver_individuo', individuo_id=individuo.id)
 
 #GEOPOS

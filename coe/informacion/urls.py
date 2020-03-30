@@ -44,7 +44,7 @@ urlpatterns = [
     path('lista/nac/<int:nacionalidad_id>', views.lista_individuos, name='lista_nacionalidad'),
     path('lista/estado/<int:estado>', views.lista_individuos, name='lista_estado'),
     path('lista/conducta/<str:conducta>', views.lista_individuos, name='lista_conducta'),
-    #ABMS
+    #Individuo
     path('cargar/individuo/<str:num_doc>', views.cargar_individuo, name='cargar_individuo'),
     path('cargar/pasajero/<int:control_id>', views.buscar_individuo, name='buscar_pasajero'),
     path('cargar/pasajero/<int:control_id>/nuevo/<int:individuo_id>/', views.cargar_individuo, name='cargar_pasajero'),
@@ -53,19 +53,33 @@ urlpatterns = [
     path('cargar/domicilio/<int:individuo_id>', views.cargar_domicilio, name='cargar_domicilio'),
     path('elegir_ubicacion/<int:individuo_id>', views.elegir_ubicacion, name='elegir_ubicacion'),
     path('trasladar/<int:individuo_id>/<int:ubicacion_id>', views.trasladar, name='trasladar'),
+    #Signos vitales
+    path('cargar/signosvitales/<int:individuo_id>', views.cargar_signosvitales, name='cargar_signosvitales'),
+    path('mod/signosvitales/<int:individuo_id>/<int:signosvitales_id>', views.cargar_signosvitales, name='mod_signosvitales'),
+    path('del/signosvitales/<int:signosvitales_id>', views.del_signosvitales, name='del_signosvitales'),
+    #Situacion
+    path('cargar/situacion/<int:individuo_id>', views.cargar_situacion, name='cargar_situacion'),
+    #Seguimiento
     path('cargar/seguimiento/<int:individuo_id>', views.cargar_seguimiento, name='cargar_seguimiento'),
     path('mod/seguimiento/<int:individuo_id>/<int:seguimiento_id>', views.cargar_seguimiento, name='mod_seguimiento'),
     path('del/seguimiento/<int:seguimiento_id>', views.del_seguimiento, name='del_seguimiento'),
-    path('cargar/situacion/<int:individuo_id>', views.cargar_situacion, name='cargar_situacion'),
+    #Relacion
     path('cargar/relacion/<int:individuo_id>', views.cargar_relacion, name='cargar_relacion'),
     path('mod/relacion/<int:individuo_id>/<int:relacion_id>', views.cargar_relacion, name='mod_relacion'),
     path('del/relacion/<int:relacion_id>', views.del_relacion, name='del_relacion'),
+    #Atributos
     path('cargar/atributo/<int:individuo_id>', views.cargar_atributo, name='cargar_atributo'),
     path('mod/atributo/<int:individuo_id>/<int:atributo_id>', views.cargar_atributo, name='mod_atributo'),
     path('del/atributo/<int:atributo_id>', views.del_atributo, name='del_atributo'),
+    #Sintoma
     path('cargar/sintoma/<int:individuo_id>', views.cargar_sintoma, name='cargar_sintoma'),
     path('mod/sintoma/<int:individuo_id>/<int:sintoma_id>', views.cargar_sintoma, name='mod_sintoma'),
     path('del/sintoma/<int:sintoma_id>', views.del_sintoma, name='del_sintoma'),
+    #Documentos
+    path('cargar/documento/<int:individuo_id>', views.cargar_documento, name='cargar_documento'),
+    path('mod/documento/<int:individuo_id>/<int:documento_id>', views.cargar_documento, name='mod_documento'),
+    path('del/documento/<int:documento_id>', views.del_documento, name='del_documento'),
+    #Geopos
     path('cargar/geopos/<int:domicilio_id>', views.cargar_geoposicion, name='cargar_geoposicion'),
     #Reportes
     path('tablero', views.tablero_control, name='tablero_control'),

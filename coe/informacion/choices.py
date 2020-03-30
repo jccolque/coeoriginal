@@ -104,6 +104,16 @@ TIPO_SINTOMA = (
     ('ESC', 'Escalofrios')
 )
 
+TIPO_DOCUMENTO = (
+    ('HM', 'Historia Medica'),
+    ('RG', 'Radiografia'),
+    ('EC', 'Electrocardiograma'),
+    ('AS', 'Analisis de Sangre'),
+    ('AO', 'Analisis de Orina'),
+    ('LB', 'Laboratorio'),
+)
+
+
 TIPO_PERMISO = (
     ('L', 'Autoridades/Funcionarios Publicos'),
     ('S', 'Trabajador de la Salud/Seguridad'),

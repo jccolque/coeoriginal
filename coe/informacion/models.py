@@ -16,7 +16,9 @@ from georef.models import Nacionalidad, Localidad
 from .choices import TIPO_IMPORTANCIA, TIPO_ARCHIVO
 from .choices import TIPO_VEHICULO, TIPO_ESTADO, TIPO_CONDUCTA
 from .choices import TIPO_RELACION, TIPO_SEGUIMIENTO
-from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA, TIPO_PERMISO
+from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
+from .choices import TIPO_DOCUMENTO
+from .choices import TIPO_PERMISO
 from .choices import TIPO_TRIAJE
 
 # Create your models here.
@@ -197,6 +199,20 @@ class GeoPosicion(models.Model):
         }
 
 #Extras
+class SignosVitales(models.Model):
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="signos_vitales")
+    tension_diastolica = models.IntegerField('Tension Diastolica')
+    tension_sistolica = models.IntegerField('Tension Sistolica')
+    frec_cardiaca = models.IntegerField('Frecuencia Cardiaca')
+    frec_respiratoria = models.IntegerField('Frecuencia Respiratoria')
+    temperatura = models.DecimalField('Temperatura', max_digits=4, decimal_places=2)
+    sat_oxigeno = models.IntegerField('Saturacion de Oxigeno')
+    glucemia = models.IntegerField('Glucemia')
+    observaciones = HTMLField(null=True, blank=True)
+    fecha = models.DateTimeField('Fecha Subido', default=timezone.now)
+    def __str__(self):
+        return str(self.individuo) + ' de ' + str(self.fecha)
+
 class Situacion(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="situaciones")
     estado = models.IntegerField('Estado de Seguimiento', choices=TIPO_ESTADO, default=11)
@@ -276,16 +292,14 @@ class Seguimiento(models.Model):
             "fecha": str(self.fecha),
         }
 
-class SignosVitales(models.Model):
-    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="evaluaciones")
-    #TENSION ARTERIAL DIASTOLICA SISTOLICA (Dos valores)
-    #FRECUENCIA CARDIACA (numero)
-    #FRECUENCIA RESPIRATORIA (numero) x minuto
-    #TEMPERATURA (Numero con coma) en centigrados
-    #SATURACION DE OXIGENO (numero)%
-    #GLUCEMIA 
-    #observaciones (no obligatoria)
-    #Fecha y Hora
+class Documento(models.Model):
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="documentos")
+    tipo = models.CharField('Tipo de Documento', choices=TIPO_DOCUMENTO, max_length=12, default='HM')
+    archivo = models.FileField('Archivo', upload_to='archivos/individuo/documentos/')
+    aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
+    fecha = models.DateTimeField('Fecha Subido', default=timezone.now)
+    def __str__(self):
+        return self.get_tipo_display()
 
 class AppData(models.Model):
     individuo = models.OneToOneField(Individuo, on_delete=models.CASCADE, related_name="appdata")
@@ -364,6 +378,8 @@ from .signals import relacion_vehiculo
 from .signals import relacionar_situacion
 from .signals import afectar_relacionados
 from .signals import aislados
+from .signals import cargo_signosvitales
+from .signals import cargo_documento
 
 #Auditoria
 auditlog.register(Archivo)
