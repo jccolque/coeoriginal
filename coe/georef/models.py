@@ -101,6 +101,7 @@ class Ubicacion(models.Model):
     max_individuos = models.IntegerField('Poblacion Maxima Permitida', default=50)
     calle = models.CharField('Calle', max_length=200)
     numero = models.CharField('Numero', max_length=100)
+    telefono = models.CharField('Telefono', max_length=50, default='+549388', null=True, blank=True)
     aclaracion = HTMLField(null=True, blank=True)
     latitud = models.DecimalField('latitud', max_digits=12, decimal_places=10, null=True)
     longitud = models.DecimalField('longitud', max_digits=12, decimal_places=10, null=True)
