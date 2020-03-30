@@ -33,7 +33,7 @@
                             <td>{{ubicacion.nombre}}</td>
                             <td>{{ubicacion.max_individuos}}</td>
                             <td>{{ubicacion.calle}} {{ubicacion.numero}}</td>
-                            <td>{{ubicacion.aclaracion}}</td>
+                            <td>{{ubicacion.aclaracion|safe}}</td>
                             <td>
                                 <a href="{% url 'georef:mod_ubicacion' ubicacion_id=ubicacion.id %}">
                                     <img class="icons" src="{% static '/img/icons/change.png' %}">
@@ -47,7 +47,7 @@
                                     </a>
                                 {% else %}
                                     <a href="{% url 'georef:geopos_ubicacion' ubicacion_id=ubicacion.id %}" >
-                                        <img class="icons" src="{% static '/img/icons/map.png' %}">
+                                        <img class="icons" src="{% static '/img/icons/nomap.png' %}">
                                     </a>
                                 {% endif %}
                             </td>

@@ -1,6 +1,7 @@
 #Imports de python
 import re
 #Imports django
+from django.db.models.deletion import Collector
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 #Imports de la app
 from .apps import CoreConfig
@@ -26,3 +27,11 @@ def delete_tags(texto):
 
 def date2str(fecha):
     return str(fecha)[8:10] + '/' + str(fecha)[5:7]
+
+def is_related(instance):
+    collector = Collector(using="default")
+    collector.collect([instance])
+    if collector.dependencies:
+        return True
+    else:
+        return False
