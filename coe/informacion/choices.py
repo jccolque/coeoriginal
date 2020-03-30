@@ -54,6 +54,7 @@ TIPO_SEGUIMIENTO = (
     ('L', 'Llamada Telefonica'),
     ('M', 'Reporte Medico'),
     ('C', 'Cronologia'),
+    ('E', 'Epicrisis'),
     ('A', 'Autodiagnostico'),
     ('F', 'Fin del Seguimiento/Alta'),
 )

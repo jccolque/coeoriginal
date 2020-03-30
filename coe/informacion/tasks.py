@@ -5,7 +5,6 @@ from dateutil.relativedelta import relativedelta
 from background_task import background
 #Imports django
 from django.utils import timezone
-from django.db.models import Q
 #Imports del proyecto
 from georef.models import Nacionalidad, Departamento, Localidad
 #Import Personales
@@ -13,7 +12,34 @@ from .models import Archivo
 from .models import Individuo, Domicilio
 from .models import Seguimiento
 from .models import Situacion, Sintoma, Atributo
-from .choices import TIPO_SINTOMA
+
+#Reconocedores
+Rsintomas = [
+    ('DPR', 'Respirar'),
+    ('DM', 'Muscular'),
+    ('DRO', 'Ocular'),
+    ('ART', 'Articul'),
+    ('DC', 'Cabeza'),
+    ('DC', 'Cefalea'),
+    ('DG', 'Garganta'),
+    ('DP', 'Pecho'),
+    ('DSV', 'Vientre'),
+    ('FAT', 'Fatiga'),
+    ('FIE', 'Fiebre'),
+    ('HEP', 'Hemorragia'),
+    ('MAR', 'Mareos'),
+    ('NAS', 'Nauseas'),
+    ('PAL', 'Palidez'),
+    ('PDA', 'Apetito'),
+    ('RCA', 'Cardiaco'),
+    ('RCA', 'Taquicard'),
+    ('SAR', 'Sarpulli'),
+    ('SN', 'Nasal'),
+    ('TOS', 'Tos'),
+    ('VOM', 'Vomit'),
+    ('ESC', 'Escalof')
+]
+Rriesgos = ['HIPER', 'TENSION', 'DBT', 'DIABE', 'EMBARA', 'INMUN', 'ASMA', 'BRONQ', 'CARDIA', 'CARDIO', 'RENAL']
 
 @background(schedule=1)
 def guardar_same(lineas, archivo_id, ultimo=False):
@@ -50,7 +76,7 @@ def guardar_same(lineas, archivo_id, ultimo=False):
             #Cargamos Situacion
             situacion = Situacion()
             situacion.individuo = individuo
-            situacion.estado = 1
+            situacion.estado = 11
             situacion.conducta = 'B'
             situacion.aclaracion = "CARGA SAME"
             situacion.save()
@@ -63,16 +89,15 @@ def guardar_same(lineas, archivo_id, ultimo=False):
             seguimiento.fecha = timezone.datetime(int(d[2]),int(d[1]),int(d[0]), int(h[0]), int(h[1]))
             seguimiento.save()
             #Intentamos procesar sintomas:
-            for tsintoma in TIPO_SINTOMA:
-                if tsintoma[0] in linea[3].upper():
+            for sintoma in Rsintomas:
+                if sintoma[1].upper() in linea[3].upper():
                     sintoma = Sintoma()
                     sintoma.individuo = individuo
-                    sintoma.tipo = tsintoma[0]
+                    sintoma.tipo = sintoma[0]
                     sintoma.aclaracion = "SAME: "+linea[3][0:190]
                     sintoma.save()
             #Poblacion de riesgo:
-            riesgos = ['HTA', 'DBT', 'EMBAR', 'INMUN', 'ASMA', 'BRONQ', 'CARDIA', 'RENAL']
-            for riesgo in riesgos:
+            for riesgo in Rriesgos:
                 if riesgo in linea[3].upper():
                     atributo = Atributo()
                     atributo.individuo = individuo
@@ -157,24 +182,25 @@ def guardar_epidemiologia(lineas, archivo_id, ultimo=False):
             #Cargamos Situacion
             situacion = Situacion()
             situacion.individuo = individuo
-            situacion.estado = 1
+            situacion.estado = 11
             situacion.conducta = 'C'
             situacion.aclaracion = "Carga Seguimiento Epidemiologia"
             situacion.save()
             # DIA 1 a 14 (del 8 al 21)
-            #Intentamos procesar sintomas:
+            #No Intentamos procesar sintomas pues mete mucha basura:
             for dia in linea[7:]:
                 if dia:
                     seguimiento = Seguimiento()
                     seguimiento.individuo = individuo
-                    seguimiento.aclaracion = dia[0:190]
+                    seguimiento.aclaracion = "EPIDEMIOLOGIA" + dia[0:190]
                     seguimiento.save()
-                    for tsintoma in TIPO_SINTOMA:
-                        if tsintoma[0] in dia.upper():
+                    #Intentamos identificar sintomas
+                    for sintoma in Rsintomas:
+                        if sintoma[1].upper() in linea[3].upper():
                             sintoma = Sintoma()
                             sintoma.individuo = individuo
-                            sintoma.tipo = tsintoma[0]
-                            sintoma.aclaracion = "SEGUIMIENTO: "+dia[0:190]
+                            sintoma.tipo = sintoma[0]
+                            sintoma.aclaracion = "EPIDEMIOLOGIA: " + linea[3][0:190]
                             sintoma.save()
             #Lista la linea
             cant_subidos += 1

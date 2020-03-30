@@ -276,6 +276,17 @@ class Seguimiento(models.Model):
             "fecha": str(self.fecha),
         }
 
+class SignosVitales(models.Model):
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="evaluaciones")
+    #TENSION ARTERIAL DIASTOLICA SISTOLICA (Dos valores)
+    #FRECUENCIA CARDIACA (numero)
+    #FRECUENCIA RESPIRATORIA (numero) x minuto
+    #TEMPERATURA (Numero con coma) en centigrados
+    #SATURACION DE OXIGENO (numero)%
+    #GLUCEMIA 
+    #observaciones (no obligatoria)
+    #Fecha y Hora
+
 class AppData(models.Model):
     individuo = models.OneToOneField(Individuo, on_delete=models.CASCADE, related_name="appdata")
     telefono = models.CharField('Telefono', max_length=50, default='+549388')

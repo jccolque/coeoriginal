@@ -65,7 +65,7 @@ class Localidad(models.Model):
         verbose_name_plural = 'Localidades'
         unique_together = ('departamento', 'nombre')
     def __str__(self):
-        return self.nombre
+        return self.nombre + ' (' + str(self.departamento) + ')'
     def as_dict(self):
         return {
             "id": self.id,
