@@ -1,5 +1,7 @@
 {% block content %}
-    <div id="chart-{{graf_datos.nombre}}" style="width: 95%%;"></div>
+    <a href="{% url 'graficos:ver_grafico' grafico_id=graf_datos.id %}">
+        <div id="chart-{{graf_datos.nombre}}" style="width: 95%%;"></div>
+    </a>
 {% endblock %}
 
 {% load grafic_tags %}

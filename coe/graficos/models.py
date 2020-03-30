@@ -63,7 +63,7 @@ class Grafico(models.Model):
                         dato.append(new)
                 #Agregamos la linea
                 datos.append(dato)
-            return datos[:self.cant_datos]
+            return datos[-self.cant_datos:]#Entregamos la cantidad esperada
 
 class Columna(models.Model):
     grafico = models.ForeignKey(Grafico, on_delete=models.CASCADE, related_name="columnas")

@@ -51,8 +51,11 @@ def crear_grafico(request, grafico_id=None):
 @permission_required('operadores.menu_graficos')
 def reniciar_datos(request, grafico_id):
     grafico = Grafico.objects.get(pk=grafico_id)
-    #Eliminamos todos sus datos
-    grafico.columnas.all().delete()
+    #Elegimos datos para eliminar
+    filas = [d.fila for d in  grafico.columnas.first().datos.all()]
+    filas = filas[-grafico.cant_datos:]
+    #Eliminamos todos esos datos
+    Dato.objects.filter(fila__in=filas).delete()
     #Quitamos su ultima actualizacion
     grafico.update = None
     grafico.save()
@@ -64,7 +67,6 @@ def cambiar_estado(request, grafico_id):
     grafico.publico = not grafico.publico
     grafico.save()
     return redirect('graficos:ver_grafico', grafico_id=grafico.id)
-
 
 @permission_required('operadores.menu_graficos')
 def eliminar_grafico(request, grafico_id):
