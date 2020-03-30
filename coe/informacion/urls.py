@@ -24,7 +24,6 @@ urlpatterns = [
     path('subir/same', views.subir_same, name='subir_same'),
     path('subir/epidemiologia', views.subir_epidemiologia, name='subir_epidemiologia'),
     path('procesar_archivos/<int:archivo_id>', views.procesar_archivos, name='procesar_archivos'),
-    #Carga de datos
     #Vehiculos
     path('buscar/vehiculo/', views.buscar_vehiculo, name='buscar_vehiculo'),
     path('lista/vehiculos', views.listar_vehiculos, name='listar_vehiculos'),

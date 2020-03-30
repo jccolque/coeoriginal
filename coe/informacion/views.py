@@ -738,6 +738,9 @@ def upload_padron_individuos(request):
     if request.method == "POST":
         form = ArchivoFormWithPass(request.POST, request.FILES)
         if form.is_valid():
+            #Eliminamos todos los objetos del padron
+            Individuo.objects.filter(observaciones="PADRON").delete()
+            #Generamos el archivo en la db
             operador = obtener_operador(request)
             archivo = form.save(commit=False)
             archivo.operador = operador
@@ -762,6 +765,9 @@ def upload_padron_domicilios(request):
     if request.method == "POST":
         form = ArchivoFormWithPass(request.POST, request.FILES)
         if form.is_valid():
+            #Eliminamos todos los objetos del padron
+            Domicilio.objects.filter(aclaracion="PADRON").delete()
+            #Generamos el archivo en la db
             operador = obtener_operador(request)
             archivo = form.save(commit=False)
             archivo.operador = operador

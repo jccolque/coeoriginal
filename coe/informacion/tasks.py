@@ -199,7 +199,6 @@ def guardar_padron_individuos(lineas, archivo_id, ultimo=False):
         archivo.descripcion = "<h3>Inicia la carga Masiva del Padron: "+str(timezone.now())+"</h3>"
         #Limpiamos la base de datos:
         archivo.descripcion += "<li> Eliminamos cargados de ultimo Padron: "+ str(timezone.now())
-        Individuo.objects.filter(observaciones="PADRON").delete()
     #Obtenemos dni existentes
     num_docs_existentes = [i.num_doc for i in Individuo.objects.all()]
     #Generamos elementos basicos:
@@ -239,7 +238,6 @@ def guardar_padron_domicilios(lineas, archivo_id, ultimo=False):
         archivo.descripcion = "<h3>Inicia la carga Masiva de Domicilios del Padron: "+str(timezone.now())+"</h3>"
         #Limpiamos la base de datos:
         archivo.descripcion += "<li> Eliminamos cargados de ultimo Padron: "+ str(timezone.now())+"</li>"
-        Domicilio.objects.filter(aclaracion="PADRON").delete()
     #Agregamos info al doc
     archivo.descripcion += "<p>Cantidad Lineas: "+str(len(lineas))+"</p>"    
     #Generamos listado de individuos para matchear
