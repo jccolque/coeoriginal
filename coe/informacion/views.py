@@ -766,7 +766,10 @@ def upload_padron_domicilios(request):
         form = ArchivoFormWithPass(request.POST, request.FILES)
         if form.is_valid():
             #Eliminamos todos los objetos del padron
-            Domicilio.objects.filter(aclaracion="PADRON").delete()
+            Situacion.objects.filter(aclaracion="CARGA SAME").delete()
+            Seguimiento.objects.filter(aclaracion="CARGA SAME").delete()
+            Sintoma.objects.filter(aclaracion__icontains="CARGA SAME:").delete()
+            Atributo.objects.filter(aclaracion__icontains="CARGA SAME:").delete()
             #Generamos el archivo en la db
             operador = obtener_operador(request)
             archivo = form.save(commit=False)
@@ -793,10 +796,10 @@ def subir_epidemiologia(request):
         form = ArchivoFormWithPass(request.POST, request.FILES)
         if form.is_valid():
             #Eliminamos registros previamente Cargados
-            Domicilio.objects.filter(aclaracion="CARGA MASIVA EPIDEMIOLOGIA").delete()
-            Seguimiento.objects.filter(aclaracion="CARGA MASIVA EPIDEMIOLOGIA").delete()
-            Situacion.objects.filter(aclaracion="Carga Seguimiento Epidemiologia").delete()
-            Sintoma.objects.filter(aclaracion__icontains="SEGUIMIENTO").delete()
+            Domicilio.objects.filter(aclaracion="EPIDEMIOLOGIA").delete()
+            Situacion.objects.filter(aclaracion="EPIDEMIOLOGIA").delete()
+            Seguimiento.objects.filter(aclaracion="EPIDEMIOLOGIA").delete()
+            Sintoma.objects.filter(aclaracion__icontains="EPIDEMIOLOGIA").delete()
             #Generamos archivo en la DB
             operador = obtener_operador(request)
             archivo = form.save(commit=False)

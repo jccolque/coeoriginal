@@ -94,7 +94,7 @@ def guardar_same(lineas, archivo_id, ultimo=False):
                     sintoma = Sintoma()
                     sintoma.individuo = individuo
                     sintoma.tipo = sintoma[0]
-                    sintoma.aclaracion = "SAME: "+linea[3][0:190]
+                    sintoma.aclaracion = "CARGA SAME: "+linea[3][0:190]
                     sintoma.save()
             #Poblacion de riesgo:
             for riesgo in Rriesgos:
@@ -102,7 +102,7 @@ def guardar_same(lineas, archivo_id, ultimo=False):
                     atributo = Atributo()
                     atributo.individuo = individuo
                     atributo.tipo = 'PR'
-                    atributo.aclaracion = "SAME: "+linea[3][0:190]
+                    atributo.aclaracion = "CARGA SAME: "+linea[3][0:190]
                     atributo.save()
             #Lista la linea
             cant_subidos += 1
@@ -166,25 +166,25 @@ def guardar_epidemiologia(lineas, archivo_id, ultimo=False):
                 if linea[5]:
                     domicilio.numero = linea[5]
                 else:
-                    domicilio.numero = 'CORREGIR'
+                    domicilio.numero = 'EPIDEMIOLOGIA:CORREGIR'
                 #Le metemos localidad
                 if linea[3]:
                     domicilio.localidad = Localidad.objects.filter(codigo_postal=linea[3]).first()
                 if not hasattr(domicilio, 'localidad'):
                     domicilio.localidad = san_salvador
-                domicilio.aclaracion = "CARGA MASIVA EPIDEMIOLOGIA"
+                domicilio.aclaracion = "EPIDEMIOLOGIA"
                 domicilio.save()
             #Cargamos seguimiento> Llamado al same
             seguimiento = Seguimiento()
             seguimiento.individuo = individuo
-            seguimiento.aclaracion = "CARGA MASIVA EPIDEMIOLOGIA"
+            seguimiento.aclaracion = "EPIDEMIOLOGIA"
             seguimiento.save()
             #Cargamos Situacion
             situacion = Situacion()
             situacion.individuo = individuo
             situacion.estado = 11
             situacion.conducta = 'C'
-            situacion.aclaracion = "Carga Seguimiento Epidemiologia"
+            situacion.aclaracion = "EPIDEMIOLOGIA"
             situacion.save()
             # DIA 1 a 14 (del 8 al 21)
             #No Intentamos procesar sintomas pues mete mucha basura:
