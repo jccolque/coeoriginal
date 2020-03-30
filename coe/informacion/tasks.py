@@ -242,6 +242,8 @@ def guardar_padron_domicilios(lineas, archivo_id, ultimo=False):
     archivo.descripcion += "<p>Cantidad Lineas: "+str(len(lineas))+"</p>"    
     #Generamos listado de individuos para matchear
     individuos = {i.num_doc: i for i in Individuo.objects.all()}
+    #Preparamos un depto para cuando se crea ciudad desconocida
+    depto = Departamento.objects.first()
     #Generamos lista de localidades para matchear
     localidades = {l.nombre: l for l in Localidad.objects.all()}
     #Cargamos domicilios
@@ -252,7 +254,7 @@ def guardar_padron_domicilios(lineas, archivo_id, ultimo=False):
             #Si no existe la localidad la creamos
             if linea[2] not in localidades:
                 localidad = Localidad()
-                localidad.departamento = Departamento.objects.first()
+                localidad.departamento = depto
                 localidad.nombre = linea[2]
                 localidad.save()
                 archivo.descripcion += "<li><b> Se creo: "+linea[2]+"| Hay que Corregirle el Departamento.</b></li>"
@@ -264,6 +266,7 @@ def guardar_padron_domicilios(lineas, archivo_id, ultimo=False):
                 domicilio.localidad = localidades[linea[2]]
                 domicilio.calle = linea[1]
                 domicilio.aclaracion = "PADRON"
+                domicilio.aislamiento = False
                 domicilios.append(domicilio)
     #Creamos este bloque
     Domicilio.objects.bulk_create(domicilios)
