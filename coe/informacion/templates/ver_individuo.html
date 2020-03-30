@@ -255,6 +255,7 @@
                         <ul class="menu_botones">
                             <li><a href="{% url 'informacion:mod_individuo' individuo_id=individuo.id %}">Modificar Datos Basicos</a></li>
                             <li><a href="{% url 'informacion:cargar_domicilio' individuo_id=individuo.id %}">Residencia Actual En La Provincia</a></li>
+                            <li><a href="{% url 'informacion:elegir_ubicacion' individuo_id=individuo.id %}">Trasladar Aislacion/Internacion</a></li>
                             <li><a href="{% url 'informacion:cargar_seguimiento' individuo_id=individuo.id %}">Cargar Seguimiento</a></li>
                             <li><a href="{% url 'informacion:cargar_sintoma' individuo_id=individuo.id  %}">Cargar Sintomas</a></li>
                             <li><a href="{% url 'informacion:cargar_atributo' individuo_id=individuo.id %}">Cargar Atributo de Control</a></li>

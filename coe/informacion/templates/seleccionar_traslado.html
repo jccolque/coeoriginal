@@ -5,12 +5,19 @@
         <div class="container">
             <div class="row">
                 <h2>Trasladar Individuo</h2>
-                DATOS INDIVIDUO
+                <p><b>{{individuo.apellidos}} {{individuo.nombres}}</b></p>
+                <p>{{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</p>
+                <p>Fecha de Nacimiento: {{individuo.fecha_nacimiento}}</p>
+                <p>Telefono: {{individuo.telefono}}</p>
+                <p>Email: {{individuo.email}}</p>
+                <p>Nacionalidad: {{individuo.nacionalidad}}</p>
+                <p>Origen: {{individuo.origen}}</p>
+                <p>Destino:{{individuo.destino}}</p>
                 <div class="col-sm-4 col-sm-offset-1">
                     <ul class="menu_botones">
                         {% for aislamiento in aislamientos %}
                             <li>
-                                <a href="{% url 'informacion:trasladar' ubicacion_id=aislamiento.id %}">
+                                <a href="{% url 'informacion:trasladar' individuo_id=individuo.id ubicacion_id=aislamiento.id %}">
                                     {{aislamiento.nombre}} - {{aislamiento.localidad}}
                                 </a>
                             </li>
@@ -21,7 +28,7 @@
                     <ul class="menu_botones">
                         {% for internacion in internaciones %}
                             <li>
-                                <a href="{% url 'informacion:trasladar' ubicacion_id=internacion.id %}">
+                                <a href="{% url 'informacion:trasladar' individuo_id=individuo.id ubicacion_id=internacion.id %}">
                                     {{internacion.nombre}} - {{internacion.localidad}}
                                 </a>
                             </li>

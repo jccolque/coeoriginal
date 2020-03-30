@@ -17,11 +17,12 @@ TIPO_ARCHIVO = (
 )
 
 TIPO_VEHICULO = (
-    (1, 'Particular'),
-    (2, 'Colectivo'),
-    (3, 'Traffic'),
-    (4, 'Comercial Pequeño'),
-    (5, 'Avion'),
+    (1, 'Transporte Sanitario'),
+    (2, 'Particular'),
+    (3, 'Colectivo'),
+    (4, 'Traffic'),
+    (5, 'Comercial Pequeño'),
+    (6, 'Avion'),
 )
 
 TIPO_ESTADO = (

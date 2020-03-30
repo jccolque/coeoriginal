@@ -451,8 +451,20 @@ def cargar_domicilio(request, individuo_id):
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Domicilio", 'form': form, 'boton': "Cargar", })
 
+#Traslados
 @permission_required('operadores.individuos')
-def transladar(request, individuo_id, ubicacion_id):
+def elegir_ubicacion(request, individuo_id):
+    individuo = Individuo.objects.get(pk=individuo_id)
+    aislamientos = Ubicacion.objects.filter(tipo='AI')
+    internaciones = Ubicacion.objects.filter(tipo='IN')
+    return render(request, "seleccionar_traslado.html", {
+        'individuo': individuo,
+        'aislamientos': aislamientos,
+        'internaciones': internaciones,
+    })
+
+@permission_required('operadores.individuos')
+def trasladar(request, individuo_id, ubicacion_id):
     #Obtenemos lo importante
     individuo = Individuo.objects.get(pk=individuo_id)
     ubicacion = Ubicacion.objects.get(pk=ubicacion_id)
