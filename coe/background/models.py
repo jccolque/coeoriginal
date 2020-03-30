@@ -22,7 +22,7 @@ class Progress_Links(models.Model):
         cant_prog = bg_Tasks.objects.filter(queue__icontains=self.tarea).count()
         cant_term = bg_CompletedTask.objects.filter(queue__icontains=self.tarea).count()
         total = cant_prog + cant_term
-        porcentaje = ( 100 / total) * cant_term
+        porcentaje = int(( 100 / total) * cant_term)
         if porcentaje == '100':
             return 'Terminada'
         elif porcentaje > 0:

@@ -792,6 +792,12 @@ def subir_epidemiologia(request):
     if request.method == "POST":
         form = ArchivoFormWithPass(request.POST, request.FILES)
         if form.is_valid():
+            #Eliminamos registros previamente Cargados
+            Domicilio.objects.filter(aclaracion="CARGA MASIVA EPIDEMIOLOGIA").delete()
+            Seguimiento.objects.filter(aclaracion="CARGA MASIVA EPIDEMIOLOGIA").delete()
+            Situacion.objects.filter(aclaracion="Carga Seguimiento Epidemiologia").delete()
+            Sintoma.objects.filter(aclaracion__icontains="SEGUIMIENTO").delete()
+            #Generamos archivo en la DB
             operador = obtener_operador(request)
             archivo = form.save(commit=False)
             archivo.operador = operador
