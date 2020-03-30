@@ -11,8 +11,9 @@ from django.contrib.auth.decorators import permission_required
 from coe.settings import GEOPOSITION_GOOGLE_MAPS_API_KEY
 from core.decoradores import superuser_required
 from core.functions import date2str
-from georef.models import Nacionalidad
 from core.forms import SearchForm
+from georef.models import Nacionalidad
+from georef.models import Ubicacion
 from operadores.functions import obtener_operador
 from background.tasks import crear_progress_link
 from graficos.functions import obtener_grafico
@@ -328,7 +329,6 @@ def ver_individuo(request, individuo_id):
     individuo = Individuo.objects.prefetch_related('domicilios', 'domicilios__localidad').get(pk=individuo_id)
     return render(request, "ver_individuo.html", {'individuo': individuo, })
 
-#LISTAS
 @permission_required('operadores.individuos')
 def buscador_individuos(request):
     form = BuscadorIndividuosForm()   
@@ -386,7 +386,6 @@ def lista_individuos(request,
 
 @permission_required('operadores.individuos')
 def lista_evaluar(request):
-    evaluar = []
     individuos = Individuo.objects.filter(situacion_actual__conducta='B')
     individuos = individuos.select_related('nacionalidad', 'origen', 'destino', )
     individuos = individuos.select_related('domicilio_actual', 'situacion_actual')
@@ -399,24 +398,31 @@ def lista_evaluar(request):
 
 @permission_required('operadores.individuos')
 def lista_seguimiento(request):
-    individuos = {}
-    seguimientos = Seguimiento.objects.all().exclude(tipo='F')#Eliminamos los que terminaron el seguimiento
+    #Obtenemos los registros
+    seguimientos = Seguimiento.objects.all()
+    seguimientos = seguimientos.exclude(tipo='F')#Eliminamos los que terminaron el seguimiento
+    #Optimizamos las busquedas
     seguimientos = seguimientos.select_related('individuo', 'individuo__nacionalidad')
     seguimientos = seguimientos.select_related('individuo__domicilio_actual', 'individuo__situacion_actual')
     seguimientos = seguimientos.prefetch_related('individuo__atributos', 'individuo__sintomas')
-    seguimientos = seguimientos.prefetch_related('individuo__situaciones', 'individuo__seguimientos')
-    seguimientos = seguimientos.prefetch_related('individuo__atributos', 'individuo__sintomas')
-    seguimientos = [s for s in seguimientos]
+    seguimientos = seguimientos.prefetch_related('individuo__seguimientos')
+    #Traemos seguimientos terminados para descartar
     seguimientos_terminados = [s.individuo for s in Seguimiento.objects.filter(tipo='F')]
+#       last12hrs = timezone.now() - timedelta(hours=12)
+#       and seguimiento.fecha < last12hrs
+    #Procesamos
+    individuos = {}
     for seguimiento in seguimientos:
         if seguimiento.individuo.id not in individuos:
             if not seguimiento.individuo in seguimientos_terminados:
                 individuos[seguimiento.individuo.id] = seguimiento.individuo
     individuos = list(individuos.values())
+    #Lanzamos reporte
     return render(request, "listado_seguimiento.html", {
         'individuos': individuos,
         'has_table': True,
     })
+
 
 @permission_required('operadores.individuos')
 def lista_autodiagnosticos(request):
@@ -444,6 +450,28 @@ def cargar_domicilio(request, individuo_id):
             domicilio.save()
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Domicilio", 'form': form, 'boton': "Cargar", })
+
+@permission_required('operadores.individuos')
+def transladar(request, individuo_id, ubicacion_id):
+    #Obtenemos lo importante
+    individuo = Individuo.objects.get(pk=individuo_id)
+    ubicacion = Ubicacion.objects.get(pk=ubicacion_id)
+    #Creamos nuevo domicilio:
+    domicilio = Domicilio()
+    domicilio.individuo = individuo
+    domicilio.localidad = ubicacion.localidad
+    domicilio.calle = ubicacion.calle
+    domicilio.numero = ubicacion.numero
+    domicilio.aclaracion = ubicacion.nombre + " (Traslado Via Sistema)"
+    domicilio.aislamiento = True
+    domicilio.save()
+    #Creamos Cronologia
+    seguimiento = Seguimiento()
+    seguimiento.individuo = individuo
+    seguimiento.tipo = 'C'
+    seguimiento.aclaracion = ubicacion.nombre + " (Traslado Via Sistema)"
+    seguimiento.save()
+    return redirect('informacion:ver_individuo', individuo_id=individuo.id)
 
 @permission_required('operadores.individuos')
 def cargar_situacion(request, individuo_id):

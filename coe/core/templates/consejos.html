@@ -1,0 +1,80 @@
+{% extends 'base/base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class="panel-pane pane-texto container">
+        <div class="pane-content">
+            <div class="row m-t-1 text-center">
+                <div class="col-md-8 col-md-offset-2">
+                    <h2><b>¿Cómo ayudamos a prevenirlo?</b></h2>
+                    <div class="col-sm-4">
+                        <img class="iconsx4" src="{% static 'img/consejos/coronavirus-jubilado.png' %}">
+                        <h5>Si sos mayor de 60 años, 
+                            <a href="https://www.argentina.gob.ar/salud/coronavirus/poblacion/mayores" target="_blank">
+                                seguí nuestros consejos.
+                            </a>
+                        </h5>
+                    </div>
+                    <div class="col-sm-4">
+                        <img class="iconsx4" src="{% static 'img/consejos/coronavirus-lavar-manos.png' %}">
+                        <h5>Lavate bien las manos con jabón o alcohol en gel.</h5>
+                    </div>
+                    <div class="col-sm-4">
+                        <img class="iconsx4" src="{% static 'img/consejos/coronavirus-estornudar.png' %}">
+                        <h5>Tosé o estornudá sobre el pliegue de tu codo.</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="row m-t-1 text-center">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="col-sm-4">
+                        <img class="iconsx4" src="{% static 'img/consejos/coronavirus-ojos-nariz.png' %}">
+                        <h5>No te lleves las manos a la cara.</h5>
+                    </div>
+                    <div class="col-sm-4">
+                        <img class="iconsx4" src="{% static 'img/consejos/coronavirus-ventilar.png' %}">
+                        <h5>Ventilá bien los ambientes de tu casa y tu lugar de trabajo.</h5>
+                    </div>
+                    <div class="col-sm-4">
+                        <img class="iconsx4" src="{% static 'img/consejos/coronavirus-desinfectar.png' %}">
+                        <h5>Desinfectá los objetos que usás con frecuencia.</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="pane-content text-center">
+            <div class="row">
+                <div class="col-md-7 col-md-offset-1">
+                    <h2 class="m-b-4">Si Tenés alguno de estos síntomas</h2>
+                    <div class="col-md-4 col-md-offset-2">
+                        <img class="iconsx4" src="{% static 'img/consejos/coronavirus-fiebre.png' %}">
+                        <h5 class="h3">Fiebre</h5>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="row">
+                            <img class="iconsx4" src="{% static 'img/consejos/coronavirus-tos.png' %}">
+                            <h5>con tos</h5>
+                        </div>
+                        <div class="row">                 
+                            <img class="iconsx4" src="{% static 'img/consejos/coronavirus-garganta.png' %}">
+                            <h5>con dolor de garganta</h5>
+                        </div>
+                        <div class="row">
+                            <img class="iconsx4" src="{% static 'img/consejos/coronavirus-respiracion.png' %}">
+                            <h5>con dificultades para respirar</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <br>
+                    <img class="fotos" src="{% static 'img/consejos/llama.png' %}">
+                    <p>Si tenés alguno de estos síntomas,  no te automediques y consultá inmediatamente al sistema de salud.</p>
+                    <p>Comunicate al 0800 888 4767 o  al 0800 777 7711</p>
+                    <p>Denuncias por incumplimiento de cuarentena llamá al 911</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

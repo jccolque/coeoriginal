@@ -26,6 +26,9 @@ def faqs(request):
     faqs_list = Faq.objects.all().order_by('orden')
     return render(request, 'faqs.html', {'faqs': faqs_list, })
 
+def consejos(request):
+    return render(request, 'consejos.html', {})
+
 #Manejo de sesiones de Usuarios
 def home_login(request):
     message = ''

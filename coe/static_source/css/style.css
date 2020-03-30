@@ -229,8 +229,12 @@ img.icons {
     width: 25px;
 }
 
-img.iconsx2{
+img.iconsx2 {
     width: 50px;
+}
+
+iconsx4{
+    width: 100px;
 }
 
 img.documento{
