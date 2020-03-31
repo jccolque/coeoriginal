@@ -1,0 +1,17 @@
+thead th {
+    padding: 0px!important;
+}
+
+thead input {
+    width: 100%;
+    text-align: center;
+    background-color: var(--color_oscuro);
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+thead input::placeholder {
+    color: white;
+    font-size: 1em;
+    font-weight: normal;
+}

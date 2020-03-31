@@ -31,7 +31,6 @@ def ver_grafico(request, grafico_id):
 
     return render(request, 'ver_grafico.html', {
         'grafico': grafico,
-        'has_table': True,
     })
 
 #administracion de graficos
