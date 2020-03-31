@@ -1,0 +1,63 @@
+{% extends 'base_informacion.html' %}
+
+{% load static %}
+
+{% block content %}
+    <section class="formulario_custom">
+        <div class="container">
+            <div class="row">
+                <h2>Trasladar Individuo</h2>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-5" "col-sm-offset-1">
+                        <p><b>{{individuo.apellidos}} {{individuo.nombres}}</b></p>
+                        <p>{{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</p>
+                        <p><b>Fecha de Nacimiento: {{individuo.fecha_nacimiento}}</b></p>
+                        <p><b>Nacionalidad: {{individuo.nacionalidad}}</b></p>
+                        <p><b>Situacion: {{individuo.situacion_actual}}</b></p>
+                    </div>
+                    <div class="col-sm-5">
+                        <h3><b>Destino del Traslado</b></h3>
+                        <p>{{ubicacion.get_tipo_display}} {{ubicacion.nombre}}</p>
+                        <p>Direccion: {{ubicacion.calle}} {{ubicacion.numero}}</p>
+                        <p>Localidad: {{ubicacion.localidad}}</p>
+                        <p>Capacidad Maxima: {{ubicacion.max_individuos}} Personas.</p> 
+                        <p>Capacidad Disponibles: {{ubicacion.capacidad_disponible}}</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="col-sm-9" "col-sm-offset-2">
+                    <table class="listado" id="table">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Identificacion</th>
+                                <th>Empresa</th>
+                                <th>Conductor</th>
+                                <th>Trasladar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for vehiculo in vehiculos %}
+                                <tr>
+                                    <td>{{vehiculo.get_tipo_display}}</td>
+                                    <td>
+                                        {{vehiculo.identificacion}}
+                                        <a href="{% url 'informacion:mod_vehiculo' vehiculo_id=vehiculo.id %}" target="_blank">
+                                            <img class="icons" src="{% static '/img/icons/change.png' %}">
+                                        </a>
+                                    </td>
+                                    <td>{{vehiculo.empresa}}</td>
+                                    <td>{{vehiculo.conductor}}</td>
+                                    <td><a href="{% url 'informacion:trasladar' individuo_id=individuo.id ubicacion_id=ubicacion.id vehiculo_id=vehiculo.id %}">Trasladar</a></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}
+
+

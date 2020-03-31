@@ -31,7 +31,7 @@ urlpatterns = [
     path('ver/vehiculo/<int:vehiculo_id>', views.ver_vehiculo, name='ver_vehiculo'),
     path('cargar/vehiculo/<str:identificacion>', views.cargar_vehiculo, name='cargar_vehiculo'),
     path('mod/vehiculo/<int:vehiculo_id>', views.cargar_vehiculo, name='mod_vehiculo'),
-    path('cargar/control/<int:vehiculo_id>', views.cargar_control, name='cargar_control'),
+    path('cargar/traslado/<int:vehiculo_id>', views.cargar_traslado, name='cargar_traslado'),
     #Individuos
     path('buscar/individuo/', views.buscar_individuo, name='buscar_individuo'),
     path('ver/individuo/<int:individuo_id>', views.ver_individuo, name='ver_individuo'),
@@ -46,13 +46,15 @@ urlpatterns = [
     path('lista/conducta/<str:conducta>', views.lista_individuos, name='lista_conducta'),
     #Individuo
     path('cargar/individuo/<str:num_doc>', views.cargar_individuo, name='cargar_individuo'),
-    path('cargar/pasajero/<int:control_id>', views.buscar_individuo, name='buscar_pasajero'),
-    path('cargar/pasajero/<int:control_id>/nuevo/<int:individuo_id>/', views.cargar_individuo, name='cargar_pasajero'),
-    path('cargar/pasajero/<int:control_id>/nuevo/<str:num_doc>/', views.cargar_individuo, name='cargar_pasajero_nuevo'),
+    path('cargar/pasajero/<int:traslado_id>', views.buscar_individuo, name='buscar_pasajero'),
+    path('cargar/pasajero/<int:traslado_id>/nuevo/<int:individuo_id>/', views.cargar_individuo, name='cargar_pasajero'),
+    path('cargar/pasajero/<int:traslado_id>/nuevo/<str:num_doc>/', views.cargar_individuo, name='cargar_pasajero_nuevo'),
     path('mod/individuo/<int:individuo_id>', views.cargar_individuo, name='mod_individuo'),
     path('cargar/domicilio/<int:individuo_id>', views.cargar_domicilio, name='cargar_domicilio'),
-    path('elegir_ubicacion/<int:individuo_id>', views.elegir_ubicacion, name='elegir_ubicacion'),
-    path('trasladar/<int:individuo_id>/<int:ubicacion_id>', views.trasladar, name='trasladar'),
+    #Traslado
+    path('traslado/elegir/ubicacion/<int:individuo_id>', views.elegir_ubicacion, name='elegir_ubicacion'),
+    path('traslado/elegir/vehiculo/<int:individuo_id>/<int:ubicacion_id>', views.elegir_vehiculo, name='elegir_vehiculo'),
+    path('trasladar/<int:individuo_id>/<int:ubicacion_id>/<int:vehiculo_id>', views.trasladar, name='trasladar'),
     #Signos vitales
     path('cargar/signosvitales/<int:individuo_id>', views.cargar_signosvitales, name='cargar_signosvitales'),
     path('mod/signosvitales/<int:individuo_id>/<int:signosvitales_id>', views.cargar_signosvitales, name='mod_signosvitales'),

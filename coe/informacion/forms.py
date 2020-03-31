@@ -12,7 +12,7 @@ from core.widgets import XDSoftDatePickerInput, XDSoftDateTimePickerInput
 from georef.models import Localidad
 #Imports de la app
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
-from .models import Vehiculo, ControlVehiculo
+from .models import Vehiculo, TrasladoVehiculo
 from .models import Individuo, Domicilio, SignosVitales, Atributo, Sintoma
 from .models import Situacion, Archivo, Relacion, Seguimiento, Permiso
 from .models import Documento
@@ -40,11 +40,14 @@ class VehiculoForm(forms.ModelForm):
         fields= '__all__'
         exclude = ('fecha', 'usuario',)
 
-class ControlVehiculoForm(forms.ModelForm):
+class TrasladoVehiculoForm(forms.ModelForm):
     class Meta:
-        model = ControlVehiculo
+        model = TrasladoVehiculo
         fields= '__all__'
-        exclude = ('vehiculo', 'fecha', )
+        exclude = ('vehiculo', )
+        widgets = {
+            'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
+        }
 
 class IndividuoForm(forms.ModelForm):
     dom_localidad = forms.ModelChoiceField(

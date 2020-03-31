@@ -9,12 +9,16 @@
                 <div class="row">        
                     <h2>Vehiculo: {{vehiculo.identificacion}}</h2>
                     <div class="col-md-8">
-                        <h3>{{vehiculo.get_tipo_display}} {{vehiculo.empresa}}</h3>
+                        <h3><b>{{vehiculo.get_tipo_display}}</b></h3>
+                        {% if vehiculo.empresa %}
+                            <p>Empresa: {{vehiculo.empresa}}</p>
+                        {% endif %}
+                        <p><b>Conductor:</b> {{vehiculo.conductor}}</p>
                         <p><b>Aclaraciones:</b> {{vehiculo.plan|safe}}</p>
-                        {% for control in vehiculo.controles.all %}
+                        {% for traslado in vehiculo.traslados.all %}
                             <hr>
-                            <h3>Control: {{control.fecha}} - {{control.aclaracion}}</h3>
-                            <a class="botoncito" href="{% url 'informacion:buscar_pasajero' control_id=control.id  %}">Cargar Pasajero</a>
+                            <h3><b>{{traslado.aclaracion}}</b>({{traslado.fecha}})</h3>
+                            <a class="botoncito" href="{% url 'informacion:buscar_pasajero' traslado_id=traslado.id  %}">Cargar Pasajero</a>
                             <h4>Listado de Pasajeros:</h4>
                             <table class="listado">
                                 <tr>
@@ -27,16 +31,16 @@
                                     <th>Destino</th>
                                     <th>Ver Individuo</th>
                                 </tr>
-                                {% for origen in control.origenes.all %}
+                                {% for pasajero in traslado.pasajeros.all %}
                                     <tr>
-                                        <td>{{origen.individuo.num_doc}}</td>
-                                        <td>{{origen.individuo.apellidos}}</td>
-                                        <td>{{origen.individuo.nombres}}</td>
-                                        <td>{{origen.individuo.fecha_nacimiento}}</td>
-                                        <td>{{origen.individuo.nacionalidad}}</td>
-                                        <td>{{origen.individuo.origen}}</td>
-                                        <td>{{origen.individuo.destino}}</td>
-                                        <td><a href="{% url 'informacion:ver_individuo' individuo_id=origen.individuo.id %}" target="_blank">(Ver Individuo)</a></td>
+                                        <td>{{pasajero.individuo.num_doc}}</td>
+                                        <td>{{pasajero.individuo.apellidos}}</td>
+                                        <td>{{pasajero.individuo.nombres}}</td>
+                                        <td>{{pasajero.individuo.domicilio_actual}}</td>
+                                        <td>{{pasajero.individuo.situacion_actual}}</td>
+                                        <td>{{pasajero.individuo.fecha_nacimiento}}</td>
+                                        <td>{{pasajero.individuo.nacionalidad}}</td>
+                                        <td><a href="{% url 'informacion:ver_individuo' individuo_id=pasajero.individuo.id %}" target="_blank">(Ver Individuo)</a></td>
                                     </tr>
                                 {% endfor %}
                             </table>
@@ -45,7 +49,7 @@
                     <div class="col-md-4">
                         <ul class="menu_botones">
                             <li><a href="{% url 'informacion:mod_vehiculo' vehiculo_id=vehiculo.id  %}">Modificar Vehiculo</a></li>
-                            <li><a href="{% url 'informacion:cargar_control' vehiculo_id=vehiculo.id  %}">Agregar Control</a></li>
+                            <li><a href="{% url 'informacion:cargar_traslado' vehiculo_id=vehiculo.id  %}">Agregar Traslado</a></li>
                             <li><a href="{% url 'informacion:menu' %}">Volver al Menu</a></li>
                         </ul>
                     </div>

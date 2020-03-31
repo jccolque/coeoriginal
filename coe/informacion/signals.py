@@ -3,11 +3,11 @@ import logging
 #Imports Django
 from django.utils import timezone
 from django.dispatch import receiver
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 #imports Extras
 from dateutil.relativedelta import relativedelta
 #Imports de la app
-from .models import Origen
+from .models import Pasajero
 from .models import Individuo, Domicilio, Situacion, Relacion, Seguimiento
 from .models import Atributo, SignosVitales, Documento
 
@@ -30,16 +30,15 @@ def estado_inicial(created, instance, **kwargs):
                 atributo.tipo = 'PR'
                 atributo.save()
 
-@receiver(post_save, sender=Origen)
+@receiver(post_save, sender=Pasajero)
 def relacion_vehiculo(created, instance, **kwargs):
-    if created:
-        origenes = Origen.objects.filter(control=instance.control)
-        for individuo in [o.individuo for o in origenes]:
+    if created and (not instance.traslado.vehiculo.tipo == 1):
+        for pasajero in instance.traslado.pasajeros.all().exclude(individuo__pk=instance.individuo.pk):
             relacion = Relacion()
             relacion.tipo = 'CE'
             relacion.individuo = instance.individuo
-            relacion.relacionado = individuo
-            relacion.aclaracion = "Mismo Vehiculo-Mismo Control"
+            relacion.relacionado = pasajero.individuo
+            relacion.aclaracion = "Mismo Vehiculo-Mismo Traslado"
             relacion.save()
 
 @receiver(post_save, sender=Domicilio)

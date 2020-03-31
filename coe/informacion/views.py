@@ -21,7 +21,7 @@ from graficos.functions import obtener_grafico
 from .choices import TIPO_ESTADO, TIPO_CONDUCTA
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
 from .models import Archivo
-from .models import Vehiculo, ControlVehiculo, Origen
+from .models import Vehiculo, TrasladoVehiculo, Pasajero
 from .models import Individuo, SignosVitales, Relacion
 from .models import Situacion
 from .models import Seguimiento
@@ -30,7 +30,7 @@ from .models import Atributo, Sintoma
 from .models import Documento
 from .models import AppData
 from .forms import ArchivoForm, ArchivoFormWithPass
-from .forms import VehiculoForm, ControlVehiculoForm
+from .forms import VehiculoForm, TrasladoVehiculoForm
 from .forms import IndividuoForm, BuscadorIndividuosForm
 from .forms import DomicilioForm, AtributoForm, SintomaForm
 from .forms import SituacionForm, RelacionForm, SeguimientoForm
@@ -202,11 +202,10 @@ def cargar_vehiculo(request, vehiculo_id=None, identificacion=None):
     vehiculo = None
     if vehiculo_id:
         vehiculo = Vehiculo.objects.get(pk=vehiculo_id)
+    else:
+        vehiculo = Vehiculo(identificacion=identificacion)
     #Cargamos Form Inicial
-    form = VehiculoForm(
-        instance=vehiculo,
-        initial={'identificacion': identificacion, }
-    )
+    form = VehiculoForm(instance=vehiculo,)
     if request.method == "POST":
         form = VehiculoForm(request.POST, instance=vehiculo)
         if form.is_valid():
@@ -218,21 +217,21 @@ def cargar_vehiculo(request, vehiculo_id=None, identificacion=None):
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Vehiculo", 'form': form, 'boton': "Cargar", })
 
 @permission_required('operadores.vehiculos')
-def cargar_control(request, vehiculo_id):
+def cargar_traslado(request, vehiculo_id):
     vehiculo = Vehiculo.objects.get(pk=vehiculo_id)
-    form = ControlVehiculoForm()
+    form = TrasladoVehiculoForm()
     if request.method == "POST":
-        form = ControlVehiculoForm(request.POST)
+        form = TrasladoVehiculoForm(request.POST)
         if form.is_valid():
-            control = form.save(commit=False)
-            control.vehiculo = vehiculo
+            traslado = form.save(commit=False)
+            traslado.vehiculo = vehiculo
             form.save()
             return redirect('informacion:ver_vehiculo', vehiculo_id=vehiculo.id)
-    return render(request, "extras/generic_form.html", {'titulo': "Cargar Control Vehicular", 'form': form, 'boton': "Cargar", }) 
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Traslado Vehicular", 'form': form, 'boton': "Cargar", }) 
 
 #INDIVIDUOS
 @permission_required('operadores.individuos')
-def buscar_individuo(request, control_id=None):
+def buscar_individuo(request, traslado_id=None):
     form = SearchIndividuoForm()
     if request.method == "POST":
         form = SearchIndividuoForm(request.POST)
@@ -241,22 +240,22 @@ def buscar_individuo(request, control_id=None):
             num_doc = num_doc.upper()
             try:
                 individuo = Individuo.objects.get(num_doc=num_doc)
-                if control_id:#lo cargamos en el vehiculo y volvemos al vehiculo:
-                    control = ControlVehiculo.objects.get(pk=control_id)
-                    origen = Origen(control=control, individuo=individuo)
-                    origen.save()
-                    return redirect('informacion:ver_vehiculo', vehiculo_id=control.vehiculo.id)
+                if traslado_id:#lo cargamos en el vehiculo y volvemos al vehiculo:
+                    traslado = TrasladoVehiculo.objects.get(pk=traslado_id)
+                    pasajero = Pasajero(traslado=traslado, individuo=individuo)
+                    pasajero.save()
+                    return redirect('informacion:ver_vehiculo', vehiculo_id=traslado.vehiculo.id)
                 else:#Se va a la planilla simplemente
                     return redirect('informacion:ver_individuo', individuo_id=individuo.id)
             except Individuo.DoesNotExist:
-                if control_id:#Se carga en un vehiculo:
-                    return redirect('informacion:cargar_pasajero_nuevo', num_doc=num_doc, control_id=control_id)
+                if traslado_id:#Se carga en un vehiculo:
+                    return redirect('informacion:cargar_pasajero_nuevo', num_doc=num_doc, traslado_id=traslado_id)
                 else:
                     return redirect('informacion:cargar_individuo', num_doc=num_doc)
     return render(request, "extras/generic_form.html", {'titulo': "Indicar Documento de Individuo", 'form': form, 'boton': "Buscar", })
 
 @permission_required('operadores.individuos')
-def cargar_individuo(request, control_id=None, individuo_id=None, num_doc=None):
+def cargar_individuo(request, traslado_id=None, individuo_id=None, num_doc=None):
     individuo = None
     if individuo_id:#Si manda individuo es para modificar
         individuo = Individuo.objects.get(pk=individuo_id)
@@ -318,11 +317,11 @@ def cargar_individuo(request, control_id=None, individuo_id=None, num_doc=None):
                 sintoma.tipo = sintoma_id
                 sintoma.save()  
             #Si vino en un vehiculo
-            if control_id:
-                control = ControlVehiculo.objects.get(pk=control_id)
-                origen = Origen(control=control, individuo=individuo)
-                origen.save()
-                return redirect('informacion:ver_vehiculo', vehiculo_id=control.vehiculo.id)
+            if traslado_id:
+                traslado = TrasladoVehiculo.objects.get(pk=traslado_id)
+                pasajero = Pasajero(traslado=traslado, individuo=individuo)
+                pasajero.save()
+                return redirect('informacion:ver_vehiculo', vehiculo_id=traslado.vehiculo.id)
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "cargar_individuo.html", {'titulo': "Cargar Individuo", 'form': form, 'boton': "Cargar", })
 
@@ -457,22 +456,35 @@ def cargar_domicilio(request, individuo_id):
 @permission_required('operadores.individuos')
 def elegir_ubicacion(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
-    aislamientos = Ubicacion.objects.filter(tipo='AI')
-    internaciones = Ubicacion.objects.filter(tipo='IN')
-    return render(request, "seleccionar_traslado.html", {
+    ubicaciones = Ubicacion.objects.filter(tipo__in=('AI', 'IN'))
+    return render(request, "seleccionar_ubicacion.html", {
         'individuo': individuo,
-        'aislamientos': aislamientos,
-        'internaciones': internaciones,
+        'ubicaciones': ubicaciones,
+        'has_table': True,
     })
 
 @permission_required('operadores.individuos')
-def trasladar(request, individuo_id, ubicacion_id):
+def elegir_vehiculo(request, individuo_id, ubicacion_id):
+    individuo = Individuo.objects.get(pk=individuo_id)
+    ubicacion = Ubicacion.objects.get(pk=ubicacion_id)
+    vehiculos = Vehiculo.objects.filter(
+        tipo=1,
+    )
+    return render(request, "seleccionar_vehiculo.html", {
+        'individuo': individuo,
+        'ubicacion': ubicacion,
+        'vehiculos': vehiculos,
+        'has_table': True,
+    })
+
+@permission_required('operadores.individuos')
+def trasladar(request, individuo_id, ubicacion_id, vehiculo_id):
     #Obtenemos lo importante
     individuo = Individuo.objects.get(pk=individuo_id)
     ubicacion = Ubicacion.objects.get(pk=ubicacion_id)
+    vehiculo = Vehiculo.objects.get(pk=vehiculo_id)
     #Creamos nuevo domicilio:
-    domicilio = Domicilio()
-    domicilio.individuo = individuo
+    domicilio = Domicilio(individuo=individuo)
     domicilio.localidad = ubicacion.localidad
     domicilio.calle = ubicacion.calle
     domicilio.numero = ubicacion.numero
@@ -480,11 +492,17 @@ def trasladar(request, individuo_id, ubicacion_id):
     domicilio.aislamiento = True
     domicilio.save()
     #Creamos Cronologia
-    seguimiento = Seguimiento()
-    seguimiento.individuo = individuo
+    seguimiento = Seguimiento(individuo=individuo)
     seguimiento.tipo = 'C'
     seguimiento.aclaracion = ubicacion.nombre + " (Traslado Via Sistema)"
     seguimiento.save()
+    #Creamos Traslado en el vehiculo
+    traslado = TrasladoVehiculo(vehiculo=vehiculo)
+    traslado.aclaracion = ubicacion.nombre + " (Traslado Via Sistema)"
+    traslado.save()
+    pasajero = Pasajero(traslado=traslado)
+    pasajero.individuo = individuo
+    pasajero.save()
     return redirect('informacion:ver_individuo', individuo_id=individuo.id)
 
 #Situacion

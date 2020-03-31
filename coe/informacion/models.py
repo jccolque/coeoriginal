@@ -64,6 +64,7 @@ class Vehiculo(models.Model):
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     identificacion = models.CharField('Identificacion Patente/Codigo', max_length=200, unique=True)
     empresa = models.CharField('Empresa (Si aplica)', max_length=200, null=True, blank=True)
+    conductor = models.CharField('Conductor:', max_length=200, null=True, blank=True)
     plan = HTMLField(verbose_name='Plan de Ruta', null=True, blank=True)
     def __str__(self):
         return self.get_tipo_display() + ': ' + self.identificacion
@@ -301,6 +302,8 @@ class Documento(models.Model):
     def __str__(self):
         return self.get_tipo_display()
 
+
+#Apps Externas
 class AppData(models.Model):
     individuo = models.OneToOneField(Individuo, on_delete=models.CASCADE, related_name="appdata")
     telefono = models.CharField('Telefono', max_length=50, default='+549388')
@@ -310,8 +313,8 @@ class AppData(models.Model):
         return str(self.individuo) + self.get_estado_display()
 
 #Controles vehiculares
-class ControlVehiculo(models.Model):
-    vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, related_name="controles")
+class TrasladoVehiculo(models.Model):
+    vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, related_name="traslados")
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     def __str__(self):
@@ -325,15 +328,15 @@ class ControlVehiculo(models.Model):
             'fecha': str(self.fecha),
         }    
 
-class Origen(models.Model):
-    control = models.ForeignKey(ControlVehiculo, on_delete=models.CASCADE, related_name="origenes")
-    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="origenes")
+class Pasajero(models.Model):
+    traslado = models.ForeignKey(TrasladoVehiculo, on_delete=models.CASCADE, related_name="pasajeros")
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="pasajes")
     def __str__(self):
-        return str(self.control) + ': ' + str(self.individuo)
+        return str(self.traslado) + ': ' + str(self.individuo)
     def as_dict(self):
         return {
             "id": self.id,
-            "control_id": self.control.id,
+            "control_id": self.traslado.id,
             "individuo_id": self.individuo.id,
         }
 
@@ -385,6 +388,6 @@ from .signals import cargo_documento
 auditlog.register(Archivo)
 auditlog.register(Vehiculo)
 auditlog.register(Individuo)
-auditlog.register(Origen)
+auditlog.register(TrasladoVehiculo)
 auditlog.register(Sintoma)
 auditlog.register(Permiso)
