@@ -233,7 +233,7 @@ img.iconsx2 {
     width: 50px;
 }
 
-iconsx4{
+img .iconsx4{
     width: 100px;
 }
 
@@ -254,6 +254,7 @@ img.foto_padding {
 /* BUSCADOR */
 .buscador {
     float: right;
+    display: flex;
     margin-bottom: 15px;
     margin-right: 25px;
 }

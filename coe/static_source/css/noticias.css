@@ -69,17 +69,15 @@
 
 /* Listado de Noticias */
 .noticias h1 {
-    text-align: center;
     background-color: #ffffff;
     color: var(--color_primario);
     font-size: 2em;
-    margin: 0;
+    margin-left: 20px;
     font-family: Roboto;
 }
 
 .lista-noticias {
     padding-left: 5%;
-
     align-content: center;
 }
 
@@ -91,11 +89,11 @@
     margin-right: 20px;
     margin-bottom: 20px;
     vertical-align: top;
-    height: 15em;
+    height: 20em;
     background: white;
     box-shadow: 0px 0px 10px #0000001f;
     border-radius: 5px;
-    max-width: 900px;
+    max-width: 95%;
     margin: auto;
     display: block;
 }
@@ -136,7 +134,7 @@
     padding-top: 5px;
     background: #b18d73;
     padding-bottom: 5px;
-    height: 70px;
+    height: 15em;
     font-size: 0.9em;
     color: white;
 }
