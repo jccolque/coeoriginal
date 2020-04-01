@@ -289,6 +289,10 @@ def cargar_individuo(request, traslado_id=None, individuo_id=None, num_doc=None)
             operador = obtener_operador(request)
             individuo = form.save(commit=False)
             individuo.operador = operador
+            #Le cargamos el ultimo domicilio y situacion
+            individuo.situacion_actual = individuo.situaciones.last()
+            individuo.domicilio_actual = individuo.domicilios.last()
+            #Guardamos
             individuo.save()
             #Generamos modelos externos:
             #Creamos domicilio
@@ -527,6 +531,7 @@ def cargar_situacion(request, individuo_id):
     if not situacion:
         situacion = Situacion()
     situacion.id = None
+    situacion.aclaracion = None
     situacion.fecha = timezone.now()
     form = SituacionForm(instance=situacion)
     #Trabajamos

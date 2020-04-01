@@ -69,7 +69,7 @@
                             </div>
                         </div>
                         <hr>
-                        {% if individuo.domicilios.exist %}
+                        {% if individuo.domicilios.all %}
                             {% with individuo.domicilio_actual as domicilio %}
                                 <p>
                                     <b>Residencia Actual:</b> {{domicilio.calle}} {{domicilio.numero}} ({{domicilio.aclaracion}}), {{domicilio.localidad.nombre}}
