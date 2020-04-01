@@ -152,7 +152,13 @@ def relacionar_situacion(created, instance, **kwargs):
         situ_actual = individuo.situacion_actual
         relacionado = instance.relacionado
         #Si no tenia le creamos
-        if not relacionado.situacion_actual or (situ_actual.estado > relacionado.situacion_actual.estado):
+        if not relacionado.situacion_actual:
+            sit = Situacion()
+            sit.individuo = relacionado
+            sit.aclaracion = "Inicializada por Sistema"
+            sit.save()
+            relacionado.situacion_actual = sit
+        if situ_actual.estado > relacionado.situacion_actual.estado:
             sit = Situacion()
             sit.individuo = relacionado
             sit.conducta = 'C'

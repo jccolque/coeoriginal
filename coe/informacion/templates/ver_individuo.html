@@ -45,13 +45,13 @@
                         <br>
                         <!-- DATOS PERSONALES -->
                         <div class="row">
-                            <div class="col-sm-4">
+                            <div class="col-sm-5">
                                 <p>Documento: {{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</p>
                                 <p>Fecha de Nacimiento: {{individuo.fecha_nacimiento}}</p>
                                 <p>Origen: {{individuo.origen}}</p>
                                 <p>Destino:{{individuo.destino}}</p>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-5">
                                 <h4><b>Contacto:</b></h4>
                                 <p>Telefono: {{individuo.telefono}}</p>
                                 <p>Email: {{individuo.email}}</p>
@@ -61,9 +61,15 @@
                                     <h4>Autodiagnostico: {{individuo.appdata.get_estado_display}}</h4>
                                 {% endif %}
                             </div>
+                            <div class="col-sm-2">
+                                <h4><b>Ver Contactos</b></h4>
+                                <a class="nolink"  href="{% url 'informacion:arbol_relaciones' individuo_id=individuo.id %}" target="_blank">
+                                    <img class="iconsx4" src="{% static '/img/icons/relaciones.png' %}">
+                                </a>
+                            </div>
                         </div>
                         <hr>
-                        {% if individuo.domicilios.all %}
+                        {% if individuo.domicilios.exist %}
                             {% with individuo.domicilio_actual as domicilio %}
                                 <p>
                                     <b>Residencia Actual:</b> {{domicilio.calle}} {{domicilio.numero}} ({{domicilio.aclaracion}}), {{domicilio.localidad.nombre}}
@@ -72,7 +78,7 @@
                                         <a class="nolink"  href="https://www.google.com/maps?q={{domicilio.geoposicion.latitud|stringformat:".5f"}},{{domicilio.geoposicion.longitud|stringformat:".5f"}}" target="_blank">
                                             <img class="icons" src="{% static '/img/icons/map.png' %}">
                                         </a>
-                                    {% else %}
+                                    {% elif individuo.domicilio_actual %}
                                         <a class="nolink"  href="{% url 'informacion:cargar_geoposicion' domicilio_id=domicilio.id %}" >
                                             <img class="icons" src="{% static '/img/icons/nomap.png' %}">
                                         </a>
@@ -340,7 +346,9 @@
                             <li><a href="{% url 'informacion:mod_individuo' individuo_id=individuo.id %}">Modificar Planilla General</a></li>
                             <hr>
                             <li><a href="{% url 'informacion:cargar_domicilio' individuo_id=individuo.id %}">Residencia Actual En La Provincia</a></li>
-                            <li><a href="{% url 'informacion:cargar_geoposicion' domicilio_id=individuo.domicilio_actual.id %}">Asignar GeoPosicion</a></li>
+                            {% if individuo.domicilio_actual %}
+                                <li><a href="{% url 'informacion:cargar_geoposicion' domicilio_id=individuo.domicilio_actual.id %}">Asignar GeoPosicion</a></li>
+                            {% endif %}
                             <li><a href="{% url 'informacion:elegir_ubicacion' individuo_id=individuo.id %}">Trasladar Aislacion/Internacion</a></li>
                             <hr>
                             <li><a href="{% url 'informacion:cargar_signosvitales' individuo_id=individuo.id %}">Cargar Signos Vitales</a></li>

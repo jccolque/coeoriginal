@@ -1,0 +1,27 @@
+{% block content %}
+    <div id="{{individuo.id}}" class="popup">
+        <a class="unidad">
+            <p>{{ individuo.apellidos }} {{ individuo.nombres }}</p>
+            <p><b>{{ individuo.situacion_actual }}</b></p>
+        </a>
+        <div class="popuptext">
+            <div class="tab">
+                <button class="tablinks" onclick="openTab(event, 'principales-{{individuo.id}}')">Datos Personales</button>
+                <button class="tablinks" onclick="openTab(event, 'secundarios-{{individuo.id}}')">Datos Secundarios</button>
+            </div>
+            <div id="principales-{{individuo.id}}" class="tabcontent">
+                <div class="container">
+                    <div class="row">
+                        DATOS PERSONALES
+                    </div>
+                </div>
+            </div>
+            <div id="secundarios-{{individuo.id}}" class="tabcontent" style="display: none;">
+                <h2>Empleados</h2>
+                <div class="empleados" style="width: 100%">
+                    DATOS SECUNDARIOS
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

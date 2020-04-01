@@ -36,6 +36,7 @@ urlpatterns = [
     path('buscar/individuo/', views.buscar_individuo, name='buscar_individuo'),
     path('ver/individuo/<int:individuo_id>', views.ver_individuo, name='ver_individuo'),
     path('buscador/individuos', views.buscador_individuos, name='buscador_individuos'),
+    path('arbol/relaciones/<int:individuo_id>', views.arbol_relaciones, name='arbol_relaciones'),
     #Listados
     path('lista/evaluar', views.lista_evaluar, name='lista_evaluar'),
     path('lista/seguimiento', views.lista_seguimiento, name='lista_seguimiento'),

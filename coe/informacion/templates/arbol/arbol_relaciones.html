@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+
+{% load static %}
+
+<html lang="en">
+    <head>
+        {% include "base/head.html" %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/arbol.css' %}" />
+        <link rel="stylesheet" type="text/css" href="{% static 'css/popup.css' %}" />
+    </head>
+
+    <body id="body"  style="width:{{ancho}}px; overflow: auto;">
+        {% include "base/menu.html" %}
+        <main>
+            <div class="popup-overlay"></div>
+            <div class="organigrama">
+                <ul>
+                    {% include "arbol/nodo_arbol.html" with individuo=individuo %}
+                </ul>
+            </div>
+        </main>
+        {% include "base/footer.html" %}
+        
+        {% block custom_script %}
+            <script type="text/javascript" src="{% static 'js/popups.js' %}"></script>
+            <script type="text/javascript" src="{% static 'js/tabs.js' %}"></script>
+            <script type="text/javascript" src="{% static 'js/hide_show.js' %}"></script>
+            <!--definimos tamaño segun cantidad-->
+            <script>
+                big_div = document.getElementById("li-{{individuo.id}}");
+                document.body.style.width = (big_div.offsetWidth + 200) + 'px';
+                setTimeout(function () {
+                    window.scrollTo((big_div.offsetWidth / 2) - 900, 0);
+                }, 200);
+            </script>
+        {% endblock %}
+    </body>
+</html>
+

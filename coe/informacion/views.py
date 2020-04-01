@@ -39,7 +39,7 @@ from .forms import PermisoForm, BuscarPermiso, DatosForm, FotoForm
 from .forms import DocumentoForm, SignosVitalesForm
 from .tasks import guardar_same, guardar_epidemiologia
 from .tasks import guardar_padron_individuos, guardar_padron_domicilios
-
+from .functions import obtener_relacionados
 #Publico
 def buscar_permiso(request):
     form = BuscarPermiso()
@@ -327,8 +327,21 @@ def cargar_individuo(request, traslado_id=None, individuo_id=None, num_doc=None)
 
 @permission_required('operadores.individuos')
 def ver_individuo(request, individuo_id):
-    individuo = Individuo.objects.prefetch_related('domicilios', 'domicilios__localidad').get(pk=individuo_id)
+    individuo = Individuo.objects.prefetch_related('domicilios', 'domicilios__localidad', 'domicilios__localidad__departamento')
+    individuo = Individuo.objects.prefetch_related('relaciones', 'relaciones__individuo', 'relaciones__individuo__situacion_actual')
+    individuo = Individuo.objects.prefetch_related('pasajes', 'pasajes__traslado__vehiculo')
+    individuo = individuo.get(pk=individuo_id)
     return render(request, "ver_individuo.html", {'individuo': individuo, })
+
+@permission_required('operadores.individuos')
+def arbol_relaciones(request, individuo_id):
+    individuo = Individuo.objects.get(pk=individuo_id)
+    set_relaciones = obtener_relacionados(individuo, set())
+    return render(request, "arbol/arbol_relaciones.html", {
+        'individuo': individuo, 
+        'set_relaciones': set_relaciones,
+        'ancho': 5000,
+        })
 
 @permission_required('operadores.individuos')
 def buscador_individuos(request):
@@ -509,7 +522,12 @@ def trasladar(request, individuo_id, ubicacion_id, vehiculo_id):
 @permission_required('operadores.individuos')
 def cargar_situacion(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
-    form = SituacionForm(initial={'individuo': individuo, })
+    #Generamos nueva situacion a partir de la anterio
+    situacion = individuo.situacion_actual
+    situacion.id = None
+    situacion.fecha = timezone.now()
+    form = SituacionForm(instance=situacion)
+    #Trabajamos
     if request.method == "POST":
         form = SituacionForm(request.POST)
         if form.is_valid():

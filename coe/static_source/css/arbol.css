@@ -1,0 +1,98 @@
+.organigrama {
+
+}
+
+.organigrama ul {
+  padding-top: 20px;
+  position: relative;
+}
+
+.organigrama>ul li {
+    float: left;
+    text-align: center;
+    list-style-type: none;
+    padding: 20px 5px 0px 5px;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.organigrama>ul li::before, .organigrama>ul li::after {
+    content: '';
+    position: absolute;
+    top: 0px;
+    right: 50%;
+    border-top: 2px solid var(--color_oscuro);
+    width: 50%;
+    height: 20px;
+}
+
+.organigrama>ul li::after{
+    right: auto;
+    left: 50%;
+    border-left: 2px solid var(--color_oscuro);
+}
+
+.organigrama>ul li:only-child::before, .organigrama>ul li:only-child::after {
+    display: none;
+}
+
+.organigrama>ul li:only-child {
+  padding-top: 0;
+}
+
+.organigrama>ul li:first-child::before, .organigrama>ul li:last-child::after{
+    border: 0 none;
+}
+
+.organigrama>ul li:last-child::before{
+    border-right: 2px solid var(--color_oscuro);
+    border-radius: 0 15px 0 0;
+}
+
+.organigrama>ul li:first-child::after{
+    border-radius: 15px 0 0 0;
+}
+
+.organigrama>ul ul::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    border-left: 2px solid var(--color_oscuro);
+    width: 0;
+    height: 20px;
+}
+
+.organigrama>ul li a.unidad{
+    display: inline-block;
+
+    width: 300px;
+    padding: 0.5em;
+    text-decoration: none;
+    color: var(--color_oscuro);
+    
+    border: 2px solid var(--color_oscuro);
+    background-color: rgba(255,255,255,0.5);
+    
+    font-family: arial, verdana, tahoma;
+    font-size: 1.5em;
+    
+    border-radius: 20px;
+}
+
+.organigrama>ul li a.unidad:hover {
+    border: 2px solid #fff;
+    color: white;
+    background-color: var(--color_claro);
+    display: inline-block;
+}
+
+.organigrama a {
+  font-size: 1em;
+  font-weight: bold;
+  color: var(--color_oscuro);
+}
+
+.organigrama > ul > li > ul > li > a {
+  width: 8em;
+}
