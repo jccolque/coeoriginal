@@ -8,36 +8,37 @@
                     <br>
                     <h1><b>Ultimas Noticias</b></h1>
                     <hr>
-            
-                    <div class="col-sm-12">
-                        {% include 'extras/buscador_noticias.html' %}
-                    </div>
                     <div class="lista-noticias container">
-                        <ul>
-                            {% for noticia in noticias %}
-                            <li class="noticia">
-                                <div class=row>
-                                    <div class="col-sm-3 foto">
-                                        <a class="novedad-link" href="{% url 'noticias:ver_noticia' noticia_id=noticia.id %}">
-                                            <img src="{{noticia.portada.url}}">
-                                        </a>
-                                    </div>
-                                    <div class="col-sm-9 info">
-                                        <h2 class="titulo"><b>{{noticia.titulo}}</b></h2>
-                                        <p>{{ noticia.cuerpo|truncatewords:80|safe }}</p>
-                                    </div>
-                                </div>
-                            
-                            
-                                <div class="leer-mas">
-                                    <a class="novedad-link" href="{% url 'noticias:ver_noticia' noticia_id=noticia.id %}">
-                                        Leer Nota
-                                    </a>
-                                </div>
-                            </li>
-                            <br>
-                            {% endfor %}
-                        </ul>
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <ul class="noticias">
+                                    {% for noticia in noticias %}
+                                    <li class="noticia">
+                                        <div class=row>
+                                            <div class="col-sm-3 foto">
+                                                <a class="novedad-link" href="{% url 'noticias:ver_noticia' noticia_id=noticia.id %}">
+                                                    <img src="{{noticia.portada.url}}">
+                                                </a>
+                                            </div>
+                                            <div class="col-sm-9 info">
+                                                <h2 class="titulo"><b>{{noticia.titulo}}</b></h2>
+                                                <p>{{ noticia.cuerpo|truncatewords:60|safe }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="leer-mas">
+                                            <a class="novedad-link" href="{% url 'noticias:ver_noticia' noticia_id=noticia.id %}">
+                                                Leer Nota
+                                            </a>
+                                        </div>
+                                    </li>
+                                    <br>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="col-sm-3">
+                                {% include 'extras/buscador_noticias.html' %}
+                            </div>
+                        </div>
                     </div>
                 {% else %}
                     <div class="aviso_faltadata">

@@ -25,13 +25,14 @@ body {
     float: right;
 }
 
-.noticia h1.titulo {
+.noticia h1 {
     text-align: left;
     background-color: #ffffff;
-    color: black;
+    color: var(--color_primario);
     font-size: 2em;
     font-family: 'Courier New', Courier, monospace;
     margin: 0;
+    margin-left: 15%;
     font-family: FivoSansModern-Bold;
 }
 
@@ -100,4 +101,8 @@ hr {
 /*Buscador */
 .buscador-noticias form {
     display: flex;
+}
+
+.icons {
+    width: 35px!important;
 }
