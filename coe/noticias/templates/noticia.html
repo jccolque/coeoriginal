@@ -11,15 +11,17 @@
 {% block content %}
     <div class="container noticias noticia-single noticia">
         <div class="row">
-            <p class="fecha">{{noticia.fecha}}</p>
             <h1><b>{{noticia.titulo}}</b></h1>
             <hr>
             <div class="col-sm-8 col-sm-offset-1">
                 <div class="noticia-cuerpo">
                     <br>
-                    <img src="{{noticia.portada.url}}">
-                    <p class="epigrafe">{{noticia.epigrafe}}</p>
                     <div class="info">
+                        <div class="foto-noticia">
+                            <p class="fecha">{{noticia.fecha}}</p>
+                            <img src="{{noticia.portada.url}}">
+                            <p class="epigrafe" style="font-family: Roboto">{{noticia.epigrafe}}</p>
+                        </div>
                         {{ noticia.cuerpo|safe }}
                     </div>
                 </div>
