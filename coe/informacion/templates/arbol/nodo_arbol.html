@@ -6,13 +6,17 @@
         {% include "arbol/hoja_individuo.html" with individuo=individuo %}
         {% ct_quitar_del_set  set_relaciones individuo as set_relaciones %}
         <!--graficamos sus relaciones-->
-            <ul>
-                {% for relacion in individuo.relaciones.all %}
-                    {% if relacion.relacionado in set_relaciones %}
-                        {% include "arbol/nodo_arbol.html" with individuo=relacion.relacionado set_relaciones=set_relaciones %}
-                    {% endif %}
-                {% endfor %}
-            </ul>
+        {% if individuo.relaciones.exists %}
+            {% ct_check_seguir individuo set_relaciones as seguir %}
+            {% if seguir %}
+                <ul>
+                    {% for relacion in individuo.relaciones.all %}
+                        {% if relacion.relacionado in set_relaciones %}
+                            {% include "arbol/nodo_arbol.html" with individuo=relacion.relacionado set_relaciones=set_relaciones %}
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
         {% endif %}
     </li>
 {% endblock %}

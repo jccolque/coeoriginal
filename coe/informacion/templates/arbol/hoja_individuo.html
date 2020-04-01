@@ -1,25 +1,45 @@
 {% block content %}
     <div id="{{individuo.id}}" class="popup">
-        <a class="unidad">
-            <p>{{ individuo.apellidos }} {{ individuo.nombres }}</p>
-            <p><b>{{ individuo.situacion_actual }}</b></p>
+        <a class="unidad{% if individuo.situacion_actual %} estado{{individuo.situacion_actual.estado }}{% endif %}">
+            <p>
+                {{ individuo.apellidos }}, {{ individuo.nombres }}
+            </p>
+            <p class="situacion"><b>{{ individuo.situacion_actual }}</b></p>
         </a>
+        
+        
         <div class="popuptext">
             <div class="tab">
                 <button class="tablinks" onclick="openTab(event, 'principales-{{individuo.id}}')">Datos Personales</button>
-                <button class="tablinks" onclick="openTab(event, 'secundarios-{{individuo.id}}')">Datos Secundarios</button>
+                <button class="tablinks" onclick="openTab(event, 'secundarios-{{individuo.id}}')">Datos Medicos</button>
             </div>
             <div id="principales-{{individuo.id}}" class="tabcontent">
                 <div class="container">
                     <div class="row">
-                        DATOS PERSONALES
+                        <a href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">
+                            <h3><b>{{ individuo.apellidos }}, {{ individuo.nombres }}</b></h3>
+                        </a>
+                        <p>Documento: {{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</p>
+                        <p>Fecha de Nacimiento: {{individuo.fecha_nacimiento}}</p>
+                        <hr>
+                        <h4><b>Contacto:</b></h4>
+                        <p>Telefono: {{individuo.telefono}}</p>
+                        <p>Email: {{individuo.email}}</p>
+                        <p>Nacionalidad: {{individuo.nacionalidad}}</p>
                     </div>
                 </div>
             </div>
             <div id="secundarios-{{individuo.id}}" class="tabcontent" style="display: none;">
-                <h2>Empleados</h2>
                 <div class="empleados" style="width: 100%">
-                    DATOS SECUNDARIOS
+                    <h3>Atributos</h3>
+                    {% for atributo in individuo.atributos.all %}
+                            <p>{{atributo.get_tipo_display}}</p>
+                    {% endfor %}
+                    <hr>
+                    <h3>Sintomas</h3>
+                    {% for sintoma in individuo.sintomas.all %}
+                            <p>{{sintoma.get_tipo_display}}</p>
+                    {% endfor %}
                 </div>
             </div>
         </div>

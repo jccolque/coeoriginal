@@ -15,7 +15,7 @@
     overflow-x: auto;
 
     width: auto!important;
-    max-height: 70vh;
+    height: 50vh;
     
     z-index: 2;
     position: fixed;
@@ -45,7 +45,7 @@
 
 .popuptext .img_link {
     display: inline; 
-    width: 8%; 
+    width: 8%;
 }
 
 .popuptext .clean {

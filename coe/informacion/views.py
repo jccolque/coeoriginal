@@ -524,6 +524,8 @@ def cargar_situacion(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
     #Generamos nueva situacion a partir de la anterio
     situacion = individuo.situacion_actual
+    if not situacion:
+        situacion = Situacion()
     situacion.id = None
     situacion.fecha = timezone.now()
     form = SituacionForm(instance=situacion)

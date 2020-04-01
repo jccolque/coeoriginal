@@ -1,5 +1,5 @@
 .organigrama {
-
+    
 }
 
 .organigrama ul {
@@ -21,7 +21,7 @@
     position: absolute;
     top: 0px;
     right: 50%;
-    border-top: 2px solid var(--color_oscuro);
+    border-top: 2px solid rgb(110, 110, 110);;
     width: 50%;
     height: 20px;
 }
@@ -29,7 +29,7 @@
 .organigrama>ul li::after{
     right: auto;
     left: 50%;
-    border-left: 2px solid var(--color_oscuro);
+    border-left: 2px solid rgb(110, 110, 110);
 }
 
 .organigrama>ul li:only-child::before, .organigrama>ul li:only-child::after {
@@ -45,7 +45,7 @@
 }
 
 .organigrama>ul li:last-child::before{
-    border-right: 2px solid var(--color_oscuro);
+    border-right: 2px solid rgb(110, 110, 110);
     border-radius: 0 15px 0 0;
 }
 
@@ -58,7 +58,7 @@
     position: absolute;
     top: 0;
     left: 50%;
-    border-left: 2px solid var(--color_oscuro);
+    border-left: 2px solid rgb(110, 110, 110);
     width: 0;
     height: 20px;
 }
@@ -69,9 +69,9 @@
     width: 300px;
     padding: 0.5em;
     text-decoration: none;
-    color: var(--color_oscuro);
+    color: rgb(68, 155, 68);
     
-    border: 2px solid var(--color_oscuro);
+    border: 2px solid rgb(68, 155, 68);
     background-color: rgba(255,255,255,0.5);
     
     font-family: arial, verdana, tahoma;
@@ -83,7 +83,7 @@
 .organigrama>ul li a.unidad:hover {
     border: 2px solid #fff;
     color: white;
-    background-color: var(--color_claro);
+    background-color: rgb(121, 121, 121);
     display: inline-block;
 }
 
@@ -95,4 +95,34 @@
 
 .organigrama > ul > li > ul > li > a {
   width: 8em;
+}
+
+p.situacion {
+    font-size: 0.7em;
+}
+
+/* Colores segun estado */
+a.estado1 {
+    color: rgb(110, 110, 110)!important;
+    border-color: rgb(110, 110, 110)!important;
+}
+
+a.estado31 {
+    color: rgb(158, 218, 62)!important;
+    border-color: rgb(158, 218, 62)!important;
+}
+
+a.estado32 {
+    color: rgb(255, 196, 0)!important;
+    border-color: rgb(255, 196, 0)!important;
+}
+
+a.estado40 {
+    color: rgb(219, 113, 42)!important;
+    border-color: rgb(219, 113, 42)!important;
+}
+
+a.estado50 {
+    color: rgb(219, 42, 42)!important;
+    border-color: rgb(219, 42, 42)!important;
 }

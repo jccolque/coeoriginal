@@ -11,4 +11,9 @@ register = template.Library()
 def ct_quitar_del_set(set_relaciones, individuo):
     set_relaciones.remove(individuo)
     return set_relaciones
-    
+
+@register.simple_tag
+def ct_check_seguir(individuo, set_relaciones):
+    for relacion in individuo.relaciones.all():
+        if relacion.relacionado in set_relaciones:
+            return True
