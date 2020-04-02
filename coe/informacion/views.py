@@ -331,9 +331,14 @@ def cargar_individuo(request, traslado_id=None, individuo_id=None, num_doc=None)
 
 @permission_required('operadores.individuos')
 def ver_individuo(request, individuo_id):
-    individuo = Individuo.objects.prefetch_related('domicilios', 'domicilios__localidad', 'domicilios__localidad__departamento')
-    individuo = Individuo.objects.prefetch_related('relaciones', 'relaciones__individuo', 'relaciones__individuo__situacion_actual')
-    individuo = Individuo.objects.prefetch_related('pasajes', 'pasajes__traslado__vehiculo')
+    individuo = Individuo.objects.prefetch_related(
+        'domicilios', 'domicilios__localidad', 'domicilios__localidad__departamento',
+        'situaciones',
+        'relaciones',
+        'relaciones__relacionado',
+        'relaciones__relacionado__situacion_actual',
+        'pasajes', 'pasajes__traslado__vehiculo')
+    individuo = individuo.select_related('situacion_actual', 'domicilio_actual', 'appdata')
     individuo = individuo.get(pk=individuo_id)
     return render(request, "ver_individuo.html", {'individuo': individuo, })
 
@@ -341,11 +346,12 @@ def ver_individuo(request, individuo_id):
 def arbol_relaciones(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
     set_relaciones = obtener_relacionados(individuo, set())
+    #Podriamos hacer un dict con todos los select related y prefetchs para optimizar
     return render(request, "arbol/arbol_relaciones.html", {
         'individuo': individuo, 
         'set_relaciones': set_relaciones,
         'ancho': 15000,
-        })
+    })
 
 @permission_required('operadores.individuos')
 def buscador_individuos(request):
