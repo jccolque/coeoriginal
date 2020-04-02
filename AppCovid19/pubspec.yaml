@@ -1,0 +1,53 @@
+name: covidjujuy_app
+description: A new Flutter application.
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^0.1.3
+  flutter_bloc: ^3.2.0
+  image_picker: ^0.6.3+4
+  url_launcher: ^5.4.2
+  shared_preferences: ^0.5.6+3
+  flutter_local_notifications: ^1.3.0
+  http: ^0.12.0+4
+  connectivity: ^0.4.8+2
+
+dev_dependencies:
+  flutter_launcher_icons: ^0.7.4
+  flutter_test:
+    sdk: flutter
+  pedantic: ^1.8.0
+  dio: ^3.0.9
+  equatable: ^1.1.1
+  flutter_secure_storage: ^3.3.1+1
+
+flutter_icons:
+  image_path: "assets/images/icono.png"
+  android: true
+  ios: true
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/graphics/GA_logo.png
+    - assets/graphics/Bandera.png
+    - assets/graphics/AtencionVerde.png
+    - assets/graphics/AtencionAmarillo.png
+    - assets/graphics/AtencionRojo.png
+    - assets/graphics/SubirImagen.png
+    - assets/graphics/GobiernoJujuy.png
+    - assets/graphics/JujuyEnergiaVivaNegro.png
+    - assets/graphics/GobiernoJujuyYCoe.jpg
+    - assets/graphics/GOBCOEJUwide.jpg
+    - assets/graphics/JujuyEnergiaVivaTrazoNegro.png
+    - assets/graphics/covid-doble.png
+    - assets/graphics/covid-shield.png
+    - assets/graphics/covid-simple.png
+    - assets/graphics/covid-tachado.png

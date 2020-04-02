@@ -344,7 +344,7 @@ def arbol_relaciones(request, individuo_id):
     return render(request, "arbol/arbol_relaciones.html", {
         'individuo': individuo, 
         'set_relaciones': set_relaciones,
-        'ancho': 5000,
+        'ancho': 15000,
         })
 
 @permission_required('operadores.individuos')
