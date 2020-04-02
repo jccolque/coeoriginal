@@ -10,10 +10,6 @@
                     <h1>Menu Operadores:</h1>
                     <div class="col-md-8">
                         <ul class="menu_botones">
-                            {% if perms.operadores.subcomites %}
-                                <li><a href="{% url 'operadores:crear_subcomite'  %}">Crear Subcomite</a></li>
-                                <li><a href="{% url 'operadores:listar_subcomites'  %}">Ver Listado de SubComites</a></li>
-                            {% endif %}
 
                             {% if perms.operadores.operadores %}
                                 <hr>
@@ -30,8 +26,13 @@
                                 <li><a href="{% url 'operadores:auditoria' %}">Ver Auditoria de Operadores</a></li>
                             {% else %}
                                 <li><a href="{% url 'operadores:auditoria_propia' user_id=request.user.id %}">Ver Mis Acciones</a></li>
-                            {% endif %}      
-                      
+                            {% endif %}
+
+                            {% if perms.operadores.subcomites %}
+                                <li><a href="{% url 'operadores:crear_subcomite'  %}">Crear Subcomite</a></li>
+                                <li><a href="{% url 'operadores:listar_subcomites'  %}">Ver Listado de SubComites</a></li>
+                            {% endif %}                      
+                            
                             {% if perms.operadores.reportes %}
                                 <li><a href="{% url 'operadores:csv_operadores'  %}">Descargar Operadores</a></li>
                                 <hr>

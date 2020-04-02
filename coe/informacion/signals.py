@@ -1,4 +1,5 @@
 #Imports Python
+import copy
 import logging
 #Imports Django
 from django.utils import timezone
@@ -122,27 +123,29 @@ def afectar_relacionados(created, instance, **kwargs):
     if created:
         individuo = instance.individuo
         for relacion in individuo.relaciones.all():
-            sit = relacion.relacionado.situacion_actual
-            if not sit:#Si no tenia estado le creamos inicial
-                sit = Situacion()
-                sit.individuo = relacion.relacionado
-                sit.aclaracion = "Inicializado por el sistema"
-                sit.estado = 11
+            sit_rel = relacion.relacionado.situacion_actual
+            if not sit_rel:#Si no tenia estado le creamos inicial
+                sit_rel = Situacion()
+                sit_rel.individuo = relacion.relacionado
+                sit_rel.aclaracion = "Inicializado por el sistema"
+                sit_rel.estado = 11
             #Procesamos lo que nos importa
-            if instance.estado > sit.estado:
+            if instance.estado > sit_rel.estado and sit_rel.estado > 2:#Que sea peor y que no este fuera de provincia o muerto...
+                anterior_estado = copy.copy(sit_rel.estado)
                 #Tramos situacion actual del relacionado
-                sit.id = None
+                sit_rel.id = None
                 #Generamos situ nueva segun caso
                 if instance.estado == 32:#Contacto Alto Riesgo            
-                    sit.estado = 31
+                    sit_rel.estado = 31
                 if instance.estado == 40:#Sospechoso
-                    sit.estado = 32
+                    sit_rel.estado = 32
                 if instance.estado == 50:#Confirmado
-                    sit.estado = 32
+                    sit_rel.estado = 40
                 #Agregamos descripcion y guardamos
-                sit.conducta = 'B'
-                sit.aclaracion = "Detectado por sistema, Relacionado con: " + individuo.num_doc
-                sit.save()
+                sit_rel.conducta = 'B'
+                sit_rel.aclaracion = "Detectado por sistema, Relacionado con: " + individuo.num_doc
+                if sit_rel.estado > anterior_estado:
+                    sit_rel.save()
 
 @receiver(post_save, sender=Relacion)
 def relacionar_situacion(created, instance, **kwargs):
