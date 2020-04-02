@@ -1,6 +1,5 @@
 #Import Django
 from django.db import models
-from django.utils import timezone
 #Imports de la app
 from .choices import TIPO_GRAFICO
 
@@ -36,34 +35,42 @@ class Grafico(models.Model):
         self.save()
     def cabecera(self):
         #Obtenemos todo lo necesario para procesar
-        return ['Fecha'] + [c.nombre for c in self.columnas.filter(mostrar=True)]
+        return ['Fecha'] + [c.nombre for c in self.columnas.all() if c.mostrar == True]
     def obtener_datos(self):
-        #Traemos todo el bloque de datos ya indexado
-        dict_datos = {}
-        for columna in self.columnas.filter(mostrar=True):
-            for dato in columna.datos.all():
-                dict_datos[dato.columna.nombre,dato.fila] = dato
-        #Referencias disponibles
-        if self.columnas.all():#Si tiene columnas
-            filas = [d.fila for d in  self.columnas.first().datos.all()]
-            #Creamos nuestro vector
-            datos = []
-            for fila in filas:#Por cada Fecha
-                #Generamos cada linea
-                dato = []
-                for columna in self.cabecera()[1:]:
-                    try:
-                        dato.append(dict_datos[columna,fila])
-                    except KeyError:#Si faltan datos por columna vacia
-                        new = Dato()#Lo creamos con valor 0
-                        new.columna = self.columnas.get(nombre=columna)
-                        new.fila = fila
-                        new.valor = 0
-                        new.save()
-                        dato.append(new)
-                #Agregamos la linea
-                datos.append(dato)
-            return datos[-self.cant_datos:]#Entregamos la cantidad esperada
+        #Para graficos de Lineas
+        if self.tipo in ('L', 'C'):
+            #Traemos todo el bloque de datos ya indexado
+            dict_datos = {}
+            for columna in self.columnas.all():
+                if columna.mostrar:
+                    for dato in columna.datos.all():
+                        dict_datos[dato.columna.nombre,dato.fila] = dato
+            #Referencias disponibles
+            if self.columnas.all():#Si tiene columnas
+                filas = [d.fila for d in  self.columnas.first().datos.all()]
+                #Creamos nuestro vector
+                datos = []
+                for fila in filas:#Por cada Fecha
+                    #Generamos cada linea
+                    dato = []
+                    for columna in self.cabecera()[1:]:
+                        try:
+                            dato.append(dict_datos[columna,fila])
+                        except KeyError:#Si faltan datos por columna vacia
+                            new = Dato()#Lo creamos con valor 0
+                            new.columna = self.columnas.get(nombre=columna)
+                            new.fila = fila
+                            new.valor = 0
+                            new.save()
+                            dato.append(new)
+                    #Agregamos la linea
+                    datos.append(dato)
+                return datos[-int(self.cant_datos):]#Entregamos la cantidad esperada
+        #Para Graficos de Torta
+        elif self.tipo == 'P':
+            datos = self.columnas.first().datos.all()#Solo es una columna
+            datos = datos.order_by('-valor')
+            return [d for d in  datos][:self.cant_datos]#De mayor a menor
 
 class Columna(models.Model):
     grafico = models.ForeignKey(Grafico, on_delete=models.CASCADE, related_name="columnas")

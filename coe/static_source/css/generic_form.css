@@ -146,6 +146,7 @@ section.formulario .respuesta-container {
 
 .formulario textarea {
     height: 250px;
+    width: 50%;
     margin-bottom: 10px;
 }
 

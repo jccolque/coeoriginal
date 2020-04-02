@@ -14,25 +14,25 @@
 
         function drawChart() {
             var data = google.visualization.arrayToDataTable([
-                
+            
                 {{graf_datos.cabecera|safe}}
                 
                 {% for linea in graf_datos.obtener_datos %}
                     {% ct_showlinea linea as linea_str %}
                     ,{{linea_str|safe}}
                 {% endfor %}
-
+            
             ]);
 
             var options = {
                 title: '{{graf_datos.verbose_name}}',
-                curveType: 'function',
-                legend: { position: 'bottom' 
-            }
-        };
+                legend: { position: 'top', maxLines: 3 },
+                bar: { groupWidth: '75%' },
+                isStacked: true,
+            };
 
-            var chart = new google.visualization.LineChart(document.getElementById('chart-{{graf_datos.nombre}}'));
+            var chart = new google.visualization.ColumnChart(document.getElementById("chart-{{graf_datos.nombre}}"));
             chart.draw(data, options);
         }
     </script>
-{% endblock %}
+{% endblock %}      

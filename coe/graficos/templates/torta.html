@@ -1,5 +1,7 @@
 {% block content %}
-    <div id="{{graf_datos.nombre}}" style="width: 600px; height: 500px;"></div>
+    <a href="{% url 'graficos:ver_grafico' grafico_id=graf_datos.id %}">
+        <div id="chart-{{graf_datos.nombre}}" class="grafico"></div>
+    </a>
 {% endblock %}
 
 {% block custom_script %}
@@ -11,19 +13,19 @@
       function drawChart() {
 
         var data = google.visualization.arrayToDataTable([
-          ['Task', 'Hours per Day'],
-          ['Work',     11],
-          ['Eat',      2],
-          ['Commute',  2],
-          ['Watch TV', 2],
-          ['Sleep',    7]
-        ]);
+                {{graf_datos.cabecera|safe}}
+                
+                {% for dato in graf_datos.obtener_datos %}
+                    ,['{{dato.fila}}', {{dato.valor|floatformat:"0" }}]
+                {% endfor %}
+
+            ]);
 
         var options = {
-          title: '{{graf_datos.nombre}}'
+          title: '{{graf_datos.verbose_name}}',
         };
 
-        var chart = new google.visualization.PieChart(document.getElementById('{{graf_datos.nombre}}'));
+        var chart = new google.visualization.PieChart(document.getElementById('chart-{{graf_datos.nombre}}'));
         chart.draw(data, options);
       }
     </script>

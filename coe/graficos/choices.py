@@ -1,4 +1,5 @@
 TIPO_GRAFICO = (
-    ('L', 'LineChart'),
-    ('P', 'PieChart'),
+    ('L', 'Lineas'),
+    ('C', 'Columnas'),
+    ('P', 'Torta'),
 )

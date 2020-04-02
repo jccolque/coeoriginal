@@ -2,7 +2,9 @@ from .models import Grafico
 
 def obtener_grafico(nombre, verbose_name, tipo):
     try:
-        return Grafico.objects.get(nombre=nombre, verbose_name=verbose_name, tipo=tipo)
+        graficos = Grafico.objects.prefetch_related('columnas', 'columnas__datos')
+        grafico = graficos.get(nombre=nombre, verbose_name=verbose_name, tipo=tipo)
+        return grafico
     except Grafico.DoesNotExist:
         grafico = Grafico()
         grafico.nombre = nombre

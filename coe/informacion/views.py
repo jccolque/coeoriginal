@@ -756,7 +756,7 @@ def tablero_control(request):
             for estado in TIPO_ESTADO:
                 cant = individuos.filter(
                     situacion_actual__estado=estado[0],
-                    situacion_actual__fecha__date__lt=dia).count()
+                    situacion_actual__fecha__date__lte=dia).count()
                 graf_estados.agregar_dato(dia, estado[1], date2str(dia), cant)
     #Obtenemos o generamos grafico de Conductas
     graf_conductas = obtener_grafico('graf_conductas', 'Grafico Acumulativo de Conductas', 'L')
@@ -765,7 +765,7 @@ def tablero_control(request):
             for conducta in TIPO_CONDUCTA:
                 cant = individuos.filter(
                     situacion_actual__conducta=conducta[0],
-                    situacion_actual__fecha__date__lt=dia).count()
+                    situacion_actual__fecha__date__lte=dia).count()
                 graf_conductas.agregar_dato(dia, conducta[1], date2str(dia), cant)
     #Entregamos el reporte
     return render(request, "tablero_control.html", {

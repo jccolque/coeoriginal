@@ -28,9 +28,15 @@ def lista_graficos(request, tipo_id=None):
 def ver_grafico(request, grafico_id):
     grafico = Grafico.objects.get(pk=grafico_id)
     #Agregar logica para tipo de graficos segun tipo
-
+    if grafico.tipo == 'L':
+        subtemplate = 'lineas.html'
+    elif grafico.tipo == 'P':
+        subtemplate = 'torta.html'
+    elif grafico.tipo == 'C':
+        subtemplate = 'columnas.html'
     return render(request, 'ver_grafico.html', {
         'grafico': grafico,
+        'subtemplate': subtemplate,
     })
 
 #administracion de graficos
