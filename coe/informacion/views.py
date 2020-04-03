@@ -400,19 +400,8 @@ def lista_individuos(request,
         individuos = Individuo.objects.filter(situacion_actual__conducta=conducta)
     #Optimizamos
     individuos = individuos.select_related('nacionalidad', 'origen', 'destino', )
-    individuos = individuos.select_related('domicilio_actual', 'situacion_actual')
-    individuos = individuos.prefetch_related('atributos', 'sintomas', 'situaciones', 'relaciones')
-    individuos = individuos.prefetch_related('atributos', 'sintomas')
-    return render(request, "lista_individuos.html", {
-        'individuos': individuos,
-        'has_table': True,
-    })
-
-@permission_required('operadores.individuos')
-def lista_evaluar(request):
-    individuos = Individuo.objects.filter(situacion_actual__conducta='B')
-    individuos = individuos.select_related('nacionalidad', 'origen', 'destino', )
-    individuos = individuos.select_related('domicilio_actual', 'situacion_actual')
+    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'domicilio_actual__localidad__departamento')
+    individuos = individuos.select_related('situacion_actual')
     individuos = individuos.prefetch_related('atributos', 'sintomas', 'situaciones', 'relaciones')
     individuos = individuos.prefetch_related('atributos', 'sintomas')
     return render(request, "lista_individuos.html", {

@@ -12,15 +12,17 @@
                         <ul class="menu_botones">
                             {% if perms.operadores.reportes %}
                                 <li><a href="{% url 'informacion:tablero_control'  %}">Tablero de Situacion</a></li>
-                                <li><a href="{% url 'informacion:reporte_basico'  %}">Reporte Basico</a></li>
+                                <li><a href="{% url 'informacion:reporte_basico'  %}">Buscador Por Filtros</a></li>
                                 <hr>
                             {% endif %}
 
                             {% if perms.operadores.individuos %}
                                 <li><a href="{% url 'informacion:buscar_individuo'  %}">Cargar Individuos</a></li>
                                 <li><a href="{% url 'informacion:buscador_individuos' %}">Buscador Ambiguo</a></li>
-                                <li><a href="{% url 'informacion:lista_evaluar'  %}">Individuos Esperando Evaluacion</a></li>
-                                <li><a href="{% url 'informacion:lista_seguimiento'  %}">Listar Individuos en Seguimiento</a></li>
+                                <hr>
+                                <li><a href="{% url 'informacion:lista_conducta' conducta='E' %}">Individuos en Aislamiento/Internacion</a></li>
+                                <li><a href="{% url 'informacion:lista_conducta' conducta='B' %}">Individuos Esperando Evaluacion</a></li>
+                                <li><a href="{% url 'informacion:lista_seguimiento'  %}">Individuos en Seguimiento</a></li>
                                 <li><a href="{% url 'informacion:lista_autodiagnosticos'  %}">Listar Autodiagnosticos</a></li>
                                 <hr>
                             {% endif %}
