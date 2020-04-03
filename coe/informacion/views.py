@@ -386,7 +386,8 @@ def buscador_individuos(request):
 
 #Listas:
 @permission_required('operadores.individuos')
-def lista_individuos(request,
+def lista_individuos(
+        request,
         nacionalidad_id=None,
         estado=None,
         conducta=None
@@ -403,7 +404,6 @@ def lista_individuos(request,
     individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'domicilio_actual__localidad__departamento')
     individuos = individuos.select_related('situacion_actual')
     individuos = individuos.prefetch_related('atributos', 'sintomas', 'situaciones', 'relaciones')
-    individuos = individuos.prefetch_related('atributos', 'sintomas')
     return render(request, "lista_individuos.html", {
         'individuos': individuos,
         'has_table': True,

@@ -4,6 +4,7 @@ import logging
 #Imports Django
 from django.utils import timezone
 from django.dispatch import receiver
+from django.db.models.signals import pre_save
 from django.db.models.signals import post_save, post_delete
 #imports Extras
 from dateutil.relativedelta import relativedelta
@@ -91,6 +92,13 @@ def aislados(created, instance, **kwargs):
         seguimiento.aclaracion = "Fue Puesto en Aislamiento."
         seguimiento.save()
 
+#Evolucionamos Estado segun relaciones
+#@receiver(pre_save, sender=Domicilio)
+#def quitar_aislamiento(created, instance, **kwargs):
+#    if created:
+#        individuo = instance.individuo
+#        if individuo.situacion_actual:
+#            if individuo.situacion_actual.conducta == 
 
 @receiver(post_save, sender=Relacion)
 def invertir_relacion(created, instance, **kwargs):
