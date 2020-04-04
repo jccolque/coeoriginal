@@ -1,11 +1,9 @@
-{% extends 'base_informacion.html' %}
+{% extends 'base/base.html' %}
 {% load static %}
 
 {% block custom_head %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/gmaps.css' %}" />
-    <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key={{gkey}}&callback=initMap">
-    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{gkey}}&callback=initMap"></script>
 {% endblock %}
 
 {% block content %}
@@ -38,6 +36,5 @@
 {% endblock %}
 
 {% block custom_script %}
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js"></script>
     <script type="text/javascript" src="{% static 'js/gmap_form.js' %}
 {% endblock %}
