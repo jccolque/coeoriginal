@@ -1,5 +1,5 @@
 from informacion.models import Individuo
-from informacion.models import Situacion, Domicilio, Sintoma, Atributo
+from informacion.models import Situacion, Domicilio, Sintoma, Atributo, Seguimiento
 from informacion.models import AppData
 
 #Vamos a limpiar todos los repetidos que no sean actual
@@ -74,3 +74,8 @@ def limpiar_atributos():
 def borrar_appdata():
     AppData.objects.all().delete()
     Individuo.objects.filter(aclaracion="AUTODIAGNOSTICO").delete()
+    Situacion.objects.filter(aclaracion="AUTODIAGNOSTICO").delete()
+    Domicilio.objects.filter(aclaracion="AUTODIAGNOSTICO").delete()
+    Sintoma.objects.filter(aclaracion="ENCUESTAAPP").delete()
+    Atributo.objects.filter(aclaracion="ENCUESTAAPP").delete()
+    Seguimiento.objects.filter(tipo="A").delete()

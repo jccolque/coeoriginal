@@ -777,8 +777,10 @@ def tablero_control(request):
         'aislamientos': aislamientos,
         'internaciones': internaciones,
         "nacionalidades": nacionalidades,
-        "estados": estados, "graf_estados": graf_estados,
-        "conductas": conductas, "graf_conductas": graf_conductas,
+        "estados": estados,
+        "graf_estados": graf_estados,
+        "conductas": conductas,
+        "graf_conductas": graf_conductas,
     })
 
 #IMPORTANTE: CORREGIR QUE SOLO IMPORTE EL ULTIMO ESTADO
@@ -829,10 +831,16 @@ def reporte_basico(request):
         #los volvemos una lista:
         reportados = list(reportados.values())
         reportados.sort(key=lambda x: x.sintomas, reverse=True)
-        return render(request, "reporte_basico_mostrar.html", {'reportados': reportados, })
+        return render(request, "reporte_basico_mostrar.html", {
+            'reportados': reportados,
+            'has_table': True,
+        })
     return render(request, "reporte_basico_buscar.html", {
-        'estados': estados, 'conductas': conductas,
-        'atributos': atributos, 'sintomas': sintomas, })
+        'estados': estados,
+        'conductas': conductas,
+        'atributos': atributos, 
+        'sintomas': sintomas,
+    })
 
 #CARGAS MASIVAS
 @superuser_required

@@ -17,11 +17,11 @@
                 <thead>
                     <tr>
                         <th>Tipo</th>
-                        <th>Localidad</th>
                         <th>Nombre</th>
+                        <th>Localidad</th>
+                        <th>Direccion</th>
                         <th>Capacidad Maxima</th>
                         <th>Capacidad Disponible</th>
-                        <th>Direccion</th>
                         <th>Aclaraciones</th>
                         <th>Editar</th>
                     </tr>
@@ -30,11 +30,11 @@
                     {% for ubicacion in ubicaciones %}
                         <tr>
                             <td>{{ubicacion.get_tipo_display}}</td>
-                            <td>{{ubicacion.localidad}}</td>
                             <td>{{ubicacion.nombre}}</td>
+                            <td>{{ubicacion.localidad.nombre}}</td>
+                            <td>{{ubicacion.calle}} {{ubicacion.numero}}{% if ubicacion.barrio %}, {{ubicacion.barrio}}{% endif %}</td>
                             <td>{{ubicacion.capacidad_maxima}}</td>
                             <td>{{ubicacion.capacidad_disponible}}</td>
-                            <td>{{ubicacion.calle}} {{ubicacion.numero}}</td>
                             <td>{{ubicacion.aclaracion|safe}}</td>
                             <td>
                                 {% if ubicacion.tipo == 'AI' or ubicacion.tipo == 'IN' %}
