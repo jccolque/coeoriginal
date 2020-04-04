@@ -3,7 +3,7 @@
 
 {% block custom_head %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/gmaps.css' %}" />
-    <script src="https://maps.googleapis.com/maps/api/js?key={{gkey}}&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{gkey}}&callback=initMap"></script>
 {% endblock %}
 
 {% block content %}
