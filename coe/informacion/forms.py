@@ -124,7 +124,7 @@ class DomicilioForm(forms.ModelForm):
     class Meta:
         model = Domicilio
         fields = '__all__'
-        exclude = ('individuo', )
+        exclude = ('individuo', 'ubicacion')
         widgets = {
             'localidad': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
         }

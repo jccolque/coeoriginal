@@ -7,7 +7,55 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                <div class="col-sm-3 nacionalidades">
+                <div class="col-sm-4 nacionalidades">
+                    <h3>Capacidad Internacion</h3>
+                    <table class="listado">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Localidad</th>
+                                <th>Capacidad Total</th>
+                                <th>Capacidad Disponible</th>
+                                <th>Ver</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ubicacion in internaciones %}
+                                <tr>
+                                    <td>{{ubicacion.nombre}}</th>
+                                    <td>{{ubicacion.localidad.nombre}}</th>
+                                    <td>{{ubicacion.capacidad_maxima}}</th>
+                                    <td>{{ubicacion.capacidad_disponible}}</th>  
+                                    <td>(Ver Detalle)</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                    <h3>Capacidad Aislamiento</h3>
+                    <table class="listado">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Localidad</th>
+                                <th>Capacidad Total</th>
+                                <th>Capacidad Disponible</th>
+                                <th>Ver detalle</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ubicacion in aislamientos %}
+                                <tr>
+                                    <td>{{ubicacion.nombre}}</th>
+                                    <td>{{ubicacion.localidad.nombre}}</th>
+                                    <td>{{ubicacion.capacidad_maxima}}</th>
+                                    <td>{{ubicacion.capacidad_disponible}}</th>  
+                                    <td>(Ver Detalle)</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
                     <h3>Individuos por Nacionalidad:</h3>
                     <table class="listado">
                         <thead>
@@ -19,6 +67,7 @@
                         </thead>
                         <tbody>
                             {% for nac in nacionalidades %}
+                                <tr>
                                     <td>{{nac.nombre}}</th>
                                     <td>{{nac.cantidad}}</th>
                                     <td><a href="{% url 'informacion:lista_nacionalidad' nacionalidad_id=nac.id %}" target="_blank">(Ver Detalle)</a></td>
@@ -28,10 +77,10 @@
                     </table>
                 </div>
                 <!-- Situacion -->
-                <div class="col-sm-9">
-                    <h3>Individuos por Estados:</h3>
+                <div class="col-sm-8">
+                    <h3>Individuos en Estados:</h3>
                     <div class="row">
-                        <div class="col-sm-5">
+                        <div class="col-sm-6">
                             <table class="listado">
                                 <thead>
                                     <tr>
@@ -52,13 +101,13 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="col-sm-7">
+                        <div class="col-sm-6">
                             {% include 'lineas.html' with graf_datos=graf_estados %}
                         </div>
                     </div>
                     <div class="row">
-                        <h3>Individuos por Conductas:</h3>
-                        <div class="col-sm-5">
+                        <h3>Individuos en Conductas:</h3>
+                        <div class="col-sm-6">
                             <table class="listado">
                                 <thead>
                                     <tr>
@@ -79,7 +128,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="col-sm-7">
+                        <div class="col-sm-6">
                             {% include 'lineas.html' with graf_datos=graf_conductas %}
                         </div>
                     </div>

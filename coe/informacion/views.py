@@ -502,7 +502,11 @@ def trasladar(request, individuo_id, ubicacion_id, vehiculo_id):
     domicilio.numero = ubicacion.numero
     domicilio.aclaracion = ubicacion.nombre + " (Traslado Via Sistema)"
     domicilio.aislamiento = True
+    domicilio.ubicacion = ubicacion
     domicilio.save()
+    #Quitamos una plaza disponible:
+    domicilio.ubicacion.capacidad_ocupada += 1
+    domicilio.ubicacion.save()
     #Creamos Cronologia
     seguimiento = Seguimiento(individuo=individuo)
     seguimiento.tipo = 'C'
@@ -707,6 +711,10 @@ def cargar_geoposicion(request, domicilio_id):
 #Reportes en el sistema
 @permission_required('operadores.reportes')
 def tablero_control(request):
+    #Ubicaciones Estrategicas
+    ubicaciones = Ubicacion.objects.select_related('localidad')
+    aislamientos = ubicaciones.filter(tipo='AI')
+    internaciones = ubicaciones.filter(tipo='IN')
     #Conteo por Nacionalidades
     nacionalidades = Nacionalidad.objects.annotate(cantidad=Count('individuos'))
     nacionalidades = nacionalidades.exclude(cantidad=0)
@@ -736,6 +744,7 @@ def tablero_control(request):
                 ).count()
             #Agregamos registro
             conductas.append([conducta[0], conducta[1], cant, last_24])
+    #GRAFICACION
     #Fechas del Grafico
     dias = [timezone.now() - timedelta(days=x) for x in range(0,15)]
     dias = [dia.date() for dia in dias]
@@ -764,6 +773,8 @@ def tablero_control(request):
                 graf_conductas.agregar_dato(dia, conducta[1], date2str(dia), cant)
     #Entregamos el reporte
     return render(request, "tablero_control.html", {
+        'aislamientos': aislamientos,
+        'internaciones': internaciones,
         "nacionalidades": nacionalidades,
         "estados": estados, "graf_estados": graf_estados,
         "conductas": conductas, "graf_conductas": graf_conductas,

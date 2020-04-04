@@ -93,12 +93,17 @@ def aislados(created, instance, **kwargs):
         seguimiento.save()
 
 #Evolucionamos Estado segun relaciones
-#@receiver(pre_save, sender=Domicilio)
-#def quitar_aislamiento(created, instance, **kwargs):
-#    if created:
-#        individuo = instance.individuo
-#        if individuo.situacion_actual:
-#            if individuo.situacion_actual.conducta == 
+@receiver(pre_save, sender=Domicilio)
+def recuperar_capacidad(instance, **kwargs):
+    individuo = instance.individuo
+    if not instance.aislamiento:#Si se esta creando un domicilio y no es de aislacion
+        try:
+            ubicacion = individuo.domicilio_actual.ubicacion#Si previamente estaba aislado
+            ubicacion.capacidad_ocupada -= 1
+            ubicacion.save()
+        except:
+            pass#No hacemos nada
+    #Lo sacamos de aislamiento?              
 
 @receiver(post_save, sender=Relacion)
 def invertir_relacion(created, instance, **kwargs):

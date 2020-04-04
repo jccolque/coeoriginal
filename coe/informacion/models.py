@@ -11,7 +11,7 @@ from django.core.validators import RegexValidator
 from coe.constantes import NOIMAGE
 from core.choices import TIPO_DOCUMENTOS, TIPO_SEXO
 from operadores.models import Operador
-from georef.models import Nacionalidad, Localidad
+from georef.models import Nacionalidad, Localidad, Ubicacion
 #Imports de la app
 from .choices import TIPO_IMPORTANCIA, TIPO_ARCHIVO
 from .choices import TIPO_VEHICULO, TIPO_ESTADO, TIPO_CONDUCTA
@@ -168,6 +168,7 @@ class Domicilio(models.Model):
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='')
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     aislamiento = models.BooleanField('Separado/Aislamiento', default=False)
+    ubicacion = models.ForeignKey(Ubicacion, on_delete=models.CASCADE, related_name="aislados", null=True, blank=True)
     class Meta:
         ordering = ['fecha', ]
     def __str__(self):
@@ -381,6 +382,7 @@ from .signals import relacion_vehiculo
 from .signals import relacionar_situacion
 from .signals import afectar_relacionados
 from .signals import aislados
+from .signals import recuperar_capacidad
 from .signals import cargo_signosvitales
 from .signals import cargo_documento
 

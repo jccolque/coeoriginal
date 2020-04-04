@@ -30,7 +30,7 @@
                                     <hr class="minibar">
                                     <ul>
                                         {% for sit in individuo.situaciones.all reversed %}
-                                            <li>{{sit}} ({{sit.fecha}})</li>
+                                            <li>{{sit}} ({{sit.fecha}}) | {{sit.aclaracion}}</li>
                                         {% endfor %}
                                     </ul>
                                 </div>
@@ -72,7 +72,7 @@
                         {% if individuo.domicilios.all %}
                             {% with individuo.domicilio_actual as domicilio %}
                                 <p>
-                                    <b>Residencia Actual:</b> {{domicilio.calle}} {{domicilio.numero}} ({{domicilio.aclaracion}}), {{domicilio.localidad.nombre}}
+                                    <b>Residencia Actual:</b> {{domicilio.calle}} {{domicilio.numero}}, {{domicilio.localidad.nombre}} | {{domicilio.aclaracion}}
                                     <a class="nolink"  href="javascript:PopUp(2);" ><img class="icons" src="{% static '/img/icons/history.png' %}"></a>
                                     {% if domicilio.geoposicion %}
                                         <a class="nolink"  href="https://www.google.com/maps?q={{domicilio.geoposicion.latitud|stringformat:".5f"}},{{domicilio.geoposicion.longitud|stringformat:".5f"}}" target="_blank">
@@ -95,7 +95,7 @@
                                     <hr class="minibar">
                                     <ul>
                                         {% for dom in individuo.domicilios.all reversed %}
-                                            <li>{{dom.calle}} {{dom.numero}}, {{dom.localidad}} ({{dom.aclaracion}}) | Fecha: {{dom.fecha|date}}</li>
+                                            <li>{{dom.calle}} {{dom.numero}}, {{dom.localidad}} ({{dom.fecha|date}}) | {{dom.aclaracion}}</li>
                                         {% endfor %}
                                     </ul>
                                 </div>
@@ -345,7 +345,7 @@
                         <ul class="menu_botones">
                             <li><a href="{% url 'informacion:mod_individuo' individuo_id=individuo.id %}">Modificar Planilla General</a></li>
                             <hr>
-                            <li><a href="{% url 'informacion:cargar_domicilio' individuo_id=individuo.id %}">Residencia Actual En La Provincia</a></li>
+                            <li><a href="{% url 'informacion:cargar_domicilio' individuo_id=individuo.id %}">Cargar Domicilio</a></li>
                             {% if individuo.domicilio_actual %}
                                 <li><a href="{% url 'informacion:cargar_geoposicion' domicilio_id=individuo.domicilio_actual.id %}">Asignar GeoPosicion</a></li>
                             {% endif %}
