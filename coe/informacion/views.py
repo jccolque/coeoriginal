@@ -40,6 +40,7 @@ from .forms import DocumentoForm, SignosVitalesForm
 from .tasks import guardar_same, guardar_epidemiologia
 from .tasks import guardar_padron_individuos, guardar_padron_domicilios
 from .functions import obtener_relacionados
+
 #Publico
 def buscar_permiso(request):
     form = BuscarPermiso()

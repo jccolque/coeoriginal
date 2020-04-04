@@ -25,8 +25,12 @@
                                     <td>{{ubicacion.nombre}}</th>
                                     <td>{{ubicacion.localidad.nombre}}</th>
                                     <td>{{ubicacion.capacidad_maxima}}</th>
-                                    <td>{{ubicacion.capacidad_disponible}}</th>  
-                                    <td>(Ver Detalle)</td>
+                                    <td>{{ubicacion.capacidad_disponible}}</th>
+                                    <td>
+                                        <a href="{% url 'georef:ver_ubicacion' ubicacion_id=ubicacion.id %}" target="_blank">
+                                            (Ver Detalle)
+                                        </a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -50,7 +54,11 @@
                                     <td>{{ubicacion.localidad.nombre}}</th>
                                     <td>{{ubicacion.capacidad_maxima}}</th>
                                     <td>{{ubicacion.capacidad_disponible}}</th>  
-                                    <td>(Ver Detalle)</td>
+                                    <td>
+                                        <a href="{% url 'georef:ver_ubicacion' ubicacion_id=ubicacion.id %}" target="_blank">
+                                            (Ver Detalle)
+                                        </a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>

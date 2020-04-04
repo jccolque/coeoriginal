@@ -168,7 +168,7 @@ class Domicilio(models.Model):
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='')
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     aislamiento = models.BooleanField('Separado/Aislamiento', default=False)
-    ubicacion = models.ForeignKey(Ubicacion, on_delete=models.CASCADE, related_name="aislados", null=True, blank=True)
+    ubicacion = models.ForeignKey(Ubicacion, on_delete=models.SET_NULL, related_name="aislados", null=True, blank=True)
     class Meta:
         ordering = ['fecha', ]
     def __str__(self):
