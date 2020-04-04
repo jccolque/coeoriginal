@@ -36,7 +36,7 @@ def registro_covidapp(request):
         individuo.apellidos = data["apellido"]
         individuo.nombres = data["nombre"]
         individuo.nacionalidad = nac
-        individuo.aclaracion = "AUTODIAGNOSTICO"
+        individuo.observaciones = "AUTODIAGNOSTICO"
         individuo.save()
     #PROCESAMOS INFO DE APP
     if not hasattr(individuo,'appdata'):

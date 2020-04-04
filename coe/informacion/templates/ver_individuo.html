@@ -95,7 +95,7 @@
                                     <hr class="minibar">
                                     <ul>
                                         {% for dom in individuo.domicilios.all reversed %}
-                                            <li>{{dom.calle}} {{dom.numero}}, {{dom.localidad}} ({{dom.fecha|date}}) | {{dom.aclaracion}}</li>
+                                            <li>{{dom.calle}} {{dom.numero}}, {{dom.localidad.nombre}} ({{dom.fecha|date}}) | {{dom.aclaracion}}</li>
                                         {% endfor %}
                                     </ul>
                                 </div>
