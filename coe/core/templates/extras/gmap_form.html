@@ -18,15 +18,11 @@
                     <hr>
                     <form id="frmPadron" name="frmPadron" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
-                        
                         <div class="map_window" id="minimap"></div>
-                        
                         <label>Coordenadas:</label>
                         <p class="campo"><label>Latitud:</label><input name="latitud"></p>
                         <p class="campo"><label>Longitud:</label><input name="longitud"></p>
-                        
                         <hr>
-                        
                         <p class="field_tittle" >Observaciones</p>
                         <input class="textbox" name="observaciones" type="text">
                         <button class="gmboton" type="submit" class="btn btn-primary">Guardar</button>
