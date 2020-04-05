@@ -55,6 +55,7 @@ TIPO_SEGUIMIENTO = (
     ('M', 'Reporte Medico'),
     ('C', 'Cronologia'),
     ('E', 'Epicrisis'),
+    ('T', 'Descartado por Test'),
     ('A', 'Autodiagnostico'),
     ('F', 'Fin del Seguimiento/Alta'),
 )

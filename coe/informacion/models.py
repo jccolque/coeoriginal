@@ -377,7 +377,8 @@ from .signals import poner_en_seguimiento
 from .signals import situacion_actual
 from .signals import domicilio_actual
 from .signals import relacion_domicilio
-from .signals import invertir_relacion
+from .signals import crear_relacion_inversa
+from .signals import eliminar_relacion_inversa
 from .signals import relacion_vehiculo
 from .signals import relacionar_situacion
 from .signals import afectar_relacionados

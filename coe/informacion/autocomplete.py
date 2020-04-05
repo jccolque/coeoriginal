@@ -24,7 +24,6 @@ class IndividuosAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = []
         if self.q:
-            print(self.q)
             if len(self.q) > 3:
                 qs = Individuo.objects.filter(
                     Q(apellidos__icontains=self.q) |
