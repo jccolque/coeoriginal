@@ -218,5 +218,8 @@ def descartar_sospechoso(created, instance, **kwargs):
     if created and instance.tipo == "T":
         situacion = Situacion()
         situacion.individuo = instance.individuo
+        #El estado pasa a asintomatico
+        if instance.individuo.situacion_actual:#Si tenia conducta actual
+            situacion.conducta = instance.individuo.situacion_actual.conducta
         situacion.aclaracion = 'Descartado' + instance.aclaracion
         situacion.save()
