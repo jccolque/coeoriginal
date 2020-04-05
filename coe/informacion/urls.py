@@ -4,7 +4,6 @@ from django.urls import path
 #Import de modulos personales
 from . import views
 from . import autocomplete
-from . import apis as info_apis
 
 #Definimos paths de la app
 app_name = 'informacion'
