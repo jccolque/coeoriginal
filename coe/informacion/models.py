@@ -25,7 +25,7 @@ from .choices import TIPO_TRIAJE
 class Archivo(models.Model):
     tipo = models.IntegerField(choices=TIPO_ARCHIVO, default='1')
     nombre = models.CharField('Nombres', max_length=100)
-    archivo = models.FileField('Archivo', upload_to='informacion/')
+    archivo = models.FileField('Archivo', upload_to='informacion/archivos/')
     fecha = models.DateTimeField('Fecha del evento', default=timezone.now)
     operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="archivos")
     procesado = models.BooleanField(default=False)
@@ -97,7 +97,7 @@ class Individuo(models.Model):
     origen = models.ForeignKey(Nacionalidad, on_delete=models.SET_NULL, null=True, blank=True, related_name="individuos_origen")
     destino = models.ForeignKey(Localidad, on_delete=models.SET_NULL, null=True, blank=True, related_name="individuos_destino")
     observaciones = HTMLField(null=True, blank=True)
-    fotografia = models.FileField('Fotografia', upload_to='individuos/', null=True, blank=True)
+    fotografia = models.FileField('Fotografia', upload_to='informacion/individuos/', null=True, blank=True)
     #Actuales
     situacion_actual = models.OneToOneField('Situacion', on_delete=models.SET_NULL, related_name="situacion_actual", null=True, blank=True)
     domicilio_actual = models.OneToOneField('Domicilio', on_delete=models.SET_NULL, related_name="domicilio_actual", null=True, blank=True)
@@ -297,7 +297,7 @@ class Seguimiento(models.Model):
 class Documento(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="documentos")
     tipo = models.CharField('Tipo de Documento', choices=TIPO_DOCUMENTO, max_length=12, default='HM')
-    archivo = models.FileField('Archivo', upload_to='archivos/individuo/documentos/')
+    archivo = models.FileField('Archivo', upload_to='informacion/individuo/documentos/')
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha Subido', default=timezone.now)
     def __str__(self):

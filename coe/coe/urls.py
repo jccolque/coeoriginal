@@ -51,7 +51,9 @@ urlpatterns = [
     path('background/', include('background.urls')),
     #APIS:
     path('covid19/', include('informacion.api_urls')),
+    #Manejo de Archivos Privados:
+    path('archivos/', include('operadores.file_urls')),#Lo hacemos desde ahi por que depende de permisos
 ]
 #Agregamos destinos de Archivos Estaticos
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+#urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

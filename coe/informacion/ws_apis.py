@@ -6,6 +6,7 @@ from .models import Situacion
 
 #Creamos nuestros webservices
 def ws_situaciones(request, fecha=None):
+    #Agregar por localidad
     estados = {}
     conductas = {}
     #Traemos todas las situaciones
