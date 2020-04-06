@@ -11,6 +11,7 @@ from georef.models import Nacionalidad, Localidad
 #Imports de la app
 from .models import Individuo, AppData, Domicilio, GeoPosicion
 from .models import Atributo, Sintoma, Situacion, Seguimiento
+from .tokens import TokenGenerator
 #Definimos logger
 logger = logging.getLogger('apis')
 
@@ -65,6 +66,7 @@ def registro_covidapp(request):
             {
                 "action":"registro",
                 "realizado": True,
+                "token": TokenGenerator(individuo),
             },
             safe=False
         )
@@ -91,6 +93,8 @@ def encuesta_covidapp(request):
         num_doc = str(data["dni"]).upper()
         #Buscamos al individuo en la db
         individuo = Individuo.objects.get(num_doc=num_doc)
+        #ACA CHEQUEAMOS TOKEN
+
         #Cargamos datos importantes:
         #Atributos
         Atributo.objects.filter(individuo=individuo, aclaracion="ENCUESTAAPP").delete()
@@ -124,7 +128,6 @@ def encuesta_covidapp(request):
             situacion.save()
         #Geoposicion
         if data["latitud"] and data["longitud"]:
-            GeoPosicion.objects.filter(domicilio=individuo.domicilio_actual).delete()
             geopos = GeoPosicion()
             geopos.domicilio = individuo.domicilio_actual
             geopos.latitud = data["latitud"]
@@ -160,6 +163,8 @@ def temperatura_covidapp(request):
         num_doc = str(data["dni"]).upper()
         #Buscamos al individuo en la db
         individuo = Individuo.objects.get(num_doc=num_doc)
+        #ACA CHEQUEAMOS TOKEN
+
         #Cargamos datos importantes:
         seguimiento = Seguimiento()
         seguimiento.individuo = individuo
@@ -177,6 +182,51 @@ def temperatura_covidapp(request):
         return JsonResponse(
         {
             "action":"temperatura",
+            "realizado": False,
+            "error": str(e),
+        },
+        safe=False,
+        status=400,
+    )
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def tracking_covidapp(request):
+    try:
+        data = None
+        #Recibimos el json
+        data = json.loads(request.body.decode("utf-8"))
+        logger.info("Llega Tracking")
+        logger.info(data, timezone.now())
+        #Agarramos el dni
+        num_doc = str(data["dni"]).upper()
+        #Buscamos al individuo en la db
+        individuo = Individuo.objects.get(num_doc=num_doc)
+        #ACA CHEQUEAMOS TOKEN
+        geopos = GeoPosicion()
+        geopos.domicilio = individuo.domicilio_actual
+        geopos.latitud = data["latitud"]
+        geopos.longitud = data["longitud"]
+        geopos.aclaracion = "TRACKING"
+        geopos.fecha = timezone.datetime(
+            int(data["fecha"][0:4]),
+            int(data["fecha"][4:6]),
+            int(data["fecha"][6:8]),
+            int(data["hora"][0:2]),
+            int(data["hora"][2:4]),
+        )
+        geopos.save()
+        return JsonResponse(
+            {
+                "action":"tracking",
+                "realizado": True,
+            },
+            safe=False
+        )
+    except Exception as e:
+        return JsonResponse(
+        {
+            "action":"tracking",
             "realizado": False,
             "error": str(e),
         },

@@ -181,9 +181,11 @@ class Domicilio(models.Model):
             "calle": self.calle,
             "numero": self.numero,
         }
+    def geoposicion(self):
+        return self.geoposiciones.last()
 
 class GeoPosicion(models.Model):
-    domicilio = models.OneToOneField(Domicilio, on_delete=models.CASCADE, related_name="geoposicion")
+    domicilio = models.ForeignKey(Domicilio, on_delete=models.CASCADE, related_name="geoposiciones")
     latitud = models.DecimalField('latitud', max_digits=12, decimal_places=10)
     longitud = models.DecimalField('longitud', max_digits=12, decimal_places=10)
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
