@@ -9,6 +9,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'package:geolocation/geolocation.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -43,12 +45,52 @@ class _MyLoginPageState extends State<MyLoginPage> {
   int _dni = 0;
   bool _loaded = false;
 
+  LocationResult locations = null;
+  StreamSubscription<LocationResult> streamSubscription;
+  bool trackLocation = false;
+
   @override
   void initState() {
     _launchFirstTermCondDialogConfirmation();
     //_getDniFromSharedPref();
     //_cleanSharedPreferences();
     super.initState();
+    checkGps();
+
+    trackLocation = false;
+  }
+
+  checkGps() async {
+    final GeolocationResult result = await Geolocation.isLocationOperational();
+    if(result.isSuccessful) {
+      print('Success');
+    } else {
+      print('Failed');
+    }
+  }
+
+  getLocations() {
+    if(trackLocation) {
+      setState(() => trackLocation = false);
+      streamSubscription.cancel();
+      streamSubscription = null;
+      locations = null;
+    } else {
+      setState(() => trackLocation = true);
+      streamSubscription = Geolocation.locationUpdates(
+        accuracy: LocationAccuracy.best,
+        displacementFilter: 0.0,
+        inBackground: false,
+      ).listen((result) {
+        final location = result;
+        setState(() {
+          locations = location;
+        });
+      });
+      streamSubscription.onDone(() => setState(() {
+        trackLocation = false;
+      }));
+    }
   }
 
   @override
@@ -96,6 +138,10 @@ class _MyLoginPageState extends State<MyLoginPage> {
      ),
    );*/
   }
+
+//  Widget crearLocation(){
+//    return locations.location != null ? Text("Latitud: ${locations.location?.latitude}") : Container();
+//  }
 
   Widget build_child() {
     if(_loaded)
@@ -274,6 +320,26 @@ class _MyLoginPageState extends State<MyLoginPage> {
                        ],
                      ),
                    ),
+                   Container(
+                     child: FloatingActionButton(
+                       child: Text('Get locations'),
+                       onPressed: getLocations,
+                     ),
+                   ),
+                   Center(
+                       child: Container(
+                         width: 400.0,
+                         height: 500.0,
+                         child: ListView(
+                           children: [
+                             locations != null ? Text("Latitud: ${locations.location?.latitude}") : Container(),
+                             locations != null ? Text("Longitud: ${locations.location?.longitude}") : Container(),
+                             locations != null ? Text("Altitud: ${locations.location?.altitude}") : Container(),
+                           ],
+                         ),
+                       )
+                   ),
+
                  ],
                )),
          );
