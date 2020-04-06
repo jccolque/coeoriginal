@@ -14,6 +14,6 @@ urlpatterns = [
     #Operador
     path('operadores/<str:filename>', file_views.ver_operador, name='ver_operador'),
     #Inscripciones
-    path('inscripciones/dni/<str:filename>', file_views.ver_dni_inscripto, name='ver_dni_inscripto'),
+    path('inscripciones/documentos/<str:filename>', file_views.ver_dni_inscripto, name='ver_dni_inscripto'),
     path('inscripciones/titulo/<str:filename>', file_views.ver_titulo_inscripto, name='ver_titulo_inscripto'),
 ]
