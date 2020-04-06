@@ -11,6 +11,7 @@ urlpatterns = [
     path('registro', app_apis.registro_covidapp, name='registro_covidapp'),
     path('encuesta', app_apis.encuesta_covidapp, name='encuesta_covidapp'),
     path('temperatura', app_apis.temperatura_covidapp, name='temperatura_covidapp'),
+    path('start/tracking', app_apis.start_tracking_covidapp, name='start_tracking_covidapp'),
     path('tracking', app_apis.tracking_covidapp, name='tracking_covidapp'),
     #WebServices
     path('situaciones', ws_apis.ws_situaciones, name='ws_situaciones'),

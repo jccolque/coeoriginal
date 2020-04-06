@@ -2,12 +2,14 @@
 import json
 import logging
 #Imports de Django
+from django.contrib.auth import authenticate
 from django.utils import timezone
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 #Imports del proyecto
 from georef.models import Nacionalidad, Localidad
+from operadores.models import Operador
 #Imports de la app
 from .models import Individuo, AppData, Domicilio, GeoPosicion
 from .models import Atributo, Sintoma, Situacion, Seguimiento
@@ -72,14 +74,14 @@ def registro_covidapp(request):
         )
     except Exception as e:
         return JsonResponse(
-        {
-            "action":"registro",
-            "realizado": False,
-            "error": str(e),
-        },
-        safe=False,
-        status=400,
-    )
+            {
+                "action":"registro",
+                "realizado": False,
+                "error": str(e),
+            },
+            safe=False,
+            status=400,
+        )
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -143,14 +145,14 @@ def encuesta_covidapp(request):
         )
     except Exception as e:
         return JsonResponse(
-        {
-            "action":"encuesta",
-            "realizado": False,
-            "error": str(e),
-        },
-        safe=False,
-        status=400,
-    )
+            {
+                "action":"encuesta",
+                "realizado": False,
+                "error": str(e),
+            },
+            safe=False,
+            status=400,
+        )
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -180,14 +182,72 @@ def temperatura_covidapp(request):
         )
     except Exception as e:
         return JsonResponse(
-        {
-            "action":"temperatura",
-            "realizado": False,
-            "error": str(e),
-        },
-        safe=False,
-        status=400,
-    )
+            {
+                "action":"temperatura",
+                "realizado": False,
+                "error": str(e),
+            },
+            safe=False,
+            status=400,
+        )
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def start_tracking_covidapp(request):
+    try:
+        data = None
+        #Recibimos el json
+        data = json.loads(request.body.decode("utf-8"))
+        #Agarramos el dni
+        num_doc = str(data["dni_individuo"]).upper()
+        #Buscamos al individuo en la db
+        individuo = Individuo.objects.get(num_doc=num_doc)
+        #ACA CHEQUEAMOS TOKEN
+
+        #Chequeamos credenciales de operador
+        operador = Operador.objects.get(num_doc=data["dni_operador"])
+        user = authenticate(username=operador.usuario, password=data["password"])
+        if not user:
+            return JsonResponse(
+            {
+                "action":"start_tracking",
+                "realizado": False,
+                "error": 'El operador no existe.',
+            },
+            safe=False,
+            status=400,
+        )
+        #Cargamos Inicio de Seguimiento:
+        seguimiento = Seguimiento()
+        seguimiento.individuo = individuo
+        seguimiento.tipo = 'IT'
+        seguimiento.aclaracion = 'Tracking:' + operador.apellidos + ', ' + operador.nombres
+        seguimiento.save()
+        #Guardamos la geoposicion BASE
+        geopos = GeoPosicion()
+        geopos.domicilio = individuo.domicilio_actual
+        geopos.latitud = data["latitud"]
+        geopos.longitud = data["longitud"]
+        geopos.aclaracion = "INICIO TRACKING"
+        geopos.save()
+        #Respondemos
+        return JsonResponse(
+            {
+                "action":"start_tracking",
+                "realizado": True,
+            },
+            safe=False
+        )
+    except Exception as e:
+        return JsonResponse(
+            {
+                "action":"start_tracking",
+                "realizado": False,
+                "error": str(e),
+            },
+            safe=False,
+            status=400,
+        )
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -196,13 +256,13 @@ def tracking_covidapp(request):
         data = None
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info("Llega Tracking")
-        logger.info(data, timezone.now())
         #Agarramos el dni
         num_doc = str(data["dni"]).upper()
         #Buscamos al individuo en la db
         individuo = Individuo.objects.get(num_doc=num_doc)
         #ACA CHEQUEAMOS TOKEN
+
+        #Guardamos nueva posgps
         geopos = GeoPosicion()
         geopos.domicilio = individuo.domicilio_actual
         geopos.latitud = data["latitud"]
@@ -216,6 +276,9 @@ def tracking_covidapp(request):
             int(data["hora"][2:4]),
         )
         geopos.save()
+        #Deberiamos chequear contra la BASE
+
+        #Respondemos que esta todo legal.
         return JsonResponse(
             {
                 "action":"tracking",
@@ -225,11 +288,11 @@ def tracking_covidapp(request):
         )
     except Exception as e:
         return JsonResponse(
-        {
-            "action":"tracking",
-            "realizado": False,
-            "error": str(e),
-        },
-        safe=False,
-        status=400,
-    )
+            {
+                "action":"tracking",
+                "realizado": False,
+                "error": str(e),
+            },
+            safe=False,
+            status=400,
+        )

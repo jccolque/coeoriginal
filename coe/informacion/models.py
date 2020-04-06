@@ -280,7 +280,7 @@ class Sintoma(models.Model):
 
 class Seguimiento(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="seguimientos")
-    tipo = models.CharField('Tipo Seguimiento', choices=TIPO_SEGUIMIENTO, max_length=1, default='I')
+    tipo = models.CharField('Tipo Seguimiento', choices=TIPO_SEGUIMIENTO, max_length=2, default='I')
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Seguimiento', default=timezone.now)
     class Meta:
