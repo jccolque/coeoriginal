@@ -191,7 +191,7 @@ class GeoPosicion(models.Model):
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     def __str__(self):
-        return str(self.domicilios) + ': ' + str(self.latitud) + '|' + str(self.longitud)
+        return str(self.latitud) + '|' + str(self.longitud)
     def as_dict(self):
         return {
             "id": self.id,
