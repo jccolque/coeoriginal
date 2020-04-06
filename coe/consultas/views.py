@@ -42,7 +42,7 @@ def contacto(request):
 def menu(request):
     return render(request, 'menu_consultas.html', {})
 
-@permission_required('operadores.consultas')
+@permission_required('operadores.menu_consultas')
 def lista_consultas(request):
     consultas = Consulta.objects.filter(valida=True, respondida=False)
     return render(request, 'lista_consultas.html', {
@@ -51,7 +51,7 @@ def lista_consultas(request):
         "refresh": True,
     })
 
-@permission_required('operadores.consultas')
+@permission_required('operadores.menu_consultas')
 def lista_respondidas(request):
     consultas = Consulta.objects.filter(respondida=True)
     return render(request, 'lista_respondidas.html', {
@@ -59,7 +59,7 @@ def lista_respondidas(request):
         "has_table": True,
     })
 
-@permission_required('operadores.consultas')
+@permission_required('operadores.menu_consultas')
 def ver_consulta(request, consulta_id):
     form = RespuestaForm()
     consulta = Consulta.objects.get(pk=consulta_id)
@@ -91,7 +91,7 @@ def ver_consulta(request, consulta_id):
             return redirect('consultas:lista_consultas')
     return render(request, 'ver_consulta.html', {"consulta": consulta, 'form': form, })
 
-@permission_required('operadores.consultas')
+@permission_required('operadores.menu_consultas')
 def consulta_respondida(request, consulta_id):
     consulta = Consulta.objects.get(pk=consulta_id)
     consulta.respondida = True
