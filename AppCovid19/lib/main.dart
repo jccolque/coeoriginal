@@ -1,13 +1,23 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:isolate';
+import 'dart:math';
+import 'dart:ui';
+import 'package:background_locator/location_dto.dart';
+import 'package:background_locator/location_settings.dart';
 import 'package:covidjujuy_app/ui/formulario.dart';
 import 'package:covidjujuy_app/ui/temperatura.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gps/gps.dart';
+import 'package:intl/intl.dart';
 import 'ui/cuestionario.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import 'package:background_locator/background_locator.dart';
 
 void main() => runApp(MyApp());
 
@@ -42,6 +52,13 @@ class _MyLoginPageState extends State<MyLoginPage> {
   bool _locationUp = false;
   int _dni = 0;
   bool _loaded = false;
+  ReceivePort port = ReceivePort();
+
+  String logStr = '';
+  bool isRunning;
+  LocationDto lastLocation;
+  DateTime lastTimeLocation;
+  static const String _isolateName = 'LocatorIsolate';
 
   @override
   void initState() {
@@ -49,6 +66,18 @@ class _MyLoginPageState extends State<MyLoginPage> {
     //_getDniFromSharedPref();
     //_cleanSharedPreferences();
     super.initState();
+    if (IsolateNameServer.lookupPortByName(_isolateName) != null) {
+      IsolateNameServer.removePortNameMapping(_isolateName);
+    }
+
+    IsolateNameServer.registerPortWithName(port.sendPort, _isolateName);
+
+    port.listen(
+          (dynamic data) async {
+        await print(data);
+      },
+    );
+    initPlatformState();
   }
 
   @override
@@ -56,6 +85,9 @@ class _MyLoginPageState extends State<MyLoginPage> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
     ));
+
+
+
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -433,6 +465,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('latitud', double.parse(latlng.lat));
     await prefs.setDouble('longitud', double.parse(latlng.lng));
+    startLocationService();
   }
 
   void _checkPermissions() async {
@@ -501,6 +534,8 @@ class _MyLoginPageState extends State<MyLoginPage> {
       if (value) {
         _setTermCondAceptadosFromSharedPref().then((bool commited) {
           //_launchTermCondDialogConfirmation();
+         // startLocationService();
+
           setState(() {
             _termCondAceptados = true;
           });
@@ -511,7 +546,102 @@ class _MyLoginPageState extends State<MyLoginPage> {
       }
     });
   }
+
+  static double dp(double val, int places) {
+    double mod = pow(10.0, places);
+    return ((val * mod).round().toDouble() / mod);
+  }
+
+  static String formatDateLog(DateTime date) {
+    return date.hour.toString() +
+        ":" +
+        date.minute.toString() +
+        ":" +
+        date.second.toString();
+  }
+
+  static String formatLog(LocationDto locationDto) {
+    return dp(locationDto.latitude, 4).toString() +
+        " " +
+        dp(locationDto.longitude, 4).toString();
+  }
+
+  static Future<void> setLog(LocationDto data) async {
+    final date = DateTime.now();
+    await print(data);
+  }
+
+  Future<void> initPlatformState() async {
+    print('Initializing...');
+    await BackgroundLocator.initialize();
+    print('Initialization done');
+    final _isRunning = await BackgroundLocator.isRegisterLocationUpdate();
+    setState(() {
+      isRunning = _isRunning;
+    });
+    print('Running ${isRunning.toString()}');
+  }
+
+  static void callback(LocationDto locationDto) async {
+    print('*******************location in dart: ${locationDto.toString()}');
+    await apiRequest(locationDto);
+    await setLog(locationDto);
+    final SendPort send = IsolateNameServer.lookupPortByName(_isolateName);
+    send?.send(locationDto);
+  }
+
+  static void notificationCallback() {
+    print('notificationCallback');
+  }
+
+  void startLocationService(){
+    print(' -------startLocationService---------');
+    BackgroundLocator.registerLocationUpdate(
+      callback,
+      androidNotificationCallback: notificationCallback,
+      settings: LocationSettings(
+          notificationTitle: "Start Location Tracking example",
+          notificationMsg: "Track location in background exapmle",
+          wakeLockTime: 60,
+          autoStop: false,
+          interval: 60
+      ),
+    );
+    setState(() {
+//      isRunning = true;
+    });
+  }
+
+  static Future<String> apiRequest(LocationDto locationDto) async {
+    print('------------apiRequest ');
+    var now = new DateTime.now();
+    var fecha = new DateFormat('yyyyMMdd');
+    var hora = new DateFormat('HHmm');
+    final item = {
+      "dni" : 31590755,
+      "fecha": fecha.format(now) ,
+      "hora": hora.format(now) ,
+      "latitud": locationDto.latitude,
+      "longitud": locationDto.longitude
+    };
+    HttpClient httpClient = HttpClient();
+    HttpClientRequest request = await httpClient.postUrl(Uri.parse('http://coe.jujuy.gob.ar/covid19/tracking'));
+    request.headers.set('content-type', 'application/json');
+    request.add(utf8.encode(json.encode(item)));
+    HttpClientResponse response = await request.close();
+    print(response);
+    print(response.statusCode);
+    if(response.statusCode == 200){
+      String reply = await response.transform(utf8.decoder).join();
+      httpClient.close();
+      return reply;
+    } else {
+      return null;
+    }
+
+  }
 }
+
 Future<bool> confirmPermissions(
     BuildContext context, GlobalKey<ScaffoldState> _scaffoldKey) {
   showDialog(
