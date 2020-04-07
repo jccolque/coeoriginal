@@ -14,6 +14,7 @@ from operadores.models import Operador
 from .models import Individuo, AppData, Domicilio, GeoPosicion
 from .models import Atributo, Sintoma, Situacion, Seguimiento
 from .tokens import TokenGenerator
+from .geofence import controlar_distancia
 #Definimos logger
 logger = logging.getLogger('apis')
 
@@ -217,19 +218,22 @@ def start_tracking_covidapp(request):
             safe=False,
             status=400,
         )
-        #Cargamos Inicio de Seguimiento:
-        seguimiento = Seguimiento()
-        seguimiento.individuo = individuo
-        seguimiento.tipo = 'IT'
-        seguimiento.aclaracion = 'Tracking:' + operador.apellidos + ', ' + operador.nombres
-        seguimiento.save()
         #Guardamos la geoposicion BASE
+        GeoPosicion.objects.filter(domicilio__individuo=individuo, aclaracion__icontains="INICIO TRACKING").delete()
+        GeoPosicion.objects.filter(domicilio__individuo=individuo, aclaracion="TRACKING").delete()
         geopos = GeoPosicion()
         geopos.domicilio = individuo.domicilio_actual
         geopos.latitud = data["latitud"]
         geopos.longitud = data["longitud"]
-        geopos.aclaracion = "INICIO TRACKING"
+        geopos.aclaracion = "INICIO TRACKING: " + str(geopos.latitud)+', '+str(geopos.longitud)
         geopos.save()
+        #Cargamos Inicio de Seguimiento:
+        Seguimiento.objects.filter(tipo__in=('IT','AT', 'FT')).delete()
+        seguimiento = Seguimiento()
+        seguimiento.individuo = individuo
+        seguimiento.tipo = 'IT'
+        seguimiento.aclaracion = "INICIO TRACKING: " + str(geopos.latitud)+', '+str(geopos.longitud)
+        seguimiento.save()
         #Respondemos
         return JsonResponse(
             {
@@ -276,13 +280,13 @@ def tracking_covidapp(request):
             int(data["hora"][2:4]),
         )
         geopos.save()
-        #Deberiamos chequear contra la BASE
-
-        #Respondemos que esta todo legal.
+        #Controlamos posicion:
+        distancia = controlar_distancia(geopos)
         return JsonResponse(
             {
                 "action":"tracking",
                 "realizado": True,
+                "distancia": distancia,
             },
             safe=False
         )

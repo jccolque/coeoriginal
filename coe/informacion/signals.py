@@ -96,13 +96,13 @@ def aislados(created, instance, **kwargs):
 @receiver(pre_save, sender=Domicilio)
 def recuperar_capacidad(instance, **kwargs):
     individuo = instance.individuo
-    if not instance.aislamiento:#Si se esta creando un domicilio y no es de aislacion
-        try:
+    try:
+        if individuo.domicilio_actual.aislamiento:#Si estaba en aislamiento
             ubicacion = individuo.domicilio_actual.ubicacion#Si previamente estaba aislado
             ubicacion.capacidad_ocupada -= 1
             ubicacion.save()
-        except:
-            pass#No hacemos nada
+    except:
+        pass#No hacemos nada
     #Lo sacamos de aislamiento?              
 
 @receiver(post_save, sender=Relacion)

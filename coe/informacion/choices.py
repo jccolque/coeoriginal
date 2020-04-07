@@ -59,6 +59,7 @@ TIPO_SEGUIMIENTO = (
     ('A', 'Autodiagnostico'),
     ('F', 'Fin del Seguimiento/Alta'),
     ('IT', 'Inicio Tracking'),
+    ('AT', 'Alerta Tracking'),
     ('FT', 'Baja Tracking'),
 )
 
