@@ -13,7 +13,7 @@
         </div>
         <div class="row">
         <div class="col-md-12">
-            <table class="listado" id="table">
+            <table class="listado table" id="table">
                 <thead>
                     <tr>
                         <th>Rubro</th>
@@ -25,18 +25,18 @@
                 <tbody>
                     {% for subgrupo in subgrupos %}
                         <tr>
-                            <td>
+                            <td data-title="Rubro: ">
                                 <a href={% url 'inventario:lista_rubro' rubro_id=subgrupo.rubro.id %}>
                                     {{subgrupo.rubro}}
                                 </a>
                             </td>
-                            <td>
+                            <td data-title="SubGrupo: ">
                                 <a href={% url 'inventario:lista_subgrupo' subgrupo_id=subgrupo.id %}>
                                     {{subgrupo}}
                                 </a>
                             </td>
-                            <td>{{subgrupo.cantidad_disponible}}</td>
-                            <td>{{subgrupo.cantidad_distribuida}}</td>
+                            <td data-title="Cantidad Disponible: ">{{subgrupo.cantidad_disponible}}</td>
+                            <td data-title="Cantidad Distribuida: ">{{subgrupo.cantidad_distribuida}}</td>
                         </tr>
                     {% endfor %}
                 </tbody>

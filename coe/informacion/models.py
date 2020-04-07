@@ -25,7 +25,7 @@ from .choices import TIPO_TRIAJE
 class Archivo(models.Model):
     tipo = models.IntegerField(choices=TIPO_ARCHIVO, default='1')
     nombre = models.CharField('Nombres', max_length=100)
-    archivo = models.FileField('Archivo', upload_to='informacion/archivos/')
+    archivo = models.FileField('Archivo', upload_to='informacion/')
     fecha = models.DateTimeField('Fecha del evento', default=timezone.now)
     operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="archivos")
     procesado = models.BooleanField(default=False)
@@ -97,7 +97,7 @@ class Individuo(models.Model):
     origen = models.ForeignKey(Nacionalidad, on_delete=models.SET_NULL, null=True, blank=True, related_name="individuos_origen")
     destino = models.ForeignKey(Localidad, on_delete=models.SET_NULL, null=True, blank=True, related_name="individuos_destino")
     observaciones = HTMLField(null=True, blank=True)
-    fotografia = models.FileField('Fotografia', upload_to='informacion/individuos/', null=True, blank=True)
+    fotografia = models.FileField('Fotografia', upload_to='individuos/', null=True, blank=True)
     #Actuales
     situacion_actual = models.OneToOneField('Situacion', on_delete=models.SET_NULL, related_name="situacion_actual", null=True, blank=True)
     domicilio_actual = models.OneToOneField('Domicilio', on_delete=models.SET_NULL, related_name="domicilio_actual", null=True, blank=True)
@@ -181,17 +181,15 @@ class Domicilio(models.Model):
             "calle": self.calle,
             "numero": self.numero,
         }
-    def geoposicion(self):
-        return self.geoposiciones.last()
 
 class GeoPosicion(models.Model):
-    domicilio = models.ForeignKey(Domicilio, on_delete=models.CASCADE, related_name="geoposiciones")
+    domicilio = models.OneToOneField(Domicilio, on_delete=models.CASCADE, related_name="geoposicion")
     latitud = models.DecimalField('latitud', max_digits=12, decimal_places=10)
     longitud = models.DecimalField('longitud', max_digits=12, decimal_places=10)
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     def __str__(self):
-        return str(self.latitud) + '|' + str(self.longitud)
+        return str(self.domicilios) + ': ' + str(self.latitud) + '|' + str(self.longitud)
     def as_dict(self):
         return {
             "id": self.id,
@@ -280,7 +278,7 @@ class Sintoma(models.Model):
 
 class Seguimiento(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="seguimientos")
-    tipo = models.CharField('Tipo Seguimiento', choices=TIPO_SEGUIMIENTO, max_length=2, default='I')
+    tipo = models.CharField('Tipo Seguimiento', choices=TIPO_SEGUIMIENTO, max_length=1, default='I')
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Seguimiento', default=timezone.now)
     class Meta:
@@ -299,7 +297,7 @@ class Seguimiento(models.Model):
 class Documento(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="documentos")
     tipo = models.CharField('Tipo de Documento', choices=TIPO_DOCUMENTO, max_length=12, default='HM')
-    archivo = models.FileField('Archivo', upload_to='informacion/individuo/documentos/')
+    archivo = models.FileField('Archivo', upload_to='archivos/individuo/documentos/')
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha Subido', default=timezone.now)
     def __str__(self):
@@ -379,8 +377,7 @@ from .signals import poner_en_seguimiento
 from .signals import situacion_actual
 from .signals import domicilio_actual
 from .signals import relacion_domicilio
-from .signals import crear_relacion_inversa
-from .signals import eliminar_relacion_inversa
+from .signals import invertir_relacion
 from .signals import relacion_vehiculo
 from .signals import relacionar_situacion
 from .signals import afectar_relacionados

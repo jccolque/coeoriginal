@@ -6,8 +6,8 @@
             <h2>Seguimiento Individuos Bajo Vigilancia</h2>
         </div>
         <div class="row">
-        <div class="col-md-12">
-            <table class="listado" id="table">
+        <div>
+            <table class="listado table" id="table">
                 <thead>
                     <tr>
                         <th>Documento</th>
@@ -23,21 +23,21 @@
                 <tbody>
                     {% for individuo in individuos %}
                         <tr>
-                            <td>{{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</td>
-                            <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
-                            <td>{{individuo.nacionalidad}}</td>
-                            <td>{{individuo.situacion_actual}}</td>
-                            <td>
+                            <td data-title="Documento: ">{{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</td>
+                            <td data-title="Individuo: ">{{individuo.apellidos}}, {{individuo.nombres}}</td>
+                            <td data-title="Nacionalidad: ">{{individuo.nacionalidad}}</td>
+                            <td data-title="Situacion: ">{{individuo.situacion_actual}}</td>
+                            <td data-title="Atributo: ">
                                 {% for atributo in individuo.atributos.all%}
                                     <li>{{atributo.get_tipo_display}}</li>
                                 {% endfor %}
                             </td>
-                            <td>
+                            <td data-title="Sintomas: ">
                                 {% for sintoma in individuo.sintomas.all%}
                                     <li>{{sintoma.get_tipo_display}}</li>
                                 {% endfor %}
                             </td>
-                            <td>
+                            <td data-title="Ultima Actualizacion: ">
                                 {{individuo.ultimo_seguimiento}}
                             </td>
                             <td><a href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">(Ver Detalle)</a></td>

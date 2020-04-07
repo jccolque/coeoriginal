@@ -12,8 +12,8 @@
             {% endif %}
         </div>
         <div class="row">
-        <div class="col-md-12">
-            <table class="listado" id="table">
+        <div>
+            <table class="listado table" id="table">
                 <thead>
                     <tr>
                         <th>Nacion</th>
@@ -27,11 +27,11 @@
                 <tbody>
                     {% for barrio in barrios %}
                         <tr>
-                            <td>{{barrio.localidad.departamento.provincia.nacion}}</td>
-                            <td>{{barrio.localidad.departamento.provincia}}</td>
-                            <td>{{barrio.localidad.departamento}}</td>
-                            <td>{{barrio.localidad}}</td>
-                            <td>{{barrio}}</td>
+                            <td data-title="Nacion: ">{{barrio.localidad.departamento.provincia.nacion}}</td>
+                            <td data-title="Provincia: ">{{barrio.localidad.departamento.provincia}}</td>
+                            <td data-title="Departamento: ">{{barrio.localidad.departamento}}</td>
+                            <td data-title="Localidad: ">{{barrio.localidad}}</td>
+                            <td data-title="Nombre: ">{{barrio}}</td>
                             <td>
                                 <a href="{% url 'georef:mod_barrio' barrio_id=barrio.id %}">
                                     <img class="icons" src="{% static '/img/icons/change.png' %}">

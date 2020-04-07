@@ -27,7 +27,7 @@
                 </div>
                 <hr>
                 <div class="col-sm-9" "col-sm-offset-2">
-                    <table class="listado" id="table">
+                    <table class="listado table" id="table">
                         <thead>
                             <tr>
                                 <th>Tipo</th>
@@ -40,16 +40,16 @@
                         <tbody>
                             {% for vehiculo in vehiculos %}
                                 <tr>
-                                    <td>{{vehiculo.get_tipo_display}}</td>
-                                    <td>
+                                    <td data-title="Tipo: ">{{vehiculo.get_tipo_display}}</td>
+                                    <td data-title="Identificacion: ">
                                         {{vehiculo.identificacion}}
                                         <a href="{% url 'informacion:mod_vehiculo' vehiculo_id=vehiculo.id %}" target="_blank">
                                             <img class="icons" src="{% static '/img/icons/change.png' %}">
                                         </a>
                                     </td>
-                                    <td>{{vehiculo.empresa}}</td>
-                                    <td>{{vehiculo.conductor}}</td>
-                                    <td><a href="{% url 'informacion:trasladar' individuo_id=individuo.id ubicacion_id=ubicacion.id vehiculo_id=vehiculo.id %}">Trasladar</a></td>
+                                    <td data-title="Empresa: ">{{vehiculo.empresa}}</td>
+                                    <td data-title="Conductor: ">{{vehiculo.conductor}}</td>
+                                    <td data-title="Trasladar: "><a href="{% url 'informacion:trasladar' individuo_id=individuo.id ubicacion_id=ubicacion.id vehiculo_id=vehiculo.id %}">Trasladar</a></td>
                                 </tr>
                             {% endfor %}
                         </tbody>

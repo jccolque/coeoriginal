@@ -191,6 +191,28 @@ a.nolink:hover {
   background-color: #dddddd;
 }
 
+@media screen and (max-device-width: 980px) {
+    th {
+        display: none;
+    }
+    .listado, .listado tbody, .listado tr, .listado thead, .listado td {
+        display: block;
+    }
+    .listado tr {
+        margin-bottom: 10px;
+    }
+    .listado td {
+        text-align: left;
+        padding-left: 50%;
+        box-sizing: content-box;
+    }
+    .listado td::before {
+        content: attr(data-title);
+        text-align: left;
+        font-weight: bolder;
+    }
+}
+
 .resultado {
     color: white;
     font-weight: bold;

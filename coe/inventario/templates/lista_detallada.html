@@ -13,7 +13,7 @@
         </div>
         <div class="row">
         <div class="col-md-12">
-            <table class="listado" id="table">
+            <table class="listado table" id="table">
                 <thead>
                     <tr>
                         <th>Rubro</th>
@@ -22,27 +22,26 @@
                         <th>Cantidad Disponible</th>
                         <th>Cantidad Distribuida</th>
                         <th>Administrador</th>
-
                         <th>Ver Detalle</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for item in items %}
                         <tr>
-                            <td>
+                            <td data-title="Rubro: ">
                                 <a href={% url 'inventario:lista_rubro' rubro_id=item.subgrupo.rubro.id %}>
                                     {{item.subgrupo.rubro}}
                                 </a>
                             </td>
-                            <td>
+                            <td data-title="SubGrupo: ">
                                 <a href={% url 'inventario:lista_subgrupo' subgrupo_id=item.subgrupo.id %}>
                                     {{item.subgrupo}}
                                 </a>
                             </td>
-                            <td>{{item.nombre}}</td>
-                            <td>{{item.cantidad_disponible}}</td>
-                            <td>{{item.cantidad_distribuida}}</td>
-                            <td>{{item.responsable}}</td>
+                            <td data-title="Nombre: ">{{item.nombre}}</td>
+                            <td data-title="Cantidad Disponible: ">{{item.cantidad_disponible}}</td>
+                            <td data-title="Cantidad Distribuida: ">{{item.cantidad_distribuida}}</td>
+                            <td data-title="Administrador: ">{{item.responsable}}</td>
                             <td><a href="{% url 'inventario:ver_item' item_id=item.id %}" target="_blank">(Ver Detalle)</a></td>
                         </tr>
                     {% endfor %}

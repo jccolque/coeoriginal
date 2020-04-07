@@ -12,8 +12,8 @@
             {% endif %}
         </div>
         <div class="row">
-        <div class="col-md-12">
-            <table class="listado" id="table">
+        <div>
+            <table class="listado table" id="table">
                 <thead>
                     <tr>
                         <th>Tipo</th>
@@ -29,14 +29,14 @@
                 <tbody>
                     {% for ubicacion in ubicaciones %}
                         <tr>
-                            <td>{{ubicacion.get_tipo_display}}</td>
-                            <td>{{ubicacion.nombre}}</td>
-                            <td>{{ubicacion.localidad.nombre}}</td>
-                            <td>{{ubicacion.calle}} {{ubicacion.numero}}{% if ubicacion.barrio %}, {{ubicacion.barrio}}{% endif %}</td>
-                            <td>{{ubicacion.capacidad_maxima}}</td>
-                            <td>{{ubicacion.capacidad_disponible}}</td>
-                            <td>{{ubicacion.aclaracion|safe}}</td>
-                            <td>
+                            <td data-title="Tipo: ">{{ubicacion.get_tipo_display}}</td>
+                            <td data-title="Nombre: ">{{ubicacion.nombre}}</td>
+                            <td data-title="Localidad: ">{{ubicacion.localidad.nombre}}</td>
+                            <td data-title="Direccion: ">{{ubicacion.calle}} {{ubicacion.numero}}{% if ubicacion.barrio %}, {{ubicacion.barrio}}{% endif %}</td>
+                            <td data-title="Capacidad Maxima: ">{{ubicacion.capacidad_maxima}}</td>
+                            <td data-title="Capacidad Disponible: ">{{ubicacion.capacidad_disponible}}</td>
+                            <td data-title="Aclaraciones: ">{{ubicacion.aclaracion|safe}}</td>
+                            <td data-title="Editar: ">
                                 {% if ubicacion.tipo == 'AI' or ubicacion.tipo == 'IN' %}
                                     <a href="{% url 'georef:ver_ubicacion' ubicacion_id=ubicacion.id %}" class="nolink">
                                         <img class="icons" src="{% static '/img/icons/lupa.png' %}">

@@ -26,7 +26,7 @@
                 </div>
                 <hr>
                 <h3>Operadores Asignados</h3>
-                <table class="listado">
+                <table class="listado table">
                     <tr>
                         <th>Usuario</th>
                         <th>Operador</th>
@@ -39,20 +39,20 @@
                     </tr>
                     {% for operador in subcomite.operadores.all %}
                         <tr class="fila_usuario">
-                            <td>{{operador.usuario.username}}</td>
-                            <td>{{operador.apellidos}}, {{operador.nombres}}</td>
-                            <td>{{operador.subcomite}}</td>
-                            <td>{{operador.get_nivel_acceso_display}}</td>
-                            <td>{{operador.telefono}}</td>
-                            <td>{{operador.email}}</td>
-                            <td>
+                            <td data-title="Usuario: ">{{operador.usuario.username}}</td>
+                            <td data-title="Operador: ">{{operador.apellidos}}, {{operador.nombres}}</td>
+                            <td data-title="Grupo: ">{{operador.subcomite}}</td>
+                            <td data-title="Nivel Autorizacion: ">{{operador.get_nivel_acceso_display}}</td>
+                            <td data-title="Telefono: ">{{operador.telefono}}</td>
+                            <td data-title="Email: ">{{operador.email}}</td>
+                            <td data-title="Estado: ">
                                 {% if operador.usuario.is_active %}
                                     <b style="color:green;">Activo</b>
                                 {% else %}
                                     <b style="color:red;">Inactivo</b>
                                 {% endif %}
                             </td>
-                            <td>
+                            <td data-title="Acciones: ">
                                 <a class="nolink" href="{% url 'operadores:ver_credencial' operador_id=operador.id %}">
                                     <img class="icons" src="/static/img/icons/access_card.png" alt="Ver Tarjeta">
                                 </a>
@@ -82,7 +82,7 @@
                 </table>
                 <hr>
                 <h3>Tareas Pendientes</h3>
-                <table class="listado">
+                <table class="listado table">
                 <tr>
                     <th>Nombre</th>
                     <th>Prioridad</th>
@@ -94,12 +94,12 @@
                 </tr>
                 {% for tarea in subcomite.tareas.all %}
                     <tr>
-                        <td>{{tarea.nombre}}</td>
-                        <td>{{tarea.get_prioridad_display}}</td>
-                        <td>{{tarea.begda}}</td>
-                        <td>{{tarea.endda}}</td>
+                        <td data-title="Nombre: ">{{tarea.nombre}}</td>
+                        <td data-title="Prioridad: ">{{tarea.get_prioridad_display}}</td>
+                        <td data-title="Inicio: ">{{tarea.begda}}</td>
+                        <td data-title="Fecha Limite: ">{{tarea.endda}}</td>
                         {% with tarea.hrs_restantes as hrs %}
-                            <td class="
+                            <td data-title="Horas Restantes: " class="
                                 {% if hrs < 0 %}
                                     tiempo_negativo
                                 {% elif hrs < 12 %}
@@ -111,8 +111,8 @@
                                 {{hrs}} Horas
                             </td>
                         {% endwith %}
-                        <td>{{tarea.get_last_event.get_accion_display}}</td>
-                        <td><a href="{% url 'tareas:ver_tarea' tarea_id=tarea.id %}" target="_blank">(Ver Detalle)</a></td>
+                        <td data-title="Ultimo Cambio: ">{{tarea.get_last_event.get_accion_display}}</td>
+                        <td data-title=""><a href="{% url 'tareas:ver_tarea' tarea_id=tarea.id %}" target="_blank">(Ver Detalle)</a></td>
                     </tr>
                 {% endfor %}
             </table>

@@ -6,8 +6,8 @@
             <h2>Tareas</h2>
         </div>
         <div class="row">
-        <div class="col-md-12">
-            <table class="listado" id="table">
+        <div>
+            <table class="listado table" id="table">
                 <thead>
                     <tr>
                         <th>Nombre</th>
@@ -22,12 +22,12 @@
                 <tbody>
                     {% for task in tasks %}
                         <tr>
-                            <td>{{task.tarea}}</td>
-                            <td>{{task.inicio}}</td>
-                            <td>{{task.en_cola | length}}</td>
-                            <td>{{task.terminadas | length}}</td>
-                            <td>{{task.total}}</td>
-                            <td>{{task.estado}}</td>
+                            <td data-title="Nombre: ">{{task.tarea}}</td>
+                            <td data-title="Fecha de Inicio: ">{{task.inicio}}</td>
+                            <td data-title="En Progreso: ">{{task.en_cola | length}}</td>
+                            <td data-title="Terminado: ">{{task.terminadas | length}}</td>
+                            <td data-title="Cantidad Hilos: ">{{task.total}}</td>
+                            <td data-title="Avance: ">{{task.estado}}</td>
                             <td><a href="{% url 'background:ver_background' task_id=task.id %}" target="_blank">(Ver Detalle)</a></td>
                         </tr>
                     {% endfor %}

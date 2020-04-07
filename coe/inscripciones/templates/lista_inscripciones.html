@@ -7,7 +7,7 @@
         </div>
         <div class="row">
         <div class="col-md-12">
-            <table class="listado" id="table">
+            <table class="listado table" id="table">
                 <thead>
                     <tr>
                         <th>Profesion</th>
@@ -22,16 +22,16 @@
                 <tbody>
                     {% for inscripto in inscriptos %}
                         <tr>
-                            <td>
+                            <td data-title="Profesion">
                                 <a href="{% url 'inscripciones:lista_filtrada' profesion_id=inscripto.profesion %}">
                                     {{inscripto.get_profesion_display}}
                                 </a>
                             </td>
-                            <td>{{inscripto.apellidos}}</td>
-                            <td>{{inscripto.nombres}}</td>
-                            <td>{{inscripto.localidad}}</td>
-                            <td>{{inscripto.telefono}}</td>
-                            <td>{{inscripto.fecha}}</td>
+                            <td data-title="Apellido">{{inscripto.apellidos}}</td>
+                            <td data-title="Nombre">{{inscripto.nombres}}</td>
+                            <td data-title="Localidad">{{inscripto.localidad}}</td>
+                            <td data-title="Telefono">{{inscripto.telefono}}</td>
+                            <td data-title="Fecha Inscripcion">{{inscripto.fecha}}</td>
                             <td><a href="{% url 'inscripciones:ver_inscripto' inscripto_id=inscripto.id %}">Ver Resumen</a></td>
                         </tr>
                     {% endfor %}

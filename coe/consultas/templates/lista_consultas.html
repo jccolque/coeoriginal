@@ -1,15 +1,13 @@
-{% extends 'base/base.html' %}
-
+{% extends 'base_informacion.html' %}
 {% load static %}
-
 {% block content %}
     <div class="beneficiario container">
         <div class="row">
             <h2>Consultas Validas:</h2>
         </div>
         <div class="row">
-        <div class="col-md-12">
-            <table class="listado" id="table">
+        <div>
+            <table class="listado table" id="table">
                 <thead>
                     <tr>
                         <th>autor</th>
@@ -24,12 +22,12 @@
                 <tbody>
                     {% for consulta in consultas %}
                         <tr>
-                            <td>{{consulta.autor}}</td>
-                            <td>{{consulta.email}}</td>
-                            <td>{{consulta.telefono}}</td>
-                            <td>{{consulta.asunto}}</td>
-                            <td>{{consulta.descripcion|safe}}</td>
-                            <td>{{consulta.fecha_consulta}}</td>
+                            <td data-title="autor: ">{{consulta.autor}}</td>
+                            <td data-title="email: ">{{consulta.email}}</td>
+                            <td data-title="telefono: ">{{consulta.telefono}}</td>
+                            <td data-title="asunto: ">{{consulta.asunto}}</td>
+                            <td data-title="descripcion: ">{{consulta.descripcion|safe}}</td>
+                            <td data-title="fecha_consulta: ">{{consulta.fecha_consulta}}</td>
                             <td><a href="{% url 'consultas:ver_consulta' consulta_id=consulta.id %}" target="_blank">(Ver Detalle)</a></td>
                         </tr>
                     {% endfor %}

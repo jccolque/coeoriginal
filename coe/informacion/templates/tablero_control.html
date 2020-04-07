@@ -9,7 +9,7 @@
             <div class="col-md-12">
                 <div class="col-sm-4 nacionalidades">
                     <h3>Capacidad Internacion</h3>
-                    <table class="listado">
+                    <table class="listado table">
                         <thead>
                             <tr>
                                 <th>Nombre</th>
@@ -22,10 +22,10 @@
                         <tbody>
                             {% for ubicacion in internaciones %}
                                 <tr>
-                                    <td>{{ubicacion.nombre}}</th>
-                                    <td>{{ubicacion.localidad.nombre}}</th>
-                                    <td>{{ubicacion.capacidad_maxima}}</th>
-                                    <td>{{ubicacion.capacidad_disponible}}</th>
+                                    <td data-title="Nombre: ">{{ubicacion.nombre}}</th>
+                                    <td data-title="Localidad: ">{{ubicacion.localidad.nombre}}</th>
+                                    <td data-title="Capacidad Total: ">{{ubicacion.capacidad_maxima}}</th>
+                                    <td data-title="Capacidad Disponible: ">{{ubicacion.capacidad_disponible}}</th>
                                     <td>
                                         <a href="{% url 'georef:ver_ubicacion' ubicacion_id=ubicacion.id %}" target="_blank">
                                             (Ver Detalle)
@@ -37,7 +37,7 @@
                     </table>
                     
                     <h3>Capacidad Aislamiento</h3>
-                    <table class="listado">
+                    <table class="listado table">
                         <thead>
                             <tr>
                                 <th>Nombre</th>
@@ -50,10 +50,10 @@
                         <tbody>
                             {% for ubicacion in aislamientos %}
                                 <tr>
-                                    <td>{{ubicacion.nombre}}</th>
-                                    <td>{{ubicacion.localidad.nombre}}</th>
-                                    <td>{{ubicacion.capacidad_maxima}}</th>
-                                    <td>{{ubicacion.capacidad_disponible}}</th>  
+                                    <td data-title="Nombre: ">{{ubicacion.nombre}}</th>
+                                    <td data-title="Localidad: ">{{ubicacion.localidad.nombre}}</th>
+                                    <td data-title="Capacidad Total: ">{{ubicacion.capacidad_maxima}}</th>
+                                    <td data-title="Capacidad Disponible: ">{{ubicacion.capacidad_disponible}}</th>  
                                     <td>
                                         <a href="{% url 'georef:ver_ubicacion' ubicacion_id=ubicacion.id %}" target="_blank">
                                             (Ver Detalle)
@@ -65,7 +65,7 @@
                     </table>
 
                     <h3>Individuos por Nacionalidad:</h3>
-                    <table class="listado">
+                    <table class="listado table">
                         <thead>
                             <tr>
                                 <th>Nacionalidad</th>
@@ -76,8 +76,8 @@
                         <tbody>
                             {% for nac in nacionalidades %}
                                 <tr>
-                                    <td>{{nac.nombre}}</th>
-                                    <td>{{nac.cantidad}}</th>
+                                    <td data-title="Nacionalidad: ">{{nac.nombre}}</th>
+                                    <td data-title="Cantidad: ">{{nac.cantidad}}</th>
                                     <td><a href="{% url 'informacion:lista_nacionalidad' nacionalidad_id=nac.id %}" target="_blank">(Ver Detalle)</a></td>
                                 </tr>
                             {% endfor %}
@@ -89,7 +89,7 @@
                     <h3>Individuos en Estados:</h3>
                     <div class="row">
                         <div class="col-sm-6">
-                            <table class="listado">
+                            <table class="listado table">
                                 <thead>
                                     <tr>
                                         <th>Estado</th>
@@ -100,9 +100,9 @@
                                 </thead>
                                 <tbody>
                                     {% for estado in estados %}
-                                            <td>{{estado.1}}</th>
-                                            <td>{{estado.2}}</th>
-                                            <td>{{estado.3}}</th>
+                                            <td data-title="Estado: ">{{estado.1}}</th>
+                                            <td data-title="Cantidad: ">{{estado.2}}</th>
+                                            <td data-title="Ultimas 24hrs: ">{{estado.3}}</th>
                                             <td><a href="{% url 'informacion:lista_estado' estado=estado.0 %}" target="_blank">(Ver Detalle)</a></td>
                                         </tr>
                                     {% endfor %}
@@ -116,7 +116,7 @@
                     <div class="row">
                         <h3>Individuos en Conductas:</h3>
                         <div class="col-sm-6">
-                            <table class="listado">
+                            <table class="listado table">
                                 <thead>
                                     <tr>
                                         <th>Estado</th>
@@ -127,9 +127,9 @@
                                 </thead>
                                 <tbody>
                                     {% for conducta in conductas %}
-                                            <td>{{conducta.1}}</th>
-                                            <td>{{conducta.2}}</th>
-                                            <td>{{conducta.3}}</th>
+                                            <td data-title="Estado: ">{{conducta.1}}</th>
+                                            <td data-title="Total: ">{{conducta.2}}</th>
+                                            <td data-title="Ultimas 24hrs: ">{{conducta.3}}</th>
                                             <td><a href="{% url 'informacion:lista_conducta' conducta=conducta.0 %}" target="_blank">(Ver Detalle)</a></td>
                                         </tr>
                                     {% endfor %}

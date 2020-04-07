@@ -111,7 +111,7 @@
                             {% if forloop.first %}
                                 <hr>
                                 <h3>Signos Vitales:</h3>
-                                <table class="listado">
+                                <table class="listado table">
                                     <tr>
                                         <th>Fecha</th>
                                         <th>Tension</th>
@@ -124,14 +124,14 @@
                                     </tr>
                             {% endif %}
                             <tr>
-                                <td>{{signovitale.fecha}}</td>
-                                <td>{{signovitale.tension_diastolica}}/{{signovitale.tension_sistolica}}</td>
-                                <td>{{signovitale.frec_cardiaca}}'</td>
-                                <td>{{signovitale.frec_respiratoria}}'</td>
-                                <td>{{signovitale.temperatura}}°C</td>
-                                <td>{{signovitale.sat_oxigeno}}%</td>
-                                <td>{{signovitale.glucemia}}</td>
-                                <td>
+                                <td data-title="Fecha: ">{{signovitale.fecha}}</td>
+                                <td data-title="Tension: ">{{signovitale.tension_diastolica}}/{{signovitale.tension_sistolica}}</td>
+                                <td data-title="Frec Card: ">{{signovitale.frec_cardiaca}}'</td>
+                                <td data-title="Frec Resp: ">{{signovitale.frec_respiratoria}}'</td>
+                                <td data-title="Temp: ">{{signovitale.temperatura}}°C</td>
+                                <td data-title="Sat O2: ">{{signovitale.sat_oxigeno}}%</td>
+                                <td data-title="Glucosa: ">{{signovitale.glucemia}}</td>
+                                <td data-title="Acciones: ">
                                     <a class="nolink"  href="{% url 'informacion:mod_signosvitales' individuo_id=individuo.id signosvitales_id=signovitale.id %}">
                                         <img class="icons" src="{% static '/img/icons/change.png' %}">
                                     </a>
@@ -152,7 +152,7 @@
                             {% if forloop.first %}
                                 <hr>
                                 <h3>Sintomas:</h3>
-                                <table class="listado">
+                                <table class="listado table">
                                     <tr>
                                         <th>Sintoma</th>
                                         <th>Aclaracion</th>
@@ -161,10 +161,10 @@
                                     </tr>
                             {% endif %}
                             <tr>
-                                <td>{{sintoma.get_tipo_display}}</td>
-                                <td>{{sintoma.aclaracion}}</td>
-                                <td>{{sintoma.fecha}}</td>
-                                <td>
+                                <td data-title="Sintoma: ">{{sintoma.get_tipo_display}}</td>
+                                <td data-title="Aclaracion: ">{{sintoma.aclaracion}}</td>
+                                <td data-title="Fecha: ">{{sintoma.fecha}}</td>
+                                <td data-title="Acciones: ">
                                     <a class="nolink"  href="{% url 'informacion:mod_sintoma' individuo_id=individuo.id sintoma_id=sintoma.id %}">
                                         <img class="icons" src="{% static '/img/icons/change.png' %}">
                                     </a>
@@ -183,7 +183,7 @@
                             {% if forloop.first %}
                                 <hr>
                                 <h3>Atributos Registrados:</h3>
-                                <table class="listado">
+                                <table class="listado table">
                                     <tr>
                                         <th>Atributo</th>
                                         <th>Aclaracion</th>
@@ -192,10 +192,10 @@
                                     </tr>
                             {% endif %}
                             <tr>
-                                <td>{{atributo.get_tipo_display}}</td>
-                                <td>{{atributo.aclaracion}}</td>
-                                <td>{{atributo.fecha}}</td>
-                                <td>
+                                <td data-title="Atributo: ">{{atributo.get_tipo_display}}</td>
+                                <td data-title="Aclaracion: ">{{atributo.aclaracion}}</td>
+                                <td data-title="Fecha: ">{{atributo.fecha}}</td>
+                                <td data-title="Acciones: ">
                                     <a class="nolink"  href="{% url 'informacion:mod_atributo' individuo_id=individuo.id atributo_id=atributo.id %}">
                                         <img class="icons" src="{% static '/img/icons/change.png' %}">
                                     </a>
@@ -214,7 +214,7 @@
                             {% if forloop.first %}
                                 <hr>
                                 <h3>Documentos Subidos:</h3>
-                                <table class="listado">
+                                <table class="listado table">
                                     <tr>
                                         <th>Tipo</th>
                                         <th>Fecha</th>
@@ -223,11 +223,10 @@
                                     </tr>
                             {% endif %}
                             <tr>
-                                <td>{{documento.get_tipo_display}}</td>
-                                <td>{{documento.fecha}}</td>
-                                <td>{{documento.aclaracion}}</td>
-
-                                <td>
+                                <td data-title="Tipo: ">{{documento.get_tipo_display}}</td>
+                                <td data-title="Fecha: ">{{documento.fecha}}</td>
+                                <td data-title="Aclaracion: ">{{documento.aclaracion}}</td>
+                                <td data-title="Acciones: ">
                                     <a class="nolink"  href="{{documento.archivo.url}}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/lupa.png' %}">
                                     </a>
@@ -251,7 +250,7 @@
                             {% if forloop.first %}
                                 <hr>
                                 <h3>Relaciones Registradas:</h3>
-                                <table class="listado">
+                                <table class="listado table">
                                     <tr>
                                         <th>Tipo</th>
                                         <th>Individuo</th>
@@ -262,16 +261,16 @@
                                     </tr>
                             {% endif %}
                             <tr>
-                                <td>{{relacion.get_tipo_display}}</td>
-                                <td>
+                                <td data-title="Tipo: ">{{relacion.get_tipo_display}}</td>
+                                <td data-title="Individuo: ">
                                     <a href="{% url 'informacion:ver_individuo' individuo_id=relacion.relacionado.id %}" target="_blank">
                                         {{relacion.relacionado}}
                                     </a>
                                 </td>
-                                <td>{{relacion.aclaracion}}</td>
-                                <td>{{relacion.relacionado.situacion_actual}}</td>
-                                <td>{{relacion.fecha}}</td>
-                                <td>
+                                <td data-title="Aclaracion: ">{{relacion.aclaracion}}</td>
+                                <td data-title="Estado: ">{{relacion.relacionado.situacion_actual}}</td>
+                                <td data-title="Fecha: ">{{relacion.fecha}}</td>
+                                <td data-title="Acciones: ">
                                     <a class="nolink"  href="{% url 'informacion:mod_relacion' individuo_id=individuo.id relacion_id=relacion.id %}">
                                         <img class="icons" src="{% static '/img/icons/change.png' %}">
                                     </a>
@@ -290,7 +289,7 @@
                             {% if forloop.first %}
                                 <hr>
                                 <h3>Seguimiento Registrado:</h3>
-                                <table class="listado">
+                                <table class="listado table">
                                     <tr>
                                         <th>Tipo</th>
                                         <th>Aclaracion</th>
@@ -299,10 +298,10 @@
                                     </tr>
                             {% endif %}
                             <tr>
-                                <td>{{seguimiento.get_tipo_display}}</td>
-                                <td>{{seguimiento.aclaracion}}</td>
-                                <td>{{seguimiento.fecha}}</td>
-                                <td>
+                                <td data-title="Tipo: ">{{seguimiento.get_tipo_display}}</td>
+                                <td data-title="Aclaracion: ">{{seguimiento.aclaracion}}</td>
+                                <td data-title="Fecha: ">{{seguimiento.fecha}}</td>
+                                <td data-title="Acciones: ">
                                     <a class="nolink"  href="{% url 'informacion:mod_seguimiento' individuo_id=individuo.id seguimiento_id=seguimiento.id %}">
                                         <img class="icons" src="{% static '/img/icons/change.png' %}">
                                     </a>
@@ -321,7 +320,7 @@
                             {% if forloop.first %}
                                 <hr>
                                 <h3>Controles Vehiculares Registrados:</h3>
-                                <table class="listado">
+                                <table class="listado table">
                                     <tr>
                                         <th>Fecha</th>
                                         <th>Vehiculo</th>
@@ -330,9 +329,9 @@
                                     </tr>
                             {% endif %}
                             <tr>
-                                <td>{{pasaje.traslado.fecha}}</td>
-                                <td>{{pasaje.traslado.vehiculo}}</td>
-                                <td>{{pasaje.traslado.aclaracion}}</td>
+                                <td data-title="Fecha: ">{{pasaje.traslado.fecha}}</td>
+                                <td data-title="Vehiculo: ">{{pasaje.traslado.vehiculo}}</td>
+                                <td data-title="Aclaracion: ">{{pasaje.traslado.aclaracion}}</td>
                                 <td><a class="nolink" href="{% url 'informacion:ver_vehiculo' vehiculo_id=pasaje.traslado.vehiculo.id %}">Ver Vehiculo</a></li>
                             </tr>
                             {% if forloop.last %}

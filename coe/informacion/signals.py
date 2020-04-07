@@ -106,7 +106,7 @@ def recuperar_capacidad(instance, **kwargs):
     #Lo sacamos de aislamiento?              
 
 @receiver(post_save, sender=Relacion)
-def crear_relacion_inversa(created, instance, **kwargs):
+def invertir_relacion(created, instance, **kwargs):
     #Creamos la relacion inversa
     if created and not instance.inversa():
         relacion = Relacion()
@@ -115,13 +115,6 @@ def crear_relacion_inversa(created, instance, **kwargs):
         relacion.relacionado = instance.individuo
         relacion.aclaracion = instance.aclaracion
         relacion.save()
-
-@receiver(post_delete, sender=Relacion)
-def eliminar_relacion_inversa(instance, **kwargs):
-    #Eliminamos relacion inversa
-    inversa = instance.inversa()
-    if inversa:
-        inversa.delete()
 
 @receiver(post_save, sender=Atributo)
 def poner_en_seguimiento(created, instance, **kwargs):
@@ -180,7 +173,7 @@ def relacionar_situacion(created, instance, **kwargs):
             sit.individuo = relacionado
             sit.aclaracion = "Inicializada por Sistema"
             sit.save()
-            relacionado = Individuo.objects.get(pk=relacionado.id)
+            relacionado.situacion_actual = sit
         if situ_actual.estado > relacionado.situacion_actual.estado:
             sit = Situacion()
             sit.individuo = relacionado
@@ -195,6 +188,7 @@ def relacionar_situacion(created, instance, **kwargs):
                 sit.conducta = 'D'
             sit.aclaracion = "Relacion Detectada por el sistema"
             sit.save()
+
 
 @receiver(post_save, sender=SignosVitales)
 def cargo_signosvitales(created, instance, **kwargs):
@@ -211,15 +205,3 @@ def cargo_documento(created, instance, **kwargs):
         seguimiento.tipo = 'M'
         seguimiento.aclaracion = "Se Cargo Documento " + instance.get_tipo_display()
         seguimiento.save()
-
-@receiver(post_save, sender=Seguimiento)
-def descartar_sospechoso(created, instance, **kwargs):
-    #Eliminamos relacion inversa
-    if created and instance.tipo == "T":
-        situacion = Situacion()
-        situacion.individuo = instance.individuo
-        #El estado pasa a asintomatico
-        if instance.individuo.situacion_actual:#Si tenia conducta actual
-            situacion.conducta = instance.individuo.situacion_actual.conducta
-        situacion.aclaracion = 'Descartado' + instance.aclaracion
-        situacion.save()

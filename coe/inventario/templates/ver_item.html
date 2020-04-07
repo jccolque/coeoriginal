@@ -31,7 +31,7 @@
                             {% if forloop.first %}
                                 <hr>
                                 <h3>Eventos:</h3>
-                                <table class="listado">
+                                <table class="listado table">
                                     <tr>
                                         <th>Fecha</th>
                                         <th>Accion</th>
@@ -44,13 +44,13 @@
                             {% endif %}
 
                             <tr>
-                                <td>{{evento.fecha}}</td>
-                                <td>{{evento.get_accion_display}}</td>
-                                <td>{{evento.cantidad}}</td>
-                                <td>{{evento.actuante}}</td>
-                                <td>{{evento.tarea}}</td>
-                                <td>{{evento.operador}}</td>
-                                <td>{{evento.detalle|safe}}</td>
+                                <td data-title="Fecha: ">{{evento.fecha}}</td>
+                                <td data-title="Accion: ">{{evento.get_accion_display}}</td>
+                                <td data-title="Cantidad: ">{{evento.cantidad}}</td>
+                                <td data-title="Actuante: ">{{evento.actuante}}</td>
+                                <td data-title="Tarea: ">{{evento.tarea}}</td>
+                                <td data-title="Operador: ">{{evento.operador}}</td>
+                                <td data-title="Detalle: ">{{evento.detalle|safe}}</td>
                             </tr>
                             
                             {% if forloop.last %}

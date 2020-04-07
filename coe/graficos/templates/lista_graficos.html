@@ -6,8 +6,8 @@
             <h2>Graficos</h2>
         </div>
         <div class="row">
-        <div class="col-md-12">
-            <table class="listado" id="table">
+        <div>
+            <table class="listado table" id="table">
                 <thead>
                     <tr>
                         <th>Tipo</th>
@@ -21,21 +21,21 @@
                 <tbody>
                     {% for grafico in graficos %}
                         <tr>
-                            <td>
+                            <td data-title="Tipo: ">
                                 <a href="{% url 'graficos:lista_tipo' tipo_id=grafico.tipo %}">
                                     {{grafico.get_tipo_display}}
                                 </a>
                             </td>
-                            <td>{{grafico.verbose_name}}</td>
-                            <td>
+                            <td data-title="Nombre: ">{{grafico.verbose_name}}</td>
+                            <td data-title="Publico: ">
                                 {% if grafico.publico %}
                                     <img class="iconsx2" src="/static/img/icons/public.png" alt="Es Publico">
                                 {% else %}
                                     <img class="iconsx2" src="/static/img/icons/private.png" alt="Es Privado">
                                 {% endif %}
                             </td>
-                            <td>{{grafico.update}}</td>
-                            <td>
+                            <td data-title="Ultima Actualizacion: ">{{grafico.update}}</td>
+                            <td data-title="Valores a Mostrar: ">
                                 {% for dato in grafico.cabecera%}
                                     {% if forloop.first %}
                                         <ul>
@@ -45,7 +45,7 @@
                                         </ul>
                                     {% endif %}
                                 {% endfor %}
-                            <td><a href="{% url 'graficos:ver_grafico' grafico_id=grafico.id %}" target="_blank">(Detalle)</a></td>
+                            <td data-title="Ver: "><a href="{% url 'graficos:ver_grafico' grafico_id=grafico.id %}" target="_blank">(Detalle)</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>

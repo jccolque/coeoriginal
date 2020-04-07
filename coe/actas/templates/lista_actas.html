@@ -6,8 +6,8 @@
             <h2>Actas Cargadas</h2>
         </div>
         <div class="row">
-        <div class="col-md-12">
-            <table class="listado" id="table">
+        <div>
+            <table class="listado table" id="table">
                 <thead>
                     <tr>
                         <th>Titulo</th>
@@ -20,10 +20,10 @@
                 <tbody>
                     {% for acta in actas %}
                         <tr>
-                            <td>{{acta.titulo}}</td>
-                            <td>{{acta.get_tipo_display}}</td>
-                            <td>{{acta.fecha}}</td>
-                            <td>{{acta.publica}}</td>
+                            <td data-title="Titulo: ">{{acta.titulo}}</td>
+                            <td data-title="Tipo: ">{{acta.get_tipo_display}}</td>
+                            <td data-title="Fecha: ">{{acta.fecha}}</td>
+                            <td data-title="Publica: ">{{acta.publica}}</td>
                             <td><a href="{% url 'actas:ver_acta' acta_id=acta.id %}" target="_blank">(Ver Acta)</a></td>
                         </tr>
                     {% endfor %}

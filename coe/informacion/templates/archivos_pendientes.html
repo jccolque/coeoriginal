@@ -7,7 +7,7 @@
         </div>
         <div class="row">
             <div class="col-md-9">
-                <table class="listado"  id="table">
+                <table class="listado table"  id="table">
                     <thead>
                         <tr>
                             <th>Tipo</th>
@@ -20,11 +20,11 @@
                     <tbody>
                         {% for archivo in archivos %}
                             <tr>
-                                <td>{{archivo.get_tipo_display}}</td>
-                                <td>{{archivo.nombre}}</td>
-                                <td>{{archivo.fecha}}</td>
-                                <td>{{archivo.operador}}</td>
-                                <td><a href="{% url 'informacion:ver_archivo' archivo_id=archivo.id %}" target="_blank">(Ver Documento)</a></td>
+                                <td data-title="Tipo: ">{{archivo.get_tipo_display}}</td>
+                                <td data-title="Titulo: ">{{archivo.nombre}}</td>
+                                <td data-title="Fecha Subido: ">{{archivo.fecha}}</td>
+                                <td data-title="Operador: ">{{archivo.operador}}</td>
+                                <td data-title="Ver Documento: "><a href="{% url 'informacion:ver_archivo' archivo_id=archivo.id %}" target="_blank">(Ver Documento)</a></td>
                             </tr>
                         {% endfor %}
                     </tbody>  

@@ -8,7 +8,7 @@
                     <h1>Auditoria de: <b>{{usuario}}</b></h1>
                     <h3>Periodo: {{begda}} - {{endda}}</h3>
                     <div class="col-md-12">
-                        <table class="listado">
+                        <table class="listado table">
                             <tr>
                                 <th>Objeto</th>
                                 <th>Identificacion</th>
@@ -18,11 +18,11 @@
                             </tr>
                             {% for reg in registros %}
                                 <tr>
-                                    <td>{% ct_model_name reg %}</td>
-                                    <td>{{reg.object_repr}}</td>
-                                    <td>{{reg.get_action_display}}</td>
-                                    <td>{{reg.timestamp}}</td>
-                                    <td>
+                                    <td data-title="Objeto: ">{% ct_model_name reg %}</td>
+                                    <td data-title="Identificacion: ">{{reg.object_repr}}</td>
+                                    <td data-title="Accion: ">{{reg.get_action_display}}</td>
+                                    <td data-title="Fecha: ">{{reg.timestamp}}</td>
+                                    <td data-title="Cambios: ">
                                         <ul>
                                             {% ct_changes_to_list reg.changes as changes %}
                                             {% for change in changes %}

@@ -6,8 +6,8 @@
             <h2>Vehiculos Registrados</h2>
         </div>
         <div class="row">
-        <div class="col-md-12">
-            <table class="listado" id="table">
+        <div>
+            <table class="listado table" id="table">
                 <thead>
                     <tr>
                         <th>Tipo</th>
@@ -22,16 +22,16 @@
                 <tbody>
                     {% for vehiculo in vehiculos %}
                         <tr>
-                            <td>
+                            <td data-title="Tipo:">
                                 <a href="{% url 'informacion:vehiculos_tipo' tipo_id=vehiculo.tipo %}">
                                     {{vehiculo.get_tipo_display}}
                                 </a>
                             </td>
-                            <td>{{vehiculo.identificacion}}</td>
-                            <td>{{vehiculo.cant_pasajeros}}</td>
-                            <td>{{vehiculo.empresa}}</td>
-                            <td>{{vehiculo.plan}}</td>
-                            <td>{{vehiculo.fecha}}</td>
+                            <td data-title="Identificacion:">{{vehiculo.identificacion}}</td>
+                            <td data-title="Cant Pasajeros:">{{vehiculo.cant_pasajeros}}</td>
+                            <td data-title="Empresa:">{{vehiculo.empresa}}</td>
+                            <td data-title="Plan de Ruta:">{{vehiculo.plan}}</td>
+                            <td data-title="Fecha Registro:">{{vehiculo.fecha}}</td>
                             <td><a href="{% url 'informacion:ver_vehiculo' vehiculo_id=vehiculo.id %}" target="_blank">(Ver Detalle)</a></td>
                         </tr>
                     {% endfor %}

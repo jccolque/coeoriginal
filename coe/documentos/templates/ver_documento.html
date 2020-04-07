@@ -28,7 +28,7 @@
                         <hr>
                         <h3>Versiones del Archivo</h3>
                         {% if documento.versiones.all %}
-                            <table class="listado">
+                            <table class="listado table">
                                 <tr>
                                     <th>Fecha</th>
                                     <th>Operador</th>
@@ -37,9 +37,9 @@
                                 </tr>
                                 {% for version in documento.versiones.all reversed %}
                                     <tr>
-                                        <td>{{version.fecha}}</td>
-                                        <td>{{version.operador}}</td>
-                                        <td>{{version.cambios|safe}}</td>
+                                        <td data-title="Fecha: ">{{version.fecha}}</td>
+                                        <td data-title="Operador: ">{{version.operador}}</td>
+                                        <td data-title="Cambios: ">{{version.cambios|safe}}</td>
                                         <td>
                                             {% if version.archivo %}
                                                 <a href="{{version.archivo.url}}">Descargar</a>

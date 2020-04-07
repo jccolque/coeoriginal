@@ -16,7 +16,7 @@
                         <div class="row">
                             <hr>
                             <h3>Eventos:</h3>
-                            <table class="listado">
+                            <table class="listado table">
                                 <tr>
                                     <th>Tipo</th>
                                     <th>Responsable</th>
@@ -26,11 +26,11 @@
                                 </tr>
                                 {% for evento in tarea.eventos.all %}
                                     <tr>
-                                        <td>{{evento.get_accion_display}}</td>
-                                        <td>{{evento.responsable}}</td>
-                                        <td>{{evento.fecha}}</td>
-                                        <td>{{evento.detalle|safe}}</td>
-                                        <td>
+                                        <td data-title="Tipo: ">{{evento.get_accion_display}}</td>
+                                        <td data-title="Responsable: ">{{evento.responsable}}</td>
+                                        <td data-title="Fecha: ">{{evento.fecha}}</td>
+                                        <td data-title="Detalles: ">{{evento.detalle|safe}}</td>
+                                        <td data-title="Acciones: ">
                                             <a href="{% url 'tareas:eliminar_evento' evento_id=evento.id %}">
                                                 <img class="icons" src="{% static 'img/icons/delete.png' %}">
                                             </a>
@@ -42,7 +42,7 @@
                         <div class="row">
                             <hr>
                             <h3>Operadores Asignados:</h3>
-                            <table class="listado">
+                            <table class="listado table">
                                 <tr>
                                     <th>Documento</th>
                                     <th>Apellidos</th>
@@ -54,13 +54,13 @@
                                 </tr>
                                 {% for responsable in tarea.responsables.all %}
                                     <tr>
-                                        <td>{{responsable.operador.num_doc}}</td>
-                                        <td>{{responsable.operador.usuario.last_name}}</td>
-                                        <td>{{responsable.operador.usuario.first_name}}</td>
-                                        <td>{{responsable.operador.get_organismo_display}}</td>
-                                        <td>{{responsable.fecha_asignacion}}</td>
-                                        <td>{{responsable.obligaciones|safe}}</td>
-                                        <td>
+                                        <td data-title="Documento: ">{{responsable.operador.num_doc}}</td>
+                                        <td data-title="Apellidos: ">{{responsable.operador.usuario.last_name}}</td>
+                                        <td data-title="Nombres: ">{{responsable.operador.usuario.first_name}}</td>
+                                        <td data-title="Organismo: ">{{responsable.operador.get_organismo_display}}</td>
+                                        <td data-title="Fecha de Asignacion: ">{{responsable.fecha_asignacion}}</td>
+                                        <td data-title="Obligaciones: ">{{responsable.obligaciones|safe}}</td>
+                                        <td data-title="Acciones: ">
                                             <a href="{% url 'tareas:eliminar_responsable' responsable_id=responsable.id %}">
                                                 <img class="icons" src="{% static 'img/icons/delete.png' %}">
                                             </a>
@@ -72,7 +72,7 @@
                         <div class="row">
                             <hr>
                             <h3>Recursos Asignados:</h3>
-                            <table class="listado">
+                            <table class="listado table">
                                 <tr>
                                     <th>Fecha</th>
                                     <th>Nombre</th>
@@ -81,10 +81,10 @@
                                 </tr>
                                 {% for evento in tarea.recursos_actuales %}
                                     <tr>
-                                        <td>{{evento.fecha}}</td>
-                                        <td>{{evento.item.nombre}}</td>
-                                        <td>{{evento.cantidad}}</td>
-                                        <td>
+                                        <td data-title="Fecha: ">{{evento.fecha}}</td>
+                                        <td data-title="Nombre: ">{{evento.item.nombre}}</td>
+                                        <td data-title="Cantidad: ">{{evento.cantidad}}</td>
+                                        <td data-title="Acciones: ">
                                             <a href="{% url 'inventario:devolver' evento_id=evento.id %}">
                                                 <img class="icons" src="{% static 'img/icons/delete.png' %}">
                                             </a>

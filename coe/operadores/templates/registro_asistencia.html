@@ -11,7 +11,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <table class="listado">
+                        <table class="listado table">
                             <tr>
                                 <th>Documento</th>
                                 <th>Operador</th>
@@ -23,13 +23,13 @@
                             </tr>
                             {% for asistente in asistentes %}
                                 <tr>
-                                    <td>{{asistente.num_doc}}</td>
-                                    <td>{{asistente.apellidos}}, {{asistente.nombres}}</td>
-                                    <td>{{asistente.subcomite}}</td>
-                                    <td>{{asistente.get_nivel_acceso_display}}</td>
-                                    <td>{% ct_get_fecha asistente ingresos %}</td>
-                                    <td>{% ct_get_fecha asistente egresos %}</td>
-                                    <td>
+                                    <td data-title="Documento: ">{{asistente.num_doc}}</td>
+                                    <td data-title="Operador: ">{{asistente.apellidos}}, {{asistente.nombres}}</td>
+                                    <td data-title="Grupo: ">{{asistente.subcomite}}</td>
+                                    <td data-title="Acceso: ">{{asistente.get_nivel_acceso_display}}</td>
+                                    <td data-title="Ingreso: ">{% ct_get_fecha asistente ingresos %}</td>
+                                    <td data-title="Egreso: ">{% ct_get_fecha asistente egresos %}</td>
+                                    <td data-title="Acciones: ">
                                         <a class="nolink" href="{% url 'operadores:ver_credencial' operador_id=asistente.id %}">
                                             <img class="icons" src="/static/img/icons/access_card.png" alt="Ver Tarjeta">
                                         </a>

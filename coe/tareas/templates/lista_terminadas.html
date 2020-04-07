@@ -20,8 +20,8 @@
             </div>
         </div>
         <div class="row">
-        <div class="col-md-12">
-            <table class="listado" id="table">
+        <div>
+            <table class="listado table" id="table">
                 <thead>
                     <tr>
                         <th>Subcomite</th>
@@ -35,11 +35,11 @@
                 <tbody>
                     {% for tarea in tareas %}
                         <tr>
-                            <td>{{tarea.subcomite}}</td>
-                            <td>{{tarea.nombre}}</td>
-                            <td>{{tarea.get_prioridad_display}}</td>
-                            <td>{{tarea.begda}}</td>
-                            <td>{{tarea.get_last_event.fecha}}</td>
+                            <td data-title="Subcomite: ">{{tarea.subcomite}}</td>
+                            <td data-title="Nombre: ">{{tarea.nombre}}</td>
+                            <td data-title="Prioridad: ">{{tarea.get_prioridad_display}}</td>
+                            <td data-title="Inicio: ">{{tarea.begda}}</td>
+                            <td data-title="Finalizacion: ">{{tarea.get_last_event.fecha}}</td>
                             <td><a href="{% url 'tareas:ver_tarea' tarea_id=tarea.id %}" target="_blank">(Ver Detalle)</a></td>
                         </tr>
                     {% endfor %}

@@ -19,7 +19,7 @@
                 </div> 
                 <div class="row"> 
                     <div class="col-md-12">
-                        <table class="listado" id="table">
+                        <table class="listado table" id="table">
                             <thead>
                                 <tr>
                                     <th>Usuario</th>
@@ -36,20 +36,20 @@
                                 {% for operador in operadores %}
                                     <tr class="fila_usuario">
                                         
-                                        <td>{{operador.usuario.username}}</td>
-                                        <td>{{operador.apellidos}}, {{operador.nombres}}</td>
-                                        <td>{{operador.subcomite}}</td>
-                                        <td>{{operador.get_nivel_acceso_display}}</td>
-                                        <td>{{operador.telefono}}</td>
-                                        <td>{{operador.email}}</td>
-                                        <td><!-- Icono de Activo -->
+                                        <td data-title="Usuario: ">{{operador.usuario.username}}</td>
+                                        <td data-title="Operador: ">{{operador.apellidos}}, {{operador.nombres}}</td>
+                                        <td data-title="Grupo: ">{{operador.subcomite}}</td>
+                                        <td data-title="Nivel Autorizacion: ">{{operador.get_nivel_acceso_display}}</td>
+                                        <td data-title="Telefono: ">{{operador.telefono}}</td>
+                                        <td data-title="Email: ">{{operador.email}}</td>
+                                        <td data-title="Estado: "><!-- Icono de Activo -->
                                             {% if operador.usuario.is_active %}
                                                 <b style="color:green;">Activo</b>
                                             {% else %}
                                                 <b style="color:red;">Inactivo</b>
                                             {% endif %}
                                         </td>
-                                        <td style="display: inline-block;"><!-- Acciones -->
+                                        <td data-title="Acciones: " style="display: inline-block;"><!-- Acciones -->
                                             <a class="nolink" href="{% url 'operadores:ver_credencial' operador_id=operador.id %}">
                                                 <img class="icons" src="/static/img/icons/access_card.png" alt="Ver Tarjeta">
                                             </a>

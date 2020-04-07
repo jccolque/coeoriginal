@@ -11,7 +11,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-8">
-                        <table class="listado" id="table">
+                        <table class="listado table" id="table">
                             <thead>
                                 <tr>
                                     <th>Ingreso</th>
@@ -25,12 +25,12 @@
                             <tbody>
                                 {% for evento in presentes %}
                                     <tr>
-                                        <td>{{evento.fecha}}</td>
-                                        <td>{{evento.operador.num_doc}}</td>
-                                        <td>{{evento.operador.apellidos}}, {{evento.operador.nombres}}</td>
-                                        <td>{{evento.operador.subcomite}}</td>
-                                        <td>{{evento.operador.get_nivel_acceso_display}}</td>
-                                        <td>
+                                        <td data-title="Ingreso: ">{{evento.fecha}}</td>
+                                        <td data-title="Documento: ">{{evento.operador.num_doc}}</td>
+                                        <td data-title="Operador: ">{{evento.operador.apellidos}}, {{evento.operador.nombres}}</td>
+                                        <td data-title="Grupo: ">{{evento.operador.subcomite}}</td>
+                                        <td data-title="Nivel de Acceso: ">{{evento.operador.get_nivel_acceso_display}}</td>
+                                        <td data-title="Acciones: ">
                                             <a class="nolink" href="{% url 'operadores:ver_credencial' operador_id=evento.operador.id %}">
                                                 <img class="icons" src="/static/img/icons/access_card.png" alt="Ver Tarjeta">
                                             </a>

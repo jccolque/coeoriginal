@@ -12,8 +12,8 @@
             {% endif %}
         </div>
         <div class="row">
-        <div class="col-md-12">
-            <table class="listado" id="table">
+        <div>
+            <table class="listado table" id="table">
                 <thead>
                     <tr>
                         <th>Nombre</th>
@@ -25,10 +25,10 @@
                 <tbody>
                     {% for nacionalidad in nacionalidades %}
                         <tr>
-                            <td>{{nacionalidad.nombre}}</td>
-                            <td>{{nacionalidad.riesgo}}</td>
-                            <td>{{nacionalidad.contacto}}</td>
-                            <td>
+                            <td data-title="Nombre: ">{{nacionalidad.nombre}}</td>
+                            <td data-title="Riesgo: ">{{nacionalidad.riesgo}}</td>
+                            <td data-title="Contacto: ">{{nacionalidad.contacto}}</td>
+                            <td data-title="Editar: ">
                                 <a href="{% url 'georef:mod_nacionalidad' nacionalidad_id=nacionalidad.id %}">
                                     <img class="icons" src="{% static '/img/icons/change.png' %}">
                                 </a>

@@ -62,8 +62,8 @@
                                 <img class="icons" src="{% static '/img/icons/change.png' %}">
                             </a>
                         </h4>
-                        <div class="col-md-12">
-                            <table class="listado">
+                        <div>
+                            <table class="listado table">
                                 <thead>
                                     <tr>
                                         <th>Fila</th>
@@ -74,9 +74,9 @@
                                 <tbody>
                                     {% for dato in columna.datos.all %}
                                         <tr>
-                                            <td>{{dato.fila}}</td>
-                                            <td>{{dato.valor}}</td>
-                                            <td>
+                                            <td data-title="Fila: ">{{dato.fila}}</td>
+                                            <td data-title="Valor: ">{{dato.valor}}</td>
+                                            <td data-title="Modificar: ">
                                                 <a href="{% url 'graficos:mod_dato' dato_id=dato.id %}">
                                                     <img class="icons" src="{% static '/img/icons/change.png' %}">
                                                 </a>

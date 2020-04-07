@@ -31,7 +31,7 @@
                         {% endif %}
                         <hr>
                         <h4><b>Listado de Aislados Actuales:</b></h4>
-                        <table class="listado" id="table">
+                        <table class="listado table" id="table">
                             <thead>
                                 <tr>
                                     <th>Documento</th>
@@ -44,11 +44,11 @@
                             <tbody>
                                 {% for aislado in ubicacion.aislados_actuales %}
                                     <tr>
-                                        <td>{{aislado.num_doc}}</td>
-                                        <td>{{aislado.apellidos}}</td>
-                                        <td>{{aislado.nombres}}</td>
-                                        <td>{{aislado.situacion_actual}}</td>
-                                        <td><a href="{% url 'informacion:ver_individuo' individuo_id=aislado.id %}" target="_blank">(Ver Individuo)</a></td>
+                                        <td data-title="Documento: ">{{aislado.num_doc}}</td>
+                                        <td data-title="Apellidos: ">{{aislado.apellidos}}</td>
+                                        <td data-title="Nombres: ">{{aislado.nombres}}</td>
+                                        <td data-title="Situacion: ">{{aislado.situacion_actual}}</td>
+                                        <td data-title="Ver Individuo: "><a href="{% url 'informacion:ver_individuo' individuo_id=aislado.id %}" target="_blank">(Ver Individuo)</a></td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

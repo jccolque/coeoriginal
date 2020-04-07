@@ -20,7 +20,7 @@
                             <h3><b>{{traslado.aclaracion}}</b>({{traslado.fecha}})</h3>
                             <a class="botoncito" href="{% url 'informacion:buscar_pasajero' traslado_id=traslado.id  %}">Cargar Pasajero</a>
                             <h4>Listado de Pasajeros:</h4>
-                            <table class="listado">
+                            <table class="listado table">
                                 <tr>
                                     <th>Documento</th>
                                     <th>Apellidos</th>
@@ -33,14 +33,14 @@
                                 </tr>
                                 {% for pasajero in traslado.pasajeros.all %}
                                     <tr>
-                                        <td>{{pasajero.individuo.num_doc}}</td>
-                                        <td>{{pasajero.individuo.apellidos}}</td>
-                                        <td>{{pasajero.individuo.nombres}}</td>
-                                        <td>{{pasajero.individuo.domicilio_actual}}</td>
-                                        <td>{{pasajero.individuo.situacion_actual}}</td>
-                                        <td>{{pasajero.individuo.fecha_nacimiento}}</td>
-                                        <td>{{pasajero.individuo.nacionalidad}}</td>
-                                        <td><a href="{% url 'informacion:ver_individuo' individuo_id=pasajero.individuo.id %}" target="_blank">(Ver Individuo)</a></td>
+                                        <td data-title="Documento: ">{{pasajero.individuo.num_doc}}</td>
+                                        <td data-title="Apellidos: ">{{pasajero.individuo.apellidos}}</td>
+                                        <td data-title="Nombres: ">{{pasajero.individuo.nombres}}</td>
+                                        <td data-title="Fecha de Nacimiento: ">{{pasajero.individuo.domicilio_actual}}</td>
+                                        <td data-title="Nacionalidad: ">{{pasajero.individuo.situacion_actual}}</td>
+                                        <td data-title="Origen: ">{{pasajero.individuo.fecha_nacimiento}}</td>
+                                        <td data-title="Destino: ">{{pasajero.individuo.nacionalidad}}</td>
+                                        <td data-title="Ver Individuo: "><a href="{% url 'informacion:ver_individuo' individuo_id=pasajero.individuo.id %}" target="_blank">(Ver Individuo)</a></td>
                                     </tr>
                                 {% endfor %}
                             </table>

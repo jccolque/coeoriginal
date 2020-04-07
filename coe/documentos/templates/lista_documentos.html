@@ -12,8 +12,8 @@
             {% endif %}
         </div>
         <div class="row">
-        <div class="col-md-12">
-            <table class="listado" id="table">
+        <div>
+            <table class="listado tables" id="table">
                 <thead>
                     <tr>
                         <th>SubComite</th>
@@ -29,23 +29,23 @@
                 <tbody>
                     {% for documento in documentos %}
                         <tr>
-                            <td>
+                            <td data-title="SubComite: ">
                                 <a href="{% url 'documentos:lista_subcomite' subco_id=documento.subcomite.id %}">
                                     {{documento.subcomite}}
                                 </a>
                             </td>
-                            <td>
+                            <td data-title="Estado: ">
                                 {% if documento.publico %}
                                     <img class="iconsx2" src="/static/img/icons/public.png" alt="Es Publico">
                                 {% else %}
                                     <img class="iconsx2" src="/static/img/icons/private.png" alt="Es Privado">
                                 {% endif %}
                             </td>
-                            <td>{{documento.nombre}}</td>
-                            <td>{{documento.get_tipo_display}}</td>
-                            <td>{{documento.autor}}</td>
-                            <td>{{documento.ultima_version.fecha}}</td>
-                            <td><a href="{% url 'documentos:ver_documento' documento_id=documento.id %}">Documento</a></td>
+                            <td data-title="Nombre: ">{{documento.nombre}}</td>
+                            <td data-title="Tipo: ">{{documento.get_tipo_display}}</td>
+                            <td data-title="Autor: ">{{documento.autor}}</td>
+                            <td data-title="Fecha Actualizacion: ">{{documento.ultima_version.fecha}}</td>
+                            <td data-title="Administrar: "><a href="{% url 'documentos:ver_documento' documento_id=documento.id %}">Documento</a></td>
                             {% if documento.ultima_version %}
                                 {% if documento.ultima_version.archivo %}
                                     <td><a href="{{documento.ultima_version.archivo.url}}">Descargar</a></td>
