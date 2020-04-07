@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
-import 'dart:math';
 import 'dart:ui';
 import 'package:background_locator/location_dto.dart';
 import 'package:background_locator/location_settings.dart';
@@ -45,8 +44,7 @@ class MyLoginPage extends StatefulWidget {
 class _MyLoginPageState extends State<MyLoginPage> {
   Future<void> launched;
   String _coelaunchUrl = 'http://coe.jujuy.gob.ar';
-  String _minsSaludlaunUrl =
-      'https://www.argentina.gob.ar/salud/coronavirus-COVID-19';
+  String _minsSaludlaunUrl = 'https://www.argentina.gob.ar/salud/coronavirus-COVID-19';
 
   bool _termCondAceptados = false;
   bool _locationUp = false;
@@ -73,8 +71,8 @@ class _MyLoginPageState extends State<MyLoginPage> {
     IsolateNameServer.registerPortWithName(port.sendPort, _isolateName);
 
     port.listen(
-          (dynamic data) async {
-        await print(data);
+      (dynamic data) async {
+        await updateUI(data);
       },
     );
     initPlatformState();
@@ -547,30 +545,6 @@ class _MyLoginPageState extends State<MyLoginPage> {
     });
   }
 
-  static double dp(double val, int places) {
-    double mod = pow(10.0, places);
-    return ((val * mod).round().toDouble() / mod);
-  }
-
-  static String formatDateLog(DateTime date) {
-    return date.hour.toString() +
-        ":" +
-        date.minute.toString() +
-        ":" +
-        date.second.toString();
-  }
-
-  static String formatLog(LocationDto locationDto) {
-    return dp(locationDto.latitude, 4).toString() +
-        " " +
-        dp(locationDto.longitude, 4).toString();
-  }
-
-  static Future<void> setLog(LocationDto data) async {
-    final date = DateTime.now();
-    await print(data);
-  }
-
   Future<void> initPlatformState() async {
     print('Initializing...');
     await BackgroundLocator.initialize();
@@ -582,10 +556,12 @@ class _MyLoginPageState extends State<MyLoginPage> {
     print('Running ${isRunning.toString()}');
   }
 
+  Future<void> updateUI(LocationDto data) async {
+    await apiRequest(data);
+  }
+
   static void callback(LocationDto locationDto) async {
-    print('*******************location in dart: ${locationDto.toString()}');
-    await apiRequest(locationDto);
-    await setLog(locationDto);
+    print('location in dart: ${locationDto.toString()}');
     final SendPort send = IsolateNameServer.lookupPortByName(_isolateName);
     send?.send(locationDto);
   }
@@ -595,30 +571,30 @@ class _MyLoginPageState extends State<MyLoginPage> {
   }
 
   void startLocationService(){
-    print(' -------startLocationService---------');
     BackgroundLocator.registerLocationUpdate(
       callback,
       androidNotificationCallback: notificationCallback,
       settings: LocationSettings(
           notificationTitle: "Start Location Tracking example",
           notificationMsg: "Track location in background exapmle",
-          wakeLockTime: 60,
+          wakeLockTime: 20,
           autoStop: false,
           interval: 60
       ),
     );
-    setState(() {
-//      isRunning = true;
-    });
   }
 
-  static Future<String> apiRequest(LocationDto locationDto) async {
-    print('------------apiRequest ');
-    var now = new DateTime.now();
-    var fecha = new DateFormat('yyyyMMdd');
-    var hora = new DateFormat('HHmm');
+  ///
+  /// Metodo para enviar las coordenadas hacia /covid19/tracking
+  /// @authos JLopez
+  ///
+  Future<String> apiRequest(LocationDto locationDto) async {
+    var now = DateTime.now();
+    var fecha = DateFormat('yyyyMMdd');
+    var hora = DateFormat('HHmm');
+
     final item = {
-      "dni" : 31590755,
+      "dni" : _dni,
       "fecha": fecha.format(now) ,
       "hora": hora.format(now) ,
       "latitud": locationDto.latitude,
@@ -629,7 +605,6 @@ class _MyLoginPageState extends State<MyLoginPage> {
     request.headers.set('content-type', 'application/json');
     request.add(utf8.encode(json.encode(item)));
     HttpClientResponse response = await request.close();
-    print(response);
     print(response.statusCode);
     if(response.statusCode == 200){
       String reply = await response.transform(utf8.decoder).join();
@@ -638,7 +613,6 @@ class _MyLoginPageState extends State<MyLoginPage> {
     } else {
       return null;
     }
-
   }
 }
 
