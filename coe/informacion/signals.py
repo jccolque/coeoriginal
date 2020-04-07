@@ -172,7 +172,15 @@ def relacionar_situacion(created, instance, **kwargs):
     #Creamos la relacion inversa
     if created:
         individuo = instance.individuo
-        situ_actual = individuo.situacion_actual
+        if individuo.situacion_actual:
+            situ_actual = individuo.situacion_actual
+        else:
+            sit = Situacion()
+            sit.individuo = individuo
+            sit.aclaracion = "Inicializada por Sistema"
+            sit.save()
+            situ_actual = sit
+        #Obtenemos relacionado
         relacionado = instance.relacionado
         #Si no tenia le creamos
         if not relacionado.situacion_actual:
