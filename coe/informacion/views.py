@@ -169,7 +169,7 @@ def procesar_archivos(request, archivo_id):
     return redirect('informacion:ver_archivo', archivo_id=archivo.id)
 
 #VEHICULOS
-@permission_required('operadores.ver_individuo')
+@permission_required('operadores.vehiculos')
 def buscar_vehiculo(request):
     form = SearchVehiculoForm()
     if request.method == "POST":
