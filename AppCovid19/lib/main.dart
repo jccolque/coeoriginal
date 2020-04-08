@@ -5,6 +5,7 @@ import 'dart:isolate';
 import 'dart:ui';
 import 'package:background_locator/location_dto.dart';
 import 'package:background_locator/location_settings.dart';
+import 'package:covidjujuy_app/pages/salvo_conducto.dart';
 import 'package:covidjujuy_app/ui/formulario.dart';
 import 'package:covidjujuy_app/ui/temperatura.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         '/cuestionario': (BuildContext context) => CuestionarioPage(),
         '/formulario': (BuildContext context) => FormularioPage(),
+        '/salvoconducto': (BuildContext context) => SalvoConducto(),
         '/main': (BuildContext context) => MyApp(),
       },
       home: MyLoginPage(),
@@ -104,7 +106,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
                   )),
               height: MediaQuery.of(context).size.height,
               child: Container(
-                child: build_child(),
+                child: build_child( context ),
               )
           ),
         ),
@@ -130,7 +132,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
    );*/
   }
 
-  Widget build_child() {
+  Widget build_child( BuildContext context ) {
     if(_loaded)
       {
          return SingleChildScrollView(
@@ -285,6 +287,37 @@ class _MyLoginPageState extends State<MyLoginPage> {
                                },
                                child: Text(
                                  'Activar Geotracking',
+                                 textAlign: TextAlign.center,
+                                 style: TextStyle(
+                                     color: Colors.black,
+                                     fontSize: 22.0,
+                                     fontWeight: FontWeight.bold,
+                                     fontFamily: 'Montserrat'),
+                               ),
+                             ),
+                           ),
+                         ),
+                         SizedBox(height: 30),
+                         Container(
+                           child: Center(
+                             child: RaisedButton(
+                               padding: EdgeInsets.only(
+                                   top: 10.0,
+                                   bottom: 10.0,
+                                   left: 60.0,
+                                   right: 60.0),
+                               color: Colors.white,
+                               splashColor: Colors.blueAccent,
+                               elevation: 4,
+                               shape: RoundedRectangleBorder(
+                                 borderRadius: BorderRadius.circular(24.0),
+                               ),
+                               onPressed: () {
+                                 //Navigator.of(context).pushNamed('/coe');
+                                 _lauchSalvoConductoForm( context );
+                               },
+                               child: Text(
+                                 'Salvo Conducto',
                                  textAlign: TextAlign.center,
                                  style: TextStyle(
                                      color: Colors.black,
@@ -477,6 +510,14 @@ class _MyLoginPageState extends State<MyLoginPage> {
 
   Future<void> _launchFirstTermCondDialogConfirmation() async {
     await _getTermCondAceptadosFromSharedPref().then(_updateTermAndCondt);
+  }
+
+  Future<void> _lauchSalvoConductoForm( BuildContext context ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final startupDniNumber = prefs.getInt('savedDniNumber');
+    if (startupDniNumber != null) {
+      Navigator.of(context).pushNamed('/salvoconducto');
+    }
   }
 
   void _updateTermAndCondt(bool value) {
