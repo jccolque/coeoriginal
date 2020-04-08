@@ -57,6 +57,9 @@ TIPO_SEGUIMIENTO = (
     ('E', 'Epicrisis'),
     ('A', 'Autodiagnostico'),
     ('F', 'Fin del Seguimiento/Alta'),
+    ('IT', 'Inicio Tracking'),
+    ('AT', 'Alerta Tracking'),
+    ('FT', 'Baja Tracking'),
 )
 
 TIPO_RELACION = (
