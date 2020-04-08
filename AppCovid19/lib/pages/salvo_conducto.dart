@@ -203,13 +203,13 @@ class _SalvoConductoState extends State<SalvoConducto> {
         child: Column(
           children: <Widget>[
             Text(
-                'What is your favorite city?'
+                ''
             ),
             TypeAheadFormField(
               textFieldConfiguration: TextFieldConfiguration(
                   controller: this._typeAheadController,
                   decoration: InputDecoration(
-                      labelText: 'City'
+                      labelText: 'Localidad'
                   )
               ),
               suggestionsCallback: (pattern) {
@@ -229,7 +229,7 @@ class _SalvoConductoState extends State<SalvoConducto> {
               },
               validator: (value) {
                 if (value.isEmpty) {
-                  return 'Please select a city';
+                  return 'Por favor seleccione una localidad';
                 }
               },
               onSaved: (value) => this._selectedCity = value,
