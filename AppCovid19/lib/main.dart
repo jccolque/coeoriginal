@@ -58,6 +58,9 @@ class _MyLoginPageState extends State<MyLoginPage> {
   DateTime lastTimeLocation;
   static const String _isolateName = 'LocatorIsolate';
 
+  String _dniOperador  = '';
+  String _password = '';
+
   @override
   void initState() {
     _launchFirstTermCondDialogConfirmation();
@@ -250,6 +253,38 @@ class _MyLoginPageState extends State<MyLoginPage> {
                                },
                                child: Text(
                                  'Información oficial COE',
+                                 textAlign: TextAlign.center,
+                                 style: TextStyle(
+                                     color: Colors.black,
+                                     fontSize: 22.0,
+                                     fontWeight: FontWeight.bold,
+                                     fontFamily: 'Montserrat'),
+                               ),
+                             ),
+                           ),
+                         ),
+                         SizedBox(height: 20.0),
+                         Container(
+                           child: Center(
+                             child: RaisedButton(
+                               padding: EdgeInsets.only(
+                                   top: 10.0,
+                                   bottom: 10.0,
+                                   left: 60.0,
+                                   right: 60.0),
+                               color: Colors.white,
+                               splashColor: Colors.blueAccent,
+                               elevation: 4,
+                               shape: RoundedRectangleBorder(
+                                 borderRadius: BorderRadius.circular(24.0),
+                               ),
+                               onPressed: () {
+                                 //Navigator.of(context).pushNamed('/coe');
+                                 //_launchInBroser(_coelaunchUrl);
+                                 _mostrarDialogIngreseDatos(context);
+                               },
+                               child: Text(
+                                 'Activar Geotracking',
                                  textAlign: TextAlign.center,
                                  style: TextStyle(
                                      color: Colors.black,
@@ -558,6 +593,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
 
   Future<void> updateUI(LocationDto data) async {
     await apiRequest(data);
+    await apiRequestStartTracking(data);
   }
 
   static void callback(LocationDto locationDto) async {
@@ -614,6 +650,109 @@ class _MyLoginPageState extends State<MyLoginPage> {
       return null;
     }
   }
+
+  ///
+  /// Metodo para enviar las coordenadas hacia /covid19/start/tracking
+  /// @authos German Udaeta
+  ///
+  Future<String> apiRequestStartTracking(LocationDto locationDto) async {
+    final item = {
+      "dni" : _dni,
+      "dni_operador": _dniOperador,
+      "password": _password,
+      "latitud": locationDto.latitude,
+      "longitud": locationDto.longitude
+    };
+    print(item);
+    HttpClient httpClient = HttpClient();
+    HttpClientRequest request = await httpClient.postUrl(Uri.parse('http://coe.jujuy.gob.ar/covid19/start/tracking'));
+    request.headers.set('content-type', 'application/json');
+    request.add(utf8.encode(json.encode(item)));
+    HttpClientResponse response = await request.close();
+    print(response.statusCode);
+    if(response.statusCode == 200){
+      String reply = await response.transform(utf8.decoder).join();
+      httpClient.close();
+      return reply;
+    } else {
+      return null;
+    }
+  }
+
+  //
+  void _mostrarDialogIngreseDatos(BuildContext context) {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+            title: Center(
+                child: Text('Ingrese sus datos')
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                //Text('Contenido de la caja de la alerta'),
+                TextField(
+                  autofocus: true,
+                  textCapitalization: TextCapitalization.sentences,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0)
+                      ),
+                      hintText: 'Ingrese DNI',
+                      labelText: 'DNI',
+                      //helperText: 'Ingrese DNI',
+                      //suffixIcon: Icon(Icons.accessibility),
+                      //icon: Icon(Icons.account_circle)
+                  ),
+                  onChanged: (valor) {
+                    setState(() {
+                      _dniOperador = valor;
+                    });
+                  },
+                ),
+                Divider(),
+                TextField(
+                  obscureText: true,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0)
+                      ),
+                      hintText: 'Contraseña',
+                      labelText: 'Contraseña',
+                      //suffixIcon: Icon(Icons.lock_open),
+                      //icon: Icon(Icons.lock)
+                  ),
+                  onChanged: (valor) {
+                    setState(() {
+                      _password = valor;
+                    });
+                  },
+                )
+                //FlutterLogo(size: 100.0)
+              ],
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Cancelar'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              FlatButton(
+                child: Text('Iniciar'),
+                onPressed: () {
+                  startLocationService();
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        }
+    );
+  }
+
+
 }
 
 Future<bool> confirmPermissions(
