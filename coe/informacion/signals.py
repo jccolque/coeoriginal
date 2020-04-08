@@ -87,14 +87,18 @@ def aislados(created, instance, **kwargs):
         situacion.conducta = 'E'
         situacion.aclaracion = "Aislado por cambio a locacion de AISLAMIENTO"
         situacion.save()
-        #Creamos seguimiento
-        seguimiento = Seguimiento(individuo=individuo)
-        seguimiento.aclaracion = "Fue Puesto en Aislamiento."
-        seguimiento.save()
+
+#Evolucionamos Estado segun relaciones
+@receiver(post_save, sender=Domicilio)
+def ocupar_capacidad_ubicacion(created, instance, **kwargs):
+    if created and instance.ubicacion: 
+        #Quitamos una plaza disponible:
+        instance.ubicacion.capacidad_ocupada += 1
+        instance.ubicacion.save()
 
 #Evolucionamos Estado segun relaciones
 @receiver(pre_save, sender=Domicilio)
-def recuperar_capacidad(instance, **kwargs):
+def recuperar_capacidad_ubicacion(instance, **kwargs):
     individuo = instance.individuo
     try:
         if individuo.domicilio_actual.aislamiento:#Si estaba en aislamiento
@@ -102,8 +106,7 @@ def recuperar_capacidad(instance, **kwargs):
             ubicacion.capacidad_ocupada -= 1
             ubicacion.save()
     except:
-        pass#No hacemos nada
-    #Lo sacamos de aislamiento?              
+        pass#No hacemos nada            
 
 @receiver(post_save, sender=Relacion)
 def crear_relacion_inversa(created, instance, **kwargs):

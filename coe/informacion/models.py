@@ -385,7 +385,8 @@ from .signals import relacion_vehiculo
 from .signals import relacionar_situacion
 from .signals import afectar_relacionados
 from .signals import aislados
-from .signals import recuperar_capacidad
+from .signals import ocupar_capacidad_ubicacion
+from .signals import recuperar_capacidad_ubicacion
 from .signals import cargo_signosvitales
 from .signals import cargo_documento
 

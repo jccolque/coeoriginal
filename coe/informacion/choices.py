@@ -55,12 +55,15 @@ TIPO_SEGUIMIENTO = (
     ('M', 'Reporte Medico'),
     ('C', 'Cronologia'),
     ('E', 'Epicrisis'),
-    ('T', 'Descartado por Test'),
+    ('ET', 'Esperando Resultados'),
+    ('CT', 'Confirmado por Test'),
+    ('DT', 'Descartado por Test'),
     ('A', 'Autodiagnostico'),
-    ('F', 'Fin del Seguimiento/Alta'),
+    ('FS', 'Fin del Seguimiento/Alta'),
     ('IT', 'Inicio Tracking'),
     ('AT', 'Alerta Tracking'),
     ('FT', 'Baja Tracking'),
+    ('TA', 'Traslado a Aislamiento'),
 )
 
 TIPO_RELACION = (
@@ -74,7 +77,6 @@ TIPO_ATRIBUTO = (
     ('PR', 'Poblacion de Riesgo/Comorbilidades'),
     ('DE', 'Denuncia Externa'),
     ('IP', 'Informado Por'),
-    ('ER', 'Esperando Resultados'),
     ('VE', 'Vigilancia Epidemiologica'),
     ('AS', 'Es Agente de Salud'),
     ('PS', 'Es Personal de Seguridad'),
@@ -115,6 +117,7 @@ TIPO_DOCUMENTO = (
     ('AS', 'Analisis de Sangre'),
     ('AO', 'Analisis de Orina'),
     ('LB', 'Laboratorio'),
+    ('OT', 'Otros'),
 )
 
 
