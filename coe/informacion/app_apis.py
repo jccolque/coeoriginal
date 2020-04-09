@@ -2,11 +2,13 @@
 import copy
 import json
 import logging
+from base64 import b64decode
 #Imports de Django
 from django.urls import reverse
 from django.utils import timezone
 from django.http import JsonResponse
 from django.contrib.auth import authenticate
+from django.core.files.base import ContentFile
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 #Imports del proyecto
@@ -17,6 +19,7 @@ from .models import Individuo, AppData, Domicilio, GeoPosicion
 from .models import Atributo, Sintoma, Situacion, Seguimiento
 from .tokens import TokenGenerator
 from .geofence import controlar_distancia
+
 #Definimos logger
 logger = logging.getLogger("apis")
 
@@ -26,31 +29,57 @@ def AppConfig(request):
     return JsonResponse(
         {
             "action":"AppConfig",
+            #WebServices
+            "WebServices":
+            {
+                "localidad": reverse("georef:localidad-autocomplete"),
+                "barrio": reverse("georef:barrio-autocomplete"),
+            },
             #Registro:
             "Registro":
             {
-                "url_Registro": reverse("api_urls:registro_covidapp"),
+                "url": reverse("api_urls:registro"),
                 "fields_request": 
                 {
                     "dni": "str",
                     "apellido": "str",
                     "nombre": "str",
+                    "localidad": "int: id_localidad",
+                    "barrio": "int: id_barrio (opcional)",
                     "direccion_calle": "str",
                     "direccion_numero": "str",
                     "telefono": "str",
+                    "email": "str (Opcional)",
+                    "push_notification_id": "str",
                 },
                 "fields_response": 
                 {
                     "action": "registro",
                     "realizado": "bool",
-                    "token": "str: Registrar para envios posteriores",
-                    "error": "str",
+                    "token": "str: para validar envios posteriores",
+                    "error": "str (Solo si hay errores)",
+                },
+            },
+            "FotoPerfil":
+            {
+                "url": reverse("api_urls:foto_perfil"),
+                "fields_request": 
+                {
+                    "dni": "str",
+                    "imagen": "Base64",
+
+                },
+                "fields_response": 
+                {
+                    "action": "registro_avanzado",
+                    "realizado": "bool",
+                    "error": "str (Solo si hay errores)",
                 }
             },
             #Encuesta
             "Encuesta":
             {
-                "url": reverse("api_urls:encuesta_covidapp"),
+                "url": reverse("api_urls:encuesta"),
                 "fields_request": 
                 {
                     "dni": "str",
@@ -68,13 +97,13 @@ def AppConfig(request):
                 {
                     "action": "encuesta",
                     "realizado": "bool",
-                    "error": "str",
+                    "error": "str (Solo si hay errores)",
                 }
             },
             #Start Tracking
             "StartTracking":
             {
-                "url": reverse("api_urls:start_tracking_covidapp"),
+                "url": reverse("api_urls:start_tracking"),
                 "fields": 
                 {
                     "dni_individuo": "str",
@@ -88,13 +117,13 @@ def AppConfig(request):
                 {
                     "action": "start_tracking",
                     "realizado": "bool",
-                    "error": "str",
+                    "error": "str (Solo si hay errores)",
                 }
             },
             #Tracking
             "tracking": 
             {
-                "url": reverse("api_urls:tracking_covidapp"),
+                "url": reverse("api_urls:tracking"),
                 "fields": 
                 {
                     "dni_individuo": "str",
@@ -109,7 +138,7 @@ def AppConfig(request):
                     "action": "tracking",
                     "realizado": "bool",
                     "distancia" : "float (en metros)",
-                    "error": "str",
+                    "error": "str (Solo si hay errores)",
                 },
                 "parametros":
                 {
@@ -125,13 +154,13 @@ def AppConfig(request):
 
 @csrf_exempt
 @require_http_methods(["POST"])
-def registro_covidapp(request):
+def registro(request):
     try:
         data = None
         #Registramos ingreso de info
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info("registro_covidapp:"+str(timezone.now())+"|"+str(data))
+        logger.info("registro:"+str(timezone.now())+"|"+str(data))
         #Obtenemos datos basicos:
         nac = Nacionalidad.objects.filter(nombre__icontains="Argentina").first()
         #Agarramos el dni
@@ -155,19 +184,33 @@ def registro_covidapp(request):
             appdata.individuo = individuo
         else:
             appdata = individuo.appdata
-        #Procesamos los datos que si nos importan
-        if not hasattr(individuo, "telefono"):
+        #Procesamos telefono si lo envio
+        if not individuo.telefono == "+549388":
             individuo.telefono = str(data["telefono"])
             individuo.save()
         else:
             appdata.telefono = str(data["telefono"])
+        #Procesamos email si lo envio
+        if "email" in data:
+            if not individuo.email:
+                individuo.email = data["email"]
+            else:
+                appdata.email = data["email"]
+        #Registramos push_not_id
+        if "push_notification_id" in data:
+            appdata.push_id = data["push_notification_id"]
+        #Guardamos
+        appdata.fecha = timezone.now()
         appdata.save()
         #Cargamos un nuevo domicilio:
         Domicilio.objects.filter(individuo=individuo, aclaracion="AUTODIAGNOSTICO").delete()
         domicilio = Domicilio(individuo=individuo)
         domicilio.calle = data["direccion_calle"]
         domicilio.numero = str(data["direccion_numero"])
-        domicilio.localidad = Localidad.objects.first()
+        if "localidad" in data:
+            domicilio.localidad = Localidad.objects.get(pk=data["localidad"])
+        else:
+            domicilio.localidad = Localidad.objects.first()
         domicilio.aclaracion = "AUTODIAGNOSTICO"
         domicilio.save()
         #Respondemos que fue procesado
@@ -194,13 +237,55 @@ def registro_covidapp(request):
 
 @csrf_exempt
 @require_http_methods(["POST"])
-def encuesta_covidapp(request):
+def foto_perfil(request):
     try:
         data = None
         #Registramos ingreso de info
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info("encuesta_covidapp:"+str(timezone.now())+"|"+str(data))
+        data2 = copy.copy(data)
+        data2["imagen"] = data2["imagen"][:25]+'| full |'+data2["imagen"][-25:]
+        logger.info("foto_perfil:"+str(timezone.now())+"|"+str(data2))
+        #Agarramos el dni
+        num_doc = str(data["dni"]).upper()
+        #Buscamos al individuo en la db
+        individuo = Individuo.objects.get(num_doc=num_doc)
+        #ACA CHEQUEAMOS TOKEN
+
+        #Cargamos la foto:
+        image_data = b64decode(data['imagen'])
+        individuo.fotografia = ContentFile(image_data, individuo.num_doc+'.jpg')
+        individuo.save()
+        #Terminamos proceso
+        logger.info("Exito!")
+        return JsonResponse(
+            {
+                "action":"foto_perfil",
+                "realizado": True,
+            },
+            safe=False
+        )
+    except Exception as e:
+        logger.info("Falla: "+str(e))
+        return JsonResponse(
+            {
+                "action":"foto_perfil",
+                "realizado": False,
+                "error": str(e),
+            },
+            safe=False,
+            status=400,
+        )
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def encuesta(request):
+    try:
+        data = None
+        #Registramos ingreso de info
+        #Recibimos el json
+        data = json.loads(request.body.decode("utf-8"))
+        logger.info("encuesta:"+str(timezone.now())+"|"+str(data))
         #Agarramos el dni
         num_doc = str(data["dni"]).upper()
         #Buscamos al individuo en la db
@@ -268,12 +353,12 @@ def encuesta_covidapp(request):
 
 @csrf_exempt
 @require_http_methods(["POST"])
-def temperatura_covidapp(request):
+def temperatura(request):
     try:
         data = None
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info("temperatura_covidapp:"+str(timezone.now())+"|"+str(data))
+        logger.info("temperatura:"+str(timezone.now())+"|"+str(data))
         #Agarramos el dni
         num_doc = str(data["dni"]).upper()
         #Buscamos al individuo en la db
@@ -308,14 +393,14 @@ def temperatura_covidapp(request):
 
 @csrf_exempt
 @require_http_methods(["POST"])
-def start_tracking_covidapp(request):
+def start_tracking(request):
     try:
         data = None
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
         data2 = copy.copy(data)
         data2["password"] = "OCULTA"
-        logger.info("start_tracking_covidapp:"+str(timezone.now())+"|"+str(data2))
+        logger.info("start_tracking:"+str(timezone.now())+"|"+str(data2))
         #Agarramos el dni
         num_doc = str(data["dni_individuo"]).upper()
         #Buscamos al individuo en la db
@@ -374,12 +459,12 @@ def start_tracking_covidapp(request):
 
 @csrf_exempt
 @require_http_methods(["POST"])
-def tracking_covidapp(request):
+def tracking(request):
     try:
         data = None
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info("tracking_covidapp:"+str(timezone.now())+"|"+str(data))
+        logger.info("tracking:"+str(timezone.now())+"|"+str(data))
         #Agarramos el dni
         num_doc = str(data["dni"]).upper()
         #Buscamos al individuo en la db

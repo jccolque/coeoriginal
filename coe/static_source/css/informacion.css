@@ -16,3 +16,8 @@ ul, li {
 .history {
     font-size: 0.5em;
 }
+
+img.fotografia {
+    width: 120px;
+    border-radius: 25px;
+}

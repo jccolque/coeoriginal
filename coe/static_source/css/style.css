@@ -237,6 +237,10 @@ img.iconsx4 {
     width: 80px;
 }
 
+img.iconsx8 {
+    width: 160px;
+}
+
 img.documento{
     max-height: 10em;
 }

@@ -338,6 +338,18 @@ def cargar_individuo(request, traslado_id=None, individuo_id=None, num_doc=None)
     return render(request, "cargar_individuo.html", {'titulo': "Cargar Individuo", 'form': form, 'boton': "Cargar", })
 
 @permission_required('operadores.individuos')
+def cargar_fotografia(request, individuo_id):
+    individuo = Individuo.objects.get(pk=individuo_id)
+    form = FotoForm()
+    if request.method == "POST":
+        form = FotoForm(request.POST, request.FILES)
+        if form.is_valid():
+            individuo.fotografia = form.cleaned_data['fotografia']
+            individuo.save()
+            return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+    return render(request, "extras/generic_form.html", {'titulo': "Subir Fotografia", 'form': form, 'boton': "Cargar", })
+
+@permission_required('operadores.individuos')
 def buscar_inquilino(request, ubicacion_id):
     ubicacion = Ubicacion.objects.get(pk=ubicacion_id)
     form = TrasladarIndividuoForm(initial={'ubicacion': ubicacion,})

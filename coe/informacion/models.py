@@ -310,7 +310,9 @@ class Documento(models.Model):
 class AppData(models.Model):
     individuo = models.OneToOneField(Individuo, on_delete=models.CASCADE, related_name="appdata")
     telefono = models.CharField('Telefono', max_length=50, default='+549388')
+    email = models.EmailField('Correo Electronico', null=True, blank=True)#Enviar mails
     estado = models.CharField('Estado', choices=TIPO_TRIAJE, max_length=1, default='V')
+    push_id = models.CharField('Push Notification ID', max_length=255, blank=True, null=True)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     def __str__(self):
         return str(self.individuo) + self.get_estado_display()

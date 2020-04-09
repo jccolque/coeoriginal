@@ -10,7 +10,19 @@
                 <div class="row">
                     <div class="col-md-8">
                         <br>
-                        <h2><b>{{individuo.apellidos}}, {{individuo.nombres}}</b></h2>
+                        <h2>
+                            
+                            <a class="nolink" href="
+                                {% if individuo.fotografia %}
+                                    {{individuo.get_foto}}
+                                {% else %}
+                                    {% url 'informacion:cargar_fotografia' individuo_id=individuo.id %}
+                                {% endif %}
+                                ">
+                                <img class="fotografia" src="{{individuo.get_foto}}">
+                            </a>
+                            <b>{{individuo.apellidos}}, {{individuo.nombres}}</b>
+                        </h2>
                         <hr>
                         <!-- ESTADO -->
                         {% if individuo.situacion_actual %}
