@@ -1,22 +1,127 @@
 #Imports de python
+import copy
 import json
 import logging
 #Imports de Django
-from django.contrib.auth import authenticate
+from django.urls import reverse
 from django.utils import timezone
 from django.http import JsonResponse
+from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 #Imports del proyecto
-from georef.models import Nacionalidad, Localidad
 from operadores.models import Operador
+from georef.models import Nacionalidad, Localidad
 #Imports de la app
 from .models import Individuo, AppData, Domicilio, GeoPosicion
 from .models import Atributo, Sintoma, Situacion, Seguimiento
 from .tokens import TokenGenerator
 from .geofence import controlar_distancia
 #Definimos logger
-logger = logging.getLogger('apis')
+logger = logging.getLogger("apis")
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def AppConfig(request):
+    return JsonResponse(
+        {
+            "action":"AppConfig",
+            #Registro:
+            "Registro":
+            {
+                "url_Registro": reverse("api_urls:registro_covidapp"),
+                "fields_request": 
+                {
+                    "dni": "str",
+                    "apellido": "str",
+                    "nombre": "str",
+                    "direccion_calle": "str",
+                    "direccion_numero": "str",
+                    "telefono": "str",
+                },
+                "fields_response": 
+                {
+                    "action": "registro",
+                    "realizado": "bool",
+                    "token": "str: Registrar para envios posteriores",
+                    "error": "str",
+                }
+            },
+            #Encuesta
+            "Encuesta":
+            {
+                "url": reverse("api_urls:encuesta_covidapp"),
+                "fields_request": 
+                {
+                    "dni": "str",
+                    "token": "str: Obtenido en respuesta registro",
+                    "pais_riesgo": "bool",
+                    "contacto_extranjero": "bool",
+                    "fiebre": "bool",
+                    "tos": "bool",
+                    "dif_respirar": "bool",
+                    "riesgo": "int (1:Alto,2:Medio,3:Bajo)",
+                    "latitud": "float", 
+                    "longitud": "float",
+                },
+                "fields_response": 
+                {
+                    "action": "encuesta",
+                    "realizado": "bool",
+                    "error": "str",
+                }
+            },
+            #Start Tracking
+            "StartTracking":
+            {
+                "url": reverse("api_urls:start_tracking_covidapp"),
+                "fields": 
+                {
+                    "dni_individuo": "str",
+                    "token": "str: Obtenido en respuesta registro",
+                    "dni_operador": "str",
+                    "password": "str",
+                    "latitud": "float", 
+                    "longitud": "float",
+                },
+                "fields_response": 
+                {
+                    "action": "start_tracking",
+                    "realizado": "bool",
+                    "error": "str",
+                }
+            },
+            #Tracking
+            "tracking": 
+            {
+                "url": reverse("api_urls:tracking_covidapp"),
+                "fields": 
+                {
+                    "dni_individuo": "str",
+                    "token": "str: Obtenido en respuesta registro",
+                    "fecha": "str: YYYYMMDD",
+                    "hora": "str: HHMM",
+                    "latitud": "float", 
+                    "longitud": "float",
+                },
+                "fields_response": 
+                {
+                    "action": "tracking",
+                    "realizado": "bool",
+                    "distancia" : "float (en metros)",
+                    "error": "str",
+                },
+                "parametros":
+                {
+                    'alerta_distancia': 50,
+                    'alerta_mensaje': 'Alerta, usted se ha alejado por mas de 50 metros del punto fijado.',
+                    'critico_distancia': 100,
+                    'critico_mensaje': 'Usted se ha alejado mas de 100 metros del punto fijado, las fuerzas de seguridad estan siendo informadas.',
+                }
+            },
+        },
+        safe=False
+    )
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -26,7 +131,7 @@ def registro_covidapp(request):
         #Registramos ingreso de info
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info('registro_covidapp:'+str(timezone.now())+'|'+str(data))
+        logger.info("registro_covidapp:"+str(timezone.now())+"|"+str(data))
         #Obtenemos datos basicos:
         nac = Nacionalidad.objects.filter(nombre__icontains="Argentina").first()
         #Agarramos el dni
@@ -45,13 +150,13 @@ def registro_covidapp(request):
             individuo.observaciones = "AUTODIAGNOSTICO"
             individuo.save()
         #PROCESAMOS INFO DE APP
-        if not hasattr(individuo,'appdata'):
+        if not hasattr(individuo,"appdata"):
             appdata = AppData()
             appdata.individuo = individuo
         else:
             appdata = individuo.appdata
         #Procesamos los datos que si nos importan
-        if not hasattr(individuo, 'telefono'):
+        if not hasattr(individuo, "telefono"):
             individuo.telefono = str(data["telefono"])
             individuo.save()
         else:
@@ -66,7 +171,7 @@ def registro_covidapp(request):
         domicilio.aclaracion = "AUTODIAGNOSTICO"
         domicilio.save()
         #Respondemos que fue procesado
-        logger.info('Exito!')
+        logger.info("Exito!")
         return JsonResponse(
             {
                 "action":"registro",
@@ -76,7 +181,7 @@ def registro_covidapp(request):
             safe=False
         )
     except Exception as e:
-        logger.info('Falla: '+str(e))
+        logger.info("Falla: "+str(e))
         return JsonResponse(
             {
                 "action":"registro",
@@ -95,7 +200,7 @@ def encuesta_covidapp(request):
         #Registramos ingreso de info
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info('encuesta_covidapp:'+str(timezone.now())+'|'+str(data))
+        logger.info("encuesta_covidapp:"+str(timezone.now())+"|"+str(data))
         #Agarramos el dni
         num_doc = str(data["dni"]).upper()
         #Buscamos al individuo en la db
@@ -113,16 +218,16 @@ def encuesta_covidapp(request):
         #Sintomas
         Sintoma.objects.filter(individuo=individuo, aclaracion="ENCUESTAAPP").delete()
         if data["fiebre"]:
-            sintoma = Sintoma(individuo=individuo, tipo='FIE', aclaracion="ENCUESTAAPP")
+            sintoma = Sintoma(individuo=individuo, tipo="FIE", aclaracion="ENCUESTAAPP")
             sintoma.save()
         if data["tos"]:
-            sintoma = Sintoma(individuo=individuo, tipo='TOS', aclaracion="ENCUESTAAPP")
+            sintoma = Sintoma(individuo=individuo, tipo="TOS", aclaracion="ENCUESTAAPP")
             sintoma.save()
         if data["dif_respirar"]:
-            sintoma = Sintoma(individuo=individuo, tipo='DPR', aclaracion="ENCUESTAAPP")
+            sintoma = Sintoma(individuo=individuo, tipo="DPR", aclaracion="ENCUESTAAPP")
             sintoma.save()
         #Resultado
-        individuo.appdata.estado = [0,'R','A','V'][data["riesgo"]]
+        individuo.appdata.estado = [0,"R","A","V"][data["riesgo"]]
         individuo.appdata.save()
         #Cargamos nueva situacion
         if data["riesgo"] > 1:
@@ -130,7 +235,7 @@ def encuesta_covidapp(request):
             situacion = Situacion()
             situacion.individuo = individuo
             situacion.estado = 40
-            situacion.conducta = 'C'
+            situacion.conducta = "C"
             situacion.aclaracion = "AUTODIAGNOSTICO"
             situacion.save()
         #Geoposicion
@@ -141,7 +246,7 @@ def encuesta_covidapp(request):
             geopos.longitud = data["longitud"]
             geopos.aclaracion = "AUTODIAGNOSTICO"
             geopos.save()
-        logger.info('Exito!')
+        logger.info("Exito!")
         return JsonResponse(
             {
                 "action":"encuesta",
@@ -150,7 +255,7 @@ def encuesta_covidapp(request):
             safe=False
         )
     except Exception as e:
-        logger.info('Falla: '+str(e))
+        logger.info("Falla: "+str(e))
         return JsonResponse(
             {
                 "action":"encuesta",
@@ -168,7 +273,7 @@ def temperatura_covidapp(request):
         data = None
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info('temperatura_covidapp:'+str(timezone.now())+'|'+str(data))
+        logger.info("temperatura_covidapp:"+str(timezone.now())+"|"+str(data))
         #Agarramos el dni
         num_doc = str(data["dni"]).upper()
         #Buscamos al individuo en la db
@@ -178,10 +283,10 @@ def temperatura_covidapp(request):
         #Cargamos datos importantes:
         seguimiento = Seguimiento()
         seguimiento.individuo = individuo
-        seguimiento.tipo = 'A'
+        seguimiento.tipo = "A"
         seguimiento.aclaracion = "AUTODIAGNOSTICO - Temp:" + str(data["temperatura"])
         seguimiento.save()
-        logger.info('Exito!')
+        logger.info("Exito!")
         return JsonResponse(
             {
                 "action":"temperatura",
@@ -190,7 +295,7 @@ def temperatura_covidapp(request):
             safe=False
         )
     except Exception as e:
-        logger.info('Falla: '+str(e))
+        logger.info("Falla: "+str(e))
         return JsonResponse(
             {
                 "action":"temperatura",
@@ -208,9 +313,9 @@ def start_tracking_covidapp(request):
         data = None
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        data2 = data
-        data2['password'] = 'OCULTA'
-        logger.info('start_tracking_covidapp:'+str(timezone.now())+'|'+str(data2))
+        data2 = copy.copy(data)
+        data2["password"] = "OCULTA"
+        logger.info("start_tracking_covidapp:"+str(timezone.now())+"|"+str(data2))
         #Agarramos el dni
         num_doc = str(data["dni_individuo"]).upper()
         #Buscamos al individuo en la db
@@ -225,7 +330,7 @@ def start_tracking_covidapp(request):
             {
                 "action":"start_tracking",
                 "realizado": False,
-                "error": 'El operador no existe.',
+                "error": "El operador no existe.",
             },
             safe=False,
             status=400,
@@ -237,17 +342,17 @@ def start_tracking_covidapp(request):
         geopos.domicilio = individuo.domicilio_actual
         geopos.latitud = data["latitud"]
         geopos.longitud = data["longitud"]
-        geopos.aclaracion = "INICIO TRACKING: " + str(geopos.latitud)+', '+str(geopos.longitud)
+        geopos.aclaracion = "INICIO TRACKING: " + str(geopos.latitud)+", "+str(geopos.longitud)
         geopos.save()
         #Cargamos Inicio de Seguimiento:
-        Seguimiento.objects.filter(tipo__in=('IT','AT', 'FT')).delete()
+        Seguimiento.objects.filter(tipo__in=("IT","AT", "FT")).delete()
         seguimiento = Seguimiento()
         seguimiento.individuo = individuo
-        seguimiento.tipo = 'IT'
-        seguimiento.aclaracion = "INICIO TRACKING: " + str(geopos.latitud)+', '+str(geopos.longitud)
+        seguimiento.tipo = "IT"
+        seguimiento.aclaracion = "INICIO TRACKING: " + str(geopos.latitud)+", "+str(geopos.longitud)
         seguimiento.save()
         #Respondemos
-        logger.info('Exito!')
+        logger.info("Exito!")
         return JsonResponse(
             {
                 "action":"start_tracking",
@@ -256,7 +361,7 @@ def start_tracking_covidapp(request):
             safe=False
         )
     except Exception as e:
-        logger.info('Falla: '+str(e))
+        logger.info("Falla: "+str(e))
         return JsonResponse(
             {
                 "action":"start_tracking",
@@ -274,7 +379,7 @@ def tracking_covidapp(request):
         data = None
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info('tracking_covidapp:'+str(timezone.now())+'|'+str(data))
+        logger.info("tracking_covidapp:"+str(timezone.now())+"|"+str(data))
         #Agarramos el dni
         num_doc = str(data["dni"]).upper()
         #Buscamos al individuo en la db
@@ -297,7 +402,7 @@ def tracking_covidapp(request):
         geopos.save()
         #Controlamos posicion:
         distancia = controlar_distancia(geopos)
-        logger.info('Exito')
+        logger.info("Exito")
         return JsonResponse(
             {
                 "action":"tracking",
@@ -307,7 +412,7 @@ def tracking_covidapp(request):
             safe=False
         )
     except Exception as e:
-        logger.info('Falla: '+str(e))
+        logger.info("Falla: "+str(e))
         return JsonResponse(
             {
                 "action":"tracking",

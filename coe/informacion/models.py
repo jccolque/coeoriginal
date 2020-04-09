@@ -205,8 +205,8 @@ class GeoPosicion(models.Model):
 #Extras
 class SignosVitales(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="signos_vitales")
-    tension_diastolica = models.IntegerField('Tension Diastolica')
     tension_sistolica = models.IntegerField('Tension Sistolica')
+    tension_diastolica = models.IntegerField('Tension Diastolica')
     frec_cardiaca = models.IntegerField('Frecuencia Cardiaca')
     frec_respiratoria = models.IntegerField('Frecuencia Respiratoria')
     temperatura = models.DecimalField('Temperatura', max_digits=4, decimal_places=2)

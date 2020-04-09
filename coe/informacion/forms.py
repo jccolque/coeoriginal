@@ -190,7 +190,7 @@ class SignosVitalesForm(forms.ModelForm):
         }
     def __init__(self, *args, **kwargs):
         self.nolabel = ['', ]
-        self.alinear = [('tension_diastolica', 'tension_sistolica'), ]
+        self.alinear = [('tension_sistolica', 'tension_diastolica'), ]
         super(SignosVitalesForm, self).__init__(*args, **kwargs)
 
 class SeguimientoForm(forms.ModelForm):
