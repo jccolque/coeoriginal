@@ -208,7 +208,9 @@ def start_tracking_covidapp(request):
         data = None
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info('start_tracking_covidapp:'+str(timezone.now())+'|'+str(data))
+        data2 = data
+        data2['password'] = 'OCULTA'
+        logger.info('start_tracking_covidapp:'+str(timezone.now())+'|'+str(data2))
         #Agarramos el dni
         num_doc = str(data["dni_individuo"]).upper()
         #Buscamos al individuo en la db
