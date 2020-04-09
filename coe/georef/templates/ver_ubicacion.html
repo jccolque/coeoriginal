@@ -57,6 +57,7 @@
                     <div class="col-md-4">
                         <ul class="menu_botones">
                             <li><a href="{% url 'georef:mod_ubicacion' ubicacion_id=ubicacion.id %}">Modificar ubicacion</a></li>
+                            <li><a href="{% url 'informacion:buscar_inquilino' ubicacion_id=ubicacion.id %}">Alojar Individuo</a></li>
                             {% if request.user.is_superuser %}
                                 <li><a href="{% url 'georef:delete_ubicacion' ubicacion_id=ubicacion.id %}">Eliminar Ubicacion</a></li>
                             {% endif %}

@@ -31,7 +31,8 @@ from .models import Documento
 from .models import AppData
 from .forms import ArchivoForm, ArchivoFormWithPass
 from .forms import VehiculoForm, TrasladoVehiculoForm
-from .forms import IndividuoForm, BuscadorIndividuosForm
+from .forms import IndividuoForm, InquilinoForm
+from .forms import BuscadorIndividuosForm, TrasladarIndividuoForm
 from .forms import DomicilioForm, AtributoForm, SintomaForm
 from .forms import SituacionForm, RelacionForm, SeguimientoForm
 from .forms import SearchIndividuoForm, SearchVehiculoForm
@@ -169,7 +170,7 @@ def procesar_archivos(request, archivo_id):
     return redirect('informacion:ver_archivo', archivo_id=archivo.id)
 
 #VEHICULOS
-@permission_required('operadores.ver_individuo')
+@permission_required('operadores.vehiculos')
 def buscar_vehiculo(request):
     form = SearchVehiculoForm()
     if request.method == "POST":
@@ -237,8 +238,7 @@ def buscar_individuo(request, traslado_id=None):
     if request.method == "POST":
         form = SearchIndividuoForm(request.POST)
         if form.is_valid():
-            num_doc = form.cleaned_data['num_doc']
-            num_doc = num_doc.upper()
+            num_doc = form.cleaned_data['num_doc'].upper()
             try:
                 individuo = Individuo.objects.get(num_doc=num_doc)
                 if traslado_id:#lo cargamos en el vehiculo y volvemos al vehiculo:
@@ -269,6 +269,7 @@ def cargar_individuo(request, traslado_id=None, individuo_id=None, num_doc=None)
                     'dom_calle': domicilio_actual.calle,
                     'dom_numero': domicilio_actual.numero,
                     'dom_aclaracion': domicilio_actual.aclaracion,
+                    'dom_aislamiento': domicilio_actual.aislamiento,
                     'atributos': [a.tipo for a in individuo.atributos.all()],
                     'sintomas': [s.tipo for s in individuo.sintomas.all()],
                 }
@@ -291,20 +292,26 @@ def cargar_individuo(request, traslado_id=None, individuo_id=None, num_doc=None)
             individuo = form.save(commit=False)
             individuo.operador = operador
             #Le cargamos el ultimo domicilio y situacion
-            individuo.situacion_actual = individuo.situaciones.last()
-            individuo.domicilio_actual = individuo.domicilios.last()
-            #Guardamos
-            individuo.save()
+            if not individuo.situacion_actual:
+                individuo.situacion_actual = individuo.situaciones.last()
+                individuo.save()
+            if not individuo.domicilio_actual:
+                individuo.domicilio_actual = individuo.domicilios.last()
+                individuo.save()
             #Generamos modelos externos:
-            #Creamos domicilio
-            domicilio = Domicilio()
-            domicilio.individuo = individuo
-            if form.cleaned_data['dom_localidad']:
-                domicilio.localidad = form.cleaned_data['dom_localidad']
-                domicilio.calle = form.cleaned_data['dom_calle']
-                domicilio.numero = form.cleaned_data['dom_numero']
-                domicilio.aclaracion = form.cleaned_data['dom_aclaracion']
-                domicilio.save()
+            #Si cambio el domicilio Actual:
+            if not individuo.domicilio_actual or (
+                form.cleaned_data['dom_calle'] != individuo.domicilio_actual.calle
+                ):
+                #Creamos domicilio
+                if form.cleaned_data['dom_localidad']:
+                    domicilio = Domicilio()
+                    domicilio.individuo = individuo
+                    domicilio.localidad = form.cleaned_data['dom_localidad']
+                    domicilio.calle = form.cleaned_data['dom_calle']
+                    domicilio.numero = form.cleaned_data['dom_numero']
+                    domicilio.aclaracion = form.cleaned_data['dom_aclaracion']
+                    domicilio.save()
             #Creamos atributos
             atributos = form.cleaned_data['atributos']
             individuo.atributos.all().delete()
@@ -329,6 +336,113 @@ def cargar_individuo(request, traslado_id=None, individuo_id=None, num_doc=None)
                 return redirect('informacion:ver_vehiculo', vehiculo_id=traslado.vehiculo.id)
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "cargar_individuo.html", {'titulo': "Cargar Individuo", 'form': form, 'boton': "Cargar", })
+
+@permission_required('operadores.individuos')
+def buscar_inquilino(request, ubicacion_id):
+    ubicacion = Ubicacion.objects.get(pk=ubicacion_id)
+    form = TrasladarIndividuoForm(initial={'ubicacion': ubicacion,})
+    if request.method == "POST":
+        form = TrasladarIndividuoForm(request.POST)
+        if form.is_valid():
+            num_doc = form.cleaned_data['num_doc'].upper()
+            try:
+                individuo = Individuo.objects.get(num_doc=num_doc)
+                #Creamos nuevo domicilio:
+                domicilio = Domicilio(individuo=individuo)
+                domicilio.localidad = ubicacion.localidad
+                domicilio.calle = ubicacion.calle
+                domicilio.numero = ubicacion.numero
+                domicilio.aclaracion = ubicacion.nombre + " Habitacion:" + form.cleaned_data['habitacion']
+                domicilio.fecha = form.cleaned_data['fecha']
+                domicilio.aislamiento = True
+                domicilio.ubicacion = ubicacion
+                domicilio.save()
+                #Quitamos una plaza disponible:
+                domicilio.ubicacion.capacidad_ocupada += 1
+                domicilio.ubicacion.save()
+                #Creamos Cronologia
+                seguimiento = Seguimiento(individuo=individuo)
+                seguimiento.tipo = 'TA'
+                seguimiento.aclaracion = ubicacion.nombre + " (Traslado Via Sistema)"
+                seguimiento.fecha = form.cleaned_data['fecha']
+                seguimiento.save()
+                return redirect('georef:ver_ubicacion', ubicacion_id=ubicacion.id)
+            except Individuo.DoesNotExist:
+                request.redirect = True
+                request.ubicacion = ubicacion
+                request.num_doc = num_doc
+                request.habitacion = form.cleaned_data['habitacion']
+                request.fecha = form.cleaned_data['fecha']
+                return cargar_inquilino(request)
+    return render(request, "extras/generic_form.html", {'titulo': "Trasladar Individuo", 'form': form, 'boton': "Trasladar", })
+
+@permission_required('operadores.individuos')
+def cargar_inquilino(request):
+    if hasattr(request, 'redirect'):#Si viene desde la otra vista:
+        ubicacion = request.ubicacion
+        request.method = 'GET'
+        form = InquilinoForm(
+            initial={
+                'num_doc': request.num_doc,
+                'ubicacion': ubicacion,
+                'habitacion': request.habitacion,
+                'fecha': request.fecha,
+            }
+        )
+    #Si nos mando el individuo completo lo creamos e ingresamos
+    if request.method == 'POST':
+        form = InquilinoForm(request.POST)
+        if form.is_valid():
+            #Creamos el individuo
+            individuo = form.save(commit=False)
+            individuo.operador = obtener_operador(request)
+            individuo.save()
+            #Obtenemos la ubicacion
+            ubicacion = form.cleaned_data['ubicacion']
+            #Generamos modelos externos:
+            #Creamos atributos
+            atributos = form.cleaned_data['atributos']
+            individuo.atributos.all().delete()
+            for atributo_id in atributos:
+                atributo = Atributo()
+                atributo.individuo = individuo
+                atributo.tipo = atributo_id
+                atributo.save()           
+            #Creamos sintomas
+            sintomas = form.cleaned_data['sintomas']
+            individuo.sintomas.all().delete()
+            for sintoma_id in sintomas:
+                sintoma = Sintoma()
+                sintoma.individuo = individuo
+                sintoma.tipo = sintoma_id
+                sintoma.save()  
+            #Creamos nuevo domicilio:
+            domicilio = Domicilio(individuo=individuo)
+            domicilio.localidad = ubicacion.localidad
+            domicilio.calle = ubicacion.calle
+            domicilio.numero = ubicacion.numero
+            domicilio.aclaracion = ubicacion.nombre + " (Traslado Via Sistema)"
+            domicilio.aislamiento = True
+            domicilio.ubicacion = ubicacion
+            domicilio.fecha = form.cleaned_data['fecha']
+            domicilio.save()
+            #Creamos Cronologia
+            seguimiento = Seguimiento(individuo=individuo)
+            seguimiento.tipo = 'TA'
+            seguimiento.aclaracion = ubicacion.nombre +' | '+ form.cleaned_data['habitacion']
+            seguimiento.fecha = form.cleaned_data['fecha']
+            seguimiento.save()
+            #Volvemos al aislamiento
+            return redirect('georef:ver_ubicacion', ubicacion_id=ubicacion.id)
+    #Lanzamos formulario
+    return render(request, "cargar_inquilino.html", {
+            'titulo': "Cargar Inquilino",
+            'form': form, 
+            'boton': "Cargar",
+            'ubicacion': ubicacion,
+            'habitacion': request.habitacion,
+            'fecha_ingreso': request.fecha,
+        })
 
 @permission_required('operadores.individuos')
 def ver_individuo(request, individuo_id):

@@ -87,23 +87,26 @@ def aislados(created, instance, **kwargs):
         situacion.conducta = 'E'
         situacion.aclaracion = "Aislado por cambio a locacion de AISLAMIENTO"
         situacion.save()
-        #Creamos seguimiento
-        seguimiento = Seguimiento(individuo=individuo)
-        seguimiento.aclaracion = "Fue Puesto en Aislamiento."
-        seguimiento.save()
+
+#Evolucionamos Estado segun relaciones
+@receiver(post_save, sender=Domicilio)
+def ocupar_capacidad_ubicacion(created, instance, **kwargs):
+    if created and instance.ubicacion: 
+        #Quitamos una plaza disponible:
+        instance.ubicacion.capacidad_ocupada += 1
+        instance.ubicacion.save()
 
 #Evolucionamos Estado segun relaciones
 @receiver(pre_save, sender=Domicilio)
-def recuperar_capacidad(instance, **kwargs):
+def recuperar_capacidad_ubicacion(instance, **kwargs):
     individuo = instance.individuo
-    if not instance.aislamiento:#Si se esta creando un domicilio y no es de aislacion
-        try:
+    try:
+        if individuo.domicilio_actual.aislamiento:#Si estaba en aislamiento
             ubicacion = individuo.domicilio_actual.ubicacion#Si previamente estaba aislado
             ubicacion.capacidad_ocupada -= 1
             ubicacion.save()
-        except:
-            pass#No hacemos nada
-    #Lo sacamos de aislamiento?              
+    except:
+        pass#No hacemos nada            
 
 @receiver(post_save, sender=Relacion)
 def crear_relacion_inversa(created, instance, **kwargs):
@@ -172,7 +175,15 @@ def relacionar_situacion(created, instance, **kwargs):
     #Creamos la relacion inversa
     if created:
         individuo = instance.individuo
-        situ_actual = individuo.situacion_actual
+        if individuo.situacion_actual:
+            situ_actual = individuo.situacion_actual
+        else:
+            sit = Situacion()
+            sit.individuo = individuo
+            sit.aclaracion = "Inicializada por Sistema"
+            sit.save()
+            situ_actual = sit
+        #Obtenemos relacionado
         relacionado = instance.relacionado
         #Si no tenia le creamos
         if not relacionado.situacion_actual:

@@ -50,6 +50,9 @@ urlpatterns = [
     path('cargar/pasajero/<int:traslado_id>/nuevo/<str:num_doc>/', views.cargar_individuo, name='cargar_pasajero_nuevo'),
     path('mod/individuo/<int:individuo_id>', views.cargar_individuo, name='mod_individuo'),
     path('cargar/domicilio/<int:individuo_id>', views.cargar_domicilio, name='cargar_domicilio'),
+    #Turismo
+    path('buscar/inquilino/<int:ubicacion_id>', views.buscar_inquilino, name='buscar_inquilino'),
+    path('nuevo/inquilino/', views.cargar_inquilino, name='cargar_inquilino'),
     #Traslado
     path('traslado/elegir/ubicacion/<int:individuo_id>', views.elegir_ubicacion, name='elegir_ubicacion'),
     path('traslado/elegir/vehiculo/<int:individuo_id>/<int:ubicacion_id>', views.elegir_vehiculo, name='elegir_vehiculo'),

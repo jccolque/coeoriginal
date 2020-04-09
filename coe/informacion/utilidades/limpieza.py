@@ -71,6 +71,17 @@ def limpiar_atributos():
     Atributo.objects.filter(id__in=eliminar).delete()
     print("Se eliminaron", len(eliminar), "Atributos Repetidos.")
 
+def remplazar_esperando_res():
+    for atributo in Atributo.objects.filter(tipo='ER'):
+        seguimiento = Seguimiento()
+        seguimiento.individuo = atributo.individuo
+        seguimiento.tipo = 'ET'
+        seguimiento.fecha = atributo.fecha
+        seguimiento.aclaracion = 'MIGRADO:' + str(atributo.aclaracion)
+        seguimiento.save()
+        atributo.delete()
+
+
 def borrar_appdata():
     AppData.objects.all().delete()
     Individuo.objects.filter(aclaracion="AUTODIAGNOSTICO").delete()

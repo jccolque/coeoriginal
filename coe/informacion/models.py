@@ -65,7 +65,7 @@ class Vehiculo(models.Model):
     identificacion = models.CharField('Identificacion Patente/Codigo', max_length=200, unique=True)
     empresa = models.CharField('Empresa (Si aplica)', max_length=200, null=True, blank=True)
     conductor = models.CharField('Conductor:', max_length=200, null=True, blank=True)
-    plan = HTMLField(verbose_name='Plan de Ruta', null=True, blank=True)
+    aclaracion = HTMLField(verbose_name='Aclaracion', null=True, blank=True)
     def __str__(self):
         return self.get_tipo_display() + ': ' + self.identificacion
     def as_dict(self):
@@ -205,8 +205,8 @@ class GeoPosicion(models.Model):
 #Extras
 class SignosVitales(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="signos_vitales")
-    tension_diastolica = models.IntegerField('Tension Diastolica')
     tension_sistolica = models.IntegerField('Tension Sistolica')
+    tension_diastolica = models.IntegerField('Tension Diastolica')
     frec_cardiaca = models.IntegerField('Frecuencia Cardiaca')
     frec_respiratoria = models.IntegerField('Frecuencia Respiratoria')
     temperatura = models.DecimalField('Temperatura', max_digits=4, decimal_places=2)
@@ -385,7 +385,8 @@ from .signals import relacion_vehiculo
 from .signals import relacionar_situacion
 from .signals import afectar_relacionados
 from .signals import aislados
-from .signals import recuperar_capacidad
+from .signals import ocupar_capacidad_ubicacion
+from .signals import recuperar_capacidad_ubicacion
 from .signals import cargo_signosvitales
 from .signals import cargo_documento
 

@@ -8,6 +8,7 @@ from . import ws_apis as ws_apis
 app_name = 'api_urls'
 urlpatterns = [
     #App
+    path('config', app_apis.AppConfig, name='AppConfig'),
     path('registro', app_apis.registro_covidapp, name='registro_covidapp'),
     path('encuesta', app_apis.encuesta_covidapp, name='encuesta_covidapp'),
     path('temperatura', app_apis.temperatura_covidapp, name='temperatura_covidapp'),

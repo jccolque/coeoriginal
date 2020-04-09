@@ -9,7 +9,7 @@ from dal import autocomplete
 #Imports del proyecto
 from coe.settings import SECRET_KEY
 from core.widgets import XDSoftDatePickerInput, XDSoftDateTimePickerInput
-from georef.models import Localidad
+from georef.models import Localidad, Ubicacion
 #Imports de la app
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
 from .models import Vehiculo, TrasladoVehiculo
@@ -58,6 +58,8 @@ class IndividuoForm(forms.ModelForm):
     dom_calle = forms.CharField(required=False, )
     dom_numero = forms.CharField(required=False, )
     dom_aclaracion = forms.CharField(required=False, )
+    dom_fecha = forms.DateTimeField(required=False)
+    dom_aislamiento = forms.BooleanField(required=False, initial=False)
     atributos = forms.MultipleChoiceField(
         choices=TIPO_ATRIBUTO,
         widget=CheckboxSelectMultiple(attrs={'class':'multiplechoice',}),
@@ -67,6 +69,37 @@ class IndividuoForm(forms.ModelForm):
         choices=TIPO_SINTOMA,
         widget=CheckboxSelectMultiple(attrs={'class':'multiplechoice',}),
         required=False
+    )
+    class Meta:
+        model = Individuo
+        fields= '__all__'
+        widgets = {
+            'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
+            'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
+            'origen': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
+            'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+            #Oculto
+            'dom_fecha': forms.HiddenInput(),
+            'dom_aislamiento': forms.HiddenInput(),
+            'dom_ubicacion': forms.HiddenInput(),
+        }
+
+class InquilinoForm(forms.ModelForm):
+    atributos = forms.MultipleChoiceField(
+        choices=TIPO_ATRIBUTO,
+        widget=CheckboxSelectMultiple(attrs={'class':'multiplechoice',}),
+        required=False
+    )
+    sintomas = forms.MultipleChoiceField(
+        choices=TIPO_SINTOMA,
+        widget=CheckboxSelectMultiple(attrs={'class':'multiplechoice',}),
+        required=False
+    )
+    ubicacion = forms.ModelChoiceField(queryset=Ubicacion.objects.all(), required=True)
+    habitacion = forms.CharField(label="Habitacion", required=True)
+    fecha = forms.DateTimeField(label="Fecha Ingreso", required=True, 
+        initial=timezone.now(),
+        widget=XDSoftDateTimePickerInput()
     )
     class Meta:
         model = Individuo
@@ -120,6 +153,15 @@ class SearchVehiculoForm(forms.Form):
 class SearchIndividuoForm(forms.Form):
     num_doc = forms.CharField(label="Documento/Pasaporte", required=True)
 
+class TrasladarIndividuoForm(forms.Form):
+    ubicacion = forms.ModelChoiceField(queryset=Ubicacion.objects.filter(tipo__in=('AI', 'IN')),)
+    num_doc = forms.CharField(label="Documento/Pasaporte", required=True)
+    habitacion = forms.CharField(label="Habitacion", required=True)
+    fecha = forms.DateTimeField(label="Fecha Ingreso", required=True, 
+        initial=timezone.now(),
+        widget=XDSoftDateTimePickerInput()
+    )
+
 class DomicilioForm(forms.ModelForm):
     class Meta:
         model = Domicilio
@@ -148,7 +190,7 @@ class SignosVitalesForm(forms.ModelForm):
         }
     def __init__(self, *args, **kwargs):
         self.nolabel = ['', ]
-        self.alinear = [('tension_diastolica', 'tension_sistolica'), ]
+        self.alinear = [('tension_sistolica', 'tension_diastolica'), ]
         super(SignosVitalesForm, self).__init__(*args, **kwargs)
 
 class SeguimientoForm(forms.ModelForm):
