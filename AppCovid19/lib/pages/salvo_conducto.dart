@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:covidjujuy_app/src/bloc/provider.dart';
 import 'package:covidjujuy_app/src/model/localidad_model.dart';
+import 'package:covidjujuy_app/src/model/registro_avanzado_model.dart';
 import 'package:covidjujuy_app/src/model/view_localidad_model.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SalvoConducto extends StatefulWidget {
   @override
@@ -28,6 +30,8 @@ class _SalvoConductoState extends State<SalvoConducto> {
   final aclaracionController = TextEditingController();
   final numeroController = TextEditingController();
   final calleController = TextEditingController();
+
+  bool _separadoAislado = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _typeAheadController = TextEditingController();
@@ -200,6 +204,8 @@ class _SalvoConductoState extends State<SalvoConducto> {
                 SizedBox(height: 10.0),
                 _crearFecha(),
                 SizedBox(height: 10.0),
+                _crearSeparadoAislado(),
+                SizedBox(height: 10.0),
                 _crearBoton(),
               ],
             ),
@@ -342,6 +348,28 @@ class _SalvoConductoState extends State<SalvoConducto> {
     );
   }
 
+  Widget _crearSeparadoAislado() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 50.0),
+      child: Container(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text("Separado/Aislamiento"),
+            Checkbox(
+              value: _separadoAislado,
+              onChanged: (bool value) {
+                setState(() {
+                  _separadoAislado = value;
+                });
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<Null> _selectDate(BuildContext context) async {
     DateFormat dateFormat = DateFormat("dd/MM/yyyy");
     DateTime now = DateTime.now();
@@ -395,18 +423,56 @@ class _SalvoConductoState extends State<SalvoConducto> {
       textColor: Colors.white,
 //      onPressed: snapshot.hasData ? () => _login(bloc, context) : null,
       onPressed: (){
-        print(_localidad);
-        print(fechaController.text);
-        print(aclaracionController.text);
-        print(numeroController.text);
-        print(calleController.text);
-        print(image.toString());
-        List<int> imageBytes = image.readAsBytesSync();
-        print(imageBytes);
-        String base64Image = base64Encode(imageBytes);
-        print(base64Image);
+        _getDniFromSharedPref().then( (dni) {
+          DateTime auxdate = DateTime.now();
+          DateTime newDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, auxdate.hour, auxdate.minute);
+
+          List<int> imageBytes = image.readAsBytesSync();
+          print(imageBytes.toString());
+          String base64Image = base64Encode(imageBytes);
+          DateFormat dateFormat = DateFormat("yyyyMMdd HHmm");
+          String formattedDate = dateFormat.format(newDate);
+          final form = RegistroAvanzadoModel(
+              localidad: _localidad,
+              calle: calleController.text,
+              numero: int.parse(numeroController.text),
+              aclaraciones: aclaracionController.text,
+              fechaRegistro: formattedDate,
+              separadoAislamiento: _separadoAislado,
+              imagen: base64Image,
+              dni: dni
+          );
+//          print(json.encode(form.toJson()));
+        print(form.imagen);
+//        envioRegistroAvanzado(form);
+        });
       },
     );
+  }
+
+  Future<int> _getDniFromSharedPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final startupDniNumber = prefs.getInt('savedDniNumber');
+    print('DNI OBTENIDO');
+    print(startupDniNumber);
+    return startupDniNumber;
+  }
+
+  Future<String> envioRegistroAvanzado( RegistroAvanzadoModel registroAvanzadoModel ) async {
+
+    HttpClient httpClient = HttpClient();
+    HttpClientRequest request = await httpClient.postUrl(Uri.parse('http:// coe.jujuy.gob.ar/covid19/registro_avanzado'));
+    request.headers.set('content-type', 'application/json');
+    request.add(utf8.encode(json.encode(registroAvanzadoModel)));
+    HttpClientResponse response = await request.close();
+    print(response.statusCode);
+    if(response.statusCode == 200){
+      String reply = await response.transform(utf8.decoder).join();
+      httpClient.close();
+      return reply;
+    } else {
+      return null;
+    }
   }
 }
 
