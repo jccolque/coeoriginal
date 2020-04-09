@@ -73,6 +73,7 @@ class IndividuoForm(forms.ModelForm):
     class Meta:
         model = Individuo
         fields= '__all__'
+        exclude = ('fotografia', 'qrpath', )
         widgets = {
             'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
             'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
@@ -104,6 +105,7 @@ class InquilinoForm(forms.ModelForm):
     class Meta:
         model = Individuo
         fields= '__all__'
+        exclude = ('fotografia', 'qrpath', )
         widgets = {
             'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
             'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),

@@ -1,16 +1,17 @@
 #Imports de python
-
+import qrcode
 #Realizamos imports de Django
 from django.db import models
 from django.utils import timezone
+from django.core.validators import RegexValidator
 #Imports de paquetes extras
 from auditlog.registry import auditlog
 from tinymce.models import HTMLField
-from django.core.validators import RegexValidator
 #Imports del proyecto:
 from coe.constantes import NOIMAGE
-from core.choices import TIPO_DOCUMENTOS, TIPO_SEXO
+from coe.settings import MEDIA_ROOT
 from operadores.models import Operador
+from core.choices import TIPO_DOCUMENTOS, TIPO_SEXO
 from georef.models import Nacionalidad, Localidad, Ubicacion
 #Imports de la app
 from .choices import TIPO_IMPORTANCIA, TIPO_ARCHIVO
@@ -98,6 +99,7 @@ class Individuo(models.Model):
     destino = models.ForeignKey(Localidad, on_delete=models.SET_NULL, null=True, blank=True, related_name="individuos_destino")
     observaciones = HTMLField(null=True, blank=True)
     fotografia = models.FileField('Fotografia', upload_to='informacion/individuos/', null=True, blank=True)
+    qrpath = models.CharField('qrpath', max_length=100, null=True, blank=True)
     #Actuales
     situacion_actual = models.OneToOneField('Situacion', on_delete=models.SET_NULL, related_name="situacion_actual", null=True, blank=True)
     domicilio_actual = models.OneToOneField('Domicilio', on_delete=models.SET_NULL, related_name="domicilio_actual", null=True, blank=True)
@@ -134,6 +136,17 @@ class Individuo(models.Model):
             return self.fotografia.url
         else:
             return NOIMAGE
+    def get_qr(self):
+        if self.qrpath:
+            return self.qrpath
+        else:
+            path = MEDIA_ROOT + '/informacion/individuos/qrcode-'+ str(self.num_doc)+'.png'
+            img = qrcode.make(str(self.id)+'-'+self.num_doc)
+            img.save(path)
+            relative_path = '/archivos/informacion/individuos/qrcode-'+ str(self.num_doc)+'.png'
+            self.qrpath = relative_path
+            self.save()
+            return self.qrpath
 
 class Relacion(models.Model):#Origen del Dato
     tipo = models.CharField('Tipo Relacion', choices=TIPO_RELACION, max_length=2, default='F')

@@ -15,6 +15,7 @@ from django.views.decorators.http import require_http_methods
 from operadores.models import Operador
 from georef.models import Nacionalidad, Localidad
 #Imports de la app
+from .choices import TIPO_PERMISO
 from .models import Individuo, AppData, Domicilio, GeoPosicion
 from .models import Atributo, Sintoma, Situacion, Seguimiento
 from .tokens import TokenGenerator
@@ -148,10 +149,39 @@ def AppConfig(request):
                     'alerta_mensaje': 'Alerta, usted se ha alejado por mas de 50 metros del punto fijado.',
                     'critico_distancia': 100,
                     'critico_mensaje': 'Usted se ha alejado mas de 100 metros del punto fijado, las fuerzas de seguridad estan siendo informadas.',
-                }
+                },
+            },
+            #Salvoconducto Digital
+            "salvoconducto":
+            {
+                "url": reverse("api_urls:salvoconducto"),
+                "fields":
+                {
+                    "dni_individuo": "str",
+                    "token": "str: Obtenido en respuesta registro",
+                    "tipo_permiso": "str(1):id de TIPO_PERMISO",
+                    "fecha_ideal": "str: YYYYMMDD",
+                    "hora_ideal": "str: HHMM",
+                },
+                "fields_response": 
+                {
+                    "action": "salvoconducto",
+                    "realizado": "bool",
+                    "fecha": "datefield",
+                    "hora_inicio": "timefield",
+                    "hora_fin": "str: timefield",
+                    "imagen": "url",
+                    "qr": "url",
+                    "texto": "str: leyenda de permiso autorizado",
+                    "error": "str (Solo si hay errores/rechaza pedido)",
+                },
+                "parametros":
+                {
+                    'TIPO_PERMISO': TIPO_PERMISO,
+                },
             },
         },
-        safe=False
+        safe=False,
     )
 
 @csrf_exempt
@@ -509,3 +539,57 @@ def tracking(request):
             safe=False,
             status=400,
         )
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def salvoconducto(request):
+    try:
+        data = None
+        #Recibimos el json
+        data = json.loads(request.body.decode("utf-8"))
+        logger.info("salvoconducto:"+str(timezone.now())+"|"+str(data))
+        #Agarramos el dni
+        num_doc = str(data["dni"]).upper()
+        #Buscamos al individuo en la db
+        individuo = Individuo.objects.select_related('appdata').get(num_doc=num_doc)
+        #ACA CHEQUEAMOS TOKEN
+
+        #Obtenemos datos del pedido de permiso:
+        permiso = data["tipo_permiso"]
+        fecha = timezone.datetime(
+            int(data["fecha_ideal"][0:4]),
+            int(data["fecha_ideal"][4:6]),
+            int(data["fecha_ideal"][6:8]),
+            int(data["hora_ideal"][0:2]),
+            int(data["hora_ideal"][2:4]),
+        )
+        #Validamos si es factible:
+            #REALIZAR TODA LA LOGICA
+            #POR AHORA RESPONDE PERMISO
+        #Si todo salio bien
+        logger.info("Exito")
+        return JsonResponse(
+            {
+                "action": "salvoconducto",
+                "realizado": True,
+                "fecha": str(timezone.now().date()),
+                "hora_inicio": str(timezone.now().time()),
+                "hora_fin": str(timezone.now().time()),
+                "imagen": individuo.get_foto(),
+                "qr": individuo.get_qr(),
+                "texto": "Aprobado sin validacion, para test.",
+
+            },
+            safe=False
+        )
+    except Exception as e:
+        logger.info("Falla: "+str(e))
+        return JsonResponse(
+            {
+                "action":"salvoconducto",
+                "realizado": False,
+                "error": str(e),
+            },
+            safe=False,
+            status=400,
+        )        
