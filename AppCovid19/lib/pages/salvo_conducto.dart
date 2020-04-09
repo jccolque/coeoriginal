@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:covidjujuy_app/src/bloc/provider.dart';
+import 'package:covidjujuy_app/src/model/imagen_perfil_model.dart';
 import 'package:covidjujuy_app/src/model/localidad_model.dart';
 import 'package:covidjujuy_app/src/model/registro_avanzado_model.dart';
 import 'package:covidjujuy_app/src/model/view_localidad_model.dart';
@@ -51,8 +52,8 @@ class _SalvoConductoState extends State<SalvoConducto> {
         ],
       ),
 
-      floatingActionButton: cameraButton(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+//      floatingActionButton: cameraButton(),
+//      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
 
     );
   }
@@ -89,20 +90,7 @@ class _SalvoConductoState extends State<SalvoConducto> {
         Positioned( top: -40.0, left: -30.0, child: circulo),
         Positioned( bottom: -50.0, right: -10.0, child: circulo),
         Positioned( bottom: 120.0, right: 20.0, child: circulo),
-        Positioned( bottom: -50.0, left: -20.0, child: circulo),
-
-        Container(
-          padding: EdgeInsets.only(top: 5.0),
-          child: Column(
-            children: <Widget>[
-              image == null ? Icon(Icons.account_circle, color: Colors.white, size: 100.0)
-              : _imagenCapturada( context ),
-              SizedBox(height: 10.0, width: double.infinity,),
-//              Text('Juan Manuel Lopez', style: TextStyle(color: Colors.white, fontSize: 25.0),),
-
-            ],
-          ),
-        )
+        Positioned( bottom: -50.0, left: -20.0, child: circulo)
       ],
     );
   }
@@ -123,7 +111,7 @@ class _SalvoConductoState extends State<SalvoConducto> {
         picker();
       },
       child:  Icon(
-        Icons.camera,
+        Icons.camera_enhance,
         color: Colors.blue,
         size: 35.0,
       ),
@@ -137,10 +125,10 @@ class _SalvoConductoState extends State<SalvoConducto> {
   Widget _imagenCapturada(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Container(
-      width: size.width * 0.4,
-      height: size.width * 0.4,
-      margin: EdgeInsets.symmetric(vertical: 5.0),
-      padding: EdgeInsets.symmetric(vertical: 5.0),
+      width: size.width * 0.6,
+      height: size.width * 0.6,
+      margin: EdgeInsets.symmetric(vertical: 10.0),
+      padding: EdgeInsets.symmetric(vertical: 10.0),
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10.0),
@@ -171,7 +159,7 @@ class _SalvoConductoState extends State<SalvoConducto> {
         children: <Widget>[
           SafeArea(
             child: Container(
-              height: 128.0,
+//              height: 5.0,
             ),
           ),
           Container(
@@ -192,25 +180,38 @@ class _SalvoConductoState extends State<SalvoConducto> {
             ),
             child: Column(
               children: <Widget>[
+                Container(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child: Column(
+                    children: <Widget>[
+                      image == null ? Icon(Icons.account_circle, color: Colors.blue, size: 100.0)
+                          : _imagenCapturada( context ),
+                      SizedBox(height: 10.0, width: double.infinity,),
+//              Text('Juan Manuel Lopez', style: TextStyle(color: Colors.white, fontSize: 25.0),),
+
+                    ],
+                  ),
+                ),
 //                Text('Ingreso', style: TextStyle(fontSize: 20.0),),
 //                SizedBox(height: 10.0),
-                _crearLocalidadAutocomplete( context ),
+//                _crearLocalidadAutocomplete( context ),
+//                SizedBox(height: 10.0),
+//                _crearCalle(),
+//                SizedBox(height: 10.0),
+//                _crearNumero(),
+//                SizedBox(height: 10.0),
+//                _crearAclaracion(),
+//                SizedBox(height: 10.0),
+//                _crearFecha(),
+                cameraButton(),
                 SizedBox(height: 10.0),
-                _crearCalle(),
-                SizedBox(height: 10.0),
-                _crearNumero(),
-                SizedBox(height: 10.0),
-                _crearAclaracion(),
-                SizedBox(height: 10.0),
-                _crearFecha(),
-                SizedBox(height: 10.0),
-                _crearSeparadoAislado(),
+//                _crearSeparadoAislado(),
                 SizedBox(height: 10.0),
                 _crearBoton(),
               ],
             ),
           ),
-          SizedBox(height: 100.0)
+//          SizedBox(height: 100.0)
         ],
       ),
     );
@@ -421,30 +422,18 @@ class _SalvoConductoState extends State<SalvoConducto> {
       elevation: 0.0,
       color: Colors.lightBlue,
       textColor: Colors.white,
-//      onPressed: snapshot.hasData ? () => _login(bloc, context) : null,
       onPressed: (){
         _getDniFromSharedPref().then( (dni) {
-          DateTime auxdate = DateTime.now();
-          DateTime newDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, auxdate.hour, auxdate.minute);
-
           List<int> imageBytes = image.readAsBytesSync();
           print(imageBytes.toString());
           String base64Image = base64Encode(imageBytes);
-          DateFormat dateFormat = DateFormat("yyyyMMdd HHmm");
-          String formattedDate = dateFormat.format(newDate);
-          final form = RegistroAvanzadoModel(
-              localidad: _localidad,
-              calle: calleController.text,
-              numero: int.parse(numeroController.text),
-              aclaraciones: aclaracionController.text,
-              fechaRegistro: formattedDate,
-              separadoAislamiento: _separadoAislado,
+          final form = ImagenPerfilModel(
               imagen: base64Image,
               dni: dni
           );
 //          print(json.encode(form.toJson()));
         print(form.imagen);
-//        envioRegistroAvanzado(form);
+        envioRegistroAvanzado(form);
         });
       },
     );
@@ -453,17 +442,17 @@ class _SalvoConductoState extends State<SalvoConducto> {
   Future<int> _getDniFromSharedPref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final startupDniNumber = prefs.getInt('savedDniNumber');
-    print('DNI OBTENIDO');
+    print('startupDniNumber');
     print(startupDniNumber);
     return startupDniNumber;
   }
 
-  Future<String> envioRegistroAvanzado( RegistroAvanzadoModel registroAvanzadoModel ) async {
+  Future<String> envioRegistroAvanzado( ImagenPerfilModel imagenPerfilModel ) async {
 
     HttpClient httpClient = HttpClient();
-    HttpClientRequest request = await httpClient.postUrl(Uri.parse('http:// coe.jujuy.gob.ar/covid19/registro_avanzado'));
+    HttpClientRequest request = await httpClient.postUrl(Uri.parse('http://coe.jujuy.gob.ar/covid19/foto_perfil'));
     request.headers.set('content-type', 'application/json');
-    request.add(utf8.encode(json.encode(registroAvanzadoModel)));
+    request.add(utf8.encode(json.encode(imagenPerfilModel)));
     HttpClientResponse response = await request.close();
     print(response.statusCode);
     if(response.statusCode == 200){
