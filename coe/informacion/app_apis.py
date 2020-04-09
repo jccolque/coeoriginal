@@ -26,6 +26,7 @@ def registro_covidapp(request):
         #Registramos ingreso de info
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
+        logger.info('registro_covidapp:'+str(timezone.now())+'|'+str(data))
         #Obtenemos datos basicos:
         nac = Nacionalidad.objects.filter(nombre__icontains="Argentina").first()
         #Agarramos el dni
@@ -65,6 +66,7 @@ def registro_covidapp(request):
         domicilio.aclaracion = "AUTODIAGNOSTICO"
         domicilio.save()
         #Respondemos que fue procesado
+        logger.info('Exito!')
         return JsonResponse(
             {
                 "action":"registro",
@@ -74,6 +76,7 @@ def registro_covidapp(request):
             safe=False
         )
     except Exception as e:
+        logger.info('Falla: '+str(e))
         return JsonResponse(
             {
                 "action":"registro",
@@ -92,6 +95,7 @@ def encuesta_covidapp(request):
         #Registramos ingreso de info
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
+        logger.info('encuesta_covidapp:'+str(timezone.now())+'|'+str(data))
         #Agarramos el dni
         num_doc = str(data["dni"]).upper()
         #Buscamos al individuo en la db
@@ -137,6 +141,7 @@ def encuesta_covidapp(request):
             geopos.longitud = data["longitud"]
             geopos.aclaracion = "AUTODIAGNOSTICO"
             geopos.save()
+        logger.info('Exito!')
         return JsonResponse(
             {
                 "action":"encuesta",
@@ -145,6 +150,7 @@ def encuesta_covidapp(request):
             safe=False
         )
     except Exception as e:
+        logger.info('Falla: '+str(e))
         return JsonResponse(
             {
                 "action":"encuesta",
@@ -162,6 +168,7 @@ def temperatura_covidapp(request):
         data = None
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
+        logger.info('temperatura_covidapp:'+str(timezone.now())+'|'+str(data))
         #Agarramos el dni
         num_doc = str(data["dni"]).upper()
         #Buscamos al individuo en la db
@@ -174,6 +181,7 @@ def temperatura_covidapp(request):
         seguimiento.tipo = 'A'
         seguimiento.aclaracion = "AUTODIAGNOSTICO - Temp:" + str(data["temperatura"])
         seguimiento.save()
+        logger.info('Exito!')
         return JsonResponse(
             {
                 "action":"temperatura",
@@ -182,6 +190,7 @@ def temperatura_covidapp(request):
             safe=False
         )
     except Exception as e:
+        logger.info('Falla: '+str(e))
         return JsonResponse(
             {
                 "action":"temperatura",
@@ -199,6 +208,7 @@ def start_tracking_covidapp(request):
         data = None
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
+        logger.info('start_tracking_covidapp:'+str(timezone.now())+'|'+str(data))
         #Agarramos el dni
         num_doc = str(data["dni_individuo"]).upper()
         #Buscamos al individuo en la db
@@ -235,6 +245,7 @@ def start_tracking_covidapp(request):
         seguimiento.aclaracion = "INICIO TRACKING: " + str(geopos.latitud)+', '+str(geopos.longitud)
         seguimiento.save()
         #Respondemos
+        logger.info('Exito!')
         return JsonResponse(
             {
                 "action":"start_tracking",
@@ -243,6 +254,7 @@ def start_tracking_covidapp(request):
             safe=False
         )
     except Exception as e:
+        logger.info('Falla: '+str(e))
         return JsonResponse(
             {
                 "action":"start_tracking",
@@ -260,6 +272,7 @@ def tracking_covidapp(request):
         data = None
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
+        logger.info('tracking_covidapp:'+str(timezone.now())+'|'+str(data))
         #Agarramos el dni
         num_doc = str(data["dni"]).upper()
         #Buscamos al individuo en la db
@@ -282,6 +295,7 @@ def tracking_covidapp(request):
         geopos.save()
         #Controlamos posicion:
         distancia = controlar_distancia(geopos)
+        logger.info('Exito')
         return JsonResponse(
             {
                 "action":"tracking",
@@ -291,6 +305,7 @@ def tracking_covidapp(request):
             safe=False
         )
     except Exception as e:
+        logger.info('Falla: '+str(e))
         return JsonResponse(
             {
                 "action":"tracking",
