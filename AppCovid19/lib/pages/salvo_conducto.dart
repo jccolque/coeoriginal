@@ -6,11 +6,11 @@ import 'package:covidjujuy_app/src/model/localidad_model.dart';
 import 'package:covidjujuy_app/src/model/view_localidad_model.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-
 import 'package:http/http.dart' as http;
-
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:intl/intl.dart';
 
 class SalvoConducto extends StatefulWidget {
   @override
@@ -21,25 +21,35 @@ class _SalvoConductoState extends State<SalvoConducto> {
   File image;
 
   TextEditingController controller = TextEditingController();
-  String _selectedCity;
+
+  String _localidad;
+  DateTime selectedDate = DateTime.now();
+  final fechaController = TextEditingController();
+  final aclaracionController = TextEditingController();
+  final numeroController = TextEditingController();
+  final calleController = TextEditingController();
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _typeAheadController = TextEditingController();
-
-  void _loadData() async {
-    await ViewLocalidadModel.loadPlayers();
-  }
 
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Solicitud de permiso"),
+      ),
       body: Stack(
+
         children: <Widget>[
           _crearFondo( context ),
-          _loginForm( context ) ,
+          _permisoForm( context ) ,
         ],
       ),
+
       floatingActionButton: cameraButton(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+
     );
   }
 
@@ -78,7 +88,7 @@ class _SalvoConductoState extends State<SalvoConducto> {
         Positioned( bottom: -50.0, left: -20.0, child: circulo),
 
         Container(
-          padding: EdgeInsets.only(top: 30.0),
+          padding: EdgeInsets.only(top: 5.0),
           child: Column(
             children: <Widget>[
               image == null ? Icon(Icons.account_circle, color: Colors.white, size: 100.0)
@@ -109,7 +119,7 @@ class _SalvoConductoState extends State<SalvoConducto> {
         picker();
       },
       child:  Icon(
-        Icons.camera_front,
+        Icons.camera,
         color: Colors.blue,
         size: 35.0,
       ),
@@ -129,24 +139,24 @@ class _SalvoConductoState extends State<SalvoConducto> {
       padding: EdgeInsets.symmetric(vertical: 5.0),
       decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(5.0),
+          borderRadius: BorderRadius.circular(10.0),
           boxShadow: <BoxShadow> [
             BoxShadow(
                 color: Colors.black26,
-                blurRadius: 3.0,
+                blurRadius: 10.0,
                 offset: Offset(0.0, 5.0),
                 spreadRadius: 3.0
             )
           ]
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(50.0),
+        borderRadius: BorderRadius.circular(20.0),
         child: Image.file(image),
       ),
     );
   }
 
-  Widget _loginForm(BuildContext context) {
+  Widget _permisoForm(BuildContext context) {
 
 //    final bloc = Provider.of(context);
 
@@ -157,14 +167,13 @@ class _SalvoConductoState extends State<SalvoConducto> {
         children: <Widget>[
           SafeArea(
             child: Container(
-              height: 180.0,
+              height: 128.0,
             ),
           ),
-
           Container(
             width: size.width * 0.85,
             margin: EdgeInsets.symmetric(vertical: 30.0),
-            padding: EdgeInsets.symmetric(vertical: 50.0),
+            padding: EdgeInsets.symmetric(vertical: 20.0),
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(5.0),
@@ -179,13 +188,19 @@ class _SalvoConductoState extends State<SalvoConducto> {
             ),
             child: Column(
               children: <Widget>[
-                Text('Ingreso', style: TextStyle(fontSize: 20.0),),
-                SizedBox(height: 60.0),
+//                Text('Ingreso', style: TextStyle(fontSize: 20.0),),
+//                SizedBox(height: 10.0),
                 _crearLocalidadAutocomplete( context ),
-                SizedBox(height: 30.0),
-//                _crearPassword( bloc ),
-                SizedBox(height: 30.0),
-//                _crearBoton( bloc ),
+                SizedBox(height: 10.0),
+                _crearCalle(),
+                SizedBox(height: 10.0),
+                _crearNumero(),
+                SizedBox(height: 10.0),
+                _crearAclaracion(),
+                SizedBox(height: 10.0),
+                _crearFecha(),
+                SizedBox(height: 10.0),
+                _crearBoton(),
               ],
             ),
           ),
@@ -225,31 +240,123 @@ class _SalvoConductoState extends State<SalvoConducto> {
                 return suggestionsBox;
               },
               onSuggestionSelected: (suggestion) {
+                print('suggestion');
+                print(suggestion);
                 this._typeAheadController.text = suggestion;
+                setState(() => this._localidad = suggestion);
               },
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Por favor seleccione una localidad';
                 }
               },
-              onSaved: (value) => this._selectedCity = value,
+              onSaved: (value) => this._localidad = value,
             ),
-            SizedBox(height: 10.0,),
-            RaisedButton(
-              child: Text('Submit'),
-              onPressed: () {
-                if (this._formKey.currentState.validate()) {
-                  this._formKey.currentState.save();
-                  Scaffold.of(context).showSnackBar(SnackBar(
-                      content: Text('Your Favorite City is ${this._selectedCity}')
-                  ));
-                }
-              },
-            )
           ],
         ),
       )
     );
+  }
+
+  Widget _crearCalle() {
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20.0),
+      child: TextField(
+        controller: calleController,
+        decoration: InputDecoration(
+            labelText: 'Calle',
+        ),
+//        onChanged: ( value ) => bloc.changePassword(value),
+      ),
+    );
+  }
+
+  Widget _crearNumero() {
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20.0),
+      child: TextField(
+        controller: numeroController,
+        keyboardType: TextInputType.number,
+        inputFormatters: [
+          WhitelistingTextInputFormatter.digitsOnly
+        ],
+        decoration: InputDecoration(
+//          icon: Icon(Icons.format_list_numbered, color: Colors.deepPurple,),
+          labelText: 'Número',
+        ),
+//        onChanged: ( value ) => bloc.changePassword(value),
+      ),
+    );
+  }
+
+  Widget _crearAclaracion() {
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20.0),
+      child: TextField(
+        controller: aclaracionController,
+        decoration: InputDecoration(
+//          icon: Icon(Icons.format_list_numbered, color: Colors.deepPurple,),
+          labelText: 'Aclaraciones',
+        ),
+//        onChanged: ( value ) => bloc.changePassword(value),
+      ),
+    );
+  }
+
+  Widget _crearFecha() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20.0),
+      child: Container(
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+              flex: 3,
+              child: Container(
+                child: TextField(
+                  controller: fechaController,
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Container(
+                child: RaisedButton(
+                  textColor: Colors.white,
+                  color: Theme.of(context).primaryColor,
+                  child: Icon(Icons.calendar_today),
+                  onPressed: () =>  _selectDate(context),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                ),
+              ),
+            ),//
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<Null> _selectDate(BuildContext context) async {
+    DateFormat dateFormat = DateFormat("dd/MM/yyyy");
+    DateTime now = DateTime.now();
+    String formattedDate = dateFormat.format(now);
+    DateTime dateTime = dateFormat.parse(formattedDate);
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: dateTime,
+        lastDate: DateTime(2023));
+    if (picked != null && picked != selectedDate)
+      setState(() {
+        selectedDate = picked;
+        fechaController.text = dateFormat.format(selectedDate);
+      });
   }
 
   Future<List<String>> fetchPost(String filtro) async {
@@ -271,6 +378,35 @@ class _SalvoConductoState extends State<SalvoConducto> {
       // Si esta respuesta no fue OK, lanza un error.
       throw Exception('Failed to load post');
     }
+  }
+
+  Widget _crearBoton( ) {
+
+    return RaisedButton(
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
+        child: Text('Enviar'),
+      ),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5.0)
+      ),
+      elevation: 0.0,
+      color: Colors.lightBlue,
+      textColor: Colors.white,
+//      onPressed: snapshot.hasData ? () => _login(bloc, context) : null,
+      onPressed: (){
+        print(_localidad);
+        print(fechaController.text);
+        print(aclaracionController.text);
+        print(numeroController.text);
+        print(calleController.text);
+        print(image.toString());
+        List<int> imageBytes = image.readAsBytesSync();
+        print(imageBytes);
+        String base64Image = base64Encode(imageBytes);
+        print(base64Image);
+      },
+    );
   }
 }
 
