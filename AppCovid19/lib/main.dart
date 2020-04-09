@@ -1,13 +1,23 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:isolate';
+import 'dart:ui';
+import 'package:background_locator/location_dto.dart';
+import 'package:background_locator/location_settings.dart';
+import 'package:covidjujuy_app/pages/salvo_conducto.dart';
 import 'package:covidjujuy_app/ui/formulario.dart';
 import 'package:covidjujuy_app/ui/temperatura.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gps/gps.dart';
+import 'package:intl/intl.dart';
 import 'ui/cuestionario.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import 'package:background_locator/background_locator.dart';
 
 void main() => runApp(MyApp());
 
@@ -19,6 +29,7 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         '/cuestionario': (BuildContext context) => CuestionarioPage(),
         '/formulario': (BuildContext context) => FormularioPage(),
+        '/salvoconducto': (BuildContext context) => SalvoConducto(),
         '/main': (BuildContext context) => MyApp(),
       },
       home: MyLoginPage(),
@@ -35,13 +46,22 @@ class MyLoginPage extends StatefulWidget {
 class _MyLoginPageState extends State<MyLoginPage> {
   Future<void> launched;
   String _coelaunchUrl = 'http://coe.jujuy.gob.ar';
-  String _minsSaludlaunUrl =
-      'https://www.argentina.gob.ar/salud/coronavirus-COVID-19';
+  String _minsSaludlaunUrl = 'https://www.argentina.gob.ar/salud/coronavirus-COVID-19';
 
   bool _termCondAceptados = false;
   bool _locationUp = false;
   int _dni = 0;
   bool _loaded = false;
+  ReceivePort port = ReceivePort();
+
+  String logStr = '';
+  bool isRunning;
+  LocationDto lastLocation;
+  DateTime lastTimeLocation;
+  static const String _isolateName = 'LocatorIsolate';
+
+  String _dniOperador  = '';
+  String _password = '';
 
   @override
   void initState() {
@@ -49,6 +69,18 @@ class _MyLoginPageState extends State<MyLoginPage> {
     //_getDniFromSharedPref();
     //_cleanSharedPreferences();
     super.initState();
+    if (IsolateNameServer.lookupPortByName(_isolateName) != null) {
+      IsolateNameServer.removePortNameMapping(_isolateName);
+    }
+
+    IsolateNameServer.registerPortWithName(port.sendPort, _isolateName);
+
+    port.listen(
+      (dynamic data) async {
+        await updateUI(data);
+      },
+    );
+    initPlatformState();
   }
 
   @override
@@ -56,6 +88,9 @@ class _MyLoginPageState extends State<MyLoginPage> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
     ));
+
+
+
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -71,7 +106,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
                   )),
               height: MediaQuery.of(context).size.height,
               child: Container(
-                child: build_child(),
+                child: build_child( context ),
               )
           ),
         ),
@@ -97,7 +132,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
    );*/
   }
 
-  Widget build_child() {
+  Widget build_child( BuildContext context ) {
     if(_loaded)
       {
          return SingleChildScrollView(
@@ -220,6 +255,69 @@ class _MyLoginPageState extends State<MyLoginPage> {
                                },
                                child: Text(
                                  'Información oficial COE',
+                                 textAlign: TextAlign.center,
+                                 style: TextStyle(
+                                     color: Colors.black,
+                                     fontSize: 22.0,
+                                     fontWeight: FontWeight.bold,
+                                     fontFamily: 'Montserrat'),
+                               ),
+                             ),
+                           ),
+                         ),
+                         SizedBox(height: 20.0),
+                         Container(
+                           child: Center(
+                             child: RaisedButton(
+                               padding: EdgeInsets.only(
+                                   top: 10.0,
+                                   bottom: 10.0,
+                                   left: 60.0,
+                                   right: 60.0),
+                               color: Colors.white,
+                               splashColor: Colors.blueAccent,
+                               elevation: 4,
+                               shape: RoundedRectangleBorder(
+                                 borderRadius: BorderRadius.circular(24.0),
+                               ),
+                               onPressed: () {
+                                 //Navigator.of(context).pushNamed('/coe');
+                                 //_launchInBroser(_coelaunchUrl);
+                                 _mostrarDialogIngreseDatos(context);
+                               },
+                               child: Text(
+                                 'Activar Geotracking',
+                                 textAlign: TextAlign.center,
+                                 style: TextStyle(
+                                     color: Colors.black,
+                                     fontSize: 22.0,
+                                     fontWeight: FontWeight.bold,
+                                     fontFamily: 'Montserrat'),
+                               ),
+                             ),
+                           ),
+                         ),
+                         SizedBox(height: 30),
+                         Container(
+                           child: Center(
+                             child: RaisedButton(
+                               padding: EdgeInsets.only(
+                                   top: 10.0,
+                                   bottom: 10.0,
+                                   left: 60.0,
+                                   right: 60.0),
+                               color: Colors.white,
+                               splashColor: Colors.blueAccent,
+                               elevation: 4,
+                               shape: RoundedRectangleBorder(
+                                 borderRadius: BorderRadius.circular(24.0),
+                               ),
+                               onPressed: () {
+                                 //Navigator.of(context).pushNamed('/coe');
+                                 _lauchSalvoConductoForm( context );
+                               },
+                               child: Text(
+                                 'Salvo Conducto',
                                  textAlign: TextAlign.center,
                                  style: TextStyle(
                                      color: Colors.black,
@@ -414,6 +512,14 @@ class _MyLoginPageState extends State<MyLoginPage> {
     await _getTermCondAceptadosFromSharedPref().then(_updateTermAndCondt);
   }
 
+  Future<void> _lauchSalvoConductoForm( BuildContext context ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final startupDniNumber = prefs.getInt('savedDniNumber');
+    if (startupDniNumber != null) {
+      Navigator.of(context).pushNamed('/salvoconducto');
+    }
+  }
+
   void _updateTermAndCondt(bool value) {
     setState(() {
       _termCondAceptados = value;
@@ -433,6 +539,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('latitud', double.parse(latlng.lat));
     await prefs.setDouble('longitud', double.parse(latlng.lng));
+    startLocationService();
   }
 
   void _checkPermissions() async {
@@ -501,6 +608,8 @@ class _MyLoginPageState extends State<MyLoginPage> {
       if (value) {
         _setTermCondAceptadosFromSharedPref().then((bool commited) {
           //_launchTermCondDialogConfirmation();
+         // startLocationService();
+
           setState(() {
             _termCondAceptados = true;
           });
@@ -511,7 +620,182 @@ class _MyLoginPageState extends State<MyLoginPage> {
       }
     });
   }
+
+  Future<void> initPlatformState() async {
+    print('Initializing...');
+    await BackgroundLocator.initialize();
+    print('Initialization done');
+    final _isRunning = await BackgroundLocator.isRegisterLocationUpdate();
+    setState(() {
+      isRunning = _isRunning;
+    });
+    print('Running ${isRunning.toString()}');
+  }
+
+  Future<void> updateUI(LocationDto data) async {
+    await apiRequest(data);
+    await apiRequestStartTracking(data);
+  }
+
+  static void callback(LocationDto locationDto) async {
+    print('location in dart: ${locationDto.toString()}');
+    final SendPort send = IsolateNameServer.lookupPortByName(_isolateName);
+    send?.send(locationDto);
+  }
+
+  static void notificationCallback() {
+    print('notificationCallback');
+  }
+
+  void startLocationService(){
+    BackgroundLocator.registerLocationUpdate(
+      callback,
+      androidNotificationCallback: notificationCallback,
+      settings: LocationSettings(
+          notificationTitle: "Start Location Tracking example",
+          notificationMsg: "Track location in background exapmle",
+          wakeLockTime: 20,
+          autoStop: false,
+          interval: 60
+      ),
+    );
+  }
+
+  ///
+  /// Metodo para enviar las coordenadas hacia /covid19/tracking
+  /// @authos JLopez
+  ///
+  Future<String> apiRequest(LocationDto locationDto) async {
+    var now = DateTime.now();
+    var fecha = DateFormat('yyyyMMdd');
+    var hora = DateFormat('HHmm');
+
+    final item = {
+      "dni" : _dni,
+      "fecha": fecha.format(now) ,
+      "hora": hora.format(now) ,
+      "latitud": locationDto.latitude,
+      "longitud": locationDto.longitude
+    };
+    HttpClient httpClient = HttpClient();
+    HttpClientRequest request = await httpClient.postUrl(Uri.parse('http://coe.jujuy.gob.ar/covid19/tracking'));
+    request.headers.set('content-type', 'application/json');
+    request.add(utf8.encode(json.encode(item)));
+    HttpClientResponse response = await request.close();
+    print(response.statusCode);
+    if(response.statusCode == 200){
+      String reply = await response.transform(utf8.decoder).join();
+      httpClient.close();
+      return reply;
+    } else {
+      return null;
+    }
+  }
+
+  ///
+  /// Metodo para enviar las coordenadas hacia /covid19/start/tracking
+  /// @authos German Udaeta
+  ///
+  Future<String> apiRequestStartTracking(LocationDto locationDto) async {
+    final item = {
+      "dni" : _dni,
+      "dni_operador": _dniOperador,
+      "password": _password,
+      "latitud": locationDto.latitude,
+      "longitud": locationDto.longitude
+    };
+    print(item);
+    HttpClient httpClient = HttpClient();
+    HttpClientRequest request = await httpClient.postUrl(Uri.parse('http://coe.jujuy.gob.ar/covid19/start/tracking'));
+    request.headers.set('content-type', 'application/json');
+    request.add(utf8.encode(json.encode(item)));
+    HttpClientResponse response = await request.close();
+    print(response.statusCode);
+    if(response.statusCode == 200){
+      String reply = await response.transform(utf8.decoder).join();
+      httpClient.close();
+      return reply;
+    } else {
+      return null;
+    }
+  }
+
+  //
+  void _mostrarDialogIngreseDatos(BuildContext context) {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+            title: Center(
+                child: Text('Ingrese sus datos')
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                //Text('Contenido de la caja de la alerta'),
+                TextField(
+                  autofocus: true,
+                  textCapitalization: TextCapitalization.sentences,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0)
+                      ),
+                      hintText: 'Ingrese DNI',
+                      labelText: 'DNI',
+                      //helperText: 'Ingrese DNI',
+                      //suffixIcon: Icon(Icons.accessibility),
+                      //icon: Icon(Icons.account_circle)
+                  ),
+                  onChanged: (valor) {
+                    setState(() {
+                      _dniOperador = valor;
+                    });
+                  },
+                ),
+                Divider(),
+                TextField(
+                  obscureText: true,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0)
+                      ),
+                      hintText: 'Contraseña',
+                      labelText: 'Contraseña',
+                      //suffixIcon: Icon(Icons.lock_open),
+                      //icon: Icon(Icons.lock)
+                  ),
+                  onChanged: (valor) {
+                    setState(() {
+                      _password = valor;
+                    });
+                  },
+                )
+                //FlutterLogo(size: 100.0)
+              ],
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Cancelar'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              FlatButton(
+                child: Text('Iniciar'),
+                onPressed: () {
+                  startLocationService();
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        }
+    );
+  }
+
+
 }
+
 Future<bool> confirmPermissions(
     BuildContext context, GlobalKey<ScaffoldState> _scaffoldKey) {
   showDialog(
