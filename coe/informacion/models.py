@@ -11,7 +11,7 @@ from django.core.validators import RegexValidator
 from coe.constantes import NOIMAGE
 from core.choices import TIPO_DOCUMENTOS, TIPO_SEXO
 from operadores.models import Operador
-from georef.models import Nacionalidad, Localidad
+from georef.models import Nacionalidad, Localidad, Ubicacion
 #Imports de la app
 from .choices import TIPO_IMPORTANCIA, TIPO_ARCHIVO
 from .choices import TIPO_VEHICULO, TIPO_ESTADO, TIPO_CONDUCTA
@@ -25,7 +25,7 @@ from .choices import TIPO_TRIAJE
 class Archivo(models.Model):
     tipo = models.IntegerField(choices=TIPO_ARCHIVO, default='1')
     nombre = models.CharField('Nombres', max_length=100)
-    archivo = models.FileField('Archivo', upload_to='informacion/')
+    archivo = models.FileField('Archivo', upload_to='informacion/archivos/')
     fecha = models.DateTimeField('Fecha del evento', default=timezone.now)
     operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="archivos")
     procesado = models.BooleanField(default=False)
@@ -65,7 +65,7 @@ class Vehiculo(models.Model):
     identificacion = models.CharField('Identificacion Patente/Codigo', max_length=200, unique=True)
     empresa = models.CharField('Empresa (Si aplica)', max_length=200, null=True, blank=True)
     conductor = models.CharField('Conductor:', max_length=200, null=True, blank=True)
-    plan = HTMLField(verbose_name='Plan de Ruta', null=True, blank=True)
+    aclaracion = HTMLField(verbose_name='Aclaracion', null=True, blank=True)
     def __str__(self):
         return self.get_tipo_display() + ': ' + self.identificacion
     def as_dict(self):
@@ -97,7 +97,7 @@ class Individuo(models.Model):
     origen = models.ForeignKey(Nacionalidad, on_delete=models.SET_NULL, null=True, blank=True, related_name="individuos_origen")
     destino = models.ForeignKey(Localidad, on_delete=models.SET_NULL, null=True, blank=True, related_name="individuos_destino")
     observaciones = HTMLField(null=True, blank=True)
-    fotografia = models.FileField('Fotografia', upload_to='individuos/', null=True, blank=True)
+    fotografia = models.FileField('Fotografia', upload_to='informacion/individuos/', null=True, blank=True)
     #Actuales
     situacion_actual = models.OneToOneField('Situacion', on_delete=models.SET_NULL, related_name="situacion_actual", null=True, blank=True)
     domicilio_actual = models.OneToOneField('Domicilio', on_delete=models.SET_NULL, related_name="domicilio_actual", null=True, blank=True)
@@ -168,6 +168,7 @@ class Domicilio(models.Model):
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='')
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     aislamiento = models.BooleanField('Separado/Aislamiento', default=False)
+    ubicacion = models.ForeignKey(Ubicacion, on_delete=models.SET_NULL, related_name="aislados", null=True, blank=True)
     class Meta:
         ordering = ['fecha', ]
     def __str__(self):
@@ -180,15 +181,17 @@ class Domicilio(models.Model):
             "calle": self.calle,
             "numero": self.numero,
         }
+    def geoposicion(self):
+        return self.geoposiciones.last()
 
 class GeoPosicion(models.Model):
-    domicilio = models.OneToOneField(Domicilio, on_delete=models.CASCADE, related_name="geoposicion")
+    domicilio = models.ForeignKey(Domicilio, on_delete=models.CASCADE, related_name="geoposiciones")
     latitud = models.DecimalField('latitud', max_digits=12, decimal_places=10)
     longitud = models.DecimalField('longitud', max_digits=12, decimal_places=10)
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     def __str__(self):
-        return str(self.domicilios) + ': ' + str(self.latitud) + '|' + str(self.longitud)
+        return str(self.latitud) + '|' + str(self.longitud)
     def as_dict(self):
         return {
             "id": self.id,
@@ -202,8 +205,8 @@ class GeoPosicion(models.Model):
 #Extras
 class SignosVitales(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="signos_vitales")
-    tension_diastolica = models.IntegerField('Tension Diastolica')
     tension_sistolica = models.IntegerField('Tension Sistolica')
+    tension_diastolica = models.IntegerField('Tension Diastolica')
     frec_cardiaca = models.IntegerField('Frecuencia Cardiaca')
     frec_respiratoria = models.IntegerField('Frecuencia Respiratoria')
     temperatura = models.DecimalField('Temperatura', max_digits=4, decimal_places=2)
@@ -277,7 +280,7 @@ class Sintoma(models.Model):
 
 class Seguimiento(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="seguimientos")
-    tipo = models.CharField('Tipo Seguimiento', choices=TIPO_SEGUIMIENTO, max_length=1, default='I')
+    tipo = models.CharField('Tipo Seguimiento', choices=TIPO_SEGUIMIENTO, max_length=2, default='I')
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Seguimiento', default=timezone.now)
     class Meta:
@@ -296,7 +299,7 @@ class Seguimiento(models.Model):
 class Documento(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="documentos")
     tipo = models.CharField('Tipo de Documento', choices=TIPO_DOCUMENTO, max_length=12, default='HM')
-    archivo = models.FileField('Archivo', upload_to='archivos/individuo/documentos/')
+    archivo = models.FileField('Archivo', upload_to='informacion/individuo/documentos/')
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha Subido', default=timezone.now)
     def __str__(self):
@@ -307,7 +310,9 @@ class Documento(models.Model):
 class AppData(models.Model):
     individuo = models.OneToOneField(Individuo, on_delete=models.CASCADE, related_name="appdata")
     telefono = models.CharField('Telefono', max_length=50, default='+549388')
+    email = models.EmailField('Correo Electronico', null=True, blank=True)#Enviar mails
     estado = models.CharField('Estado', choices=TIPO_TRIAJE, max_length=1, default='V')
+    push_id = models.CharField('Push Notification ID', max_length=255, blank=True, null=True)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     def __str__(self):
         return str(self.individuo) + self.get_estado_display()
@@ -376,11 +381,14 @@ from .signals import poner_en_seguimiento
 from .signals import situacion_actual
 from .signals import domicilio_actual
 from .signals import relacion_domicilio
-from .signals import invertir_relacion
+from .signals import crear_relacion_inversa
+from .signals import eliminar_relacion_inversa
 from .signals import relacion_vehiculo
 from .signals import relacionar_situacion
 from .signals import afectar_relacionados
 from .signals import aislados
+from .signals import ocupar_capacidad_ubicacion
+from .signals import recuperar_capacidad_ubicacion
 from .signals import cargo_signosvitales
 from .signals import cargo_documento
 

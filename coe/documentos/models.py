@@ -25,7 +25,7 @@ class Documento(models.Model):
 
 class Version(models.Model):
     documento = models.ForeignKey(Documento, on_delete=models.CASCADE, related_name='versiones')
-    archivo = models.FileField('Archivo', upload_to='archivos/', null=True, blank=True)
+    archivo = models.FileField('Archivo', upload_to='documentos/', null=True, blank=True)
     operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name='versiones')
     cambios = HTMLField()
     fecha = models.DateTimeField('Fecha Subido', default=timezone.now)

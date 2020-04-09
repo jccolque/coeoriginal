@@ -213,6 +213,16 @@ def crear_ubicacion(request, ubicacion_id=None):
     return render(request, "extras/generic_form.html", {'titulo': "Crear Barrio", 'form': form, 'boton': "Crear", })
 
 @permission_required('operadores.menu_georef')
+def ver_ubicacion(request, ubicacion_id=None):
+    ubicacion = Ubicacion.objects.select_related('localidad', 'barrio')
+    ubicacion = ubicacion.prefetch_related('aislados')
+    ubicacion = ubicacion.get(pk=ubicacion_id)
+    return render(request, 'ver_ubicacion.html', {
+        'ubicacion': ubicacion,
+        'has_table': True,
+    })
+
+@permission_required('operadores.menu_georef')
 def delete_ubicacion(request, ubicacion_id):
     ubicacion = Ubicacion.objects.get(pk=ubicacion_id)
     if is_related(ubicacion):

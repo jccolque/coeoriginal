@@ -41,6 +41,7 @@ urlpatterns = [
     path('ubicacion/mod/<int:ubicacion_id>', views.crear_ubicacion, name='mod_ubicacion'),
     path('ubicacion/del/<int:ubicacion_id>', views.delete_ubicacion, name='delete_ubicacion'),
     path('ubicacion/geopos/<int:ubicacion_id>', views.geopos_ubicacion, name='geopos_ubicacion'),
+    path('ubicacion/ver/<int:ubicacion_id>', views.ver_ubicacion, name='ver_ubicacion'),
     #Upload
     path('upload', views.upload_localidades, name='upload_localidades'),
     #Autocompleteviews

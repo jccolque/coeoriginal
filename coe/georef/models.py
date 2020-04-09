@@ -96,9 +96,10 @@ class Barrio(models.Model):
 class Ubicacion(models.Model):
     tipo = models.CharField('Tipo de Ubicacion', max_length=2, choices=TIPO_UBICACION,  default='SU')
     localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="ubicaciones")
-    barrio = models.ForeignKey(Barrio, on_delete=models.CASCADE, related_name="ubicaciones", null=True, blank=True)
+    barrio = models.ForeignKey(Barrio, on_delete=models.SET_NULL, related_name="ubicaciones", null=True, blank=True)
     nombre = models.CharField('Nombre', max_length=100)
-    max_individuos = models.IntegerField('Poblacion Maxima Permitida', default=50)
+    capacidad_maxima = models.IntegerField('Capacidad Maxima Permitida', default=50)
+    capacidad_ocupada = models.IntegerField('Capacidad Ocupada', default=0)
     calle = models.CharField('Calle', max_length=200)
     numero = models.CharField('Numero', max_length=100)
     telefono = models.CharField('Telefono', max_length=50, default='+549388', null=True, blank=True)
@@ -121,7 +122,16 @@ class Ubicacion(models.Model):
             "longitud": self.longitud,
             "max_individuos": self.max_individuos,
         }
-
+    def capacidad_disponible(self):
+        return self.capacidad_maxima - self.capacidad_ocupada
+    def aislados_actuales(self):
+        actuales = set()
+        for domicilio in self.aislados.all().select_related('individuo'):
+            if domicilio.individuo not in actuales:#Para no procesar al pedo.
+                individuo = domicilio.individuo
+                if domicilio == individuo.domicilio_actual:
+                    actuales.add(individuo)
+        return actuales
 #Auditoria
 auditlog.register(Nacionalidad)
 auditlog.register(Provincia)

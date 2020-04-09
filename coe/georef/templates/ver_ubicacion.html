@@ -1,0 +1,71 @@
+{% extends 'base_informacion.html' %}
+
+{% load static %}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">        
+                    <h2>Ubicacion: {{ubicacion.nombre}}</h2>
+                    <div class="col-md-8">
+                        <h3>Tipo: <b>{{ubicacion.get_tipo_display}}</b></h3>
+                        <p><b>Domicilio:</b> {{ubicacion.calle}} {{ubicacion.numero}}, {{ubicacion.localidad}}</p>
+                        <p><b>Capacidad Maxima:</b> {{ubicacion.capacidad_maxima}} <b>| Disponible:</b> {{ubicacion.capacidad_disponible}}</p>
+                        {% if ubicacion.latitud and ubicacion.longitud %}
+                            <p><b>Geoposicion:</b>
+                                <a class="nolink"  href="https://www.google.com/maps?q={{ubicacion.latitud|stringformat:".5f"}},{{ubicacion.longitud|stringformat:".5f"}}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/map.png' %}">
+                                </a>
+                            </p>
+                        {% else %}
+                            <p><b>Cargar Geoposicion:</b>
+                                <a class="nolink"  href="{% url 'georef:geopos_ubicacion' ubicacion_id=ubicacion.id %}" >
+                                    <img class="icons" src="{% static '/img/icons/nomap.png' %}">
+                                </a>
+                            </p>
+                        {% endif %}
+                        {% if ubicacion.aclaracion %}
+                            <p>Aclaracion:</p>
+                            {{ubicacion.aclaracion|safe}}
+                        {% endif %}
+                        <hr>
+                        <h4><b>Listado de Aislados Actuales:</b></h4>
+                        <table class="listado" id="table">
+                            <thead>
+                                <tr>
+                                    <th>Documento</th>
+                                    <th>Apellidos</th>
+                                    <th>Nombres</th>
+                                    <th>Situacion</th>
+                                    <th>Ver Individuo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for aislado in ubicacion.aislados_actuales %}
+                                    <tr>
+                                        <td>{{aislado.num_doc}}</td>
+                                        <td>{{aislado.apellidos}}</td>
+                                        <td>{{aislado.nombres}}</td>
+                                        <td>{{aislado.situacion_actual}}</td>
+                                        <td><a href="{% url 'informacion:ver_individuo' individuo_id=aislado.id %}" target="_blank">(Ver Individuo)</a></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-4">
+                        <ul class="menu_botones">
+                            <li><a href="{% url 'georef:mod_ubicacion' ubicacion_id=ubicacion.id %}">Modificar ubicacion</a></li>
+                            <li><a href="{% url 'informacion:buscar_inquilino' ubicacion_id=ubicacion.id %}">Alojar Individuo</a></li>
+                            {% if request.user.is_superuser %}
+                                <li><a href="{% url 'georef:delete_ubicacion' ubicacion_id=ubicacion.id %}">Eliminar Ubicacion</a></li>
+                            {% endif %}
+                            <li><a href="{% url 'georef:lista_ubicaciones' %}">Volver al Listado</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}
