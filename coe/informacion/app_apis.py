@@ -34,6 +34,7 @@ def AppConfig(request):
             {
                 "localidad": reverse("georef:localidad-autocomplete"),
                 "barrio": reverse("georef:barrio-autocomplete"),
+                "logs": "/archivos/logs/apis.txt",
             },
             #Registro:
             "Registro":
@@ -66,6 +67,7 @@ def AppConfig(request):
                 "fields_request": 
                 {
                     "dni": "str",
+                    "token": "str: Obtenido en respuesta registro",
                     "imagen": "Base64",
 
                 },
