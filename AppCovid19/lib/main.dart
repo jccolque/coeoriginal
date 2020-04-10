@@ -6,6 +6,7 @@ import 'dart:ui';
 import 'package:background_locator/location_dto.dart';
 import 'package:background_locator/location_settings.dart';
 import 'package:covidjujuy_app/pages/salvo_conducto.dart';
+import 'package:covidjujuy_app/pages/solicitar_permiso.dart';
 import 'package:covidjujuy_app/ui/formulario.dart';
 import 'package:covidjujuy_app/ui/temperatura.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
         '/cuestionario': (BuildContext context) => CuestionarioPage(),
         '/formulario': (BuildContext context) => FormularioPage(),
         '/salvoconducto': (BuildContext context) => SalvoConducto(),
+        '/solicitarpermiso': (BuildContext context) => SolicitarPermiso(),
         '/main': (BuildContext context) => MyApp(),
       },
       home: MyLoginPage(),
@@ -313,7 +315,6 @@ class _MyLoginPageState extends State<MyLoginPage> {
                                  borderRadius: BorderRadius.circular(24.0),
                                ),
                                onPressed: () {
-                                 //Navigator.of(context).pushNamed('/coe');
                                  _lauchSalvoConductoForm( context );
                                },
                                child: Text(
@@ -515,8 +516,17 @@ class _MyLoginPageState extends State<MyLoginPage> {
   Future<void> _lauchSalvoConductoForm( BuildContext context ) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final startupDniNumber = prefs.getInt('savedDniNumber');
+    final imagen = prefs.getBool('imagenPerfil');
     if (startupDniNumber != null) {
-      Navigator.of(context).pushNamed('/salvoconducto');
+      if(imagen != null){
+        if(imagen == true){
+          Navigator.of(context).pushNamed('/solicitarpermiso');
+        } else {
+          Navigator.of(context).pushNamed('/salvoconducto');
+        }
+      } else {
+        Navigator.of(context).pushNamed('/salvoconducto');
+      }
     }
   }
 
@@ -524,6 +534,12 @@ class _MyLoginPageState extends State<MyLoginPage> {
     setState(() {
       _termCondAceptados = value;
     });
+  }
+
+  Future<bool> _getImageSharedPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final imagen = prefs.getBool('imagenPerfil');
+
   }
 
   Future<void> _cleanSharedPreferences() async {
@@ -862,6 +878,8 @@ Future<bool> confirmPermissions(
     ),
   );
 }
+
+
 
 Future<bool> confirmGeolocalizationDialog(
     BuildContext context, GlobalKey<ScaffoldState> _scaffoldKey) {

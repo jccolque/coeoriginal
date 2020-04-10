@@ -33,29 +33,24 @@ class _SalvoConductoState extends State<SalvoConducto> {
   final calleController = TextEditingController();
 
   bool _separadoAislado = false;
+  bool _imagenGuardada = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _typeAheadController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Solicitud de permiso"),
-      ),
-      body: Stack(
-
-        children: <Widget>[
-          _crearFondo( context ),
-          _permisoForm( context ) ,
-        ],
-      ),
-
-//      floatingActionButton: cameraButton(),
-//      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
-
-    );
+      return Scaffold(
+        appBar: AppBar(
+          title: Text("Agregue su imagen de perfil"),
+        ),
+        body: Stack(
+          children: <Widget>[
+            _crearFondo( context ),
+            _permisoForm( context ),
+          ],
+        ),
+      );
   }
 
   Widget _crearFondo(BuildContext context) {
@@ -150,8 +145,6 @@ class _SalvoConductoState extends State<SalvoConducto> {
 
   Widget _permisoForm(BuildContext context) {
 
-//    final bloc = Provider.of(context);
-
     final size = MediaQuery.of(context).size;
 
     return SingleChildScrollView(
@@ -159,7 +152,6 @@ class _SalvoConductoState extends State<SalvoConducto> {
         children: <Widget>[
           SafeArea(
             child: Container(
-//              height: 5.0,
             ),
           ),
           Container(
@@ -192,26 +184,12 @@ class _SalvoConductoState extends State<SalvoConducto> {
                     ],
                   ),
                 ),
-//                Text('Ingreso', style: TextStyle(fontSize: 20.0),),
-//                SizedBox(height: 10.0),
-//                _crearLocalidadAutocomplete( context ),
-//                SizedBox(height: 10.0),
-//                _crearCalle(),
-//                SizedBox(height: 10.0),
-//                _crearNumero(),
-//                SizedBox(height: 10.0),
-//                _crearAclaracion(),
-//                SizedBox(height: 10.0),
-//                _crearFecha(),
                 cameraButton(),
-                SizedBox(height: 10.0),
-//                _crearSeparadoAislado(),
                 SizedBox(height: 10.0),
                 _crearBoton(),
               ],
             ),
           ),
-//          SizedBox(height: 100.0)
         ],
       ),
     );
@@ -424,9 +402,11 @@ class _SalvoConductoState extends State<SalvoConducto> {
       textColor: Colors.white,
       onPressed: (){
         _getDniFromSharedPref().then( (dni) {
+
           List<int> imageBytes = image.readAsBytesSync();
           print(imageBytes.toString());
           String base64Image = base64Encode(imageBytes);
+          _setImageSharedPref(true);
           final form = ImagenPerfilModel(
               imagen: base64Image,
               dni: dni
@@ -458,10 +438,19 @@ class _SalvoConductoState extends State<SalvoConducto> {
     if(response.statusCode == 200){
       String reply = await response.transform(utf8.decoder).join();
       httpClient.close();
+      setState(() {
+        _imagenGuardada = true;
+      });
       return reply;
     } else {
       return null;
     }
   }
+
+  Future<bool> _setImageSharedPref(bool image) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return await prefs.setBool('imagenPerfil', image);
+  }
+
 }
 
