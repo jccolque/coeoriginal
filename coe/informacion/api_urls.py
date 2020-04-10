@@ -18,4 +18,7 @@ urlpatterns = [
     path('salvoconducto', app_apis.salvoconducto, name='salvoconducto'),
     #WebServices
     path('situaciones', ws_apis.ws_situaciones, name='ws_situaciones'),
+
+    #Parametros:
+    path('tipo_permisos', app_apis.tipo_permisos, name='tipo_permisos'),
 ]

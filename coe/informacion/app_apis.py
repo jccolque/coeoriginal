@@ -184,6 +184,13 @@ def AppConfig(request):
         safe=False,
     )
 
+@require_http_methods(["GET"])
+def tipo_permisos(request):
+    return JsonResponse(
+        {tp[0]:tp[1] for tp in TIPO_PERMISO}, 
+        safe=False,
+    )
+
 @csrf_exempt
 @require_http_methods(["POST"])
 def registro(request):
@@ -553,7 +560,10 @@ def salvoconducto(request):
         #Buscamos al individuo en la db
         individuo = Individuo.objects.select_related('appdata').get(num_doc=num_doc)
         #ACA CHEQUEAMOS TOKEN
-
+        
+        #Trabajamos
+        #Chequear si no es policia, salud, funcionario >Permiso ilimitado.
+            #RESPONDER CON FULL GREEN
         #Obtenemos datos del pedido de permiso:
         permiso = data["tipo_permiso"]
         fecha = timezone.datetime(
