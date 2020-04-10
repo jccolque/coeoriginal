@@ -177,7 +177,7 @@ def AppConfig(request):
                 },
                 "parametros":
                 {
-                    'TIPO_PERMISO': TIPO_PERMISO,
+                    'TIPO_PERMISO': {tp[0]:tp[1] for tp in TIPO_PERMISO},
                 },
             },
         },
@@ -187,7 +187,7 @@ def AppConfig(request):
 @require_http_methods(["GET"])
 def tipo_permisos(request):
     return JsonResponse(
-        {tp[0]:tp[1] for tp in TIPO_PERMISO}, 
+        [{"id":tipo[0],"descripcion":tipo[1]} for tipo in TIPO_PERMISO], 
         safe=False,
     )
 
