@@ -43,7 +43,7 @@ def AppConfig(request):
             #Registro:
             "Registro":
             {
-                "url": reverse("api_urls:registro"),
+                "url": reverse("app_urls:registro"),
                 "fields_request": 
                 {
                     "dni_individuo": "str",
@@ -67,7 +67,7 @@ def AppConfig(request):
             },
             "FotoPerfil":
             {
-                "url": reverse("api_urls:foto_perfil"),
+                "url": reverse("app_urls:foto_perfil"),
                 "fields_request": 
                 {
                     "dni_individuo": "str",
@@ -85,7 +85,7 @@ def AppConfig(request):
             #Encuesta
             "Encuesta":
             {
-                "url": reverse("api_urls:encuesta"),
+                "url": reverse("app_urls:encuesta"),
                 "fields_request": 
                 {
                     "dni_individuo": "str",
@@ -109,7 +109,7 @@ def AppConfig(request):
             #Start Tracking
             "StartTracking":
             {
-                "url": reverse("api_urls:start_tracking"),
+                "url": reverse("app_urls:start_tracking"),
                 "fields": 
                 {
                     "dni_individuo": "str",
@@ -129,7 +129,7 @@ def AppConfig(request):
             #Tracking
             "tracking": 
             {
-                "url": reverse("api_urls:tracking"),
+                "url": reverse("app_urls:tracking"),
                 "fields": 
                 {
                     "dni_individuo": "str",
@@ -157,7 +157,7 @@ def AppConfig(request):
             #Obtener Salvoconducto Digital
             "get_salvoconducto":
             {
-                "url": reverse("api_urls:get_salvoconducto"),
+                "url": reverse("app_urls:get_salvoconducto"),
                 "fields":
                 {
                     "dni_individuo": "str",
@@ -180,7 +180,7 @@ def AppConfig(request):
             #Salvoconducto Digital
             "salvoconducto":
             {
-                "url": reverse("api_urls:salvoconducto"),
+                "url": reverse("app_urls:salvoconducto"),
                 "fields":
                 {
                     "dni_individuo": "str",
@@ -207,15 +207,6 @@ def AppConfig(request):
                     'TIPO_PERMISO': {tp[0]:tp[1] for tp in TIPO_PERMISO if tp[0] != 'P'},
                 },
             },
-        },
-        safe=False,
-    )
-
-@require_http_methods(["GET"])
-def tipo_permisos(request):
-    return JsonResponse(
-        {
-            "permisos": [{"id":tipo[0],"descripcion":tipo[1]} for tipo in TIPO_PERMISO if tipo[0] != 'P'],
         },
         safe=False,
     )
@@ -510,7 +501,7 @@ def start_tracking(request):
         geopos.domicilio = individuo.domicilio_actual
         geopos.latitud = data["latitud"]
         geopos.longitud = data["longitud"]
-        geopos.aclaracion = "INICIO TRACKING: " + str(geopos.latitud)+", "+str(geopos.longitud)
+        geopos.aclaracion = "INICIO TRACKING"
         geopos.save()
         #Cargamos Inicio de Seguimiento:
         Seguimiento.objects.filter(tipo__in=("IT","AT", "FT")).delete()
@@ -570,9 +561,15 @@ def tracking(request):
             int(data["hora"][0:2]),
             int(data["hora"][2:4]),
         )
+        #Chequeamos distancia:
+        distancia = controlar_distancia(geopos)
+        #Si es mayor a alerta la marcamos
+        if distancia > 50:
+            geopos.alerta = True
+        #Guardamos la geopos
         geopos.save()
         #Controlamos posicion:
-        distancia = controlar_distancia(geopos)
+        
         logger.info("Exito")
         return JsonResponse(
             {

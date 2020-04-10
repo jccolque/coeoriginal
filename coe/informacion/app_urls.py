@@ -2,10 +2,9 @@
 from django.urls import path
 #Import de modulos personales
 from . import app_apis as app_apis
-from . import ws_apis as ws_apis
 
 #Definimos paths de la app
-app_name = 'api_urls'
+app_name = 'app_urls'
 urlpatterns = [
     #App
     path('config', app_apis.AppConfig, name='AppConfig'),
@@ -17,9 +16,4 @@ urlpatterns = [
     path('tracking', app_apis.tracking, name='tracking'),
     path('salvoconducto', app_apis.salvoconducto, name='salvoconducto'),
     path('get/salvoconducto', app_apis.get_salvoconducto, name='get_salvoconducto'),
-    #WebServices
-    path('situaciones', ws_apis.ws_situaciones, name='ws_situaciones'),
-
-    #Parametros:
-    path('tipo_permisos', app_apis.tipo_permisos, name='tipo_permisos'),
 ]

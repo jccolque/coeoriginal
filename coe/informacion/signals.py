@@ -23,6 +23,7 @@ def estado_inicial(created, instance, **kwargs):
         #Situacion Inicial:
         situacion = Situacion()
         situacion.individuo = instance
+        situacion.aclaracion = "Iniciada por Sistema"
         situacion.save()
         #   Vejez +60 años
         if instance.fecha_nacimiento:

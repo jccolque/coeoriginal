@@ -131,6 +131,15 @@ class Individuo(models.Model):
             return self.domicilio_actual.localidad
         else:
             return None
+    def get_situacion(self):
+        if self.situacion_actual:
+            return self.situacion_actual
+        else:
+            situacion = Situacion()
+            situacion.individuo = self
+            situacion.aclaracion = "Iniciada por Sistema"
+            situacion.save()
+            return situacion
     def get_foto(self):
         if self.fotografia:
             return self.fotografia.url
@@ -203,6 +212,7 @@ class GeoPosicion(models.Model):
     longitud = models.DecimalField('longitud', max_digits=12, decimal_places=10)
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    alerta = models.BooleanField('Posicion de Alerta', default=False)
     def __str__(self):
         return str(self.latitud) + '|' + str(self.longitud)
     def as_dict(self):

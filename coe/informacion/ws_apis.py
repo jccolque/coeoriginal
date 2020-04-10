@@ -1,10 +1,13 @@
 #Imports Django
 from django.utils import timezone
 from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
 #Imports de la app
+from .choices import TIPO_ESTADO, TIPO_CONDUCTA, TIPO_PERMISO
 from .models import Situacion
 
 #Creamos nuestros webservices
+@require_http_methods(["GET"])
 def ws_situaciones(request, fecha=None):
     #Agregar por localidad
     estados = {}
@@ -35,4 +38,32 @@ def ws_situaciones(request, fecha=None):
             "conductas": conductas,
         },
         safe=False
+    )
+
+@require_http_methods(["GET"])
+def tipo_estado(request):
+    return JsonResponse(
+        {
+            "permisos": [{"id":tipo[0],"descripcion":tipo[1]} for tipo in TIPO_ESTADO],
+        },
+        safe=False,
+    )
+
+@require_http_methods(["GET"])
+def tipo_conducta(request):
+    return JsonResponse(
+        {
+            "permisos": [{"id":tipo[0],"descripcion":tipo[1]} for tipo in TIPO_CONDUCTA],
+        },
+        safe=False,
+    )
+
+
+@require_http_methods(["GET"])
+def tipo_permiso(request):
+    return JsonResponse(
+        {
+            "permisos": [{"id":tipo[0],"descripcion":tipo[1]} for tipo in TIPO_PERMISO if tipo[0] != 'P'],
+        },
+        safe=False,
     )
