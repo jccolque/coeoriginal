@@ -239,13 +239,14 @@ class _SolicitarPermisoState extends State<SolicitarPermiso> {
 
     if (response.statusCode == 200) {
       // Si el servidor devuelve una repuesta OK, parseamos el JSON
-      RespuestaPermisoModel list = RespuestaPermisoModel.fromJson(json.decode(response.body));
-      print(json.encode(list));
-      print(list.imagen);
-      print(list.qr);
-      showLongToast(list.texto);
+      RespuestaPermisoModel permisoOtorgado = RespuestaPermisoModel.fromJson(json.decode(response.body));
+      print(json.encode(permisoOtorgado));
+      print(permisoOtorgado.imagen);
+      print(permisoOtorgado.qr);
+      showLongToast(permisoOtorgado.texto);
       await _setPermisoSharedPref(true);
-      return list;
+      await _setPermisoOtorgadoSharedPref(permisoOtorgado);
+      return permisoOtorgado;
     } else {
       // Si esta respuesta no fue OK, lanza un error.
       PermisoErrorModel permisoErrorModel = PermisoErrorModel.fromJson(json.decode(response.body));
@@ -336,6 +337,17 @@ class _SolicitarPermisoState extends State<SolicitarPermiso> {
   Future<void> _setPermisoSharedPref(bool permiso) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return await prefs.setBool('permisoOtorgado', permiso);
+  }
+
+  Future<void> _setPermisoOtorgadoSharedPref(RespuestaPermisoModel permisoOtorgado) async {
+    DateFormat dateFormat = DateFormat("dd/MM/yyyy");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('imagenPerfilOtorgada', permisoOtorgado.imagen);
+    await prefs.setString('qrOtorgado', permisoOtorgado.qr);
+    await prefs.setString('fechaOtorgado', dateFormat.format(permisoOtorgado.fecha));
+    await prefs.setString('horaInicioOtorgado', permisoOtorgado.horaInicio);
+    await prefs.setString('horaFinOtorgado', permisoOtorgado.horaFin);
+    await prefs.setString('textoOtorgado', permisoOtorgado.texto);
   }
 
   void showLongToast(String mensaje) {
