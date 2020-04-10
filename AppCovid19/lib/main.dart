@@ -5,6 +5,7 @@ import 'dart:isolate';
 import 'dart:ui';
 import 'package:background_locator/location_dto.dart';
 import 'package:background_locator/location_settings.dart';
+import 'package:covidjujuy_app/pages/permiso_otorgado.dart';
 import 'package:covidjujuy_app/pages/salvo_conducto.dart';
 import 'package:covidjujuy_app/pages/solicitar_permiso.dart';
 import 'package:covidjujuy_app/ui/formulario.dart';
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
         '/formulario': (BuildContext context) => FormularioPage(),
         '/salvoconducto': (BuildContext context) => SalvoConducto(),
         '/solicitarpermiso': (BuildContext context) => SolicitarPermiso(),
+        '/permisootorgado': (BuildContext context) => PermisoOtorgado(),
         '/main': (BuildContext context) => MyApp(),
       },
       home: MyLoginPage(),
@@ -517,15 +519,24 @@ class _MyLoginPageState extends State<MyLoginPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final startupDniNumber = prefs.getInt('savedDniNumber');
     final imagen = prefs.getBool('imagenPerfil');
+    final permiso = prefs.getBool('permisoOtorgado');
     if (startupDniNumber != null) {
       if(imagen != null){
         if(imagen == true){
-          Navigator.of(context).pushNamed('/solicitarpermiso');
+          if(permiso != null) {
+            if(permiso == true) {
+              await Navigator.of(context).pushNamed('/permisootorgado');
+            } else {
+              await Navigator.of(context).pushNamed('/solicitarpermiso');
+            }
+          } else {
+            await Navigator.of(context).pushNamed('/solicitarpermiso');
+          }
         } else {
-          Navigator.of(context).pushNamed('/salvoconducto');
+          await Navigator.of(context).pushNamed('/salvoconducto');
         }
       } else {
-        Navigator.of(context).pushNamed('/salvoconducto');
+        await Navigator.of(context).pushNamed('/salvoconducto');
       }
     }
   }

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:covidjujuy_app/src/loader.dart';
+import 'package:covidjujuy_app/src/model/permiso_error_model.dart';
 import 'package:covidjujuy_app/src/model/permiso_model.dart';
 import 'package:covidjujuy_app/src/model/respuesta_permiso_model.dart';
 import 'package:covidjujuy_app/src/model/solicitud_permiso_model.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class SolicitarPermiso extends StatefulWidget {
   @override
@@ -232,28 +234,6 @@ class _SolicitarPermisoState extends State<SolicitarPermiso> {
   }
 
   Future<RespuestaPermisoModel> envioSolicitudPermiso( SolicitudPermisoModel solicitudPermisoModel ) async {
-    print(json.encode(solicitudPermisoModel));
-//    HttpClient httpClient = HttpClient();
-//    setState(() {
-//      loading = true;
-//    });
-//    HttpClientRequest request = await httpClient.postUrl(Uri.parse('http://coe.jujuy.gob.ar/covid19/salvoconducto'));
-//    request.headers.set('content-type', 'application/json');
-//    request.add(utf8.encode(json.encode(solicitudPermisoModel)));
-//    HttpClientResponse response = await request.close();
-//    print(response.statusCode);
-//    if(response.statusCode == 200){
-//      RespuestaPermisoModel reply = RespuestaPermisoModel.fromJson(json.decode(response));
-//      httpClient.close();
-//      setState(() {
-//        loading = false;
-//      });
-//      return reply;
-//    } else {
-//      return null;
-//    }
-
-    print('fetchPost');
     final response =
     await http.post('http://coe.jujuy.gob.ar/covid19/salvoconducto', body: (utf8.encode(json.encode(solicitudPermisoModel))));
 
@@ -263,10 +243,16 @@ class _SolicitarPermisoState extends State<SolicitarPermiso> {
       print(json.encode(list));
       print(list.imagen);
       print(list.qr);
+      showLongToast(list.texto);
+      await _setPermisoSharedPref(true);
       return list;
     } else {
       // Si esta respuesta no fue OK, lanza un error.
-      throw Exception('Failed to load post');
+      PermisoErrorModel permisoErrorModel = PermisoErrorModel.fromJson(json.decode(response.body));
+      print(permisoErrorModel.error);
+      showLongErrorToast(permisoErrorModel.error);
+      await _setPermisoSharedPref(false);
+//      throw Exception('Failed to load post');
     }
   }
 
@@ -345,5 +331,28 @@ class _SolicitarPermisoState extends State<SolicitarPermiso> {
     print('startupDniNumber');
     print(startupDniNumber);
     return startupDniNumber;
+  }
+
+  Future<void> _setPermisoSharedPref(bool permiso) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return await prefs.setBool('permisoOtorgado', permiso);
+  }
+
+  void showLongToast(String mensaje) {
+    Fluttertoast.showToast(
+      msg: mensaje,
+      toastLength: Toast.LENGTH_LONG,
+        backgroundColor: Colors.green,
+        textColor: Colors.white
+    );
+  }
+
+  void showLongErrorToast(String mensaje) {
+    Fluttertoast.showToast(
+      msg: mensaje,
+      toastLength: Toast.LENGTH_LONG,
+      backgroundColor: Colors.red,
+      textColor: Colors.white
+    );
   }
 }
