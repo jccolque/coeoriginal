@@ -362,12 +362,10 @@ class Pasajero(models.Model):
 class Permiso(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="permisos")
     tipo = models.CharField('Tipo Permiso', choices=TIPO_PERMISO, max_length=1, default='C')
-    origen = models.CharField('Origen', max_length=200, default='', blank=False)
-    destino = models.CharField('Destino', max_length=200, default='', blank=False)
+    localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="permisos")
     begda = models.DateTimeField('Inicio Permiso', default=timezone.now)
     endda = models.DateTimeField('Fin Permiso', default=timezone.now)
     aclaracion = HTMLField(null=True, blank=True)
-    habilitado = models.BooleanField(default=True)
     def __str__(self):
         return self.get_tipo_display() + str(self.begda)[0:16]
     def as_dict(self):
@@ -380,7 +378,6 @@ class Permiso(models.Model):
             "begda": str(self.fecha),
             "endda": str(self.fecha),
             "aclaracion": self.aclaracion,
-            "habilitado": self.habilitado,
         }
     def estado(self):
         if self.habilitado:

@@ -66,10 +66,10 @@ def relacion_domicilio(created, instance, **kwargs):
                 relacion.save()
             except Relacion.DoesNotExist:
                 relacion = Relacion()
-                relacion.tipo = 'CE'
+                relacion.tipo = 'MD'
                 relacion.individuo = instance.individuo
                 relacion.relacionado = domicilio.individuo
-                relacion.aclaracion = "Mismo Domicilio"
+                relacion.aclaracion = instance.calle + ' ' + instance.numero
                 relacion.save()
 
 #Evolucionamos Estado segun relaciones
