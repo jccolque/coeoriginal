@@ -51,6 +51,7 @@ urlpatterns = [
     path('mod/individuo/<int:individuo_id>', views.cargar_individuo, name='mod_individuo'),
     path('cargar/domicilio/<int:individuo_id>', views.cargar_domicilio, name='cargar_domicilio'),
     path('cargar/fotografia/<int:individuo_id>', views.cargar_fotografia, name='cargar_fotografia'),
+    path('seguimiento//<int:individuo_id>', views.ver_seguimiento, name='ver_seguimiento'),
     #Turismo
     path('buscar/inquilino/<int:ubicacion_id>', views.buscar_inquilino, name='buscar_inquilino'),
     path('nuevo/inquilino/', views.cargar_inquilino, name='cargar_inquilino'),
@@ -85,7 +86,7 @@ urlpatterns = [
     path('mod/documento/<int:individuo_id>/<int:documento_id>', views.cargar_documento, name='mod_documento'),
     path('del/documento/<int:documento_id>', views.del_documento, name='del_documento'),
     #Geopos
-    path('cargar/geopos/<int:domicilio_id>', views.cargar_geoposicion, name='cargar_geoposicion'),
+    path('cargar/geopos/<int:individuo_id>', views.cargar_geoposicion, name='cargar_geoposicion'),
     #Reportes
     path('tablero', views.tablero_control, name='tablero_control'),
     path('reporte/basico', views.reporte_basico, name='reporte_basico'),

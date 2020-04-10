@@ -83,7 +83,7 @@ def mapeo_general(request):
 def tracking_individuo(request, individuo_id):
     individuo = Individuo.objects.select_related('situacion_actual', 'domicilio_actual')
     individuo = individuo.get(pk=individuo_id)
-    geoposiciones = GeoPosicion.objects.filter(domicilio__individuo=individuo)
+    geoposiciones = GeoPosicion.objects.filter(individuo=individuo)
     geoposiciones = {
         str(g.fecha)[0:16] : {
             "latitud": g.latitud, 

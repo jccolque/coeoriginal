@@ -394,7 +394,7 @@ def encuesta(request):
         #Geoposicion
         if data["latitud"] and data["longitud"]:
             geopos = GeoPosicion()
-            geopos.domicilio = individuo.domicilio_actual
+            geopos.individuo = individuo
             geopos.latitud = data["latitud"]
             geopos.longitud = data["longitud"]
             geopos.aclaracion = "AUTODIAGNOSTICO"
@@ -495,10 +495,10 @@ def start_tracking(request):
             status=400,
         )
         #Guardamos la geoposicion BASE
-        GeoPosicion.objects.filter(domicilio__individuo=individuo, aclaracion__icontains="INICIO TRACKING").delete()
-        GeoPosicion.objects.filter(domicilio__individuo=individuo, aclaracion="TRACKING").delete()
+        GeoPosicion.objects.filter(individuo=individuo, aclaracion__icontains="INICIO TRACKING").delete()
+        GeoPosicion.objects.filter(individuo=individuo, aclaracion="TRACKING").delete()
         geopos = GeoPosicion()
-        geopos.domicilio = individuo.domicilio_actual
+        geopos.individuo = individuo
         geopos.latitud = data["latitud"]
         geopos.longitud = data["longitud"]
         geopos.aclaracion = "INICIO TRACKING"
@@ -550,7 +550,7 @@ def tracking(request):
 
         #Guardamos nueva posgps
         geopos = GeoPosicion()
-        geopos.domicilio = individuo.domicilio_actual
+        geopos.individuo = individuo
         geopos.latitud = data["latitud"]
         geopos.longitud = data["longitud"]
         geopos.aclaracion = "TRACKING"

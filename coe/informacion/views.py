@@ -469,6 +469,17 @@ def ver_individuo(request, individuo_id):
     individuo = individuo.get(pk=individuo_id)
     return render(request, "ver_individuo.html", {'individuo': individuo, })
 
+
+@permission_required('operadores.individuos')
+def ver_seguimiento(request, individuo_id):
+    individuo = Individuo.objects.select_related('situacion_actual', 'domicilio_actual', 'appdata')
+    individuo = individuo.get(pk=individuo_id)
+    geoposiciones = GeoPosicion.objects.filter(individuo=individuo)
+    return render(request, "seguimiento.html", {
+        'individuo': individuo,
+        'geoposiciones': geoposiciones,
+    })
+
 @permission_required('operadores.individuos')
 def arbol_relaciones(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
@@ -816,22 +827,22 @@ def del_documento(request, documento_id):
 
 #GEOPOS
 @permission_required('operadores.individuos')
-def cargar_geoposicion(request, domicilio_id):
-    domicilio = Domicilio.objects.get(pk=domicilio_id)
+def cargar_geoposicion(request, individuo_id):
+    individuo = Individuo.objects.get(pk=individuo_id)
     if request.method == "POST":
-        if hasattr(domicilio,'geoposicion'):
-            geoposicion = domicilio.geoposicion
+        if hasattr(individuo,'geoposicion'):
+            geoposicion = individuo.geoposicion
         else:
             geoposicion = GeoPosicion()
-            geoposicion.domicilio = domicilio
+            geoposicion.individuo = individuo
         #cargamos los datos del form:
         geoposicion.latitud = request.POST['latitud']
         geoposicion.longitud = request.POST['longitud']
         geoposicion.observaciones = request.POST['observaciones']
         geoposicion.save()
-        return redirect('informacion:ver_individuo', individuo_id=domicilio.individuo.id)
+        return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/gmap_form.html", {
-        'objetivo': domicilio.individuo, 
+        'objetivo': individuo, 
         'gkey': GEOPOSITION_GOOGLE_MAPS_API_KEY,
     })
 

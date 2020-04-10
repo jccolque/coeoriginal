@@ -2,7 +2,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import permission_required
 #Imports del Proyecto
-
+from coe.credenciales import GEOPOSITION_GOOGLE_MAPS_API_KEY
 #Imports de la app
 from .models import Grafico, Columna, Dato
 from .forms import GraficoForm, ColumnaForm, DatoForm
@@ -25,7 +25,7 @@ def lista_graficos(request, tipo_id=None):
     })
 
 @permission_required('operadores.menu_graficos')
-def ver_grafico(request, grafico_id):
+def ver_grafico(request, grafico_id, geoposiciones=None):
     grafico = Grafico.objects.get(pk=grafico_id)
     #Agregar logica para tipo de graficos segun tipo
     if grafico.tipo == 'L':
@@ -34,9 +34,13 @@ def ver_grafico(request, grafico_id):
         subtemplate = 'torta.html'
     elif grafico.tipo == 'C':
         subtemplate = 'columnas.html'
+    elif grafico.tipo == 'MP':
+        subtemplate = 'mapa_puntos.html'
     return render(request, 'ver_grafico.html', {
         'grafico': grafico,
         'subtemplate': subtemplate,
+        'geoposiciones': geoposiciones,
+        'gmkey': GEOPOSITION_GOOGLE_MAPS_API_KEY,
     })
 
 #administracion de graficos
