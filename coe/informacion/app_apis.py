@@ -558,7 +558,7 @@ def salvoconducto(request):
         data = json.loads(request.body.decode("utf-8"))
         logger.info("salvoconducto:"+str(timezone.now())+"|"+str(data))
         #Agarramos el dni
-        num_doc = str(data["dni"]).upper()
+        num_doc = str(data["dni_individuo"]).upper()
         #Buscamos al individuo en la db
         individuo = Individuo.objects.select_related('appdata').get(num_doc=num_doc)
         #ACA CHEQUEAMOS TOKEN
