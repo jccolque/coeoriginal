@@ -122,13 +122,9 @@ TIPO_DOCUMENTO = (
 
 
 TIPO_PERMISO = (
-    ('L', 'Autoridades/Funcionarios Publicos'),
-    ('S', 'Trabajador de la Salud/Seguridad'),
-    ('T', 'Trabajador de Industria Estrategica'),
-    ('A', 'Trabajador de Abastecimiento'),
-    ('C', 'Salida Temporal por Compras de Primera Necesidad'),
-    ('F', 'Salida Temporal por Compras de Farmacia'),
-    ('P', 'Salida Temporal por Personas a Cargo'),
+    ('C', 'Compras de Primera Necesidad'),
+    ('F', 'Compras de Farmacia'),
+    ('P', 'Personas a Cargo'),
 )
 
 TIPO_TRIAJE = (

@@ -15,6 +15,10 @@ urlpatterns = [
     path('temperatura', app_apis.temperatura, name='temperatura'),
     path('start/tracking', app_apis.start_tracking, name='start_tracking'),
     path('tracking', app_apis.tracking, name='tracking'),
+    path('salvoconducto', app_apis.salvoconducto, name='salvoconducto'),
     #WebServices
     path('situaciones', ws_apis.ws_situaciones, name='ws_situaciones'),
+
+    #Parametros:
+    path('tipo_permisos', app_apis.tipo_permisos, name='tipo_permisos'),
 ]
