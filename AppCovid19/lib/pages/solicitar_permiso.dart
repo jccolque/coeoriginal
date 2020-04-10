@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:covidjujuy_app/src/loader.dart';
 import 'package:covidjujuy_app/src/model/permiso_model.dart';
+import 'package:covidjujuy_app/src/model/respuesta_permiso_model.dart';
 import 'package:covidjujuy_app/src/model/solicitud_permiso_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -220,7 +221,7 @@ class _SolicitarPermisoState extends State<SolicitarPermiso> {
         final time = timeFormat.format(dt);
 
         final permiso = SolicitudPermisoModel(
-          dniIndividuo: _dni.toString(),
+          dni_individuo: _dni.toString(),
           fechaIdeal: dateFormat.format(selectedDate),
           horaIdeal: time,
           tipoPermiso: _permisoSeleccionado
@@ -230,23 +231,42 @@ class _SolicitarPermisoState extends State<SolicitarPermiso> {
     );
   }
 
-  Future<String> envioSolicitudPermiso( SolicitudPermisoModel solicitudPermisoModel ) async {
+  Future<RespuestaPermisoModel> envioSolicitudPermiso( SolicitudPermisoModel solicitudPermisoModel ) async {
     print(json.encode(solicitudPermisoModel));
-    HttpClient httpClient = HttpClient();
-    HttpClientRequest request = await httpClient.postUrl(Uri.parse('http://coe.jujuy.gob.ar/covid19/salvoconducto'));
-    request.headers.set('content-type', 'application/json');
-    request.add(utf8.encode(json.encode(solicitudPermisoModel)));
-    HttpClientResponse response = await request.close();
-    print(response.statusCode);
-    if(response.statusCode == 200){
-      String reply = await response.transform(utf8.decoder).join();
-      httpClient.close();
-      setState(() {
-//        _imagenGuardada = true;
-      });
-      return reply;
+//    HttpClient httpClient = HttpClient();
+//    setState(() {
+//      loading = true;
+//    });
+//    HttpClientRequest request = await httpClient.postUrl(Uri.parse('http://coe.jujuy.gob.ar/covid19/salvoconducto'));
+//    request.headers.set('content-type', 'application/json');
+//    request.add(utf8.encode(json.encode(solicitudPermisoModel)));
+//    HttpClientResponse response = await request.close();
+//    print(response.statusCode);
+//    if(response.statusCode == 200){
+//      RespuestaPermisoModel reply = RespuestaPermisoModel.fromJson(json.decode(response));
+//      httpClient.close();
+//      setState(() {
+//        loading = false;
+//      });
+//      return reply;
+//    } else {
+//      return null;
+//    }
+
+    print('fetchPost');
+    final response =
+    await http.post('http://coe.jujuy.gob.ar/covid19/salvoconducto', body: (utf8.encode(json.encode(solicitudPermisoModel))));
+
+    if (response.statusCode == 200) {
+      // Si el servidor devuelve una repuesta OK, parseamos el JSON
+      RespuestaPermisoModel list = RespuestaPermisoModel.fromJson(json.decode(response.body));
+      print(json.encode(list));
+      print(list.imagen);
+      print(list.qr);
+      return list;
     } else {
-      return null;
+      // Si esta respuesta no fue OK, lanza un error.
+      throw Exception('Failed to load post');
     }
   }
 
