@@ -51,7 +51,7 @@ urlpatterns = [
     path('mod/individuo/<int:individuo_id>', views.cargar_individuo, name='mod_individuo'),
     path('cargar/domicilio/<int:individuo_id>', views.cargar_domicilio, name='cargar_domicilio'),
     path('cargar/fotografia/<int:individuo_id>', views.cargar_fotografia, name='cargar_fotografia'),
-    path('seguimiento//<int:individuo_id>', views.ver_seguimiento, name='ver_seguimiento'),
+    path('seguimiento/<int:individuo_id>', views.ver_seguimiento, name='ver_seguimiento'),
     #Turismo
     path('buscar/inquilino/<int:ubicacion_id>', views.buscar_inquilino, name='buscar_inquilino'),
     path('nuevo/inquilino/', views.cargar_inquilino, name='cargar_inquilino'),
