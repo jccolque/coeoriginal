@@ -1,0 +1,27 @@
+{% load static %}
+
+{% block content %}
+    <div class="popup-overlay"></div>
+    <div class="popup">
+        <div class="popuptext" id="myPopup-2">
+            <a class="nolink"  href="javascript:PopUp(2);" >
+                <img class="close_icon" src="{% static 'img/icons/close.png' %}">
+            </a>
+            <p class="history_tittle">HISTORIAL:</p>
+            <hr class="minibar">
+            <ul>
+                {% for dom in individuo.domicilios.all reversed %}
+                    <li>
+                        {{dom.calle}} {{dom.numero}}, {{dom.localidad.nombre}} ({{dom.fecha|date}}) | {{dom.aclaracion}}
+                        <a href="{% url 'informacion:mod_domicilio' domicilio_id=dom.id %}">
+                            <img class="icons" src="{% static '/img/icons/change.png' %}">
+                        </a>
+                        <a href="{% url 'informacion:del_domicilio' domicilio_id=dom.id %}">
+                            <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}

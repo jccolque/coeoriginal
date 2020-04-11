@@ -475,7 +475,9 @@ def ver_seguimiento(request, individuo_id):
     individuo = Individuo.objects.select_related('situacion_actual', 'domicilio_actual', 'appdata')
     individuo = individuo.get(pk=individuo_id)
     geoposiciones = GeoPosicion.objects.filter(individuo=individuo)
+    geoposiciones = geoposiciones.order_by('fecha')
     return render(request, "seguimiento.html", {
+        'gmkey': GEOPOSITION_GOOGLE_MAPS_API_KEY,
         'individuo': individuo,
         'geoposiciones': geoposiciones,
     })
@@ -590,17 +592,35 @@ def lista_autodiagnosticos(request):
 
 #CARGA DE ELEMENTOS
 @permission_required('operadores.individuos')
-def cargar_domicilio(request, individuo_id):
-    individuo = Individuo.objects.get(pk=individuo_id)
-    form = DomicilioForm()
+def cargar_domicilio(request, individuo_id=None, domicilio_id=None):
+    domicilio = None
+    if individuo_id:
+        individuo = Individuo.objects.get(pk=individuo_id)
+    if domicilio_id:
+        domicilio = Domicilio.objects.get(pk=domicilio_id)
+        individuo = domicilio.individuo
+    form = DomicilioForm(instance=domicilio)
     if request.method == "POST":
-        form = DomicilioForm(request.POST)
+        form = DomicilioForm(request.POST, instance=domicilio)
         if form.is_valid():
             domicilio = form.save(commit=False)
             domicilio.individuo = individuo
             domicilio.save()
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Domicilio", 'form': form, 'boton': "Cargar", })
+
+@permission_required('operadores.individuos')
+def del_domicilio(request, domicilio_id=None):
+    domicilio = Domicilio.objects.get(pk=domicilio_id)
+    individuo = domicilio.individuo
+    if domicilio == individuo.domicilio_actual:
+        return render(request, 'extras/error.html', {
+            'titulo': 'Eliminar Domicilio',
+            'error': "No se puede Borrar el domicilio Actual.",
+        })
+    else:
+        domicilio.delete()
+        return redirect('informacion:ver_individuo', individuo_id=individuo.id)
 
 #Traslados
 @permission_required('operadores.individuos')
@@ -661,25 +681,38 @@ def trasladar(request, individuo_id, ubicacion_id, vehiculo_id):
 
 #Situacion
 @permission_required('operadores.individuos')
-def cargar_situacion(request, individuo_id):
-    individuo = Individuo.objects.get(pk=individuo_id)
-    #Generamos nueva situacion a partir de la anterio
-    situacion = individuo.situacion_actual
-    if not situacion:
-        situacion = Situacion()
-    situacion.id = None
-    situacion.aclaracion = None
-    situacion.fecha = timezone.now()
+def cargar_situacion(request, individuo_id=None, situacion_id=None):
+    situacion = Situacion()
+    if individuo_id:
+        individuo = Individuo.objects.get(pk=individuo_id)
+        #Generamos nueva situacion a partir de la anterio
+        situacion = individuo.situacion_actual
+    elif situacion_id:
+        situacion = Situacion.objects.get(pk=situacion_id)
+        individuo = situacion.individuo
     form = SituacionForm(instance=situacion)
     #Trabajamos
     if request.method == "POST":
-        form = SituacionForm(request.POST)
+        form = SituacionForm(request.POST, instance=situacion)
         if form.is_valid():
             situacion = form.save(commit=False)
             situacion.individuo = individuo
             situacion.save()
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Situacion", 'form': form, 'boton': "Cargar", }) 
+
+@permission_required('operadores.individuos')
+def del_situacion(request, situacion_id=None):
+    situacion = Situacion.objects.get(pk=situacion_id)
+    individuo = situacion.individuo
+    if situacion == individuo.situacion_actual:
+        return render(request, 'extras/error.html', {
+            'titulo': 'Eliminar Situacion',
+            'error': "No se puede Borrar la Situacion Actual.",
+        })
+    else:
+        situacion.delete()
+        return redirect('informacion:ver_individuo', individuo_id=individuo.id)
 
 #Signos Vitales
 @permission_required('operadores.individuos')

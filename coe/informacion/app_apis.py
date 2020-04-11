@@ -50,6 +50,7 @@ def AppConfig(request):
                     "apellido": "str",
                     "nombre": "str",
                     "localidad": "int: id_localidad",
+                    "localidad_nombre": "str: nombre completo desde ws",
                     "barrio": "int: id_barrio (opcional)",
                     "direccion_calle": "str",
                     "direccion_numero": "str",
@@ -271,6 +272,11 @@ def registro(request):
         domicilio.numero = str(data["direccion_numero"])
         if "localidad" in data:
             domicilio.localidad = Localidad.objects.get(pk=data["localidad"])
+        elif "localidad_nombre" in data:
+            localidad, departamento = data["localidad_nombre"].split('(')
+            localidad = localidad[:-1]
+            departamento = departamento[:-1]
+            domicilio.localidad = Localidad.objects.get(nombre=localidad, departamento__nombre=departamento)
         else:
             domicilio.localidad = Localidad.objects.first()
         domicilio.aclaracion = "AUTODIAGNOSTICO"

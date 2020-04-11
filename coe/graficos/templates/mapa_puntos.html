@@ -18,7 +18,7 @@
             ['Lat', 'Long', 'Name'],
             
             {% for posicion in geoposiciones %}
-                [{{posicion.latitud|stringformat:".5f"}}, {{posicion.longitud|stringformat:".5f"}}, "{{posicion.fecha}}"],
+                [{{posicion.latitud|stringformat:".5f"}}, {{posicion.longitud|stringformat:".5f"}}, "{{posicion.fecha}}<br>{{posicion.aclaracion}}"],
             {% endfor %}
 
         ]);

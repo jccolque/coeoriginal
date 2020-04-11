@@ -32,21 +32,7 @@
                                         </a>
                                         <a class="nolink"  href="javascript:PopUp(1);" ><img class="icons" src="{% static '/img/icons/history.png' %}"></a>
                                     </h4>
-                                    <div class="popup-overlay"></div>
-                                    <div class="popup">
-                                        <div class="popuptext" id="myPopup-1">
-                                            <a class="nolink"  href="javascript:PopUp(1);" >
-                                                <img class="close_icon" src="{% static 'img/icons/close.png' %}">
-                                            </a>
-                                            <p class="history_tittle">HISTORIAL:</p>
-                                            <hr class="minibar">
-                                            <ul>
-                                                {% for sit in individuo.situaciones.all reversed %}
-                                                    <li>{{sit}} ({{sit.fecha}}) | {{sit.aclaracion}}</li>
-                                                {% endfor %}
-                                            </ul>
-                                        </div>
-                                    </div>
+                                    {% include 'utils/historial_situaciones.html' %}
                                 {% else %}
                                     <h4 class="alerta">EL INDIVIDUO NO REGISTRA ESTADO ACTUAL: 
                                         <a class="nolink" href="{% url 'informacion:cargar_situacion' individuo_id=individuo.id %}">
@@ -110,21 +96,7 @@
                                     {% endif %}
                                 </p>
                             {% endwith %}
-                            <div class="popup-overlay"></div>
-                            <div class="popup">
-                                <div class="popuptext" id="myPopup-2">
-                                    <a class="nolink"  href="javascript:PopUp(2);" >
-                                        <img class="close_icon" src="{% static 'img/icons/close.png' %}">
-                                    </a>
-                                    <p class="history_tittle">HISTORIAL:</p>
-                                    <hr class="minibar">
-                                    <ul>
-                                        {% for dom in individuo.domicilios.all reversed %}
-                                            <li>{{dom.calle}} {{dom.numero}}, {{dom.localidad.nombre}} ({{dom.fecha|date}}) | {{dom.aclaracion}}</li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                            </div>
+                            {% include 'utils/historial_domicilios.html' %}
                         {% else %}
                             <h4 class="alerta">NO REGISTRA RESIDENCIA ACTUAL EN LA PROVINCIA: <a class="nolink"  href="{% url 'informacion:cargar_domicilio' individuo_id=individuo.id %}">CARGAR</a></h4>
                         {% endif %}

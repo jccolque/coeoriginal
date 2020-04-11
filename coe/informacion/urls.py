@@ -36,6 +36,7 @@ urlpatterns = [
     path('ver/individuo/<int:individuo_id>', views.ver_individuo, name='ver_individuo'),
     path('buscador/individuos', views.buscador_individuos, name='buscador_individuos'),
     path('arbol/relaciones/<int:individuo_id>', views.arbol_relaciones, name='arbol_relaciones'),
+    path('seguimiento/<int:individuo_id>', views.ver_seguimiento, name='ver_seguimiento'),
     #Listados
     path('lista/seguimiento', views.lista_seguimiento, name='lista_seguimiento'),
     path('lista/autodiagnosticos', views.lista_autodiagnosticos, name='lista_autodiagnosticos'),
@@ -49,9 +50,12 @@ urlpatterns = [
     path('cargar/pasajero/<int:traslado_id>/nuevo/<int:individuo_id>/', views.cargar_individuo, name='cargar_pasajero'),
     path('cargar/pasajero/<int:traslado_id>/nuevo/<str:num_doc>/', views.cargar_individuo, name='cargar_pasajero_nuevo'),
     path('mod/individuo/<int:individuo_id>', views.cargar_individuo, name='mod_individuo'),
+    #Domicilio
     path('cargar/domicilio/<int:individuo_id>', views.cargar_domicilio, name='cargar_domicilio'),
+    path('mod/domicilio/<int:domicilio_id>', views.cargar_domicilio, name='mod_domicilio'),
+    path('del/domicilio/<int:domicilio_id>', views.del_domicilio, name='del_domicilio'),
+    #Fotografia
     path('cargar/fotografia/<int:individuo_id>', views.cargar_fotografia, name='cargar_fotografia'),
-    path('seguimiento/<int:individuo_id>', views.ver_seguimiento, name='ver_seguimiento'),
     #Turismo
     path('buscar/inquilino/<int:ubicacion_id>', views.buscar_inquilino, name='buscar_inquilino'),
     path('nuevo/inquilino/', views.cargar_inquilino, name='cargar_inquilino'),
@@ -65,6 +69,8 @@ urlpatterns = [
     path('del/signosvitales/<int:signosvitales_id>', views.del_signosvitales, name='del_signosvitales'),
     #Situacion
     path('cargar/situacion/<int:individuo_id>', views.cargar_situacion, name='cargar_situacion'),
+    path('mod/situacion/<int:situacion_id>', views.cargar_situacion, name='mod_situacion'),
+    path('del/situacion/<int:situacion_id>', views.del_situacion, name='del_situacion'),
     #Seguimiento
     path('cargar/seguimiento/<int:individuo_id>', views.cargar_seguimiento, name='cargar_seguimiento'),
     path('mod/seguimiento/<int:individuo_id>/<int:seguimiento_id>', views.cargar_seguimiento, name='mod_seguimiento'),
