@@ -38,6 +38,9 @@
                                 <a href="{% url 'informacion:descartar_alerta' geoposicion_id=alerta.id %}" target="_blank">
                                     <img class="icons" src="{% static '/img/icons/operador.png' %}">
                                 </a>
+                                <a href="{% url 'informacion:ver_tracking' individuo_id=alerta.individuo.id %}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/tracking.png' %}">
+                                </a>
                             </td>
                         </tr>
                     {% endfor %}
