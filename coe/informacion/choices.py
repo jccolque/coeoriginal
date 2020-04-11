@@ -136,3 +136,9 @@ TIPO_TRIAJE = (
     ('A', 'Amarillo'),
     ('R', 'Rojo'),
 )
+
+TIPO_ICONO = (
+    ('I', 'Info'),
+    ('W', 'Warning'),
+    ('C', 'Critico'),
+)

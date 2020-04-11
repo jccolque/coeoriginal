@@ -100,6 +100,8 @@ urlpatterns = [
     path('upload/epidemiologia', views.subir_epidemiologia, name='subir_epidemiologia'),
     path('upload/padron/individuos/', views.upload_padron_individuos, name='upload_padron_individuos'),
     path('upload/padron/domicilios/', views.upload_padron_domicilios, name='upload_padron_domicilios'),
+    #Testing
+    path('send/notificacion', views.enviar_notificacion, name='enviar_notificacion'),
     #Autocomplete
     #url(r'^sintomas-autocomplete/$', autocomplete.SintomaAutocomplete.as_view(), name='sintomas-autocomplete',),
     #url(r'^atributos-autocomplete/$', autocomplete.AtributoAutocomplete.as_view(), name='atributos-autocomplete',),
