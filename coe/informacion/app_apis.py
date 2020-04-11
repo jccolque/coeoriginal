@@ -647,7 +647,7 @@ def salvoconducto(request):
         permiso.aprobar = True
         #REALIZAR TODA LA LOGICA
         #Chequeamos que no este en cuarentena obligatoria o aislado
-        if individuo.situacion_actual.conducta in ('D', 'E'):
+        if individuo.get_situacion().conducta in ('D', 'E'):
             permiso.aprobar = False
             permiso.aclaracion = "Usted se encuentra bajo " + individuo.situacion_actual.get_conducta_display() + " Por favor mantengase en su Hogar."
         else:
