@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:covidjujuy_app/src/model/localidad_model.dart';
 import 'package:covidjujuy_app/src/model/registro_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:image_picker/image_picker.dart';
 import '../main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -64,6 +66,10 @@ class _MyFormularioPage extends State<MyFormularioPage> {
   final _formKey = GlobalKey<FormState>();
   var _aceptarHabilitado = true;
   var _menuHabilitado = false;
+
+//  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _typeAheadController = TextEditingController();
+  String _localidad;
 
   void initState() {
     //_getDniFromSharedPref();
@@ -289,6 +295,10 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
+                          _crearLocalidadAutocomplete( context ),
+                          SizedBox(height: 30.0),
+                          _crearBarrio(),
+                          SizedBox(height: 30.0),
                           Container(
                             margin: EdgeInsets.only(left: 20.0, right: 20.0),
                             child: TextFormField(
@@ -409,12 +419,15 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                               direccionCalle: _direccionCalleController.text,
                               direccionNumero: _direccionNumeroController.text,
                               telefono: _telefonoController.text,
+                              localidad: _localidad,
+                              barrio: _barrioController.text,
                             );
                             var connectivityResult =
                             await (Connectivity().checkConnectivity());
 
                             if (connectivityResult == ConnectivityResult.mobile) {
                               final result = await enviarFormulario(form);
+                              final res = await _setRegistroSharedPref(form);
                               saveDniCredentials(_dniController.text);
                               showInSnackBar('Datos personales enviados con exito puede seguír al menu principal');
                               setState(() {
@@ -864,6 +877,133 @@ class _MyFormularioPage extends State<MyFormularioPage> {
     );*/
   }
 
+  Widget _crearLocalidadAutocomplete(BuildContext context) {
+
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: 20.0),
+        child: Container(
+          child: Column(
+            children: <Widget>[
+              Text(
+                  ''
+              ),
+              TypeAheadFormField(
+                textFieldConfiguration: TextFieldConfiguration(
+                  style: TextStyle(color: Colors.white, fontSize: 20.0),
+                    controller: this._typeAheadController,
+                    decoration: InputDecoration(
+                        labelText: 'Localidad',
+                        errorStyle: TextStyle(
+                          fontFamily: 'Montserrat',
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        labelStyle: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide:
+                            BorderSide(color: Colors.white)
+                        )
+                    )
+                ),
+                suggestionsCallback: (pattern) {
+                  print(pattern);
+                  return getLocalidades(pattern);
+                },
+                itemBuilder: (context, suggestion) {
+                  return ListTile(
+                    title: Text(suggestion, style: TextStyle(color: Colors.black),),
+                  );
+                },
+                transitionBuilder: (context, suggestionsBox, controller) {
+                  return suggestionsBox;
+                },
+                onSuggestionSelected: (suggestion) {
+                  print('suggestion');
+                  print(suggestion);
+                  this._typeAheadController.text = suggestion;
+                  setState(() => this._localidad = suggestion);
+                },
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Por favor seleccione una localidad';
+                  }
+                },
+                onSaved: (value) => this._localidad = value,
+              ),
+            ],
+          ),
+        )
+    );
+  }
+
+  Future<List<String>> getLocalidades(String filtro) async {
+    print('fetchPost');
+    final response =
+    await http.get('http://coe.jujuy.gob.ar/georef/localidad-autocomplete/?q=${filtro}');
+
+    if (response.statusCode == 200) {
+      // Si el servidor devuelve una repuesta OK, parseamos el JSON
+      List<Result> list = LocalidadModel.fromJson(json.decode(response.body)).results;
+      List<String> salida = List();
+      list.forEach((text){
+        salida.add(text.text);
+      });
+      print(salida);
+      return salida;
+      return null;
+    } else {
+      // Si esta respuesta no fue OK, lanza un error.
+      throw Exception('Failed to load post');
+    }
+  }
+
+  Widget _crearBarrio() {
+    return Container(
+      margin: EdgeInsets.only(left: 20.0, right: 20.0),
+      child: TextFormField(
+        controller: _barrioController,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20.0,
+        ),
+        decoration: const InputDecoration(
+            errorStyle: TextStyle(
+              color: Colors.white,
+            ),
+            hintText:
+            'Ingrese el nombre de su barrio',
+            labelText: 'Barrio',
+            labelStyle: TextStyle(
+              fontFamily: 'Montserrat',
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+            focusedBorder: UnderlineInputBorder(
+                borderSide:
+                BorderSide(color: Colors.white))),
+        validator: (String value) {
+          return value.isEmpty
+              ? 'El campo es obligatorio'
+              : null;
+        },
+      ),
+    );
+  }
+
+  Future<bool> _setRegistroSharedPref(RegistroModel item) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('nombreGuardado', item.nombre);
+    await prefs.setString('apellidoGuardado', item.apellido);
+    await prefs.setString('domicilioGuardado', item.direccionCalle + ' ' + item.direccionNumero);
+    await prefs.setString('barrioGuardado', item.barrio);
+
+    return true;
+  }
+
   void saveDniCredentials(String value) {
     int dni = int.parse(value);
     _saveDniFromSharedPref(dni).then((bool value) {
@@ -900,16 +1040,6 @@ class _MyFormularioPage extends State<MyFormularioPage> {
     });
   }
 
-  Future<void> _getDniFromSharedPref() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final startupDniNumber = prefs.getInt('savedDniNumber');
-    if (startupDniNumber == null) {
-
-    } else {
-      Navigator.of(context).pushNamed('/main');
-    }
-  }
-
   void setupNotificationPlugin() {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     var initializationSettingsAndroid =
@@ -930,15 +1060,12 @@ class _MyFormularioPage extends State<MyFormularioPage> {
     if (payload != null) {
       debugPrint('notification payload: ' + payload);
     }
-   /* await Navigator.push(
-      context, MaterialPageRoute(builder: (context) => TemperaturaPage()),
-    );*/
   }
 
   Future onDidReceiveLocalNotification(
       int id, String title, String body, String payload) async{
     // display a dialog with the notification details, tap ok to go to another page
-    showDialog(
+    await showDialog(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
         title: Text(title),

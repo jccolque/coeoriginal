@@ -413,7 +413,9 @@ class _SalvoConductoState extends State<SalvoConducto> {
           );
 //          print(json.encode(form.toJson()));
         print(form.imagen);
-        envioRegistroAvanzado(form);
+        envioRegistroAvanzado(form).then((val) {
+          Navigator.of(context).pop();
+        });
         });
       },
     );
@@ -441,6 +443,7 @@ class _SalvoConductoState extends State<SalvoConducto> {
       setState(() {
         _imagenGuardada = true;
       });
+
       return reply;
     } else {
       return null;

@@ -1,10 +1,10 @@
 class RegistroModel {
-  int localidad;
+  String localidad;
   String email;
   String direccionNumero;
   String apellido;
   String dniIndividuo;
-  int barrio;
+  String barrio;
   String nombre;
   String pushNotificationId;
   String telefono;
