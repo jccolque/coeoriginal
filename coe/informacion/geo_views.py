@@ -1,4 +1,5 @@
 #Imports Django
+from django.utils import timezone
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import permission_required
@@ -76,15 +77,16 @@ def ver_tracking(request, individuo_id):
     })
 
 @permission_required('operadores.individuos')
-def descartar_alerta(request, geoposicion_id):
+def procesar_alerta(request, geoposicion_id):
     geoposicion = GeoPosicion.objects.get(pk=geoposicion_id)
-    form = JustificarForm()
+    form = JustificarForm(initial={'justificacion':geoposicion.aclaracion})
     if request.method == "POST":
         form = JustificarForm(request.POST)
         if form.is_valid:
             geoposicion.procesada = True
-            geoposicion.operador = obtener_operador(request)
-            geoposicion.aclaracion = request.POST['justificacion']
+            if not geoposicion.operador:
+                geoposicion.operador = obtener_operador(request)
+            geoposicion.aclaracion = request.POST['justificacion'] + '(' + str(obtener_operador(request)) + ')'
             geoposicion.save()
-            return redirect('geo_urls:control_tracking')
+            return redirect('geo_urls:lista_alertas')
     return render(request, "extras/generic_form.html", {'titulo': "Procesar Alerta", 'form': form, 'boton': "Procesar", })

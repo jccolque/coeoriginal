@@ -10,7 +10,7 @@
             <a href="{% url 'informacion:ver_individuo' individuo_id=alerta.individuo.id %}" target="_blank">
                 <img class="icons" src="{% static '/img/icons/lupa.png' %}">
             </a>
-            <a href="{% url 'geo_urls:descartar_alerta' geoposicion_id=alerta.id %}" target="_blank">
+            <a href="{% url 'geo_urls:procesar_alerta' geoposicion_id=alerta.id %}" target="_blank">
                 <img class="icons" src="{% static '/img/icons/operador.png' %}">
             </a>
             <a href="{% url 'geo_urls:ver_tracking' individuo_id=alerta.individuo.id %}" target="_blank">

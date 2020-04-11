@@ -13,5 +13,5 @@ urlpatterns = [
     path('lista/alertas', geo_views.lista_alertas, name='lista_alertas'),
     path('lista/procesadas', geo_views.alertas_procesadas, name='alertas_procesadas'),
     path('ver/<int:individuo_id>', geo_views.ver_tracking, name='ver_tracking'),
-    path('descartar/<int:geoposicion_id>', geo_views.descartar_alerta, name='descartar_alerta'),
+    path('procesar/<int:geoposicion_id>', geo_views.procesar_alerta, name='procesar_alerta'),
 ]
