@@ -191,7 +191,7 @@ class _SolicitarPermisoState extends State<SolicitarPermiso> {
   Future<List<Permiso>> getPermisos() async {
     print('fetchPost');
     final response =
-    await http.get('http://coe.jujuy.gob.ar/covid19/tipo_permisos');
+    await http.get('http://coe.jujuy.gob.ar/api_refs/tipo_permiso');
 
     if (response.statusCode == 200) {
       // Si el servidor devuelve una repuesta OK, parseamos el JSON
@@ -238,6 +238,7 @@ class _SolicitarPermisoState extends State<SolicitarPermiso> {
   }
 
   Future<RespuestaPermisoModel> envioSolicitudPermiso( SolicitudPermisoModel solicitudPermisoModel ) async {
+    print(json.encode(solicitudPermisoModel));
     final response =
     await http.post('http://coe.jujuy.gob.ar/covid19/salvoconducto', body: (utf8.encode(json.encode(solicitudPermisoModel))));
 

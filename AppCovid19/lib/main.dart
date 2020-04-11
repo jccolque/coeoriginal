@@ -66,6 +66,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
 
   String _dniOperador  = '';
   String _password = '';
+  bool _encuestaRealizada = false;
 
   @override
   void initState() {
@@ -85,6 +86,15 @@ class _MyLoginPageState extends State<MyLoginPage> {
       },
     );
     initPlatformState();
+    _getPermisoOtorgadoSharedPref().then((permiso) {
+      setState(() {
+        if(permiso != null) {
+          _encuestaRealizada = permiso;
+        } else {
+          _encuestaRealizada = false;
+        }
+      });
+    });
   }
 
   @override
@@ -92,8 +102,6 @@ class _MyLoginPageState extends State<MyLoginPage> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
     ));
-
-
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -271,62 +279,68 @@ class _MyLoginPageState extends State<MyLoginPage> {
                          ),
                          SizedBox(height: 20.0),
                          Container(
-                           child: Center(
-                             child: RaisedButton(
-                               padding: EdgeInsets.only(
-                                   top: 10.0,
-                                   bottom: 10.0,
-                                   left: 60.0,
-                                   right: 60.0),
-                               color: Colors.white,
-                               splashColor: Colors.blueAccent,
-                               elevation: 4,
-                               shape: RoundedRectangleBorder(
-                                 borderRadius: BorderRadius.circular(24.0),
-                               ),
-                               onPressed: () {
-                                 //Navigator.of(context).pushNamed('/coe');
-                                 //_launchInBroser(_coelaunchUrl);
-                                 _mostrarDialogIngreseDatos(context);
-                               },
-                               child: Text(
-                                 'Activar Geotracking',
-                                 textAlign: TextAlign.center,
-                                 style: TextStyle(
-                                     color: Colors.black,
-                                     fontSize: 22.0,
-                                     fontWeight: FontWeight.bold,
-                                     fontFamily: 'Montserrat'),
+                           child: Visibility(
+                             visible: _encuestaRealizada,
+                             child: Center(
+                               child: RaisedButton(
+                                 padding: EdgeInsets.only(
+                                     top: 10.0,
+                                     bottom: 10.0,
+                                     left: 60.0,
+                                     right: 60.0),
+                                 color: Colors.white,
+                                 splashColor: Colors.blueAccent,
+                                 elevation: 4,
+                                 shape: RoundedRectangleBorder(
+                                   borderRadius: BorderRadius.circular(24.0),
+                                 ),
+                                 onPressed: () {
+                                   //Navigator.of(context).pushNamed('/coe');
+                                   //_launchInBroser(_coelaunchUrl);
+                                   _mostrarDialogIngreseDatos(context);
+                                 },
+                                 child: Text(
+                                   'Activar Geotracking',
+                                   textAlign: TextAlign.center,
+                                   style: TextStyle(
+                                       color: Colors.black,
+                                       fontSize: 22.0,
+                                       fontWeight: FontWeight.bold,
+                                       fontFamily: 'Montserrat'),
+                                 ),
                                ),
                              ),
                            ),
                          ),
                          SizedBox(height: 30),
                          Container(
-                           child: Center(
-                             child: RaisedButton(
-                               padding: EdgeInsets.only(
-                                   top: 10.0,
-                                   bottom: 10.0,
-                                   left: 60.0,
-                                   right: 60.0),
-                               color: Colors.white,
-                               splashColor: Colors.blueAccent,
-                               elevation: 4,
-                               shape: RoundedRectangleBorder(
-                                 borderRadius: BorderRadius.circular(24.0),
-                               ),
-                               onPressed: () {
-                                 _lauchSalvoConductoForm( context );
-                               },
-                               child: Text(
-                                 'Salvo Conducto',
-                                 textAlign: TextAlign.center,
-                                 style: TextStyle(
-                                     color: Colors.black,
-                                     fontSize: 22.0,
-                                     fontWeight: FontWeight.bold,
-                                     fontFamily: 'Montserrat'),
+                           child: Visibility(
+                             visible: _encuestaRealizada,
+                             child: Center(
+                               child: RaisedButton(
+                                 padding: EdgeInsets.only(
+                                     top: 10.0,
+                                     bottom: 10.0,
+                                     left: 60.0,
+                                     right: 60.0),
+                                 color: Colors.white,
+                                 splashColor: Colors.blueAccent,
+                                 elevation: 4,
+                                 shape: RoundedRectangleBorder(
+                                   borderRadius: BorderRadius.circular(24.0),
+                                 ),
+                                 onPressed: () {
+                                   _lauchSalvoConductoForm( context );
+                                 },
+                                 child: Text(
+                                   'Salvo Conducto',
+                                   textAlign: TextAlign.center,
+                                   style: TextStyle(
+                                       color: Colors.black,
+                                       fontSize: 22.0,
+                                       fontWeight: FontWeight.bold,
+                                       fontFamily: 'Montserrat'),
+                                 ),
                                ),
                              ),
                            ),
@@ -515,6 +529,11 @@ class _MyLoginPageState extends State<MyLoginPage> {
     await _getTermCondAceptadosFromSharedPref().then(_updateTermAndCondt);
   }
 
+  Future<bool> _getPermisoOtorgadoSharedPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return await prefs.getBool('encuestaRealizada');
+  }
+
   Future<void> _lauchSalvoConductoForm( BuildContext context ) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final startupDniNumber = prefs.getInt('savedDniNumber');
@@ -566,7 +585,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('latitud', double.parse(latlng.lat));
     await prefs.setDouble('longitud', double.parse(latlng.lng));
-    startLocationService();
+//    startLocationService();
   }
 
   void _checkPermissions() async {
@@ -704,6 +723,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
       "latitud": locationDto.latitude,
       "longitud": locationDto.longitude
     };
+    print(item);
     HttpClient httpClient = HttpClient();
     HttpClientRequest request = await httpClient.postUrl(Uri.parse('http://coe.jujuy.gob.ar/covid19/tracking'));
     request.headers.set('content-type', 'application/json');
@@ -715,6 +735,9 @@ class _MyLoginPageState extends State<MyLoginPage> {
       httpClient.close();
       return reply;
     } else {
+      String reply = await response.transform(utf8.decoder).join();
+      print('track');
+      print(reply);
       return null;
     }
   }
@@ -743,6 +766,8 @@ class _MyLoginPageState extends State<MyLoginPage> {
       httpClient.close();
       return reply;
     } else {
+      String reply = await response.transform(utf8.decoder).join();
+      print(reply);
       return null;
     }
   }
@@ -752,14 +777,18 @@ class _MyLoginPageState extends State<MyLoginPage> {
     showDialog(
         context: context,
         barrierDismissible: false,
+
         builder: (context) {
           return AlertDialog(
+
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+
             title: Center(
                 child: Text('Ingrese sus datos')
             ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
+
               children: <Widget>[
                 //Text('Contenido de la caja de la alerta'),
                 TextField(
@@ -785,6 +814,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
                 TextField(
                   obscureText: true,
                   decoration: InputDecoration(
+
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0)
                       ),

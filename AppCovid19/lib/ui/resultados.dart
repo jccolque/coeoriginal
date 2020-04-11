@@ -351,7 +351,10 @@ class _MyResultadosPageState extends State<MyResultadosPage> {
                         borderRadius: BorderRadius.circular(25.0),
                       ),
                       onPressed: () {
-                        Navigator.of(context).pushNamed('/main');
+                        _setEncuestaRealizadaSharedPref(true).then((v) {
+                          Navigator.of(context).pushNamed('/main');
+                        });
+
                       },
                       child: Text(
                         'Menú principal',
@@ -372,6 +375,11 @@ class _MyResultadosPageState extends State<MyResultadosPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _setEncuestaRealizadaSharedPref(bool permiso) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return await prefs.setBool('encuestaRealizada', permiso);
   }
 
   void showInSnackBar(String value) {

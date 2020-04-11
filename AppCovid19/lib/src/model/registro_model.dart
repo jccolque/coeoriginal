@@ -4,6 +4,7 @@
 ///
 class RegistroModel {
   String localidad;
+  String localidadNombre;
   String email;
   String direccionNumero;
   String apellido;
@@ -16,6 +17,7 @@ class RegistroModel {
 
   RegistroModel({
     this.localidad,
+    this.localidadNombre,
     this.email,
     this.direccionNumero,
     this.apellido,
@@ -29,6 +31,7 @@ class RegistroModel {
 
   factory RegistroModel.fromJson(Map<String, dynamic> json) => RegistroModel(
     localidad: json["localidad"],
+    localidadNombre: json["localidad_nombre"],
     email: json["email"],
     direccionNumero: json["direccion_numero"],
     apellido: json["apellido"],
@@ -42,6 +45,7 @@ class RegistroModel {
 
   Map<String, dynamic> toJson() => {
     "localidad": localidad,
+    "localidad_nombre": localidadNombre,
     "email": email,
     "direccion_numero": direccionNumero,
     "apellido": apellido,
