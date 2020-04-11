@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'nested_inline',
     'background_task',
     'debug_toolbar',
+    "fcm_django",
     #Apps Propias
     'core.apps.CoreConfig',
     'consultas.apps.ConsultasConfig',

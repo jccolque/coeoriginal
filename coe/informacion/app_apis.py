@@ -12,6 +12,8 @@ from django.contrib.auth import authenticate
 from django.core.files.base import ContentFile
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+#Imports Extras
+from fcm_django.models import FCMDevice
 #Imports del proyecto
 from coe.constantes import LAST_DATETIME
 from operadores.models import Operador
@@ -261,7 +263,16 @@ def registro(request):
                 appdata.email = data["email"]
         #Registramos push_not_id
         if "push_notification_id" in data:
-            appdata.push_id = data["push_notification_id"]
+            device = FCMDevice()
+            device.name = individuo.num_doc
+            device.registration_id = data["push_notification_id"]
+            device.type = 'android'
+            if "device_id" in data:
+                device.device_id = data["device_id"]
+            device.save()
+            #Le registramos su dispositivo
+            individuo.device = device
+            individuo.save()
         #Guardamos
         appdata.fecha = timezone.now()
         appdata.save()

@@ -5,8 +5,9 @@ from django.db import models
 from django.utils import timezone
 from django.core.validators import RegexValidator
 #Imports de paquetes extras
-from auditlog.registry import auditlog
 from tinymce.models import HTMLField
+from auditlog.registry import auditlog
+from fcm_django.models import FCMDevice
 #Imports del proyecto:
 from coe.constantes import NOIMAGE
 from coe.settings import MEDIA_ROOT
@@ -338,7 +339,7 @@ class AppData(models.Model):
     telefono = models.CharField('Telefono', max_length=50, default='+549388')
     email = models.EmailField('Correo Electronico', null=True, blank=True)#Enviar mails
     estado = models.CharField('Estado', choices=TIPO_TRIAJE, max_length=1, default='V')
-    push_id = models.CharField('Push Notification ID', max_length=255, blank=True, null=True)
+    device = models.OneToOneField(FCMDevice, on_delete=models.SET_NULL, null=True, blank=True, related_name="appdata")
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     def __str__(self):
         return str(self.individuo) + self.get_estado_display()
