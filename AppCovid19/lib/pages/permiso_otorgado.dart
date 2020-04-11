@@ -75,9 +75,12 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
   Widget volver() {
     return FloatingActionButton(
       backgroundColor: Colors.blue,
-      onPressed: () {},
+      onPressed: () {
+        Navigator.of(context).pushNamed('/main');
+      },
       tooltip: 'Volver',
-      child: Icon(Icons.arrow_back)
+      child: Icon(Icons.arrow_back),
+
     );
   }
 

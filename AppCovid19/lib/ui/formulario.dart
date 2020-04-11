@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:covidjujuy_app/src/model/registro_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -29,45 +30,6 @@ class MyFormularioPage extends StatefulWidget {
   _MyFormularioPage createState() => _MyFormularioPage();
 }
 
-class Post {
-  int dni;
-  String apellido;
-  String nombre;
-  String direccion_calle;
-  int direccion_numero;
-  int telefono;
-
-  Post(
-      {@required this.dni,
-      @required this.apellido,
-      @required this.nombre,
-      @required this.direccion_calle,
-      @required this.direccion_numero,
-      @required this.telefono});
-
-  factory Post.fromJson(Map<String, dynamic> json) {
-    return Post(
-      dni: json["dni"],
-      apellido: json["apellido"],
-      nombre: json["nombre"],
-      direccion_calle: json["direccion_calle"],
-      direccion_numero: json["direccion_numero"],
-      telefono: json["telefono"],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      "dni": dni,
-      "apellido": apellido,
-      "nombre": nombre,
-      "direccion_calle": direccion_calle,
-      "direccion_numero": direccion_numero,
-      "telefono": telefono
-    };
-  }
-}
-
 class _MyFormularioPage extends State<MyFormularioPage> {
   static const API = 'http://coe.jujuy.gob.ar/covid19/registro';
   //static const API = 'https://prueba-3ac16.firebaseio.com/personas.json';
@@ -77,7 +39,7 @@ class _MyFormularioPage extends State<MyFormularioPage> {
     'Content-Type': 'application/json'
   };
 
-  Future<bool> enviarFormulario(Post item) {
+  Future<bool> enviarFormulario(RegistroModel item) {
     return http.post(API, body: json.encode(item.toJson())).then((data) {
       //print('STATUS ' + data.toString());
       if (data.statusCode == 200) {
@@ -96,6 +58,8 @@ class _MyFormularioPage extends State<MyFormularioPage> {
   var _direccionCalleController = TextEditingController();
   var _direccionNumeroController = TextEditingController();
   var _telefonoController = TextEditingController();
+  var _localidadController = TextEditingController();
+  var _barrioController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
   var _aceptarHabilitado = true;
@@ -438,13 +402,13 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                             _aceptarHabilitado = false;
                           });
                           if (_formKey.currentState.validate()) {
-                            final form = Post(
-                              dni: int.parse(_dniController.text),
+                            final form = RegistroModel(
+                              dniIndividuo: _dniController.text,
                               apellido: _apellidoController.text,
                               nombre: _nombreController.text,
-                              direccion_calle: _direccionCalleController.text,
-                              direccion_numero: int.parse(_direccionNumeroController.text),
-                              telefono: int.parse(_telefonoController.text),
+                              direccionCalle: _direccionCalleController.text,
+                              direccionNumero: _direccionNumeroController.text,
+                              telefono: _telefonoController.text,
                             );
                             var connectivityResult =
                             await (Connectivity().checkConnectivity());
