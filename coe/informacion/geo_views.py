@@ -84,9 +84,8 @@ def procesar_alerta(request, geoposicion_id):
         form = JustificarForm(request.POST)
         if form.is_valid:
             geoposicion.procesada = True
-            if not geoposicion.operador:
-                geoposicion.operador = obtener_operador(request)
-            geoposicion.aclaracion = request.POST['justificacion'] + '(' + str(obtener_operador(request)) + ')'
+            geoposicion.operador = obtener_operador(request)
+            geoposicion.aclaracion = request.POST['justificacion'] + '(' + str(geoposicion.operador) + ')'
             geoposicion.save()
             return redirect('geo_urls:lista_alertas')
     return render(request, "extras/generic_form.html", {'titulo': "Procesar Alerta", 'form': form, 'boton': "Procesar", })
