@@ -3,45 +3,53 @@
 /// @author JLopez
 ///
 class RespuestaPermisoModel {
-  bool realizado;
-  String horaInicio;
-  String imagen;
-  String action;
-  String qr;
-  DateTime fecha;
-  String texto;
+  String fechaInicio;
   String horaFin;
+  String qr;
+  String fechaFin;
+  String error;
+  String imagen;
+  String horaInicio;
+  String texto;
+  bool realizado;
+  String action;
 
   RespuestaPermisoModel({
-    this.realizado,
-    this.horaInicio,
-    this.imagen,
-    this.action,
-    this.qr,
-    this.fecha,
-    this.texto,
+    this.fechaInicio,
     this.horaFin,
+    this.qr,
+    this.fechaFin,
+    this.error,
+    this.imagen,
+    this.horaInicio,
+    this.texto,
+    this.realizado,
+    this.action,
   });
 
   factory RespuestaPermisoModel.fromJson(Map<String, dynamic> json) => RespuestaPermisoModel(
-    realizado: json["realizado"],
-    horaInicio: json["hora_inicio"],
-    imagen: json["imagen"],
-    action: json["action"],
-    qr: json["qr"],
-    fecha: DateTime.parse(json["fecha"]),
-    texto: json["texto"],
+    fechaInicio: json["fecha_inicio"],
     horaFin: json["hora_fin"],
+    qr: json["qr"],
+    fechaFin: json["fecha_fin"],
+    error: json["error"],
+    imagen: json["imagen"],
+    horaInicio: json["hora_inicio"],
+    texto: json["texto"],
+    realizado: json["realizado"],
+    action: json["action"],
   );
 
   Map<String, dynamic> toJson() => {
-    "realizado": realizado,
-    "hora_inicio": horaInicio,
-    "imagen": imagen,
-    "action": action,
-    "qr": qr,
-    "fecha": "${fecha.year.toString().padLeft(4, '0')}-${fecha.month.toString().padLeft(2, '0')}-${fecha.day.toString().padLeft(2, '0')}",
-    "texto": texto,
+    "fecha_inicio": fechaInicio,
     "hora_fin": horaFin,
+    "qr": qr,
+    "fecha_fin": fechaFin,
+    "error": error,
+    "imagen": imagen,
+    "hora_inicio": horaInicio,
+    "texto": texto,
+    "realizado": realizado,
+    "action": action,
   };
 }

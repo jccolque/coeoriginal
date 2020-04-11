@@ -1,3 +1,4 @@
+import 'package:covidjujuy_app/src/util/prevent_back.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,6 +24,7 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
 
   @override
   Widget build(BuildContext context) {
+//    Navigator.of(context).push(PreventBackRoute());
     return Scaffold(
       floatingActionButton: volver(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -40,10 +42,12 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
     _getPermisoSharedPref().then((val) {
       print('cargo todo');
     });
+
   }
 
   Widget _crearFondo(BuildContext context) {
     final size = MediaQuery.of(context).size;
+
 
     final fondoGradient = Container(
       height: double.infinity,
@@ -172,14 +176,14 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
     final texto = await prefs.getString('textoOtorgado');
 
     setState(() {
-      _nombreController.text = 'Juan Manuel';
-      _apellidoController.text = 'Lopez';
-      _imagen = '/archivos/informacion/individuos/3159055_GJFxe5s.jpg';
-      _qr = '/archivos/informacion/individuos/qrcode-31590550.png';
-//      _fecha = fecha;
-//      _horaInicio = horaInicio;
-//      _horaFin = horaFin;
-//      _texto = texto;
+      _nombreController.text = nombre;
+      _apellidoController.text = apellido;
+      _imagen = imagen;
+      _qr = qr;
+      _fecha = fecha;
+      _horaInicio = horaInicio;
+      _horaFin = horaFin;
+      _texto = texto;
     });
 
     return true;

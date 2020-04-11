@@ -8,8 +8,10 @@ import 'package:background_locator/location_settings.dart';
 import 'package:covidjujuy_app/pages/permiso_otorgado.dart';
 import 'package:covidjujuy_app/pages/salvo_conducto.dart';
 import 'package:covidjujuy_app/pages/solicitar_permiso.dart';
+import 'package:covidjujuy_app/src/model/permiso_ya_otorgado_model.dart';
+import 'package:covidjujuy_app/src/model/respuesta_permiso_model.dart';
 import 'package:covidjujuy_app/ui/formulario.dart';
-import 'package:covidjujuy_app/ui/temperatura.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gps/gps.dart';
@@ -62,6 +64,8 @@ class _MyLoginPageState extends State<MyLoginPage> {
   bool isRunning;
   LocationDto lastLocation;
   DateTime lastTimeLocation;
+  String _latitud;
+  String _longitud;
   static const String _isolateName = 'LocatorIsolate';
 
   String _dniOperador  = '';
@@ -71,8 +75,6 @@ class _MyLoginPageState extends State<MyLoginPage> {
   @override
   void initState() {
     _launchFirstTermCondDialogConfirmation();
-    //_getDniFromSharedPref();
-    //_cleanSharedPreferences();
     super.initState();
     if (IsolateNameServer.lookupPortByName(_isolateName) != null) {
       IsolateNameServer.removePortNameMapping(_isolateName);
@@ -87,6 +89,8 @@ class _MyLoginPageState extends State<MyLoginPage> {
     );
     initPlatformState();
     _getPermisoOtorgadoSharedPref().then((permiso) {
+      print('permiso');
+      print(permiso);
       setState(() {
         if(permiso != null) {
           _encuestaRealizada = permiso;
@@ -124,24 +128,6 @@ class _MyLoginPageState extends State<MyLoginPage> {
         ),
       ),
     );
-   /*return Scaffold(
-     key: _scaffoldKey,
-     resizeToAvoidBottomInset: false,
-     body: Container(
-       child: Container(
-           decoration: BoxDecoration(
-               gradient: LinearGradient(
-                 begin: Alignment.bottomCenter,
-                 end: Alignment.topCenter,
-                 colors: [Colors.blue[900], Colors.lightBlue],
-               )),
-           height: MediaQuery.of(context).size.height,
-           child: Container(
-             child: build_child(),
-           )
-       ),
-     ),
-   );*/
   }
 
   Widget build_child( BuildContext context ) {
@@ -531,7 +517,8 @@ class _MyLoginPageState extends State<MyLoginPage> {
 
   Future<bool> _getPermisoOtorgadoSharedPref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return await prefs.getBool('encuestaRealizada');
+    final permiso = await prefs.getBool('encuestaRealizada');
+    return permiso != null ? permiso : false;
   }
 
   Future<void> _lauchSalvoConductoForm( BuildContext context ) async {
@@ -540,23 +527,32 @@ class _MyLoginPageState extends State<MyLoginPage> {
     final imagen = prefs.getBool('imagenPerfil');
     final permiso = prefs.getBool('permisoOtorgado');
     if (startupDniNumber != null) {
-      if(imagen != null){
-        if(imagen == true){
-          if(permiso != null) {
-            if(permiso == true) {
-              await Navigator.of(context).pushNamed('/permisootorgado');
+      final perm = PermisoYaOtorgadoModel(dniIndividuo: _dni.toString(), token: "");
+      await _getPermisosYaOtorgado(perm).then((v) {
+        print(v);
+        if(v == true){
+          Navigator.of(context).pushNamed('/permisootorgado');
+        } else {
+          if(imagen != null){
+            if(imagen == true){
+              if(permiso != null) {
+                if(permiso == true) {
+                  Navigator.of(context).pushNamed('/permisootorgado');
+                } else {
+                  Navigator.of(context).pushNamed('/solicitarpermiso');
+                }
+              } else {
+                Navigator.of(context).pushNamed('/solicitarpermiso');
+              }
             } else {
-              await Navigator.of(context).pushNamed('/solicitarpermiso');
+              Navigator.of(context).pushNamed('/salvoconducto');
             }
           } else {
-            await Navigator.of(context).pushNamed('/solicitarpermiso');
+            Navigator.of(context).pushNamed('/salvoconducto');
           }
-        } else {
-          await Navigator.of(context).pushNamed('/salvoconducto');
         }
-      } else {
-        await Navigator.of(context).pushNamed('/salvoconducto');
-      }
+      });
+
     }
   }
 
@@ -579,14 +575,64 @@ class _MyLoginPageState extends State<MyLoginPage> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  void _getLatitudLongitud() async {
+  void _setLatitudLongitud() async {
     var latlng = await Gps.currentGps();
-    //print('GEO POS ' + latlng.toString());
+    print('GEO POS ' + latlng.toString());
+    print('GEO POS lat ' + latlng.lat);
+    print('GEO POS long ' + latlng.lng);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('latitud', double.parse(latlng.lat));
     await prefs.setDouble('longitud', double.parse(latlng.lng));
 //    startLocationService();
   }
+
+  Future<void> _getLatitudLongitud() async {
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final latitud = await prefs.getDouble('latitud');
+    final longitud = await prefs.getDouble('longitud');
+    setState(() {
+      _latitud = latitud.toString();
+      _longitud = longitud.toString();
+    });
+//    startLocationService();
+  }
+
+  Future<bool> _getPermisosYaOtorgado(PermisoYaOtorgadoModel permisoYaOtorgadoModel) async {
+    print('_getPermisosYaOtorgado');
+    print(json.encode(permisoYaOtorgadoModel));
+    final response = await http.post('http://coe.jujuy.gob.ar/covid19/get/salvoconducto', body: (utf8.encode(json.encode(permisoYaOtorgadoModel))));
+    print('response.body');
+    print(response.body);
+    if (response.statusCode == 200) {
+      print('tiene permiso');
+      // Si el servidor devuelve una repuesta OK, parseamos el JSON
+      RespuestaPermisoModel list = RespuestaPermisoModel.fromJson(json.decode(response.body));
+      print('********** respuesta ************');
+      print(list.toJson());
+      await _setPermisoOtorgadoSharedPref(list).then((v) {
+        print('okkkkkkkkkkkk');
+      });
+      return true;
+    } else {
+      print('no tiene permiso');
+      // Si esta respuesta no fue OK, lanza un error.
+      //
+      return false;
+    }
+  }
+
+  Future<void> _setPermisoOtorgadoSharedPref(RespuestaPermisoModel permisoOtorgado) async {
+    DateFormat dateFormat = DateFormat("dd/MM/yyyy");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('imagenPerfilOtorgada', permisoOtorgado.imagen);
+    await prefs.setString('qrOtorgado', permisoOtorgado.qr);
+    await prefs.setString('fechaOtorgado', permisoOtorgado.fechaInicio);
+    await prefs.setString('horaInicioOtorgado', permisoOtorgado.horaInicio);
+    await prefs.setString('horaFinOtorgado', permisoOtorgado.horaFin);
+    await prefs.setString('textoOtorgado', permisoOtorgado.texto);
+  }
+
 
   void _checkPermissions() async {
     Map<PermissionGroup, PermissionStatus> permissions =
@@ -599,7 +645,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
 
     if (permission == PermissionStatus.granted) {
       if (serviceStatus == ServiceStatus.enabled) {
-        _getLatitudLongitud();
+        _setLatitudLongitud();
         setState(() {
           _locationUp = true;
         });
@@ -680,7 +726,6 @@ class _MyLoginPageState extends State<MyLoginPage> {
 
   Future<void> updateUI(LocationDto data) async {
     await apiRequest(data);
-    await apiRequestStartTracking(data);
   }
 
   static void callback(LocationDto locationDto) async {
@@ -717,7 +762,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
     var hora = DateFormat('HHmm');
 
     final item = {
-      "dni" : _dni,
+      "dni_individuo" : _dni,
       "fecha": fecha.format(now) ,
       "hora": hora.format(now) ,
       "latitud": locationDto.latitude,
@@ -746,14 +791,15 @@ class _MyLoginPageState extends State<MyLoginPage> {
   /// Metodo para enviar las coordenadas hacia /covid19/start/tracking
   /// @authos German Udaeta
   ///
-  Future<String> apiRequestStartTracking(LocationDto locationDto) async {
+  Future<String> apiRequestStartTracking() async {
     final item = {
-      "dni" : _dni,
+      "dni_individuo" : _dni,
       "dni_operador": _dniOperador,
       "password": _password,
-      "latitud": locationDto.latitude,
-      "longitud": locationDto.longitude
+      "latitud": _latitud,
+      "longitud": _longitud
     };
+    print('**************');
     print(item);
     HttpClient httpClient = HttpClient();
     HttpClientRequest request = await httpClient.postUrl(Uri.parse('http://coe.jujuy.gob.ar/covid19/start/tracking'));
@@ -840,7 +886,10 @@ class _MyLoginPageState extends State<MyLoginPage> {
               FlatButton(
                 child: Text('Iniciar'),
                 onPressed: () {
-                  startLocationService();
+                  _getLatitudLongitud().then((v){
+                    apiRequestStartTracking();
+                    startLocationService();
+                  });
                   Navigator.of(context).pop();
                 },
               )
