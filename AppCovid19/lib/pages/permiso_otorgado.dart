@@ -15,6 +15,7 @@ class PermisoOtorgado extends StatefulWidget {
 class _PermisoOtorgadoState extends State<PermisoOtorgado> {
   final _nombreController = TextEditingController();
   final _apellidoController = TextEditingController();
+  final _domicilioController = TextEditingController();
   String _imagen;
   String _qr;
   String _fecha;
@@ -178,11 +179,12 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
     setState(() {
       _nombreController.text = nombre;
       _apellidoController.text = apellido;
+      _domicilioController.text = domicilio;
       _imagen = imagen;
       _qr = qr;
       _fecha = fecha;
-      _horaInicio = horaInicio;
-      _horaFin = horaFin;
+      _horaInicio = horaInicio.substring(0, 5);
+      _horaFin = horaFin.substring(0, 5);
       _texto = texto;
     });
 
@@ -243,8 +245,8 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('Domicilio: '),
-            Text('Barrio: '),
+            Text('Domicilio: ${_domicilioController.text}'),
+//            Text('Barrio: '),
           ],
         ));
   }
@@ -257,9 +259,9 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('Permiso valido: '),
-            Text('Desde: '),
-            Text('Hasta: '),
+            Text('Permiso valido: ${_fecha}'),
+            Text('Desde: ${_horaInicio}'),
+            Text('Hasta: ${_horaFin}'),
           ],
         ));
   }

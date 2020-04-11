@@ -393,8 +393,10 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                               });
                             }
                           } else if (connectivityResult == ConnectivityResult.wifi) {
+
                             final result = await enviarFormulario(form);
                             if (result == true) {
+                              final res = await _setRegistroSharedPref(form);
                               saveDniCredentials(_dniController.text);
                               showInSnackBar('Datos personales enviados con exito puede seguír al menu principal');
                               setupNotification();
@@ -533,6 +535,7 @@ class _MyFormularioPage extends State<MyFormularioPage> {
   }
 
   Future<bool> _setRegistroSharedPref(RegistroModel item) async {
+    print('_setRegistroSharedPref');
     print(item.toJson());
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('nombreGuardado', item.nombre);
