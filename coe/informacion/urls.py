@@ -36,10 +36,6 @@ urlpatterns = [
     path('ver/individuo/<int:individuo_id>', views.ver_individuo, name='ver_individuo'),
     path('buscador/individuos', views.buscador_individuos, name='buscador_individuos'),
     path('arbol/relaciones/<int:individuo_id>', views.arbol_relaciones, name='arbol_relaciones'),
-    #Tracking
-    path('tracking/general', views.control_tracking, name='control_tracking'),
-    path('tracking/<int:individuo_id>', views.ver_tracking, name='ver_tracking'),
-    path('descartar/<int:geoposicion_id>', views.descartar_alerta, name='descartar_alerta'),
     #Listados
     path('lista/seguimiento', views.lista_seguimiento, name='lista_seguimiento'),
     path('lista/autodiagnosticos', views.lista_autodiagnosticos, name='lista_autodiagnosticos'),

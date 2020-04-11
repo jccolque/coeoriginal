@@ -473,48 +473,6 @@ def ver_individuo(request, individuo_id):
     individuo = individuo.get(pk=individuo_id)
     return render(request, "ver_individuo.html", {'individuo': individuo, })
 
-#Tracking
-@permission_required('operadores.individuos')
-def control_tracking(request):
-    #Obtenemos Posiciones Bases
-    geoposiciones = GeoPosicion.objects.filter(aclaracion="INICIO TRACKING")
-    #Obtenemos Alertas
-    alertas = GeoPosicion.objects.filter(alerta=True, procesada=False)
-    alertas = alertas.select_related('individuo', 'individuo__situacion_actual', 'individuo__domicilio_actual')
-    alertas = alertas.order_by('-fecha')
-    #Lanzamos monitoreo
-    return render(request, "control_tracking.html", {
-        'gmkey': GEOPOSITION_GOOGLE_MAPS_API_KEY,
-        'geoposiciones': geoposiciones,
-        'alertas': alertas,
-    })
-
-@permission_required('operadores.individuos')
-def ver_tracking(request, individuo_id):
-    individuo = Individuo.objects.select_related('situacion_actual', 'domicilio_actual', 'appdata')
-    individuo = individuo.get(pk=individuo_id)
-    geoposiciones = GeoPosicion.objects.filter(individuo=individuo)
-    geoposiciones = geoposiciones.order_by('fecha')
-    return render(request, "seguimiento.html", {
-        'gmkey': GEOPOSITION_GOOGLE_MAPS_API_KEY,
-        'individuo': individuo,
-        'geoposiciones': geoposiciones,
-    })
-
-@permission_required('operadores.individuos')
-def descartar_alerta(request, geoposicion_id):
-    geoposicion = GeoPosicion.objects.get(pk=geoposicion_id)
-    form = JustificarForm()
-    if request.method == "POST":
-        form = JustificarForm(request.POST)
-        if form.is_valid:
-            geoposicion.procesada = True
-            geoposicion.operador = obtener_operador(request)
-            geoposicion.aclaracion = request.POST['justificacion']
-            geoposicion.save()
-            return redirect('informacion:control_tracking')
-    return render(request, "extras/generic_form.html", {'titulo': "Procesar Alerta", 'form': form, 'boton': "Procesar", })
-
 #Relaciones
 @permission_required('operadores.individuos')
 def arbol_relaciones(request, individuo_id):
@@ -978,7 +936,7 @@ def tablero_control(request):
                     situacion_actual__fecha__date__lte=dia).count()
                 graf_conductas.agregar_dato(dia, conducta[1], date2str(dia), cant)
     #Entregamos el reporte
-    return render(request, "tablero_control.html", {
+    return render(request, "reportes/tablero_control.html", {
         'aislamientos': aislamientos,
         'internaciones': internaciones,
         "nacionalidades": nacionalidades,
@@ -1036,11 +994,11 @@ def reporte_basico(request):
         #los volvemos una lista:
         reportados = list(reportados.values())
         reportados.sort(key=lambda x: x.sintomas, reverse=True)
-        return render(request, "reporte_basico_mostrar.html", {
+        return render(request, "reportes/reporte_basico_mostrar.html", {
             'reportados': reportados,
             'has_table': True,
         })
-    return render(request, "reporte_basico_buscar.html", {
+    return render(request, "reportes/reporte_basico_buscar.html", {
         'estados': estados,
         'conductas': conductas,
         'atributos': atributos, 

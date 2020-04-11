@@ -1,0 +1,29 @@
+{% extends 'base_informacion.html' %}
+{% load static %}
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2><b>Control del Sistema de Trackeo</b></h2>
+            <div class="col-md-12">
+                <h3>Ultimas Alertas:</h3>
+                <table class="listado" id="table">
+                    <thead>
+                        <tr>
+                            <th>Individuo</th>
+                            <th>Situacion</th>
+                            <th>Domicilio</th>
+                            <th>Fecha y Hora</th>
+                            <th>Distancia</th>
+                            <th>Ver Detalle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for alerta in alertas %}
+                            {% include 'geotracking/linea_alerta.html' %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

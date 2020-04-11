@@ -9,15 +9,7 @@
                 <div class="row">
                     <br>
                     <div class="col-sm-1" style="text-align:right;">
-                        <a class="nolink" href="
-                            {% if individuo.fotografia %}
-                                {{individuo.get_foto}}
-                            {% else %}
-                                {% url 'informacion:cargar_fotografia' individuo_id=individuo.id %}
-                            {% endif %}
-                            ">
-                            <img class="fotografia" src="{{individuo.get_foto}}">
-                        </a>
+                        <img class="fotografia" src="{{individuo.get_foto}}">
                     </div>
                     <div class="col-sm-6">
                         <h2><b>{{individuo.apellidos}}, {{individuo.nombres}}</b></h2>
@@ -60,7 +52,7 @@
                                             <th>Aclaracion</th>
                                         </tr>
                                 {% endif %}
-                                <tr class="aclaracion">
+                                <tr class="geo_aclaracion">
                                     <td>{{geopos.fecha|date:"d/m H:i"}}</td>
                                     <td>{{geopos.latitud|stringformat:".5f"}}/{{geopos.longitud|stringformat:".5f"}}</td>
                                     <td>
