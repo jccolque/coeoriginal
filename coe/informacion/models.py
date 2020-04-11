@@ -220,7 +220,7 @@ class GeoPosicion(models.Model):
     def as_dict(self):
         return {
             "id": self.id,
-            "domicilio_id": self.domicilio.id,
+            "individuo_id": self.individuo.id,
             "latitud": str(self.latitud),
             "longitud": str(self.longitud),
             "aclaracion": self.aclaracion,
