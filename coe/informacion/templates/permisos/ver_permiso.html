@@ -1,0 +1,27 @@
+{% extends 'base_informacion.html' %}
+{% load static %}
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <br>
+            <div class="col-md-4 col-md-offset-2 permiso">
+                <div class="row">
+                    <div class="col-md-6">
+                        <img class="fotos" src="{{individuo.get_foto}}">
+                    </div>
+                    <div class="col-md-6">
+                        <img class="fotos" src="{{individuo.get_qr}}">
+                    </div>
+                </div>
+                <div class="row cuerpo">
+                    <p>{{permiso.individuo.apellidos}}, {{permiso.individuo.nombres}}</p>
+                    <p><b>{{permiso.get_tipo_display}}</b></p>
+                    <p><b>Estado:</b> {{permiso.individuo.situacion_actual}}</p>
+                    <p><b>Domicilio Actual:</b> {{permiso.individuo.domicilio_actual}}</p>
+                    <p><b>Validez:</b> {{permiso.begda|date:"d/m/Y H:i"}} a {{permiso.endda|date:"d/m/Y H:i"}}</p>
+                    <p>{{permiso.aclaracion}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

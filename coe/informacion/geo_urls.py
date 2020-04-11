@@ -10,6 +10,7 @@ urlpatterns = [
     path('', geo_views.menu_geotracking, name='menu_geotracking'),
     #Tracking
     path('general', geo_views.control_tracking, name='control_tracking'),
+    path('lista/individuos', geo_views.lista_individuos, name='lista_individuos'),
     path('lista/alertas', geo_views.lista_alertas, name='lista_alertas'),
     path('lista/procesadas', geo_views.alertas_procesadas, name='alertas_procesadas'),
     path('ver/<int:individuo_id>', geo_views.ver_tracking, name='ver_tracking'),

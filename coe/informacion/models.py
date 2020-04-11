@@ -396,10 +396,10 @@ class Permiso(models.Model):
             "aclaracion": self.aclaracion,
         }
     def estado(self):
-        if self.habilitado:
-            return "Aprobado"
+        if self.endda > timezone.now():
+            return "Activo"
         else:
-            return "En Espera"
+            return "Vencido"
 
 #Señales
 from .signals import estado_inicial

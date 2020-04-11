@@ -7,15 +7,14 @@
         <section class="informacion_basica">
             <div class="container">
                 <div class="row">        
-                    <h1>Menu GeoTracking:</h1>
+                    <h1>Menu Permisos:</h1>
                     <div class="col-md-8">
                         <ul class="menu_botones">
                             {% if perms.operadores.individuos %}
-                                <li><a href="{% url 'geo_urls:control_tracking' %}">Sistema de Control GeoPosicional</a></li>
-                                <li><a href="{% url 'geo_urls:lista_alertas' %}">Listado de Alertas Activas</a></li>
-                                <li><a href="{% url 'geo_urls:lista_individuos' %}">Listado de Individuos Bajo Seguimiento</a></li>
+                                <li><a href="{% url 'permisos_urls:lista_activos' %}">Listado de Permisos Activos</a></li>
+                                <li><a href="{% url 'permisos_urls:lista_vencidos' %}">Listado de Permisos Vencidos</a></li>
                                 <hr>
-                                <li><a href="{% url 'geo_urls:alertas_procesadas' %}">Listado de Alertas Procesadas</a></li>
+                                <li><a href="{% url 'permisos_urls:buscar_permiso' %}">Pedido de Permiso Publico</a></li>
                             {% endif %}
 
                             {% if request.user.is_superuser %}

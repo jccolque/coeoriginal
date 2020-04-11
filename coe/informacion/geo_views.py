@@ -34,12 +34,27 @@ def control_tracking(request):
     })
 
 @permission_required('operadores.individuos')
+def lista_individuos(request):
+    geopos = GeoPosicion.objects.all().values_list("individuo__id", flat=True).distinct()
+    #Obtenemos individuos de interes
+    individuos = Individuo.objects.filter(id__in=geopos).select_related('situacion_actual', 'domicilio_actual')
+    #Optimizamos
+    individuos = individuos.select_related('nacionalidad', 'origen', 'destino', )
+    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'domicilio_actual__localidad__departamento')
+    individuos = individuos.select_related('situacion_actual')
+    individuos = individuos.prefetch_related('atributos', 'sintomas', 'situaciones', 'relaciones')
+    return render(request, "lista_individuos.html", {
+        'individuos': individuos,
+        'has_table': True,
+    })
+
+@permission_required('operadores.individuos')
 def lista_alertas(request):
     #Obtenemos Alertas
     alertas = GeoPosicion.objects.filter(alerta=True, procesada=False)
     alertas = alertas.select_related('individuo', 'individuo__situacion_actual', 'individuo__domicilio_actual')
     alertas = alertas.order_by('-fecha')
-    #Lanzamos monitoreo
+    #Lanzamos listado
     return render(request, "geotracking/lista_alertas.html", {
         'alertas': alertas,
         'refresh': True,
@@ -56,7 +71,7 @@ def alertas_procesadas(request):
         'operador',
     )
     alertas = alertas.order_by('-fecha')
-    #Lanzamos monitoreo
+    #Lanzamos listado
     return render(request, "geotracking/lista_procesadas.html", {
         'alertas': alertas,
         'refresh': True,

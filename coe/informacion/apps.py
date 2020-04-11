@@ -8,7 +8,11 @@ class InformacionConfig(AppConfig):
     name = 'informacion'
     def ready(self):
         agregar_menu(self)
-        #Fabricamos un menu virtual
+        #Fabricamos un menus virtuales
         geo = copy.copy(self)
         geo.name = "geotracking"
         agregar_menu(geo)
+        #Permisos
+        permisos = copy.copy(self)
+        permisos.name = "permisos"
+        agregar_menu(permisos)

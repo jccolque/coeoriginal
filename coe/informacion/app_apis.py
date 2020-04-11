@@ -583,8 +583,11 @@ def tracking(request):
         #Si es mayor a alerta la marcamos
         if geopos.distancia > 50:
             geopos.alerta = True
-        #Guardamos la geopos
-        geopos.save()
+        
+        if geopos.distancia > 5:#Guardamos solo si vale la pena
+            geopos.save()
+        #Realizamos controles avanzados
+        
         #Controlamos posicion:
         
         logger.info("Exito")

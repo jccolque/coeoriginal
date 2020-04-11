@@ -35,3 +35,18 @@ img.fotografia {
 .geo_aclaracion {
     font-size: 0.8em;
 }
+
+.permiso {
+    margin: auto;
+    margin-top: 25px;
+    border: solid 1px black;
+    border-radius: 10px;
+    padding-bottom: 5px;
+    padding: 15px;
+    text-align: justify;
+    font-weight: normal;
+}
+
+.permiso .cuerpo {
+    padding: 15px;
+}

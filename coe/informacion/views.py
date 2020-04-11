@@ -46,59 +46,6 @@ from .tasks import guardar_same, guardar_epidemiologia
 from .tasks import guardar_padron_individuos, guardar_padron_domicilios
 from .functions import obtener_relacionados
 
-#Publico
-def buscar_permiso(request):
-    form = BuscarPermiso()
-    if request.method == 'POST':
-        form = BuscarPermiso(request.POST)
-        if form.is_valid():
-            individuo = Individuo.objects.filter(
-                num_doc=form.cleaned_data['num_doc'],
-                apellidos__icontains=form.cleaned_data['apellido'])
-            if individuo:
-                individuo = individuo.first()
-                return redirect('informacion:pedir_permiso', individuo_id=individuo.id, num_doc=individuo.num_doc)
-            else:
-                form.add_error(None, "No se ha encontrado a Nadie con esos Datos.")
-    return render(request, "permisos/buscar_permiso.html", {'form': form, })
-
-def pedir_permiso(request, individuo_id, num_doc):
-    try:
-        individuo = Individuo.objects.get(pk=individuo_id, num_doc=num_doc)
-        form = PermisoForm(initial={'individuo': individuo, })
-        if request.method == 'POST':
-            form = PermisoForm(request.POST, initial={'individuo': individuo, })
-            if form.is_valid():
-                permiso = form.save(commit=False)
-                permiso.individuo = individuo
-                permiso.save()
-                #Enviar email
-                return render(request, "permisos/permiso_entregado.html", {'permiso': permiso, })
-        return render(request, "permisos/pedir_permiso.html", {'form': form, 'individuo': individuo, })
-    except Individuo.DoesNotExist:
-        return redirect('informacion:buscar_permiso')
-
-def completar_datos(request, individuo_id):
-    individuo = Individuo.objects.get(pk=individuo_id)
-    form = DatosForm(instance=individuo)
-    if request.method == "POST":
-        form = DatosForm(request.POST, instance=individuo)
-        if form.is_valid():
-            form.save()
-            return redirect('informacion:pedir_permiso', individuo_id=individuo.id)
-    return render(request, "extras/generic_form.html", {'titulo': "Corregir/Completar Datos", 'form': form, 'boton': "Guardar", })
-
-def subir_foto(request, individuo_id):
-    individuo = Individuo.objects.get(pk=individuo_id)
-    form = FotoForm()
-    if request.method == "POST":
-        form = FotoForm(request.POST, request.FILES)
-        if form.is_valid():
-            individuo.fotografia = form.cleaned_data['fotografia']
-            individuo.save()
-            return redirect('informacion:pedir_permiso', individuo_id=individuo.id)
-    return render(request, "extras/generic_form.html", {'titulo': "Subir Fotografia", 'form': form, 'boton': "Cargar", })
-
 #Administrar
 @permission_required('operadores.menu_informacion')
 def menu(request):
