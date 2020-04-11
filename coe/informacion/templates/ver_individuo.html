@@ -63,10 +63,10 @@
                                 <p>Telefono: {{individuo.telefono}}</p>
                                 <p>Email: {{individuo.email}}</p>
                                 <!--Seguimiento-->
-                                {% if individuo.seguimiento %}
+                                {% if individuo.tracking %}
                                     <p>
                                         <b>Ver Seguimiento:</b> 
-                                        <a href="{% url 'informacion:ver_seguimiento' individuo_id=individuo.id %}">
+                                        <a href="{% url 'informacion:ver_tracking' individuo_id=individuo.id %}">
                                             Aqui.
                                         </a>
                                     </p>

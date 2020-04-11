@@ -1,0 +1,48 @@
+{% extends 'base_informacion.html' %}
+{% load static %}
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2><b>Control del Sistema de Trackeo</b></h2>
+        </div>
+        <div class="row">
+        <div class="col-md-12">
+            {% include 'mapa_puntos.html' %}
+        </div>
+        <hr>
+        <div class="col-md-12">
+            <h3>Ultimas Alertas:</h3>
+            <table class="listado" id="table">
+                <thead>
+                    <tr>
+                        <th>Individuo</th>
+                        <th>Situacion</th>
+                        <th>Domicilio</th>
+                        <th>Fecha y Hora</th>
+                        <th>Distancia</th>
+                        <th>Ver Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for alerta in alertas %}
+                        <tr>
+                            <td>{{alerta.individuo.num_doc}} - {{alerta.individuo.apellidos}}, {{alerta.individuo.nombres}}</td>
+                            <td>{{alerta.individuo.situacion_actual}}</td>
+                            <td>{{alerta.individuo.domicilio_actual}}</td>
+                            <td>{{alerta.fecha|date:"d/m H:i"}}</td>
+                            <td>{{alerta.distancia}}</td>
+                            <td>
+                                <a href="{% url 'informacion:ver_individuo' individuo_id=alerta.individuo.id %}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                </a>
+                                <a href="{% url 'informacion:descartar_alerta' geoposicion_id=alerta.id %}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

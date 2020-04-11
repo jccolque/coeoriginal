@@ -65,7 +65,11 @@
                                     <td>{{geopos.latitud|stringformat:".5f"}}/{{geopos.longitud|stringformat:".5f"}}</td>
                                     <td>
                                         {% if geopos.alerta %}
-                                            <b>ALERTA: {{geopos.distancia}}mts de Base.</b><br>
+                                            {% if geopos.procesada %}
+                                                <b>Alerta Procesada: {{geopos.distancia}}mts de Base.</b><br>
+                                            {% else %}
+                                                <b>ALERTA: {{geopos.distancia}}mts de Base.</b><br>
+                                            {% endif %}
                                         {% endif %}
                                         {{geopos.aclaracion}}
                                     </td>

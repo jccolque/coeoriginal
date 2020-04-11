@@ -159,7 +159,7 @@ class Individuo(models.Model):
             self.qrpath = relative_path
             self.save()
             return self.qrpath
-    def seguimiento(self):
+    def tracking(self):
         return self.geoposiciones.filter(aclaracion="INICIO TRACKING").exists()
 
 class Relacion(models.Model):#Origen del Dato
@@ -199,7 +199,7 @@ class Domicilio(models.Model):
     class Meta:
         ordering = ['fecha', ]
     def __str__(self):
-        return self.calle + ' ' + self.numero + ', ' + str(self.localidad)
+        return self.calle + ' ' + self.numero + ', ' + str(self.localidad.nombre)
     def as_dict(self):
         return {
             "id": self.id,
@@ -217,6 +217,8 @@ class GeoPosicion(models.Model):
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     distancia = models.DecimalField('Distancia a Base', max_digits=8, decimal_places=2, default=0)
     alerta = models.BooleanField('Posicion de Alerta', default=False)
+    procesada = models.BooleanField('Procesada', default=False)
+    operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True)
     def __str__(self):
         return str(self.latitud) + '|' + str(self.longitud)
     def as_dict(self):

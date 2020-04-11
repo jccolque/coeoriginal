@@ -86,3 +86,6 @@ class AuditoriaForm(forms.Form):
         if self.cleaned_data['endda'] > date.today():
             raise forms.ValidationError("No puede ingresar una fecha posteriores a hoy.")
         return self.cleaned_data
+
+class JustificarForm(forms.Form):
+    justificacion = forms.CharField(widget=forms.Textarea())

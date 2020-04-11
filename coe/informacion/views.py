@@ -14,7 +14,7 @@ from fcm_django.models import FCMDevice
 from coe.settings import GEOPOSITION_GOOGLE_MAPS_API_KEY
 from core.decoradores import superuser_required
 from core.functions import date2str
-from core.forms import SearchForm
+from core.forms import SearchForm, JustificarForm
 from georef.models import Nacionalidad
 from georef.models import Ubicacion
 from operadores.functions import obtener_operador
@@ -473,9 +473,24 @@ def ver_individuo(request, individuo_id):
     individuo = individuo.get(pk=individuo_id)
     return render(request, "ver_individuo.html", {'individuo': individuo, })
 
+#Tracking
+@permission_required('operadores.individuos')
+def control_tracking(request):
+    #Obtenemos Posiciones Bases
+    geoposiciones = GeoPosicion.objects.filter(aclaracion="INICIO TRACKING")
+    #Obtenemos Alertas
+    alertas = GeoPosicion.objects.filter(alerta=True, procesada=False)
+    alertas = alertas.select_related('individuo', 'individuo__situacion_actual', 'individuo__domicilio_actual')
+    alertas = alertas.order_by('-fecha')
+    #Lanzamos monitoreo
+    return render(request, "control_tracking.html", {
+        'gmkey': GEOPOSITION_GOOGLE_MAPS_API_KEY,
+        'geoposiciones': geoposiciones,
+        'alertas': alertas,
+    })
 
 @permission_required('operadores.individuos')
-def ver_seguimiento(request, individuo_id):
+def ver_tracking(request, individuo_id):
     individuo = Individuo.objects.select_related('situacion_actual', 'domicilio_actual', 'appdata')
     individuo = individuo.get(pk=individuo_id)
     geoposiciones = GeoPosicion.objects.filter(individuo=individuo)
@@ -487,6 +502,21 @@ def ver_seguimiento(request, individuo_id):
     })
 
 @permission_required('operadores.individuos')
+def descartar_alerta(request, geoposicion_id):
+    geoposicion = GeoPosicion.objects.get(pk=geoposicion_id)
+    form = JustificarForm()
+    if request.method == "POST":
+        form = JustificarForm(request.POST)
+        if form.is_valid:
+            geoposicion.procesada = True
+            geoposicion.operador = obtener_operador(request)
+            geoposicion.aclaracion = request.POST['justificacion']
+            geoposicion.save()
+            return redirect('informacion:control_tracking')
+    return render(request, "extras/generic_form.html", {'titulo': "Procesar Alerta", 'form': form, 'boton': "Procesar", })
+
+#Relaciones
+@permission_required('operadores.individuos')
 def arbol_relaciones(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
     set_relaciones = obtener_relacionados(individuo, set())
@@ -497,6 +527,7 @@ def arbol_relaciones(request, individuo_id):
         'ancho': 15000,
     })
 
+#Individuos
 @permission_required('operadores.individuos')
 def buscador_individuos(request):
     form = BuscadorIndividuosForm()   
