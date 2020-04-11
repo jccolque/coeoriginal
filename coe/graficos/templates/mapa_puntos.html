@@ -18,7 +18,11 @@
             ['Lat', 'Long', 'Name'],
             
             {% for posicion in geoposiciones %}
-                [{{posicion.latitud|stringformat:".5f"}}, {{posicion.longitud|stringformat:".5f"}}, "{{posicion.fecha}}<br>{{posicion.aclaracion}}"],
+                [
+                    {{posicion.latitud|stringformat:".5f"}},
+                    {{posicion.longitud|stringformat:".5f"}},
+                    "{% if posicion.individuo %}<a href='{% url 'informacion:ver_individuo' individuo_id=posicion.individuo.id %}' target='_blank'>{{posicion.individuo}}</a>{% endif %}<br><b>Info:</b> {{posicion.aclaracion}}<br><b>Fecha:</b> {{posicion.fecha}}"
+                ],
             {% endfor %}
 
         ]);
