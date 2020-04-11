@@ -49,7 +49,7 @@
                             {% include 'mapa_puntos.html' %}
                         </div>
                         <!--tabla-->
-                        <div class="col-sm-4">
+                        <div class="col-sm-4 tabla_posiciones">
                             {% for geopos in geoposiciones %}
                                 {% if forloop.first %}
                                     <h3>Registros:</h3>
@@ -60,10 +60,15 @@
                                             <th>Aclaracion</th>
                                         </tr>
                                 {% endif %}
-                                <tr>
+                                <tr class="aclaracion">
                                     <td>{{geopos.fecha|date:"d/m H:i"}}</td>
                                     <td>{{geopos.latitud|stringformat:".5f"}}/{{geopos.longitud|stringformat:".5f"}}</td>
-                                    <td>{{geopos.aclaracion}}'</td>
+                                    <td>
+                                        {% if geopos.alerta %}
+                                            <b>ALERTA: {{geopos.distancia}}mts de Base.</b><br>
+                                        {% endif %}
+                                        {{geopos.aclaracion}}
+                                    </td>
                                 </tr>
                                 {% if forloop.last %}
                                     </table>

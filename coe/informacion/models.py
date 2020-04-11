@@ -214,6 +214,7 @@ class GeoPosicion(models.Model):
     longitud = models.DecimalField('longitud', max_digits=12, decimal_places=10)
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    distancia = models.DecimalField('Distancia a Base', max_digits=8, decimal_places=2, default=0)
     alerta = models.BooleanField('Posicion de Alerta', default=False)
     def __str__(self):
         return str(self.latitud) + '|' + str(self.longitud)

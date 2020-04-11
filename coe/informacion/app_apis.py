@@ -568,9 +568,9 @@ def tracking(request):
             int(data["hora"][2:4]),
         )
         #Chequeamos distancia:
-        distancia = controlar_distancia(geopos)
+        geopos.distancia = controlar_distancia(geopos)
         #Si es mayor a alerta la marcamos
-        if distancia > 50:
+        if geopos.distancia > 50:
             geopos.alerta = True
         #Guardamos la geopos
         geopos.save()
@@ -581,7 +581,7 @@ def tracking(request):
             {
                 "action":"tracking",
                 "realizado": True,
-                "distancia": distancia,
+                "distancia": geopos.distancia,
             },
             safe=False
         )

@@ -24,5 +24,14 @@ img.fotografia {
 
 .mapa_seguimiento {
     width: 100%;
-    height: 750px;
+    height: 600px;
+}
+
+.tabla_posiciones {
+    height: 600px;
+    overflow: auto;
+}
+
+.aclaracion {
+    font-size: 0.8em;
 }

@@ -863,15 +863,15 @@ def del_documento(request, documento_id):
 def cargar_geoposicion(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
     if request.method == "POST":
-        if hasattr(individuo,'geoposicion'):
-            geoposicion = individuo.geoposicion
-        else:
-            geoposicion = GeoPosicion()
-            geoposicion.individuo = individuo
-        #cargamos los datos del form:
+        print(request.POST)
+        geoposicion = GeoPosicion()
+        geoposicion.individuo = individuo
         geoposicion.latitud = request.POST['latitud']
         geoposicion.longitud = request.POST['longitud']
-        geoposicion.observaciones = request.POST['observaciones']
+        if request.POST['observaciones'] != '':
+            geoposicion.aclaracion = request.POST['observaciones']
+        else:
+            geoposicion.aclaracion = "Carga Manual de " + str(obtener_operador(request))
         geoposicion.save()
         return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/gmap_form.html", {
