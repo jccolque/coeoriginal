@@ -70,6 +70,7 @@ TIPO_RELACION = (
     ('F', 'Familiar'),
     ('CE', 'Contacto Bajo Riesgo'),
     ('CA', 'Contacto Alto Riesgo'),
+    ('MD', 'Mismo Domicilio'),
     ('O', 'Otro...'),
 )
 
@@ -80,6 +81,8 @@ TIPO_ATRIBUTO = (
     ('VE', 'Vigilancia Epidemiologica'),
     ('AS', 'Es Agente de Salud'),
     ('PS', 'Es Personal de Seguridad'),
+    ('FP', 'Es Funcionario Publico'),
+    ('TE', 'Es Trabajador de Empresa Estrategica'),
     ('PD', 'Se encuentra Presos/Detenidos'),
     ('CE', 'Visito Pais de Riesgo/Contacto con Extranjeros'),
 )
@@ -124,7 +127,8 @@ TIPO_DOCUMENTO = (
 TIPO_PERMISO = (
     ('C', 'Compras de Primera Necesidad'),
     ('F', 'Compras de Farmacia'),
-    ('P', 'Personas a Cargo'),
+    ('R', 'Responsable de Personas a Cargo'),
+    ('P', 'Permiso Permanente'),
 )
 
 TIPO_TRIAJE = (

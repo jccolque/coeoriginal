@@ -1,0 +1,83 @@
+{% extends 'base_informacion.html' %}
+
+{% load static %}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">
+                    <br>
+                    <div class="col-sm-3">
+                        <a class="nolink" href="
+                            {% if individuo.fotografia %}
+                                {{individuo.get_foto}}
+                            {% else %}
+                                {% url 'informacion:cargar_fotografia' individuo_id=individuo.id %}
+                            {% endif %}
+                            ">
+                            <img class="fotografia" src="{{individuo.get_foto}}">
+                        </a>
+                    </div>
+                    <div class="col-sm-9">
+                        <h2><b>{{individuo.apellidos}}, {{individuo.nombres}}</b></h2>
+                        <!-- ESTADO -->
+                        {% if individuo.situacion_actual %}
+                            <h4>Estado: <b>{{individuo.situacion_actual}}</b> 
+                                <a class="nolink" href="{% url 'informacion:cargar_situacion' individuo_id=individuo.id %}">
+                                    <img class="icons" src="{% static '/img/icons/change.png' %}">
+                                </a>
+                                <a class="nolink"  href="javascript:PopUp(1);" ><img class="icons" src="{% static '/img/icons/history.png' %}"></a>
+                            </h4>
+                            <div class="popup-overlay"></div>
+                            <div class="popup">
+                                <div class="popuptext" id="myPopup-1">
+                                    <a class="nolink"  href="javascript:PopUp(1);" >
+                                        <img class="close_icon" src="{% static 'img/icons/close.png' %}">
+                                    </a>
+                                    <p class="history_tittle">HISTORIAL:</p>
+                                    <hr class="minibar">
+                                    <ul>
+                                        {% for sit in individuo.situaciones.all reversed %}
+                                            <li>{{sit}} ({{sit.fecha}}) | {{sit.aclaracion}}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        {% else %}
+                            <h4 class="alerta">EL INDIVIDUO NO REGISTRA ESTADO ACTUAL: 
+                                <a class="nolink" href="{% url 'informacion:cargar_situacion' individuo_id=individuo.id %}">
+                                    CARGAR
+                                </a>
+                            </h4>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class"row">
+                    <hr>
+                    <!-- DATOS PERSONALES -->
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p>Documento: {{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</p>
+                            <p>Nacionalidad: {{individuo.nacionalidad}}</p>
+                            <p>Fecha de Nacimiento: {{individuo.fecha_nacimiento}}</p>
+                            <p>Origen: {{individuo.origen}}</p>
+                            <p>Destino:{{individuo.destino}}</p>
+                            <h4><b>Contacto:</b></h4>
+                            <p>Telefono: {{individuo.telefono}}</p>
+                            <p>Email: {{individuo.email}}</p>
+                            <h4><b>Ver Contactos</b></h4>
+                            <a class="nolink"  href="{% url 'informacion:arbol_relaciones' individuo_id=individuo.id %}" target="_blank">
+                                <img class="iconsx4" src="{% static '/img/icons/relaciones.png' %}">
+                            </a>
+                        </div>
+                        <div class="col-sm-8">
+                            {% include 'mapa_puntos.html' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}
+    

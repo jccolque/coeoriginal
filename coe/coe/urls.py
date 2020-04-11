@@ -50,7 +50,9 @@ urlpatterns = [
     path('inscripciones/', include('inscripciones.urls')),
     path('background/', include('background.urls')),
     #APIS:
-    path('covid19/', include('informacion.api_urls')),
+    path('api_refs/', include('informacion.ws_urls')),
+    path('ide/', include('informacion.ide_urls')),
+    path('covid19/', include('informacion.app_urls')),
     #Manejo de Archivos Privados:
     path('archivos/', include('operadores.file_urls')),#Lo hacemos desde ahi por que depende de permisos
 ]

@@ -3,6 +3,7 @@ import copy
 import json
 import logging
 from base64 import b64decode
+from datetime import timedelta
 #Imports de Django
 from django.urls import reverse
 from django.utils import timezone
@@ -12,12 +13,14 @@ from django.core.files.base import ContentFile
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 #Imports del proyecto
+from coe.constantes import LAST_DATETIME
 from operadores.models import Operador
 from georef.models import Nacionalidad, Localidad
 #Imports de la app
 from .choices import TIPO_PERMISO
 from .models import Individuo, AppData, Domicilio, GeoPosicion
 from .models import Atributo, Sintoma, Situacion, Seguimiento
+from .models import Permiso
 from .tokens import TokenGenerator
 from .geofence import controlar_distancia
 
@@ -40,10 +43,10 @@ def AppConfig(request):
             #Registro:
             "Registro":
             {
-                "url": reverse("api_urls:registro"),
+                "url": reverse("app_urls:registro"),
                 "fields_request": 
                 {
-                    "dni": "str",
+                    "dni_individuo": "str",
                     "apellido": "str",
                     "nombre": "str",
                     "localidad": "int: id_localidad",
@@ -64,10 +67,10 @@ def AppConfig(request):
             },
             "FotoPerfil":
             {
-                "url": reverse("api_urls:foto_perfil"),
+                "url": reverse("app_urls:foto_perfil"),
                 "fields_request": 
                 {
-                    "dni": "str",
+                    "dni_individuo": "str",
                     "token": "str: Obtenido en respuesta registro",
                     "imagen": "Base64",
 
@@ -82,10 +85,10 @@ def AppConfig(request):
             #Encuesta
             "Encuesta":
             {
-                "url": reverse("api_urls:encuesta"),
+                "url": reverse("app_urls:encuesta"),
                 "fields_request": 
                 {
-                    "dni": "str",
+                    "dni_individuo": "str",
                     "token": "str: Obtenido en respuesta registro",
                     "pais_riesgo": "bool",
                     "contacto_extranjero": "bool",
@@ -106,7 +109,7 @@ def AppConfig(request):
             #Start Tracking
             "StartTracking":
             {
-                "url": reverse("api_urls:start_tracking"),
+                "url": reverse("app_urls:start_tracking"),
                 "fields": 
                 {
                     "dni_individuo": "str",
@@ -126,7 +129,7 @@ def AppConfig(request):
             #Tracking
             "tracking": 
             {
-                "url": reverse("api_urls:tracking"),
+                "url": reverse("app_urls:tracking"),
                 "fields": 
                 {
                     "dni_individuo": "str",
@@ -151,10 +154,33 @@ def AppConfig(request):
                     'critico_mensaje': 'Usted se ha alejado mas de 100 metros del punto fijado, las fuerzas de seguridad estan siendo informadas.',
                 },
             },
+            #Obtener Salvoconducto Digital
+            "get_salvoconducto":
+            {
+                "url": reverse("app_urls:get_salvoconducto"),
+                "fields":
+                {
+                    "dni_individuo": "str",
+                    "token": "str: Obtenido en respuesta registro",            
+                },
+                "fields_response": 
+                {
+                    "action": "salvoconducto",
+                    "realizado": "bool",
+                    "fecha_inicio": "datefield",
+                    "hora_inicio": "timefield",
+                    "fecha_fin": "datefield",
+                    "hora_fin": "str: timefield",
+                    "imagen": "url",
+                    "qr": "url",
+                    "texto": "str: leyenda de permiso autorizado",
+                    "error": "str (Solo si hay errores/rechaza pedido)",
+                },
+            },
             #Salvoconducto Digital
             "salvoconducto":
             {
-                "url": reverse("api_urls:salvoconducto"),
+                "url": reverse("app_urls:salvoconducto"),
                 "fields":
                 {
                     "dni_individuo": "str",
@@ -167,8 +193,9 @@ def AppConfig(request):
                 {
                     "action": "salvoconducto",
                     "realizado": "bool",
-                    "fecha": "datefield",
+                    "fecha_inicio": "datefield",
                     "hora_inicio": "timefield",
+                    "fecha_fin": "datefield",
                     "hora_fin": "str: timefield",
                     "imagen": "url",
                     "qr": "url",
@@ -177,18 +204,9 @@ def AppConfig(request):
                 },
                 "parametros":
                 {
-                    'TIPO_PERMISO': {tp[0]:tp[1] for tp in TIPO_PERMISO},
+                    'TIPO_PERMISO': {tp[0]:tp[1] for tp in TIPO_PERMISO if tp[0] != 'P'},
                 },
             },
-        },
-        safe=False,
-    )
-
-@require_http_methods(["GET"])
-def tipo_permisos(request):
-    return JsonResponse(
-        {
-            "permisos": [{"id":tipo[0],"descripcion":tipo[1]} for tipo in TIPO_PERMISO],
         },
         safe=False,
     )
@@ -205,7 +223,10 @@ def registro(request):
         #Obtenemos datos basicos:
         nac = Nacionalidad.objects.filter(nombre__icontains="Argentina").first()
         #Agarramos el dni
-        num_doc = str(data["dni"]).upper()
+        if "dni" in data:
+            num_doc = str(data["dni"]).upper()
+        else:
+            num_doc = str(data["dni_individuo"]).upper()
         #Buscamos al individuo en la db
         try:#Si lo encontramos, lo usamos
             individuo = Individuo.objects.get(num_doc=num_doc)
@@ -288,7 +309,10 @@ def foto_perfil(request):
         data2["imagen"] = data2["imagen"][:25]+'| full |'+data2["imagen"][-25:]
         logger.info("foto_perfil:"+str(timezone.now())+"|"+str(data2))
         #Agarramos el dni
-        num_doc = str(data["dni"]).upper()
+        if "dni" in data:
+            num_doc = str(data["dni"]).upper()
+        else:
+            num_doc = str(data["dni_individuo"]).upper()
         #Buscamos al individuo en la db
         individuo = Individuo.objects.get(num_doc=num_doc)
         #ACA CHEQUEAMOS TOKEN
@@ -328,7 +352,10 @@ def encuesta(request):
         data = json.loads(request.body.decode("utf-8"))
         logger.info("encuesta:"+str(timezone.now())+"|"+str(data))
         #Agarramos el dni
-        num_doc = str(data["dni"]).upper()
+        if "dni" in data:
+            num_doc = str(data["dni"]).upper()
+        else:
+            num_doc = str(data["dni_individuo"]).upper()
         #Buscamos al individuo en la db
         individuo = Individuo.objects.get(num_doc=num_doc)
         #ACA CHEQUEAMOS TOKEN
@@ -367,7 +394,7 @@ def encuesta(request):
         #Geoposicion
         if data["latitud"] and data["longitud"]:
             geopos = GeoPosicion()
-            geopos.domicilio = individuo.domicilio_actual
+            geopos.individuo = individuo
             geopos.latitud = data["latitud"]
             geopos.longitud = data["longitud"]
             geopos.aclaracion = "AUTODIAGNOSTICO"
@@ -401,7 +428,10 @@ def temperatura(request):
         data = json.loads(request.body.decode("utf-8"))
         logger.info("temperatura:"+str(timezone.now())+"|"+str(data))
         #Agarramos el dni
-        num_doc = str(data["dni"]).upper()
+        if "dni" in data:
+            num_doc = str(data["dni"]).upper()
+        else:
+            num_doc = str(data["dni_individuo"]).upper()
         #Buscamos al individuo en la db
         individuo = Individuo.objects.get(num_doc=num_doc)
         #ACA CHEQUEAMOS TOKEN
@@ -443,7 +473,10 @@ def start_tracking(request):
         data2["password"] = "OCULTA"
         logger.info("start_tracking:"+str(timezone.now())+"|"+str(data2))
         #Agarramos el dni
-        num_doc = str(data["dni_individuo"]).upper()
+        if "dni" in data:
+            num_doc = str(data["dni"]).upper()
+        else:
+            num_doc = str(data["dni_individuo"]).upper()
         #Buscamos al individuo en la db
         individuo = Individuo.objects.get(num_doc=num_doc)
         #ACA CHEQUEAMOS TOKEN
@@ -462,13 +495,13 @@ def start_tracking(request):
             status=400,
         )
         #Guardamos la geoposicion BASE
-        GeoPosicion.objects.filter(domicilio__individuo=individuo, aclaracion__icontains="INICIO TRACKING").delete()
-        GeoPosicion.objects.filter(domicilio__individuo=individuo, aclaracion="TRACKING").delete()
+        GeoPosicion.objects.filter(individuo=individuo, aclaracion__icontains="INICIO TRACKING").delete()
+        GeoPosicion.objects.filter(individuo=individuo, aclaracion="TRACKING").delete()
         geopos = GeoPosicion()
-        geopos.domicilio = individuo.domicilio_actual
+        geopos.individuo = individuo
         geopos.latitud = data["latitud"]
         geopos.longitud = data["longitud"]
-        geopos.aclaracion = "INICIO TRACKING: " + str(geopos.latitud)+", "+str(geopos.longitud)
+        geopos.aclaracion = "INICIO TRACKING"
         geopos.save()
         #Cargamos Inicio de Seguimiento:
         Seguimiento.objects.filter(tipo__in=("IT","AT", "FT")).delete()
@@ -507,14 +540,17 @@ def tracking(request):
         data = json.loads(request.body.decode("utf-8"))
         logger.info("tracking:"+str(timezone.now())+"|"+str(data))
         #Agarramos el dni
-        num_doc = str(data["dni"]).upper()
+        if "dni" in data:
+            num_doc = str(data["dni"]).upper()
+        else:
+            num_doc = str(data["dni_individuo"]).upper()
         #Buscamos al individuo en la db
         individuo = Individuo.objects.get(num_doc=num_doc)
         #ACA CHEQUEAMOS TOKEN
 
         #Guardamos nueva posgps
         geopos = GeoPosicion()
-        geopos.domicilio = individuo.domicilio_actual
+        geopos.individuo = individuo
         geopos.latitud = data["latitud"]
         geopos.longitud = data["longitud"]
         geopos.aclaracion = "TRACKING"
@@ -525,9 +561,15 @@ def tracking(request):
             int(data["hora"][0:2]),
             int(data["hora"][2:4]),
         )
+        #Chequeamos distancia:
+        distancia = controlar_distancia(geopos)
+        #Si es mayor a alerta la marcamos
+        if distancia > 50:
+            geopos.alerta = True
+        #Guardamos la geopos
         geopos.save()
         #Controlamos posicion:
-        distancia = controlar_distancia(geopos)
+        
         logger.info("Exito")
         return JsonResponse(
             {
@@ -549,6 +591,7 @@ def tracking(request):
             status=400,
         )
 
+
 @csrf_exempt
 @require_http_methods(["POST"])
 def salvoconducto(request):
@@ -558,9 +601,14 @@ def salvoconducto(request):
         data = json.loads(request.body.decode("utf-8"))
         logger.info("salvoconducto:"+str(timezone.now())+"|"+str(data))
         #Agarramos el dni
-        num_doc = str(data["dni"]).upper()
+        if "dni" in data:
+            num_doc = str(data["dni"]).upper()
+        else:
+            num_doc = str(data["dni_individuo"]).upper()
         #Buscamos al individuo en la db
-        individuo = Individuo.objects.select_related('appdata').get(num_doc=num_doc)
+        individuo = Individuo.objects.select_related('appdata', 'domicilio_actual', 'situacion_actual')
+        individuo = Individuo.objects.prefetch_related('permisos')
+        individuo = individuo.get(num_doc=num_doc)
         #ACA CHEQUEAMOS TOKEN
         
         #Trabajamos
@@ -576,24 +624,66 @@ def salvoconducto(request):
             int(data["hora_ideal"][2:4]),
         )
         #Validamos si es factible:
-            #REALIZAR TODA LA LOGICA
-            #POR AHORA RESPONDE PERMISO
-        #Si todo salio bien
-        logger.info("Exito")
-        return JsonResponse(
-            {
-                "action": "salvoconducto",
-                "realizado": True,
-                "fecha": str(timezone.now().date()),
-                "hora_inicio": str(timezone.now().time()),
-                "hora_fin": str(timezone.now().time()),
-                "imagen": individuo.get_foto(),
-                "qr": individuo.get_qr(),
-                "texto": "Aprobado sin validacion, para test.",
-
-            },
-            safe=False
-        )
+        
+        #Inicializamos permiso:
+        permiso = Permiso()
+        permiso.aprobar = True
+        #REALIZAR TODA LA LOGICA
+        #Chequeamos que no este en cuarentena obligatoria o aislado
+        if individuo.situacion_actual.conducta in ('D', 'E'):
+            permiso.aprobar = False
+            permiso.aclaracion = "Usted se encuentra bajo " + individuo.situacion_actual.get_conducta_display() + " Por favor mantengase en su Hogar."
+        else:
+            #Chequeamos que no tenga un permiso hace menos de 3 dias (DEL MISMO TIPO?):
+            cooldown = timezone.now() - timedelta(days=3)
+            permisos = individuo.permisos.filter(endda__gt=cooldown, tipo=data["tipo_permiso"])
+            if permisos:
+                permiso.aprobar = False
+                permiso.aclaracion = "Usted recibio un Permiso el dia " + str(permisos.last().endda.date())
+            else:
+                #Chequeamos que nadie del domicilio tenga permiso
+                for relacion in individuo.relaciones.filter(tipo="MD"):
+                    if relacion.relacionado.permisos.filter(endda__gt=cooldown, tipo=data["tipo_permiso"]):
+                        relacionado = relacion.relacionado
+                        permiso.aprobar = False
+                        permiso.aclaracion = relacionado.nombres + ' ' + relacionado.apellidos + ' Ya obtuvo un permiso en los ultimos dias.' 
+        #chequeamos num_dni por fecha
+        #Creamos Permiso
+        if permiso.aprobar:
+            permiso.individuo = individuo
+            permiso.tipo = data["tipo_permiso"]
+            permiso.localidad = individuo.domicilio_actual.localidad
+            permiso.begda = timezone.now() + timedelta(days=1)
+            permiso.endda = timezone.now() + timedelta(days=1, hours=2)
+            permiso.aclaracion = "Requerido Via App."
+            permiso.save()
+            #Si todo salio bien
+            logger.info("Exito")
+            return JsonResponse(
+                {
+                    "action": "salvoconducto",
+                    "realizado": permiso.aprobar,
+                    "fecha_inicio": permiso.begda.date(),
+                    "hora_inicio": permiso.begda.time(),
+                    "fecha_fin": permiso.endda.date(),
+                    "hora_fin": permiso.endda.time(),
+                    "imagen": individuo.get_foto(),
+                    "qr": individuo.get_qr(),
+                    "texto": permiso.aclaracion,
+                },
+                safe=False
+            )
+        else:
+            #Si todo salio bien
+            logger.info("Denegado: " + permiso.aclaracion)
+            return JsonResponse(
+                {
+                    "action": "salvoconducto",
+                    "realizado": permiso.aprobar,
+                    "error": permiso.aclaracion,
+                },
+                safe=False
+            )
     except Exception as e:
         logger.info("Falla: "+str(e))
         return JsonResponse(
@@ -604,4 +694,65 @@ def salvoconducto(request):
             },
             safe=False,
             status=400,
-        )        
+        )
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def get_salvoconducto(request):
+    try:
+        data = None
+        #Recibimos el json
+        data = json.loads(request.body.decode("utf-8"))
+        logger.info("get_salvoconducto:"+str(timezone.now())+"|"+str(data))
+        #Agarramos el dni
+        if "dni" in data:
+            num_doc = str(data["dni"]).upper()
+        else:
+            num_doc = str(data["dni_individuo"]).upper()
+        #Buscamos al individuo en la db
+        individuo = Individuo.objects.select_related('appdata').get(num_doc=num_doc)
+        #ACA CHEQUEAMOS TOKEN
+        
+        #Buscamos permiso
+        permiso = Permiso.objects.filter(individuo=individuo, endda__gt=timezone.now()).first()
+        if not permiso:
+            #Chequeamos que el individuo no tenga atributo laboral para permiso permanente:
+            atributos = individuo.atributos.filter(tipo__in=('AS','PS','FP','TE'))
+            if atributos:
+                atributo = atributos.first()
+                permiso = Permiso()
+                permiso.individuo = individuo
+                permiso.tipo = 'P'
+                permiso.localidad = individuo.domicilio_actual.localidad
+                permiso.begda = timezone.now()
+                permiso.endda = LAST_DATETIME
+                permiso.aclaracion = "Permiso Permanente: " + atributo.get_tipo_display()
+                permiso.save()
+        #Damos respuesta
+        logger.info("Exito")
+        return JsonResponse(
+            {
+                "action": "get_salvoconducto",
+                "realizado": True,
+                "fecha_inicio": permiso.begda.date(),
+                "hora_inicio": permiso.begda.time(),
+                "fecha_fin": permiso.endda.date(),
+                "hora_fin": permiso.endda.time(),
+                "imagen": individuo.get_foto(),
+                "qr": individuo.get_qr(),
+                "texto": permiso.aclaracion,
+
+            },
+            safe=False
+        )
+    except Exception as e:
+        logger.info("Falla: "+str(e))
+        return JsonResponse(
+            {
+                "action":"get_salvoconducto",
+                "realizado": False,
+                "error": str(e),
+            },
+            safe=False,
+            status=400,
+        )

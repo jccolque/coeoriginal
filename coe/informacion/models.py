@@ -126,11 +126,22 @@ class Individuo(models.Model):
             return [d for d in self.seguimientos.all()][-1]
         else:
             return None
+    def geoposicion(self):
+        return self.geoposiciones.last()
     def localidad_actual(self):
         if self.domicilio_actual:
             return self.domicilio_actual.localidad
         else:
             return None
+    def get_situacion(self):
+        if self.situacion_actual:
+            return self.situacion_actual
+        else:
+            situacion = Situacion()
+            situacion.individuo = self
+            situacion.aclaracion = "Iniciada por Sistema"
+            situacion.save()
+            return situacion
     def get_foto(self):
         if self.fotografia:
             return self.fotografia.url
@@ -147,6 +158,8 @@ class Individuo(models.Model):
             self.qrpath = relative_path
             self.save()
             return self.qrpath
+    def seguimiento(self):
+        return self.geoposiciones.filter(aclaracion="INICIO TRACKING").exists()
 
 class Relacion(models.Model):#Origen del Dato
     tipo = models.CharField('Tipo Relacion', choices=TIPO_RELACION, max_length=2, default='F')
@@ -194,21 +207,20 @@ class Domicilio(models.Model):
             "calle": self.calle,
             "numero": self.numero,
         }
-    def geoposicion(self):
-        return self.geoposiciones.last()
 
 class GeoPosicion(models.Model):
-    domicilio = models.ForeignKey(Domicilio, on_delete=models.CASCADE, related_name="geoposiciones")
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="geoposiciones")
     latitud = models.DecimalField('latitud', max_digits=12, decimal_places=10)
     longitud = models.DecimalField('longitud', max_digits=12, decimal_places=10)
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    alerta = models.BooleanField('Posicion de Alerta', default=False)
     def __str__(self):
         return str(self.latitud) + '|' + str(self.longitud)
     def as_dict(self):
         return {
             "id": self.id,
-            "domicilio_id": self.domicilio.id,
+            "individuo_id": self.individuo.id,
             "latitud": str(self.latitud),
             "longitud": str(self.longitud),
             "aclaracion": self.aclaracion,
@@ -362,12 +374,10 @@ class Pasajero(models.Model):
 class Permiso(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="permisos")
     tipo = models.CharField('Tipo Permiso', choices=TIPO_PERMISO, max_length=1, default='C')
-    origen = models.CharField('Origen', max_length=200, default='', blank=False)
-    destino = models.CharField('Destino', max_length=200, default='', blank=False)
+    localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="permisos")
     begda = models.DateTimeField('Inicio Permiso', default=timezone.now)
     endda = models.DateTimeField('Fin Permiso', default=timezone.now)
     aclaracion = HTMLField(null=True, blank=True)
-    habilitado = models.BooleanField(default=True)
     def __str__(self):
         return self.get_tipo_display() + str(self.begda)[0:16]
     def as_dict(self):
@@ -380,7 +390,6 @@ class Permiso(models.Model):
             "begda": str(self.fecha),
             "endda": str(self.fecha),
             "aclaracion": self.aclaracion,
-            "habilitado": self.habilitado,
         }
     def estado(self):
         if self.habilitado:

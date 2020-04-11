@@ -7,7 +7,7 @@ from .choices import TIPO_GRAFICO
 class Grafico(models.Model):
     nombre = models.CharField('Nombre Informatico', max_length=100)
     verbose_name = models.CharField('Nombre Para Mostrar', max_length=100)
-    tipo = models.CharField('Tipo Grafico', choices=TIPO_GRAFICO, max_length=1, default='L')
+    tipo = models.CharField('Tipo Grafico', choices=TIPO_GRAFICO, max_length=2, default='L')
     update = models.DateField('Ultimo Dato Cargado', null=True)
     cant_datos = models.IntegerField('Cantidad de Datos a Mostrar', default=15)
     publico = models.BooleanField(default=False)
