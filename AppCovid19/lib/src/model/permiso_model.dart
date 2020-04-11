@@ -1,3 +1,7 @@
+///
+/// Model Permiso
+/// @author JLopez
+///
 class PermisoModel {
   List<Permiso> permisos;
 

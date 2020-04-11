@@ -1,3 +1,7 @@
+///
+/// Model Registro
+/// @author JLopez
+///
 class RegistroModel {
   String localidad;
   String email;

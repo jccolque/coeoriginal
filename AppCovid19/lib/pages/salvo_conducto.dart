@@ -20,6 +20,10 @@ class SalvoConducto extends StatefulWidget {
   _SalvoConductoState createState() => _SalvoConductoState();
 }
 
+///
+/// Pantalla inicial de salvoconducto
+/// @author JLopez
+///
 class _SalvoConductoState extends State<SalvoConducto> {
   File image;
 
@@ -411,7 +415,6 @@ class _SalvoConductoState extends State<SalvoConducto> {
               imagen: base64Image,
               dni: dni
           );
-//          print(json.encode(form.toJson()));
         print(form.imagen);
         envioRegistroAvanzado(form).then((val) {
           Navigator.of(context).pop();

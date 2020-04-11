@@ -7,6 +7,10 @@ class PermisoOtorgado extends StatefulWidget {
   _PermisoOtorgadoState createState() => _PermisoOtorgadoState();
 }
 
+///
+/// Pantalla de permiso otorgado
+/// @author JLopez
+///
 class _PermisoOtorgadoState extends State<PermisoOtorgado> {
   final _nombreController = TextEditingController();
   final _apellidoController = TextEditingController();

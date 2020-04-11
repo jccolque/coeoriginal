@@ -1,3 +1,7 @@
+///
+/// Model Respuesta de permiso
+/// @author JLopez
+///
 class RespuestaPermisoModel {
   bool realizado;
   String horaInicio;

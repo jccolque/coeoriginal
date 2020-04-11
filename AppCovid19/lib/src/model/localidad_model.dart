@@ -1,4 +1,7 @@
-
+///
+/// Model Localidad
+/// @author JLopez
+///
 class LocalidadModel {
   Pagination pagination;
   List<Result> results;

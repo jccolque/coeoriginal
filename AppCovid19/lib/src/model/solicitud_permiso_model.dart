@@ -1,3 +1,7 @@
+///
+/// Model Solicitud de permiso
+/// @author JLopez
+///
 class SolicitudPermisoModel {
   String token;
   String fechaIdeal;

@@ -1,3 +1,7 @@
+///
+/// Model Permiso Error
+/// @author JLopez
+///
 class PermisoErrorModel {
   String action;
   String error;

@@ -17,6 +17,10 @@ class SolicitarPermiso extends StatefulWidget {
   _SolicitarPermisoState createState() => _SolicitarPermisoState();
 }
 
+///
+/// Pantalla para solicitar permiso
+/// @author JLopez
+///
 class _SolicitarPermisoState extends State<SolicitarPermiso> {
 
   String _permisoSeleccionado;

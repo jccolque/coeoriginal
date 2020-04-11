@@ -1,3 +1,7 @@
+///
+/// Model a ser usado en servicio de envio de imagen de perfil
+/// @author JLopez
+///
 class ImagenPerfilModel {
   int dni;
   String imagen;
