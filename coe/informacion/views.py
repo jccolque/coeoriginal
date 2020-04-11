@@ -1068,7 +1068,7 @@ def enviar_notificacion(request):
                     'titulo': 'No se pudo enviar el mensaje',
                     'error': str(e),
                 })
-    return render(request, "extras/generic_form.html", {'titulo': "Cargar Documento", 'form': form, 'boton': "Cargar", })
+    return render(request, "extras/generic_form.html", {'titulo': "Enviar Notificacion", 'form': form, 'boton': "Enviar", })
 
 #CARGAS MASIVAS
 @superuser_required

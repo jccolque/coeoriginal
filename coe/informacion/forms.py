@@ -275,6 +275,6 @@ class DocumentoForm(forms.ModelForm):
 class SendNotificationForm(forms.Form):
     dispositivo = forms.ModelChoiceField(queryset=FCMDevice.objects.all())
     titulo = forms.CharField(label="Titulo", required=True)
-    texto = forms.CharField(label="Texto", required=True)
+    texto = forms.CharField(label="Texto", widget=forms.Textarea())
     icono = forms.ChoiceField(choices=TIPO_ICONO, required=True)
-    color = forms.CharField(max_length=9, widget=forms.TextInput(attrs={'type': 'color'}))
+    color = forms.CharField(max_length=9, initial="#FFFFFF", widget=forms.TextInput(attrs={'type': 'color'}))
