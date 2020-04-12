@@ -826,29 +826,24 @@ class _MyLoginPageState extends State<MyLoginPage> {
 
         builder: (context) {
           return AlertDialog(
-
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-
             title: Center(
-                child: Text('Ingrese sus datos')
+                child: Text('Ingrese sus datos', style: TextStyle(fontSize: 15),)
             ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
-
               children: <Widget>[
-                //Text('Contenido de la caja de la alerta'),
                 TextField(
                   autofocus: true,
+                  textAlign: TextAlign.left,
                   textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0)
                       ),
                       hintText: 'Ingrese DNI',
                       labelText: 'DNI',
-                      //helperText: 'Ingrese DNI',
-                      //suffixIcon: Icon(Icons.accessibility),
-                      //icon: Icon(Icons.account_circle)
                   ),
                   onChanged: (valor) {
                     setState(() {
@@ -860,21 +855,19 @@ class _MyLoginPageState extends State<MyLoginPage> {
                 TextField(
                   obscureText: true,
                   decoration: InputDecoration(
-
+                    contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0)
                       ),
                       hintText: 'Contraseña',
                       labelText: 'Contraseña',
-                      //suffixIcon: Icon(Icons.lock_open),
-                      //icon: Icon(Icons.lock)
                   ),
                   onChanged: (valor) {
                     setState(() {
                       _password = valor;
                     });
                   },
-                )
+                ),
                 //FlutterLogo(size: 100.0)
               ],
             ),
