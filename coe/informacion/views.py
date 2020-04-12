@@ -300,17 +300,32 @@ def cargar_fotografia(request, individuo_id):
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Subir Fotografia", 'form': form, 'boton': "Cargar", })
 
+#Aislamiento Manual
 @permission_required('operadores.individuos')
 def buscar_inquilino(request, ubicacion_id):
-    ubicacion = Ubicacion.objects.get(pk=ubicacion_id)
-    form = TrasladarIndividuoForm(initial={'ubicacion': ubicacion,})
+    form = SearchIndividuoForm()
     if request.method == "POST":
-        form = TrasladarIndividuoForm(request.POST)
+        form = SearchIndividuoForm(request.POST)
         if form.is_valid():
             num_doc = form.cleaned_data['num_doc'].upper()
             try:
                 individuo = Individuo.objects.get(num_doc=num_doc)
-                #Creamos nuevo domicilio:
+                return redirect('informacion:confirmar_inquilino', ubicacion_id=ubicacion_id, individuo_id=individuo.id)
+            except Individuo.DoesNotExist:
+                return redirect('informacion:cargar_inquilino', ubicacion_id=ubicacion_id, num_doc=num_doc)
+    return render(request, "extras/generic_form.html", {'titulo': "Trasladar Individuo", 'form': form, 'boton': "Trasladar", })
+
+@permission_required('operadores.individuos')
+def confirmar_inquilino(request, ubicacion_id, individuo_id):
+    form = TrasladarIndividuoForm()
+    ubicacion = Ubicacion.objects.get(pk=ubicacion_id)
+    individuo = Individuo.objects.get(pk=individuo_id)
+    if request.method == 'POST':
+        if 'confirmar' in request.POST:
+            form = TrasladarIndividuoForm(request.POST)
+            print("ENTRO ACA")
+            if form.is_valid():
+                print("IS VALID")
                 domicilio = Domicilio(individuo=individuo)
                 domicilio.localidad = ubicacion.localidad
                 domicilio.calle = ubicacion.calle
@@ -320,9 +335,6 @@ def buscar_inquilino(request, ubicacion_id):
                 domicilio.aislamiento = True
                 domicilio.ubicacion = ubicacion
                 domicilio.save()
-                #Quitamos una plaza disponible:
-                domicilio.ubicacion.capacidad_ocupada += 1
-                domicilio.ubicacion.save()
                 #Creamos Cronologia
                 seguimiento = Seguimiento(individuo=individuo)
                 seguimiento.tipo = 'TA'
@@ -330,28 +342,26 @@ def buscar_inquilino(request, ubicacion_id):
                 seguimiento.fecha = form.cleaned_data['fecha']
                 seguimiento.save()
                 return redirect('georef:ver_ubicacion', ubicacion_id=ubicacion.id)
-            except Individuo.DoesNotExist:
-                request.redirect = True
-                request.ubicacion = ubicacion
-                request.num_doc = num_doc
-                request.habitacion = form.cleaned_data['habitacion']
-                request.fecha = form.cleaned_data['fecha']
-                return cargar_inquilino(request)
-    return render(request, "extras/generic_form.html", {'titulo': "Trasladar Individuo", 'form': form, 'boton': "Trasladar", })
-
-@permission_required('operadores.individuos')
-def cargar_inquilino(request):
-    if hasattr(request, 'redirect'):#Si viene desde la otra vista:
-        ubicacion = request.ubicacion
-        request.method = 'GET'
-        form = InquilinoForm(
-            initial={
-                'num_doc': request.num_doc,
+        else:
+            return redirect('informacion:buscar_inquilino', ubicacion_id=ubicacion.id)
+    #Mostramos form
+    return render(request, 'confirmar_inquilino.html', 
+            {
+                'form': form,
                 'ubicacion': ubicacion,
-                'habitacion': request.habitacion,
-                'fecha': request.fecha,
+                'individuo': individuo,
             }
         )
+
+@permission_required('operadores.individuos')
+def cargar_inquilino(request, ubicacion_id, num_doc):
+    ubicacion = Ubicacion.objects.get(pk=ubicacion_id)
+    form = InquilinoForm(initial=
+        {
+            'num_doc': num_doc,
+            'ubicacion': ubicacion,
+        }
+    )
     #Si nos mando el individuo completo lo creamos e ingresamos
     if request.method == 'POST':
         form = InquilinoForm(request.POST)
@@ -398,15 +408,16 @@ def cargar_inquilino(request):
             #Volvemos al aislamiento
             return redirect('georef:ver_ubicacion', ubicacion_id=ubicacion.id)
     #Lanzamos formulario
-    return render(request, "cargar_inquilino.html", {
+    return render(request, "cargar_inquilino.html",
+        {
             'titulo': "Cargar Inquilino",
             'form': form, 
             'boton': "Cargar",
             'ubicacion': ubicacion,
-            'habitacion': request.habitacion,
-            'fecha_ingreso': request.fecha,
-        })
+        }
+    )
 
+#INDIVIDUOS
 @permission_required('operadores.individuos')
 def ver_individuo(request, individuo_id):
     individuo = Individuo.objects.prefetch_related(
@@ -602,9 +613,6 @@ def trasladar(request, individuo_id, ubicacion_id, vehiculo_id):
     domicilio.aislamiento = True
     domicilio.ubicacion = ubicacion
     domicilio.save()
-    #Quitamos una plaza disponible:
-    domicilio.ubicacion.capacidad_ocupada += 1
-    domicilio.ubicacion.save()
     #Creamos Cronologia
     seguimiento = Seguimiento(individuo=individuo)
     seguimiento.tipo = 'C'

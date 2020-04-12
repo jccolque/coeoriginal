@@ -52,7 +52,8 @@ urlpatterns = [
     path('cargar/fotografia/<int:individuo_id>', views.cargar_fotografia, name='cargar_fotografia'),
     #Turismo
     path('buscar/inquilino/<int:ubicacion_id>', views.buscar_inquilino, name='buscar_inquilino'),
-    path('nuevo/inquilino/', views.cargar_inquilino, name='cargar_inquilino'),
+    path('mover_inquilino/<int:ubicacion_id>/<int:individuo_id>', views.confirmar_inquilino, name='confirmar_inquilino'),
+    path('nuevo/inquilino/<int:ubicacion_id>/<str:num_doc>', views.cargar_inquilino, name='cargar_inquilino'),
     #Traslado
     path('traslado/elegir/ubicacion/<int:individuo_id>', views.elegir_ubicacion, name='elegir_ubicacion'),
     path('traslado/elegir/vehiculo/<int:individuo_id>/<int:ubicacion_id>', views.elegir_vehiculo, name='elegir_vehiculo'),

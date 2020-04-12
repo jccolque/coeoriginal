@@ -157,8 +157,6 @@ class SearchIndividuoForm(forms.Form):
     num_doc = forms.CharField(label="Documento/Pasaporte", required=True)
 
 class TrasladarIndividuoForm(forms.Form):
-    ubicacion = forms.ModelChoiceField(queryset=Ubicacion.objects.filter(tipo__in=('AI', 'IN')),)
-    num_doc = forms.CharField(label="Documento/Pasaporte", required=True)
     habitacion = forms.CharField(label="Habitacion", required=True)
     fecha = forms.DateTimeField(label="Fecha Ingreso", required=True, 
         initial=timezone.now(),
