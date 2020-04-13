@@ -23,9 +23,15 @@ def control_tracking(request):
     #Obtenemos Posiciones Bases
     geoposiciones = GeoPosicion.objects.filter(tipo='ST')
     #Obtenemos Alertas
+    #Obtenemos Alertas
     alertas = GeoPosicion.objects.filter(alerta=True, procesada=False)
-    alertas = alertas.select_related('individuo', 'individuo__situacion_actual', 'individuo__domicilio_actual')
-    alertas = alertas.order_by('-fecha')
+    alertas = alertas.select_related(
+        'individuo', 'individuo__situacion_actual',
+        'individuo__domicilio_actual', "individuo__domicilio_actual__localidad"
+    )
+    alertas = alertas.order_by('distancia')
+    dict_alertas = {alerta.individuo.num_doc:alerta for alerta in alertas}
+    alertas = list(dict_alertas.values())
     #Lanzamos monitoreo
     return render(request, "geotracking/control_tracking.html", {
         'gmkey': GEOPOSITION_GOOGLE_MAPS_API_KEY,
