@@ -26,14 +26,17 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
   @override
   Widget build(BuildContext context) {
 //    Navigator.of(context).push(PreventBackRoute());
-    return Scaffold(
-      floatingActionButton: volver(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: Stack(
-        children: <Widget>[
-          _crearFondo(context),
-          _permisoCard(context),
-        ],
+    return WillPopScope(
+      onWillPop: () => Future.value(false),
+      child: Scaffold(
+        floatingActionButton: volver(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        body: Stack(
+          children: <Widget>[
+            _crearFondo(context),
+            _permisoCard(context),
+          ],
+        ),
       ),
     );
   }
@@ -260,8 +263,8 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text('Permiso valido: ${_fecha}'),
-            Text('Desde: ${_horaInicio}'),
-            Text('Hasta: ${_horaFin}'),
+            Text('Desde:  ${_fecha} - ${_horaInicio}'),
+            Text('Hasta:  ${_fecha} - ${_horaFin}'),
           ],
         ));
   }

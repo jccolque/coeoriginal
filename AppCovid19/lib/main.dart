@@ -119,7 +119,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
     ));
 
     return WillPopScope(
-      onWillPop: () async => false,
+      onWillPop: () => Future.value(false),
       child: Scaffold(
         key: _scaffoldKey,
         resizeToAvoidBottomInset: false,
@@ -519,7 +519,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
     return permiso != null ? permiso : false;
   }
 
-  Future<void> _lauchSalvoConductoForm(BuildContext context) async {
+  Future<bool> _lauchSalvoConductoForm(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final startupDniNumber = prefs.getInt('savedDniNumber');
     final imagen = prefs.getBool('imagenPerfil');
@@ -527,25 +527,33 @@ class _MyLoginPageState extends State<MyLoginPage> {
     if (startupDniNumber != null) {
       final perm = PermisoYaOtorgadoModel(dniIndividuo: _dni.toString(), token: "");
       await _getPermisosYaOtorgado(perm).then((v) {
+        print('permiso otorgado');
+        print(v);
         if (v == true) {
           Navigator.of(context).pushNamed('/permisootorgado');
+          return true;
         } else {
           if (imagen != null) {
             if (imagen == true) {
               if (permiso != null) {
                 if (permiso == true) {
                   Navigator.of(context).pushNamed('/permisootorgado');
+                  return true;
                 } else {
                   Navigator.of(context).pushNamed('/solicitarpermiso');
+                  return true;
                 }
               } else {
                 Navigator.of(context).pushNamed('/solicitarpermiso');
+                return true;
               }
             } else {
               Navigator.of(context).pushNamed('/salvoconducto');
+              return true;
             }
           } else {
             Navigator.of(context).pushNamed('/salvoconducto');
+            return true;
           }
         }
       });
@@ -594,10 +602,20 @@ class _MyLoginPageState extends State<MyLoginPage> {
       await _setPermisoOtorgadoSharedPref(list).then((v) {
         print('ok');
       });
+      await _setPermisoSharedPref(true).then((v){
+        return true;
+      });
       return true;
     } else {
-      return false;
+      await _setPermisoSharedPref(false).then((v){
+        return false;
+      });
     }
+  }
+
+  Future<void> _setPermisoSharedPref(bool permiso) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return await prefs.setBool('permisoOtorgado', permiso);
   }
 
   Future<void> _setPermisoOtorgadoSharedPref(RespuestaPermisoModel permisoOtorgado) async {

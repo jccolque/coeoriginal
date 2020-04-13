@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:covidjujuy_app/src/bloc/provider.dart';
+import 'package:covidjujuy_app/src/loader.dart';
 import 'package:covidjujuy_app/src/model/imagen_perfil_model.dart';
 import 'package:covidjujuy_app/src/model/localidad_model.dart';
 import 'package:covidjujuy_app/src/model/registro_avanzado_model.dart';
@@ -39,23 +40,41 @@ class _SalvoConductoState extends State<SalvoConducto> {
 
   bool _separadoAislado = false;
   bool _imagenGuardada = false;
+  bool loading = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _typeAheadController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text("Agregue su imagen de perfil"),
-        ),
-        body: Stack(
-          children: <Widget>[
-            _crearFondo( context ),
-            _permisoForm( context ),
-          ],
+      return WillPopScope(
+        onWillPop: () => Future.value(false),
+        child: Scaffold(
+          floatingActionButton: volver(),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+          appBar: AppBar(
+            title: Text("Agregue su imagen de perfil"),
+          ),
+          body: Stack(
+            children: <Widget>[
+              _crearFondo( context ),
+              _permisoForm( context ),
+            ],
+          ),
         ),
       );
+  }
+
+  Widget volver() {
+    return FloatingActionButton(
+      backgroundColor: Colors.blue,
+      onPressed: () {
+        Navigator.of(context).pushNamed('/main');
+      },
+      tooltip: 'Volver',
+      child: Icon(Icons.arrow_back),
+
+    );
   }
 
   Widget _crearFondo(BuildContext context) {
@@ -196,7 +215,15 @@ class _SalvoConductoState extends State<SalvoConducto> {
                 ),
                 cameraButton(),
                 SizedBox(height: 10.0),
-                _crearBoton(),
+                Visibility(
+                  visible: !loading,
+                  child: _crearBoton(),
+                ),
+
+                Visibility(
+                  visible: loading,
+                  child: loader(),
+                ),
               ],
             ),
           ),
@@ -423,7 +450,7 @@ class _SalvoConductoState extends State<SalvoConducto> {
           );
         print(form.imagen);
         envioRegistroAvanzado(form).then((val) {
-          Navigator.of(context).pop();
+          Navigator.of(context).pushNamed('/main');
         });
         });
       },
@@ -439,7 +466,9 @@ class _SalvoConductoState extends State<SalvoConducto> {
   }
 
   Future<String> envioRegistroAvanzado( ImagenPerfilModel imagenPerfilModel ) async {
-
+    setState(() {
+      loading = true;
+    });
     HttpClient httpClient = HttpClient();
     HttpClientRequest request = await httpClient.postUrl(Uri.parse('http://coe.jujuy.gob.ar/covid19/foto_perfil'));
     request.headers.set('content-type', 'application/json');
@@ -451,6 +480,7 @@ class _SalvoConductoState extends State<SalvoConducto> {
       httpClient.close();
       setState(() {
         _imagenGuardada = true;
+        loading = false;
       });
 
       return reply;
@@ -462,6 +492,20 @@ class _SalvoConductoState extends State<SalvoConducto> {
   Future<bool> _setImageSharedPref(bool image) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return await prefs.setBool('imagenPerfil', image);
+  }
+
+  Widget loader() {
+    if (loading == true) {
+      return Container(
+        child: Loader(
+          color1: Colors.blue,
+          color2: Colors.yellow,
+          color3: Colors.green,
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
 
 }

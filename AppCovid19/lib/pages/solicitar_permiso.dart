@@ -59,16 +59,33 @@ class _SolicitarPermisoState extends State<SolicitarPermiso> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Solicitud de Permiso"),
+    return WillPopScope(
+      onWillPop: () => Future.value(false),
+      child: Scaffold(
+        floatingActionButton: volver(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        appBar: AppBar(
+          title: Text("Solicitud de Permiso"),
+        ),
+        body: Stack(
+          children: <Widget>[
+            _crearFondo(context),
+            _seleccionPermiso(context),
+          ],
+        ),
       ),
-      body: Stack(
-        children: <Widget>[
-          _crearFondo(context),
-          _seleccionPermiso(context),
-        ],
-      ),
+    );
+  }
+
+  Widget volver() {
+    return FloatingActionButton(
+      backgroundColor: Colors.blue,
+      onPressed: () {
+        Navigator.of(context).pushNamed('/main');
+      },
+      tooltip: 'Volver',
+      child: Icon(Icons.arrow_back),
+
     );
   }
 
@@ -195,9 +212,9 @@ class _SolicitarPermisoState extends State<SolicitarPermiso> {
       // Si el servidor devuelve una repuesta OK, parseamos el JSON
       RespuestaPermisoModel list = RespuestaPermisoModel.fromJson(json.decode(response.body));
       print(list.toJson());
-     await _setPermisoOtorgadoSharedPref(list).then((v) {
-       Navigator.of(context).pushNamed('/permisootorgado');
-     });
+      await _setPermisoOtorgadoSharedPref(list).then((v) {
+        Navigator.of(context).pushNamed('/permisootorgado');
+      });
     } else {
       print('no tiene permiso');
     }
@@ -234,7 +251,11 @@ class _SolicitarPermisoState extends State<SolicitarPermiso> {
 
         final permiso = SolicitudPermisoModel(
             dni_individuo: _dni.toString(), fechaIdeal: dateFormat.format(selectedDate), horaIdeal: time, tipoPermiso: _permisoSeleccionado);
-        envioSolicitudPermiso(permiso);
+        envioSolicitudPermiso(permiso).then((permiso){
+          if(permiso != null){
+            Navigator.of(context).pushNamed('/permisootorgado');
+          }
+        });
       },
     );
   }
@@ -261,6 +282,7 @@ class _SolicitarPermisoState extends State<SolicitarPermiso> {
       showLongErrorToast(permisoErrorModel.error);
       await _setPermisoSharedPref(false);
 //      throw Exception('Failed to load post');
+      return null;
     }
   }
 
