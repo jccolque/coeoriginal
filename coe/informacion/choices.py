@@ -143,6 +143,7 @@ TIPO_GEOPOS = (
     ('AD', 'AutoDiagnostico'),
     ('ST', 'Inicio de Tracking/Base'),
     ('RG', 'Reporte de GeoPosicion'),
+    ('CG', 'Control GeoPosicion'),
 )
 
 TIPO_ACCION_NOTIFICACION = (

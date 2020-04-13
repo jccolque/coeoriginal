@@ -1,9 +1,14 @@
+#Imports de Python
+from datetime import timedelta
 #Imports de Django
+from django.utils import timezone
 from django.core.cache import cache
 #Imports Extras
 from geographiclib.geodesic import Geodesic
+#Imports del proyecto
+from coe.constantes import LAST_DATETIME
 #Imports de la app
-from .models import GeoPosicion, Seguimiento
+from .models import GeoPosicion, Seguimiento, Permiso
 
 #Definimos nuestras funciones:
 def obtener_base(num_doc):
@@ -42,3 +47,50 @@ def controlar_distancia(nueva_geopos):
         seguimiento.aclaracion = 'Distancia: '+str(distancia)+'mts | '+str(nueva_geopos.fecha)
         seguimiento.save()
     return distancia
+
+def buscar_permiso(individuo, activo=False):
+    permisos = Permiso.objects.filter(individuo=individuo, endda__gt=timezone.now())
+    if activo:#Chequear que este activo
+        permisos = permisos.filter(begda__lt=timezone.now())
+    permiso = permisos.first()
+    if not permiso:
+        #Chequeamos que el individuo no tenga atributo laboral para permiso permanente:
+        atributos = individuo.atributos.filter(tipo__in=('AS','PS','FP','TE'))
+        if atributos:
+            atributo = atributos.first()
+            permiso = Permiso()
+            permiso.individuo = individuo
+            permiso.tipo = 'P'
+            permiso.localidad = individuo.domicilio_actual.localidad
+            permiso.begda = timezone.now()
+            permiso.endda = LAST_DATETIME
+            permiso.aclaracion = "Permiso Permanente: " + atributo.get_tipo_display()
+            permiso.save()
+    return permiso
+
+def validar_permiso(individuo, data):
+    #Inicializamos permiso:
+    permiso = Permiso()
+    permiso.aprobar = True
+    #REALIZAR TODA LA LOGICA
+    #Chequeamos que no este en cuarentena obligatoria o aislado
+    if individuo.situacion_actual.conducta in ('D', 'E'):
+        permiso.aprobar = False
+        permiso.aclaracion = "Usted se encuentra bajo " + individuo.situacion_actual.get_conducta_display() + " Por favor mantengase en su Hogar."
+    else:
+        #Chequeamos que no tenga un permiso hace menos de 3 dias (DEL MISMO TIPO?):
+        cooldown = timezone.now() - timedelta(days=3)
+        permisos = individuo.permisos.filter(endda__gt=cooldown, tipo=data["tipo_permiso"])
+        if permisos:
+            permiso.aprobar = False
+            permiso.aclaracion = "Usted recibio un Permiso el dia " + str(permisos.last().endda.date())
+        else:
+            #Chequeamos que nadie del domicilio tenga permiso
+            for relacion in individuo.relaciones.filter(tipo="MD"):
+                if relacion.relacionado.permisos.filter(endda__gt=cooldown, tipo=data["tipo_permiso"]):
+                    relacionado = relacion.relacionado
+                    permiso.aprobar = False
+                    permiso.aclaracion = relacionado.nombres + ' ' + relacionado.apellidos + ' Ya obtuvo un permiso en los ultimos dias.' 
+    #Devolvemos todo lo procesado
+    return permiso
+    

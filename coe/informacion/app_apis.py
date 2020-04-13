@@ -4,7 +4,7 @@ import json
 import logging
 import traceback
 from base64 import b64decode
-from datetime import timedelta
+
 #Imports de Django
 from django.urls import reverse
 from django.utils import timezone
@@ -25,7 +25,7 @@ from .models import Individuo, AppData, Domicilio, GeoPosicion
 from .models import Atributo, Sintoma, Situacion, Seguimiento
 from .models import Permiso
 from .tokens import TokenGenerator
-from .geofence import controlar_distancia
+from .geofence import controlar_distancia, buscar_permiso, validar_permiso
 
 #Definimos logger
 logger = logging.getLogger("apis")
@@ -39,6 +39,7 @@ def AppConfig(request):
             #WebServices
             "WebServices":
             {
+                "tipo_permisos": reverse("ws_urls:tipo_permiso"),
                 "localidad": reverse("georef:localidad-autocomplete"),
                 "barrio": reverse("georef:barrio-autocomplete"),
                 "logs": "/archivos/logs/apis.txt",
@@ -175,6 +176,7 @@ def AppConfig(request):
                 {
                     "action": "salvoconducto",
                     "realizado": "bool",
+                    "tipo_permiso": "str: Descripcion del permiso",
                     "fecha_inicio": "datefield",
                     "hora_inicio": "timefield",
                     "fecha_fin": "datefield",
@@ -201,6 +203,7 @@ def AppConfig(request):
                 {
                     "action": "salvoconducto",
                     "realizado": "bool",
+                    "tipo_permiso": "str: Descripcion del permiso",
                     "fecha_inicio": "datefield",
                     "hora_inicio": "timefield",
                     "fecha_fin": "datefield",
@@ -213,6 +216,32 @@ def AppConfig(request):
                 "parametros":
                 {
                     'TIPO_PERMISO': {tp[0]:tp[1] for tp in TIPO_PERMISO if tp[0] != 'P'},
+                },
+            },
+            #Control de SalvoConducto
+            "control_salvoconducto":
+            {
+                "url": reverse("app_urls:control_salvoconducto"),
+                "fields":
+                {
+                    "dni_operador": "str (Del Dueño del celular)",
+                    "qr_code": "El QR que se leyo",
+                    "latitud": "float", 
+                    "longitud": "float",
+                },
+                "fields_response": 
+                {
+                    "action": "salvoconducto",
+                    "realizado": "bool",
+                    "tipo_permiso": "str: Descripcion del permiso",
+                    "fecha_inicio": "datefield",
+                    "hora_inicio": "timefield",
+                    "fecha_fin": "datefield",
+                    "hora_fin": "str: timefield",
+                    "imagen": "url",
+                    "qr": "url",
+                    "texto": "str: leyenda de permiso autorizado",
+                    "error": "str (Solo si hay errores/rechaza pedido)",
                 },
             },
             #Notifaciones
@@ -643,31 +672,8 @@ def salvoconducto(request):
             int(data["hora_ideal"][2:4]),
         )
         #Validamos si es factible:
-        
-        #Inicializamos permiso:
-        permiso = Permiso()
-        permiso.aprobar = True
-        #REALIZAR TODA LA LOGICA
-        #Chequeamos que no este en cuarentena obligatoria o aislado
-        if individuo.situacion_actual.conducta in ('D', 'E'):
-            permiso.aprobar = False
-            permiso.aclaracion = "Usted se encuentra bajo " + individuo.situacion_actual.get_conducta_display() + " Por favor mantengase en su Hogar."
-        else:
-            #Chequeamos que no tenga un permiso hace menos de 3 dias (DEL MISMO TIPO?):
-            cooldown = timezone.now() - timedelta(days=3)
-            permisos = individuo.permisos.filter(endda__gt=cooldown, tipo=data["tipo_permiso"])
-            if permisos:
-                permiso.aprobar = False
-                permiso.aclaracion = "Usted recibio un Permiso el dia " + str(permisos.last().endda.date())
-            else:
-                #Chequeamos que nadie del domicilio tenga permiso
-                for relacion in individuo.relaciones.filter(tipo="MD"):
-                    if relacion.relacionado.permisos.filter(endda__gt=cooldown, tipo=data["tipo_permiso"]):
-                        relacionado = relacion.relacionado
-                        permiso.aprobar = False
-                        permiso.aclaracion = relacionado.nombres + ' ' + relacionado.apellidos + ' Ya obtuvo un permiso en los ultimos dias.' 
-        #chequeamos num_dni por fecha
-        #Creamos Permiso
+        permiso = validar_permiso(individuo, data)
+        #Si fue aprobado, Creamos Permiso
         if permiso.aprobar:
             permiso.individuo = individuo
             permiso.tipo = data["tipo_permiso"]
@@ -736,20 +742,73 @@ def get_salvoconducto(request):
         #ACA CHEQUEAMOS TOKEN
         
         #Buscamos permiso
-        permiso = Permiso.objects.filter(individuo=individuo, endda__gt=timezone.now()).first()
-        if not permiso:
-            #Chequeamos que el individuo no tenga atributo laboral para permiso permanente:
-            atributos = individuo.atributos.filter(tipo__in=('AS','PS','FP','TE'))
-            if atributos:
-                atributo = atributos.first()
-                permiso = Permiso()
-                permiso.individuo = individuo
-                permiso.tipo = 'P'
-                permiso.localidad = individuo.domicilio_actual.localidad
-                permiso.begda = timezone.now()
-                permiso.endda = LAST_DATETIME
-                permiso.aclaracion = "Permiso Permanente: " + atributo.get_tipo_display()
-                permiso.save()
+        permiso = buscar_permiso(individuo)
+        #Damos respuesta
+        logger.info("Exito")
+        return JsonResponse(
+            {
+                "action": "get_salvoconducto",
+                "realizado": True,
+                "tipo_permiso": permiso.get_tipo_display(),
+                "fecha_inicio": permiso.begda.date(),
+                "hora_inicio": permiso.begda.time(),
+                "fecha_fin": permiso.endda.date(),
+                "hora_fin": permiso.endda.time(),
+                "imagen": individuo.get_foto(),
+                "qr": individuo.get_qr(),
+                "texto": permiso.aclaracion,
+
+            },
+            safe=False
+        )
+    except Exception as e:
+        logger.info("Falla: "+str(e))
+        return JsonResponse(
+            {
+                "action":"get_salvoconducto",
+                "realizado": False,
+                "error": str(e),
+                "error_contexto": str(e.__context__),
+                "error_traceback": str(traceback.format_exc()),
+            },
+            safe=False,
+            status=400,
+        )
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def control_salvoconducto(request):
+    try:
+        data = None
+        #Recibimos el json
+        data = json.loads(request.body.decode("utf-8"))
+        logger.info("\nget_salvoconducto:"+str(timezone.now())+"|"+str(data))
+        #Agarramos el dni
+        num_doc = str(data["dni_operador"]).upper()
+        #Obtenemos el operador
+        operador = Operador.objects.get(num_doc=num_doc)
+        #Leemos QR y parceamos
+        qr_code = data["qr_code"]
+        if "@" in qr_code:#Es un DNI
+            dni_qr = qr_code.split('@')[4]
+            #Podriamos procesar el resto de la info del tipo
+            #Fecha de Nacimiento
+        elif "-" in qr_code:#Es permiso de App
+            dni_qr = qr_code.split('-')[1]
+        #Buscamos al individuo en la db
+        individuo = Individuo.objects.select_related('appdata').get(num_doc=dni_qr)
+        #ACA CHEQUEAMOS TOKEN
+        #Buscamos permiso
+        permiso = buscar_permiso(individuo, activo=True)
+        #Guardamos registro de control
+        geopos = GeoPosicion()
+        geopos.individuo = individuo
+        geopos.tipo = "CG"
+        geopos.latitud = data["latitud"]
+        geopos.longitud = data["longitud"]
+        geopos.aclaracion = "Control de Salvoconducto"
+        geopos.operador = operador
+        geopos.save()
         #Damos respuesta
         logger.info("Exito")
         return JsonResponse(
