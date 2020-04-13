@@ -798,8 +798,7 @@ def control_salvoconducto(request):
         #Buscamos al individuo en la db
         individuo = Individuo.objects.select_related('appdata').get(num_doc=dni_qr)
         #ACA CHEQUEAMOS TOKEN
-        #Buscamos permiso
-        permiso = buscar_permiso(individuo, activo=True)
+        
         #Guardamos registro de control
         geopos = GeoPosicion()
         geopos.individuo = individuo
@@ -809,6 +808,8 @@ def control_salvoconducto(request):
         geopos.aclaracion = "Control de Salvoconducto"
         geopos.operador = operador
         geopos.save()
+        #Buscamos permiso
+        permiso = buscar_permiso(individuo, activo=True)
         #Damos respuesta
         logger.info("Exito")
         return JsonResponse(
@@ -829,6 +830,11 @@ def control_salvoconducto(request):
         )
     except Exception as e:
         logger.info("Falla: "+str(e))
+        try:
+            geopos.alerta = True
+            geopos.save()
+        except:
+            pass
         return JsonResponse(
             {
                 "action":"get_salvoconducto",

@@ -54,6 +54,7 @@
                                 {% endif %}
                                 <tr class="geo_aclaracion">
                                     <td>{{geopos.fecha|date:"d/m H:i"}}</td>
+                                    <td>{{geopos.get_tipo_display}}</td>
                                     <td>{{geopos.latitud|stringformat:".5f"}}/{{geopos.longitud|stringformat:".5f"}}</td>
                                     <td>
                                         {% if geopos.alerta %}
