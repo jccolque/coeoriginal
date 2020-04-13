@@ -146,7 +146,11 @@ def AppConfig(request):
                 {
                     "action": "tracking",
                     "realizado": "bool",
+                    "alerta": "bool",
+                    "notif_titulo": "str (Titulo notificacion Local)",
+                    "notif_mensaje": "str (Mensaje notificacion Local)",
                     "distancia" : "float (en metros)",
+                    "prox_tracking": "int (Minutos hasta proximo envio)",
                     "error": "str (Solo si hay errores)",
                 },
                 "parametros":
@@ -412,6 +416,7 @@ def encuesta(request):
         if data["latitud"] and data["longitud"]:
             geopos = GeoPosicion()
             geopos.individuo = individuo
+            geopos.tipo = 'AD'
             geopos.latitud = data["latitud"]
             geopos.longitud = data["longitud"]
             geopos.aclaracion = "AUTODIAGNOSTICO"
@@ -429,49 +434,6 @@ def encuesta(request):
         return JsonResponse(
             {
                 "action":"encuesta",
-                "realizado": False,
-                "error": str(e),
-            },
-            safe=False,
-            status=400,
-        )
-
-@csrf_exempt
-@require_http_methods(["POST"])
-def temperatura(request):
-    try:
-        data = None
-        #Recibimos el json
-        data = json.loads(request.body.decode("utf-8"))
-        logger.info("temperatura:"+str(timezone.now())+"|"+str(data))
-        #Agarramos el dni
-        if "dni" in data:
-            num_doc = str(data["dni"]).upper()
-        else:
-            num_doc = str(data["dni_individuo"]).upper()
-        #Buscamos al individuo en la db
-        individuo = Individuo.objects.get(num_doc=num_doc)
-        #ACA CHEQUEAMOS TOKEN
-
-        #Cargamos datos importantes:
-        seguimiento = Seguimiento()
-        seguimiento.individuo = individuo
-        seguimiento.tipo = "A"
-        seguimiento.aclaracion = "AUTODIAGNOSTICO - Temp:" + str(data["temperatura"])
-        seguimiento.save()
-        logger.info("Exito!")
-        return JsonResponse(
-            {
-                "action":"temperatura",
-                "realizado": True,
-            },
-            safe=False
-        )
-    except Exception as e:
-        logger.info("Falla: "+str(e))
-        return JsonResponse(
-            {
-                "action":"temperatura",
                 "realizado": False,
                 "error": str(e),
             },
@@ -511,11 +473,11 @@ def start_tracking(request):
             safe=False,
             status=400,
         )
-        #Guardamos la geoposicion BASE
-        GeoPosicion.objects.filter(individuo=individuo, aclaracion__icontains="INICIO TRACKING").delete()
-        GeoPosicion.objects.filter(individuo=individuo, aclaracion="TRACKING").delete()
+        #Guardamos la geoposicion BASE (Eliminamos todas las anteriores)
+        GeoPosicion.objects.filter(individuo=individuo, tipo__in=('ST', 'TC')).delete()
         geopos = GeoPosicion()
         geopos.individuo = individuo
+        geopos.tipo = 'ST'
         geopos.latitud = data["latitud"]
         geopos.longitud = data["longitud"]
         geopos.aclaracion = "INICIO TRACKING"
@@ -568,6 +530,7 @@ def tracking(request):
         #Guardamos nueva posgps
         geopos = GeoPosicion()
         geopos.individuo = individuo
+        geopos.tipo = 'RG'
         geopos.latitud = data["latitud"]
         geopos.longitud = data["longitud"]
         geopos.aclaracion = "TRACKING"
@@ -581,21 +544,28 @@ def tracking(request):
         #Chequeamos distancia:
         geopos.distancia = controlar_distancia(geopos)
         #Si es mayor a alerta la marcamos
+        notif_titulo = None
+        notif_mensaje = None
         if geopos.distancia > 50:
             geopos.alerta = True
-        
-        if geopos.distancia > 5:#Guardamos solo si vale la pena
+            notif_titulo = "Covid19 - Alerta por Distancia"
+            notif_mensaje = "Usted se ha alejado a "+str(int(geopos.distancia))+"mts del area permitida."
+        #Guardamos solo si vale la pena
+        if geopos.distancia > 5:
             geopos.save()
         #Realizamos controles avanzados
         
         #Controlamos posicion:
-        
         logger.info("Exito")
         return JsonResponse(
             {
                 "action":"tracking",
                 "realizado": True,
-                "distancia": geopos.distancia,
+                "prox_tracking": 5,#Minutos
+                "distancia": int(geopos.distancia),
+                "alerta": geopos.alerta,
+                "notif_titulo": notif_titulo,
+                "notif_mensaje": notif_mensaje,
             },
             safe=False
         )

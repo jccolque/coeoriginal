@@ -21,7 +21,7 @@ from .choices import TIPO_RELACION, TIPO_SEGUIMIENTO
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
 from .choices import TIPO_DOCUMENTO
 from .choices import TIPO_PERMISO
-from .choices import TIPO_TRIAJE
+from .choices import TIPO_TRIAJE, TIPO_GEOPOS
 
 # Create your models here.
 class Archivo(models.Model):
@@ -157,7 +157,7 @@ class Individuo(models.Model):
             self.save()
             return self.qrpath
     def tracking(self):
-        return self.geoposiciones.filter(aclaracion="INICIO TRACKING").exists()
+        return self.geoposiciones.filter(tipo='ST').exists()
 
 class Relacion(models.Model):#Origen del Dato
     tipo = models.CharField('Tipo Relacion', choices=TIPO_RELACION, max_length=2, default='F')
@@ -208,6 +208,7 @@ class Domicilio(models.Model):
 
 class GeoPosicion(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="geoposiciones")
+    tipo = models.CharField('Tipo GeoPosicion', max_length=2, choices=TIPO_GEOPOS, default='MS')
     latitud = models.DecimalField('latitud', max_digits=12, decimal_places=10)
     longitud = models.DecimalField('longitud', max_digits=12, decimal_places=10)
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)

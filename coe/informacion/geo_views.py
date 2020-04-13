@@ -10,6 +10,7 @@ from core.forms import JustificarForm
 #imports de la app
 from .models import Individuo
 from .models import GeoPosicion
+from .geofence import renovar_base
 
 #Administrar
 @permission_required('operadores.geotracking')
@@ -20,7 +21,7 @@ def menu_geotracking(request):
 @permission_required('operadores.geotracking')
 def control_tracking(request):
     #Obtenemos Posiciones Bases
-    geoposiciones = GeoPosicion.objects.filter(aclaracion="INICIO TRACKING")
+    geoposiciones = GeoPosicion.objects.filter(tipo='ST')
     #Obtenemos Alertas
     alertas = GeoPosicion.objects.filter(alerta=True, procesada=False)
     alertas = alertas.select_related('individuo', 'individuo__situacion_actual', 'individuo__domicilio_actual')
@@ -115,3 +116,21 @@ def procesar_alerta(request, geoposicion_id):
             )
             return redirect('geo_urls:lista_alertas')
     return render(request, "extras/generic_form.html", {'titulo': "Procesar Alerta", 'form': form, 'boton': "Procesar", })
+
+@permission_required('operadores.geotracking')
+def cambiar_base(request, geoposicion_id):
+    #Obtenemos la nueva base:
+    geopos = GeoPosicion.objects.select_related('individuo').get(pk=geoposicion_id)
+    #Desactivamos la anterior
+    GeoPosicion.objects.filter(individuo=geopos.individuo, tipo='ST').update(tipo='RG', aclaracion="Desactivada: "+str(obtener_operador(request)))
+    #Desactivamos todas las alarmas previas a esta alarma
+    GeoPosicion.objects.filter(individuo=geopos.individuo, alerta=True, fecha__lte=geopos.fecha).update(alerta=False, aclaracion="Desactivada por Cambiode Base.")
+    #Generamos nuevo inicio Tracking
+    geopos.alerta = False
+    geopos.tipo = 'ST'
+    geopos.aclaracion = "INICIO TRACKING - Definido por:" + str(obtener_operador(request))
+    geopos.save()
+    #Renovamos cache para proximos checks
+    renovar_base(geopos)
+    #Volvemos al mapa
+    return redirect('geo_urls:ver_tracking', individuo_id=geopos.individuo.id)

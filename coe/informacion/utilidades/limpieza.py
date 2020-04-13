@@ -90,4 +90,4 @@ def borrar_appdata():
     Sintoma.objects.filter(aclaracion="ENCUESTAAPP").delete()
     Atributo.objects.filter(aclaracion="ENCUESTAAPP").delete()
     Seguimiento.objects.filter(tipo="A").delete()
-    GeoPosicion.objects.filter(aclaracion__in=("TRACKING", "INICIO TRACKING", "AUTODIAGNOSTICO"))
+    GeoPosicion.objects.filter(aclaracion__icontains=("TRACK", "DIAGNO")).delete()
