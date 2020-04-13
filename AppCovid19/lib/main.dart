@@ -71,6 +71,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
   String _dniOperador = '';
   String _password = '';
   bool _encuestaRealizada = false;
+  bool _geoTrackActicado = false;
 
   @override
   void initState() {
@@ -79,6 +80,12 @@ class _MyLoginPageState extends State<MyLoginPage> {
     if (IsolateNameServer.lookupPortByName(_isolateName) != null) {
       IsolateNameServer.removePortNameMapping(_isolateName);
     }
+
+    _getGeoActivateSharedPref().then((v){
+      setState(() {
+        _geoTrackActicado = v;
+      });
+    });
 
     IsolateNameServer.registerPortWithName(port.sendPort, _isolateName);
 
@@ -311,7 +318,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
 
                   Container(
                     child: Visibility(
-                      visible: _encuestaRealizada,
+                      visible: _encuestaRealizada && !_geoTrackActicado,
                       child: Center(
                         child: RaisedButton(
                           padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 60.0, right: 60.0),
@@ -328,6 +335,30 @@ class _MyLoginPageState extends State<MyLoginPage> {
                             'Activar Geotracking',
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.black, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    child: Visibility(
+                      visible: _encuestaRealizada && _geoTrackActicado,
+                      child: Center(
+                        child: RaisedButton(
+                          padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 50.0, right: 50.0),
+                          color: Colors.red,
+                          splashColor: Colors.white,
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24.0),
+                          ),
+                          onPressed: () {
+//                            _mostrarDialogIngreseDatos(context);
+                          },
+                          child: Text(
+                            'GeoTracking Activado',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.white, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
                           ),
                         ),
                       ),
@@ -592,6 +623,8 @@ class _MyLoginPageState extends State<MyLoginPage> {
     setState(() {
       _latitud = latitud.toString();
       _longitud = longitud.toString();
+      _geoTrackActicado = true;
+      _setGeoActivateSharedPref(true);
     });
   }
 
@@ -611,6 +644,17 @@ class _MyLoginPageState extends State<MyLoginPage> {
         return false;
       });
     }
+  }
+
+  Future<void> _setGeoActivateSharedPref(bool permiso) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return await prefs.setBool('geoTrackActicado', permiso);
+  }
+
+  Future<bool> _getGeoActivateSharedPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final loadOk = await prefs.getBool('geoTrackActicado');
+    return loadOk != null ? loadOk : false;
   }
 
   Future<void> _setPermisoSharedPref(bool permiso) async {
