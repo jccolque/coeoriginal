@@ -682,6 +682,7 @@ def salvoconducto(request):
                 {
                     "action": "salvoconducto",
                     "realizado": permiso.aprobar,
+                    "tipo_permiso": permiso.get_tipo_display(),
                     "fecha_inicio": permiso.begda.date(),
                     "hora_inicio": permiso.begda.time(),
                     "fecha_fin": permiso.endda.date(),
@@ -755,6 +756,7 @@ def get_salvoconducto(request):
             {
                 "action": "get_salvoconducto",
                 "realizado": True,
+                "tipo_permiso": permiso.get_tipo_display(),
                 "fecha_inicio": permiso.begda.date(),
                 "hora_inicio": permiso.begda.time(),
                 "fecha_fin": permiso.endda.date(),

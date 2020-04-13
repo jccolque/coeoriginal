@@ -28,7 +28,7 @@ def enviar_notificacion(request):
                     'titulo': 'No se pudo enviar el mensaje',
                     'error': str(e),
                 })
-    return render(request, "extras/generic_form.html", {'titulo': "Enviar Notificacion", 'form': form, 'boton': "Enviar", })
+    return render(request, "extras/generic_form.html", {'titulo': "Enviar Notificacion via Push", 'form': form, 'boton': "Enviar", })
 
 @staff_member_required
 def guardar_notificacion(request):
@@ -37,4 +37,5 @@ def guardar_notificacion(request):
         form = AppNotificationForm(request.POST)
         if form.is_valid:
             form.save()
-    return render(request, "extras/generic_form.html", {'titulo': "Guardar Notificacion Local", 'form': form, 'boton': "Enviar", })
+            return render(request, "extras/resultado.html", {"texto": "Se Guardo el mensaje deseado."})
+    return render(request, "extras/generic_form.html", {'titulo': "Guardar Notificacion Local", 'form': form, 'boton': "Guardar", })
