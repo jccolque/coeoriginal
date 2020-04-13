@@ -44,6 +44,7 @@ def delete_nacionalidad(request, nacionalidad_id):
     nacionalidad = Nacionalidad.objects.get(pk=nacionalidad_id)
     if is_related(nacionalidad):
         return render(request, 'extras/error.html', {
+            'titulo': 'Eliminar Nacionalidad',
             'error': "La nacionalidad no puede ser borrada pues es Clave de Otros Registros, Contacte al Administrador.",
         })
     else:
@@ -78,6 +79,7 @@ def delete_provincia(request, provincia_id):
     provincia = Provincia.objects.get(pk=provincia_id)
     if is_related(provincia):
         return render(request, 'extras/error.html', {
+            'titulo': 'Eliminar Provincia',
             'error': "La Provincia no puede ser borrada pues es Clave de Otros Registros, Contacte al Administrador.",
         })
     else:
@@ -112,6 +114,7 @@ def delete_departamento(request, departamento_id):
     departamento = Departamento.objects.get(pk=departamento_id)
     if is_related(departamento):
         return render(request, 'extras/error.html', {
+            'titulo': 'Eliminar Departamento',
             'error': "El Departamento no puede ser borrada pues es Clave de Otros Registros, Contacte al Administrador.",
         })
     else:
@@ -146,6 +149,7 @@ def delete_localidad(request, localidad_id):
     localidad = Localidad.objects.get(pk=localidad_id)
     if is_related(localidad):
         return render(request, 'extras/error.html', {
+            'titulo': 'Eliminar Localidad',
             'error': "La Localidad no puede ser borrada pues es Clave de Otros Registros, Contacte al Administrador.",
         })
     else:
@@ -183,6 +187,7 @@ def delete_barrio(request, barrio_id):
     barrio = Barrio.objects.get(pk=barrio_id)
     if is_related(barrio):
         return render(request, 'extras/error.html', {
+            'titulo': 'Eliminar Barrio',
             'error': "El Barrio no puede ser borrada pues es Clave de Otros Registros, Contacte al Administrador.",
         })
     else:
@@ -227,6 +232,7 @@ def delete_ubicacion(request, ubicacion_id):
     ubicacion = Ubicacion.objects.get(pk=ubicacion_id)
     if is_related(ubicacion):
         return render(request, 'extras/error.html', {
+            'titulo': 'Eliminar Ubicacion Estrategica',
             'error': "La Ubicacion no puede ser borrada pues es Clave de Otros Registros, Contacte al Administrador.",
         })
     else:

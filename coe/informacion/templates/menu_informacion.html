@@ -11,6 +11,7 @@
                     <div class="col-md-8">
                         <ul class="menu_botones">
                             {% if perms.operadores.reportes %}
+                                <hr>
                                 <li><a href="{% url 'informacion:tablero_control'  %}">Tablero de Situacion</a></li>
                                 <li><a href="{% url 'informacion:reporte_basico'  %}">Buscador Por Filtros</a></li>
                                 <hr>
@@ -45,7 +46,6 @@
                                 <li><a href="{% url 'informacion:upload_padron_individuos' %}">Upload Padron Individuos</a></li>
                                 <li><a href="{% url 'informacion:upload_padron_domicilios' %}">Upload Padron Domicilios</a></li>
                                 <hr>
-                                <li><a href="{% url 'informacion:buscar_permiso' %}">Pedir Permiso de Circulacion</a></li>
                                 <li><a href="{% url 'informacion:subir_epidemiologia'  %}">Carga Masiva Epidemiologia</a></li>
                             {% endif %}
                         </ul>

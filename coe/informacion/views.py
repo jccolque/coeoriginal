@@ -7,11 +7,14 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import permission_required
+from django.contrib.admin.views.decorators import staff_member_required
+#Imports extras
+from fcm_django.models import FCMDevice
 #Imports del proyecto
 from coe.settings import GEOPOSITION_GOOGLE_MAPS_API_KEY
 from core.decoradores import superuser_required
 from core.functions import date2str
-from core.forms import SearchForm
+from core.forms import SearchForm, JustificarForm
 from georef.models import Nacionalidad
 from georef.models import Ubicacion
 from operadores.functions import obtener_operador
@@ -38,62 +41,10 @@ from .forms import SituacionForm, RelacionForm, SeguimientoForm
 from .forms import SearchIndividuoForm, SearchVehiculoForm
 from .forms import PermisoForm, BuscarPermiso, DatosForm, FotoForm
 from .forms import DocumentoForm, SignosVitalesForm
+from .forms import SendNotificationForm
 from .tasks import guardar_same, guardar_epidemiologia
 from .tasks import guardar_padron_individuos, guardar_padron_domicilios
 from .functions import obtener_relacionados
-
-#Publico
-def buscar_permiso(request):
-    form = BuscarPermiso()
-    if request.method == 'POST':
-        form = BuscarPermiso(request.POST)
-        if form.is_valid():
-            individuo = Individuo.objects.filter(
-                num_doc=form.cleaned_data['num_doc'],
-                apellidos__icontains=form.cleaned_data['apellido'])
-            if individuo:
-                individuo = individuo.first()
-                return redirect('informacion:pedir_permiso', individuo_id=individuo.id, num_doc=individuo.num_doc)
-            else:
-                form.add_error(None, "No se ha encontrado a Nadie con esos Datos.")
-    return render(request, "permisos/buscar_permiso.html", {'form': form, })
-
-def pedir_permiso(request, individuo_id, num_doc):
-    try:
-        individuo = Individuo.objects.get(pk=individuo_id, num_doc=num_doc)
-        form = PermisoForm(initial={'individuo': individuo, })
-        if request.method == 'POST':
-            form = PermisoForm(request.POST, initial={'individuo': individuo, })
-            if form.is_valid():
-                permiso = form.save(commit=False)
-                permiso.individuo = individuo
-                permiso.save()
-                #Enviar email
-                return render(request, "permisos/permiso_entregado.html", {'permiso': permiso, })
-        return render(request, "permisos/pedir_permiso.html", {'form': form, 'individuo': individuo, })
-    except Individuo.DoesNotExist:
-        return redirect('informacion:buscar_permiso')
-
-def completar_datos(request, individuo_id):
-    individuo = Individuo.objects.get(pk=individuo_id)
-    form = DatosForm(instance=individuo)
-    if request.method == "POST":
-        form = DatosForm(request.POST, instance=individuo)
-        if form.is_valid():
-            form.save()
-            return redirect('informacion:pedir_permiso', individuo_id=individuo.id)
-    return render(request, "extras/generic_form.html", {'titulo': "Corregir/Completar Datos", 'form': form, 'boton': "Guardar", })
-
-def subir_foto(request, individuo_id):
-    individuo = Individuo.objects.get(pk=individuo_id)
-    form = FotoForm()
-    if request.method == "POST":
-        form = FotoForm(request.POST, request.FILES)
-        if form.is_valid():
-            individuo.fotografia = form.cleaned_data['fotografia']
-            individuo.save()
-            return redirect('informacion:pedir_permiso', individuo_id=individuo.id)
-    return render(request, "extras/generic_form.html", {'titulo': "Subir Fotografia", 'form': form, 'boton': "Cargar", })
 
 #Administrar
 @permission_required('operadores.menu_informacion')
@@ -349,17 +300,32 @@ def cargar_fotografia(request, individuo_id):
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Subir Fotografia", 'form': form, 'boton': "Cargar", })
 
+#Aislamiento Manual
 @permission_required('operadores.individuos')
 def buscar_inquilino(request, ubicacion_id):
-    ubicacion = Ubicacion.objects.get(pk=ubicacion_id)
-    form = TrasladarIndividuoForm(initial={'ubicacion': ubicacion,})
+    form = SearchIndividuoForm()
     if request.method == "POST":
-        form = TrasladarIndividuoForm(request.POST)
+        form = SearchIndividuoForm(request.POST)
         if form.is_valid():
             num_doc = form.cleaned_data['num_doc'].upper()
             try:
                 individuo = Individuo.objects.get(num_doc=num_doc)
-                #Creamos nuevo domicilio:
+                return redirect('informacion:confirmar_inquilino', ubicacion_id=ubicacion_id, individuo_id=individuo.id)
+            except Individuo.DoesNotExist:
+                return redirect('informacion:cargar_inquilino', ubicacion_id=ubicacion_id, num_doc=num_doc)
+    return render(request, "extras/generic_form.html", {'titulo': "Trasladar Individuo", 'form': form, 'boton': "Trasladar", })
+
+@permission_required('operadores.individuos')
+def confirmar_inquilino(request, ubicacion_id, individuo_id):
+    form = TrasladarIndividuoForm()
+    ubicacion = Ubicacion.objects.get(pk=ubicacion_id)
+    individuo = Individuo.objects.get(pk=individuo_id)
+    if request.method == 'POST':
+        if 'confirmar' in request.POST:
+            form = TrasladarIndividuoForm(request.POST)
+            print("ENTRO ACA")
+            if form.is_valid():
+                print("IS VALID")
                 domicilio = Domicilio(individuo=individuo)
                 domicilio.localidad = ubicacion.localidad
                 domicilio.calle = ubicacion.calle
@@ -369,9 +335,6 @@ def buscar_inquilino(request, ubicacion_id):
                 domicilio.aislamiento = True
                 domicilio.ubicacion = ubicacion
                 domicilio.save()
-                #Quitamos una plaza disponible:
-                domicilio.ubicacion.capacidad_ocupada += 1
-                domicilio.ubicacion.save()
                 #Creamos Cronologia
                 seguimiento = Seguimiento(individuo=individuo)
                 seguimiento.tipo = 'TA'
@@ -379,28 +342,26 @@ def buscar_inquilino(request, ubicacion_id):
                 seguimiento.fecha = form.cleaned_data['fecha']
                 seguimiento.save()
                 return redirect('georef:ver_ubicacion', ubicacion_id=ubicacion.id)
-            except Individuo.DoesNotExist:
-                request.redirect = True
-                request.ubicacion = ubicacion
-                request.num_doc = num_doc
-                request.habitacion = form.cleaned_data['habitacion']
-                request.fecha = form.cleaned_data['fecha']
-                return cargar_inquilino(request)
-    return render(request, "extras/generic_form.html", {'titulo': "Trasladar Individuo", 'form': form, 'boton': "Trasladar", })
-
-@permission_required('operadores.individuos')
-def cargar_inquilino(request):
-    if hasattr(request, 'redirect'):#Si viene desde la otra vista:
-        ubicacion = request.ubicacion
-        request.method = 'GET'
-        form = InquilinoForm(
-            initial={
-                'num_doc': request.num_doc,
+        else:
+            return redirect('informacion:buscar_inquilino', ubicacion_id=ubicacion.id)
+    #Mostramos form
+    return render(request, 'confirmar_inquilino.html', 
+            {
+                'form': form,
                 'ubicacion': ubicacion,
-                'habitacion': request.habitacion,
-                'fecha': request.fecha,
+                'individuo': individuo,
             }
         )
+
+@permission_required('operadores.individuos')
+def cargar_inquilino(request, ubicacion_id, num_doc):
+    ubicacion = Ubicacion.objects.get(pk=ubicacion_id)
+    form = InquilinoForm(initial=
+        {
+            'num_doc': num_doc,
+            'ubicacion': ubicacion,
+        }
+    )
     #Si nos mando el individuo completo lo creamos e ingresamos
     if request.method == 'POST':
         form = InquilinoForm(request.POST)
@@ -447,15 +408,16 @@ def cargar_inquilino(request):
             #Volvemos al aislamiento
             return redirect('georef:ver_ubicacion', ubicacion_id=ubicacion.id)
     #Lanzamos formulario
-    return render(request, "cargar_inquilino.html", {
+    return render(request, "cargar_inquilino.html",
+        {
             'titulo': "Cargar Inquilino",
             'form': form, 
             'boton': "Cargar",
             'ubicacion': ubicacion,
-            'habitacion': request.habitacion,
-            'fecha_ingreso': request.fecha,
-        })
+        }
+    )
 
+#INDIVIDUOS
 @permission_required('operadores.individuos')
 def ver_individuo(request, individuo_id):
     individuo = Individuo.objects.prefetch_related(
@@ -469,17 +431,7 @@ def ver_individuo(request, individuo_id):
     individuo = individuo.get(pk=individuo_id)
     return render(request, "ver_individuo.html", {'individuo': individuo, })
 
-
-@permission_required('operadores.individuos')
-def ver_seguimiento(request, individuo_id):
-    individuo = Individuo.objects.select_related('situacion_actual', 'domicilio_actual', 'appdata')
-    individuo = individuo.get(pk=individuo_id)
-    geoposiciones = GeoPosicion.objects.filter(individuo=individuo)
-    return render(request, "seguimiento.html", {
-        'individuo': individuo,
-        'geoposiciones': geoposiciones,
-    })
-
+#Relaciones
 @permission_required('operadores.individuos')
 def arbol_relaciones(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
@@ -491,6 +443,7 @@ def arbol_relaciones(request, individuo_id):
         'ancho': 15000,
     })
 
+#Individuos
 @permission_required('operadores.individuos')
 def buscador_individuos(request):
     form = BuscadorIndividuosForm()   
@@ -580,7 +533,8 @@ def lista_autodiagnosticos(request):
     individuos = []
     appdatas = AppData.objects.all().order_by('-estado')
     appdatas = appdatas.select_related('individuo')
-    appdatas = appdatas.prefetch_related('individuo__situaciones')
+    appdatas = appdatas.prefetch_related('individuo__situacion_actual')
+    appdatas = appdatas.order_by('estado')
     for appdata in appdatas:
         individuos.append(appdata.individuo)
     return render(request, "lista_autodiagnosticos.html", {
@@ -590,17 +544,44 @@ def lista_autodiagnosticos(request):
 
 #CARGA DE ELEMENTOS
 @permission_required('operadores.individuos')
-def cargar_domicilio(request, individuo_id):
-    individuo = Individuo.objects.get(pk=individuo_id)
-    form = DomicilioForm()
+def cargar_domicilio(request, individuo_id=None, domicilio_id=None):
+    domicilio = None
+    if individuo_id:
+        individuo = Individuo.objects.get(pk=individuo_id)
+    if domicilio_id:
+        domicilio = Domicilio.objects.get(pk=domicilio_id)
+        individuo = domicilio.individuo
+    form = DomicilioForm(instance=domicilio)
     if request.method == "POST":
-        form = DomicilioForm(request.POST)
+        form = DomicilioForm(request.POST, instance=domicilio)
         if form.is_valid():
             domicilio = form.save(commit=False)
             domicilio.individuo = individuo
             domicilio.save()
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Domicilio", 'form': form, 'boton': "Cargar", })
+
+@permission_required('operadores.individuos')
+def volver_domicilio(request, domicilio_id):
+    nuevo_domicilio = Domicilio.objects.get(pk=domicilio_id)
+    nuevo_domicilio.pk = None
+    nuevo_domicilio.aclaracion = "Devuelto al Hogar por " + str(obtener_operador(request))
+    nuevo_domicilio.fecha = timezone.now()
+    nuevo_domicilio.save()
+    return redirect('informacion:ver_individuo', individuo_id=nuevo_domicilio.individuo.id)
+
+@permission_required('operadores.individuos')
+def del_domicilio(request, domicilio_id=None):
+    domicilio = Domicilio.objects.get(pk=domicilio_id)
+    individuo = domicilio.individuo
+    if domicilio == individuo.domicilio_actual:
+        return render(request, 'extras/error.html', {
+            'titulo': 'Eliminar Domicilio',
+            'error': "No se puede Borrar el domicilio Actual.",
+        })
+    else:
+        domicilio.delete()
+        return redirect('informacion:ver_individuo', individuo_id=individuo.id)
 
 #Traslados
 @permission_required('operadores.individuos')
@@ -642,9 +623,6 @@ def trasladar(request, individuo_id, ubicacion_id, vehiculo_id):
     domicilio.aislamiento = True
     domicilio.ubicacion = ubicacion
     domicilio.save()
-    #Quitamos una plaza disponible:
-    domicilio.ubicacion.capacidad_ocupada += 1
-    domicilio.ubicacion.save()
     #Creamos Cronologia
     seguimiento = Seguimiento(individuo=individuo)
     seguimiento.tipo = 'C'
@@ -661,25 +639,38 @@ def trasladar(request, individuo_id, ubicacion_id, vehiculo_id):
 
 #Situacion
 @permission_required('operadores.individuos')
-def cargar_situacion(request, individuo_id):
-    individuo = Individuo.objects.get(pk=individuo_id)
-    #Generamos nueva situacion a partir de la anterio
-    situacion = individuo.situacion_actual
-    if not situacion:
-        situacion = Situacion()
-    situacion.id = None
-    situacion.aclaracion = None
-    situacion.fecha = timezone.now()
+def cargar_situacion(request, individuo_id=None, situacion_id=None):
+    situacion = Situacion()
+    if individuo_id:
+        individuo = Individuo.objects.get(pk=individuo_id)
+        #Generamos nueva situacion a partir de la anterio
+        situacion = individuo.situacion_actual
+    elif situacion_id:
+        situacion = Situacion.objects.get(pk=situacion_id)
+        individuo = situacion.individuo
     form = SituacionForm(instance=situacion)
     #Trabajamos
     if request.method == "POST":
-        form = SituacionForm(request.POST)
+        form = SituacionForm(request.POST, instance=situacion)
         if form.is_valid():
             situacion = form.save(commit=False)
             situacion.individuo = individuo
             situacion.save()
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Situacion", 'form': form, 'boton': "Cargar", }) 
+
+@permission_required('operadores.individuos')
+def del_situacion(request, situacion_id=None):
+    situacion = Situacion.objects.get(pk=situacion_id)
+    individuo = situacion.individuo
+    if situacion == individuo.situacion_actual:
+        return render(request, 'extras/error.html', {
+            'titulo': 'Eliminar Situacion',
+            'error': "No se puede Borrar la Situacion Actual.",
+        })
+    else:
+        situacion.delete()
+        return redirect('informacion:ver_individuo', individuo_id=individuo.id)
 
 #Signos Vitales
 @permission_required('operadores.individuos')
@@ -830,15 +821,15 @@ def del_documento(request, documento_id):
 def cargar_geoposicion(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
     if request.method == "POST":
-        if hasattr(individuo,'geoposicion'):
-            geoposicion = individuo.geoposicion
-        else:
-            geoposicion = GeoPosicion()
-            geoposicion.individuo = individuo
-        #cargamos los datos del form:
+        print(request.POST)
+        geoposicion = GeoPosicion()
+        geoposicion.individuo = individuo
         geoposicion.latitud = request.POST['latitud']
         geoposicion.longitud = request.POST['longitud']
-        geoposicion.observaciones = request.POST['observaciones']
+        if request.POST['observaciones'] != '':
+            geoposicion.aclaracion = request.POST['observaciones']
+        else:
+            geoposicion.aclaracion = "Carga Manual de " + str(obtener_operador(request))
         geoposicion.save()
         return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/gmap_form.html", {
@@ -910,7 +901,7 @@ def tablero_control(request):
                     situacion_actual__fecha__date__lte=dia).count()
                 graf_conductas.agregar_dato(dia, conducta[1], date2str(dia), cant)
     #Entregamos el reporte
-    return render(request, "tablero_control.html", {
+    return render(request, "reportes/tablero_control.html", {
         'aislamientos': aislamientos,
         'internaciones': internaciones,
         "nacionalidades": nacionalidades,
@@ -968,16 +959,39 @@ def reporte_basico(request):
         #los volvemos una lista:
         reportados = list(reportados.values())
         reportados.sort(key=lambda x: x.sintomas, reverse=True)
-        return render(request, "reporte_basico_mostrar.html", {
+        return render(request, "reportes/reporte_basico_mostrar.html", {
             'reportados': reportados,
             'has_table': True,
         })
-    return render(request, "reporte_basico_buscar.html", {
+    return render(request, "reportes/reporte_basico_buscar.html", {
         'estados': estados,
         'conductas': conductas,
         'atributos': atributos, 
         'sintomas': sintomas,
     })
+
+#Enviar notificaciones
+@staff_member_required
+def enviar_notificacion(request):
+    form = SendNotificationForm()
+    if request.method == 'POST':
+        form = SendNotificationForm(request.POST)
+        if form.is_valid:
+            try:
+                device = FCMDevice.objects.get(pk=request.POST['dispositivo'])
+                device.send_message(
+                    title= request.POST['titulo'],
+                    body= request.POST['texto'],
+                    color= request.POST['color'],
+                    #icon=request.POST['icono'], data={"test": "test"}
+                )
+                return render(request, "extras/resultado.html", {"texto": "Se envio el mensaje deseado."})
+            except Exception as e:
+                return render(request, 'extras/error.html', {
+                    'titulo': 'No se pudo enviar el mensaje',
+                    'error': str(e),
+                })
+    return render(request, "extras/generic_form.html", {'titulo': "Enviar Notificacion", 'form': form, 'boton': "Enviar", })
 
 #CARGAS MASIVAS
 @superuser_required

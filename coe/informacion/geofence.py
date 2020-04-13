@@ -14,14 +14,20 @@ def obtener_base(num_doc):
         try:
             gps = GeoPosicion.objects.get(
                     individuo__num_doc=num_doc,
-                    aclaracion__icontains="INICIO TRACKING")
+                    tipo='ST')
             if not geopos_bases:#Creamos la base inicial
-                geopos_bases = {g.individuo.num_doc: g for g in GeoPosicion.objects.filter(aclaracion="INICIO TRACKING")}
+                geopos_bases = {g.individuo.num_doc: g for g in GeoPosicion.objects.filter(tipo='ST')}
             geopos_bases[num_doc] = gps
             cache.set("geopos_bases", geopos_bases)
             return geopos_bases[num_doc]
         except GeoPosicion.DoesNotExist:
             return None
+
+def renovar_base(nueva_geopos):
+    geopos_bases = cache.get("geopos_bases")
+    if geopos_bases:
+        geopos_bases[nueva_geopos.individuo.num_doc] = geopos_bases
+        cache.set("geopos_bases", geopos_bases)
 
 def controlar_distancia(nueva_geopos):
     #Obtenemos su posicion Permitida

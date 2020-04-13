@@ -5,8 +5,9 @@ from django.db import models
 from django.utils import timezone
 from django.core.validators import RegexValidator
 #Imports de paquetes extras
-from auditlog.registry import auditlog
 from tinymce.models import HTMLField
+from auditlog.registry import auditlog
+from fcm_django.models import FCMDevice
 #Imports del proyecto:
 from coe.constantes import NOIMAGE
 from coe.settings import MEDIA_ROOT
@@ -20,7 +21,7 @@ from .choices import TIPO_RELACION, TIPO_SEGUIMIENTO
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
 from .choices import TIPO_DOCUMENTO
 from .choices import TIPO_PERMISO
-from .choices import TIPO_TRIAJE
+from .choices import TIPO_TRIAJE, TIPO_GEOPOS
 
 # Create your models here.
 class Archivo(models.Model):
@@ -122,10 +123,7 @@ class Individuo(models.Model):
             'observaciones': self.observaciones,
         }
     def ultimo_seguimiento(self):
-        if self.seguimientos.all():
-            return [d for d in self.seguimientos.all()][-1]
-        else:
-            return None
+        return self.seguimientos.last()
     def geoposicion(self):
         return self.geoposiciones.last()
     def localidad_actual(self):
@@ -158,8 +156,8 @@ class Individuo(models.Model):
             self.qrpath = relative_path
             self.save()
             return self.qrpath
-    def seguimiento(self):
-        return self.geoposiciones.filter(aclaracion="INICIO TRACKING").exists()
+    def tracking(self):
+        return self.geoposiciones.filter(tipo='ST').exists()
 
 class Relacion(models.Model):#Origen del Dato
     tipo = models.CharField('Tipo Relacion', choices=TIPO_RELACION, max_length=2, default='F')
@@ -198,7 +196,7 @@ class Domicilio(models.Model):
     class Meta:
         ordering = ['fecha', ]
     def __str__(self):
-        return self.calle + ' ' + self.numero + ', ' + str(self.localidad)
+        return self.calle + ' ' + self.numero + ', ' + str(self.localidad.nombre)
     def as_dict(self):
         return {
             "id": self.id,
@@ -210,11 +208,15 @@ class Domicilio(models.Model):
 
 class GeoPosicion(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="geoposiciones")
+    tipo = models.CharField('Tipo GeoPosicion', max_length=2, choices=TIPO_GEOPOS, default='MS')
     latitud = models.DecimalField('latitud', max_digits=12, decimal_places=10)
     longitud = models.DecimalField('longitud', max_digits=12, decimal_places=10)
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    distancia = models.DecimalField('Distancia a Base', max_digits=8, decimal_places=2, default=0)
     alerta = models.BooleanField('Posicion de Alerta', default=False)
+    procesada = models.BooleanField('Procesada', default=False)
+    operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True)
     def __str__(self):
         return str(self.latitud) + '|' + str(self.longitud)
     def as_dict(self):
@@ -337,7 +339,7 @@ class AppData(models.Model):
     telefono = models.CharField('Telefono', max_length=50, default='+549388')
     email = models.EmailField('Correo Electronico', null=True, blank=True)#Enviar mails
     estado = models.CharField('Estado', choices=TIPO_TRIAJE, max_length=1, default='V')
-    push_id = models.CharField('Push Notification ID', max_length=255, blank=True, null=True)
+    device = models.OneToOneField(FCMDevice, on_delete=models.SET_NULL, null=True, blank=True, related_name="appdata")
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     def __str__(self):
         return str(self.individuo) + self.get_estado_display()
@@ -392,10 +394,10 @@ class Permiso(models.Model):
             "aclaracion": self.aclaracion,
         }
     def estado(self):
-        if self.habilitado:
-            return "Aprobado"
+        if self.endda > timezone.now():
+            return "Activo"
         else:
-            return "En Espera"
+            return "Vencido"
 
 #Señales
 from .signals import estado_inicial

@@ -8,7 +8,7 @@
             <div class="col-sm-7 col-sm-offset-1">
                 <div class="row">
                     <div class="col-sm-12">
-                        <a class="nolink" href="{% url 'informacion:completar_datos' individuo_id=individuo.id %}">
+                        <a class="nolink" href="{% url 'permisos_urls:completar_datos' individuo_id=individuo.id %}">
                             <p class="botoncito">
                                 Completar/Corregir Datos
                             </p>
@@ -35,7 +35,7 @@
                         </p>
                     </div>
                     <div class="col-sm-4">
-                        <a href="{% url 'informacion:subir_foto' individuo_id=individuo.id %}">
+                        <a href="{% url 'permisos_urls:subir_foto' individuo_id=individuo.id %}">
                             <img class="fotos" src="{{individuo.get_foto}}">
                         </a>
                     </div>

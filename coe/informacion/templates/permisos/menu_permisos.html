@@ -1,0 +1,33 @@
+{% extends 'base_informacion.html' %}
+
+{% load seguridad_tags%}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">        
+                    <h1>Menu Permisos:</h1>
+                    <div class="col-md-8">
+                        <ul class="menu_botones">
+                            {% if perms.operadores.individuos %}
+                                <li><a href="{% url 'permisos_urls:lista_activos' %}">Listado de Permisos Activos</a></li>
+                                <li><a href="{% url 'permisos_urls:lista_vencidos' %}">Listado de Permisos Vencidos</a></li>
+                                <hr>
+                                <li><a href="{% url 'permisos_urls:buscar_permiso' %}">Pedido de Permiso Publico</a></li>
+                            {% endif %}
+
+                            {% if request.user.is_superuser %}
+                                <h3>Uso Bajo Supervision:</h3>
+                                <li><a href="{% url 'admin:index' %}">Administrador</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        {% include 'users/info_user.html' %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base_informacion.html' %}
+
+{% block content %}
+    <section class="formulario_custom">
+        <div class="container">
+            <form method="post" enctype="multipart/individuo-data" action="">
+                <div class="row">
+                    {% csrf_token %}
+                    <!-- Mostramos errores -->
+                    {% for field in form %}
+					    {% if field.errors %}
+                            <li>
+                                {{ field.label }}: {{ field.errors|striptags }}
+                            </li>
+                        {% endif %}
+				    {% endfor %}
+                    <h1>Confirmar Traslado</h1>
+                    <div class="col-md-4 col-sm-offset-1">
+                        <h2><b>Ubicacion Destino:</b></h2>
+                        <p><b>Destino:</b> {{ubicacion.nombre}}</p>
+                        <p><b>Direccion:</b> {{ubicacion.calle}} {{ubicacion.numero}}, {{ubicacion.localidad}}</p>
+                        <hr>
+                        <h3><b>Completar</b></h3>
+                        <p>Habitacion: {{form.habitacion}}</p>
+                        <p>Fecha: {{form.fecha}}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h2><b>Inquilino:</b></h2>
+                        <p><b>{{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</b></p>
+                        <p><b>Nombres y Apellido:</b> {{individuo.nombres}} {{individuo.apellidos}}</p>
+                        <p><b>Sexo:</b> {{individuo.get_sexo_display}}</p>
+                        <p><b>Fecha Nacimiento:</b> {{individuo.fecha_nacimiento}}</p>
+                        <p><b>Telefono:</b> {{individuo.telefono}}</p>
+                        <p><b>Email:</b> {{individuo.email}}</p>
+                        <p><b>Nacionalidad:</b> {{individuo.nacionalidad}}</p>
+                    </div>
+                </div>
+                <br>
+                <div class="col-sm-4 col-sm-offset-2">
+                    <button type="submit" id="cancelar"  name="cancelar" value="cancelar">Cancelar</button>
+                    <button type="submit" id="confirmar" name="confirmar" value="confirmar">Confirmar</button>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

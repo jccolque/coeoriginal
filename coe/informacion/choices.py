@@ -136,3 +136,16 @@ TIPO_TRIAJE = (
     ('A', 'Amarillo'),
     ('R', 'Rojo'),
 )
+
+TIPO_GEOPOS = (
+    ('MS', 'Manual desde Sistema'),
+    ('AD', 'AutoDiagnostico'),
+    ('ST', 'Inicio de Tracking/Base'),
+    ('RG', 'Reporte de GeoPosicion'),
+)
+
+TIPO_ICONO = (
+    ('I', 'Info'),
+    ('W', 'Warning'),
+    ('C', 'Critico'),
+)

@@ -58,6 +58,7 @@ def relacion_domicilio(created, instance, **kwargs):
             localidad=instance.localidad,
             calle=instance.calle,
             numero=instance.numero,
+            aislamiento=False
             ).exclude(individuo=instance.individuo)#Excluyendolo a el
         for domicilio in domicilios:
             #Evitamos repetir relaciones
@@ -101,13 +102,11 @@ def ocupar_capacidad_ubicacion(created, instance, **kwargs):
 @receiver(pre_save, sender=Domicilio)
 def recuperar_capacidad_ubicacion(instance, **kwargs):
     individuo = instance.individuo
-    try:
-        if individuo.domicilio_actual.aislamiento:#Si estaba en aislamiento
+    if individuo.domicilio_actual:
+        if individuo.domicilio_actual.ubicacion:#Si estaba en alguna ubicacion
             ubicacion = individuo.domicilio_actual.ubicacion#Si previamente estaba aislado
             ubicacion.capacidad_ocupada -= 1
-            ubicacion.save()
-    except:
-        pass#No hacemos nada            
+            ubicacion.save()       
 
 @receiver(post_save, sender=Relacion)
 def crear_relacion_inversa(created, instance, **kwargs):

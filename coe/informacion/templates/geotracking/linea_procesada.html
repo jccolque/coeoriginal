@@ -1,0 +1,23 @@
+{% load static %}
+{% block content %}
+    <tr>
+        <td>{{alerta.individuo.apellidos}}, {{alerta.individuo.nombres}}</td>
+        <td>{{alerta.individuo.situacion_actual}}</td>
+        <td>{{alerta.individuo.domicilio_actual}}</td>
+        <td>{{alerta.fecha|date:"d/m H:i"}}</td>
+        <td>{{alerta.distancia}}</td>
+        <td class="geo_aclaracion">{{alerta.aclaracion}}</td>
+        <td>{{alerta.operador}}</td>
+        <td>
+            <a href="{% url 'informacion:ver_individuo' individuo_id=alerta.individuo.id %}" target="_blank">
+                <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+            </a>
+            <a href="{% url 'geo_urls:procesar_alerta' geoposicion_id=alerta.id %}" target="_blank">
+                <img class="icons" src="{% static '/img/icons/operador.png' %}">
+            </a>
+            <a href="{% url 'geo_urls:ver_tracking' individuo_id=alerta.individuo.id %}" target="_blank">
+                <img class="icons" src="{% static '/img/icons/tracking.png' %}">
+            </a>
+        </td>
+    </tr>
+{% endblock %}

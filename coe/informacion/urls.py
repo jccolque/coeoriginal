@@ -8,11 +8,6 @@ from . import autocomplete
 #Definimos paths de la app
 app_name = 'informacion'
 urlpatterns = [
-    #Publico
-    path('buscar/', views.buscar_permiso, name='buscar_permiso'),
-    path('permiso/<int:individuo_id>/<int:num_doc>/', views.pedir_permiso, name='pedir_permiso'),
-    path('completar/datos/<int:individuo_id>', views.completar_datos, name='completar_datos'),
-    path('subir/foto/<int:individuo_id>', views.subir_foto, name='subir_foto'),
     #Administrador
     path('', views.menu, name='menu'),
     #Archivos
@@ -49,12 +44,17 @@ urlpatterns = [
     path('cargar/pasajero/<int:traslado_id>/nuevo/<int:individuo_id>/', views.cargar_individuo, name='cargar_pasajero'),
     path('cargar/pasajero/<int:traslado_id>/nuevo/<str:num_doc>/', views.cargar_individuo, name='cargar_pasajero_nuevo'),
     path('mod/individuo/<int:individuo_id>', views.cargar_individuo, name='mod_individuo'),
+    #Domicilio
     path('cargar/domicilio/<int:individuo_id>', views.cargar_domicilio, name='cargar_domicilio'),
+    path('mod/domicilio/<int:domicilio_id>', views.cargar_domicilio, name='mod_domicilio'),
+    path('volver/domicilio/<int:domicilio_id>', views.volver_domicilio, name='volver_domicilio'),
+    path('del/domicilio/<int:domicilio_id>', views.del_domicilio, name='del_domicilio'),
+    #Fotografia
     path('cargar/fotografia/<int:individuo_id>', views.cargar_fotografia, name='cargar_fotografia'),
-    path('seguimiento/<int:individuo_id>', views.ver_seguimiento, name='ver_seguimiento'),
     #Turismo
     path('buscar/inquilino/<int:ubicacion_id>', views.buscar_inquilino, name='buscar_inquilino'),
-    path('nuevo/inquilino/', views.cargar_inquilino, name='cargar_inquilino'),
+    path('mover_inquilino/<int:ubicacion_id>/<int:individuo_id>', views.confirmar_inquilino, name='confirmar_inquilino'),
+    path('nuevo/inquilino/<int:ubicacion_id>/<str:num_doc>', views.cargar_inquilino, name='cargar_inquilino'),
     #Traslado
     path('traslado/elegir/ubicacion/<int:individuo_id>', views.elegir_ubicacion, name='elegir_ubicacion'),
     path('traslado/elegir/vehiculo/<int:individuo_id>/<int:ubicacion_id>', views.elegir_vehiculo, name='elegir_vehiculo'),
@@ -65,6 +65,8 @@ urlpatterns = [
     path('del/signosvitales/<int:signosvitales_id>', views.del_signosvitales, name='del_signosvitales'),
     #Situacion
     path('cargar/situacion/<int:individuo_id>', views.cargar_situacion, name='cargar_situacion'),
+    path('mod/situacion/<int:situacion_id>', views.cargar_situacion, name='mod_situacion'),
+    path('del/situacion/<int:situacion_id>', views.del_situacion, name='del_situacion'),
     #Seguimiento
     path('cargar/seguimiento/<int:individuo_id>', views.cargar_seguimiento, name='cargar_seguimiento'),
     path('mod/seguimiento/<int:individuo_id>/<int:seguimiento_id>', views.cargar_seguimiento, name='mod_seguimiento'),
@@ -94,6 +96,8 @@ urlpatterns = [
     path('upload/epidemiologia', views.subir_epidemiologia, name='subir_epidemiologia'),
     path('upload/padron/individuos/', views.upload_padron_individuos, name='upload_padron_individuos'),
     path('upload/padron/domicilios/', views.upload_padron_domicilios, name='upload_padron_domicilios'),
+    #Testing
+    path('send/notificacion', views.enviar_notificacion, name='enviar_notificacion'),
     #Autocomplete
     #url(r'^sintomas-autocomplete/$', autocomplete.SintomaAutocomplete.as_view(), name='sintomas-autocomplete',),
     #url(r'^atributos-autocomplete/$', autocomplete.AtributoAutocomplete.as_view(), name='atributos-autocomplete',),

@@ -47,7 +47,7 @@ def IdeConfig(request):
 
 @require_http_methods(["GET"])
 def mapeo_general(request):
-    geopos = GeoPosicion.objects.all().values_list("domicilio__individuo__id", flat=True).distinct()
+    geopos = GeoPosicion.objects.all().values_list("individuo__id", flat=True).distinct()
     #Obtenemos individuos de interes
     individuos = {
         i.id: i 
@@ -55,8 +55,8 @@ def mapeo_general(request):
     }
     #Obtenemos ultimas posiciones gps
     last_geopos = {
-        g.domicilio.individuo.id: g
-        for g in GeoPosicion.objects.filter(domicilio__individuo__id__in=geopos).select_related('domicilio', 'domicilio__individuo')
+        g.individuo.id: g
+        for g in GeoPosicion.objects.filter(individuo__id__in=geopos).select_related('individuo')
     }
     #Generamos diccionario
     resultado = {}

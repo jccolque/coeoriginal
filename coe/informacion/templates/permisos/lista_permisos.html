@@ -1,0 +1,48 @@
+{% extends 'base_informacion.html' %}
+{% load static %}
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2><b>{{titulo}}</b></h2>
+            <div class="col-md-12">
+                <table class="listado" id="table">
+                    <thead>
+                        <tr>
+                            <th>Individuo</th>
+                            <th>Situacion</th>
+                            <th>Domicilio</th>
+                            <th>Fecha y Hora</th>
+                            <th>Tipo Permiso</th>
+                            <th>Aclaracion</th>
+                            <th>Ver Detalle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for permiso in permisos %}
+                            <tr>
+                                <td>{{permiso.individuo.apellidos}}, {{permiso.individuo.nombres}}</td>
+                                <td>{{permiso.individuo.situacion_actual}}</td>
+                                <td>{{permiso.individuo.domicilio_actual}}</td>
+                                <td>{{permiso.begda|date:"d/m H:i"}} a {{permiso.endda|date:"H:i"}}</td>
+                                <td>{{permiso.get_tipo_display}}</td>
+                                <td class="geo_aclaracion">{{permiso.aclaracion}}</td>
+                                <td>
+                                    <a href="{% url 'informacion:ver_individuo' individuo_id=permiso.individuo.id %}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/access_card.png' %}">
+                                    </a>
+                                    <a href="{% url 'permisos_urls:ver_permiso' permiso_id=permiso.id %}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                    </a>
+
+                                    <a href="{% url 'permisos_urls:eliminar_permiso' permiso_id=permiso.id %}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

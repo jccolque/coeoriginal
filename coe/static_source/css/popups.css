@@ -12,14 +12,14 @@
   /* The actual popup */
   .popup .popuptext {
     visibility: hidden;
-    background-color: rgba(90, 88, 88, 0.911);
-    color: #fff;
+    background-color: rgba(121, 121, 121, 0.95);
+    color: black;
     border-radius: 10px;
     padding: 8px 0;
     position: absolute;
     z-index: 1;
-    bottom: 125%;
     width: 900px;
+    font-size: 0.8em;
   }
   
   /* Popup arrow */

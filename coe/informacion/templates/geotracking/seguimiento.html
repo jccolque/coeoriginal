@@ -1,0 +1,80 @@
+{% extends 'base_informacion.html' %}
+
+{% load static %}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">
+                    <br>
+                    <div class="col-sm-1" style="text-align:right;">
+                        <img class="fotografia" src="{{individuo.get_foto}}">
+                    </div>
+                    <div class="col-sm-6">
+                        <h2><b>{{individuo.apellidos}}, {{individuo.nombres}}</b></h2>
+                        <!-- ESTADO -->
+                        {% if individuo.situacion_actual %}
+                            <h4>Estado: <b>{{individuo.situacion_actual}}</b> 
+                                <a class="nolink"  href="javascript:PopUp(1);" ><img class="icons" src="{% static '/img/icons/history.png' %}"></a>
+                            </h4>
+                            {% include 'utils/historial_situaciones.html' %}
+                        {% else %}
+                            <h4 class="alerta">EL INDIVIDUO NO REGISTRA ESTADO ACTUAL: 
+                                <a class="nolink" href="{% url 'informacion:cargar_situacion' individuo_id=individuo.id %}">
+                                    CARGAR
+                                </a>
+                            </h4>
+                        {% endif %}
+                    </div>
+                    <div class="col-sm-3">
+                        <h4><b>Contacto:</b></h4>
+                        <p>Telefono: <a href="skype:{{individuo.telefono}}?call">{{individuo.telefono}}</a></p>
+                        <p>Email: {{individuo.email}}</p>
+                    </div>
+                </div>
+                <div class"row">
+                    <hr>
+                    <div class="row">
+                        <!--MAPA-->
+                        <div class="col-sm-8">
+                            {% include 'geotracking/mapa_seguimiento.html' %}
+                        </div>
+                        <!--tabla-->
+                        <div class="col-sm-4 tabla_posiciones">
+                            {% for geopos in geoposiciones %}
+                                {% if forloop.first %}
+                                    <h3>Registros:</h3>
+                                    <table class="listado">
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Posicion</th>
+                                            <th>Aclaracion</th>
+                                        </tr>
+                                {% endif %}
+                                <tr class="geo_aclaracion">
+                                    <td>{{geopos.fecha|date:"d/m H:i"}}</td>
+                                    <td>{{geopos.latitud|stringformat:".5f"}}/{{geopos.longitud|stringformat:".5f"}}</td>
+                                    <td>
+                                        {% if geopos.alerta %}
+                                            {% if geopos.procesada %}
+                                                <b>Alerta Procesada: {{geopos.distancia}}mts de Base.</b><br>
+                                            {% else %}
+                                                <b>ALERTA: {{geopos.distancia}}mts de Base.</b><br>
+                                            {% endif %}
+                                        {% endif %}
+                                        {{geopos.aclaracion}}
+                                    </td>
+                                </tr>
+                                {% if forloop.last %}
+                                    </table>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}
+    
