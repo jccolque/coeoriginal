@@ -1,6 +1,7 @@
 #imports django
 from django.urls import path
 #Import de modulos personales
+from . import apps_views as apps_views
 from . import app_apis as app_apis
 
 #Definimos paths de la app
@@ -15,4 +16,8 @@ urlpatterns = [
     path('tracking', app_apis.tracking, name='tracking'),
     path('salvoconducto', app_apis.salvoconducto, name='salvoconducto'),
     path('get/salvoconducto', app_apis.get_salvoconducto, name='get_salvoconducto'),
+    path('get/notificacion', app_apis.notificacion, name='notificacion'),
+    #Testing
+    path('send/notificacion', apps_views.enviar_notificacion, name='enviar_notificacion'),
+    path('save/notificacion', apps_views.guardar_notificacion, name='enviar_notificacion'),
 ]

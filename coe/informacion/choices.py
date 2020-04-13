@@ -127,6 +127,7 @@ TIPO_DOCUMENTO = (
 TIPO_PERMISO = (
     ('C', 'Compras de Primera Necesidad'),
     ('F', 'Compras de Farmacia'),
+    ('B', 'Turno Bancario'),
     ('R', 'Responsable de Personas a Cargo'),
     ('P', 'Permiso Permanente'),
 )
@@ -142,6 +143,11 @@ TIPO_GEOPOS = (
     ('AD', 'AutoDiagnostico'),
     ('ST', 'Inicio de Tracking/Base'),
     ('RG', 'Reporte de GeoPosicion'),
+)
+
+TIPO_ACCION_NOTIFICACION = (
+    ('SM', 'showMessage'),
+    ('SL', 'sendLocation'),
 )
 
 TIPO_ICONO = (
