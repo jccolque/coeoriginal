@@ -45,6 +45,7 @@ class MyApp extends StatelessWidget {
 
 class MyLoginPage extends StatefulWidget {
   MyLoginPage({Key key}) : super(key: key);
+
   @override
   _MyLoginPageState createState() => _MyLoginPageState();
 }
@@ -52,7 +53,6 @@ class MyLoginPage extends StatefulWidget {
 class _MyLoginPageState extends State<MyLoginPage> {
   Future<void> launched;
   String _coelaunchUrl = 'http://coe.jujuy.gob.ar';
-  String _minsSaludlaunUrl = 'https://www.argentina.gob.ar/salud/coronavirus-COVID-19';
 
   bool _termCondAceptados = false;
   bool _locationUp = false;
@@ -68,7 +68,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
   String _longitud;
   static const String _isolateName = 'LocatorIsolate';
 
-  String _dniOperador  = '';
+  String _dniOperador = '';
   String _password = '';
   bool _encuestaRealizada = false;
 
@@ -92,7 +92,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
       print('permiso');
       print(permiso);
       setState(() {
-        if(permiso != null) {
+        if (permiso != null) {
           _encuestaRealizada = permiso;
         } else {
           _encuestaRealizada = false;
@@ -116,269 +116,231 @@ class _MyLoginPageState extends State<MyLoginPage> {
           child: Container(
               decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    colors: [Colors.blue[900], Colors.lightBlue],
-                  )),
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                colors: [Colors.blue[900], Colors.lightBlue],
+              )),
               height: MediaQuery.of(context).size.height,
               child: Container(
-                child: build_child( context ),
-              )
-          ),
+                child: build_child(context),
+              )),
         ),
       ),
     );
   }
 
-  Widget build_child( BuildContext context ) {
-    if(_loaded)
-      {
-         return SingleChildScrollView(
-           child: SafeArea(
-               child: Column(
-                 children: <Widget>[
-                   Container(
-                     padding: EdgeInsets.only(top: 20),
-                     child: Column(
-                       children: <Widget>[
-                         Image.asset(
-                           'assets/graphics/GOBCOEJUwide.jpg',
-                           width: 300,
-                         ),
-                         SizedBox(height: 20.0),
-                         Text(
-                           'Cuestionario',
-                           style: TextStyle(
-                             fontSize: 45.0,
-                             fontWeight: FontWeight.bold,
-                             color: Colors.white,
-                             shadows: [
-                               Shadow(
-                                 blurRadius: 10.0,
-                                 color: Colors.black.withOpacity(0.4),
-                                 offset: Offset(0.0, 3.0),
-                               ),
-                             ],
-                           ),
-                         ),
-                         Text(
-                           'COVID-19',
-                           style: TextStyle(
-                             fontSize: 30.0,
-                             color: Colors.white,
-                             shadows: [
-                               Shadow(
-                                 blurRadius: 10.0,
-                                 color: Colors.black.withOpacity(0.4),
-                                 offset: Offset(0.0, 3.0),
-                               ),
-                             ],
-                           ),
-                         ),
-                       ],
-                     ),
-                   ),
-                   Container(
-                     padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                     child: Column(
-                       crossAxisAlignment: CrossAxisAlignment.start,
-                       children: <Widget>[
-                         SizedBox(height: 50.0),
-                         Center(
-                           child: Text(
-                             _dni != 0
-                                 ? 'Todas las respuestas en este dispositivo serán enviadas con este dni: $_dni'
-                                 : '',
-                             textAlign: TextAlign.center,
-                             style: TextStyle(
-                               color: Colors.white,
-                               fontSize: 22.0,
-                               fontWeight: FontWeight.bold,
-                               fontFamily: 'Montserrat',
-                             ),
-                           ),
-                         ),
-                         SizedBox(height: 60.0),
-                         Container(
-                           child: Center(
-                             child: RaisedButton(
-                               padding: EdgeInsets.only(
-                                   top: 10.0,
-                                   bottom: 10.0,
-                                   left: 90.0,
-                                   right: 90.0),
-                               color: Colors.lightGreen,
-                               splashColor: Colors.blueAccent,
-                               elevation: 4,
-                               shape: RoundedRectangleBorder(
-                                 borderRadius: BorderRadius.circular(24.0),
-                               ),
-                               onPressed: () async {
-                                 _dni == 0 ? _getDniFromSharedPref() :
-                                 (!_termCondAceptados ? _launchTermCondDialogConfirmation() :
-                                 _checkPermissions());
-                                 //_getDniFromSharedPref();
-                                 //_checkPermissions();
-                               },
-                               child: Text(
-                                 'Cuestionario covid-19',
-                                 textAlign: TextAlign.center,
-                                 style: TextStyle(
-                                     color: Colors.white,
-                                     fontSize: 22.0,
-                                     fontWeight: FontWeight.bold,
-                                     fontFamily: 'Montserrat'),
-                               ),
-                             ),
-                           ),
-                         ),
-                         SizedBox(height: 20.0),
-                         Container(
-                           child: Center(
-                             child: RaisedButton(
-                               padding: EdgeInsets.only(
-                                   top: 10.0,
-                                   bottom: 10.0,
-                                   left: 60.0,
-                                   right: 60.0),
-                               color: Colors.white,
-                               splashColor: Colors.blueAccent,
-                               elevation: 4,
-                               shape: RoundedRectangleBorder(
-                                 borderRadius: BorderRadius.circular(24.0),
-                               ),
-                               onPressed: () {
-                                 //Navigator.of(context).pushNamed('/coe');
-                                 _launchInBroser(_coelaunchUrl);
-                               },
-                               child: Text(
-                                 'Información oficial COE',
-                                 textAlign: TextAlign.center,
-                                 style: TextStyle(
-                                     color: Colors.black,
-                                     fontSize: 22.0,
-                                     fontWeight: FontWeight.bold,
-                                     fontFamily: 'Montserrat'),
-                               ),
-                             ),
-                           ),
-                         ),
-                         SizedBox(height: 20.0),
-                         Container(
-                           child: Visibility(
-                             visible: _encuestaRealizada,
-                             child: Center(
-                               child: RaisedButton(
-                                 padding: EdgeInsets.only(
-                                     top: 10.0,
-                                     bottom: 10.0,
-                                     left: 60.0,
-                                     right: 60.0),
-                                 color: Colors.white,
-                                 splashColor: Colors.blueAccent,
-                                 elevation: 4,
-                                 shape: RoundedRectangleBorder(
-                                   borderRadius: BorderRadius.circular(24.0),
-                                 ),
-                                 onPressed: () {
-                                   //Navigator.of(context).pushNamed('/coe');
-                                   //_launchInBroser(_coelaunchUrl);
-                                   _mostrarDialogIngreseDatos(context);
-                                 },
-                                 child: Text(
-                                   'Activar Geotracking',
-                                   textAlign: TextAlign.center,
-                                   style: TextStyle(
-                                       color: Colors.black,
-                                       fontSize: 22.0,
-                                       fontWeight: FontWeight.bold,
-                                       fontFamily: 'Montserrat'),
-                                 ),
-                               ),
-                             ),
-                           ),
-                         ),
-                         SizedBox(height: 30),
-                         Container(
-                           child: Visibility(
-                             visible: _encuestaRealizada,
-                             child: Center(
-                               child: RaisedButton(
-                                 padding: EdgeInsets.only(
-                                     top: 10.0,
-                                     bottom: 10.0,
-                                     left: 60.0,
-                                     right: 60.0),
-                                 color: Colors.white,
-                                 splashColor: Colors.blueAccent,
-                                 elevation: 4,
-                                 shape: RoundedRectangleBorder(
-                                   borderRadius: BorderRadius.circular(24.0),
-                                 ),
-                                 onPressed: () {
-                                   _lauchSalvoConductoForm( context );
-                                 },
-                                 child: Text(
-                                   'Salvo Conducto',
-                                   textAlign: TextAlign.center,
-                                   style: TextStyle(
-                                       color: Colors.black,
-                                       fontSize: 22.0,
-                                       fontWeight: FontWeight.bold,
-                                       fontFamily: 'Montserrat'),
-                                 ),
-                               ),
-                             ),
-                           ),
-                         ),
-                         SizedBox(height: 30),
-                         Visibility(
-                           visible: !_termCondAceptados,
-                           child: Container(
-                             child: Center(
-                               child: InkWell(
-                                 child: Text(
-                                   'Ver términos y condiciones de uso',
-                                   style: TextStyle(
-                                     color: Colors.white,
-                                   ),
-                                 ),
-                                 onTap: () {
-                                   _handleFirsGeoConfirmation(_scaffoldKey);
-                                 },
-                               ),
-                             ),
-                           ),
-                         ),
-                         SizedBox(height: 20.0),
-                         Row(
-                           mainAxisAlignment: MainAxisAlignment.center,
-                           children: <Widget>[
-                             Center(
-                               child: Image.asset(
-                                 'assets/graphics/JujuyEnergiaVivaTrazoNegro.png',
-                                 height: 40,
-                               ),
-                             ),
-                             Container(
-                                 child: Image.asset(
-                                   'assets/graphics/GA_logo.png',
-                                   height: 30,
-                                 )),
-                             Container(
-                                 child: Text(
-                                   '@GA_ide',
-                                   style: TextStyle(color: Colors.white),
-                                 )),
-                           ],
-                         ),
-                       ],
-                     ),
-                   ),
-                 ],
-               )),
-         );
-      }else{
+  Widget build_child(BuildContext context) {
+    if (_loaded) {
+      return SingleChildScrollView(
+        child: SafeArea(
+            child: Column(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.only(top: 20),
+              child: Column(
+                children: <Widget>[
+                  Image.asset(
+                    'assets/graphics/GOBCOEJUwide.jpg',
+                    width: 300,
+                  ),
+                  SizedBox(height: 20.0),
+                  Text(
+                    'Cuestionario',
+                    style: TextStyle(
+                      fontSize: 45.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      shadows: [
+                        Shadow(
+                          blurRadius: 10.0,
+                          color: Colors.black.withOpacity(0.4),
+                          offset: Offset(0.0, 3.0),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Text(
+                    'COVID-19',
+                    style: TextStyle(
+                      fontSize: 30.0,
+                      color: Colors.white,
+                      shadows: [
+                        Shadow(
+                          blurRadius: 10.0,
+                          color: Colors.black.withOpacity(0.4),
+                          offset: Offset(0.0, 3.0),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 20.0, right: 20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(height: 50.0),
+                  Center(
+                    child: Text(
+                      _dni != 0 ? 'Todas las respuestas en este dispositivo serán enviadas con este dni: $_dni' : '',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22.0,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Montserrat',
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 60.0),
+                  Container(
+                    child: Center(
+                      child: RaisedButton(
+                        padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 90.0, right: 90.0),
+                        color: Colors.lightGreen,
+                        splashColor: Colors.blueAccent,
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24.0),
+                        ),
+                        onPressed: () async {
+                          _dni == 0 ? _getDniFromSharedPref() : (!_termCondAceptados ? _launchTermCondDialogConfirmation() : _checkPermissions());
+                          //_getDniFromSharedPref();
+                          //_checkPermissions();
+                        },
+                        child: Text(
+                          'Cuestionario covid-19',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20.0),
+                  Container(
+                    child: Center(
+                      child: RaisedButton(
+                        padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 60.0, right: 60.0),
+                        color: Colors.white,
+                        splashColor: Colors.blueAccent,
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24.0),
+                        ),
+                        onPressed: () {
+                          //Navigator.of(context).pushNamed('/coe');
+                          _launchInBroser(_coelaunchUrl);
+                        },
+                        child: Text(
+                          'Información oficial COE',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.black, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20.0),
+                  Container(
+                    child: Visibility(
+                      visible: _encuestaRealizada,
+                      child: Center(
+                        child: RaisedButton(
+                          padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 60.0, right: 60.0),
+                          color: Colors.white,
+                          splashColor: Colors.blueAccent,
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24.0),
+                          ),
+                          onPressed: () {
+                            //Navigator.of(context).pushNamed('/coe');
+                            //_launchInBroser(_coelaunchUrl);
+                            _mostrarDialogIngreseDatos(context);
+                          },
+                          child: Text(
+                            'Activar Geotracking',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.black, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  Container(
+                    child: Visibility(
+                      visible: _encuestaRealizada,
+                      child: Center(
+                        child: RaisedButton(
+                          padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 60.0, right: 60.0),
+                          color: Colors.white,
+                          splashColor: Colors.blueAccent,
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24.0),
+                          ),
+                          onPressed: () {
+                            _lauchSalvoConductoForm(context);
+                          },
+                          child: Text(
+                            'Salvo Conducto',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.black, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  Visibility(
+                    visible: !_termCondAceptados,
+                    child: Container(
+                      child: Center(
+                        child: InkWell(
+                          child: Text(
+                            'Ver términos y condiciones de uso',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                          onTap: () {
+                            _handleFirsGeoConfirmation(_scaffoldKey);
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Center(
+                        child: Image.asset(
+                          'assets/graphics/JujuyEnergiaVivaTrazoNegro.png',
+                          height: 40,
+                        ),
+                      ),
+                      Container(
+                          child: Image.asset(
+                        'assets/graphics/GA_logo.png',
+                        height: 30,
+                      )),
+                      Container(
+                          child: Text(
+                        '@GA_ide',
+                        style: TextStyle(color: Colors.white),
+                      )),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        )),
+      );
+    } else {
       return Container(
         child: SafeArea(
           child: Column(
@@ -424,11 +386,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
                 child: Container(
                   child: Center(
                     child: RaisedButton(
-                      padding: EdgeInsets.only(
-                          top: 10.0,
-                          bottom: 10.0,
-                          left: 60.0,
-                          right: 60.0),
+                      padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 60.0, right: 60.0),
                       color: Colors.lightGreen,
                       splashColor: Colors.blueAccent,
                       elevation: 4,
@@ -441,11 +399,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
                       child: Text(
                         'Ingresar',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 40.0,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Montserrat'),
+                        style: TextStyle(color: Colors.white, fontSize: 40.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
                       ),
                     ),
                   ),
@@ -506,8 +460,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
   Future<void> _launchTermCondDialogConfirmation() async {
     await _getTermCondAceptadosFromSharedPref().then(_updateTermAndCondt);
     if (!_termCondAceptados) {
-      WidgetsBinding.instance.addPostFrameCallback(
-              (_) => _handleFirsGeoConfirmation(_scaffoldKey));
+      WidgetsBinding.instance.addPostFrameCallback((_) => _handleFirsGeoConfirmation(_scaffoldKey));
     }
   }
 
@@ -521,7 +474,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
     return permiso != null ? permiso : false;
   }
 
-  Future<void> _lauchSalvoConductoForm( BuildContext context ) async {
+  Future<void> _lauchSalvoConductoForm(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final startupDniNumber = prefs.getInt('savedDniNumber');
     final imagen = prefs.getBool('imagenPerfil');
@@ -529,14 +482,13 @@ class _MyLoginPageState extends State<MyLoginPage> {
     if (startupDniNumber != null) {
       final perm = PermisoYaOtorgadoModel(dniIndividuo: _dni.toString(), token: "");
       await _getPermisosYaOtorgado(perm).then((v) {
-        print(v);
-        if(v == true){
+        if (v == true) {
           Navigator.of(context).pushNamed('/permisootorgado');
         } else {
-          if(imagen != null){
-            if(imagen == true){
-              if(permiso != null) {
-                if(permiso == true) {
+          if (imagen != null) {
+            if (imagen == true) {
+              if (permiso != null) {
+                if (permiso == true) {
                   Navigator.of(context).pushNamed('/permisootorgado');
                 } else {
                   Navigator.of(context).pushNamed('/solicitarpermiso');
@@ -552,7 +504,6 @@ class _MyLoginPageState extends State<MyLoginPage> {
           }
         }
       });
-
     }
   }
 
@@ -565,7 +516,6 @@ class _MyLoginPageState extends State<MyLoginPage> {
   Future<bool> _getImageSharedPref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final imagen = prefs.getBool('imagenPerfil');
-
   }
 
   Future<void> _cleanSharedPreferences() async {
@@ -577,17 +527,12 @@ class _MyLoginPageState extends State<MyLoginPage> {
 
   void _setLatitudLongitud() async {
     var latlng = await Gps.currentGps();
-    print('GEO POS ' + latlng.toString());
-    print('GEO POS lat ' + latlng.lat);
-    print('GEO POS long ' + latlng.lng);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('latitud', double.parse(latlng.lat));
     await prefs.setDouble('longitud', double.parse(latlng.lng));
-//    startLocationService();
   }
 
   Future<void> _getLatitudLongitud() async {
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final latitud = await prefs.getDouble('latitud');
     final longitud = await prefs.getDouble('longitud');
@@ -595,29 +540,17 @@ class _MyLoginPageState extends State<MyLoginPage> {
       _latitud = latitud.toString();
       _longitud = longitud.toString();
     });
-//    startLocationService();
   }
 
   Future<bool> _getPermisosYaOtorgado(PermisoYaOtorgadoModel permisoYaOtorgadoModel) async {
-    print('_getPermisosYaOtorgado');
-    print(json.encode(permisoYaOtorgadoModel));
     final response = await http.post('http://coe.jujuy.gob.ar/covid19/get/salvoconducto', body: (utf8.encode(json.encode(permisoYaOtorgadoModel))));
-    print('response.body');
-    print(response.body);
     if (response.statusCode == 200) {
-      print('tiene permiso');
-      // Si el servidor devuelve una repuesta OK, parseamos el JSON
       RespuestaPermisoModel list = RespuestaPermisoModel.fromJson(json.decode(response.body));
-      print('********** respuesta ************');
-      print(list.toJson());
       await _setPermisoOtorgadoSharedPref(list).then((v) {
-        print('okkkkkkkkkkkk');
+        print('ok');
       });
       return true;
     } else {
-      print('no tiene permiso');
-      // Si esta respuesta no fue OK, lanza un error.
-      //
       return false;
     }
   }
@@ -633,15 +566,10 @@ class _MyLoginPageState extends State<MyLoginPage> {
     await prefs.setString('textoOtorgado', permisoOtorgado.texto);
   }
 
-
   void _checkPermissions() async {
-    Map<PermissionGroup, PermissionStatus> permissions =
-    await PermissionHandler()
-        .requestPermissions([PermissionGroup.location]);
-    PermissionStatus permission = await PermissionHandler()
-        .checkPermissionStatus(PermissionGroup.location);
-    ServiceStatus serviceStatus =
-    await PermissionHandler().checkServiceStatus(PermissionGroup.location);
+    Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.location]);
+    PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
+    ServiceStatus serviceStatus = await PermissionHandler().checkServiceStatus(PermissionGroup.location);
 
     if (permission == PermissionStatus.granted) {
       if (serviceStatus == ServiceStatus.enabled) {
@@ -649,15 +577,13 @@ class _MyLoginPageState extends State<MyLoginPage> {
         setState(() {
           _locationUp = true;
         });
-        _termCondAceptados && _dni != 0 ?
-        Navigator.of(context).pushNamed('/cuestionario') :
-        showInSnackBar(
-            'No podrá usar la app si no acepta los términos y condiciones de uso');
+        _termCondAceptados && _dni != 0
+            ? Navigator.of(context).pushNamed('/cuestionario')
+            : showInSnackBar('No podrá usar la app si no acepta los términos y condiciones de uso');
       } else {
-        showInSnackBar(
-            'Para usar la aplicacion mantenga prendida la ubicación gps');
+        showInSnackBar('Para usar la aplicacion mantenga prendida la ubicación gps');
       }
-    } else if(permission == PermissionStatus.neverAskAgain) {
+    } else if (permission == PermissionStatus.neverAskAgain) {
       _handleConfirmPermissions(_scaffoldKey);
     }
   }
@@ -672,9 +598,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
           ),
         ),
         onTap: () {
-          !_termCondAceptados
-              ? _handleFirsGeoConfirmation(_scaffoldKey)
-              : showInSnackBar('Términos y condiciones de úso aceptados');
+          !_termCondAceptados ? _handleFirsGeoConfirmation(_scaffoldKey) : showInSnackBar('Términos y condiciones de úso aceptados');
         },
       ),
       backgroundColor: Colors.pink,
@@ -686,11 +610,9 @@ class _MyLoginPageState extends State<MyLoginPage> {
   void _handleConfirmPermissions(GlobalKey<ScaffoldState> _scaffoldKey) {
     confirmPermissions(context, _scaffoldKey).then((bool value) {
       if (value) {
-        showInSnackBar(
-            'Recuerde que si no acepta los permisos no podrá usar la aplicación');
+        showInSnackBar('Recuerde que si no acepta los permisos no podrá usar la aplicación');
       } else {
-        showInSnackBar(
-            'Para usar la aplicacion deberá aceptar los terminos y condiciones de úso');
+        showInSnackBar('Para usar la aplicacion deberá aceptar los terminos y condiciones de úso');
       }
     });
   }
@@ -699,16 +621,12 @@ class _MyLoginPageState extends State<MyLoginPage> {
     confirmGeolocalizationDialog(context, _scaffoldKey).then((bool value) {
       if (value) {
         _setTermCondAceptadosFromSharedPref().then((bool commited) {
-          //_launchTermCondDialogConfirmation();
-         // startLocationService();
-
           setState(() {
             _termCondAceptados = true;
           });
         });
       } else {
-        showInSnackBar(
-            'Para usar la aplicacion deberá aceptar los terminos y condiciones de úso');
+        showInSnackBar('Para usar la aplicacion deberá aceptar los terminos y condiciones de úso');
       }
     });
   }
@@ -738,17 +656,16 @@ class _MyLoginPageState extends State<MyLoginPage> {
     print('notificationCallback');
   }
 
-  void startLocationService(){
+  void startLocationService() {
     BackgroundLocator.registerLocationUpdate(
       callback,
       androidNotificationCallback: notificationCallback,
       settings: LocationSettings(
-          notificationTitle: "Start Location Tracking example",
-          notificationMsg: "Track location in background exapmle",
+//          notificationTitle: "Start Location Tracking example",
+//          notificationMsg: "Track location in background exapmle",
           wakeLockTime: 20,
           autoStop: false,
-          interval: 60
-      ),
+          interval: 600),
     );
   }
 
@@ -762,27 +679,24 @@ class _MyLoginPageState extends State<MyLoginPage> {
     var hora = DateFormat('HHmm');
 
     final item = {
-      "dni_individuo" : _dni,
-      "fecha": fecha.format(now) ,
-      "hora": hora.format(now) ,
+      "dni_individuo": _dni,
+      "fecha": fecha.format(now),
+      "hora": hora.format(now),
       "latitud": locationDto.latitude,
       "longitud": locationDto.longitude
     };
-    print(item);
     HttpClient httpClient = HttpClient();
     HttpClientRequest request = await httpClient.postUrl(Uri.parse('http://coe.jujuy.gob.ar/covid19/tracking'));
     request.headers.set('content-type', 'application/json');
     request.add(utf8.encode(json.encode(item)));
     HttpClientResponse response = await request.close();
     print(response.statusCode);
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       String reply = await response.transform(utf8.decoder).join();
       httpClient.close();
       return reply;
     } else {
       String reply = await response.transform(utf8.decoder).join();
-      print('track');
-      print(reply);
       return null;
     }
   }
@@ -792,28 +706,19 @@ class _MyLoginPageState extends State<MyLoginPage> {
   /// @authos German Udaeta
   ///
   Future<String> apiRequestStartTracking() async {
-    final item = {
-      "dni_individuo" : _dni,
-      "dni_operador": _dniOperador,
-      "password": _password,
-      "latitud": _latitud,
-      "longitud": _longitud
-    };
-    print('**************');
-    print(item);
+    final item = {"dni_individuo": _dni, "dni_operador": _dniOperador, "password": _password, "latitud": _latitud, "longitud": _longitud};
     HttpClient httpClient = HttpClient();
     HttpClientRequest request = await httpClient.postUrl(Uri.parse('http://coe.jujuy.gob.ar/covid19/start/tracking'));
     request.headers.set('content-type', 'application/json');
     request.add(utf8.encode(json.encode(item)));
     HttpClientResponse response = await request.close();
     print(response.statusCode);
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       String reply = await response.transform(utf8.decoder).join();
       httpClient.close();
       return reply;
     } else {
       String reply = await response.transform(utf8.decoder).join();
-      print(reply);
       return null;
     }
   }
@@ -823,13 +728,14 @@ class _MyLoginPageState extends State<MyLoginPage> {
     showDialog(
         context: context,
         barrierDismissible: false,
-
         builder: (context) {
           return AlertDialog(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
             title: Center(
-                child: Text('Ingrese sus datos', style: TextStyle(fontSize: 15),)
-            ),
+                child: Text(
+              'Ingrese sus datos',
+              style: TextStyle(fontSize: 15),
+            )),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -839,11 +745,9 @@ class _MyLoginPageState extends State<MyLoginPage> {
                   textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
                     contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0)
-                      ),
-                      hintText: 'Ingrese DNI',
-                      labelText: 'DNI',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+                    hintText: 'Ingrese DNI',
+                    labelText: 'DNI',
                   ),
                   onChanged: (valor) {
                     setState(() {
@@ -856,11 +760,9 @@ class _MyLoginPageState extends State<MyLoginPage> {
                   obscureText: true,
                   decoration: InputDecoration(
                     contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0)
-                      ),
-                      hintText: 'Contraseña',
-                      labelText: 'Contraseña',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+                    hintText: 'Contraseña',
+                    labelText: 'Contraseña',
                   ),
                   onChanged: (valor) {
                     setState(() {
@@ -868,7 +770,6 @@ class _MyLoginPageState extends State<MyLoginPage> {
                     });
                   },
                 ),
-                //FlutterLogo(size: 100.0)
               ],
             ),
             actions: <Widget>[
@@ -879,7 +780,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
               FlatButton(
                 child: Text('Iniciar'),
                 onPressed: () {
-                  _getLatitudLongitud().then((v){
+                  _getLatitudLongitud().then((v) {
                     apiRequestStartTracking();
                     startLocationService();
                   });
@@ -888,53 +789,41 @@ class _MyLoginPageState extends State<MyLoginPage> {
               )
             ],
           );
-        }
-    );
+        });
   }
-
-
 }
 
-Future<bool> confirmPermissions(
-    BuildContext context, GlobalKey<ScaffoldState> _scaffoldKey) {
+Future<bool> confirmPermissions(BuildContext context, GlobalKey<ScaffoldState> _scaffoldKey) {
   showDialog(
     context: context,
     child: AlertDialog(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24.0)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
       title: Column(
         children: <Widget>[
           Center(
             child: Text(
               'Para usar la app deberá tener la ubicación encendida y aceptar los permisos',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 22.0, fontFamily: 'Montserrat'),
+              style: TextStyle(fontSize: 22.0, fontFamily: 'Montserrat'),
             ),
           ),
           Center(
             child: Text(
               'Si usted bloqueó los permisos que requiere la aplicación, por favor habilitelos desde la configuracion de su dispostivo',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 18.0, fontFamily: 'Montserrat'),
+              style: TextStyle(fontSize: 18.0, fontFamily: 'Montserrat'),
             ),
           ),
         ],
       ),
       elevation: 7.0,
-      //backgroundColor: Colors.grey,
       actions: <Widget>[
         Row(
           children: <Widget>[
             FlatButton(
               child: Text(
                 'Aceptar',
-                style: TextStyle(
-                    color: Colors.blueAccent,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22.0,
-                    fontFamily: 'Montserrat'),
+                style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold, fontSize: 22.0, fontFamily: 'Montserrat'),
               ),
               onPressed: () async {
                 await PermissionHandler().openAppSettings();
@@ -944,13 +833,9 @@ Future<bool> confirmPermissions(
             FlatButton(
               child: Text(
                 'Cerrar',
-                style: TextStyle(
-                    color: Colors.blueAccent,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22.0,
-                    fontFamily: 'Montserrat'),
+                style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold, fontSize: 22.0, fontFamily: 'Montserrat'),
               ),
-              onPressed: (){
+              onPressed: () {
                 //Navigator.of(context).pushNamed('/main');
                 Navigator.of(context).pop(false);
               },
@@ -962,17 +847,13 @@ Future<bool> confirmPermissions(
   );
 }
 
-
-
-Future<bool> confirmGeolocalizationDialog(
-    BuildContext context, GlobalKey<ScaffoldState> _scaffoldKey) {
+Future<bool> confirmGeolocalizationDialog(BuildContext context, GlobalKey<ScaffoldState> _scaffoldKey) {
   return showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
           title: Column(
             children: <Widget>[
               Center(
@@ -990,14 +871,14 @@ Future<bool> confirmGeolocalizationDialog(
               ),
               Container(
                 height: 150,
-                color: Colors.grey,
+                color: Colors.white,
                 child: SingleChildScrollView(
                   child: Text(
                     mensajeDeTerminosYCondicionesDeUso,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 10,
-                      color: Colors.pinkAccent.withOpacity(0.5),
+                      color: Colors.black.withOpacity(0.5),
                     ),
                   ),
                 ),
@@ -1012,11 +893,7 @@ Future<bool> confirmGeolocalizationDialog(
                 FlatButton(
                   child: Text(
                     'Cancelar',
-                    style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 22.0,
-                        fontFamily: 'Montserrat'),
+                    style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 22.0, fontFamily: 'Montserrat'),
                   ),
                   onPressed: () {
                     Navigator.of(context).pop(false);
@@ -1026,11 +903,7 @@ Future<bool> confirmGeolocalizationDialog(
                 FlatButton(
                   child: Text(
                     'Aceptar',
-                    style: TextStyle(
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 22.0,
-                        fontFamily: 'Montserrat'),
+                    style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 22.0, fontFamily: 'Montserrat'),
                   ),
                   onPressed: () {
                     Navigator.of(context).pop(true);
@@ -1044,7 +917,7 @@ Future<bool> confirmGeolocalizationDialog(
 }
 
 final mensajeDeTerminosYCondicionesDeUso = 'Términos y Condiciones: '
-    'Los presentes términos y condiciones particulares (en adelante, los “Términos y Condiciones”) rigen la relación entre el Comité Operativo de Emergencia de la Provincia de Jujuy (en adelante, “COE”), la Secretaría de Modernización (en adelante, “Secretaría”) y los usuarios de la aplicación denominada “Covid2019 – COE Jujuy“(en adelante, los “Usuarios”), versión para dispositivos móviles que podrá descargarse de las tiendas de aplicaciones oficiales de Android e iOS (en adelante, la'
+    'Los presentes términos y condiciones particulares (en adelante, los “Términos y Condiciones”) rigen la relación entre el Comité Operativo de Emergencia de la Provincia de Jujuy (en adelante, “COE”), la Secretaría de Modernización (en adelante, “Secretaría”) y los usuarios de la aplicación denominada “Covid2019 Jujuy“(en adelante, los “Usuarios”), versión para dispositivos móviles que podrá descargarse de las tiendas de aplicaciones oficiales de Android e iOS (en adelante, la'
     '“Aplicación”).'
     'El registro del Usuario en la Aplicación implica la aceptación inmediata y sin reserva de los presentes Términos y Condiciones, quedando entendido que en caso de contradicción prevalecerán estos Términos y Condiciones. En consecuencia, el Usuario manifiesta haber leído y aceptado en su totalidad los Términos y Condiciones; dicha aceptación es indispensable para la utilización de la Aplicación. Si no está de acuerdo con los presentes Términos y Condiciones será imposible utilizar la Aplicación.'
     '1. Descripción de la Aplicación'

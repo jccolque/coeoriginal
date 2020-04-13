@@ -15,7 +15,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <application
         android:name=".Application"
-        android:label="Covid2019 - COE Jujuy"
+        android:label="Covid2019 Jujuy"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
