@@ -9,6 +9,7 @@ import 'package:covidjujuy_app/src/model/view_localidad_model.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -98,9 +99,14 @@ class _SalvoConductoState extends State<SalvoConducto> {
     print('Picker is called');
     File img = await ImagePicker.pickImage(source: ImageSource.camera);
 //    File img = await ImagePicker.pickImage(source: ImageSource.gallery);
-    if (img != null) {
-      image = img;
-      setState(() {});
+    if (img != null && img.path != null) {
+      img = await FlutterExifRotation.rotateImage(path: img.path);
+
+      if (img != null) {
+        setState(() {
+          image = img;
+        });
+      }
     }
   }
 
