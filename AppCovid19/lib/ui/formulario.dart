@@ -178,9 +178,9 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                           margin: EdgeInsets.only(left: 20.0, right: 20.0),
                           child: TextFormField(
                             controller: _dniController,
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.text,
                             inputFormatters: [
-                              WhitelistingTextInputFormatter.digitsOnly
+                              WhitelistingTextInputFormatter(RegExp("[a-zA-Z0-9]"))
                             ],
                             style: TextStyle(
                               color: Colors.white,
