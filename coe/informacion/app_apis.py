@@ -4,7 +4,7 @@ import json
 import logging
 import traceback
 from base64 import b64decode
-
+from datetime import timedelta
 #Imports de Django
 from django.urls import reverse
 from django.utils import timezone
@@ -25,7 +25,8 @@ from .models import Individuo, AppData, Domicilio, GeoPosicion
 from .models import Atributo, Sintoma, Situacion, Seguimiento
 from .models import Permiso
 from .tokens import TokenGenerator
-from .geofence import controlar_distancia, buscar_permiso, validar_permiso
+from .geofence import controlar_distancia
+from .geofence import buscar_permiso, validar_permiso, definir_fechas
 
 #Definimos logger
 logger = logging.getLogger("apis")
@@ -164,9 +165,9 @@ def AppConfig(request):
                 },
             },
             #Obtener Salvoconducto Digital
-            "get_salvoconducto":
+            "ver_salvoconducto":
             {
-                "url": reverse("app_urls:get_salvoconducto"),
+                "url": reverse("app_urls:ver_salvoconducto"),
                 "fields":
                 {
                     "dni_individuo": "str",
@@ -188,9 +189,9 @@ def AppConfig(request):
                 },
             },
             #Salvoconducto Digital
-            "salvoconducto":
+            "pedir_salvoconducto":
             {
-                "url": reverse("app_urls:salvoconducto"),
+                "url": reverse("app_urls:pedir_salvoconducto"),
                 "fields":
                 {
                     "dni_individuo": "str",
@@ -290,8 +291,8 @@ def registro(request):
             individuo = Individuo()
             individuo.individuo = individuo
             individuo.num_doc = num_doc
-            individuo.apellidos = data["apellido"]
-            individuo.nombres = data["nombre"]
+            individuo.apellidos = " ".join([word.capitalize() for word in data["apellido"].split(" ")])
+            individuo.nombres = " ".join([word.capitalize() for word in data["nombre"].split(" ")])
             individuo.nacionalidad = nac
             individuo.observaciones = "AUTODIAGNOSTICO"
             individuo.save()
@@ -639,10 +640,9 @@ def tracking(request):
             status=400,
         )
 
-
 @csrf_exempt
 @require_http_methods(["POST"])
-def salvoconducto(request):
+def pedir_salvoconducto(request):
     try:
         data = None
         #Recibimos el json
@@ -672,14 +672,13 @@ def salvoconducto(request):
             int(data["hora_ideal"][2:4]),
         )
         #Validamos si es factible:
-        permiso = validar_permiso(individuo, data)
+        permiso = validar_permiso(individuo, data["tipo_permiso"])
         #Si fue aprobado, Creamos Permiso
         if permiso.aprobar:
             permiso.individuo = individuo
             permiso.tipo = data["tipo_permiso"]
             permiso.localidad = individuo.domicilio_actual.localidad
-            permiso.begda = timezone.now() + timedelta(days=1)
-            permiso.endda = timezone.now() + timedelta(days=1, hours=2)
+            permiso = definir_fechas(permiso)
             permiso.aclaracion = "Requerido Via App."
             permiso.save()
             #Si todo salio bien
@@ -726,7 +725,7 @@ def salvoconducto(request):
 
 @csrf_exempt
 @require_http_methods(["POST"])
-def get_salvoconducto(request):
+def ver_salvoconducto(request):
     try:
         data = None
         #Recibimos el json
@@ -862,7 +861,7 @@ def notificacion(request):
             num_doc = str(data["dni_individuo"]).upper()
         #Buscamos al individuo en la db
         individuo = Individuo.objects.select_related('appdata', 'appdata__notificacion').get(num_doc=num_doc)
-        notificacion = individuo.appdata.notificacion
+        notif = individuo.appdata.notificacion
         #Damos respuesta
         logger.info("Exito")
         return JsonResponse(
@@ -871,10 +870,10 @@ def notificacion(request):
                 "realizado": True,
                 "message":
                 {
-                    "title": notificacion.titulo,
-                    "body": notificacion.mensaje,
+                    "title": notif.titulo,
+                    "body": notif.mensaje,
                 },
-                "action": notificacion.get_accion_display(),
+                "action": notif.get_accion_display(),
 
             },
             safe=False

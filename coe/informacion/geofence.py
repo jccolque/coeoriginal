@@ -48,6 +48,7 @@ def controlar_distancia(nueva_geopos):
         seguimiento.save()
     return distancia
 
+#Salvoconducos
 def buscar_permiso(individuo, activo=False):
     permisos = Permiso.objects.filter(individuo=individuo, endda__gt=timezone.now())
     if activo:#Chequear que este activo
@@ -68,7 +69,8 @@ def buscar_permiso(individuo, activo=False):
             permiso.save()
     return permiso
 
-def validar_permiso(individuo, data):
+#Validamos la posibilidad de otorgar el permiso
+def validar_permiso(individuo, tipo_permiso):
     #Inicializamos permiso:
     permiso = Permiso()
     permiso.aprobar = True
@@ -80,17 +82,22 @@ def validar_permiso(individuo, data):
     else:
         #Chequeamos que no tenga un permiso hace menos de 3 dias (DEL MISMO TIPO?):
         cooldown = timezone.now() - timedelta(days=3)
-        permisos = individuo.permisos.filter(endda__gt=cooldown, tipo=data["tipo_permiso"])
+        permisos = individuo.permisos.filter(endda__gt=cooldown, tipo=tipo_permiso)
         if permisos:
             permiso.aprobar = False
             permiso.aclaracion = "Usted recibio un Permiso el dia " + str(permisos.last().endda.date())
         else:
             #Chequeamos que nadie del domicilio tenga permiso
             for relacion in individuo.relaciones.filter(tipo="MD"):
-                if relacion.relacionado.permisos.filter(endda__gt=cooldown, tipo=data["tipo_permiso"]):
+                if relacion.relacionado.permisos.filter(endda__gt=cooldown, tipo=tipo_permiso):
                     relacionado = relacion.relacionado
                     permiso.aprobar = False
                     permiso.aclaracion = relacionado.nombres + ' ' + relacionado.apellidos + ' Ya obtuvo un permiso en los ultimos dias.' 
     #Devolvemos todo lo procesado
     return permiso
-    
+
+#Aca ordenamos por zonas y tiempos
+def definir_fechas(permiso):
+    permiso.begda = timezone.now() + timedelta(days=1)
+    permiso.endda = timezone.now() + timedelta(days=1, hours=2)
+    return permiso
