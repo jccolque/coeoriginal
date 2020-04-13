@@ -18,7 +18,8 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
   final _domicilioController = TextEditingController();
   String _imagen;
   String _qr;
-  String _fecha;
+  String _fechaInicio;
+  String _fechaFin;
   String _horaInicio;
   String _horaFin;
   String _texto;
@@ -174,7 +175,8 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
 
     final imagen = await prefs.getString('imagenPerfilOtorgada');
     final qr = await prefs.getString('qrOtorgado');
-    final fecha = await prefs.getString('fechaOtorgado');
+    final fechaInicio = await prefs.getString('fechaInicioOtorgado');
+    final fechaFin = await prefs.getString('fechaFinOtorgado');
     final horaInicio = await prefs.getString('horaInicioOtorgado');
     final horaFin = await prefs.getString('horaFinOtorgado');
     final texto = await prefs.getString('textoOtorgado');
@@ -185,7 +187,8 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
       _domicilioController.text = domicilio;
       _imagen = imagen;
       _qr = qr;
-      _fecha = fecha;
+      _fechaInicio = fechaInicio;
+      _fechaFin = fechaFin;
       _horaInicio = horaInicio.substring(0, 5);
       _horaFin = horaFin.substring(0, 5);
       _texto = texto;
@@ -262,9 +265,9 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('Permiso valido: ${_fecha}'),
-            Text('Desde:  ${_fecha} - ${_horaInicio}'),
-            Text('Hasta:  ${_fecha} - ${_horaFin}'),
+            Text('Permiso valido:'),
+            Text('Desde:  ${_fechaInicio} - ${_horaInicio}'),
+            Text('Hasta:  ${_fechaFin} - ${_horaFin}'),
           ],
         ));
   }

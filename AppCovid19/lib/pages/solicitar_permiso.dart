@@ -367,7 +367,8 @@ class _SolicitarPermisoState extends State<SolicitarPermiso> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('imagenPerfilOtorgada', permisoOtorgado.imagen);
     await prefs.setString('qrOtorgado', permisoOtorgado.qr);
-    await prefs.setString('fechaOtorgado', permisoOtorgado.fechaInicio);
+    await prefs.setString('fechaInicioOtorgado', dateFormat.format(permisoOtorgado.fechaInicio));
+    await prefs.setString('fechaFinOtorgado', dateFormat.format(permisoOtorgado.fechaFin));
     await prefs.setString('horaInicioOtorgado', permisoOtorgado.horaInicio);
     await prefs.setString('horaFinOtorgado', permisoOtorgado.horaFin);
     await prefs.setString('textoOtorgado', permisoOtorgado.texto);

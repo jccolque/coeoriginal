@@ -3,53 +3,53 @@
 /// @author JLopez
 ///
 class RespuestaPermisoModel {
-  String fechaInicio;
-  String horaFin;
-  String qr;
-  String fechaFin;
-  String error;
-  String imagen;
-  String horaInicio;
-  String texto;
   bool realizado;
+  DateTime fechaFin;
+  String texto;
+  String horaFin;
+  String imagen;
+  String tipoPermiso;
+  String qr;
   String action;
+  DateTime fechaInicio;
+  String horaInicio;
 
   RespuestaPermisoModel({
-    this.fechaInicio,
-    this.horaFin,
-    this.qr,
-    this.fechaFin,
-    this.error,
-    this.imagen,
-    this.horaInicio,
-    this.texto,
     this.realizado,
+    this.fechaFin,
+    this.texto,
+    this.horaFin,
+    this.imagen,
+    this.tipoPermiso,
+    this.qr,
     this.action,
+    this.fechaInicio,
+    this.horaInicio,
   });
 
   factory RespuestaPermisoModel.fromJson(Map<String, dynamic> json) => RespuestaPermisoModel(
-    fechaInicio: json["fecha_inicio"],
-    horaFin: json["hora_fin"],
-    qr: json["qr"],
-    fechaFin: json["fecha_fin"],
-    error: json["error"],
-    imagen: json["imagen"],
-    horaInicio: json["hora_inicio"],
-    texto: json["texto"],
     realizado: json["realizado"],
+    fechaFin: DateTime.parse(json["fecha_fin"]),
+    texto: json["texto"],
+    horaFin: json["hora_fin"],
+    imagen: json["imagen"],
+    tipoPermiso: json["tipo_permiso"],
+    qr: json["qr"],
     action: json["action"],
+    fechaInicio: DateTime.parse(json["fecha_inicio"]),
+    horaInicio: json["hora_inicio"],
   );
 
   Map<String, dynamic> toJson() => {
-    "fecha_inicio": fechaInicio,
-    "hora_fin": horaFin,
-    "qr": qr,
-    "fecha_fin": fechaFin,
-    "error": error,
-    "imagen": imagen,
-    "hora_inicio": horaInicio,
-    "texto": texto,
     "realizado": realizado,
+    "fecha_fin": "${fechaFin.year.toString().padLeft(4, '0')}-${fechaFin.month.toString().padLeft(2, '0')}-${fechaFin.day.toString().padLeft(2, '0')}",
+    "texto": texto,
+    "hora_fin": horaFin,
+    "imagen": imagen,
+    "tipo_permiso": tipoPermiso,
+    "qr": qr,
     "action": action,
+    "fecha_inicio": "${fechaInicio.year.toString().padLeft(4, '0')}-${fechaInicio.month.toString().padLeft(2, '0')}-${fechaInicio.day.toString().padLeft(2, '0')}",
+    "hora_inicio": horaInicio,
   };
 }
