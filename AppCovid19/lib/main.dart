@@ -789,7 +789,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
                   textAlign: TextAlign.left,
                   textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
+                    contentPadding: EdgeInsets.all(10),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
                     hintText: 'Ingrese DNI',
                     labelText: 'DNI',
@@ -804,7 +804,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
                 TextField(
                   obscureText: true,
                   decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
+                    contentPadding: EdgeInsets.all(10),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
                     hintText: 'Contraseña',
                     labelText: 'Contraseña',

@@ -100,7 +100,7 @@ class _SalvoConductoState extends State<SalvoConducto> {
     File img = await ImagePicker.pickImage(source: ImageSource.camera);
 //    File img = await ImagePicker.pickImage(source: ImageSource.gallery);
     if (img != null && img.path != null) {
-      img = await FlutterExifRotation.rotateImage(path: img.path);
+//      img = await FlutterExifRotation.rotateImage(path: img.path);
 
       if (img != null) {
         setState(() {

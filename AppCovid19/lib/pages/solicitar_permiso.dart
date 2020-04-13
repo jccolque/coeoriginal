@@ -227,9 +227,6 @@ class _SolicitarPermisoState extends State<SolicitarPermiso> {
       color: Colors.lightBlue,
       textColor: Colors.white,
       onPressed: () {
-        print(_dni);
-        print(fechaController.text);
-        print(_permisoSeleccionado);
         DateFormat dateFormat = DateFormat("yyyyMMdd");
         DateFormat timeFormat = DateFormat("HHmm");
         final dt = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, selectedTime.hour, selectedTime.minute);
@@ -243,6 +240,7 @@ class _SolicitarPermisoState extends State<SolicitarPermiso> {
   }
 
   Future<RespuestaPermisoModel> envioSolicitudPermiso(SolicitudPermisoModel solicitudPermisoModel) async {
+    print('envioSolicitudPermiso');
     print(json.encode(solicitudPermisoModel));
     final response = await http.post('http://coe.jujuy.gob.ar/covid19/salvoconducto', body: (utf8.encode(json.encode(solicitudPermisoModel))));
 
