@@ -2,6 +2,7 @@
 import copy
 import json
 import logging
+import traceback
 from base64 import b64decode
 from datetime import timedelta
 #Imports de Django
@@ -214,6 +215,24 @@ def AppConfig(request):
                     'TIPO_PERMISO': {tp[0]:tp[1] for tp in TIPO_PERMISO if tp[0] != 'P'},
                 },
             },
+            #Notifaciones
+            "Notificaciones":
+            {
+                "url": reverse("app_urls:notificaciones"),
+                "fields":
+                {
+                    "dni_individuo": "str",
+                    "token": "str: Obtenido en respuesta registro",
+                },
+            "fields_response": 
+                {
+                    "action": "notificacion",
+                    "realizado": "bool",
+                    "notif_titulo": "str (Titulo notificacion Local | si realizado=True)",
+                    "notif_mensaje": "str (Mensaje notificacion Local | si realizado=True)",
+                    "error": "str (Solo si hay errores)",
+                },
+            },
         },
         safe=False,
     )
@@ -313,6 +332,8 @@ def registro(request):
                 "action":"registro",
                 "realizado": False,
                 "error": str(e),
+                "error_contexto": str(e.__context__),
+                "error_traceback": str(traceback.format_exc()),
             },
             safe=False,
             status=400,

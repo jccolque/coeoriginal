@@ -55,11 +55,13 @@ def domicilio_actual(created, instance, **kwargs):
 def relacion_domicilio(created, instance, **kwargs):
     if created and not instance.aislamiento:#Que no sea sitio de aislamiento
         domicilios = Domicilio.objects.filter(
-            localidad=instance.localidad,
-            calle=instance.calle,
-            numero=instance.numero,
-            aislamiento=False
-            ).exclude(individuo=instance.individuo)#Excluyendolo a el
+                        localidad=instance.localidad,
+                        calle=instance.calle,
+                        numero=instance.numero,
+                        aislamiento=False
+                    ).exclude(
+                        individuo=instance.individuo
+                    )#Excluyendolo a el
         for domicilio in domicilios:
             #Evitamos repetir relaciones
             try:
@@ -74,7 +76,7 @@ def relacion_domicilio(created, instance, **kwargs):
                 relacion.aclaracion = instance.calle + ' ' + instance.numero
                 relacion.save()
 
-#Evolucionamos Estado segun relaciones
+#Evolucionamos Estado segun Domicilio
 @receiver(post_save, sender=Domicilio)
 def aislados(created, instance, **kwargs):
     if created and instance.aislamiento:#Si creamos nueva posicion
@@ -90,7 +92,6 @@ def aislados(created, instance, **kwargs):
         situacion.aclaracion = "Aislado por cambio a locacion de AISLAMIENTO"
         situacion.save()
 
-#Evolucionamos Estado segun relaciones
 @receiver(post_save, sender=Domicilio)
 def ocupar_capacidad_ubicacion(created, instance, **kwargs):
     if created and instance.ubicacion: 
