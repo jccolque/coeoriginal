@@ -123,10 +123,7 @@ class Individuo(models.Model):
             'observaciones': self.observaciones,
         }
     def ultimo_seguimiento(self):
-        if self.seguimientos.all():
-            return [d for d in self.seguimientos.all()][-1]
-        else:
-            return None
+        return self.seguimientos.last()
     def geoposicion(self):
         return self.geoposiciones.last()
     def localidad_actual(self):

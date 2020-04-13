@@ -12,12 +12,12 @@ from .models import Individuo
 from .models import GeoPosicion
 
 #Administrar
-@permission_required('operadores.menu_informacion')
+@permission_required('operadores.geotracking')
 def menu_geotracking(request):
     return render(request, 'geotracking/menu_geotracking.html', {})
 
 #Tracking
-@permission_required('operadores.individuos')
+@permission_required('operadores.geotracking')
 def control_tracking(request):
     #Obtenemos Posiciones Bases
     geoposiciones = GeoPosicion.objects.filter(aclaracion="INICIO TRACKING")
@@ -33,27 +33,30 @@ def control_tracking(request):
         'has_table': True,
     })
 
-@permission_required('operadores.individuos')
-def lista_individuos(request):
+@permission_required('operadores.geotracking')
+def lista_trackeados(request):
     geopos = GeoPosicion.objects.all().values_list("individuo__id", flat=True).distinct()
     #Obtenemos individuos de interes
     individuos = Individuo.objects.filter(id__in=geopos).select_related('situacion_actual', 'domicilio_actual')
     #Optimizamos
-    individuos = individuos.select_related('nacionalidad', 'origen', 'destino', )
-    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'domicilio_actual__localidad__departamento')
-    individuos = individuos.select_related('situacion_actual')
-    individuos = individuos.prefetch_related('atributos', 'sintomas', 'situaciones', 'relaciones')
-    return render(request, "lista_individuos.html", {
+    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'situacion_actual')
+    individuos = individuos.prefetch_related('geoposiciones')
+    return render(request, "geotracking/lista_trackeados.html", {
         'individuos': individuos,
         'has_table': True,
     })
 
-@permission_required('operadores.individuos')
+@permission_required('operadores.geotracking')
 def lista_alertas(request):
     #Obtenemos Alertas
     alertas = GeoPosicion.objects.filter(alerta=True, procesada=False)
-    alertas = alertas.select_related('individuo', 'individuo__situacion_actual', 'individuo__domicilio_actual')
-    alertas = alertas.order_by('-fecha')
+    alertas = alertas.select_related(
+        'individuo', 'individuo__situacion_actual',
+        'individuo__domicilio_actual', "individuo__domicilio_actual__localidad"
+    )
+    alertas = alertas.order_by('distancia')
+    dict_alertas = {alerta.individuo.num_doc:alerta for alerta in alertas}
+    alertas = list(dict_alertas.values())
     #Lanzamos listado
     return render(request, "geotracking/lista_alertas.html", {
         'alertas': alertas,
@@ -61,7 +64,7 @@ def lista_alertas(request):
         'has_table': True,
     })
 
-@permission_required('operadores.individuos')
+@permission_required('operadores.geotracking')
 def alertas_procesadas(request):
     #Obtenemos Alertas
     alertas = GeoPosicion.objects.filter(alerta=True, procesada=True)
@@ -78,8 +81,7 @@ def alertas_procesadas(request):
         'has_table': True,
     })
 
-
-@permission_required('operadores.individuos')
+@permission_required('operadores.geotracking')
 def ver_tracking(request, individuo_id):
     individuo = Individuo.objects.select_related('situacion_actual', 'domicilio_actual', 'appdata')
     individuo = individuo.get(pk=individuo_id)
@@ -91,7 +93,7 @@ def ver_tracking(request, individuo_id):
         'geoposiciones': geoposiciones,
     })
 
-@permission_required('operadores.individuos')
+@permission_required('operadores.geotracking')
 def procesar_alerta(request, geoposicion_id):
     geoposicion = GeoPosicion.objects.get(pk=geoposicion_id)
     form = JustificarForm(initial={'justificacion':geoposicion.aclaracion})
@@ -102,5 +104,14 @@ def procesar_alerta(request, geoposicion_id):
             geoposicion.operador = obtener_operador(request)
             geoposicion.aclaracion = request.POST['justificacion'] + '(' + str(geoposicion.operador) + ')'
             geoposicion.save()
+            GeoPosicion.objects.filter(
+                individuo=geoposicion.individuo,
+                alerta=True,
+                procesada=False
+            ).update(
+                procesada=True,
+                operador=geoposicion.operador,
+                aclaracion='Se proceso Alerta: '+str(geoposicion.id)+'.Justificativo: '+geoposicion.aclaracion
+            )
             return redirect('geo_urls:lista_alertas')
     return render(request, "extras/generic_form.html", {'titulo': "Procesar Alerta", 'form': form, 'boton': "Procesar", })

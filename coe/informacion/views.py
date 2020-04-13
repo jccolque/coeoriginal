@@ -533,7 +533,8 @@ def lista_autodiagnosticos(request):
     individuos = []
     appdatas = AppData.objects.all().order_by('-estado')
     appdatas = appdatas.select_related('individuo')
-    appdatas = appdatas.prefetch_related('individuo__situaciones')
+    appdatas = appdatas.prefetch_related('individuo__situacion_actual')
+    appdatas = appdatas.order_by('estado')
     for appdata in appdatas:
         individuos.append(appdata.individuo)
     return render(request, "lista_autodiagnosticos.html", {
@@ -559,6 +560,15 @@ def cargar_domicilio(request, individuo_id=None, domicilio_id=None):
             domicilio.save()
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Domicilio", 'form': form, 'boton': "Cargar", })
+
+@permission_required('operadores.individuos')
+def volver_domicilio(request, domicilio_id):
+    nuevo_domicilio = Domicilio.objects.get(pk=domicilio_id)
+    nuevo_domicilio.pk = None
+    nuevo_domicilio.aclaracion = "Devuelto al Hogar por " + str(obtener_operador(request))
+    nuevo_domicilio.fecha = timezone.now()
+    nuevo_domicilio.save()
+    return redirect('informacion:ver_individuo', individuo_id=nuevo_domicilio.individuo.id)
 
 @permission_required('operadores.individuos')
 def del_domicilio(request, domicilio_id=None):

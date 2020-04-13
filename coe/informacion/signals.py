@@ -58,6 +58,7 @@ def relacion_domicilio(created, instance, **kwargs):
             localidad=instance.localidad,
             calle=instance.calle,
             numero=instance.numero,
+            aislamiento=False
             ).exclude(individuo=instance.individuo)#Excluyendolo a el
         for domicilio in domicilios:
             #Evitamos repetir relaciones

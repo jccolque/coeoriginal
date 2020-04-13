@@ -13,7 +13,7 @@
                             {% if perms.operadores.individuos %}
                                 <li><a href="{% url 'geo_urls:control_tracking' %}">Sistema de Control GeoPosicional</a></li>
                                 <li><a href="{% url 'geo_urls:lista_alertas' %}">Listado de Alertas Activas</a></li>
-                                <li><a href="{% url 'geo_urls:lista_individuos' %}">Listado de Individuos Bajo Seguimiento</a></li>
+                                <li><a href="{% url 'geo_urls:lista_trackeados' %}">Listado de Individuos Bajo Seguimiento</a></li>
                                 <hr>
                                 <li><a href="{% url 'geo_urls:alertas_procesadas' %}">Listado de Alertas Procesadas</a></li>
                             {% endif %}

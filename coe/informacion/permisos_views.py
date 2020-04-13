@@ -66,11 +66,11 @@ def subir_foto(request, individuo_id):
     return render(request, "extras/generic_form.html", {'titulo': "Subir Fotografia", 'form': form, 'boton': "Cargar", })
 
 #Administrar
-@permission_required('operadores.menu_informacion')
+@permission_required('operadores.permisos')
 def menu_permisos(request):
     return render(request, 'permisos/menu_permisos.html', {})
 
-@permission_required('operadores.menu_informacion')
+@permission_required('operadores.permisos')
 def lista_activos(request):
     permisos = Permiso.objects.filter(endda__gt=timezone.now())
     return render(request, 'permisos/lista_permisos.html', {
@@ -79,7 +79,7 @@ def lista_activos(request):
         'has_table': True,
     })
 
-@permission_required('operadores.menu_informacion')
+@permission_required('operadores.permisos')
 def lista_vencidos(request):
     permisos = Permiso.objects.filter(endda__lt=timezone.now())
     return render(request, 'permisos/lista_permisos.html', {
@@ -88,7 +88,7 @@ def lista_vencidos(request):
         'has_table': True,
     })
 
-@permission_required('operadores.menu_informacion')
+@permission_required('operadores.permisos')
 def ver_permiso(request, permiso_id):
     permiso = Permiso.objects.select_related('individuo')
     permiso = permiso.get(pk=permiso_id)
@@ -97,7 +97,7 @@ def ver_permiso(request, permiso_id):
         'permiso': permiso,
     })    
 
-@permission_required('operadores.menu_informacion')
+@permission_required('operadores.permisos')
 def eliminar_permiso(request, permiso_id):
     print("Damos de baja permiso")
     permiso = Permiso.objects.get(pk=permiso_id)

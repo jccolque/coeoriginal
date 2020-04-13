@@ -1,0 +1,45 @@
+{% extends 'base_informacion.html' %}
+{% load static %}
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2>Individuos Registrados</h2>
+        </div>
+        <div class="row">
+        <div class="col-md-12">
+            <table class="listado" id="table">
+                <thead>
+                    <tr>
+                        <th>Documento</th>
+                        <th>Individuo</th>
+                        <th>Fecha de Nacimiento</th>
+                        <th>Ubicacion Actual</th>
+                        <th>Situacion</th>
+                        <th>Ultima Posicion Enviada</th>
+                        <th>Ver Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for individuo in individuos %}
+                        <tr>
+                            <td>{{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</td>
+                            <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
+                            <td>{{individuo.fecha_nacimiento}}</td>
+                            <td>{{individuo.domicilio_actual}}</td>
+                            <td>{{individuo.situacion_actual}}</td>
+                            <td>
+                                {% with individuo.geoposicion as last_posicion %}
+                                    {{last_posicion.fecha}}
+                                    <a href="https://www.google.com/maps?q={{last_posicion.latitud|stringformat:".5f"}},{{last_posicion.longitud|stringformat:".5f"}}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/map.png' %}">
+                                    </a>
+                                {% endwith %}
+                            </td>
+                            <td><a href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">(Ver Detalle)</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

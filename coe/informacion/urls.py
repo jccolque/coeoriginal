@@ -47,6 +47,7 @@ urlpatterns = [
     #Domicilio
     path('cargar/domicilio/<int:individuo_id>', views.cargar_domicilio, name='cargar_domicilio'),
     path('mod/domicilio/<int:domicilio_id>', views.cargar_domicilio, name='mod_domicilio'),
+    path('volver/domicilio/<int:domicilio_id>', views.volver_domicilio, name='volver_domicilio'),
     path('del/domicilio/<int:domicilio_id>', views.del_domicilio, name='del_domicilio'),
     #Fotografia
     path('cargar/fotografia/<int:individuo_id>', views.cargar_fotografia, name='cargar_fotografia'),
