@@ -6,13 +6,12 @@ from django.utils import timezone
 from django.forms.widgets import CheckboxSelectMultiple
 #Imports extra
 from dal import autocomplete
-from fcm_django.models import FCMDevice
 #Imports del proyecto
 from coe.settings import SECRET_KEY
 from core.widgets import XDSoftDatePickerInput, XDSoftDateTimePickerInput
 from georef.models import Localidad, Ubicacion
 #Imports de la app
-from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA, TIPO_ICONO
+from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
 from .models import Vehiculo, TrasladoVehiculo
 from .models import Individuo, Domicilio, SignosVitales, Atributo, Sintoma
 from .models import Situacion, Archivo, Relacion, Seguimiento, Permiso
@@ -269,10 +268,3 @@ class DocumentoForm(forms.ModelForm):
         widgets = {
             'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
         }
-
-class SendNotificationForm(forms.Form):
-    dispositivo = forms.ModelChoiceField(queryset=FCMDevice.objects.all())
-    titulo = forms.CharField(label="Titulo", required=True)
-    texto = forms.CharField(label="Texto", widget=forms.Textarea())
-    icono = forms.ChoiceField(choices=TIPO_ICONO, required=True)
-    color = forms.CharField(max_length=9, initial="#FFFFFF", widget=forms.TextInput(attrs={'type': 'color'}))

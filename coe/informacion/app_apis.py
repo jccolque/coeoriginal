@@ -218,7 +218,7 @@ def AppConfig(request):
             #Notifaciones
             "Notificaciones":
             {
-                "url": reverse("app_urls:notificaciones"),
+                "url": reverse("app_urls:notificacion"),
                 "fields":
                 {
                     "dni_individuo": "str",
@@ -245,7 +245,7 @@ def registro(request):
         #Registramos ingreso de info
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info("registro:"+str(timezone.now())+"|"+str(data))
+        logger.info("\nregistro:"+str(timezone.now())+"|"+str(data))
         #Obtenemos datos basicos:
         nac = Nacionalidad.objects.filter(nombre__icontains="Argentina").first()
         #Agarramos el dni
@@ -349,7 +349,7 @@ def foto_perfil(request):
         data = json.loads(request.body.decode("utf-8"))
         data2 = copy.copy(data)
         data2["imagen"] = data2["imagen"][:25]+'| full |'+data2["imagen"][-25:]
-        logger.info("foto_perfil:"+str(timezone.now())+"|"+str(data2))
+        logger.info("\nfoto_perfil:"+str(timezone.now())+"|"+str(data2))
         #Agarramos el dni
         if "dni" in data:
             num_doc = str(data["dni"]).upper()
@@ -394,7 +394,7 @@ def encuesta(request):
         #Registramos ingreso de info
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info("encuesta:"+str(timezone.now())+"|"+str(data))
+        logger.info("\nencuesta:"+str(timezone.now())+"|"+str(data))
         #Agarramos el dni
         if "dni" in data:
             num_doc = str(data["dni"]).upper()
@@ -475,7 +475,7 @@ def start_tracking(request):
         data = json.loads(request.body.decode("utf-8"))
         data2 = copy.copy(data)
         data2["password"] = "OCULTA"
-        logger.info("start_tracking:"+str(timezone.now())+"|"+str(data2))
+        logger.info("\nstart_tracking:"+str(timezone.now())+"|"+str(data2))
         #Agarramos el dni
         if "dni" in data:
             num_doc = str(data["dni"]).upper()
@@ -544,7 +544,7 @@ def tracking(request):
         data = None
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info("tracking:"+str(timezone.now())+"|"+str(data))
+        logger.info("\ntracking:"+str(timezone.now())+"|"+str(data))
         #Agarramos el dni
         if "dni" in data:
             num_doc = str(data["dni"]).upper()
@@ -618,7 +618,7 @@ def salvoconducto(request):
         data = None
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info("salvoconducto:"+str(timezone.now())+"|"+str(data))
+        logger.info("\nsalvoconducto:"+str(timezone.now())+"|"+str(data))
         #Agarramos el dni
         if "dni" in data:
             num_doc = str(data["dni"]).upper()
@@ -724,7 +724,7 @@ def get_salvoconducto(request):
         data = None
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info("get_salvoconducto:"+str(timezone.now())+"|"+str(data))
+        logger.info("\nget_salvoconducto:"+str(timezone.now())+"|"+str(data))
         #Agarramos el dni
         if "dni" in data:
             num_doc = str(data["dni"]).upper()
@@ -771,6 +771,52 @@ def get_salvoconducto(request):
         return JsonResponse(
             {
                 "action":"get_salvoconducto",
+                "realizado": False,
+                "error": str(e),
+                "error_contexto": str(e.__context__),
+                "error_traceback": str(traceback.format_exc()),
+            },
+            safe=False,
+            status=400,
+        )
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def notificacion(request):
+    try:
+        data = None
+        #Recibimos el json
+        data = json.loads(request.body.decode("utf-8"))
+        logger.info("\nnotificacion:"+str(timezone.now())+"|"+str(data))
+        #Agarramos el dni
+        if "dni" in data:
+            num_doc = str(data["dni"]).upper()
+        else:
+            num_doc = str(data["dni_individuo"]).upper()
+        #Buscamos al individuo en la db
+        individuo = Individuo.objects.select_related('appdata', 'appdata__notificacion').get(num_doc=num_doc)
+        notificacion = individuo.appdata.notificacion
+        #Damos respuesta
+        logger.info("Exito")
+        return JsonResponse(
+            {
+                "action": "notificacion",
+                "realizado": True,
+                "message":
+                {
+                    "title": notificacion.titulo,
+                    "body": notificacion.mensaje,
+                },
+                "action": notificacion.get_accion_display(),
+
+            },
+            safe=False
+        )
+    except Exception as e:
+        logger.info("Falla: "+str(e))
+        return JsonResponse(
+            {
+                "action":"notificacion",
                 "realizado": False,
                 "error": str(e),
                 "error_contexto": str(e.__context__),

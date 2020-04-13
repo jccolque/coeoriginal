@@ -21,7 +21,7 @@ from .choices import TIPO_RELACION, TIPO_SEGUIMIENTO
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
 from .choices import TIPO_DOCUMENTO
 from .choices import TIPO_PERMISO
-from .choices import TIPO_TRIAJE, TIPO_GEOPOS
+from .choices import TIPO_TRIAJE, TIPO_GEOPOS, TIPO_ACCION_NOTIFICACION
 
 # Create your models here.
 class Archivo(models.Model):
@@ -343,6 +343,13 @@ class AppData(models.Model):
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     def __str__(self):
         return str(self.individuo) + self.get_estado_display()
+
+class AppNotificacion(models.Model):
+    appdata = models.OneToOneField(AppData, on_delete=models.CASCADE, related_name="notificacion")
+    titulo = models.CharField('titulo', max_length=100, default='', blank=False)
+    mensaje = models.CharField('mensaje', max_length=200, default='', blank=False)
+    accion = models.CharField('accion', choices=TIPO_ACCION_NOTIFICACION, max_length=2, default='SM')
+    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
 
 #Controles vehiculares
 class TrasladoVehiculo(models.Model):

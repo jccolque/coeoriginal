@@ -8,8 +8,6 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import permission_required
 from django.contrib.admin.views.decorators import staff_member_required
-#Imports extras
-from fcm_django.models import FCMDevice
 #Imports del proyecto
 from coe.settings import GEOPOSITION_GOOGLE_MAPS_API_KEY
 from core.decoradores import superuser_required
@@ -41,7 +39,6 @@ from .forms import SituacionForm, RelacionForm, SeguimientoForm
 from .forms import SearchIndividuoForm, SearchVehiculoForm
 from .forms import PermisoForm, BuscarPermiso, DatosForm, FotoForm
 from .forms import DocumentoForm, SignosVitalesForm
-from .forms import SendNotificationForm
 from .tasks import guardar_same, guardar_epidemiologia
 from .tasks import guardar_padron_individuos, guardar_padron_domicilios
 from .functions import obtener_relacionados
@@ -969,29 +966,6 @@ def reporte_basico(request):
         'atributos': atributos, 
         'sintomas': sintomas,
     })
-
-#Enviar notificaciones
-@staff_member_required
-def enviar_notificacion(request):
-    form = SendNotificationForm()
-    if request.method == 'POST':
-        form = SendNotificationForm(request.POST)
-        if form.is_valid:
-            try:
-                device = FCMDevice.objects.get(pk=request.POST['dispositivo'])
-                device.send_message(
-                    title= request.POST['titulo'],
-                    body= request.POST['texto'],
-                    color= request.POST['color'],
-                    #icon=request.POST['icono'], data={"test": "test"}
-                )
-                return render(request, "extras/resultado.html", {"texto": "Se envio el mensaje deseado."})
-            except Exception as e:
-                return render(request, 'extras/error.html', {
-                    'titulo': 'No se pudo enviar el mensaje',
-                    'error': str(e),
-                })
-    return render(request, "extras/generic_form.html", {'titulo': "Enviar Notificacion", 'form': form, 'boton': "Enviar", })
 
 #CARGAS MASIVAS
 @superuser_required
