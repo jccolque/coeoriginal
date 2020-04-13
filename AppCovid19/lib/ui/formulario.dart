@@ -35,14 +35,13 @@ class _MyFormularioPage extends State<MyFormularioPage> {
 
   static const headers = {'apiKey': '12039i10238129038', 'Content-Type': 'application/json'};
 
-  Future<bool> enviarFormulario(RegistroModel item) {
+  Future<bool> enviarFormulario(RegistroModel item) async {
     print(json.encode(item.toJson()));
-    return http.post(API, body: json.encode(item.toJson())).then((data) {
-      if (data.statusCode == 200) {
-        return true;
-      }
-      return false;
-    });
+    final response = await http.post(API, body: json.encode(item.toJson()));
+    if (response.statusCode == 200) {
+      return true;
+    }
+    return false;
   }
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
@@ -384,7 +383,8 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                               saveDniCredentials(_dniController.text);
                               showInSnackBar('Datos personales enviados con exito puede seguír al menu principal');
                               setState(() {
-                                _menuHabilitado = true;
+                                _menuHabilitado = false;
+                                Navigator.of(context).pushNamed('/main');
                               });
                             } else {
                               showInSnackBar('Datos enviados incorrectos');
@@ -393,7 +393,6 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                               });
                             }
                           } else if (connectivityResult == ConnectivityResult.wifi) {
-
                             final result = await enviarFormulario(form);
                             if (result == true) {
                               final res = await _setRegistroSharedPref(form);
@@ -401,7 +400,8 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                               showInSnackBar('Datos personales enviados con exito puede seguír al menu principal');
                               setupNotification();
                               setState(() {
-                                _menuHabilitado = true;
+                                _menuHabilitado = false;
+                                Navigator.of(context).pushNamed('/main');
                               });
                             } else {
                               showInSnackBar('Datos enviados incorrectos');
@@ -554,6 +554,7 @@ class _MyFormularioPage extends State<MyFormularioPage> {
 
   Future<bool> _saveDniFromSharedPref(int dni) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('loadOk', true);
     return await prefs.setInt('savedDniNumber', dni);
   }
 

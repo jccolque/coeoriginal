@@ -87,6 +87,17 @@ class _MyLoginPageState extends State<MyLoginPage> {
         await updateUI(data);
       },
     );
+    _getLoadedSharedPref().then((v){
+      setState(() {
+        if(v == true) {
+          _loaded = true;
+        }else {
+          _loaded = false;
+        }
+      });
+    });
+    _getDniSharedPref().then((v){});
+
     initPlatformState();
     _getPermisoOtorgadoSharedPref().then((permiso) {
       print('permiso');
@@ -206,6 +217,8 @@ class _MyLoginPageState extends State<MyLoginPage> {
                           borderRadius: BorderRadius.circular(24.0),
                         ),
                         onPressed: () async {
+                          print('DNI OBTENIDO');
+                          print(_dni);
                           _dni == 0 ? _getDniFromSharedPref() : (!_termCondAceptados ? _launchTermCondDialogConfirmation() : _checkPermissions());
                           //_getDniFromSharedPref();
                           //_checkPermissions();
@@ -413,6 +426,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
   }
 
   Future<void> _getDniFromSharedPref() async {
+    print('_getDniFromSharedPref');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final startupDniNumber = prefs.getInt('savedDniNumber');
     if (startupDniNumber == null) {
@@ -425,6 +439,21 @@ class _MyLoginPageState extends State<MyLoginPage> {
       setState(() {
         _dni = startupDniNumber;
         _loaded = true;
+      });
+    }
+  }
+
+  Future<void> _getDniSharedPref() async {
+    print('_getDniSharedPref');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final startupDniNumber = prefs.getInt('savedDniNumber');
+    if (startupDniNumber == null) {
+      setState(() {
+        _dni = 0;
+      });
+    } else {
+      setState(() {
+        _dni = startupDniNumber;
       });
     }
   }
@@ -466,6 +495,12 @@ class _MyLoginPageState extends State<MyLoginPage> {
 
   Future<void> _launchFirstTermCondDialogConfirmation() async {
     await _getTermCondAceptadosFromSharedPref().then(_updateTermAndCondt);
+  }
+
+  Future<bool> _getLoadedSharedPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final loadOk = await prefs.getBool('loadOk');
+    return loadOk != null ? loadOk : false;
   }
 
   Future<bool> _getPermisoOtorgadoSharedPref() async {
