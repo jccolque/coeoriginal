@@ -205,7 +205,7 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
               flex: 1,
               child: FadeInImage(
                 image: NetworkImage('http://coe.jujuy.gob.ar${_imagen}'),
-                placeholder: NetworkImage('http://coe.jujuy.gob.ar${_imagen}'),
+                placeholder: AssetImage('assets/graphics/no-image.jpg'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -213,7 +213,7 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
               flex: 1,
               child: FadeInImage(
                 image: NetworkImage('http://coe.jujuy.gob.ar${_qr}'),
-                placeholder: NetworkImage('http://coe.jujuy.gob.ar${_qr}'),
+                placeholder:AssetImage('assets/graphics/no-image.jpg'),
                 fit: BoxFit.cover,
               ),
             )
