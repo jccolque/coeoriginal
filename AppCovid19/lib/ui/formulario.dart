@@ -398,7 +398,7 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                               final res = await _setRegistroSharedPref(form);
                               saveDniCredentials(_dniController.text);
                               showInSnackBar('Datos personales enviados con exito puede seguír al menu principal');
-                              setupNotification();
+//                              setupNotification();
                               setState(() {
                                 _menuHabilitado = false;
                                 Navigator.of(context).pushNamed('/main');

@@ -236,7 +236,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
                       child: Center(
                         child: RaisedButton(
                           padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 90.0, right: 90.0),
-                          color: Colors.lightGreen,
+                          color: Colors.white,
                           splashColor: Colors.blueAccent,
                           elevation: 4,
                           shape: RoundedRectangleBorder(
@@ -252,7 +252,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
                           child: Text(
                             'Cuestionario covid-19',
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                            style: TextStyle(color: Colors.black, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
                           ),
                         ),
                       ),
