@@ -3,6 +3,7 @@ import 'package:covidjujuy_app/src/model/localidad_model.dart';
 import 'package:covidjujuy_app/src/model/registro_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import '../main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -178,6 +179,9 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                           child: TextFormField(
                             controller: _dniController,
                             keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              WhitelistingTextInputFormatter.digitsOnly
+                            ],
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 20.0,
