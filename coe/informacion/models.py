@@ -341,6 +341,10 @@ class AppData(models.Model):
     estado = models.CharField('Estado', choices=TIPO_TRIAJE, max_length=1, default='V')
     device = models.OneToOneField(FCMDevice, on_delete=models.SET_NULL, null=True, blank=True, related_name="appdata")
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    #GeoTracking
+    intervalo = models.IntegerField("Intervalo entre Trackings",default=10)#Minutos
+    distancia_alerta = models.IntegerField("Distancia de Alerta", default=50)#Mts
+    distancia_critica = models.IntegerField("Distancia Critica", default=100)#Mts
     def __str__(self):
         return str(self.individuo) + self.get_estado_display()
 

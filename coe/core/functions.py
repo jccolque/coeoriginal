@@ -1,6 +1,8 @@
 #Imports de python
 import re
+import traceback
 #Imports django
+from django.http import JsonResponse
 from django.db.models.deletion import Collector
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 #Imports de la app
@@ -35,3 +37,18 @@ def is_related(instance):
         return True
     else:
         return False
+
+def json_error(error, vista, logger=None):
+    if logger:
+        logger.info("Falla: "+str(error))
+    return JsonResponse(
+            {
+                "action": vista,
+                "realizado": False,
+                "error": str(error),
+                "error_contexto": str(error.__context__),
+                "error_traceback": str(traceback.format_exc()),
+            },
+            safe=False,
+            status=400,
+        )

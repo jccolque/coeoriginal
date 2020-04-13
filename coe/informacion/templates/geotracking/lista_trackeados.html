@@ -16,7 +16,7 @@
                         <th>Ubicacion Actual</th>
                         <th>Situacion</th>
                         <th>Ultima Posicion Enviada</th>
-                        <th>Ver Detalle</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -35,7 +35,17 @@
                                     </a>
                                 {% endwith %}
                             </td>
-                            <td><a href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">(Ver Detalle)</a></td>
+                            <td>
+                                <a href="{% url 'geo_urls:ver_tracking' individuo_id=individuo.id %}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/tracking.png' %}">
+                                </a>
+                                <a href="{% url 'geo_urls:config_tracking' individuo_id=individuo.id %}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/config.png' %}">
+                                </a>
+                                <a href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                </a>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>

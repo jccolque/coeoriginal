@@ -11,6 +11,7 @@ from core.forms import JustificarForm
 from .models import Individuo
 from .models import GeoPosicion
 from .geofence import renovar_base
+from .geo_forms import ConfigGeoForm
 
 #Administrar
 @permission_required('operadores.geotracking')
@@ -140,3 +141,22 @@ def cambiar_base(request, geoposicion_id):
     renovar_base(geopos)
     #Volvemos al mapa
     return redirect('geo_urls:ver_tracking', individuo_id=geopos.individuo.id)
+
+@permission_required('operadores.geotracking')
+def config_tracking(request, individuo_id):
+    individuo = Individuo.objects.select_related('appdata').get(pk=individuo_id)
+    appdata = individuo.appdata
+    form = ConfigGeoForm(initial={
+        'intervalo': appdata.intervalo,
+        'distancia_alerta': appdata.distancia_alerta,
+        'distancia_critica': appdata.distancia_critica,
+    })
+    if request.method == "POST":
+        form = ConfigGeoForm(request.POST)
+        if form.is_valid():
+            appdata.intervalo = form.cleaned_data["intervalo"]
+            appdata.distancia_alerta = form.cleaned_data["distancia_alerta"]
+            appdata.distancia_critica = form.cleaned_data["distancia_critica"]
+            appdata.save()
+            return redirect('geo_urls:ver_tracking', individuo_id=individuo.id)
+    return render(request, "extras/generic_form.html", {'titulo': "Configurar Parametros Individuales", 'form': form, 'boton': "Configurar", })

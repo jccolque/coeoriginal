@@ -16,17 +16,16 @@ from django.views.decorators.http import require_http_methods
 #Imports Extras
 from fcm_django.models import FCMDevice
 #Imports del proyecto
-from coe.constantes import LAST_DATETIME
+from core.functions import json_error
 from operadores.models import Operador
 from georef.models import Nacionalidad, Localidad
 #Imports de la app
 from .choices import TIPO_PERMISO
 from .models import Individuo, AppData, Domicilio, GeoPosicion
 from .models import Atributo, Sintoma, Situacion, Seguimiento
-from .models import Permiso
 from .tokens import TokenGenerator
 from .geofence import controlar_distancia
-from .geofence import buscar_permiso, validar_permiso, definir_fechas
+from .geofence import buscar_permiso, validar_permiso, definir_fechas, json_permiso
 
 #Definimos logger
 logger = logging.getLogger("apis")
@@ -346,7 +345,6 @@ def registro(request):
         domicilio.aclaracion = "AUTODIAGNOSTICO"
         domicilio.save()
         #Respondemos que fue procesado
-        logger.info("Exito!")
         return JsonResponse(
             {
                 "action":"registro",
@@ -356,18 +354,7 @@ def registro(request):
             safe=False
         )
     except Exception as e:
-        logger.info("Falla: "+str(e))
-        return JsonResponse(
-            {
-                "action":"registro",
-                "realizado": False,
-                "error": str(e),
-                "error_contexto": str(e.__context__),
-                "error_traceback": str(traceback.format_exc()),
-            },
-            safe=False,
-            status=400,
-        )
+        return json_error(e, "registro", logger)
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -394,7 +381,6 @@ def foto_perfil(request):
         individuo.fotografia = ContentFile(image_data, individuo.num_doc+'.jpg')
         individuo.save()
         #Terminamos proceso
-        logger.info("Exito!")
         return JsonResponse(
             {
                 "action":"foto_perfil",
@@ -403,18 +389,7 @@ def foto_perfil(request):
             safe=False
         )
     except Exception as e:
-        logger.info("Falla: "+str(e))
-        return JsonResponse(
-            {
-                "action":"foto_perfil",
-                "realizado": False,
-                "error": str(e),
-                "error_contexto": str(e.__context__),
-                "error_traceback": str(traceback.format_exc()),
-            },
-            safe=False,
-            status=400,
-        )
+        return json_error(e, "foto_perfil", logger)
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -474,27 +449,15 @@ def encuesta(request):
             geopos.longitud = data["longitud"]
             geopos.aclaracion = "AUTODIAGNOSTICO"
             geopos.save()
-        logger.info("Exito!")
         return JsonResponse(
             {
-                "action":"encuesta",
+                "action": "encuesta",
                 "realizado": True,
             },
             safe=False
         )
     except Exception as e:
-        logger.info("Falla: "+str(e))
-        return JsonResponse(
-            {
-                "action":"encuesta",
-                "realizado": False,
-                "error": str(e),
-                "error_contexto": str(e.__context__),
-                "error_traceback": str(traceback.format_exc()),
-            },
-            safe=False,
-            status=400,
-        )
+        return json_error(e, "encuesta", logger)
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -545,7 +508,6 @@ def start_tracking(request):
         seguimiento.aclaracion = "INICIO TRACKING: " + str(geopos.latitud)+", "+str(geopos.longitud)
         seguimiento.save()
         #Respondemos
-        logger.info("Exito!")
         return JsonResponse(
             {
                 "action":"start_tracking",
@@ -554,18 +516,7 @@ def start_tracking(request):
             safe=False
         )
     except Exception as e:
-        logger.info("Falla: "+str(e))
-        return JsonResponse(
-            {
-                "action":"start_tracking",
-                "realizado": False,
-                "error": str(e),
-                "error_contexto": str(e.__context__),
-                "error_traceback": str(traceback.format_exc()),
-            },
-            safe=False,
-            status=400,
-        )
+        return json_error(e, "start_tracking", logger)
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -581,7 +532,7 @@ def tracking(request):
         else:
             num_doc = str(data["dni_individuo"]).upper()
         #Buscamos al individuo en la db
-        individuo = Individuo.objects.get(num_doc=num_doc)
+        individuo = Individuo.objects.select_related('appdata').get(num_doc=num_doc)
         #ACA CHEQUEAMOS TOKEN
 
         #Guardamos nueva posgps
@@ -599,46 +550,27 @@ def tracking(request):
             int(data["hora"][2:4]),
         )
         #Chequeamos distancia:
-        geopos.distancia = controlar_distancia(geopos)
-        #Si es mayor a alerta la marcamos
-        notif_titulo = None
-        notif_mensaje = None
-        if geopos.distancia > 50:
-            geopos.alerta = True
-            notif_titulo = "Covid19 - Alerta por Distancia"
-            notif_mensaje = "Usted se ha alejado a "+str(int(geopos.distancia))+"mts del area permitida."
+        geopos = controlar_distancia(geopos)
         #Guardamos solo si vale la pena
         if geopos.distancia > 5:
             geopos.save()
         #Realizamos controles avanzados
         
         #Controlamos posicion:
-        logger.info("Exito")
         return JsonResponse(
             {
                 "action":"tracking",
                 "realizado": True,
-                "prox_tracking": 5,#Minutos
+                "prox_tracking": individuo.appdata.intervalo,#Minutos
                 "distancia": int(geopos.distancia),
                 "alerta": geopos.alerta,
-                "notif_titulo": notif_titulo,
-                "notif_mensaje": notif_mensaje,
+                "notif_titulo": geopos.notif_titulo,
+                "notif_mensaje": geopos.notif_mensaje,
             },
             safe=False
         )
     except Exception as e:
-        logger.info("Falla: "+str(e))
-        return JsonResponse(
-            {
-                "action":"tracking",
-                "realizado": False,
-                "error": str(e),
-                "error_contexto": str(e.__context__),
-                "error_traceback": str(traceback.format_exc()),
-            },
-            safe=False,
-            status=400,
-        )
+        return json_error(e, "tracking", logger)
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -674,30 +606,16 @@ def pedir_salvoconducto(request):
         #Validamos si es factible:
         permiso = validar_permiso(individuo, data["tipo_permiso"])
         #Si fue aprobado, Creamos Permiso
-        if permiso.aprobar:
+        if permiso.aprobar:#Variable temporal generada en validar_permiso
             permiso.individuo = individuo
             permiso.tipo = data["tipo_permiso"]
             permiso.localidad = individuo.domicilio_actual.localidad
-            permiso = definir_fechas(permiso)
             permiso.aclaracion = "Requerido Via App."
+            #Generamos las fechas ideales
+            permiso = definir_fechas(permiso)#Genera begda y endda
             permiso.save()
             #Si todo salio bien
-            logger.info("Exito")
-            return JsonResponse(
-                {
-                    "action": "salvoconducto",
-                    "realizado": permiso.aprobar,
-                    "tipo_permiso": permiso.get_tipo_display(),
-                    "fecha_inicio": permiso.begda.date(),
-                    "hora_inicio": permiso.begda.time(),
-                    "fecha_fin": permiso.endda.date(),
-                    "hora_fin": permiso.endda.time(),
-                    "imagen": individuo.get_foto(),
-                    "qr": individuo.get_qr(),
-                    "texto": permiso.aclaracion,
-                },
-                safe=False
-            )
+            return json_permiso(permiso, "salvoconducto")
         else:
             #Si todo salio bien
             logger.info("Denegado: " + permiso.aclaracion)
@@ -710,18 +628,7 @@ def pedir_salvoconducto(request):
                 safe=False
             )
     except Exception as e:
-        logger.info("Falla: "+str(e))
-        return JsonResponse(
-            {
-                "action":"salvoconducto",
-                "realizado": False,
-                "error": str(e),
-                "error_contexto": str(e.__context__),
-                "error_traceback": str(traceback.format_exc()),
-            },
-            safe=False,
-            status=400,
-        )
+        return json_error(e, "salvoconducto", logger)
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -743,36 +650,9 @@ def ver_salvoconducto(request):
         #Buscamos permiso
         permiso = buscar_permiso(individuo)
         #Damos respuesta
-        logger.info("Exito")
-        return JsonResponse(
-            {
-                "action": "get_salvoconducto",
-                "realizado": True,
-                "tipo_permiso": permiso.get_tipo_display(),
-                "fecha_inicio": permiso.begda.date(),
-                "hora_inicio": permiso.begda.time(),
-                "fecha_fin": permiso.endda.date(),
-                "hora_fin": permiso.endda.time(),
-                "imagen": individuo.get_foto(),
-                "qr": individuo.get_qr(),
-                "texto": permiso.aclaracion,
-
-            },
-            safe=False
-        )
+        return json_permiso(permiso, "get_salvoconducto")
     except Exception as e:
-        logger.info("Falla: "+str(e))
-        return JsonResponse(
-            {
-                "action":"get_salvoconducto",
-                "realizado": False,
-                "error": str(e),
-                "error_contexto": str(e.__context__),
-                "error_traceback": str(traceback.format_exc()),
-            },
-            safe=False,
-            status=400,
-        )
+        return json_error(e, "get_salvoconducto", logger)
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -781,7 +661,7 @@ def control_salvoconducto(request):
         data = None
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info("\nget_salvoconducto:"+str(timezone.now())+"|"+str(data))
+        logger.info("\ncontrol_salvoconducto:"+str(timezone.now())+"|"+str(data))
         #Agarramos el dni
         num_doc = str(data["dni_operador"]).upper()
         #Obtenemos el operador
@@ -810,41 +690,14 @@ def control_salvoconducto(request):
         #Buscamos permiso
         permiso = buscar_permiso(individuo, activo=True)
         #Damos respuesta
-        logger.info("Exito")
-        return JsonResponse(
-            {
-                "action": "get_salvoconducto",
-                "realizado": True,
-                "tipo_permiso": permiso.get_tipo_display(),
-                "fecha_inicio": permiso.begda.date(),
-                "hora_inicio": permiso.begda.time(),
-                "fecha_fin": permiso.endda.date(),
-                "hora_fin": permiso.endda.time(),
-                "imagen": individuo.get_foto(),
-                "qr": individuo.get_qr(),
-                "texto": permiso.aclaracion,
-
-            },
-            safe=False
-        )
+        return json_permiso(permiso, "control_salvoconducto")
     except Exception as e:
-        logger.info("Falla: "+str(e))
-        try:
-            geopos.alerta = True
+        try:#Si logramos generar GeoPos del Control > Marcamos al infractor
+            geopos.alerta = True#La marcamos como alerta
             geopos.save()
         except:
             pass
-        return JsonResponse(
-            {
-                "action":"get_salvoconducto",
-                "realizado": False,
-                "error": str(e),
-                "error_contexto": str(e.__context__),
-                "error_traceback": str(traceback.format_exc()),
-            },
-            safe=False,
-            status=400,
-        )
+        return json_error(e, "control_salvoconducto", logger)
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -863,7 +716,6 @@ def notificacion(request):
         individuo = Individuo.objects.select_related('appdata', 'appdata__notificacion').get(num_doc=num_doc)
         notif = individuo.appdata.notificacion
         #Damos respuesta
-        logger.info("Exito")
         return JsonResponse(
             {
                 "action": "notificacion",
@@ -879,15 +731,4 @@ def notificacion(request):
             safe=False
         )
     except Exception as e:
-        logger.info("Falla: "+str(e))
-        return JsonResponse(
-            {
-                "action":"notificacion",
-                "realizado": False,
-                "error": str(e),
-                "error_contexto": str(e.__context__),
-                "error_traceback": str(traceback.format_exc()),
-            },
-            safe=False,
-            status=400,
-        )
+        return json_error(e, "notificacion", logger)

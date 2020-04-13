@@ -11,7 +11,7 @@
                     <div class="col-sm-1" style="text-align:right;">
                         <img class="fotografia" src="{{individuo.get_foto}}">
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-5">
                         <h2><b>{{individuo.apellidos}}, {{individuo.nombres}}</b></h2>
                         <!-- ESTADO -->
                         {% if individuo.situacion_actual %}
@@ -31,6 +31,17 @@
                         <h4><b>Contacto:</b></h4>
                         <p>Telefono: <a href="skype:{{individuo.telefono}}?call">{{individuo.telefono}}</a></p>
                         <p>Email: {{individuo.email}}</p>
+                    </div>
+                    <div class="col-sm-3">
+                        <h4>
+                            <b>Parametros:</b>
+                            <a href="{% url 'geo_urls:config_tracking' individuo_id=individuo.id %}">
+                                <img class="icons" src="{% static '/img/icons/config.png' %}">
+                            </a>
+                            <p><b>Intervalo:</b> {{individuo.appdata.intervalo}} minutos</p>
+                            <p><b>Distancia de Alerta:</b> {{individuo.appdata.distancia_alerta}}mts</p>
+                            <p><b>Distancia Critica:</b> {{individuo.appdata.distancia_critica}}mts</p>
+                        </h4>
                     </div>
                 </div>
                 <div class"row">
