@@ -206,31 +206,59 @@ class _MyLoginPageState extends State<MyLoginPage> {
                     ),
                   ),
                   SizedBox(height: 60.0),
-                  Container(
-                    child: Center(
-                      child: RaisedButton(
-                        padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 90.0, right: 90.0),
-                        color: Colors.lightGreen,
-                        splashColor: Colors.blueAccent,
-                        elevation: 4,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24.0),
-                        ),
-                        onPressed: () async {
-                          print('DNI OBTENIDO');
-                          print(_dni);
-                          _dni == 0 ? _getDniFromSharedPref() : (!_termCondAceptados ? _launchTermCondDialogConfirmation() : _checkPermissions());
-                          //_getDniFromSharedPref();
-                          //_checkPermissions();
-                        },
-                        child: Text(
-                          'Cuestionario covid-19',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.white, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                  Visibility(
+                    visible: !_termCondAceptados,
+                    child: Container(
+                      child: Center(
+                        child: RaisedButton(
+                          padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 30.0, right: 30.0),
+                          color: Colors.yellowAccent,
+                          splashColor: Colors.blueAccent,
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24.0),
+                          ),
+                          onPressed: () async {
+                            _handleFirsGeoConfirmation(_scaffoldKey);
+                          },
+                          child: Text(
+                            'Ver términos y condiciones de uso',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.black, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                          ),
                         ),
                       ),
                     ),
                   ),
+                  Visibility(
+                    visible: _termCondAceptados,
+                    child: Container(
+                      child: Center(
+                        child: RaisedButton(
+                          padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 90.0, right: 90.0),
+                          color: Colors.lightGreen,
+                          splashColor: Colors.blueAccent,
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24.0),
+                          ),
+                          onPressed: () async {
+                            print('DNI OBTENIDO');
+                            print(_dni);
+                            _dni == 0 ? _getDniFromSharedPref() : (!_termCondAceptados ? _launchTermCondDialogConfirmation() : _checkPermissions());
+                            //_getDniFromSharedPref();
+                            //_checkPermissions();
+                          },
+                          child: Text(
+                            'Cuestionario covid-19',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.white, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
                   SizedBox(height: 20.0),
                   Container(
                     child: Center(
@@ -307,25 +335,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
                     ),
                   ),
                   SizedBox(height: 30),
-                  Visibility(
-                    visible: !_termCondAceptados,
-                    child: Container(
-                      child: Center(
-                        child: InkWell(
-                          child: Text(
-                            'Ver términos y condiciones de uso',
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                          onTap: () {
-                            _handleFirsGeoConfirmation(_scaffoldKey);
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20.0),
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -696,8 +706,8 @@ class _MyLoginPageState extends State<MyLoginPage> {
       callback,
       androidNotificationCallback: notificationCallback,
       settings: LocationSettings(
-//          notificationTitle: "Start Location Tracking example",
-//          notificationMsg: "Track location in background exapmle",
+          notificationTitle: "Covid19 - Jujuy",
+          notificationMsg: "Su ubicación esta siendo rastreada",
           wakeLockTime: 20,
           autoStop: false,
           interval: 600),
