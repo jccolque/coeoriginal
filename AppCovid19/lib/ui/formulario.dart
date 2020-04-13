@@ -210,6 +210,7 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                           margin: EdgeInsets.only(left: 20.0, right: 20.0),
                           child: TextFormField(
                             controller: _apellidoController,
+                            textCapitalization: TextCapitalization.words,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 20.0,
@@ -236,6 +237,7 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                           margin: EdgeInsets.only(left: 20.0, right: 20.0),
                           child: TextFormField(
                             controller: _nombreController,
+                            textCapitalization: TextCapitalization.words,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 20.0,
