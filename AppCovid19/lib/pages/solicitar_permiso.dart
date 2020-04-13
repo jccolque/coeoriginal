@@ -194,25 +194,17 @@ class _SolicitarPermisoState extends State<SolicitarPermiso> {
       print('tiene permiso');
       // Si el servidor devuelve una repuesta OK, parseamos el JSON
       RespuestaPermisoModel list = RespuestaPermisoModel.fromJson(json.decode(response.body));
-      print('********** respuesta ************');
       print(list.toJson());
      await _setPermisoOtorgadoSharedPref(list).then((v) {
        Navigator.of(context).pushNamed('/permisootorgado');
      });
-
-//      return list.permisos;
     } else {
       print('no tiene permiso');
-      // Si esta respuesta no fue OK, lanza un error.
-      //
-
     }
   }
 
   Future<List<Permiso>> getPermisos() async {
-    print('fetchPost');
     final response = await http.get('http://coe.jujuy.gob.ar/api_refs/tipo_permiso');
-
     if (response.statusCode == 200) {
       // Si el servidor devuelve una repuesta OK, parseamos el JSON
       PermisoModel list = PermisoModel.fromJson(json.decode(response.body));
