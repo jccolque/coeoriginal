@@ -35,8 +35,6 @@ def is_related(instance):
     collector.collect([instance])
     if collector.dependencies:
         return True
-    else:
-        return False
 
 def json_error(error, vista, logger=None):
     if logger:
