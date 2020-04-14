@@ -504,6 +504,16 @@ def start_tracking(request):
             status=400,
         )
         #Guardamos la geoposicion BASE (Eliminamos todas las anteriores)
+        if data["latitud"] == 0:
+            return JsonResponse(
+            {
+                "accion":"start_tracking",
+                "realizado": False,
+                "error": "Su GPS esta reportando coordenadas incorrectas.",
+            },
+            safe=False,
+            status=400,
+        )
         GeoPosicion.objects.filter(individuo=individuo, tipo__in=('ST', 'TC')).delete()
         geopos = GeoPosicion()
         geopos.individuo = individuo
