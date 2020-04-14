@@ -43,7 +43,7 @@ def json_error(error, vista, logger=None):
         logger.info("Falla: "+str(error))
     return JsonResponse(
             {
-                "action": vista,
+                "accion": vista,
                 "realizado": False,
                 "error": str(error),
                 "error_contexto": str(error.__context__),

@@ -35,7 +35,7 @@ logger = logging.getLogger("apis")
 def AppConfig(request):
     return JsonResponse(
         {
-            "action":"AppConfig",
+            "accion":"AppConfig",
             #WebServices
             "WebServices":
             {
@@ -64,7 +64,7 @@ def AppConfig(request):
                 },
                 "fields_response": 
                 {
-                    "action": "registro",
+                    "accion": "registro",
                     "realizado": "bool",
                     "token": "str: para validar envios posteriores",
                     "error": "str (Solo si hay errores)",
@@ -82,7 +82,7 @@ def AppConfig(request):
                 },
                 "fields_response": 
                 {
-                    "action": "registro_avanzado",
+                    "accion": "registro_avanzado",
                     "realizado": "bool",
                     "error": "str (Solo si hay errores)",
                 }
@@ -106,7 +106,7 @@ def AppConfig(request):
                 },
                 "fields_response": 
                 {
-                    "action": "encuesta",
+                    "accion": "encuesta",
                     "realizado": "bool",
                     "error": "str (Solo si hay errores)",
                 }
@@ -126,7 +126,7 @@ def AppConfig(request):
                 },
                 "fields_response": 
                 {
-                    "action": "start_tracking",
+                    "accion": "start_tracking",
                     "realizado": "bool",
                     "error": "str (Solo si hay errores)",
                 }
@@ -146,7 +146,7 @@ def AppConfig(request):
                 },
                 "fields_response": 
                 {
-                    "action": "tracking",
+                    "accion": "tracking",
                     "realizado": "bool",
                     "alerta": "bool",
                     "notif_titulo": "str (Titulo notificacion Local)",
@@ -174,9 +174,12 @@ def AppConfig(request):
                 },
                 "fields_response": 
                 {
-                    "action": "salvoconducto",
+                    "accion": "salvoconducto",
                     "realizado": "bool",
                     "tipo_permiso": "str: Descripcion del permiso",
+                    "dni_individuo": "str",
+                    "nombre_completo": "str",
+                    "domicilio": "str",
                     "fecha_inicio": "datefield",
                     "hora_inicio": "timefield",
                     "fecha_fin": "datefield",
@@ -202,9 +205,12 @@ def AppConfig(request):
                 },
                 "fields_response": 
                 {
-                    "action": "salvoconducto",
+                    "accion": "salvoconducto",
                     "realizado": "bool",
                     "tipo_permiso": "str: Descripcion del permiso",
+                    "dni_individuo": "str",
+                    "nombre_completo": "str",
+                    "domicilio": "str",
                     "fecha_inicio": "datefield",
                     "hora_inicio": "timefield",
                     "fecha_fin": "datefield",
@@ -233,9 +239,12 @@ def AppConfig(request):
                 },
                 "fields_response": 
                 {
-                    "action": "salvoconducto",
+                    "accion": "salvoconducto",
                     "realizado": "bool",
                     "tipo_permiso": "str: Descripcion del permiso",
+                    "dni_individuo": "str",
+                    "nombre_completo": "str",
+                    "domicilio": "str",
                     "fecha_inicio": "datefield",
                     "hora_inicio": "timefield",
                     "fecha_fin": "datefield",
@@ -243,6 +252,7 @@ def AppConfig(request):
                     "imagen": "url",
                     "qr": "url",
                     "texto": "str: leyenda de permiso autorizado",
+                    "control": "bool: Si puede controlar otros permisos",
                     "error": "str (Solo si hay errores/rechaza pedido)",
                 },
             },
@@ -257,7 +267,7 @@ def AppConfig(request):
                 },
             "fields_response": 
                 {
-                    "action": "notificacion",
+                    "accion": "notificacion",
                     "realizado": "bool",
                     "notif_titulo": "str (Titulo notificacion Local | si realizado=True)",
                     "notif_mensaje": "str (Mensaje notificacion Local | si realizado=True)",
@@ -349,7 +359,7 @@ def registro(request):
         #Respondemos que fue procesado
         return JsonResponse(
             {
-                "action":"registro",
+                "accion":"registro",
                 "realizado": True,
                 "token": TokenGenerator(individuo),
             },
@@ -385,7 +395,7 @@ def foto_perfil(request):
         #Terminamos proceso
         return JsonResponse(
             {
-                "action":"foto_perfil",
+                "accion":"foto_perfil",
                 "realizado": True,
             },
             safe=False
@@ -453,7 +463,7 @@ def encuesta(request):
             geopos.save()
         return JsonResponse(
             {
-                "action": "encuesta",
+                "accion": "encuesta",
                 "realizado": True,
             },
             safe=False
@@ -486,7 +496,7 @@ def start_tracking(request):
         if not user:
             return JsonResponse(
             {
-                "action":"start_tracking",
+                "accion":"start_tracking",
                 "realizado": False,
                 "error": "El operador no existe.",
             },
@@ -512,7 +522,7 @@ def start_tracking(request):
         #Respondemos
         return JsonResponse(
             {
-                "action":"start_tracking",
+                "accion":"start_tracking",
                 "realizado": True,
             },
             safe=False
@@ -561,7 +571,7 @@ def tracking(request):
         #Controlamos posicion:
         return JsonResponse(
             {
-                "action":"tracking",
+                "accion":"tracking",
                 "realizado": True,
                 "prox_tracking": individuo.appdata.intervalo,#Minutos
                 "distancia": int(geopos.distancia),
@@ -610,18 +620,18 @@ def pedir_salvoconducto(request):
             permiso.individuo = individuo
             permiso.tipo = data["tipo_permiso"]
             permiso.localidad = individuo.domicilio_actual.localidad
-            permiso.aclaracion = "Requerido Via App."
+            permiso.aclaracion = "Temporal: " + permiso.get_tipo_display()
             #Generamos las fechas ideales
             permiso = definir_fechas(permiso, fecha_ideal)#Genera begda y endda
             permiso.save()
             #Si todo salio bien
             return json_permiso(permiso, "salvoconducto")
         else:
-            #Si todo salio bien
+            #Si se le niega por algun motivo
             logger.info("Denegado: " + permiso.aclaracion)
             return JsonResponse(
                 {
-                    "action": "salvoconducto",
+                    "accion": "salvoconducto",
                     "realizado": permiso.aprobar,
                     "error": permiso.aclaracion,
                 },
@@ -718,7 +728,7 @@ def notificacion(request):
         #Damos respuesta
         return JsonResponse(
             {
-                "action": "notificacion",
+                "accion": "notificacion",
                 "realizado": True,
                 "message":
                 {
