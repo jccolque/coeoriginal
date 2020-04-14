@@ -230,7 +230,7 @@ def ver_ubicacion(request, ubicacion_id=None):
 @permission_required('operadores.menu_georef')
 def delete_ubicacion(request, ubicacion_id):
     ubicacion = Ubicacion.objects.get(pk=ubicacion_id)
-    if is_related(ubicacion):
+    if ubicacion.aislados_actuales():
         return render(request, 'extras/error.html', {
             'titulo': 'Eliminar Ubicacion Estrategica',
             'error': "La Ubicacion no puede ser borrada pues es Clave de Otros Registros, Contacte al Administrador.",

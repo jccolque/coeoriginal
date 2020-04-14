@@ -8,6 +8,7 @@ from django.http import JsonResponse
 from geographiclib.geodesic import Geodesic
 #Imports del proyecto
 from coe.constantes import LAST_DATETIME
+from coe.constantes import DISTANCIA_MAXIMA, CENTRO_LATITUD, CENTRO_LONGITUD
 #Imports de la app
 from .models import GeoPosicion, Seguimiento, Permiso
 
@@ -63,6 +64,14 @@ def controlar_distancia(nueva_geopos):
         seguimiento.save()
     return nueva_geopos
 
+def es_local(geopos):
+    #Calculamos diferencia
+    geodesic = Geodesic.WGS84.Inverse(CENTRO_LATITUD, CENTRO_LONGITUD, geopos.latitud, geopos.longitud)
+    distancia = geodesic['s12']# en metros
+    if distancia < DISTANCIA_MAXIMA:#Si esta dentro del radio aceptable
+        return True
+
+
 #Salvoconducos
 def buscar_permiso(individuo, activo=False):
     permisos = Permiso.objects.filter(individuo=individuo, endda__gt=timezone.now())
@@ -113,6 +122,9 @@ def validar_permiso(individuo, tipo_permiso, permiso=None):
                     permiso.aprobar = False
                     permiso.aclaracion = relacionado.nombres + ' ' + relacionado.apellidos + ' Ya obtuvo un permiso en los ultimos dias.' 
     #Devolvemos todo lo procesado
+    permiso.aprobar = False
+    permiso.aclaracion = "Esta Funcionalidad aun no fue Aprobada. Sigue Vigente Permiso Nacional."
+    #Funcionar
     return permiso
 
 #Aca ordenamos por zonas y tiempos

@@ -125,13 +125,10 @@ class Ubicacion(models.Model):
     def capacidad_disponible(self):
         return self.capacidad_maxima - self.capacidad_ocupada
     def aislados_actuales(self):
-        actuales = set()
-        for domicilio in self.aislados.all().select_related('individuo'):
-            if domicilio.individuo not in actuales:#Para no procesar al pedo.
-                individuo = domicilio.individuo
-                if domicilio == individuo.domicilio_actual:
-                    actuales.add(individuo)
-        return actuales
+        domicilios = self.aislados.filter(ubicacion=self).distinct()
+        domicilios = domicilios.select_related('individuo', 'individuo__domicilio_actual', 'individuo__situacion_actual')
+        return [d.individuo for d in domicilios if d == d.individuo.domicilio_actual]
+
 #Auditoria
 auditlog.register(Nacionalidad)
 auditlog.register(Provincia)

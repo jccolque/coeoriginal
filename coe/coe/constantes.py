@@ -10,3 +10,8 @@ NOMAIL = 'sinemail@nomail.com'
 NODOM = 'SINDOMICILIO'
 NOTEL = 'SINTELEFONO'
 NOIMAGE = '/static/img/subir_foto.png'
+
+#GeoPosiciones
+DISTANCIA_MAXIMA = 350000#300km en Metros
+CENTRO_LATITUD = -24.2363472
+CENTRO_LONGITUD = -64.8809494
