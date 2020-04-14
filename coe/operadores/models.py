@@ -57,7 +57,7 @@ class Operador(models.Model):
     nivel_acceso = models.CharField("Acceso de Seguridad", max_length=1, choices=NIVELES_SEGURIDAD, default='B')
     usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="operadores")
     tipo_doc = models.IntegerField(choices=TIPO_DOCUMENTOS, default=2)
-    num_doc = models.IntegerField('Numero de Documento', unique=True)
+    num_doc = models.CharField('Numero de Documento', unique=True, max_length=100)
     apellidos = models.CharField('Apellidos', max_length=100)
     nombres  = models.CharField('Nombres', max_length=100)
     email = models.EmailField('Correo Electronico')

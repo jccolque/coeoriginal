@@ -43,7 +43,7 @@ TIPO_CONDUCTA = (
     ('B', 'Evaluar'),
     ('C', 'Cuarentena Voluntaria'),
     ('D', 'Cuarentena Obligatoria'),
-    ('E', 'Aislado'),
+    ('E', 'Aislamiento'),
     ('F', 'En Morgue'),
     ('G', 'Cremado'),
     ('H', 'Enterrado'),
@@ -143,6 +143,7 @@ TIPO_GEOPOS = (
     ('AD', 'AutoDiagnostico'),
     ('ST', 'Inicio de Tracking/Base'),
     ('RG', 'Reporte de GeoPosicion'),
+    ('CG', 'Control GeoPosicion'),
 )
 
 TIPO_ACCION_NOTIFICACION = (

@@ -15,7 +15,7 @@ urlpatterns = [
     path('', permisos_views.menu_permisos, name='menu_permisos'),
     path('lista/activos', permisos_views.lista_activos, name='lista_activos'),
     path('lista/vencidos', permisos_views.lista_vencidos, name='lista_vencidos'),
-    path('ver/permiso/<int:permiso_id>', permisos_views.ver_permiso, name='ver_permiso'),
+    path('ver/permiso/<int:permiso_id>/<int:individuo_id>', permisos_views.ver_permiso, name='ver_permiso'),
     path('eliminar/permiso/<int:permiso_id>', permisos_views.eliminar_permiso, name='eliminar_permiso'),
 
 ]

@@ -14,8 +14,9 @@ urlpatterns = [
     path('encuesta', app_apis.encuesta, name='encuesta'),
     path('start/tracking', app_apis.start_tracking, name='start_tracking'),
     path('tracking', app_apis.tracking, name='tracking'),
-    path('salvoconducto', app_apis.salvoconducto, name='salvoconducto'),
-    path('get/salvoconducto', app_apis.get_salvoconducto, name='get_salvoconducto'),
+    path('salvoconducto', app_apis.pedir_salvoconducto, name='pedir_salvoconducto'),
+    path('get/salvoconducto', app_apis.ver_salvoconducto, name='ver_salvoconducto'),
+    path('control/salvoconducto', app_apis.control_salvoconducto, name='control_salvoconducto'),
     path('get/notificacion', app_apis.notificacion, name='notificacion'),
     #Testing
     path('send/notificacion', apps_views.enviar_notificacion, name='enviar_notificacion'),

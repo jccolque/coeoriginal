@@ -15,5 +15,7 @@ urlpatterns = [
     path('lista/procesadas', geo_views.alertas_procesadas, name='alertas_procesadas'),
     path('ver/<int:individuo_id>', geo_views.ver_tracking, name='ver_tracking'),
     path('procesar/<int:geoposicion_id>', geo_views.procesar_alerta, name='procesar_alerta'),
+    #Admin
     path('cambiar_base/<int:geoposicion_id>', geo_views.cambiar_base, name='cambiar_base'),
+    path('config/<int:individuo_id>', geo_views.config_tracking, name='config_tracking'),
 ]
