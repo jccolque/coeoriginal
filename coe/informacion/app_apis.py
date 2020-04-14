@@ -16,16 +16,16 @@ from django.views.decorators.http import require_http_methods
 #Imports Extras
 from fcm_django.models import FCMDevice
 #Imports del proyecto
-from coe.constantes import LAST_DATETIME
+from core.functions import json_error
 from operadores.models import Operador
 from georef.models import Nacionalidad, Localidad
 #Imports de la app
 from .choices import TIPO_PERMISO
 from .models import Individuo, AppData, Domicilio, GeoPosicion
 from .models import Atributo, Sintoma, Situacion, Seguimiento
-from .models import Permiso
 from .tokens import TokenGenerator
 from .geofence import controlar_distancia
+from .geofence import buscar_permiso, validar_permiso, definir_fechas, json_permiso
 
 #Definimos logger
 logger = logging.getLogger("apis")
@@ -35,10 +35,11 @@ logger = logging.getLogger("apis")
 def AppConfig(request):
     return JsonResponse(
         {
-            "action":"AppConfig",
+            "accion":"AppConfig",
             #WebServices
             "WebServices":
             {
+                "tipo_permisos": reverse("ws_urls:tipo_permiso"),
                 "localidad": reverse("georef:localidad-autocomplete"),
                 "barrio": reverse("georef:barrio-autocomplete"),
                 "logs": "/archivos/logs/apis.txt",
@@ -63,7 +64,7 @@ def AppConfig(request):
                 },
                 "fields_response": 
                 {
-                    "action": "registro",
+                    "accion": "registro",
                     "realizado": "bool",
                     "token": "str: para validar envios posteriores",
                     "error": "str (Solo si hay errores)",
@@ -81,7 +82,7 @@ def AppConfig(request):
                 },
                 "fields_response": 
                 {
-                    "action": "registro_avanzado",
+                    "accion": "registro_avanzado",
                     "realizado": "bool",
                     "error": "str (Solo si hay errores)",
                 }
@@ -105,7 +106,7 @@ def AppConfig(request):
                 },
                 "fields_response": 
                 {
-                    "action": "encuesta",
+                    "accion": "encuesta",
                     "realizado": "bool",
                     "error": "str (Solo si hay errores)",
                 }
@@ -125,7 +126,7 @@ def AppConfig(request):
                 },
                 "fields_response": 
                 {
-                    "action": "start_tracking",
+                    "accion": "start_tracking",
                     "realizado": "bool",
                     "error": "str (Solo si hay errores)",
                 }
@@ -145,7 +146,7 @@ def AppConfig(request):
                 },
                 "fields_response": 
                 {
-                    "action": "tracking",
+                    "accion": "tracking",
                     "realizado": "bool",
                     "alerta": "bool",
                     "notif_titulo": "str (Titulo notificacion Local)",
@@ -163,9 +164,9 @@ def AppConfig(request):
                 },
             },
             #Obtener Salvoconducto Digital
-            "get_salvoconducto":
+            "ver_salvoconducto":
             {
-                "url": reverse("app_urls:get_salvoconducto"),
+                "url": reverse("app_urls:ver_salvoconducto"),
                 "fields":
                 {
                     "dni_individuo": "str",
@@ -173,8 +174,12 @@ def AppConfig(request):
                 },
                 "fields_response": 
                 {
-                    "action": "salvoconducto",
+                    "accion": "salvoconducto",
                     "realizado": "bool",
+                    "tipo_permiso": "str: Descripcion del permiso",
+                    "dni_individuo": "str",
+                    "nombre_completo": "str",
+                    "domicilio": "str",
                     "fecha_inicio": "datefield",
                     "hora_inicio": "timefield",
                     "fecha_fin": "datefield",
@@ -182,13 +187,14 @@ def AppConfig(request):
                     "imagen": "url",
                     "qr": "url",
                     "texto": "str: leyenda de permiso autorizado",
+                    "control": "bool: Si puede controlar otros permisos",
                     "error": "str (Solo si hay errores/rechaza pedido)",
                 },
             },
             #Salvoconducto Digital
-            "salvoconducto":
+            "pedir_salvoconducto":
             {
-                "url": reverse("app_urls:salvoconducto"),
+                "url": reverse("app_urls:pedir_salvoconducto"),
                 "fields":
                 {
                     "dni_individuo": "str",
@@ -199,8 +205,12 @@ def AppConfig(request):
                 },
                 "fields_response": 
                 {
-                    "action": "salvoconducto",
+                    "accion": "salvoconducto",
                     "realizado": "bool",
+                    "tipo_permiso": "str: Descripcion del permiso",
+                    "dni_individuo": "str",
+                    "nombre_completo": "str",
+                    "domicilio": "str",
                     "fecha_inicio": "datefield",
                     "hora_inicio": "timefield",
                     "fecha_fin": "datefield",
@@ -208,11 +218,42 @@ def AppConfig(request):
                     "imagen": "url",
                     "qr": "url",
                     "texto": "str: leyenda de permiso autorizado",
+                    "control": "bool: Si puede controlar otros permisos",
                     "error": "str (Solo si hay errores/rechaza pedido)",
                 },
                 "parametros":
                 {
                     'TIPO_PERMISO': {tp[0]:tp[1] for tp in TIPO_PERMISO if tp[0] != 'P'},
+                },
+            },
+            #Control de SalvoConducto
+            "control_salvoconducto":
+            {
+                "url": reverse("app_urls:control_salvoconducto"),
+                "fields":
+                {
+                    "dni_operador": "str (Del Dueño del celular)",
+                    "qr_code": "El QR que se leyo",
+                    "latitud": "float", 
+                    "longitud": "float",
+                },
+                "fields_response": 
+                {
+                    "accion": "salvoconducto",
+                    "realizado": "bool",
+                    "tipo_permiso": "str: Descripcion del permiso",
+                    "dni_individuo": "str",
+                    "nombre_completo": "str",
+                    "domicilio": "str",
+                    "fecha_inicio": "datefield",
+                    "hora_inicio": "timefield",
+                    "fecha_fin": "datefield",
+                    "hora_fin": "str: timefield",
+                    "imagen": "url",
+                    "qr": "url",
+                    "texto": "str: leyenda de permiso autorizado",
+                    "control": "bool: Si puede controlar otros permisos",
+                    "error": "str (Solo si hay errores/rechaza pedido)",
                 },
             },
             #Notifaciones
@@ -226,7 +267,7 @@ def AppConfig(request):
                 },
             "fields_response": 
                 {
-                    "action": "notificacion",
+                    "accion": "notificacion",
                     "realizado": "bool",
                     "notif_titulo": "str (Titulo notificacion Local | si realizado=True)",
                     "notif_mensaje": "str (Mensaje notificacion Local | si realizado=True)",
@@ -261,8 +302,8 @@ def registro(request):
             individuo = Individuo()
             individuo.individuo = individuo
             individuo.num_doc = num_doc
-            individuo.apellidos = data["apellido"]
-            individuo.nombres = data["nombre"]
+            individuo.apellidos = " ".join([word.capitalize() for word in data["apellido"].split(" ")])
+            individuo.nombres = " ".join([word.capitalize() for word in data["nombre"].split(" ")])
             individuo.nacionalidad = nac
             individuo.observaciones = "AUTODIAGNOSTICO"
             individuo.save()
@@ -316,28 +357,16 @@ def registro(request):
         domicilio.aclaracion = "AUTODIAGNOSTICO"
         domicilio.save()
         #Respondemos que fue procesado
-        logger.info("Exito!")
         return JsonResponse(
             {
-                "action":"registro",
+                "accion":"registro",
                 "realizado": True,
                 "token": TokenGenerator(individuo),
             },
             safe=False
         )
     except Exception as e:
-        logger.info("Falla: "+str(e))
-        return JsonResponse(
-            {
-                "action":"registro",
-                "realizado": False,
-                "error": str(e),
-                "error_contexto": str(e.__context__),
-                "error_traceback": str(traceback.format_exc()),
-            },
-            safe=False,
-            status=400,
-        )
+        return json_error(e, "registro", logger)
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -364,27 +393,15 @@ def foto_perfil(request):
         individuo.fotografia = ContentFile(image_data, individuo.num_doc+'.jpg')
         individuo.save()
         #Terminamos proceso
-        logger.info("Exito!")
         return JsonResponse(
             {
-                "action":"foto_perfil",
+                "accion":"foto_perfil",
                 "realizado": True,
             },
             safe=False
         )
     except Exception as e:
-        logger.info("Falla: "+str(e))
-        return JsonResponse(
-            {
-                "action":"foto_perfil",
-                "realizado": False,
-                "error": str(e),
-                "error_contexto": str(e.__context__),
-                "error_traceback": str(traceback.format_exc()),
-            },
-            safe=False,
-            status=400,
-        )
+        return json_error(e, "foto_perfil", logger)
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -427,12 +444,12 @@ def encuesta(request):
         individuo.appdata.estado = [0,"R","A","V"][data["riesgo"]]
         individuo.appdata.save()
         #Cargamos nueva situacion
-        if data["riesgo"] > 1:
+        if data["riesgo"] > 3:
             Situacion.objects.filter(individuo=individuo, aclaracion="AUTODIAGNOSTICO").delete()
             situacion = Situacion()
             situacion.individuo = individuo
             situacion.estado = 40
-            situacion.conducta = "C"
+            situacion.conducta = 'B'
             situacion.aclaracion = "AUTODIAGNOSTICO"
             situacion.save()
         #Geoposicion
@@ -444,27 +461,15 @@ def encuesta(request):
             geopos.longitud = data["longitud"]
             geopos.aclaracion = "AUTODIAGNOSTICO"
             geopos.save()
-        logger.info("Exito!")
         return JsonResponse(
             {
-                "action":"encuesta",
+                "accion": "encuesta",
                 "realizado": True,
             },
             safe=False
         )
     except Exception as e:
-        logger.info("Falla: "+str(e))
-        return JsonResponse(
-            {
-                "action":"encuesta",
-                "realizado": False,
-                "error": str(e),
-                "error_contexto": str(e.__context__),
-                "error_traceback": str(traceback.format_exc()),
-            },
-            safe=False,
-            status=400,
-        )
+        return json_error(e, "encuesta", logger)
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -491,7 +496,7 @@ def start_tracking(request):
         if not user:
             return JsonResponse(
             {
-                "action":"start_tracking",
+                "accion":"start_tracking",
                 "realizado": False,
                 "error": "El operador no existe.",
             },
@@ -515,27 +520,15 @@ def start_tracking(request):
         seguimiento.aclaracion = "INICIO TRACKING: " + str(geopos.latitud)+", "+str(geopos.longitud)
         seguimiento.save()
         #Respondemos
-        logger.info("Exito!")
         return JsonResponse(
             {
-                "action":"start_tracking",
+                "accion":"start_tracking",
                 "realizado": True,
             },
             safe=False
         )
     except Exception as e:
-        logger.info("Falla: "+str(e))
-        return JsonResponse(
-            {
-                "action":"start_tracking",
-                "realizado": False,
-                "error": str(e),
-                "error_contexto": str(e.__context__),
-                "error_traceback": str(traceback.format_exc()),
-            },
-            safe=False,
-            status=400,
-        )
+        return json_error(e, "start_tracking", logger)
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -551,7 +544,7 @@ def tracking(request):
         else:
             num_doc = str(data["dni_individuo"]).upper()
         #Buscamos al individuo en la db
-        individuo = Individuo.objects.get(num_doc=num_doc)
+        individuo = Individuo.objects.select_related('appdata').get(num_doc=num_doc)
         #ACA CHEQUEAMOS TOKEN
 
         #Guardamos nueva posgps
@@ -569,51 +562,31 @@ def tracking(request):
             int(data["hora"][2:4]),
         )
         #Chequeamos distancia:
-        geopos.distancia = controlar_distancia(geopos)
-        #Si es mayor a alerta la marcamos
-        notif_titulo = None
-        notif_mensaje = None
-        if geopos.distancia > 50:
-            geopos.alerta = True
-            notif_titulo = "Covid19 - Alerta por Distancia"
-            notif_mensaje = "Usted se ha alejado a "+str(int(geopos.distancia))+"mts del area permitida."
+        geopos = controlar_distancia(geopos)
         #Guardamos solo si vale la pena
         if geopos.distancia > 5:
             geopos.save()
         #Realizamos controles avanzados
         
         #Controlamos posicion:
-        logger.info("Exito")
         return JsonResponse(
             {
-                "action":"tracking",
+                "accion":"tracking",
                 "realizado": True,
-                "prox_tracking": 5,#Minutos
+                "prox_tracking": individuo.appdata.intervalo,#Minutos
                 "distancia": int(geopos.distancia),
                 "alerta": geopos.alerta,
-                "notif_titulo": notif_titulo,
-                "notif_mensaje": notif_mensaje,
+                "notif_titulo": geopos.notif_titulo,
+                "notif_mensaje": geopos.notif_mensaje,
             },
             safe=False
         )
     except Exception as e:
-        logger.info("Falla: "+str(e))
-        return JsonResponse(
-            {
-                "action":"tracking",
-                "realizado": False,
-                "error": str(e),
-                "error_contexto": str(e.__context__),
-                "error_traceback": str(traceback.format_exc()),
-            },
-            safe=False,
-            status=400,
-        )
-
+        return json_error(e, "tracking", logger)
 
 @csrf_exempt
 @require_http_methods(["POST"])
-def salvoconducto(request):
+def pedir_salvoconducto(request):
     try:
         data = None
         #Recibimos el json
@@ -631,11 +604,9 @@ def salvoconducto(request):
         #ACA CHEQUEAMOS TOKEN
         
         #Trabajamos
-        #Chequear si no es policia, salud, funcionario >Permiso ilimitado.
-            #RESPONDER CON FULL GREEN
         #Obtenemos datos del pedido de permiso:
         permiso = data["tipo_permiso"]
-        fecha = timezone.datetime(
+        fecha_ideal = timezone.datetime(
             int(data["fecha_ideal"][0:4]),
             int(data["fecha_ideal"][4:6]),
             int(data["fecha_ideal"][6:8]),
@@ -643,84 +614,35 @@ def salvoconducto(request):
             int(data["hora_ideal"][2:4]),
         )
         #Validamos si es factible:
-        
-        #Inicializamos permiso:
-        permiso = Permiso()
-        permiso.aprobar = True
-        #REALIZAR TODA LA LOGICA
-        #Chequeamos que no este en cuarentena obligatoria o aislado
-        if individuo.situacion_actual.conducta in ('D', 'E'):
-            permiso.aprobar = False
-            permiso.aclaracion = "Usted se encuentra bajo " + individuo.situacion_actual.get_conducta_display() + " Por favor mantengase en su Hogar."
-        else:
-            #Chequeamos que no tenga un permiso hace menos de 3 dias (DEL MISMO TIPO?):
-            cooldown = timezone.now() - timedelta(days=3)
-            permisos = individuo.permisos.filter(endda__gt=cooldown, tipo=data["tipo_permiso"])
-            if permisos:
-                permiso.aprobar = False
-                permiso.aclaracion = "Usted recibio un Permiso el dia " + str(permisos.last().endda.date())
-            else:
-                #Chequeamos que nadie del domicilio tenga permiso
-                for relacion in individuo.relaciones.filter(tipo="MD"):
-                    if relacion.relacionado.permisos.filter(endda__gt=cooldown, tipo=data["tipo_permiso"]):
-                        relacionado = relacion.relacionado
-                        permiso.aprobar = False
-                        permiso.aclaracion = relacionado.nombres + ' ' + relacionado.apellidos + ' Ya obtuvo un permiso en los ultimos dias.' 
-        #chequeamos num_dni por fecha
-        #Creamos Permiso
-        if permiso.aprobar:
+        permiso = validar_permiso(individuo, data["tipo_permiso"])
+        #Si fue aprobado, Creamos Permiso
+        if permiso.aprobar:#Variable temporal generada en validar_permiso
             permiso.individuo = individuo
             permiso.tipo = data["tipo_permiso"]
             permiso.localidad = individuo.domicilio_actual.localidad
-            permiso.begda = timezone.now() + timedelta(days=1)
-            permiso.endda = timezone.now() + timedelta(days=1, hours=2)
-            permiso.aclaracion = "Requerido Via App."
+            permiso.aclaracion = "Temporal: " + permiso.get_tipo_display()
+            #Generamos las fechas ideales
+            permiso = definir_fechas(permiso, fecha_ideal)#Genera begda y endda
             permiso.save()
             #Si todo salio bien
-            logger.info("Exito")
-            return JsonResponse(
-                {
-                    "action": "salvoconducto",
-                    "realizado": permiso.aprobar,
-                    "tipo_permiso": permiso.get_tipo_display(),
-                    "fecha_inicio": permiso.begda.date(),
-                    "hora_inicio": permiso.begda.time(),
-                    "fecha_fin": permiso.endda.date(),
-                    "hora_fin": permiso.endda.time(),
-                    "imagen": individuo.get_foto(),
-                    "qr": individuo.get_qr(),
-                    "texto": permiso.aclaracion,
-                },
-                safe=False
-            )
+            return json_permiso(permiso, "salvoconducto")
         else:
-            #Si todo salio bien
+            #Si se le niega por algun motivo
             logger.info("Denegado: " + permiso.aclaracion)
             return JsonResponse(
                 {
-                    "action": "salvoconducto",
+                    "accion": "salvoconducto",
                     "realizado": permiso.aprobar,
                     "error": permiso.aclaracion,
                 },
                 safe=False
             )
     except Exception as e:
-        logger.info("Falla: "+str(e))
-        return JsonResponse(
-            {
-                "action":"salvoconducto",
-                "realizado": False,
-                "error": str(e),
-                "error_contexto": str(e.__context__),
-                "error_traceback": str(traceback.format_exc()),
-            },
-            safe=False,
-            status=400,
-        )
+        return json_error(e, "salvoconducto", logger)
 
 @csrf_exempt
 @require_http_methods(["POST"])
-def get_salvoconducto(request):
+def ver_salvoconducto(request):
     try:
         data = None
         #Recibimos el json
@@ -736,51 +658,56 @@ def get_salvoconducto(request):
         #ACA CHEQUEAMOS TOKEN
         
         #Buscamos permiso
-        permiso = Permiso.objects.filter(individuo=individuo, endda__gt=timezone.now()).first()
-        if not permiso:
-            #Chequeamos que el individuo no tenga atributo laboral para permiso permanente:
-            atributos = individuo.atributos.filter(tipo__in=('AS','PS','FP','TE'))
-            if atributos:
-                atributo = atributos.first()
-                permiso = Permiso()
-                permiso.individuo = individuo
-                permiso.tipo = 'P'
-                permiso.localidad = individuo.domicilio_actual.localidad
-                permiso.begda = timezone.now()
-                permiso.endda = LAST_DATETIME
-                permiso.aclaracion = "Permiso Permanente: " + atributo.get_tipo_display()
-                permiso.save()
+        permiso = buscar_permiso(individuo)
         #Damos respuesta
-        logger.info("Exito")
-        return JsonResponse(
-            {
-                "action": "get_salvoconducto",
-                "realizado": True,
-                "tipo_permiso": permiso.get_tipo_display(),
-                "fecha_inicio": permiso.begda.date(),
-                "hora_inicio": permiso.begda.time(),
-                "fecha_fin": permiso.endda.date(),
-                "hora_fin": permiso.endda.time(),
-                "imagen": individuo.get_foto(),
-                "qr": individuo.get_qr(),
-                "texto": permiso.aclaracion,
-
-            },
-            safe=False
-        )
+        return json_permiso(permiso, "get_salvoconducto")
     except Exception as e:
-        logger.info("Falla: "+str(e))
-        return JsonResponse(
-            {
-                "action":"get_salvoconducto",
-                "realizado": False,
-                "error": str(e),
-                "error_contexto": str(e.__context__),
-                "error_traceback": str(traceback.format_exc()),
-            },
-            safe=False,
-            status=400,
-        )
+        return json_error(e, "get_salvoconducto", logger)
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def control_salvoconducto(request):
+    try:
+        data = None
+        #Recibimos el json
+        data = json.loads(request.body.decode("utf-8"))
+        logger.info("\ncontrol_salvoconducto:"+str(timezone.now())+"|"+str(data))
+        #Agarramos el dni
+        num_doc = str(data["dni_operador"]).upper()
+        #Obtenemos el operador
+        operador = Operador.objects.get(num_doc=num_doc)
+        #Leemos QR y parceamos
+        qr_code = data["qr_code"]
+        if "@" in qr_code:#Es un DNI
+            dni_qr = qr_code.split('@')[4]
+            #Podriamos procesar el resto de la info del tipo
+            #Fecha de Nacimiento
+        elif "-" in qr_code:#Es permiso de App
+            dni_qr = qr_code.split('-')[1]
+        #Buscamos al individuo en la db
+        individuo = Individuo.objects.select_related('appdata').get(num_doc=dni_qr)
+        #ACA CHEQUEAMOS TOKEN
+        
+        #Guardamos registro de control
+        geopos = GeoPosicion()
+        geopos.individuo = individuo
+        geopos.tipo = "CG"
+        geopos.latitud = data["latitud"]
+        geopos.longitud = data["longitud"]
+        geopos.aclaracion = "Control de Salvoconducto"
+        geopos.operador = operador
+        geopos.save()
+        #Buscamos permiso
+        permiso = buscar_permiso(individuo, activo=True)
+        #Damos respuesta
+        return json_permiso(permiso, "control_salvoconducto")
+    except Exception as e:
+        try:#Si logramos generar GeoPos del Control > Marcamos al infractor
+            geopos.alerta = True#La marcamos como alerta
+            geopos.save()
+        except:
+            pass
+        return json_error(e, "control_salvoconducto", logger)
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -797,33 +724,21 @@ def notificacion(request):
             num_doc = str(data["dni_individuo"]).upper()
         #Buscamos al individuo en la db
         individuo = Individuo.objects.select_related('appdata', 'appdata__notificacion').get(num_doc=num_doc)
-        notificacion = individuo.appdata.notificacion
+        notif = individuo.appdata.notificacion
         #Damos respuesta
-        logger.info("Exito")
         return JsonResponse(
             {
-                "action": "notificacion",
+                "accion": "notificacion",
                 "realizado": True,
                 "message":
                 {
-                    "title": notificacion.titulo,
-                    "body": notificacion.mensaje,
+                    "title": notif.titulo,
+                    "body": notif.mensaje,
                 },
-                "action": notificacion.get_accion_display(),
+                "action": notif.get_accion_display(),
 
             },
             safe=False
         )
     except Exception as e:
-        logger.info("Falla: "+str(e))
-        return JsonResponse(
-            {
-                "action":"notificacion",
-                "realizado": False,
-                "error": str(e),
-                "error_contexto": str(e.__context__),
-                "error_traceback": str(traceback.format_exc()),
-            },
-            safe=False,
-            status=400,
-        )
+        return json_error(e, "notificacion", logger)

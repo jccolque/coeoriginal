@@ -23,17 +23,16 @@
                                 <td>{{permiso.individuo.apellidos}}, {{permiso.individuo.nombres}}</td>
                                 <td>{{permiso.individuo.situacion_actual}}</td>
                                 <td>{{permiso.individuo.domicilio_actual}}</td>
-                                <td>{{permiso.begda|date:"d/m H:i"}} a {{permiso.endda|date:"H:i"}}</td>
+                                <td>{{permiso.begda|date:"d/m H:i"}}<br>{{permiso.endda|date:"d/m H:i"}}</td>
                                 <td>{{permiso.get_tipo_display}}</td>
                                 <td class="geo_aclaracion">{{permiso.aclaracion}}</td>
                                 <td>
                                     <a href="{% url 'informacion:ver_individuo' individuo_id=permiso.individuo.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/access_card.png' %}">
                                     </a>
-                                    <a href="{% url 'permisos_urls:ver_permiso' permiso_id=permiso.id %}" target="_blank">
+                                    <a href="{% url 'permisos_urls:ver_permiso' permiso_id=permiso.id individuo_id=permiso.individuo.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/lupa.png' %}">
                                     </a>
-
                                     <a href="{% url 'permisos_urls:eliminar_permiso' permiso_id=permiso.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/delete.png' %}">
                                     </a>

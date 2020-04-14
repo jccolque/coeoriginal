@@ -37,7 +37,6 @@ from .forms import BuscadorIndividuosForm, TrasladarIndividuoForm
 from .forms import DomicilioForm, AtributoForm, SintomaForm
 from .forms import SituacionForm, RelacionForm, SeguimientoForm
 from .forms import SearchIndividuoForm, SearchVehiculoForm
-from .forms import PermisoForm, BuscarPermiso, DatosForm, FotoForm
 from .forms import DocumentoForm, SignosVitalesForm
 from .tasks import guardar_same, guardar_epidemiologia
 from .tasks import guardar_padron_individuos, guardar_padron_domicilios
@@ -443,7 +442,7 @@ def arbol_relaciones(request, individuo_id):
 #Individuos
 @permission_required('operadores.individuos')
 def buscador_individuos(request):
-    form = BuscadorIndividuosForm()   
+    form = BuscadorIndividuosForm()
     if request.method == "POST":
         form = BuscadorIndividuosForm(request.POST)
         if form.is_valid():
@@ -461,6 +460,7 @@ def buscador_individuos(request):
                 individuos = individuos.filter(domicilios__localidad=form.cleaned_data['localidad'])
             #Optimizamos las busquedas a la db
             individuos = individuos.select_related('nacionalidad', 'origen', 'destino', )
+            individuos = individuos.select_related('situacion_actual', 'domicilio_actual', 'domicilio_actual__localidad')
             individuos = individuos.prefetch_related('atributos', 'sintomas', 'situaciones', 'relaciones')
             individuos = individuos.prefetch_related('atributos', 'sintomas')
             #Eliminamos repetidos

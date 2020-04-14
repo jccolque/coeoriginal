@@ -4,27 +4,10 @@
 
 {% block content %}
     <div class="container">
-        <div class="row formulario_custom">
-            <div class="col-sm-7">
-                <h2>Bienvenido al sistema de Permisos Temporarios</h2>
-                <p>Texto explicativo</p>
-                <p>Texto explicativo</p>
-                <p>Texto explicativo</p>
-                <p>Texto explicativo</p>
-                <p>Texto explicativo</p>
-                <p>Texto explicativo</p>
-                <p>Texto explicativo</p>
-                <p>Texto explicativo</p>
-                <p>Texto explicativo</p>
-                <p>Texto explicativo</p>
-                <hr>
-                <p>Aclaraciones</p>
-                <p>Aclaraciones</p>
-                <p>Aclaraciones</p>
-            </div>
-            <div class="col-sm-5">
+        <div class="row">
+            <div class="col-sm-4 col-sm-offset-4 formulario_custom">
                 <form method="post" enctype="multipart/form-data">
-                    <h2>Ingrese sus Datos</h2>
+                    <h2><b>Ingrese sus Datos</b></h2>
                     {% csrf_token %}
                     <!-- Mostramos errores -->
                     <p>{{ form.non_field_errors }}</p>
