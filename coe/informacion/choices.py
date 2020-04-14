@@ -148,7 +148,9 @@ TIPO_GEOPOS = (
 
 TIPO_ACCION_NOTIFICACION = (
     ('SM', 'showMessage'),
+    ('BT', 'beginTracking'),
     ('SL', 'sendLocation'),
+    ('ST', 'stopTracking'),
 )
 
 TIPO_ICONO = (
