@@ -38,7 +38,7 @@ def guardar_notificacion(request):
     form = AppNotificationForm()
     if request.method == 'POST':
         form = AppNotificationForm(request.POST)
-        if form.is_valid:
+        if form.is_valid():
             form.save()
             return render(request, "extras/resultado.html", {"texto": "Se Guardo el mensaje deseado."})
     return render(request, "extras/generic_form.html", {'titulo': "Guardar Notificacion Local", 'form': form, 'boton': "Guardar", })
