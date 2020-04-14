@@ -597,16 +597,6 @@ class _MyLoginPageState extends State<MyLoginPage> {
     });
   }
 
-  Future<bool> _getImageSharedPref() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final imagen = prefs.getBool('imagenPerfil');
-  }
-
-  Future<void> _cleanSharedPreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-  }
-
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void _setLatitudLongitud() async {
@@ -665,6 +655,10 @@ class _MyLoginPageState extends State<MyLoginPage> {
   Future<void> _setPermisoOtorgadoSharedPref(RespuestaPermisoModel permisoOtorgado) async {
     DateFormat dateFormat = DateFormat("dd/MM/yyyy");
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('nombreCompletoOtorgado', permisoOtorgado.nombreCompleto);
+    await prefs.setString('domicilioOtorgado', permisoOtorgado.domicilio);
+    await prefs.setString('textoOtorgado', permisoOtorgado.texto);
+    await prefs.setBool('controlOtorgado', permisoOtorgado.control);
     await prefs.setString('imagenPerfilOtorgada', permisoOtorgado.imagen);
     await prefs.setString('qrOtorgado', permisoOtorgado.qr);
     await prefs.setString('fechaInicioOtorgado', dateFormat.format(permisoOtorgado.fechaInicio));

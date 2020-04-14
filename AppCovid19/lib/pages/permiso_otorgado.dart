@@ -1,7 +1,10 @@
+import 'package:barcode_scan/barcode_scan.dart';
+import 'package:covidjujuy_app/src/model/qr_envio_model.dart';
 import 'package:covidjujuy_app/src/util/prevent_back.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gps/gps.dart';
 
 class PermisoOtorgado extends StatefulWidget {
   @override
@@ -16,30 +19,106 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
   final _nombreController = TextEditingController();
   final _apellidoController = TextEditingController();
   final _domicilioController = TextEditingController();
+  String _nombreCompleto;
+  String _domicilioCompleto;
+  String _textoCompleto;
+  bool _controlOtorgado;
+  int _dni;
   String _imagen;
   String _qr;
   String _fechaInicio;
   String _fechaFin;
   String _horaInicio;
   String _horaFin;
-  String _texto;
+  int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
 //    Navigator.of(context).push(PreventBackRoute());
-    return WillPopScope(
-      onWillPop: () => Future.value(false),
-      child: Scaffold(
-        floatingActionButton: volver(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        body: Stack(
-          children: <Widget>[
-            _crearFondo(context),
-            _permisoCard(context),
-          ],
+    if(_controlOtorgado == true){
+      return WillPopScope(
+        onWillPop: () => Future.value(false),
+        child: Scaffold(
+          body: Stack(
+            children: <Widget>[
+              _crearFondo(context),
+              _permisoCard(context),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: bottomNavigationBar,
+              ),
+            ],
+          ),
         ),
+      );
+    } else {
+      return WillPopScope(
+        onWillPop: () => Future.value(false),
+        child: Scaffold(
+          floatingActionButton: volver(),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+          body: Stack(
+            children: <Widget>[
+              _crearFondo(context),
+              _permisoCard(context),
+            ],
+          ),
+        ),
+      );
+    }
+//    return WillPopScope(
+//      onWillPop: () => Future.value(false),
+//      child: Scaffold(
+//        body: Stack(
+//          children: <Widget>[
+//            _crearFondo(context),
+//            _permisoCard(context),
+//            Positioned(
+//              left: 0,
+//              right: 0,
+//              bottom: 0,
+//              child: bottomNavigationBar,
+//            ),
+//          ],
+//        ),
+//      ),
+//    );
+  }
+
+  Widget get bottomNavigationBar {
+    return ClipRRect(
+      borderRadius: BorderRadius.only(
+        topRight: Radius.circular(40),
+        topLeft: Radius.circular(40),
+      ),
+      child: BottomNavigationBar(
+        onTap: onTabTapped,
+        currentIndex: _currentIndex,
+        backgroundColor: Colors.lightBlue,
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.camera_alt), title: Text('QR')),
+          BottomNavigationBarItem(icon: Icon(Icons.arrow_back), title: Text('Volver')),
+        ],
+        unselectedItemColor: Colors.white,
+        selectedItemColor: Colors.white,
+        showUnselectedLabels: true,
       ),
     );
+  }
+
+  void onTabTapped(int index) {
+    print(index);
+    if (index == 1) {
+      Navigator.of(context).pushNamed('/main');
+    }
+    if (index == 0) {
+      _scanQR();
+    }
+    setState(() {
+      _currentIndex = index;
+    });
   }
 
   @override
@@ -47,12 +126,10 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
     _getPermisoSharedPref().then((val) {
       print('cargo todo');
     });
-
   }
 
   Widget _crearFondo(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
 
     final fondoGradient = Container(
       height: double.infinity,
@@ -68,9 +145,7 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
     final circulo = Container(
       width: 100.0,
       height: 100.0,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(100.0),
-          color: Color.fromRGBO(255, 255, 255, 0.05)),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(100.0), color: Color.fromRGBO(255, 255, 255, 0.05)),
     );
 
     return Stack(
@@ -93,8 +168,24 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
       },
       tooltip: 'Volver',
       child: Icon(Icons.arrow_back),
-
     );
+  }
+
+  _scanQR() async {
+    String futureString;
+
+    try {
+      futureString = await BarcodeScanner.scan();
+      print('Codigo escaneado');
+      print(futureString);
+      var latlng = await Gps.currentGps().then((coor) {
+        final qr =
+            QrEnvioModel(qrCode: futureString, dniOperador: _dni.toString(), latitud: double.parse(coor.lat), longitud: double.parse(coor.lng));
+
+      });
+    } catch (e) {
+      futureString = e.toString();
+    }
   }
 
   Widget _permisoCard(BuildContext context) {
@@ -112,13 +203,7 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(5.0),
-                boxShadow: <BoxShadow>[
-                  BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 3.0,
-                      offset: Offset(0.0, 5.0),
-                      spreadRadius: 3.0)
-                ]),
+                boxShadow: <BoxShadow>[BoxShadow(color: Colors.black26, blurRadius: 3.0, offset: Offset(0.0, 5.0), spreadRadius: 3.0)]),
             child: Column(
               children: <Widget>[
                 Container(
@@ -168,6 +253,11 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
 
   Future<bool> _getPermisoSharedPref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    final startupDniNumber = prefs.getInt('savedDniNumber');
+    final nombreCompleto = await prefs.getString('nombreCompletoOtorgado');
+    final domicilioCompleto = await prefs.getString('domicilioOtorgado');
+    final textoCompleto = await prefs.getString('textoOtorgado');
+    final controlOtorgado = await prefs.getBool('controlOtorgado');
     final nombre = await prefs.getString('nombreGuardado');
     final apellido = await prefs.getString('apellidoGuardado');
     final domicilio = await prefs.getString('domicilioGuardado');
@@ -182,6 +272,11 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
     final texto = await prefs.getString('textoOtorgado');
 
     setState(() {
+      _nombreCompleto = nombreCompleto;
+      _domicilioCompleto =domicilioCompleto;
+      _textoCompleto = textoCompleto;
+      _controlOtorgado = controlOtorgado;
+      _dni = startupDniNumber;
       _nombreController.text = nombre;
       _apellidoController.text = apellido;
       _domicilioController.text = domicilio;
@@ -191,7 +286,6 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
       _fechaFin = fechaFin;
       _horaInicio = horaInicio.substring(0, 5);
       _horaFin = horaFin.substring(0, 5);
-      _texto = texto;
     });
 
     return true;
@@ -216,7 +310,7 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
               flex: 1,
               child: FadeInImage(
                 image: NetworkImage('http://coe.jujuy.gob.ar${_qr}'),
-                placeholder:AssetImage('assets/graphics/no-image.jpg'),
+                placeholder: AssetImage('assets/graphics/no-image.jpg'),
                 fit: BoxFit.cover,
               ),
             )
@@ -226,19 +320,14 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
 
   Widget _crearNombreApellido(BuildContext context) {
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: 20.0),
+        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            TextField(
-              controller: _nombreController,
-              enabled: false,
-            ),
-            TextField(
-              controller: _apellidoController,
-              enabled: false,
-            ),
+          Text(_nombreCompleto, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+            SizedBox(height: 10,),
+            Text(_textoCompleto),
           ],
         ));
   }
@@ -246,12 +335,12 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
   Widget _crearDomicilio(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Container(
-      width: size.width,
+        width: size.width,
         padding: EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('Domicilio: ${_domicilioController.text}'),
+            Text('Domicilio: ${_domicilioCompleto}'),
 //            Text('Barrio: '),
           ],
         ));

@@ -3,53 +3,65 @@
 /// @author JLopez
 ///
 class RespuestaPermisoModel {
-  bool realizado;
-  DateTime fechaFin;
-  String texto;
+  String action;
+  String domicilio;
+  String nombreCompleto;
   String horaFin;
+  String texto;
   String imagen;
   String tipoPermiso;
-  String qr;
-  String action;
   DateTime fechaInicio;
+  DateTime fechaFin;
+  bool control;
+  bool realizado;
   String horaInicio;
+  String qr;
 
   RespuestaPermisoModel({
-    this.realizado,
-    this.fechaFin,
-    this.texto,
+    this.action,
+    this.domicilio,
+    this.nombreCompleto,
     this.horaFin,
+    this.texto,
     this.imagen,
     this.tipoPermiso,
-    this.qr,
-    this.action,
     this.fechaInicio,
+    this.fechaFin,
+    this.control,
+    this.realizado,
     this.horaInicio,
+    this.qr,
   });
 
   factory RespuestaPermisoModel.fromJson(Map<String, dynamic> json) => RespuestaPermisoModel(
-    realizado: json["realizado"],
-    fechaFin: DateTime.parse(json["fecha_fin"]),
-    texto: json["texto"],
+    action: json["action"],
+    domicilio: json["domicilio"],
+    nombreCompleto: json["nombre_completo"],
     horaFin: json["hora_fin"],
+    texto: json["texto"],
     imagen: json["imagen"],
     tipoPermiso: json["tipo_permiso"],
-    qr: json["qr"],
-    action: json["action"],
     fechaInicio: DateTime.parse(json["fecha_inicio"]),
+    fechaFin: DateTime.parse(json["fecha_fin"]),
+    control: json["control"],
+    realizado: json["realizado"],
     horaInicio: json["hora_inicio"],
+    qr: json["qr"],
   );
 
   Map<String, dynamic> toJson() => {
-    "realizado": realizado,
-    "fecha_fin": "${fechaFin.year.toString().padLeft(4, '0')}-${fechaFin.month.toString().padLeft(2, '0')}-${fechaFin.day.toString().padLeft(2, '0')}",
-    "texto": texto,
+    "action": action,
+    "domicilio": domicilio,
+    "nombre_completo": nombreCompleto,
     "hora_fin": horaFin,
+    "texto": texto,
     "imagen": imagen,
     "tipo_permiso": tipoPermiso,
-    "qr": qr,
-    "action": action,
     "fecha_inicio": "${fechaInicio.year.toString().padLeft(4, '0')}-${fechaInicio.month.toString().padLeft(2, '0')}-${fechaInicio.day.toString().padLeft(2, '0')}",
+    "fecha_fin": "${fechaFin.year.toString().padLeft(4, '0')}-${fechaFin.month.toString().padLeft(2, '0')}-${fechaFin.day.toString().padLeft(2, '0')}",
+    "control": control,
+    "realizado": realizado,
     "hora_inicio": horaInicio,
+    "qr": qr,
   };
 }
