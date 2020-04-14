@@ -129,6 +129,7 @@ def json_permiso(permiso, vista):
                 "action": vista,
                 "realizado": True,
                 "tipo_permiso": permiso.get_tipo_display(),
+                "dni_individuo": permiso.individuo.num_doc,
                 "nombre_completo": permiso.individuo.apellidos + ', ' + permiso.individuo.nombres,
                 "domicilio": permiso.individuo.domicilio_actual.nombre_corto(),
                 "fecha_inicio": permiso.begda.date(),
