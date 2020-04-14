@@ -221,3 +221,13 @@ class DocumentoForm(forms.ModelForm):
         widgets = {
             'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
         }
+
+class ReporteHotelesForm(forms.Form):
+    begda = forms.DateField(label="Ingreso Minimo", required=True, 
+        initial=timezone.now(),
+        widget=XDSoftDatePickerInput()
+    )
+    endda = forms.DateField(label="Ingreso Maxima", required=True, 
+        initial=timezone.now(),
+        widget=XDSoftDatePickerInput()
+    )

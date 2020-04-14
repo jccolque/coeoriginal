@@ -38,6 +38,8 @@ from .forms import DomicilioForm, AtributoForm, SintomaForm
 from .forms import SituacionForm, RelacionForm, SeguimientoForm
 from .forms import SearchIndividuoForm, SearchVehiculoForm
 from .forms import DocumentoForm, SignosVitalesForm
+from .forms import ReporteHotelesForm
+from .permisos_form import FotoForm
 from .tasks import guardar_same, guardar_epidemiologia
 from .tasks import guardar_padron_individuos, guardar_padron_domicilios
 from .functions import obtener_relacionados
@@ -966,6 +968,33 @@ def reporte_basico(request):
         'atributos': atributos, 
         'sintomas': sintomas,
     })
+
+@permission_required('operadores.reportes')
+def lista_ingresos_hoteles(request):
+    form = ReporteHotelesForm()
+    if request.method == "POST":
+        form = ReporteHotelesForm(request.POST)
+        if form.is_valid():
+            begda = form.cleaned_data['begda']
+            endda = form.cleaned_data['endda']
+            individuos = Individuo.objects.filter(
+                domicilio_actual__aislamiento=True, 
+                domicilio_actual__fecha__date__range=(begda, endda)
+            )
+            individuos = Individuo.objects.exclude(domicilio_actual__ubicacion=None)
+            #Optimizamos
+            individuos = individuos.select_related('nacionalidad')
+            individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad')
+            individuos = individuos.select_related('situacion_actual')
+            individuos = individuos.prefetch_related('domicilios', 'domicilios__localidad')
+            #Ordenamos
+            individuos = individuos.order_by('domicilio_actual__fecha')
+            return render(request, "ingresos_hoteles.html", {
+                'individuos': individuos,
+                'begda': begda, 'endda': endda,
+                'has_table': True,
+            })
+    return render(request, "extras/generic_form.html", {'titulo': "Reporte de Ingreso a Hoteles", 'form': form, 'boton': "Buscar", })
 
 #CARGAS MASIVAS
 @superuser_required
