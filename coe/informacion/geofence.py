@@ -106,7 +106,7 @@ def validar_permiso(individuo, tipo_permiso, permiso=None):
     #Chequeamos que no este en cuarentena obligatoria o aislado
     if individuo.situacion_actual.conducta in ('D', 'E'):
         permiso.aprobar = False
-        permiso.aclaracion = "Usted se encuentra bajo " + individuo.situacion_actual.get_conducta_display() + " Por favor mantengase en su Hogar."
+        permiso.aclaracion = "Usted se encuentra bajo " + individuo.situacion_actual.get_conducta_display() + " Mantengase en su Hogar."
     else:
         #Chequeamos que no tenga un permiso hace menos de 3 dias
         cooldown = timezone.now() - timedelta(days=3)

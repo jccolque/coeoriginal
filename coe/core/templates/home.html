@@ -19,7 +19,19 @@
                             </a>
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-5">
+                        <a href="{% url 'app_urls:download_app' %}">
+                            <img class="fotos" src="{% static 'img/reclutamiento.jpeg' %}">
+                        </a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-7">
+                        <a href="{% url 'inscripciones:cargar_inscripcion' %}">
+                            <img class="fotos" src="{% static 'img/reclutamiento.jpeg' %}">
+                        </a>
+                    </div>
+                    <div class="col-sm-5">
                         <div class="elem small full-size-img">
                             <a href="http://coe.jujuy.gob.ar/noticias/49" target="_blank">
                                 <img class="fotos" src="{% static 'img/transporte.jpeg' %}">
@@ -31,13 +43,7 @@
                             </a>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="elem big">
-                        <a href="{% url 'inscripciones:cargar_inscripcion' %}">
-                            <img class="fotos" src="{% static 'img/reclutamiento.jpeg' %}">
-                        </a>
-                    </div>
+                    
                 </div>
             </div>
         </div>

@@ -977,11 +977,12 @@ def lista_ingresos_hoteles(request):
         if form.is_valid():
             begda = form.cleaned_data['begda']
             endda = form.cleaned_data['endda']
-            individuos = Individuo.objects.filter(
-                domicilio_actual__aislamiento=True, 
-                domicilio_actual__fecha__date__range=(begda, endda)
-            )
-            individuos = Individuo.objects.exclude(domicilio_actual__ubicacion=None)
+            #Filtramos esos domicilios
+            domicilios = Domicilio.objects.filter(aislamiento=True)
+            domicilios = domicilios.filter(fecha__date__range=(begda, endda))
+            domicilios = domicilios.exclude(ubicacion=None)
+            #Con esos domicilios buscamos los individuos
+            individuos = Individuo.objects.filter(domicilios__in=domicilios)
             #Optimizamos
             individuos = individuos.select_related('nacionalidad')
             individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad')

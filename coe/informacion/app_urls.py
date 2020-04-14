@@ -1,8 +1,11 @@
 #imports django
 from django.urls import path
+from django.conf.urls import url
 #Import de modulos personales
 from . import apps_views as apps_views
 from . import app_apis as app_apis
+from . import autocomplete
+
 
 #Definimos paths de la app
 app_name = 'app_urls'
@@ -21,4 +24,9 @@ urlpatterns = [
     #Testing
     path('send/notificacion', apps_views.enviar_notificacion, name='enviar_notificacion'),
     path('save/notificacion', apps_views.guardar_notificacion, name='enviar_notificacion'),
+    #Descarga
+    path('app', apps_views.download_app, name='download_app'),
+    #Autocomplete:
+    url(r'^appdata-autocomplete/$', autocomplete.AppDataAutocomplete.as_view(), name='appdata-autocomplete'),
+    url(r'^dispositivo-autocomplete/$', autocomplete.DispositivoAutocomplete.as_view(), name='dispositivo-autocomplete'),
 ]

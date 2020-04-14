@@ -2,6 +2,7 @@
 from django import forms
 #Imports extra
 from fcm_django.models import FCMDevice
+from dal import autocomplete
 #Imports de la app
 from .choices import TIPO_ICONO
 from .models import AppNotificacion
@@ -12,9 +13,12 @@ class AppNotificationForm(forms.ModelForm):
         model = AppNotificacion
         fields= '__all__'
         exclude = ('fecha', )
+        widgets = {
+            'appdata': autocomplete.ModelSelect2(url='app_urls:appdata-autocomplete'),
+        }
 
 class SendNotificationForm(forms.Form):
-    dispositivo = forms.ModelChoiceField(queryset=FCMDevice.objects.all())
+    dispositivo = forms.ModelChoiceField(queryset=FCMDevice.objects.all(), widget=autocomplete.ModelSelect2(url='app_urls:dispositivo-autocomplete'))
     titulo = forms.CharField(label="Titulo", required=True)
     texto = forms.CharField(label="Texto", widget=forms.Textarea())
     icono = forms.ChoiceField(choices=TIPO_ICONO, required=True)

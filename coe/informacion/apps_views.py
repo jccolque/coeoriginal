@@ -1,5 +1,5 @@
 #Imports Django
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.admin.views.decorators import staff_member_required
 #Imports extras
 from fcm_django.models import FCMDevice
@@ -7,6 +7,9 @@ from fcm_django.models import FCMDevice
 from .app_forms import SendNotificationForm, AppNotificationForm
 
 #NUESTRAS VISTAS:
+def download_app(request):
+    return redirect('https://play.google.com/store/apps/details?id=com.ga.covidjujuy_app')
+
 #Enviar notificaciones
 @staff_member_required
 def enviar_notificacion(request):

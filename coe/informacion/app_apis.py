@@ -444,13 +444,16 @@ def encuesta(request):
         individuo.appdata.estado = [0,"R","A","V"][data["riesgo"]]
         individuo.appdata.save()
         #Cargamos nueva situacion
+        situacion = Situacion()
+        situacion.individuo = individuo
         if data["riesgo"] > 3:
-            Situacion.objects.filter(individuo=individuo, aclaracion="AUTODIAGNOSTICO").delete()
-            situacion = Situacion()
-            situacion.individuo = individuo
             situacion.estado = 40
             situacion.conducta = 'B'
-            situacion.aclaracion = "AUTODIAGNOSTICO"
+        #Guardamos si o si
+        situacion.aclaracion = "AUTODIAGNOSTICO"
+        if not individuo.situacion_actual:
+            situacion.save()
+        elif individuo.situacion_actual.conducta in ('A', 'B'):
             situacion.save()
         #Geoposicion
         if data["latitud"] and data["longitud"]:
@@ -747,7 +750,8 @@ def notificacion(request):
             num_doc = str(data["dni_individuo"]).upper()
         #Buscamos al individuo en la db
         individuo = Individuo.objects.select_related('appdata', 'appdata__notificacion').get(num_doc=num_doc)
-        notif = individuo.appdata.notificacion
+        notif = copy.copy(individuo.appdata.notificacion)
+        individuo.appdata.notificacion.delete()
         #Damos respuesta
         return JsonResponse(
             {
