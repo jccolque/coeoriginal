@@ -71,7 +71,7 @@ class _PermisoOtorgadoControlState extends State<PermisoOtorgadoControl> {
           gradient: LinearGradient(
         begin: Alignment.bottomCenter,
         end: Alignment.topCenter,
-        colors: [Colors.blue[900], Colors.lightBlue],
+        colors: [Colors.orange[400], Colors.deepOrange],
       )),
     );
 
@@ -129,11 +129,11 @@ class _PermisoOtorgadoControlState extends State<PermisoOtorgadoControl> {
 //                      loader(),
                       Text(
                         'Control de Permiso',
-                        style: TextStyle(color: Colors.green, fontSize: 20.0),
+                        style: TextStyle(color: Colors.blue, fontSize: 30.0),
                       ),
 //
                       SizedBox(
-                        height: 10.0,
+                        height: 30.0,
                         width: double.infinity,
                       ),
                       _crearImagen(context),
