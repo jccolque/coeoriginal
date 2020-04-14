@@ -113,6 +113,9 @@ def validar_permiso(individuo, tipo_permiso, permiso=None):
                     permiso.aprobar = False
                     permiso.aclaracion = relacionado.nombres + ' ' + relacionado.apellidos + ' Ya obtuvo un permiso en los ultimos dias.' 
     #Devolvemos todo lo procesado
+    permiso.aprobar = False
+    permiso.aclaracion = "Esta Funcionalidad aun no fue Aprobada. Sigue Vigente Permiso Nacional."
+    #Funcionar
     return permiso
 
 #Aca ordenamos por zonas y tiempos
