@@ -16,7 +16,7 @@ def enviar_notificacion(request):
     form = SendNotificationForm()
     if request.method == 'POST':
         form = SendNotificationForm(request.POST)
-        if form.is_valid:
+        if form.is_valid():
             try:
                 device = FCMDevice.objects.get(pk=request.POST['dispositivo'])
                 device.send_message(
