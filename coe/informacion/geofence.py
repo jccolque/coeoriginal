@@ -66,7 +66,7 @@ def controlar_distancia(nueva_geopos):
 #Salvoconducos
 def buscar_permiso(individuo, activo=False):
     permisos = Permiso.objects.filter(individuo=individuo, endda__gt=timezone.now())
-    permisos = permisos.select_related('individuo')
+    permisos = permisos.select_related('individuo', 'individuo__domicilio_actual')
     if activo:#Chequear que este activo
         permisos = permisos.filter(begda__lt=timezone.now())
     permiso = permisos.first()
@@ -82,6 +82,7 @@ def buscar_permiso(individuo, activo=False):
             permiso.begda = timezone.now()
             permiso.endda = LAST_DATETIME
             permiso.aclaracion = "Permiso Permanente: " + atributo.get_tipo_display()
+            permiso.control = True
             permiso.save()
     return permiso
 
@@ -90,6 +91,7 @@ def validar_permiso(individuo, tipo_permiso):
     #Inicializamos permiso:
     permiso = Permiso()
     permiso.aprobar = True
+    permiso.controlador = individuo.controlador_salvoconducto()
     #REALIZAR TODA LA LOGICA
     #Chequeamos que no este en cuarentena obligatoria o aislado
     if individuo.situacion_actual.conducta in ('D', 'E'):
@@ -113,7 +115,7 @@ def validar_permiso(individuo, tipo_permiso):
     return permiso
 
 #Aca ordenamos por zonas y tiempos
-def definir_fechas(permiso):
+def definir_fechas(permiso, fecha_ideal):
     #Agregar Control DNI por dias
     #Aca tenemos que poner los horarios de comercio/fabricas
     #Aca tenemos que poner controles por zona (Podriamos usar su ultima posicion gps conocida)
@@ -127,12 +129,15 @@ def json_permiso(permiso, vista):
                 "action": vista,
                 "realizado": True,
                 "tipo_permiso": permiso.get_tipo_display(),
+                "nombre_completo": permiso.individuo.apellidos + ', ' + permiso.individuo.nombres,
+                "domicilio": permiso.individuo.domicilio_actual.nombre_corto(),
                 "fecha_inicio": permiso.begda.date(),
                 "hora_inicio": permiso.begda.time(),
                 "fecha_fin": permiso.endda.date(),
                 "hora_fin": permiso.endda.time(),
                 "imagen": permiso.individuo.get_foto(),
                 "qr": permiso.individuo.get_qr(),
+                "control": permiso.controlador,
                 "texto": permiso.aclaracion,
 
             },

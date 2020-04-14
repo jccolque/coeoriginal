@@ -184,6 +184,7 @@ def AppConfig(request):
                     "imagen": "url",
                     "qr": "url",
                     "texto": "str: leyenda de permiso autorizado",
+                    "control": "bool: Si puede controlar otros permisos",
                     "error": "str (Solo si hay errores/rechaza pedido)",
                 },
             },
@@ -211,6 +212,7 @@ def AppConfig(request):
                     "imagen": "url",
                     "qr": "url",
                     "texto": "str: leyenda de permiso autorizado",
+                    "control": "bool: Si puede controlar otros permisos",
                     "error": "str (Solo si hay errores/rechaza pedido)",
                 },
                 "parametros":
@@ -592,11 +594,9 @@ def pedir_salvoconducto(request):
         #ACA CHEQUEAMOS TOKEN
         
         #Trabajamos
-        #Chequear si no es policia, salud, funcionario >Permiso ilimitado.
-            #RESPONDER CON FULL GREEN
         #Obtenemos datos del pedido de permiso:
         permiso = data["tipo_permiso"]
-        fecha = timezone.datetime(
+        fecha_ideal = timezone.datetime(
             int(data["fecha_ideal"][0:4]),
             int(data["fecha_ideal"][4:6]),
             int(data["fecha_ideal"][6:8]),
@@ -612,7 +612,7 @@ def pedir_salvoconducto(request):
             permiso.localidad = individuo.domicilio_actual.localidad
             permiso.aclaracion = "Requerido Via App."
             #Generamos las fechas ideales
-            permiso = definir_fechas(permiso)#Genera begda y endda
+            permiso = definir_fechas(permiso, fecha_ideal)#Genera begda y endda
             permiso.save()
             #Si todo salio bien
             return json_permiso(permiso, "salvoconducto")

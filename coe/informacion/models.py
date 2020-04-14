@@ -158,6 +158,8 @@ class Individuo(models.Model):
             return self.qrpath
     def tracking(self):
         return self.geoposiciones.filter(tipo='ST').exists()
+    def controlador_salvoconducto(self):
+        return self.permisos.filter(controlador=True, endda__gt=timezone.now()).exists()
 
 class Relacion(models.Model):#Origen del Dato
     tipo = models.CharField('Tipo Relacion', choices=TIPO_RELACION, max_length=2, default='F')
@@ -205,6 +207,8 @@ class Domicilio(models.Model):
             "calle": self.calle,
             "numero": self.numero,
         }
+    def nombre_corto(self):
+        return self.calle + ' ' + self.numero + ', ' + self.localidad.nombre
 
 class GeoPosicion(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="geoposiciones")
@@ -390,6 +394,7 @@ class Permiso(models.Model):
     localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="permisos")
     begda = models.DateTimeField('Inicio Permiso', default=timezone.now)
     endda = models.DateTimeField('Fin Permiso', default=timezone.now)
+    controlador = models.BooleanField(default=False)
     aclaracion = HTMLField(null=True, blank=True)
     def __str__(self):
         return self.get_tipo_display() + str(self.begda)[0:16]

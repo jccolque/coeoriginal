@@ -94,7 +94,8 @@ def ver_tracking(request, individuo_id):
     individuo = Individuo.objects.select_related('situacion_actual', 'domicilio_actual', 'appdata')
     individuo = individuo.get(pk=individuo_id)
     geoposiciones = GeoPosicion.objects.filter(individuo=individuo)
-    geoposiciones = geoposiciones.order_by('fecha')
+    geoposiciones = geoposiciones.select_related('individuo')
+    geoposiciones = geoposiciones.order_by('-fecha')
     return render(request, "geotracking/seguimiento.html", {
         'gmkey': GEOPOSITION_GOOGLE_MAPS_API_KEY,
         'individuo': individuo,
