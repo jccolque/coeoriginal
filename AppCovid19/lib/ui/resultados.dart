@@ -1,18 +1,16 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'formulario.dart';
 import '../main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:connectivity/connectivity.dart';
-import 'package:gps/gps.dart';
-import 'temperatura.dart';
 
 class ResultadosPage extends StatelessWidget {
   final List<int> data;
 
   ResultadosPage({Key key, this.data}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -28,6 +26,7 @@ class ResultadosPage extends StatelessWidget {
 
 class MyResultadosPage extends StatefulWidget {
   final List<int> respuestas;
+
   MyResultadosPage({Key key, this.respuestas}) : super(key: key);
 
   @override
@@ -45,30 +44,28 @@ class Post {
   double latitud;
   double longitud;
 
-  Post({
-    @required this.dni,
-    @required this.pais_riesgo,
-    @required this.contacto_extranjero,
-    @required this.fiebre,
-    @required this.tos,
-    @required this.dif_respirar,
-    @required this.riesgo,
-    @required this.latitud,
-    @required this.longitud
-  });
+  Post(
+      {@required this.dni,
+      @required this.pais_riesgo,
+      @required this.contacto_extranjero,
+      @required this.fiebre,
+      @required this.tos,
+      @required this.dif_respirar,
+      @required this.riesgo,
+      @required this.latitud,
+      @required this.longitud});
 
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
-      dni: json["dni"],
-      pais_riesgo: json["pais_riesgo"],
-      contacto_extranjero: json["contacto_extranjero"],
-      fiebre: json["fiebre"],
-      tos: json["tos"],
-      dif_respirar: json["dif_respirar"],
-      riesgo: json["riesgo"],
-      latitud: json["latitud"],
-      longitud: json["longitud"]
-    );
+        dni: json["dni"],
+        pais_riesgo: json["pais_riesgo"],
+        contacto_extranjero: json["contacto_extranjero"],
+        fiebre: json["fiebre"],
+        tos: json["tos"],
+        dif_respirar: json["dif_respirar"],
+        riesgo: json["riesgo"],
+        latitud: json["latitud"],
+        longitud: json["longitud"]);
   }
 
   Map<String, dynamic> toJson() {
@@ -88,7 +85,6 @@ class Post {
 
 class _MyResultadosPageState extends State<MyResultadosPage> {
   static const API = 'http://coe.jujuy.gob.ar/covid19/encuesta';
-  //static const API = 'https://prueba-3ac16.firebaseio.com/personas.json';
 
   static const headers = {
     'apiKey': '12039i10238129038',
@@ -186,19 +182,17 @@ class _MyResultadosPageState extends State<MyResultadosPage> {
       tos: widget.respuestas[3] == 1 ? true : false,
       dif_respirar: widget.respuestas[4] == 1 ? true : false,
       riesgo: _riesgo,
-      latitud:  _latitud,
+      latitud: _latitud,
       longitud: _longitud,
     );
-    var connectivityResult =
-    await (Connectivity().checkConnectivity());
+    var connectivityResult = await (Connectivity().checkConnectivity());
 
     if (connectivityResult == ConnectivityResult.mobile) {
       final result = await enviarResultados(form);
       setState(() {
         _menuHabilitado = true;
       });
-    } else if (connectivityResult ==
-        ConnectivityResult.wifi) {
+    } else if (connectivityResult == ConnectivityResult.wifi) {
       final result = await enviarResultados(form);
       setState(() {
         _menuHabilitado = true;
@@ -210,11 +204,15 @@ class _MyResultadosPageState extends State<MyResultadosPage> {
     }
   }
 
-  void _getLatitudLongitud() async{
+  void _getLatitudLongitud() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final lat = prefs.getDouble('latitud');
     final long = prefs.getDouble('longitud');
-    //print('latitud '+lat.toString()+', longitud '+long.toString());
+
+    print('*********** latitud');
+    print(lat);
+    print('*********** longitud');
+    print(long);
 
     if (lat == null || long == null) {
       setState(() {
@@ -235,7 +233,6 @@ class _MyResultadosPageState extends State<MyResultadosPage> {
     _getLatitudLongitud();
     _calcularRiesgo();
     //_savedDniQuery();
-
   }
 
   @override
@@ -351,7 +348,9 @@ class _MyResultadosPageState extends State<MyResultadosPage> {
                         borderRadius: BorderRadius.circular(25.0),
                       ),
                       onPressed: () {
-                        Navigator.of(context).pushNamed('/main');
+                        _setEncuestaRealizadaSharedPref(true).then((v) {
+                          Navigator.of(context).pushNamed('/main');
+                        });
                       },
                       child: Text(
                         'Menú principal',
@@ -372,6 +371,11 @@ class _MyResultadosPageState extends State<MyResultadosPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _setEncuestaRealizadaSharedPref(bool permiso) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return await prefs.setBool('encuestaRealizada', permiso);
   }
 
   void showInSnackBar(String value) {

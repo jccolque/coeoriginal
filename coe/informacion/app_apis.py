@@ -444,12 +444,12 @@ def encuesta(request):
         individuo.appdata.estado = [0,"R","A","V"][data["riesgo"]]
         individuo.appdata.save()
         #Cargamos nueva situacion
-        if data["riesgo"] > 1:
+        if data["riesgo"] > 3:
             Situacion.objects.filter(individuo=individuo, aclaracion="AUTODIAGNOSTICO").delete()
             situacion = Situacion()
             situacion.individuo = individuo
             situacion.estado = 40
-            situacion.conducta = "C"
+            situacion.conducta = 'B'
             situacion.aclaracion = "AUTODIAGNOSTICO"
             situacion.save()
         #Geoposicion

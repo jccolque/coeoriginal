@@ -1,18 +1,16 @@
 #Imports Python
 import string
 import random
-import inspect
 #Imports de Django
 from django.contrib.auth.models import User
 from django.dispatch import receiver
-from django.db.models.signals import pre_delete, post_save
+from django.db.models.signals import post_save
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 #Imports del proyecto
 from coe.constantes import NOMAIL
 from coe.settings import SEND_MAIL
 #Imports de la app
-from .apps import CoreConfig
 from .tokens import account_activation_token
 
 #Definimos nuestras señales

@@ -30,10 +30,9 @@
                                     <a href="{% url 'informacion:ver_individuo' individuo_id=permiso.individuo.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/access_card.png' %}">
                                     </a>
-                                    <a href="{% url 'permisos_urls:ver_permiso' permiso_id=permiso.id %}" target="_blank">
+                                    <a href="{% url 'permisos_urls:ver_permiso' permiso_id=permiso.id individuo_id=permiso.individuo.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/lupa.png' %}">
                                     </a>
-
                                     <a href="{% url 'permisos_urls:eliminar_permiso' permiso_id=permiso.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/delete.png' %}">
                                     </a>

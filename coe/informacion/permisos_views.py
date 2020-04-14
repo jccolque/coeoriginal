@@ -4,13 +4,17 @@ from datetime import timedelta
 from django.utils import timezone
 from django.shortcuts import render
 from django.shortcuts import redirect
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 from django.contrib.auth.decorators import permission_required
 #Imports extras
 #Imports del proyecto
+from coe.settings import SEND_MAIL
 from operadores.functions import obtener_operador
 #imports de la app
 from .models import Individuo, Permiso
-from .forms import PermisoForm, BuscarPermiso, DatosForm, FotoForm
+from .geofence import validar_permiso, definir_fechas
+from .permisos_form import PermisoForm, BuscarPermiso, DatosForm, FotoForm
 
 #Publico
 def buscar_permiso(request):
@@ -37,9 +41,24 @@ def pedir_permiso(request, individuo_id, num_doc):
             if form.is_valid():
                 permiso = form.save(commit=False)
                 permiso.individuo = individuo
-                permiso.save()
-                #Enviar email
-                return render(request, "permisos/permiso_entregado.html", {'permiso': permiso, })
+                permiso = validar_permiso(individuo, permiso.tipo, permiso=permiso)
+                if permiso.aprobar:
+                    permiso = definir_fechas(permiso, permiso.begda)
+                    permiso.save()
+                    #Enviar email
+                    to_email = individuo.email
+                    #Preparamos el correo electronico
+                    mail_subject = 'Bienvenido al Sistema Centralizado COE!'
+                    message = render_to_string('emails/permiso_generado.html', {
+                            'individuo': individuo,
+                            'permiso': permiso,
+                        })
+                    #Instanciamos el objeto mail con destinatario
+                    email = EmailMessage(mail_subject, message, to=[to_email])
+                    #Enviamos el correo
+                    if SEND_MAIL:
+                        email.send()
+                return render(request, "permisos/ver_permiso.html", {'permiso': permiso, })  
         return render(request, "permisos/pedir_permiso.html", {'form': form, 'individuo': individuo, })
     except Individuo.DoesNotExist:
         return redirect('permisos_urls:buscar_permiso')
@@ -51,7 +70,7 @@ def completar_datos(request, individuo_id):
         form = DatosForm(request.POST, instance=individuo)
         if form.is_valid():
             form.save()
-            return redirect('permisos_urls:pedir_permiso', individuo_id=individuo.id)
+            return redirect('permisos_urls:pedir_permiso', individuo_id=individuo.id, num_doc=individuo.num_doc)
     return render(request, "extras/generic_form.html", {'titulo': "Corregir/Completar Datos", 'form': form, 'boton': "Guardar", })
 
 def subir_foto(request, individuo_id):
@@ -62,7 +81,7 @@ def subir_foto(request, individuo_id):
         if form.is_valid():
             individuo.fotografia = form.cleaned_data['fotografia']
             individuo.save()
-            return redirect('permisos_urls:pedir_permiso', individuo_id=individuo.id)
+            return redirect('permisos_urls:pedir_permiso', individuo_id=individuo.id, num_doc=individuo.num_doc)
     return render(request, "extras/generic_form.html", {'titulo': "Subir Fotografia", 'form': form, 'boton': "Cargar", })
 
 #Administrar
@@ -89,13 +108,19 @@ def lista_vencidos(request):
     })
 
 @permission_required('operadores.permisos')
-def ver_permiso(request, permiso_id):
+def ver_permiso(request, permiso_id, individuo_id):
     permiso = Permiso.objects.select_related('individuo')
     permiso = permiso.get(pk=permiso_id)
-    return render(request, 'permisos/ver_permiso.html', {
-        'individuo': permiso.individuo,
-        'permiso': permiso,
-    })    
+    if individuo_id == permiso.individuo.id:
+        return render(request, 'permisos/ver_permiso.html', {
+            'individuo': permiso.individuo,
+            'permiso': permiso,
+        })
+    else:
+        return render(request, 'extras/error.html', {
+            'titulo': 'Permiso Inexistente',
+            'error': "El permiso al que intenta acceder no existe.",
+        })
 
 @permission_required('operadores.permisos')
 def eliminar_permiso(request, permiso_id):

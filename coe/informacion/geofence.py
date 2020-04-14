@@ -87,9 +87,10 @@ def buscar_permiso(individuo, activo=False):
     return permiso
 
 #Validamos la posibilidad de otorgar el permiso
-def validar_permiso(individuo, tipo_permiso):
+def validar_permiso(individuo, tipo_permiso, permiso=None):
     #Inicializamos permiso:
-    permiso = Permiso()
+    if not permiso:
+        permiso = Permiso()
     permiso.aprobar = True
     permiso.controlador = individuo.controlador_salvoconducto()
     #REALIZAR TODA LA LOGICA
@@ -98,9 +99,9 @@ def validar_permiso(individuo, tipo_permiso):
         permiso.aprobar = False
         permiso.aclaracion = "Usted se encuentra bajo " + individuo.situacion_actual.get_conducta_display() + " Por favor mantengase en su Hogar."
     else:
-        #Chequeamos que no tenga un permiso hace menos de 3 dias (DEL MISMO TIPO?):
+        #Chequeamos que no tenga un permiso hace menos de 3 dias
         cooldown = timezone.now() - timedelta(days=3)
-        permisos = individuo.permisos.filter(endda__gt=cooldown, tipo=tipo_permiso)
+        permisos = individuo.permisos.filter(endda__gt=cooldown)#, tipo=tipo_permiso)#(DEL MISMO TIPO?):
         if permisos:
             permiso.aprobar = False
             permiso.aclaracion = "Usted recibio un Permiso el dia " + str(permisos.last().endda.date())
