@@ -24,7 +24,7 @@ from .choices import TIPO_PERMISO
 from .models import Individuo, AppData, Domicilio, GeoPosicion
 from .models import Atributo, Sintoma, Situacion, Seguimiento
 from .tokens import TokenGenerator
-from .geofence import controlar_distancia
+from .geofence import controlar_distancia, es_local
 from .geofence import buscar_permiso, validar_permiso, definir_fechas, json_permiso
 
 #Definimos logger
@@ -460,7 +460,8 @@ def encuesta(request):
             geopos.latitud = data["latitud"]
             geopos.longitud = data["longitud"]
             geopos.aclaracion = "AUTODIAGNOSTICO"
-            geopos.save()
+            if es_local(geopos):
+                geopos.save()
         return JsonResponse(
             {
                 "accion": "encuesta",
@@ -521,22 +522,34 @@ def start_tracking(request):
         geopos.latitud = data["latitud"]
         geopos.longitud = data["longitud"]
         geopos.aclaracion = "INICIO TRACKING"
-        geopos.save()
-        #Cargamos Inicio de Seguimiento:
-        Seguimiento.objects.filter(tipo__in=("IT","AT", "FT")).delete()
-        seguimiento = Seguimiento()
-        seguimiento.individuo = individuo
-        seguimiento.tipo = "IT"
-        seguimiento.aclaracion = "INICIO TRACKING: " + str(geopos.latitud)+", "+str(geopos.longitud)
-        seguimiento.save()
-        #Respondemos
-        return JsonResponse(
-            {
-                "accion":"start_tracking",
-                "realizado": True,
-            },
-            safe=False
-        )
+        if es_local(geopos):
+            geopos.save()
+            #Cargamos Inicio de Seguimiento:
+            Seguimiento.objects.filter(tipo__in=("IT","AT", "FT")).delete()
+            seguimiento = Seguimiento()
+            seguimiento.individuo = individuo
+            seguimiento.tipo = "IT"
+            seguimiento.aclaracion = "INICIO TRACKING: " + str(geopos.latitud)+", "+str(geopos.longitud)
+            seguimiento.save()
+            #Respondemos
+            return JsonResponse(
+                {
+                    "accion":"start_tracking",
+                    "realizado": True,
+                    "guardado": geopos.pk,
+                },
+                safe=False
+            )
+        else:
+            #Respondemos
+            return JsonResponse(
+                {
+                    "accion":"start_tracking",
+                    "realizado": False,
+                    "error": "Coordenadas fuera de la provincia.",
+                },
+                safe=False
+            )
     except Exception as e:
         return json_error(e, "start_tracking", logger)
 

@@ -1,0 +1,44 @@
+{% extends 'base_informacion.html' %}
+{% load static %}
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2>Individuos Ingresados a Hoteles</h2>
+            <p>Fecha Inicio: {{begda}}</p>
+            <p>Fecha Fin: {{endda}}</b>
+        </div>
+        <div class="row">
+        <div class="col-md-12">
+            <table class="listado" id="table">
+                <thead>
+                    <tr>
+                        <th>Documento</th>
+                        <th>Individuo</th>
+                        <th>Situacion</th>
+                        <th>Ubicacion Actual</th>
+                        <th>Ingreso</th>
+                        <th>Domicilio Original</th>
+                        <th>Ver</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for individuo in individuos %}
+                        <tr>
+                            <td>{{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</td>
+                            <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
+                            <td>{{individuo.situacion_actual}}</td>
+                            <td>{{individuo.domicilio_actual}}</td>
+                            <td>{{individuo.domicilio_actual.fecha}}</td>
+                            <td>{{individuo.domicilios.first}}</td>
+                            <td style="text-align:center;">
+                                <a href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

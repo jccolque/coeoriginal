@@ -38,6 +38,7 @@
                                     <th>Apellidos</th>
                                     <th>Nombres</th>
                                     <th>Situacion</th>
+                                    <th>Fecha de Ingreso</th>
                                     <th>Ver Individuo</th>
                                 </tr>
                             </thead>
@@ -48,6 +49,7 @@
                                         <td>{{aislado.apellidos}}</td>
                                         <td>{{aislado.nombres}}</td>
                                         <td>{{aislado.situacion_actual}}</td>
+                                        <td>{{aislado.domicilio_actual.fecha}}</td>
                                         <td><a href="{% url 'informacion:ver_individuo' individuo_id=aislado.id %}" target="_blank">(Ver Individuo)</a></td>
                                     </tr>
                                 {% endfor %}

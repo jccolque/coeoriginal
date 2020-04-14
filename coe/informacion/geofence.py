@@ -8,6 +8,7 @@ from django.http import JsonResponse
 from geographiclib.geodesic import Geodesic
 #Imports del proyecto
 from coe.constantes import LAST_DATETIME
+from coe.constantes import DISTANCIA_MAXIMA, CENTRO_LATITUD, CENTRO_LONGITUD
 #Imports de la app
 from .models import GeoPosicion, Seguimiento, Permiso
 
@@ -62,6 +63,14 @@ def controlar_distancia(nueva_geopos):
         seguimiento.aclaracion = 'Distancia: '+str(nueva_geopos.distancia)+'mts | '+str(nueva_geopos.fecha)
         seguimiento.save()
     return nueva_geopos
+
+def es_local(geopos):
+    #Calculamos diferencia
+    geodesic = Geodesic.WGS84.Inverse(CENTRO_LATITUD, CENTRO_LONGITUD, geopos.latitud, geopos.longitud)
+    distancia = geodesic['s12']# en metros
+    if distancia < DISTANCIA_MAXIMA:#Si esta dentro del radio aceptable
+        return True
+
 
 #Salvoconducos
 def buscar_permiso(individuo, activo=False):
