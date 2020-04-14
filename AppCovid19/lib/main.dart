@@ -6,6 +6,7 @@ import 'dart:ui';
 import 'package:background_locator/location_dto.dart';
 import 'package:background_locator/location_settings.dart';
 import 'package:covidjujuy_app/pages/permiso_otorgado.dart';
+import 'package:covidjujuy_app/pages/permiso_otorgado_control.dart';
 import 'package:covidjujuy_app/pages/salvo_conducto.dart';
 import 'package:covidjujuy_app/pages/solicitar_permiso.dart';
 import 'package:covidjujuy_app/src/model/permiso_ya_otorgado_model.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
         '/salvoconducto': (BuildContext context) => SalvoConducto(),
         '/solicitarpermiso': (BuildContext context) => SolicitarPermiso(),
         '/permisootorgado': (BuildContext context) => PermisoOtorgado(),
+        '/permisootorgadocontrol': (BuildContext context) => PermisoOtorgadoControl(),
         '/main': (BuildContext context) => MyApp(),
       },
       home: MyLoginPage(),
@@ -656,6 +658,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
     DateFormat dateFormat = DateFormat("dd/MM/yyyy");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('nombreCompletoOtorgado', permisoOtorgado.nombreCompleto);
+    await prefs.setString('dniOtorgado', permisoOtorgado.dniIndividuo);
     await prefs.setString('domicilioOtorgado', permisoOtorgado.domicilio);
     await prefs.setString('textoOtorgado', permisoOtorgado.texto);
     await prefs.setBool('controlOtorgado', permisoOtorgado.control);

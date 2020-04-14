@@ -6,6 +6,7 @@ class RespuestaPermisoModel {
   String action;
   String domicilio;
   String nombreCompleto;
+  String dniIndividuo;
   String horaFin;
   String texto;
   String imagen;
@@ -21,6 +22,7 @@ class RespuestaPermisoModel {
     this.action,
     this.domicilio,
     this.nombreCompleto,
+    this.dniIndividuo,
     this.horaFin,
     this.texto,
     this.imagen,
@@ -37,6 +39,7 @@ class RespuestaPermisoModel {
     action: json["action"],
     domicilio: json["domicilio"],
     nombreCompleto: json["nombre_completo"],
+    dniIndividuo: json["dni_individuo"],
     horaFin: json["hora_fin"],
     texto: json["texto"],
     imagen: json["imagen"],
@@ -53,6 +56,7 @@ class RespuestaPermisoModel {
     "action": action,
     "domicilio": domicilio,
     "nombre_completo": nombreCompleto,
+    "dni_individuo": dniIndividuo,
     "hora_fin": horaFin,
     "texto": texto,
     "imagen": imagen,
