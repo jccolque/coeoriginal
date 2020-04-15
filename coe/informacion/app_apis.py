@@ -734,6 +734,7 @@ def control_salvoconducto(request):
             geopos.save()
         except:
             pass
+        e = 'El individuo no cuenta con un permiso activo.'
         return json_error(e, "control_salvoconducto", logger)
 
 @csrf_exempt

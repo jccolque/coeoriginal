@@ -38,14 +38,12 @@ def is_related(instance):
 
 def json_error(error, vista, logger=None):
     if logger:
-        logger.info("Falla: "+str(error))
+        logger.info("Falla: "+str(error)+'\n'+str(traceback.format_exc()))
     return JsonResponse(
             {
                 "accion": vista,
                 "realizado": False,
                 "error": str(error),
-                "error_contexto": str(error.__context__),
-                "error_traceback": str(traceback.format_exc()),
             },
             safe=False,
             status=400,
