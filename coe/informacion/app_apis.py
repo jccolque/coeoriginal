@@ -491,15 +491,9 @@ def start_tracking(request):
         operador = Operador.objects.get(num_doc=data["dni_operador"])
         user = authenticate(username=operador.usuario, password=data["password"])
         if not user:
-            return JsonResponse(
-            {
-                "accion":"start_tracking",
-                "realizado": False,
-                "error": "El operador no existe.",
-            },
-            safe=False,
-            status=400,
-        )
+            data["password"] = "OCULTA"
+            e = "No se pudo validar Operador"
+            return json_error(e, "start_tracking", logger, data)
         #Guardamos la geoposicion BASE (Eliminamos todas las anteriores)
         if data["latitud"] == 0:
             return JsonResponse(
