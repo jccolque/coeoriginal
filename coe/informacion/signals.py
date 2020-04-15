@@ -62,19 +62,20 @@ def relacion_domicilio(created, instance, **kwargs):
                     ).exclude(
                         individuo=instance.individuo
                     )#Excluyendolo a el
-        for domicilio in domicilios:
-            #Evitamos repetir relaciones
-            try:
-                relacion = Relacion.objects.get(individuo=instance.individuo, relacionado=domicilio.individuo)
-                relacion.aclaracion = relacion.aclaracion + " - Mismo Domicilio(AutoDetectado)"
-                relacion.save()
-            except Relacion.DoesNotExist:
-                relacion = Relacion()
-                relacion.tipo = 'MD'
-                relacion.individuo = instance.individuo
-                relacion.relacionado = domicilio.individuo
-                relacion.aclaracion = instance.calle + ' ' + instance.numero
-                relacion.save()
+        if domicilios.count() < 8:#Para evitar super relaciones por error
+            for domicilio in domicilios:
+                #Evitamos repetir relaciones
+                try:
+                    relacion = Relacion.objects.get(individuo=instance.individuo, relacionado=domicilio.individuo)
+                    relacion.aclaracion = relacion.aclaracion + " - Mismo Domicilio(AutoDetectado)"
+                    relacion.save()
+                except Relacion.DoesNotExist:
+                    relacion = Relacion()
+                    relacion.tipo = 'MD'
+                    relacion.individuo = instance.individuo
+                    relacion.relacionado = domicilio.individuo
+                    relacion.aclaracion = instance.calle + ' ' + instance.numero
+                    relacion.save()
 
 #Evolucionamos Estado segun Domicilio
 @receiver(post_save, sender=Domicilio)

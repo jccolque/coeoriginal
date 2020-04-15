@@ -24,9 +24,9 @@ def paginador(request, queryset):
         return paginator.page(paginator.num_pages)
 
 def delete_tags(texto):
-  cleanr = re.compile('<.*?>')
-  cleantext = re.sub(cleanr, '', texto)
-  return cleantext
+    cleanr = re.compile('<.*?>')
+    cleantext = re.sub(cleanr, '', texto)
+    return cleantext
 
 def date2str(fecha):
     return str(fecha)[8:10] + '/' + str(fecha)[5:7]
@@ -39,7 +39,7 @@ def is_related(instance):
 
 def json_error(error, vista, logger, data):
     #Guardamos el error
-    logger.info("\n"+str(timezone.now())+'- '+vista+":\n"+"|"+str(data))
+    logger.info("\n"+str(timezone.now())+'\n'+vista+":\n"+"|"+str(data))
     logger.info("Falla: "+str(error)+'\n'+str(traceback.format_exc()))
     #Respondemos al device
     return JsonResponse(
