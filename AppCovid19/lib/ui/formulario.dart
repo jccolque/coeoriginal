@@ -34,7 +34,10 @@ class MyFormularioPage extends StatefulWidget {
 class _MyFormularioPage extends State<MyFormularioPage> {
   static const API = 'http://coe.jujuy.gob.ar/covid19/registro';
 
-  static const headers = {'apiKey': '12039i10238129038', 'Content-Type': 'application/json'};
+  static const headers = {
+    'apiKey': '12039i10238129038',
+    'Content-Type': 'application/json'
+  };
 
   Future<bool> enviarFormulario(RegistroModel item) async {
     print(json.encode(item.toJson()));
@@ -45,7 +48,6 @@ class _MyFormularioPage extends State<MyFormularioPage> {
     return false;
   }
 
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   var _dniController = TextEditingController();
@@ -62,35 +64,25 @@ class _MyFormularioPage extends State<MyFormularioPage> {
   final TextEditingController _typeAheadController = TextEditingController();
   String _localidad;
 
-  void initState() {
-    super.initState();
-    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    var initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
-    var initializationSettingsIOS = IOSInitializationSettings(onDidReceiveLocalNotification: onDidReceiveLocalNotification);
-    var initializationSettings = InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
-    flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: onSelectNotification);
-    _telefonoController.text = '';
-    WidgetsBinding.instance.addPostFrameCallback((_) => _handleConfirmFirstMesseage(_scaffoldKey));
-  }
 
   Future<bool> _prompt(BuildContext context) {
     return showDialog(
-          context: context,
-          child: AlertDialog(
-            title: Text('Advertencia - Registro incompleto'),
-            content: Text('¿Quiere teminar de registrarse?'),
-            actions: <Widget>[
-              FlatButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: Text('No'),
-              ),
-              FlatButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: Text('Si'),
-              ),
-            ],
+      context: context,
+      child: AlertDialog(
+        title: Text('Advertencia - Registro incompleto'),
+        content: Text('¿Quiere teminar de registrarse?'),
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text('No'),
           ),
-        ) ??
+          FlatButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text('Si'),
+          ),
+        ],
+      ),
+    ) ??
         false;
   }
 
@@ -103,11 +95,14 @@ class _MyFormularioPage extends State<MyFormularioPage> {
         child: Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-            colors: [Colors.blue[900], Colors.lightBlue],
-          )),
-          height: MediaQuery.of(context).size.height,
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                colors: [Colors.blue[900], Colors.lightBlue],
+              )),
+          height: MediaQuery
+              .of(context)
+              .size
+              .height,
           child: SafeArea(
             child: SingleChildScrollView(
               child: Column(
@@ -134,7 +129,7 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                   Center(
                     child: Text(
                       'El gobierno de Jujuy brindará ayuda, consejos e información sobre su estado y también sobre el operativo provincial con respecto al Covid19.'
-                      ' Manténgase informado de las recomendaciones en la página oficial del COE.',
+                          ' Manténgase informado de las recomendaciones en la página oficial del COE.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 22.0,
@@ -180,7 +175,8 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                             controller: _dniController,
                             keyboardType: TextInputType.text,
                             inputFormatters: [
-                              WhitelistingTextInputFormatter(RegExp("[a-zA-Z0-9]"))
+                              WhitelistingTextInputFormatter(
+                                  RegExp("[a-zA-Z0-9]"))
                             ],
                             style: TextStyle(
                               color: Colors.white,
@@ -197,11 +193,15 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                 ),
-                                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white))),
+                                focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.white))),
                             validator: (String value) {
                               return value.isEmpty
                                   ? 'El campo es obligatorio'
-                                  : value.contains('.') || value.contains(',') ? 'Porfavor ingrese el dni sin simbolos' : null;
+                                  : value.contains('.') || value.contains(',')
+                                  ? 'Porfavor ingrese el dni sin simbolos'
+                                  : null;
                             },
                           ),
                         ),
@@ -226,9 +226,13 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                 ),
-                                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white))),
+                                focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.white))),
                             validator: (String value) {
-                              return value.isEmpty ? 'El campo es obligatorio' : null;
+                              return value.isEmpty
+                                  ? 'El campo es obligatorio'
+                                  : null;
                             },
                           ),
                         ),
@@ -253,9 +257,13 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                 ),
-                                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white))),
+                                focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.white))),
                             validator: (String value) {
-                              return value.isEmpty ? 'El campo es obligatorio' : null;
+                              return value.isEmpty
+                                  ? 'El campo es obligatorio'
+                                  : null;
                             },
                           ),
                         ),
@@ -290,9 +298,13 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                 ),
-                                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white))),
+                                focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.white))),
                             validator: (String value) {
-                              return value.isEmpty ? 'El campo es obligatorio' : null;
+                              return value.isEmpty
+                                  ? 'El campo es obligatorio'
+                                  : null;
                             },
                           ),
                         ),
@@ -317,9 +329,13 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                 ),
-                                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white))),
+                                focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.white))),
                             validator: (String value) {
-                              return value.isEmpty ? 'El campo es obligatorio' : null;
+                              return value.isEmpty
+                                  ? 'El campo es obligatorio'
+                                  : null;
                             },
                           ),
                         ),
@@ -344,11 +360,15 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                 ),
-                                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white))),
+                                focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.white))),
                             validator: (String value) {
                               return value.isEmpty
                                   ? 'El campo es obligatorio'
-                                  : value.length <= 6 ? 'El nro es demasiado corto, ingrese un nro valido' : null;
+                                  : value.length <= 6
+                                  ? 'El nro es demasiado corto, ingrese un nro valido'
+                                  : null;
                             },
                           ),
                         ),
@@ -360,7 +380,8 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                   Visibility(
                     visible: _aceptarHabilitado,
                     child: RaisedButton(
-                      padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 100.0, right: 100.0),
+                      padding: EdgeInsets.only(
+                          top: 10.0, bottom: 10.0, left: 100.0, right: 100.0),
                       color: Colors.deepOrangeAccent,
                       splashColor: Colors.blueAccent,
                       elevation: 4,
@@ -380,14 +401,16 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                               direccionNumero: _direccionNumeroController.text,
                               telefono: _telefonoController.text,
                               localidadNombre: _localidad);
-                          var connectivityResult = await (Connectivity().checkConnectivity());
+                          var connectivityResult = await (Connectivity()
+                              .checkConnectivity());
 
                           if (connectivityResult == ConnectivityResult.mobile) {
                             final result = await enviarFormulario(form);
                             if (result == true) {
                               final res = await _setRegistroSharedPref(form);
                               saveDniCredentials(_dniController.text);
-                              showInSnackBar('Datos personales enviados con exito puede seguír al menu principal');
+                              showInSnackBar(
+                                  'Datos personales enviados con exito puede seguír al menu principal');
                               setState(() {
                                 _menuHabilitado = false;
                                 Navigator.of(context).pushNamed('/main');
@@ -398,13 +421,14 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                                 _aceptarHabilitado = true;
                               });
                             }
-                          } else if (connectivityResult == ConnectivityResult.wifi) {
+                          } else if (connectivityResult ==
+                              ConnectivityResult.wifi) {
                             final result = await enviarFormulario(form);
                             if (result == true) {
                               final res = await _setRegistroSharedPref(form);
                               saveDniCredentials(_dniController.text);
-                              showInSnackBar('Datos personales enviados con exito puede seguír al menu principal');
-//                              setupNotification();
+                              showInSnackBar(
+                                  'Datos personales enviados con exito puede seguír al menu principal');
                               setState(() {
                                 _menuHabilitado = false;
                                 Navigator.of(context).pushNamed('/main');
@@ -419,7 +443,8 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                             setState(() {
                               _aceptarHabilitado = true;
                             });
-                            showInSnackBar('Algo salió mal por favor verifique su conexion a internet, e intente de nuevo en unos segundos');
+                            showInSnackBar(
+                                'Algo salió mal por favor verifique su conexion a internet, e intente de nuevo en unos segundos');
                           }
                         } else {
                           showInSnackBar('Provea todos sus datos');
@@ -430,7 +455,10 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                       },
                       child: Text(
                         'Aceptar',
-                        style: TextStyle(color: Colors.white, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                        style: TextStyle(color: Colors.white,
+                            fontSize: 22.0,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Montserrat'),
                       ),
                     ),
                   ),
@@ -438,7 +466,8 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                   Visibility(
                     visible: _menuHabilitado,
                     child: RaisedButton(
-                      padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 70.0, right: 70.0),
+                      padding: EdgeInsets.only(
+                          top: 10.0, bottom: 10.0, left: 70.0, right: 70.0),
                       color: Colors.white,
                       elevation: 4,
                       shape: RoundedRectangleBorder(
@@ -449,7 +478,10 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                       },
                       child: Text(
                         'Menu principal',
-                        style: TextStyle(color: Colors.black, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                        style: TextStyle(color: Colors.black,
+                            fontSize: 22.0,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Montserrat'),
                       ),
                     ),
                   ),
@@ -486,7 +518,8 @@ class _MyFormularioPage extends State<MyFormularioPage> {
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
-                        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)))),
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white)))),
                 suggestionsCallback: (pattern) {
                   print(pattern);
                   return getLocalidades(pattern);
@@ -522,11 +555,14 @@ class _MyFormularioPage extends State<MyFormularioPage> {
 
   Future<List<String>> getLocalidades(String filtro) async {
     print('fetchPost');
-    final response = await http.get('http://coe.jujuy.gob.ar/georef/localidad-autocomplete/?q=${filtro}');
+    final response = await http.get(
+        'http://coe.jujuy.gob.ar/georef/localidad-autocomplete/?q=${filtro}');
 
     if (response.statusCode == 200) {
       // Si el servidor devuelve una repuesta OK, parseamos el JSON
-      List<Result> list = LocalidadModel.fromJson(json.decode(response.body)).results;
+      List<Result> list = LocalidadModel
+          .fromJson(json.decode(response.body))
+          .results;
       List<String> salida = List();
       list.forEach((text) {
         salida.add(text.text);
@@ -546,7 +582,8 @@ class _MyFormularioPage extends State<MyFormularioPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('nombreGuardado', item.nombre);
     await prefs.setString('apellidoGuardado', item.apellido);
-    await prefs.setString('domicilioGuardado', item.direccionCalle + ' ' + item.direccionNumero);
+    await prefs.setString(
+        'domicilioGuardado', item.direccionCalle + ' ' + item.direccionNumero);
 
     return true;
   }
@@ -588,101 +625,45 @@ class _MyFormularioPage extends State<MyFormularioPage> {
     });
   }
 
-  void setupNotificationPlugin() {
-    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    var initializationSettingsAndroid = AndroidInitializationSettings(' @ mipmap / ic_launcher');
-    var initializationSettingsIOS = IOSInitializationSettings(
-      onDidReceiveLocalNotification: onDidReceiveLocalNotification,
-    );
-    var initializationSettings = InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
 
-    flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
-      onSelectNotification: onSelectNotification,
-    );
-  }
-
-  Future onSelectNotification(String payload) async {
-    if (payload != null) {
-      debugPrint('notification payload: ' + payload);
-    }
-  }
-
-  Future onDidReceiveLocalNotification(int id, String title, String body, String payload) async {
-    // display a dialog with the notification details, tap ok to go to another page
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) => CupertinoAlertDialog(
-        title: Text(title),
-        content: Text(body),
-        actions: [
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            child: Text('Ok'),
-            onPressed: () async {
-              Navigator.of(context, rootNavigator: true).pop();
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => TemperaturaPage(),
+  Future<bool> confirmFirstMesseage(BuildContext context,
+      GlobalKey<ScaffoldState> _scaffoldKey) {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24.0)),
+            title: Column(
+              children: <Widget>[
+                Center(
+                  child: Text(
+                    'Esta es una herramienta para la salud pública, todos los datos que aquí ingrese son fundamentales.'
+                        ' Una vez finalizado el registro no podrá modificar los datos ingresados, por favor tomese su tiempo y sea preciso.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 22.0, fontFamily: 'Montserrat'),
+                  ),
                 ),
-              );
-            },
-          )
-        ],
-      ),
-    );
-  }
-
-  void setupNotification() async {
-    var time = Time(10, 0, 0);
-    var time1 = Time(14, 0, 0);
-    var time2 = Time(18, 0, 00);
-    var time3 = Time(22, 0, 00);
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'repeatDailyAtTime channel id', 'repeatDailyAtTime temperatura', 'repeatDailyAtTime temperatura',
-        importance: Importance.Max, priority: Priority.High, ongoing: true);
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.showDailyAtTime(0, 'Recordatorio', '¡Compruebe su temperatura!', time, platformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.showDailyAtTime(1, 'Recordatorio', '¡Compruebe su temperatura!', time1, platformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.showDailyAtTime(2, 'Recordatorio', '¡Compruebe su temperatura!', time2, platformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.showDailyAtTime(3, 'Recordatorio', '¡Compruebe su temperatura!', time3, platformChannelSpecifics);
-  }
-}
-
-Future<bool> confirmFirstMesseage(BuildContext context, GlobalKey<ScaffoldState> _scaffoldKey) {
-  return showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
-          title: Column(
-            children: <Widget>[
-              Center(
+              ],
+            ),
+            elevation: 7.0,
+            //backgroundColor: Colors.grey,
+            actions: <Widget>[
+              FlatButton(
                 child: Text(
-                  'Esta es una herramienta para la salud pública, todos los datos que aquí ingrese son fundamentales.'
-                  ' Una vez finalizado el registro no podrá modificar los datos ingresados, por favor tomese su tiempo y sea preciso.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 22.0, fontFamily: 'Montserrat'),
+                  'Aceptar',
+                  style: TextStyle(color: Colors.green,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22.0,
+                      fontFamily: 'Montserrat'),
                 ),
-              ),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              )
             ],
-          ),
-          elevation: 7.0,
-          //backgroundColor: Colors.grey,
-          actions: <Widget>[
-            FlatButton(
-              child: Text(
-                'Aceptar',
-                style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 22.0, fontFamily: 'Montserrat'),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-            )
-          ],
-        );
-      });
+          );
+        });
+  }
 }
