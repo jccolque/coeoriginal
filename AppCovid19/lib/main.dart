@@ -174,40 +174,42 @@ class _MyLoginPageState extends State<MyLoginPage> {
               padding: EdgeInsets.only(top: 20),
               child: Column(
                 children: <Widget>[
+
                   Image.asset(
                     'assets/graphics/GOBCOEJUwide.jpg',
                     width: 300,
                   ),
                   SizedBox(height: 20.0),
-                  Text(
-                    'Cuestionario',
-                    style: TextStyle(
-                      fontSize: 45.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      shadows: [
-                        Shadow(
-                          blurRadius: 10.0,
-                          color: Colors.black.withOpacity(0.4),
-                          offset: Offset(0.0, 3.0),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Text(
-                    'COVID-19',
-                    style: TextStyle(
-                      fontSize: 30.0,
-                      color: Colors.white,
-                      shadows: [
-                        Shadow(
-                          blurRadius: 10.0,
-                          color: Colors.black.withOpacity(0.4),
-                          offset: Offset(0.0, 3.0),
-                        ),
-                      ],
-                    ),
-                  ),
+
+//                  Text(
+//                    'Cuestionario',
+//                    style: TextStyle(
+//                      fontSize: 45.0,
+//                      fontWeight: FontWeight.bold,
+//                      color: Colors.white,
+//                      shadows: [
+//                        Shadow(
+//                          blurRadius: 10.0,
+//                          color: Colors.black.withOpacity(0.4),
+//                          offset: Offset(0.0, 3.0),
+//                        ),
+//                      ],
+//                    ),
+//                  ),
+//                  Text(
+//                    'COVID-19',
+//                    style: TextStyle(
+//                      fontSize: 30.0,
+//                      color: Colors.white,
+//                      shadows: [
+//                        Shadow(
+//                          blurRadius: 10.0,
+//                          color: Colors.black.withOpacity(0.4),
+//                          offset: Offset(0.0, 3.0),
+//                        ),
+//                      ],
+//                    ),
+//                  ),
                 ],
               ),
             ),
@@ -258,25 +260,28 @@ class _MyLoginPageState extends State<MyLoginPage> {
                     visible: _termCondAceptados,
                     child: Container(
                       child: Center(
-                        child: RaisedButton(
-                          padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 90.0, right: 90.0),
-                          color: Colors.white,
-                          splashColor: Colors.blueAccent,
-                          elevation: 4,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24.0),
-                          ),
-                          onPressed: () async {
-                            print('DNI OBTENIDO');
-                            print(_dni);
-                            _dni == 0 ? _getDniFromSharedPref() : (!_termCondAceptados ? _launchTermCondDialogConfirmation() : _checkPermissions(context));
-                            //_getDniFromSharedPref();
-                            //_checkPermissions();
-                          },
-                          child: Text(
-                            'Cuestionario covid-19',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.black, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                        child: ButtonTheme(
+                          minWidth: double.infinity,
+                          child: RaisedButton(
+                            padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 90.0, right: 90.0),
+                            color: Colors.white,
+                            splashColor: Colors.blueAccent,
+                            elevation: 4,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24.0),
+                            ),
+                            onPressed: () async {
+                              print('DNI OBTENIDO');
+                              print(_dni);
+                              _dni == 0 ? _getDniFromSharedPref() : (!_termCondAceptados ? _launchTermCondDialogConfirmation() : _checkPermissions(context));
+                              //_getDniFromSharedPref();
+                              //_checkPermissions();
+                            },
+                            child: Text(
+                              'AutoTest Covid19',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.black, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                            ),
                           ),
                         ),
                       ),
