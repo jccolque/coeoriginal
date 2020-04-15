@@ -373,7 +373,6 @@ def foto_perfil(request):
     try:
         data = None
         try:
-            print("Entro por JSON")
             #Si viene en un json
             data = json.loads(request.body.decode("utf-8"))
             #Agarramos el dni
