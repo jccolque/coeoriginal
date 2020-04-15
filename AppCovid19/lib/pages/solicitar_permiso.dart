@@ -62,7 +62,7 @@ class _SolicitarPermisoState extends State<SolicitarPermiso> {
     return WillPopScope(
       onWillPop: () => Future.value(false),
       child: Scaffold(
-        floatingActionButton: volver(),
+        floatingActionButton: volver(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         appBar: AppBar(
           title: Text("Solicitud de Permiso"),
@@ -77,7 +77,7 @@ class _SolicitarPermisoState extends State<SolicitarPermiso> {
     );
   }
 
-  Widget volver() {
+  Widget volver(BuildContext context) {
     return FloatingActionButton(
       backgroundColor: Colors.blue,
       onPressed: () {

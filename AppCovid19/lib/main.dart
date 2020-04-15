@@ -24,6 +24,8 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'package:background_locator/background_locator.dart';
 
+import 'package:back_button_interceptor/back_button_interceptor.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -75,8 +77,16 @@ class _MyLoginPageState extends State<MyLoginPage> {
   bool _encuestaRealizada = false;
   bool _geoTrackActicado = false;
 
+
+  @override
+  void dispose() {
+    BackButtonInterceptor.remove(myInterceptor);
+    super.dispose();
+  }
+
   @override
   void initState() {
+    BackButtonInterceptor.add(myInterceptor);
     _launchFirstTermCondDialogConfirmation();
     super.initState();
     if (IsolateNameServer.lookupPortByName(_isolateName) != null) {
@@ -119,6 +129,11 @@ class _MyLoginPageState extends State<MyLoginPage> {
         }
       });
     });
+  }
+
+  bool myInterceptor(bool stopDefaultButtonEvent) {
+    print("BACK BUTTON!"); // Do some stuff.
+    return true;
   }
 
   @override
@@ -254,7 +269,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
                           onPressed: () async {
                             print('DNI OBTENIDO');
                             print(_dni);
-                            _dni == 0 ? _getDniFromSharedPref() : (!_termCondAceptados ? _launchTermCondDialogConfirmation() : _checkPermissions());
+                            _dni == 0 ? _getDniFromSharedPref() : (!_termCondAceptados ? _launchTermCondDialogConfirmation() : _checkPermissions(context));
                             //_getDniFromSharedPref();
                             //_checkPermissions();
                           },
@@ -308,7 +323,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
                             _lauchSalvoConductoForm(context);
                           },
                           child: Text(
-                            'Salvo Conducto',
+                            'Permiso Digital',
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.black, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
                           ),
@@ -530,6 +545,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
   }
 
   Future<void> _launchTermCondDialogConfirmation() async {
+    print('_launchTermCondDialogConfirmation');
     await _getTermCondAceptadosFromSharedPref().then(_updateTermAndCondt);
     if (!_termCondAceptados) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _handleFirsGeoConfirmation(_scaffoldKey));
@@ -621,11 +637,12 @@ class _MyLoginPageState extends State<MyLoginPage> {
   }
 
   Future<bool> _getPermisosYaOtorgado(PermisoYaOtorgadoModel permisoYaOtorgadoModel) async {
+    print(json.encode(permisoYaOtorgadoModel));
     final response = await http.post('http://coe.jujuy.gob.ar/covid19/get/salvoconducto', body: (utf8.encode(json.encode(permisoYaOtorgadoModel))));
     if (response.statusCode == 200) {
       RespuestaPermisoModel list = RespuestaPermisoModel.fromJson(json.decode(response.body));
       await _setPermisoOtorgadoSharedPref(list).then((v) {
-        print('ok');
+        print('ok---');
       });
       await _setPermisoSharedPref(true).then((v){
         return true;
@@ -671,7 +688,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
     await prefs.setString('textoOtorgado', permisoOtorgado.texto);
   }
 
-  void _checkPermissions() async {
+  void _checkPermissions(BuildContext context) async {
     Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.location]);
     PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
     ServiceStatus serviceStatus = await PermissionHandler().checkServiceStatus(PermissionGroup.location);
@@ -880,7 +897,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
             actions: <Widget>[
               FlatButton(
                 child: Text('Cancelar'),
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => Navigator.of(context).pop(false),
               ),
               FlatButton(
                 child: Text('Iniciar'),
@@ -889,7 +906,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
                     apiRequestStartTracking();
                     startLocationService();
                   });
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(false);
                 },
               )
             ],
