@@ -180,7 +180,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
                     child: Image.asset(
                       'assets/graphics/GOBCOEJUwide.jpg',
 //                    height: double.infinity,
-                      width: double.infinity,
+                      width: 350,
                       alignment: Alignment.center,
                       fit: BoxFit.cover,
                     ),
