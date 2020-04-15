@@ -244,7 +244,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
                       child: Center(
                         child: RaisedButton(
                           padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 30.0, right: 30.0),
-                          color: Colors.yellowAccent,
+                          color: Colors.green,
                           splashColor: Colors.blueAccent,
                           elevation: 4,
                           shape: RoundedRectangleBorder(
