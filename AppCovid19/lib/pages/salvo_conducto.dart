@@ -1,20 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:covidjujuy_app/src/bloc/provider.dart';
 import 'package:covidjujuy_app/src/loader.dart';
 import 'package:covidjujuy_app/src/model/imagen_perfil_model.dart';
 import 'package:covidjujuy_app/src/model/localidad_model.dart';
-import 'package:covidjujuy_app/src/model/registro_avanzado_model.dart';
-import 'package:covidjujuy_app/src/model/view_localidad_model.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SalvoConducto extends StatefulWidget {
@@ -119,8 +112,6 @@ class _SalvoConductoState extends State<SalvoConducto> {
     File img = await ImagePicker.pickImage(source: ImageSource.camera);
 //    File img = await ImagePicker.pickImage(source: ImageSource.gallery);
     if (img != null && img.path != null) {
-//      img = await FlutterExifRotation.rotateImage(path: img.path);
-
       if (img != null) {
         setState(() {
           image = img;
@@ -232,181 +223,9 @@ class _SalvoConductoState extends State<SalvoConducto> {
     );
   }
 
-  Widget _crearLocalidadAutocomplete(BuildContext context) {
-
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.0),
-      child: Container(
-        child: Column(
-          children: <Widget>[
-            Text(
-                ''
-            ),
-            TypeAheadFormField(
-              textFieldConfiguration: TextFieldConfiguration(
-                  controller: this._typeAheadController,
-                  decoration: InputDecoration(
-                      labelText: 'Localidad'
-                  )
-              ),
-              suggestionsCallback: (pattern) {
-                print(pattern);
-                  return fetchPost(pattern);
-              },
-              itemBuilder: (context, suggestion) {
-                return ListTile(
-                  title: Text(suggestion),
-                );
-              },
-              transitionBuilder: (context, suggestionsBox, controller) {
-                return suggestionsBox;
-              },
-              onSuggestionSelected: (suggestion) {
-                print('suggestion');
-                print(suggestion);
-                this._typeAheadController.text = suggestion;
-                setState(() => this._localidad = suggestion);
-              },
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Por favor seleccione una localidad';
-                }
-              },
-              onSaved: (value) => this._localidad = value,
-            ),
-          ],
-        ),
-      )
-    );
-  }
-
-  Widget _crearCalle() {
-
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.0),
-      child: TextField(
-        controller: calleController,
-        decoration: InputDecoration(
-            labelText: 'Calle',
-        ),
-//        onChanged: ( value ) => bloc.changePassword(value),
-      ),
-    );
-  }
-
-  Widget _crearNumero() {
-
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.0),
-      child: TextField(
-        controller: numeroController,
-        keyboardType: TextInputType.number,
-        inputFormatters: [
-          WhitelistingTextInputFormatter.digitsOnly
-        ],
-        decoration: InputDecoration(
-//          icon: Icon(Icons.format_list_numbered, color: Colors.deepPurple,),
-          labelText: 'Número',
-        ),
-//        onChanged: ( value ) => bloc.changePassword(value),
-      ),
-    );
-  }
-
-  Widget _crearAclaracion() {
-
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.0),
-      child: TextField(
-        controller: aclaracionController,
-        decoration: InputDecoration(
-//          icon: Icon(Icons.format_list_numbered, color: Colors.deepPurple,),
-          labelText: 'Aclaraciones',
-        ),
-//        onChanged: ( value ) => bloc.changePassword(value),
-      ),
-    );
-  }
-
-  Widget _crearFecha() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.0),
-      child: Container(
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-              flex: 3,
-              child: Container(
-                child: TextField(
-                  controller: fechaController,
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Container(
-                child: RaisedButton(
-                  textColor: Colors.white,
-                  color: Theme.of(context).primaryColor,
-                  child: Icon(Icons.calendar_today),
-                  onPressed: () =>  _selectDate(context),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                ),
-              ),
-            ),//
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _crearSeparadoAislado() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 50.0),
-      child: Container(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text("Separado/Aislamiento"),
-            Checkbox(
-              value: _separadoAislado,
-              onChanged: (bool value) {
-                setState(() {
-                  _separadoAislado = value;
-                });
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<Null> _selectDate(BuildContext context) async {
-    DateFormat dateFormat = DateFormat("dd/MM/yyyy");
-    DateTime now = DateTime.now();
-    String formattedDate = dateFormat.format(now);
-    DateTime dateTime = dateFormat.parse(formattedDate);
-    final DateTime picked = await showDatePicker(
-        context: context,
-        initialDate: selectedDate,
-        firstDate: dateTime,
-        lastDate: DateTime(2023));
-    if (picked != null && picked != selectedDate)
-      setState(() {
-        selectedDate = picked;
-        fechaController.text = dateFormat.format(selectedDate);
-      });
-  }
-
-  Future<List<String>> fetchPost(String filtro) async {
-    print('fetchPost');
-    final response =
-    await http.get('http://coe.jujuy.gob.ar/georef/localidad-autocomplete/?q=${filtro}');
+  Future<List<String>> getLocalidadByFiltro(String filtro) async {
+    print('getLocalidadByFiltro');
+    final response = await http.get('http://coe.jujuy.gob.ar/georef/localidad-autocomplete/?q=${filtro}');
 
     if (response.statusCode == 200) {
       // Si el servidor devuelve una repuesta OK, parseamos el JSON
@@ -448,10 +267,10 @@ class _SalvoConductoState extends State<SalvoConducto> {
               imagen: base64Image,
               dni: dni
           );
-        print(form.imagen);
-        envioRegistroAvanzado(form).then((val) {
-          Navigator.of(context).pushNamed('/main');
-        });
+          print(form.imagen);
+          envioRegistroAvanzado(form).then((val) {
+            Navigator.of(context).pushNamed('/main');
+          });
         });
       },
     );

@@ -139,13 +139,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.2.0"
-  flutter_exif_rotation:
-    dependency: "direct main"
-    description:
-      name: flutter_exif_rotation
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.7"
   flutter_keyboard_visibility:
     dependency: transitive
     description:
@@ -246,7 +239,7 @@ packages:
       name: image_picker
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.6.4"
+    version: "0.6.5"
   intl:
     dependency: "direct main"
     description:
