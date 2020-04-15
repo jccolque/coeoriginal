@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:covidjujuy_app/src/loader.dart';
+import 'package:covidjujuy_app/src/model/error_control_permiso_model.dart';
 import 'package:covidjujuy_app/src/model/qr_envio_model.dart';
 import 'package:covidjujuy_app/src/model/respuesta_permiso_model.dart';
 import 'package:covidjujuy_app/src/util/prevent_back.dart';
@@ -182,7 +183,6 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
             });
           } else {
             print('no tiene datos');
-            showLongErrorToast('Permiso Caducado o Invalido.');
           }
         });
       });
@@ -208,6 +208,9 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
 
       return permisoOtorgado;
     } else {
+      ErrorControlPermisoModel respon = ErrorControlPermisoModel.fromJson(json.decode(response.body));
+      print(respon.error);
+      showLongErrorToast(respon.error);
       setState(() {
         loading = false;
       });
