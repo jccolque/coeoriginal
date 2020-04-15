@@ -10,6 +10,7 @@ import 'package:covidjujuy_app/pages/permiso_otorgado_control.dart';
 import 'package:covidjujuy_app/pages/salvo_conducto.dart';
 import 'package:covidjujuy_app/pages/solicitar_permiso.dart';
 import 'package:covidjujuy_app/src/model/permiso_ya_otorgado_model.dart';
+import 'package:covidjujuy_app/src/model/response_notificacion_model.dart';
 import 'package:covidjujuy_app/src/model/respuesta_permiso_model.dart';
 import 'package:covidjujuy_app/ui/formulario.dart';
 import 'package:http/http.dart' as http;
@@ -77,7 +78,6 @@ class _MyLoginPageState extends State<MyLoginPage> {
   bool _encuestaRealizada = false;
   bool _geoTrackActicado = false;
 
-
   @override
   void dispose() {
     BackButtonInterceptor.remove(myInterceptor);
@@ -93,7 +93,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
       IsolateNameServer.removePortNameMapping(_isolateName);
     }
 
-    _getGeoActivateSharedPref().then((v){
+    _getGeoActivateSharedPref().then((v) {
       setState(() {
         _geoTrackActicado = v;
       });
@@ -106,16 +106,16 @@ class _MyLoginPageState extends State<MyLoginPage> {
         await updateUI(data);
       },
     );
-    _getLoadedSharedPref().then((v){
+    _getLoadedSharedPref().then((v) {
       setState(() {
-        if(v == true) {
+        if (v == true) {
           _loaded = true;
-        }else {
+        } else {
           _loaded = false;
         }
       });
     });
-    _getDniSharedPref().then((v){});
+    _getDniSharedPref().then((v) {});
 
     initPlatformState();
     _getPermisoOtorgadoSharedPref().then((permiso) {
@@ -128,6 +128,14 @@ class _MyLoginPageState extends State<MyLoginPage> {
           _encuestaRealizada = false;
         }
       });
+    });
+    _getActicateTrackingSharedPref().then((t){
+      print('****************************');
+      if(t == true){
+        print('Inicio de trackeo');
+        startLocationService();
+
+      }
     });
   }
 
@@ -174,7 +182,6 @@ class _MyLoginPageState extends State<MyLoginPage> {
               padding: EdgeInsets.only(top: 20),
               child: Column(
                 children: <Widget>[
-
                   ClipRRect(
                     borderRadius: BorderRadius.circular(15.0),
                     child: Image.asset(
@@ -186,36 +193,6 @@ class _MyLoginPageState extends State<MyLoginPage> {
                     ),
                   ),
                   SizedBox(height: 20.0),
-
-//                  Text(
-//                    'Cuestionario',
-//                    style: TextStyle(
-//                      fontSize: 45.0,
-//                      fontWeight: FontWeight.bold,
-//                      color: Colors.white,
-//                      shadows: [
-//                        Shadow(
-//                          blurRadius: 10.0,
-//                          color: Colors.black.withOpacity(0.4),
-//                          offset: Offset(0.0, 3.0),
-//                        ),
-//                      ],
-//                    ),
-//                  ),
-//                  Text(
-//                    'COVID-19',
-//                    style: TextStyle(
-//                      fontSize: 30.0,
-//                      color: Colors.white,
-//                      shadows: [
-//                        Shadow(
-//                          blurRadius: 10.0,
-//                          color: Colors.black.withOpacity(0.4),
-//                          offset: Offset(0.0, 3.0),
-//                        ),
-//                      ],
-//                    ),
-//                  ),
                 ],
               ),
             ),
@@ -293,7 +270,6 @@ class _MyLoginPageState extends State<MyLoginPage> {
                       ),
                     ),
                   ),
-
                   SizedBox(height: 20.0),
                   Container(
                     child: Center(
@@ -349,7 +325,6 @@ class _MyLoginPageState extends State<MyLoginPage> {
                     ),
                   ),
                   SizedBox(height: 20.0),
-
                   Container(
                     child: Visibility(
                       visible: _encuestaRealizada && !_geoTrackActicado,
@@ -404,9 +379,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
                       ),
                     ),
                   ),
-
                   SizedBox(height: 30),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -667,12 +640,12 @@ class _MyLoginPageState extends State<MyLoginPage> {
       await _setPermisoOtorgadoSharedPref(list).then((v) {
         print('ok---');
       });
-      await _setPermisoSharedPref(true).then((v){
+      await _setPermisoSharedPref(true).then((v) {
         return true;
       });
       return true;
     } else {
-      await _setPermisoSharedPref(false).then((v){
+      await _setPermisoSharedPref(false).then((v) {
         return false;
       });
     }
@@ -806,11 +779,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
       callback,
       androidNotificationCallback: notificationCallback,
       settings: LocationSettings(
-          notificationTitle: "Covid19 - Jujuy",
-          notificationMsg: "Su ubicación esta siendo rastreada",
-          wakeLockTime: 20,
-          autoStop: false,
-          interval: 600),
+          notificationTitle: "Covid19 - Jujuy", notificationMsg: "Su ubicación esta siendo rastreada", wakeLockTime: 20, autoStop: false, interval: 600),
     );
   }
 
@@ -865,6 +834,20 @@ class _MyLoginPageState extends State<MyLoginPage> {
     } else {
       String reply = await response.transform(utf8.decoder).join();
       return null;
+    }
+  }
+
+  Future<bool> apiCheckTracking(PermisoYaOtorgadoModel permiso) async {
+    print(json.encode(permiso));
+    final response = await http.post('http://coe.jujuy.gob.ar/covid19/get/notificacion', body: (utf8.encode(json.encode(permiso))));
+    if (response.statusCode == 200) {
+      ResponseNotificacionModel list = ResponseNotificacionModel.fromJson(json.decode(response.body));
+
+      return true;
+    } else {
+      await _setPermisoSharedPref(false).then((v) {
+        return false;
+      });
     }
   }
 
@@ -928,6 +911,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
                   _getLatitudLongitud().then((v) {
                     apiRequestStartTracking();
                     startLocationService();
+                    _setActicateTrackingSharedPref(true).then((v){});
                   });
                   Navigator.of(context).pop(false);
                 },
@@ -935,6 +919,17 @@ class _MyLoginPageState extends State<MyLoginPage> {
             ],
           );
         });
+  }
+
+  Future<bool> _getActicateTrackingSharedPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final acticateTracking = await prefs.getBool('acticateTracking');
+    return acticateTracking != null ? acticateTracking : false;
+  }
+
+  Future<void> _setActicateTrackingSharedPref(bool permiso) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return await prefs.setBool('acticateTracking', permiso);
   }
 }
 
