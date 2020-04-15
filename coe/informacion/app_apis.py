@@ -661,7 +661,7 @@ def pedir_salvoconducto(request):
                     "realizado": permiso.aprobar,
                     "error": permiso.aclaracion,
                 },
-                safe=False
+                safe=False,
                 status=400,
             )
     except Exception as e:
