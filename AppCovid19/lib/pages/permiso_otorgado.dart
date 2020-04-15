@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gps/gps.dart';
 import 'package:http/http.dart' as http;
+import 'package:fluttertoast/fluttertoast.dart';
 
 class PermisoOtorgado extends StatefulWidget {
   @override
@@ -179,6 +180,9 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
             _setPermisoOtorgadoSharedPref(resp).then((v){
               Navigator.of(context).pushNamed('/permisootorgadocontrol');
             });
+          } else {
+            print('no tiene datos');
+            showLongErrorToast('Permiso Caducado o Invalido.');
           }
         });
       });
@@ -417,5 +421,9 @@ class _PermisoOtorgadoState extends State<PermisoOtorgado> {
     await prefs.setString('horaInicioOtorgadoControl', permisoOtorgado.horaInicio);
     await prefs.setString('horaFinOtorgadoControl', permisoOtorgado.horaFin);
     await prefs.setString('textoOtorgadoControl', permisoOtorgado.texto);
+  }
+
+  void showLongErrorToast(String mensaje) {
+    Fluttertoast.showToast(msg: mensaje, toastLength: Toast.LENGTH_LONG, backgroundColor: Colors.red, textColor: Colors.white);
   }
 }
