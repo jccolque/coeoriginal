@@ -662,6 +662,7 @@ def pedir_salvoconducto(request):
                     "error": permiso.aclaracion,
                 },
                 safe=False
+                status=400,
             )
     except Exception as e:
         return json_error(e, "salvoconducto", logger)
