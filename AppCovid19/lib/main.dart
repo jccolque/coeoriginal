@@ -175,9 +175,15 @@ class _MyLoginPageState extends State<MyLoginPage> {
               child: Column(
                 children: <Widget>[
 
-                  Image.asset(
-                    'assets/graphics/GOBCOEJUwide.jpg',
-                    width: 300,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15.0),
+                    child: Image.asset(
+                      'assets/graphics/GOBCOEJUwide.jpg',
+//                    height: double.infinity,
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   SizedBox(height: 20.0),
 
