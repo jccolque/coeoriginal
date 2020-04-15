@@ -286,22 +286,25 @@ class _MyLoginPageState extends State<MyLoginPage> {
                   SizedBox(height: 20.0),
                   Container(
                     child: Center(
-                      child: RaisedButton(
-                        padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 60.0, right: 60.0),
-                        color: Colors.white,
-                        splashColor: Colors.blueAccent,
-                        elevation: 4,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24.0),
-                        ),
-                        onPressed: () {
-                          //Navigator.of(context).pushNamed('/coe');
-                          _launchInBroser(_coelaunchUrl);
-                        },
-                        child: Text(
-                          'Información oficial COE',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.black, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                      child: ButtonTheme(
+                        minWidth: double.infinity,
+                        child: RaisedButton(
+                          padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 60.0, right: 60.0),
+                          color: Colors.white,
+                          splashColor: Colors.blueAccent,
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24.0),
+                          ),
+                          onPressed: () {
+                            //Navigator.of(context).pushNamed('/coe');
+                            _launchInBroser(_coelaunchUrl);
+                          },
+                          child: Text(
+                            'Información oficial COE',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.black, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                          ),
                         ),
                       ),
                     ),
@@ -311,21 +314,24 @@ class _MyLoginPageState extends State<MyLoginPage> {
                     child: Visibility(
                       visible: _encuestaRealizada,
                       child: Center(
-                        child: RaisedButton(
-                          padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 80.0, right: 80.0),
-                          color: Colors.white,
-                          splashColor: Colors.blueAccent,
-                          elevation: 4,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24.0),
-                          ),
-                          onPressed: () {
-                            _lauchSalvoConductoForm(context);
-                          },
-                          child: Text(
-                            'Permiso Digital',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.black, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                        child: ButtonTheme(
+                          minWidth: double.infinity,
+                          child: RaisedButton(
+                            padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 80.0, right: 80.0),
+                            color: Colors.white,
+                            splashColor: Colors.blueAccent,
+                            elevation: 4,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24.0),
+                            ),
+                            onPressed: () {
+                              _lauchSalvoConductoForm(context);
+                            },
+                            child: Text(
+                              'Permiso Digital',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.black, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                            ),
                           ),
                         ),
                       ),
@@ -337,21 +343,24 @@ class _MyLoginPageState extends State<MyLoginPage> {
                     child: Visibility(
                       visible: _encuestaRealizada && !_geoTrackActicado,
                       child: Center(
-                        child: RaisedButton(
-                          padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 60.0, right: 60.0),
-                          color: Colors.white,
-                          splashColor: Colors.blueAccent,
-                          elevation: 4,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24.0),
-                          ),
-                          onPressed: () {
-                            _mostrarDialogIngreseDatos(context);
-                          },
-                          child: Text(
-                            'Activar Geotracking',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.black, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                        child: ButtonTheme(
+                          minWidth: double.infinity,
+                          child: RaisedButton(
+                            padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 60.0, right: 60.0),
+                            color: Colors.white,
+                            splashColor: Colors.blueAccent,
+                            elevation: 4,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24.0),
+                            ),
+                            onPressed: () {
+                              _mostrarDialogIngreseDatos(context);
+                            },
+                            child: Text(
+                              'Activar Geotracking',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.black, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                            ),
                           ),
                         ),
                       ),
@@ -361,21 +370,24 @@ class _MyLoginPageState extends State<MyLoginPage> {
                     child: Visibility(
                       visible: _encuestaRealizada && _geoTrackActicado,
                       child: Center(
-                        child: RaisedButton(
-                          padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 50.0, right: 50.0),
-                          color: Colors.red,
-                          splashColor: Colors.white,
-                          elevation: 4,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24.0),
-                          ),
-                          onPressed: () {
+                        child: ButtonTheme(
+                          minWidth: double.infinity,
+                          child: RaisedButton(
+                            padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 50.0, right: 50.0),
+                            color: Colors.red,
+                            splashColor: Colors.white,
+                            elevation: 4,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24.0),
+                            ),
+                            onPressed: () {
 //                            _mostrarDialogIngreseDatos(context);
-                          },
-                          child: Text(
-                            'GeoTracking Activado',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                            },
+                            child: Text(
+                              'GeoTracking Activado',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.white, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                            ),
                           ),
                         ),
                       ),
