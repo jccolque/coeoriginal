@@ -120,7 +120,8 @@ class Ubicacion(models.Model):
             "aclaracion": self.aclaracion,
             "latitud": self.latitud,
             "longitud": self.longitud,
-            "max_individuos": self.max_individuos,
+            "capacidad_maxima": self.capacidad_maxima,
+            "capacidad_ocupada": self.capacidad_ocupada,
         }
     def capacidad_disponible(self):
         return self.capacidad_maxima - self.capacidad_ocupada

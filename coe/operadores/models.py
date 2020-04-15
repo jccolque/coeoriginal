@@ -108,14 +108,13 @@ class Operador(models.Model):
     def as_dict(self):
         return {
             'id': self.id,
-            'subcomite': self.subcomite,
-            'usuario_id': self.usuario.id,
-            'usuario_username': self.usuario.username,
+            'subcomite': str(self.subcomite),
+            'usuario': str(self.usuario),
             'tipo_doc': self.tipo_doc,
             'num_doc': self.num_doc,
             'telefono': self.telefono,
-            'fotografia': self.fotografia,
-            'qrpath': self.qrpath,
+            'fotografia': str(self.fotografia),
+            'qrpath': str(self.qrpath),
         }
     def get_foto(self):
         if self.fotografia:

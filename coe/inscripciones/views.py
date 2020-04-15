@@ -14,7 +14,7 @@ from core.functions import delete_tags
 #Impors de la app
 from .tokens import account_activation_token
 from .models import Inscripto
-from .forms import InscriptoForm
+from .forms import ProfesionalSaludForm
 
 # Create your views here.
 @permission_required('operadores.menu_inscripciones')
@@ -22,11 +22,13 @@ def menu(request):
     return render(request, 'menu_inscripciones.html', {})
 
 def cargar_inscripcion(request):
-    form = InscriptoForm()
+    form = ProfesionalSaludForm()
     if request.method == "POST":
-        form = InscriptoForm(request.POST, request.FILES)
+        form = ProfesionalSaludForm(request.POST, request.FILES)
         if form.is_valid():
-            inscripto = form.save()
+            inscripto = form.save(commit=False)
+            inscripto.tipo = 'PS'
+            inscripto.save()
             #enviar email de validacion
             to_email = inscripto.email
             #Preparamos el correo electronico

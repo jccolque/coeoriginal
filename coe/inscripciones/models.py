@@ -7,10 +7,11 @@ from tinymce.models import HTMLField
 #Imports del proyecto
 from core.choices import TIPO_DOCUMENTOS
 #Imports de la app
-from .choices import TIPO_PROFESIONAL
+from .choices import TIPO_INSCRIPTO, TIPO_PROFESIONAL
 
 # Create your models here.
 class Inscripto(models.Model):
+    tipo_inscripto = models.CharField(choices=TIPO_INSCRIPTO, max_length=2, default='PS')
     tipo_doc = models.IntegerField(choices=TIPO_DOCUMENTOS, default=2)
     num_doc = models.CharField('Documento/Pasaporte', 
         max_length=20,
@@ -45,8 +46,8 @@ class Inscripto(models.Model):
             'matrícula': self.matricula,
             'email': self.email,
             'telefono': self.telefono,
-            'archivo_dni': self.archivo_dni,
-            'archivo_título': self.archivo_título,
+            'archivo_dni': str(self.archivo_dni),
+            'archivo_título': str(self.archivo_titulo),
             'info_extra': self.info_extra,
             'fecha': str(self.fecha),
             'valido': self.valido,

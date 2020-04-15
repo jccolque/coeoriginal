@@ -34,16 +34,6 @@ class Archivo(models.Model):
     descripcion = HTMLField(verbose_name='Descripcion', null=True, blank=True)
     def __str__(self):
         return self.get_tipo_display() + ': ' + self.nombre
-    def as_dict(self):
-        return {
-            'id': self.id,
-            'tipo': self.get_tipo_display(),
-            'nombre': self.nombre,
-            'archivo': str(self.archivo),
-            'fecha': str(self.fecha),
-            'operador': str(self.operador),
-            'procesado': self.procesado,
-        }
 
 class Enfermedad(models.Model):#Origen del Dato
     nombre = models.CharField('Nombre', max_length=100)
@@ -52,13 +42,6 @@ class Enfermedad(models.Model):#Origen del Dato
     #sintomas = models.ManyToManyField(TipoSintoma)
     def __str__(self):
         return self.nombre
-    def as_dict(self):
-        return {
-            'id': self.id,
-            'nombre': self.nombre,
-            'descripcion': self.descripcion,
-            'importancia': self.get_importancia_display(),
-        }
 
 #Vehiculos
 class Vehiculo(models.Model):
@@ -70,16 +53,6 @@ class Vehiculo(models.Model):
     aclaracion = HTMLField(verbose_name='Aclaracion', null=True, blank=True)
     def __str__(self):
         return self.get_tipo_display() + ': ' + self.identificacion
-    def as_dict(self):
-        return {
-            'id': self.id,
-            'tipo': self.get_tipo_display(),
-            'fecha': str(self.fecha),
-            'identificacion': self.identificacion,
-            'cant_pasajeros': self.cant_pasajeros,
-            'empresa': self.empresa,
-            'plan': self.plan,
-        }
 
 #Individuos
 class Individuo(models.Model):
@@ -107,21 +80,6 @@ class Individuo(models.Model):
     #Funciones
     def __str__(self):
         return str(self.num_doc) + ': ' + self.apellidos + ', ' + self.nombres
-    def as_dict(self):
-        return {
-            'id': self.id,
-            'tipo_doc': self.get_tipo_doc_display(),
-            'num_doc': self.num_doc,
-            'apellidos': self.apellidos,
-            'nombres': self.nombres,
-            'fecha_nacimiento': str(self.fecha_nacimiento),
-            'telefono': self.telefono,
-            'email': self.email,
-            'nacionalidad': self.nacionalidad,
-            'origen': self.origen,
-            'destino': self.destino,
-            'observaciones': self.observaciones,
-        }
     def ultimo_seguimiento(self):
         return self.seguimientos.last()
     def geoposicion(self):
@@ -171,14 +129,6 @@ class Relacion(models.Model):#Origen del Dato
         unique_together = ['tipo', 'individuo', 'relacionado']
     def __str__(self):
         return str(self.individuo) + ' ' + self.get_tipo_display() + ' con ' + str(self.relacionado)
-    def as_dict(self):
-        return {
-            "tipo": self.get_tipo_display(),
-            "individuo_id": self.individuo.id,
-            "relacionado_id": self.relacionado.id,
-            "aclaracion": self.aclaracion,
-            "fecha": str(self.fecha),
-        }
     def inversa(self):
         try:
             return Relacion.objects.get(tipo=self.tipo, individuo=self.relacionado, relacionado=self.individuo)
@@ -199,14 +149,6 @@ class Domicilio(models.Model):
         ordering = ['fecha', ]
     def __str__(self):
         return self.calle + ' ' + self.numero + ', ' + str(self.localidad.nombre)
-    def as_dict(self):
-        return {
-            "id": self.id,
-            "individuo_id": self.individuo.id,
-            "localidad": str(self.localidad),
-            "calle": self.calle,
-            "numero": self.numero,
-        }
     def nombre_corto(self):
         return self.calle + ' ' + self.numero + ', ' + self.localidad.nombre
 
@@ -223,15 +165,6 @@ class GeoPosicion(models.Model):
     operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True)
     def __str__(self):
         return str(self.latitud) + '|' + str(self.longitud)
-    def as_dict(self):
-        return {
-            "id": self.id,
-            "individuo_id": self.individuo.id,
-            "latitud": str(self.latitud),
-            "longitud": str(self.longitud),
-            "aclaracion": self.aclaracion,
-            "fecha": str(self.fecha),
-        }
 
 #Extras
 class SignosVitales(models.Model):
@@ -258,16 +191,6 @@ class Situacion(models.Model):
         ordering = ['fecha', ]
     def __str__(self):
         return self.get_estado_display() + '-'  + self.get_conducta_display()
-    def as_dict(self):
-        return {
-            "id": self.id,
-            "individuo_id": self.individuo.id,
-            "estado_id": self.estado,
-            "estado": self.get_estado_display(),
-            "conducta_id": self.conducta,
-            "conducta": self.get_conducta_display(),
-            "fecha": str(self.fecha),
-        }
 
 class Atributo(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="atributos")
@@ -279,16 +202,6 @@ class Atributo(models.Model):
         ordering = ['fecha', ]
     def __str__(self):
         return str(self.individuo) + ': ' + self.get_tipo_display() + ' ' + str(self.fecha)
-    def as_dict(self):
-        return {
-            "id": self.id,
-            "individuo_id": self.individuo.id,
-            "tipo_id": self.tipo,
-            "tipo": self.get_tipo_display(),
-            "aclaracion": self.aclaracion,
-            "fecha": str(self.fecha),
-            "activo": self.activo,
-        }
 
 class Sintoma(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="sintomas")
@@ -299,15 +212,6 @@ class Sintoma(models.Model):
         ordering = ['fecha', ]
     def __str__(self):
         return self.get_tipo_display() + ': ' + str(self.fecha)
-    def as_dict(self):
-        return {
-            "id": self.id,
-            "individuo_id": self.individuo.id,
-            "tipo_id": self.tipo,
-            "tipo": self.get_tipo_display(),
-            "aclaracion": self.aclaracion,
-            "fecha": str(self.fecha),
-        }
 
 class Seguimiento(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="seguimientos")
@@ -318,14 +222,6 @@ class Seguimiento(models.Model):
         ordering = ['fecha', ]
     def __str__(self):
         return str(self.fecha)[0:16] + ': ' + self.get_tipo_display() + ': ' + self.aclaracion
-    def as_dict(self):
-        return {
-            "id": self.id,
-            "individuo_id": self.individuo.id,
-            "tipo_id": self.tipo,
-            "aclaracion": self.aclaracion,
-            "fecha": str(self.fecha),
-        }
 
 class Documento(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="documentos")
@@ -365,27 +261,13 @@ class TrasladoVehiculo(models.Model):
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     def __str__(self):
-        return self.aclaracion + ': ' + str(self.fecha)
-    def as_dict(self):
-        return {
-            'id': self.id,
-            'vehiculo_id': self.vehiculo.id,
-            'vehiculo': str(self.vehiculo),
-            'aclaracion': self.aclaracion,
-            'fecha': str(self.fecha),
-        }    
+        return self.aclaracion + ': ' + str(self.fecha)   
 
 class Pasajero(models.Model):
     traslado = models.ForeignKey(TrasladoVehiculo, on_delete=models.CASCADE, related_name="pasajeros")
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="pasajes")
     def __str__(self):
         return str(self.traslado) + ': ' + str(self.individuo)
-    def as_dict(self):
-        return {
-            "id": self.id,
-            "control_id": self.traslado.id,
-            "individuo_id": self.individuo.id,
-        }
 
 #Permisos
 class Permiso(models.Model):
@@ -398,17 +280,6 @@ class Permiso(models.Model):
     aclaracion = HTMLField(null=True, blank=True)
     def __str__(self):
         return self.get_tipo_display() + str(self.begda)[0:16]
-    def as_dict(self):
-        return {
-            "id": self.id,
-            "individuo_id": self.individuo.id,
-            "tipo_id": self.tipo,
-            "origen": self.origen,
-            "destino": self.destino,
-            "begda": str(self.fecha),
-            "endda": str(self.fecha),
-            "aclaracion": self.aclaracion,
-        }
     def estado(self):
         if self.endda > timezone.now():
             return "Activo"

@@ -1,5 +1,4 @@
 #Imports Python
-from datetime import date
 #Imports Django
 from django import forms
 #Imports extra
@@ -10,9 +9,9 @@ from django import forms
 from .models import Inscripto
 
 #Definimos nuestros forms
-class InscriptoForm(forms.ModelForm):
+class ProfesionalSaludForm(forms.ModelForm):
     class Meta:
         model = Inscripto
         fields= '__all__'
-        exclude = ('fecha', 'valido', 'disponible')
+        exclude = ('tipo_inscripto', 'fecha', 'valido', 'disponible')
         

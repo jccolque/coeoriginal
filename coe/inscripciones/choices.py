@@ -1,3 +1,8 @@
+TIPO_INSCRIPTO = (
+    ('PS', 'Profesionales de Salud'),
+    ('VS', 'Voluntarios Sociales'),
+)
+
 TIPO_PROFESIONAL = (
     (1, 'Enfermeros profesionales'),
     (11, 'Auxiliares de enfermería'),
