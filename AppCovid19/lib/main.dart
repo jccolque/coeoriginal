@@ -256,7 +256,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
                           child: Text(
                             'Ver términos y condiciones de uso',
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.black, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                            style: TextStyle(color: Colors.white, fontSize: 22.0, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
                           ),
                         ),
                       ),
