@@ -286,7 +286,6 @@ def registro(request):
         #Registramos ingreso de info
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info("\nregistro:"+str(timezone.now())+"|"+str(data))
         #Obtenemos datos basicos:
         nac = Nacionalidad.objects.filter(nombre__icontains="Argentina").first()
         #Agarramos el dni
@@ -366,7 +365,7 @@ def registro(request):
             safe=False
         )
     except Exception as e:
-        return json_error(e, "registro", logger)
+        return json_error(e, "registro", logger, data)
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -376,9 +375,6 @@ def foto_perfil(request):
         #Registramos ingreso de info
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        data2 = copy.copy(data)
-        data2["imagen"] = data2["imagen"][:25]+'| full |'+data2["imagen"][-25:]
-        logger.info("\nfoto_perfil:"+str(timezone.now())+"|"+str(data2))
         #Agarramos el dni
         if "dni" in data:
             num_doc = str(data["dni"]).upper()
@@ -401,7 +397,8 @@ def foto_perfil(request):
             safe=False
         )
     except Exception as e:
-        return json_error(e, "foto_perfil", logger)
+        data["imagen"] = data["imagen"][:25]+'| full |'+data["imagen"][-25:]
+        return json_error(e, "foto_perfil", logger, data)
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -411,7 +408,6 @@ def encuesta(request):
         #Registramos ingreso de info
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info("\nencuesta:"+str(timezone.now())+"|"+str(data))
         #Agarramos el dni
         if "dni" in data:
             num_doc = str(data["dni"]).upper()
@@ -473,7 +469,7 @@ def encuesta(request):
             safe=False
         )
     except Exception as e:
-        return json_error(e, "encuesta", logger)
+        return json_error(e, "encuesta", logger, data)
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -482,9 +478,6 @@ def start_tracking(request):
         data = None
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        data2 = copy.copy(data)
-        data2["password"] = "OCULTA"
-        logger.info("\nstart_tracking:"+str(timezone.now())+"|"+str(data2))
         #Agarramos el dni
         if "dni" in data:
             num_doc = str(data["dni"]).upper()
@@ -554,7 +547,8 @@ def start_tracking(request):
                 safe=False
             )
     except Exception as e:
-        return json_error(e, "start_tracking", logger)
+        data["password"] = "OCULTA"
+        return json_error(e, "start_tracking", logger, data)
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -563,7 +557,6 @@ def tracking(request):
         data = None
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info("\ntracking:"+str(timezone.now())+"|"+str(data))
         #Agarramos el dni
         if "dni" in data:
             num_doc = str(data["dni"]).upper()
@@ -608,7 +601,7 @@ def tracking(request):
             safe=False
         )
     except Exception as e:
-        return json_error(e, "tracking", logger)
+        return json_error(e, "tracking", logger, data)
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -617,7 +610,6 @@ def pedir_salvoconducto(request):
         data = None
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info("\nsalvoconducto:"+str(timezone.now())+"|"+str(data))
         #Agarramos el dni
         if "dni" in data:
             num_doc = str(data["dni"]).upper()
@@ -665,7 +657,7 @@ def pedir_salvoconducto(request):
                 status=400,
             )
     except Exception as e:
-        return json_error(e, "salvoconducto", logger)
+        return json_error(e, "salvoconducto", logger, data)
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -674,7 +666,6 @@ def ver_salvoconducto(request):
         data = None
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info("\nget_salvoconducto:"+str(timezone.now())+"|"+str(data))
         #Agarramos el dni
         if "dni" in data:
             num_doc = str(data["dni"]).upper()
@@ -689,7 +680,7 @@ def ver_salvoconducto(request):
         #Damos respuesta
         return json_permiso(permiso, "get_salvoconducto")
     except Exception as e:
-        return json_error(e, "get_salvoconducto", logger)
+        return json_error(e, "get_salvoconducto", logger, data)
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -698,7 +689,6 @@ def control_salvoconducto(request):
         data = None
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info("\ncontrol_salvoconducto:"+str(timezone.now())+"|"+str(data))
         #Agarramos el dni
         num_doc = str(data["dni_operador"]).upper()
         #Obtenemos el operador
@@ -735,7 +725,7 @@ def control_salvoconducto(request):
         except:
             pass
         e = 'El individuo no cuenta con un permiso activo.'
-        return json_error(e, "control_salvoconducto", logger)
+        return json_error(e, "control_salvoconducto", logger, data)
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -744,7 +734,6 @@ def notificacion(request):
         data = None
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info("\nnotificacion:"+str(timezone.now())+"|"+str(data))
         #Agarramos el dni
         if "dni" in data:
             num_doc = str(data["dni"]).upper()
@@ -770,4 +759,4 @@ def notificacion(request):
             safe=False
         )
     except Exception as e:
-        return json_error(e, "notificacion", logger)
+        return json_error(e, "notificacion", logger, data)

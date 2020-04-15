@@ -2,6 +2,7 @@
 import re
 import traceback
 #Imports django
+from django.utils import timezone
 from django.http import JsonResponse
 from django.db.models.deletion import Collector
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -36,9 +37,11 @@ def is_related(instance):
     if collector.dependencies:
         return True
 
-def json_error(error, vista, logger=None):
-    if logger:
-        logger.info("Falla: "+str(error)+'\n'+str(traceback.format_exc()))
+def json_error(error, vista, logger, data):
+    #Guardamos el error
+    logger.info("\n"+vista+":"+str(timezone.now())+"|"+str(data))
+    logger.info("Falla: "+str(error)+'\n'+str(traceback.format_exc()))
+    #Respondemos al device
     return JsonResponse(
             {
                 "accion": vista,
