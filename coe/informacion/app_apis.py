@@ -372,20 +372,28 @@ def registro(request):
 def foto_perfil(request):
     try:
         data = None
-        #Registramos ingreso de info
-        #Recibimos el json
-        data = json.loads(request.body.decode("utf-8"))
-        #Agarramos el dni
-        if "dni" in data:
-            num_doc = str(data["dni"]).upper()
-        else:
-            num_doc = str(data["dni_individuo"]).upper()
+        try:
+            print("Entro por JSON")
+            #Si viene en un json
+            data = json.loads(request.body.decode("utf-8"))
+            #Agarramos el dni
+            if "dni" in data:
+                num_doc = str(data["dni"]).upper()
+            else:
+                num_doc = str(data["dni_individuo"]).upper()
+            #Codificamos imagen
+            image_data = b64decode(data['imagen'])
+            data["imagen"] = data["imagen"][:25]+'| full |'+data["imagen"][-25:]
+        except:
+            #Si viene por form
+            num_doc = str(request.POST['dni']).upper()
+            image_data = request.FILES['imagen'].read()
+
         #Buscamos al individuo en la db
         individuo = Individuo.objects.get(num_doc=num_doc)
         #ACA CHEQUEAMOS TOKEN
 
         #Cargamos la foto:
-        image_data = b64decode(data['imagen'])
         individuo.fotografia = ContentFile(image_data, individuo.num_doc+'.jpg')
         individuo.save()
         #Terminamos proceso
@@ -397,7 +405,7 @@ def foto_perfil(request):
             safe=False
         )
     except Exception as e:
-        data["imagen"] = data["imagen"][:25]+'| full |'+data["imagen"][-25:]
+        
         return json_error(e, "foto_perfil", logger, data)
 
 @csrf_exempt

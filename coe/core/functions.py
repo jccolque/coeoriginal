@@ -39,7 +39,7 @@ def is_related(instance):
 
 def json_error(error, vista, logger, data):
     #Guardamos el error
-    logger.info("\n"+vista+":"+str(timezone.now())+"|"+str(data))
+    logger.info("\n"+str(timezone.now())+'- '+vista+":\n"+"|"+str(data))
     logger.info("Falla: "+str(error)+'\n'+str(traceback.format_exc()))
     #Respondemos al device
     return JsonResponse(
