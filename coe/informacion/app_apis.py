@@ -611,7 +611,6 @@ def pedir_salvoconducto(request):
         data = None
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        logger.info("data: " + str(data))
         #Agarramos el dni
         if "dni" in data:
             num_doc = str(data["dni"]).upper()
@@ -635,12 +634,9 @@ def pedir_salvoconducto(request):
         )
         #Validamos si es factible:
         permiso = buscar_permiso(individuo)
-        logger.info("buscar_permiso: " + str(permiso))
         permiso = pedir_permiso(individuo, data["tipo_permiso"], permiso)
-        logger.info("pedir_permiso: " + str(permiso))
         #Si fue aprobado, Creamos Permiso
         if permiso.aprobar:#Variable temporal
-            logger.info("Aprobado")
             permiso.individuo = individuo
             permiso.tipo = data["tipo_permiso"]
             permiso.localidad = individuo.domicilio_actual.localidad
@@ -683,6 +679,9 @@ def ver_salvoconducto(request):
 
         #Buscamos permiso
         permiso = buscar_permiso(individuo)
+        #loggeamos todo
+        logger.info("data: " + str(data))
+        logger.info("buscar_permiso: " + str(permiso))
         #Damos respuesta
         return json_permiso(permiso, "ver_salvoconducto")
     except Exception as e:
