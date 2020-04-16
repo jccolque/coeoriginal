@@ -11,14 +11,14 @@ from .choices import TIPO_INSCRIPTO, GRUPO_SANGUINEO, TIPO_PROFESIONAL
 
 # Create your models here.
 class Area(models.Model):
-    nombre = models.CharField('Nombres', max_length=200)
+    nombre = models.CharField('Nombres', max_length=250)
     orden = models.IntegerField('Prioridad')
     def __str__(self):
         return self.nombre
 
 class Tarea(models.Model):
     area = models.ForeignKey(Area, on_delete=models.CASCADE, related_name="tareas")
-    nombre = models.CharField('Nombres', max_length=200)
+    nombre = models.CharField('Nombres', max_length=250)
     orden = models.IntegerField('Prioridad')
     def __str__(self):
         return self.nombre
