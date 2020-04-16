@@ -13,11 +13,11 @@ from coe.settings import SEND_MAIL
 from operadores.functions import obtener_operador
 #imports de la app
 from .models import Individuo, Permiso
-from .geofence import pedir_permiso, definir_fechas
+from .geofence import buscar_permiso, pedir_permiso, definir_fechas
 from .permisos_form import PermisoForm, BuscarPermiso, DatosForm, FotoForm
 
 #Publico
-def buscar_permiso(request):
+def buscar_permiso_web(request):
     form = BuscarPermiso()
     if request.method == 'POST':
         form = BuscarPermiso(request.POST)
@@ -32,32 +32,36 @@ def buscar_permiso(request):
                 form.add_error(None, "No se ha encontrado a Nadie con esos Datos.")
     return render(request, "permisos/buscar_permiso.html", {'form': form, })
 
-def pedir_permiso(request, individuo_id, num_doc):
+def pedir_permiso_web(request, individuo_id, num_doc):
     try:
         individuo = Individuo.objects.get(pk=individuo_id, num_doc=num_doc)
         form = PermisoForm(initial={'individuo': individuo, })
         if request.method == 'POST':
             form = PermisoForm(request.POST, initial={'individuo': individuo, })
             if form.is_valid():
-                permiso = form.save(commit=False)
-                permiso.individuo = individuo
-                permiso = pedir_permiso(individuo, permiso.tipo, permiso=permiso)
-                if permiso.aprobar:
-                    permiso = definir_fechas(permiso, permiso.begda)
-                    permiso.save()
-                    #Enviar email
-                    to_email = individuo.email
-                    #Preparamos el correo electronico
-                    mail_subject = 'Bienvenido al Sistema Centralizado COE!'
-                    message = render_to_string('emails/permiso_generado.html', {
-                            'individuo': individuo,
-                            'permiso': permiso,
-                        })
-                    #Instanciamos el objeto mail con destinatario
-                    email = EmailMessage(mail_subject, message, to=[to_email])
-                    #Enviamos el correo
-                    if SEND_MAIL:
-                        email.send()
+                permiso = buscar_permiso(individuo)
+                if not permiso:
+                    permiso = form.save(commit=False)
+                    permiso.individuo = individuo
+                    permiso.localidad = individuo.domicilio_actual.localidad
+                    permiso = pedir_permiso(individuo, permiso.tipo, permiso=permiso)
+                    if permiso.aprobar:
+                        permiso = definir_fechas(permiso, permiso.begda)
+                        if not permiso.pk:
+                            permiso.save()
+                            #Enviar email
+                            to_email = individuo.email
+                            #Preparamos el correo electronico
+                            mail_subject = 'Bienvenido al Sistema Centralizado COE!'
+                            message = render_to_string('emails/permiso_generado.html', {
+                                    'individuo': individuo,
+                                    'permiso': permiso,
+                                })
+                            #Instanciamos el objeto mail con destinatario
+                            email = EmailMessage(mail_subject, message, to=[to_email])
+                            #Enviamos el correo
+                            if SEND_MAIL:
+                                email.send()
                 return render(request, "permisos/ver_permiso.html", {'permiso': permiso, })  
         return render(request, "permisos/pedir_permiso.html", {'form': form, 'individuo': individuo, })
     except Individuo.DoesNotExist:

@@ -92,6 +92,8 @@ def buscar_permiso(individuo, activo=False):
             permiso.aclaracion = "Permiso Permanente: " + atributo.get_tipo_display()
             permiso.control = True
             permiso.save()
+    if permiso:
+        permiso.aprobar = True
     return permiso
 
 #Validamos la posibilidad de otorgar el permiso
@@ -102,6 +104,7 @@ def pedir_permiso(individuo, tipo_permiso, permiso=None):
     else:
         permiso = Permiso()
         permiso.aprobar = True
+        permiso.localidad = individuo.domicilio_actual.localidad
         permiso.controlador = individuo.controlador_salvoconducto()
         #REALIZAR TODA LA LOGICA
         #Chequeamos que no este en cuarentena obligatoria o aislado

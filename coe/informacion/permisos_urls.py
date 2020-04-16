@@ -7,8 +7,8 @@ from . import permisos_views as permisos_views
 app_name = 'permisos_urls'
 urlpatterns = [
     #Publico
-    path('buscar/', permisos_views.buscar_permiso, name='buscar_permiso'),
-    path('permiso/<int:individuo_id>/<int:num_doc>/', permisos_views.pedir_permiso, name='pedir_permiso'),
+    path('buscar/', permisos_views.buscar_permiso_web, name='buscar_permiso'),
+    path('permiso/<int:individuo_id>/<int:num_doc>/', permisos_views.pedir_permiso_web, name='pedir_permiso'),
     path('completar/datos/<int:individuo_id>', permisos_views.completar_datos, name='completar_datos'),
     path('subir/foto/<int:individuo_id>', permisos_views.subir_foto, name='subir_foto'),
     #Administracion
