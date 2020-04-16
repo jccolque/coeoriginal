@@ -1,6 +1,18 @@
+#Choices
 TIPO_INSCRIPTO = (
     ('PS', 'Profesionales de Salud'),
     ('VS', 'Voluntarios Sociales'),
+)
+
+GRUPO_SANGUINEO = (
+    (1, 'A+'),
+    (2, 'A-'),
+    (3, 'B+'),
+    (4, 'B-'),
+    (5, 'AB+'),
+    (6, 'AB-'),
+    (7, '0+'),
+    (8, '0-'),
 )
 
 TIPO_PROFESIONAL = (

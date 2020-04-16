@@ -13,15 +13,11 @@ from core.forms import SearchForm
 from core.functions import delete_tags
 #Impors de la app
 from .tokens import account_activation_token
-from .models import Inscripto
-from .forms import ProfesionalSaludForm
+from .models import Inscripto, Area, Tarea, TareaElegida
+from .forms import ProfesionalSaludForm, VoluntarioSocialForm
 
 # Create your views here.
-@permission_required('operadores.menu_inscripciones')
-def menu(request):
-    return render(request, 'menu_inscripciones.html', {})
-
-def cargar_inscripcion(request):
+def inscripcion_salud(request):
     form = ProfesionalSaludForm()
     if request.method == "POST":
         form = ProfesionalSaludForm(request.POST, request.FILES)
@@ -45,9 +41,57 @@ def cargar_inscripcion(request):
             return render(request, 'inscripto_exito.html', {'inscripto': inscripto, })
     return render(request, "extras/generic_form.html", {'titulo': "Inscribite", 'form': form, 'boton': "Inscribirse", })
 
+def inscripcion_social(request):
+    areas = Area.objects.all()
+    form = VoluntarioSocialForm()
+    if request.method == "POST":
+        tareas = request.POST.getlist('tareas')
+        form = VoluntarioSocialForm(request.POST, request.FILES)
+        if form.is_valid():
+            #Creamos diccionario de tareas
+            dict_tareas = {t.id:t for t in Tarea.objects.all()}
+            #Generamos el inscripto
+            inscripto = form.save(commit=False)
+            inscripto.tipo = 'VS'
+            if tareas:
+                inscripto.save()
+                #Agregamos las tareas
+                for tarea in tareas:
+                    te = TareaElegida()
+                    te.inscripto = inscripto
+                    te.tarea = dict_tareas[int(tarea)]
+                    te.save()
+                #enviar email de validacion
+                to_email = inscripto.email
+                #Preparamos el correo electronico
+                mail_subject = 'Inscripcion al COE2020'
+                message = render_to_string('emails/acc_active_inscripcion.html', {
+                        'inscripto': inscripto,
+                        'token':account_activation_token.make_token(inscripto),
+                    })
+                #Instanciamos el objeto mail con destinatario
+                email = EmailMessage(mail_subject, message, to=[to_email])
+                #Enviamos el correo
+                if SEND_MAIL:
+                    email.send()
+                return render(request, 'inscripto_exito.html', {'inscripto': inscripto, })
+            else:
+                form.add_error("info_extra", "No ha Seleccionado ninguna tarea.")
+    return render(request, "inscripcion_social.html", {
+        'titulo': "Inscribite", 
+        'form': form, 
+        'boton': "Inscribirse",
+        'areas': areas,
+    })
+
+#Administracion
 @permission_required('operadores.menu_inscripciones')
-def lista_inscriptos(request, profesion_id=None):
-    inscriptos = Inscripto.objects.filter(disponible=True)
+def menu(request):
+    return render(request, 'menu_inscripciones.html', {})
+
+@permission_required('operadores.menu_inscripciones')
+def lista_voluntarios(request, tipo_inscripto, profesion_id=None):
+    inscriptos = Inscripto.objects.filter(disponible=True, tipo_inscripto=tipo_inscripto)
     if profesion_id:
         inscriptos = inscriptos.filter(profesion=profesion_id)
     #Agregar buscador

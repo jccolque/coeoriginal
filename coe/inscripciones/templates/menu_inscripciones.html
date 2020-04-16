@@ -10,9 +10,13 @@
                     <h1>Menu Documentos:</h1>
                     <div class="col-md-8">
                         <ul class="menu_botones">
-                            <li><a href="{% url 'inscripciones:cargar_inscripcion'  %}">Inscribir a Alguien</a></li>
-                            <li><a href="{% url 'inscripciones:lista_inscriptos'  %}">Ver Listado de Inscriptos</a></li>
+                            <li><a href="{% url 'inscripciones:lista_voluntarios' tipo_inscripto='PS'  %}">Ver Listado de Voluntarios de Salud</a></li>
+                            <li><a href="{% url 'inscripciones:lista_voluntarios' tipo_inscripto='VS'  %}">Ver Listado de Voluntarios Sociales</a></li>
                             <li><a href="{% url 'inscripciones:download_inscriptos'  %}">Descargar Listado de Inscriptos</a></li>
+                            <hr>
+                            <li><a href="{% url 'inscripciones:inscripcion_salud'  %}">Inscripcion Voluntario de Salud</a></li>
+                            <li><a href="{% url 'inscripciones:inscripcion_social'  %}">Inscripcion Voluntario Social</a></li>
+                            <hr>
                             {% if request.user.is_superuser %}
                                 <li><a href="{% url 'documentos:menu' %}">Opcion del Administrador</a></li>
                             {% endif %}

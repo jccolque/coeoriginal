@@ -8,11 +8,14 @@ from . import views
 #Definimos paths de la app
 app_name = 'inscripciones'
 urlpatterns = [
+    #Publico
+    path('profesional/salud', views.inscripcion_salud, name='inscripcion_salud'),
+    path('voluntario/social', views.inscripcion_social, name='inscripcion_social'),
+    #Administracion
     path('', views.menu, name='menu'),
+    path('lista/<str:tipo_inscripto>/', views.lista_voluntarios, name='lista_voluntarios'),
+    path('lista/<str:tipo_inscripto>/<int:profesion_id>', views.lista_voluntarios, name='lista_filtrada'),
 
-    path('cargar', views.cargar_inscripcion, name='cargar_inscripcion'),
-    path('lista', views.lista_inscriptos, name='lista_inscriptos'),
-    path('lista/prof/<int:profesion_id>', views.lista_inscriptos, name='lista_filtrada'),
     path('ver/<int:inscripto_id>', views.ver_inscripto, name='ver_inscripto'),
     path('download', views.download_inscriptos, name='download_inscriptos'),
 
