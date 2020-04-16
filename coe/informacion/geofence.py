@@ -80,7 +80,7 @@ def buscar_permiso(individuo, activo=False):
     permiso = permisos.first()
     if not permiso:
         #Chequeamos que el individuo no tenga atributo laboral para permiso permanente:
-        atributos = individuo.atributos.filter(tipo__in=('AS','PS','FP','TE'))
+        atributos = individuo.atributos.filter(tipo__in=('AS','PS','FP'))
         if atributos:
             atributo = atributos.first()
             permiso = Permiso()
@@ -95,35 +95,38 @@ def buscar_permiso(individuo, activo=False):
     return permiso
 
 #Validamos la posibilidad de otorgar el permiso
-def validar_permiso(individuo, tipo_permiso, permiso=None):
+def pedir_permiso(individuo, tipo_permiso, permiso=None):
     #Inicializamos permiso:
-    if not permiso:
-        permiso = Permiso()
-    permiso.aprobar = True
-    permiso.controlador = individuo.controlador_salvoconducto()
-    #REALIZAR TODA LA LOGICA
-    #Chequeamos que no este en cuarentena obligatoria o aislado
-    if individuo.situacion_actual.conducta in ('D', 'E'):
-        permiso.aprobar = False
-        permiso.aclaracion = "Usted se encuentra bajo " + individuo.situacion_actual.get_conducta_display() + " Mantengase en su Hogar."
+    if permiso:#Si encontro un permiso previamente guardado
+        permiso.aprobar = True
     else:
-        #Chequeamos que no tenga un permiso hace menos de 3 dias
-        cooldown = timezone.now() - timedelta(days=3)
-        permisos = individuo.permisos.filter(endda__gt=cooldown)#, tipo=tipo_permiso)#(DEL MISMO TIPO?):
-        if permisos:
+        permiso = Permiso()
+        permiso.aprobar = True
+        permiso.controlador = individuo.controlador_salvoconducto()
+        #REALIZAR TODA LA LOGICA
+        #Chequeamos que no este en cuarentena obligatoria o aislado
+        if individuo.situacion_actual.conducta in ('D', 'E'):
             permiso.aprobar = False
-            permiso.aclaracion = "Usted recibio un Permiso el dia " + str(permisos.last().endda.date())
+            permiso.aclaracion = "Usted se encuentra bajo " + individuo.situacion_actual.get_conducta_display() + " Mantengase en su Hogar."
         else:
-            #Chequeamos que nadie del domicilio tenga permiso
-            for relacion in individuo.relaciones.filter(tipo="MD"):
-                if relacion.relacionado.permisos.filter(endda__gt=cooldown, tipo=tipo_permiso):
-                    relacionado = relacion.relacionado
-                    permiso.aprobar = False
-                    permiso.aclaracion = relacionado.nombres + ' ' + relacionado.apellidos + ' Ya obtuvo un permiso en los ultimos dias.' 
-    #Devolvemos todo lo procesado
-    permiso.aprobar = False
-    permiso.aclaracion = "Esta Funcionalidad aun no fue Aprobada. Sigue Vigente Permiso Nacional."
-    #Funcionar
+            #Chequeamos que no tenga un permiso hace menos de 3 dias
+            cooldown = timezone.now() - timedelta(days=3)
+            permisos = individuo.permisos.filter(endda__gt=cooldown)#, tipo=tipo_permiso)#(DEL MISMO TIPO?):
+            if permisos:
+                permiso.aprobar = False
+                permiso.aclaracion = "Usted recibio un Permiso el dia " + str(permisos.last().endda.date())
+            else:
+                #Chequeamos que nadie del domicilio tenga permiso
+                for relacion in individuo.relaciones.filter(tipo="MD"):
+                    if relacion.relacionado.permisos.filter(endda__gt=cooldown, tipo=tipo_permiso):
+                        relacionado = relacion.relacionado
+                        permiso.aprobar = False
+                        permiso.aclaracion = relacionado.nombres + ' ' + relacionado.apellidos + ' Ya obtuvo un permiso en los ultimos dias.' 
+        #Devolvemos todo lo procesado
+        #HARDCODEADO HASTA QUE SE APRUEBE:
+        permiso.aprobar = False
+        permiso.aclaracion = "Esta Funcionalidad aun no fue Aprobada. Sigue Vigente Permiso Nacional."
+        #Funcionar
     return permiso
 
 #Aca ordenamos por zonas y tiempos

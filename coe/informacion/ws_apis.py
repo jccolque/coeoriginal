@@ -2,6 +2,8 @@
 from django.utils import timezone
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
+#Imports del proyecto
+from georef.models import Localidad, Barrio
 #Imports de la app
 from .choices import TIPO_ESTADO, TIPO_CONDUCTA, TIPO_PERMISO
 from .models import Situacion
@@ -64,6 +66,27 @@ def tipo_permiso(request):
     return JsonResponse(
         {
             "permisos": [{"id":tipo[0],"descripcion":tipo[1]} for tipo in TIPO_PERMISO if tipo[0] != 'P'],
+        },
+        safe=False,
+    )
+
+@require_http_methods(["GET"])
+def ws_localidades(request):
+    return JsonResponse(
+        {
+            l.id : l.nombre for l in Localidad.objects.all()
+        },
+        safe=False,
+    )
+
+@require_http_methods(["GET"])
+def ws_barrios(request, localidad_id=None):
+    barrios = Barrio.objects.all()
+    if localidad_id:
+        barrios = barrios.filter(localidad_id=localidad_id)
+    return JsonResponse(
+        {
+            b.id: b.nombre for b in barrios
         },
         safe=False,
     )

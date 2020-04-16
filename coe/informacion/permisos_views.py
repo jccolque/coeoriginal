@@ -13,7 +13,7 @@ from coe.settings import SEND_MAIL
 from operadores.functions import obtener_operador
 #imports de la app
 from .models import Individuo, Permiso
-from .geofence import validar_permiso, definir_fechas
+from .geofence import pedir_permiso, definir_fechas
 from .permisos_form import PermisoForm, BuscarPermiso, DatosForm, FotoForm
 
 #Publico
@@ -41,7 +41,7 @@ def pedir_permiso(request, individuo_id, num_doc):
             if form.is_valid():
                 permiso = form.save(commit=False)
                 permiso.individuo = individuo
-                permiso = validar_permiso(individuo, permiso.tipo, permiso=permiso)
+                permiso = pedir_permiso(individuo, permiso.tipo, permiso=permiso)
                 if permiso.aprobar:
                     permiso = definir_fechas(permiso, permiso.begda)
                     permiso.save()

@@ -25,7 +25,7 @@ from .models import Individuo, AppData, Domicilio, GeoPosicion
 from .models import Atributo, Sintoma, Situacion, Seguimiento
 from .tokens import TokenGenerator
 from .geofence import controlar_distancia, es_local
-from .geofence import buscar_permiso, validar_permiso, definir_fechas, json_permiso
+from .geofence import buscar_permiso, pedir_permiso, definir_fechas, json_permiso
 
 #Definimos logger
 logger = logging.getLogger("apis")
@@ -40,8 +40,10 @@ def AppConfig(request):
             "WebServices":
             {
                 "tipo_permisos": reverse("ws_urls:tipo_permiso"),
-                "localidad": reverse("georef:localidad-autocomplete"),
-                "barrio": reverse("georef:barrio-autocomplete"),
+                "full_localidades": reverse("ws_urls:ws_localidades"),
+                "full_barrios": reverse("ws_urls:ws_barrios"),
+                "ac_localidad": reverse("georef:localidad-autocomplete"),
+                "ac_barrio": reverse("georef:barrio-autocomplete"),
                 "logs": "/archivos/logs/apis.txt",
             },
             #Registro:
@@ -633,9 +635,10 @@ def pedir_salvoconducto(request):
             int(data["hora_ideal"][2:4]),
         )
         #Validamos si es factible:
-        permiso = validar_permiso(individuo, data["tipo_permiso"])
+        permiso = buscar_permiso(individuo)
+        permiso = pedir_permiso(individuo, data["tipo_permiso"], permiso)
         #Si fue aprobado, Creamos Permiso
-        if permiso.aprobar:#Variable temporal generada en validar_permiso
+        if permiso.aprobar:#Variable temporal
             permiso.individuo = individuo
             permiso.tipo = data["tipo_permiso"]
             permiso.localidad = individuo.domicilio_actual.localidad
@@ -675,13 +678,13 @@ def ver_salvoconducto(request):
         #Buscamos al individuo en la db
         individuo = Individuo.objects.select_related('appdata').get(num_doc=num_doc)
         #ACA CHEQUEAMOS TOKEN
-        
+
         #Buscamos permiso
         permiso = buscar_permiso(individuo)
         #Damos respuesta
-        return json_permiso(permiso, "get_salvoconducto")
+        return json_permiso(permiso, "ver_salvoconducto")
     except Exception as e:
-        return json_error(e, "get_salvoconducto", logger, data)
+        return json_error(e, "ver_salvoconducto", logger, data)
 
 @csrf_exempt
 @require_http_methods(["POST"])
