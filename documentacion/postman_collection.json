@@ -1,0 +1,433 @@
+{
+	"info": {
+		"_postman_id": "23eecc73-7212-4703-9b7d-ae5c84ec2b1a",
+		"name": "COE2020",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "IDE",
+			"item": [
+				{
+					"name": "IDE Mapeo General",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{server}}/ide/mapeo_general",
+							"protocol": "http",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"ide",
+								"mapeo_general"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "IDE Tracking",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{server}}/ide/tracking/557781",
+							"protocol": "http",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"ide",
+								"tracking",
+								"557781"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "APP",
+			"item": [
+				{
+					"name": "Get CONFIGS",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{server}}/covid19/config",
+							"protocol": "http",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"covid19",
+								"config"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Tipos Permisos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{server}}/api_refs/tipo_permiso",
+							"protocol": "http",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api_refs",
+								"tipo_permiso"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Full Localidades",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{server}}/api_refs/localidades",
+							"protocol": "http",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api_refs",
+								"localidades"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Full Barrios",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{server}}/api_refs/barrios/{{id_san_salvador}}",
+							"protocol": "http",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api_refs",
+								"barrios",
+								"{{id_san_salvador}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Registro",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"dni\": {{dni}},\n    \"apellido\": \"mandrille\",\n    \"nombre\": \"marcos federico\",\n    \"localidad\": {{id_san_salvador}},\n    \"localidad_nombre\": \"SAN SALVADOR DE JUJUY (DOCTOR MANUEL BELGRANO)\",\n    \"direccion_calle\": \"El Cañaveral\",\n    \"direccion_numero\": 71,\n    \"telefono\": 3885899506,\n    \"push_notification_id\": \"{{device_id}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{server}}/covid19/registro",
+							"protocol": "http",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"covid19",
+								"registro"
+							]
+						},
+						"description": "Test de inscripcion localserver"
+					},
+					"response": []
+				},
+				{
+					"name": "Ecuesta",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"dni\": {{dni}},\n    \"token\": \"{{token}}\",\n\t\"pais_riesgo\": true,\n\t\"contacto_extranjero\": true,\n\t\"fiebre\": false,\n\t\"tos\": true,\n\t\"dif_respirar\": true,\n\t\"riesgo\": 2,\n\t\"latitud\": -24.385128, \n\t\"longitud\": -65.126089\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{server}}/covid19/encuesta",
+							"protocol": "http",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"covid19",
+								"encuesta"
+							]
+						},
+						"description": "Envio de la encuesta"
+					},
+					"response": []
+				},
+				{
+					"name": "Foto Perfil",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "dni",
+									"value": "32503332",
+									"type": "text"
+								},
+								{
+									"key": "imagen",
+									"type": "file",
+									"src": "/home/mmandrille/Dropbox/Imagenes/Saved Pictures/304982_4248817616223_1059623143_n.jpg"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{server}}/covid19/foto_perfil",
+							"protocol": "http",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"covid19",
+								"foto_perfil"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Start Tracking",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"dni_individuo\" : {{dni}},\n\t\"token\": \"{{token}}\",\n\t\"dni_operador\": {{dni_test_user}},\n\t\"password\": \"{{pass_test_user}}\",\n\t\"latitud\": -24.2039917,\n    \"longitud\": -65.2978886\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{server}}/covid19/start/tracking",
+							"protocol": "http",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"covid19",
+								"start",
+								"tracking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Tracking",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"dni\" : {{dni}},\n\t\"token\": \"{{token}}\",\n\t\"fecha\": \"20200413\",\n\t\"hora\": \"2015\",\n\t\"latitud\": -24.2039917,\n    \"longitud\": -65.2978886\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{server}}/covid19/tracking",
+							"protocol": "http",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"covid19",
+								"tracking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Salvoconducto",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"dni\" : {{dni}},\n\t\"token\": \"{{token}}\",\n\t\"tipo_permiso\": \"C\",\n\t\"fecha_ideal\": \"20200406\",\n\t\"hora_ideal\": \"0309\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{server}}/covid19/salvoconducto",
+							"protocol": "http",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"covid19",
+								"salvoconducto"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Salvoconducto",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"dni_individuo\" : {{dni}},\n\t\"token\": \"{{token}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{server}}/covid19/get/salvoconducto",
+							"protocol": "http",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"covid19",
+								"get",
+								"salvoconducto"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Control Salvoconducto",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"dni_operador\" : {{dni}},\n\t\"qr_code\": \"00612673072@MANDRILLE@MARCOS FEDERICO@M@32503332@B@16/10/1986@25/09/2019@201\",\n    \"latitud\": -24.2049917,\n    \"longitud\": -65.2354888\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{server}}/covid19/control/salvoconducto",
+							"protocol": "http",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"covid19",
+								"control",
+								"salvoconducto"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Notificacion",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"dni_individuo\" : {{dni}},\n\t\"token\": \"{{token}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{server}}/covid19/get/notificacion",
+							"protocol": "http",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"covid19",
+								"get",
+								"notificacion"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get LOG App Apis",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{server}}/covid19/config",
+							"protocol": "http",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"covid19",
+								"config"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
