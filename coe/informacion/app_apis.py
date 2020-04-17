@@ -518,7 +518,8 @@ def start_tracking(request):
         geopos.tipo = 'ST'
         geopos.latitud = data["latitud"]
         geopos.longitud = data["longitud"]
-        geopos.aclaracion = "INICIO TRACKING"
+        geopos.aclaracion = "Iniciado por: " + str(operador)
+        geopos.operador = operador
         if es_local(geopos):
             geopos.save()
             #Cargamos Inicio de Seguimiento:
@@ -526,7 +527,7 @@ def start_tracking(request):
             seguimiento = Seguimiento()
             seguimiento.individuo = individuo
             seguimiento.tipo = "IT"
-            seguimiento.aclaracion = "INICIO TRACKING: " + str(geopos.latitud)+", "+str(geopos.longitud)
+            seguimiento.aclaracion = "Iniciado por: " + str(operador)
             seguimiento.save()
             #Respondemos
             return JsonResponse(

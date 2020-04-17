@@ -1,6 +1,8 @@
 #Imports Django
+import json
 from django.utils import timezone
 from django.http import JsonResponse
+from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 #Imports del proyecto
 from georef.models import Localidad, Barrio
@@ -72,21 +74,19 @@ def tipo_permiso(request):
 
 @require_http_methods(["GET"])
 def ws_localidades(request):
-    return JsonResponse(
-        {
-            l.id : l.nombre for l in Localidad.objects.all()
-        },
-        safe=False,
-    )
-
+    datos = Localidad.objects.all()
+    datos = [d.as_dict() for d in datos]
+    return HttpResponse(json.dumps({'Localidades': datos, "cant_registros": len(datos),}), content_type='application/json')
+    
 @require_http_methods(["GET"])
 def ws_barrios(request, localidad_id=None):
-    barrios = Barrio.objects.all()
+    datos = Barrio.objects.all()
     if localidad_id:
-        barrios = barrios.filter(localidad_id=localidad_id)
-    return JsonResponse(
+        datos = datos.filter(localidad__id=localidad_id)
+    datos = [d.as_dict() for d in datos]
+    return HttpResponse(json.dumps(
         {
-            b.id: b.nombre for b in barrios
-        },
-        safe=False,
-    )
+            'localidad_id': localidad_id,
+            'barrios': datos,
+            "cant_registros": len(datos),
+        }), content_type='application/json')
