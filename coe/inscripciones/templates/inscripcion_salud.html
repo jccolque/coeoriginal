@@ -1,0 +1,56 @@
+{% extends 'base_inscripciones.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <form method="post" enctype="multipart/form-data" autocomplete="off">
+                <br>
+                {% csrf_token %}
+                <!-- Mostramos errores -->
+                {% for field in form %}
+                    {% if field.errors %}
+                        <li>
+                            <b>{{ field.label }}: {{ field.errors|striptags }}</b>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                <br>
+                <h1><b>PLAN DE VOLUNTARIOS PROFESIONALES DE SALUD COVID-19</b></h1>
+                <h3>Postulación de Profesionales de la Salud</h3>
+                <div class="col-sm-4">
+                    <div class="bordeado">
+                        <img class="fotos" src="{% static 'img/reclutamiento.jpeg' %}">
+                        <p>La información consignada precedentemente reviste carácter de <b>Declaración Jurada</b>.</p>
+                    </div>
+                </div>
+                <div class="col-sm-6 custom_form_fields">
+                    <div class="bordeado">
+                        <h3><b>Datos Personales</b></h3>
+                        <p><b>Numero de Documento:</b> {{form.num_doc}}</p>
+                        <p><b>Apellido:</b> {{form.apellidos}}</p>
+                        <p><b>Nombre:</b> {{form.nombres}}</p>
+                        <p><b>Fecha de Nacimiento:</b> {{form.fecha_nacimiento}}</p>
+                        <p><b>Grupo Sanguineo:</b> {{form.grupo_sanguineo}}</p>
+                        <hr>
+                        <p><b>Domicilio</b></p>
+                        <p><b>Localidad:</b> {{form.dom_localidad}}</p>
+                        <p><b>Calle:</b> {{form.dom_calle}} <b>Numero:</b> {{form.dom_numero}}</p>
+                        <p><b>Aclaracion:</b> {{form.dom_aclaracion}}</p>
+                        <hr>
+                        <p><b>Contacto</b></p>
+                        <p><b>Correo Electronico:</b> {{form.email}}</p>
+                        <p><b>Telefono:</b> {{form.telefono}}</p>
+                        <hr>
+                        <p><b>Documentacion:</b></p>
+                        <p><b>Documento de Identidad</b> {{form.archivo_dni}}</p>
+                        <p><b>Titulo</b> {{form.archivo_titulo}}</p>
+                        <p><b>Informacion Extra:</b> {{form.info_extra}}</p>
+                        <button type="submit" style="float:right;">Cargar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

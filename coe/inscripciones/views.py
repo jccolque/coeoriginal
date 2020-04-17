@@ -16,6 +16,7 @@ from informacion.models import Individuo
 from .tokens import account_activation_token
 from .models import Inscripto, Area, Tarea, TareaElegida
 from .forms import ProfesionalSaludForm, VoluntarioSocialForm
+from .functions import actualizar_individuo
 
 # Create your views here.
 def inscripcion_salud(request):
@@ -23,8 +24,16 @@ def inscripcion_salud(request):
     if request.method == "POST":
         form = ProfesionalSaludForm(request.POST, request.FILES)
         if form.is_valid():
-            inscripto = form.save(commit=False)
+            individuo = actualizar_individuo(form)
+            #Armamos la inscripcion:
+            inscripto = Inscripto()
             inscripto.tipo = 'PS'
+            inscripto.individuo = individuo
+            inscripto.profesion = form.profesion
+            inscripto.matricula = form.matricula
+            inscripto.archivo_dni = form.archivo_dni
+            inscripto.archivo_titulo = form.archivo_titulo
+            inscripto.info_extra = form.info_extra
             inscripto.save()
             #enviar email de validacion
             to_email = inscripto.email
@@ -40,7 +49,11 @@ def inscripcion_salud(request):
             if SEND_MAIL:
                 email.send()
             return render(request, 'inscripto_exito.html', {'inscripto': inscripto, })
-    return render(request, "extras/generic_form.html", {'titulo': "Inscribite", 'form': form, 'boton': "Inscribirse", })
+    return render(request, "inscripcion_salud.html", {
+        'titulo': "Inscribite",
+        'form': form, 
+        'boton': "Inscribirse",
+    })
 
 def inscripcion_social(request):
     areas = Area.objects.all()
@@ -49,19 +62,30 @@ def inscripcion_social(request):
         tareas = request.POST.getlist('tareas')
         form = VoluntarioSocialForm(request.POST, request.FILES)
         if form.is_valid():
+            individuo = actualizar_individuo(form)
             #Creamos diccionario de tareas
             dict_tareas = {t.id:t for t in Tarea.objects.all()}
-            #Generamos el inscripto
-            inscripto = form.save(commit=False)
+            #Armamos la inscripcion:
+            inscripto = Inscripto()
             inscripto.tipo = 'VS'
+            inscripto.individuo = individuo
+            inscripto.oficio = form.oficio
+            inscripto.archivo_dni = form.archivo_dni
+            inscripto.grupo_sanguineo = form.grupo_sanguineo
+            inscripto.info_extra = form.info_extra
+            #Dispositivos
+            #form.tiene_desktop
+            #form.tiene_notebook
+            #form.tiene_telefono
+            #form.tiene_tablet
+            #Agregamos las tareas
             if tareas:
                 inscripto.save()
-                #Agregamos las tareas
                 for tarea in tareas:
-                    te = TareaElegida()
-                    te.inscripto = inscripto
-                    te.tarea = dict_tareas[int(tarea)]
-                    te.save()
+                    teleg = TareaElegida()
+                    teleg.inscripto = inscripto
+                    teleg.tarea = dict_tareas[int(tarea)]
+                    teleg.save()
                 #enviar email de validacion
                 to_email = inscripto.email
                 #Preparamos el correo electronico

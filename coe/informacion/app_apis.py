@@ -371,8 +371,8 @@ def foto_perfil(request):
     try:
         data = None
         #Agarramos el dni
-        num_doc = obtener_dni(data)
         try:
+            num_doc = obtener_dni(data)
             #Si viene en un json
             data = json.loads(request.body.decode("utf-8"))
             #Codificamos imagen
@@ -380,7 +380,6 @@ def foto_perfil(request):
             data["imagen"] = data["imagen"][:25]+'| full |'+data["imagen"][-25:]
         except:#Si viene por form
             image_data = request.FILES['imagen'].read()
-
         #Buscamos al individuo en la db
         individuo = Individuo.objects.get(num_doc=num_doc)
         #ACA CHEQUEAMOS TOKEN
