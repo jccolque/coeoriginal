@@ -2,7 +2,7 @@
 {% load geotracking %}
 
 {% block content %}
-    <tr class="{% ct_color_alerta alerta.alerta %}">
+    <tr id="{{alerta.id}}" class="{% ct_color_alerta alerta.alerta %}">
         <td><b>{{alerta.get_alerta_display}}</b></td>
         <td>{{alerta.individuo.apellidos}}, {{alerta.individuo.nombres}}</td>
         <td>{{alerta.individuo.situacion_actual}}</td>

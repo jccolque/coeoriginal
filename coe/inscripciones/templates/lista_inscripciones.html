@@ -22,11 +22,7 @@
                 <tbody>
                     {% for inscripto in inscriptos %}
                         <tr>
-                            <td>
-                                <a href="{% url 'inscripciones:lista_filtrada' profesion_id=inscripto.profesion %}">
-                                    {{inscripto.get_profesion_display}}
-                                </a>
-                            </td>
+                            <td>{{inscripto.get_profesion_display}}</td>
                             <td>{{inscripto.apellidos}}</td>
                             <td>{{inscripto.nombres}}</td>
                             <td>{{inscripto.localidad}}</td>

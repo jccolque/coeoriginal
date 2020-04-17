@@ -2,6 +2,7 @@
 #Imports Django
 from django import forms
 #Imports extra
+from dal import autocomplete
 #Imports del proyecto
 from core.widgets import XDSoftDatePickerInput
 #Imports de la app
@@ -13,6 +14,10 @@ class ProfesionalSaludForm(forms.ModelForm):
         model = Inscripto
         fields= '__all__'
         exclude = ('tipo_inscripto', 'grupo_sanguineo', 'fecha', 'valido', 'disponible', 'oficio')
+        widgets = {
+            'fecha_nacimiento': XDSoftDatePickerInput(),
+            'localidad': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+        }
 
 class VoluntarioSocialForm(forms.ModelForm):
     no_grupo_riesgo = forms.BooleanField(required=True)
@@ -23,4 +28,5 @@ class VoluntarioSocialForm(forms.ModelForm):
         exclude = ('tipo_inscripto', 'fecha', 'valido', 'disponible')
         widgets = {
             'fecha_nacimiento': XDSoftDatePickerInput(),
+            'localidad': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
         }

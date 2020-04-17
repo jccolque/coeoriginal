@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import permission_required
 from coe.settings import SEND_MAIL
 from core.forms import SearchForm
 from core.functions import delete_tags
+from informacion.models import Individuo
 #Impors de la app
 from .tokens import account_activation_token
 from .models import Inscripto, Area, Tarea, TareaElegida
@@ -90,10 +91,8 @@ def menu(request):
     return render(request, 'menu_inscripciones.html', {})
 
 @permission_required('operadores.menu_inscripciones')
-def lista_voluntarios(request, tipo_inscripto, profesion_id=None):
+def lista_voluntarios(request, tipo_inscripto):
     inscriptos = Inscripto.objects.filter(disponible=True, tipo_inscripto=tipo_inscripto)
-    if profesion_id:
-        inscriptos = inscriptos.filter(profesion=profesion_id)
     #Agregar buscador
     if request.method == "POST":
         form = SearchForm(request.POST)
@@ -145,6 +144,11 @@ def activar_inscripcion_mail(request, inscripcion_id, token):
         inscripto = None
     if inscripto and account_activation_token.check_token(inscripto, token):
         inscripto.valido = True
+        try:
+            inscripto.individuo = Individuo.objects.get(num_doc=inscripto.num_doc)
+            #Actualizamos domicilio
+        except Individuo.DoesNotExist:
+            pass#No tenemos registrada a esa persona
         inscripto.save()
         texto = 'Excelente! Su correo electronico fue validada.'
     else:
