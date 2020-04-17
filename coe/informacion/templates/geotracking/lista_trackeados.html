@@ -1,5 +1,8 @@
 {% extends 'base_informacion.html' %}
+
 {% load static %}
+{% load geotracking %}
+
 {% block content %}
     <div class="beneficiario container">
         <div class="row">
@@ -16,37 +19,38 @@
                         <th>Ubicacion Actual</th>
                         <th>Situacion</th>
                         <th>Ultima Posicion Enviada</th>
+                        <th>Ultima Alerta</ht>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for individuo in individuos %}
-                        <tr>
-                            <td>{{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</td>
-                            <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
-                            <td>{{individuo.fecha_nacimiento}}</td>
-                            <td>{{individuo.domicilio_actual}}</td>
-                            <td>{{individuo.situacion_actual}}</td>
-                            <td>
-                                {% with individuo.geoposicion as last_posicion %}
-                                    {{last_posicion.fecha}}
-                                    <a href="https://www.google.com/maps?q={{last_posicion.latitud|stringformat:".5f"}},{{last_posicion.longitud|stringformat:".5f"}}" target="_blank">
-                                        <img class="icons" src="{% static '/img/icons/map.png' %}">
+                        {% with individuo.ultima_alerta as ultima_alerta %}
+                            <tr class="{% ct_color_alerta ultima_alerta.alerta %}">
+                                <td>{{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</td>
+                                <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
+                                <td>{{individuo.fecha_nacimiento}}</td>
+                                <td>{{individuo.domicilio_actual}}</td>
+                                <td>{{individuo.situacion_actual}}</td>
+                                <td>
+                                    {% with individuo.geoposicion as last_posicion %}
+                                        {{last_posicion.fecha|date:"d/m H:i"}}
+                                    {% endwith %}
+                                </td>
+                                <td>{{ultima_alerta.fecha|date:"d/m H:i"}}: {{ultima_alerta.get_alerta_display}}</td>
+                                <td>
+                                    <a href="{% url 'geo_urls:ver_tracking' individuo_id=individuo.id %}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/tracking.png' %}">
                                     </a>
-                                {% endwith %}
-                            </td>
-                            <td>
-                                <a href="{% url 'geo_urls:ver_tracking' individuo_id=individuo.id %}" target="_blank">
-                                    <img class="icons" src="{% static '/img/icons/tracking.png' %}">
-                                </a>
-                                <a href="{% url 'geo_urls:config_tracking' individuo_id=individuo.id %}" target="_blank">
-                                    <img class="icons" src="{% static '/img/icons/config.png' %}">
-                                </a>
-                                <a href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">
-                                    <img class="icons" src="{% static '/img/icons/lupa.png' %}">
-                                </a>
-                            </td>
-                        </tr>
+                                    <a href="{% url 'geo_urls:config_tracking' individuo_id=individuo.id %}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/config.png' %}">
+                                    </a>
+                                    <a href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endwith %}
                     {% endfor %}
                 </tbody>
             </table>

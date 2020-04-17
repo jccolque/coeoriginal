@@ -148,6 +148,7 @@ TIPO_GEOPOS = (
 )
 
 TIPO_ALERTA = (
+    ('SA', 'Sin Alerta'),
     ('DA', 'Distancia de Alerta'),
     ('DC', 'Distancia Critica'),
     ('FG', 'Falta de GeoTracking'),

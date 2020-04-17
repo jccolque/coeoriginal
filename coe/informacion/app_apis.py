@@ -24,6 +24,7 @@ from .models import Atributo, Sintoma, Situacion, Seguimiento
 from .tokens import TokenGenerator
 from .geofence import controlar_distancia, es_local
 from .geofence import buscar_permiso, pedir_permiso, definir_fechas, json_permiso
+from .app_functions import obtener_dni
 
 #Definimos logger
 logger = logging.getLogger("apis")
@@ -148,7 +149,7 @@ def AppConfig(request):
                 {
                     "accion": "tracking",
                     "realizado": "bool",
-                    "alerta": "bool",
+                    "alerta": "str: Tipo de Alerta",
                     "notif_titulo": "str (Titulo notificacion Local)",
                     "notif_mensaje": "str (Mensaje notificacion Local)",
                     "distancia" : "float (en metros)",
@@ -289,10 +290,7 @@ def registro(request):
         #Obtenemos datos basicos:
         nac = Nacionalidad.objects.filter(nombre__icontains="Argentina").first()
         #Agarramos el dni
-        if "dni" in data:
-            num_doc = str(data["dni"]).upper()
-        else:
-            num_doc = str(data["dni_individuo"]).upper()
+        num_doc = obtener_dni(data)
         #Buscamos al individuo en la db
         try:#Si lo encontramos, lo usamos
             individuo = Individuo.objects.get(num_doc=num_doc)
@@ -372,20 +370,15 @@ def registro(request):
 def foto_perfil(request):
     try:
         data = None
+        #Agarramos el dni
+        num_doc = obtener_dni(data)
         try:
             #Si viene en un json
             data = json.loads(request.body.decode("utf-8"))
-            #Agarramos el dni
-            if "dni" in data:
-                num_doc = str(data["dni"]).upper()
-            else:
-                num_doc = str(data["dni_individuo"]).upper()
             #Codificamos imagen
             image_data = b64decode(data['imagen'])
             data["imagen"] = data["imagen"][:25]+'| full |'+data["imagen"][-25:]
-        except:
-            #Si viene por form
-            num_doc = str(request.POST['dni']).upper()
+        except:#Si viene por form
             image_data = request.FILES['imagen'].read()
 
         #Buscamos al individuo en la db
@@ -416,10 +409,7 @@ def encuesta(request):
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
         #Agarramos el dni
-        if "dni" in data:
-            num_doc = str(data["dni"]).upper()
-        else:
-            num_doc = str(data["dni_individuo"]).upper()
+        num_doc = obtener_dni(data)
         #Buscamos al individuo en la db
         individuo = Individuo.objects.get(num_doc=num_doc)
         #ACA CHEQUEAMOS TOKEN
@@ -486,10 +476,7 @@ def start_tracking(request):
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
         #Agarramos el dni
-        if "dni" in data:
-            num_doc = str(data["dni"]).upper()
-        else:
-            num_doc = str(data["dni_individuo"]).upper()
+        num_doc = obtener_dni(data)
         #Buscamos al individuo en la db
         individuo = Individuo.objects.get(num_doc=num_doc)
         #ACA CHEQUEAMOS TOKEN
@@ -560,10 +547,7 @@ def tracking(request):
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
         #Agarramos el dni
-        if "dni" in data:
-            num_doc = str(data["dni"]).upper()
-        else:
-            num_doc = str(data["dni_individuo"]).upper()
+        num_doc = obtener_dni(data)
         #Buscamos al individuo en la db
         individuo = Individuo.objects.select_related('appdata').get(num_doc=num_doc)
         #ACA CHEQUEAMOS TOKEN
@@ -612,10 +596,7 @@ def pedir_salvoconducto(request):
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
         #Agarramos el dni
-        if "dni" in data:
-            num_doc = str(data["dni"]).upper()
-        else:
-            num_doc = str(data["dni_individuo"]).upper()
+        num_doc = obtener_dni(data)
         #Buscamos al individuo en la db
         individuo = Individuo.objects.select_related('appdata', 'domicilio_actual', 'situacion_actual')
         individuo = Individuo.objects.prefetch_related('permisos')
@@ -669,10 +650,7 @@ def ver_salvoconducto(request):
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
         #Agarramos el dni
-        if "dni" in data:
-            num_doc = str(data["dni"]).upper()
-        else:
-            num_doc = str(data["dni_individuo"]).upper()
+        num_doc = obtener_dni(data)
         #Buscamos al individuo en la db
         individuo = Individuo.objects.select_related('appdata').get(num_doc=num_doc)
         #ACA CHEQUEAMOS TOKEN
@@ -737,10 +715,7 @@ def notificacion(request):
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
         #Agarramos el dni
-        if "dni" in data:
-            num_doc = str(data["dni"]).upper()
-        else:
-            num_doc = str(data["dni_individuo"]).upper()
+        num_doc = obtener_dni(data)
         #Buscamos al individuo en la db
         individuo = Individuo.objects.select_related('appdata', 'appdata__notificacion').get(num_doc=num_doc)
         notif = copy.copy(individuo.appdata.notificacion)

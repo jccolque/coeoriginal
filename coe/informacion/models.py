@@ -117,6 +117,8 @@ class Individuo(models.Model):
             return self.qrpath
     def tracking(self):
         return self.geoposiciones.filter(tipo='ST').exists()
+    def ultima_alerta(self):
+        return self.geoposiciones.exclude(alerta='SA').last()
     def controlador_salvoconducto(self):
         return self.permisos.filter(controlador=True, endda__gt=timezone.now()).exists()
 
@@ -161,7 +163,7 @@ class GeoPosicion(models.Model):
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     distancia = models.DecimalField('Distancia a Base', max_digits=8, decimal_places=2, default=0)
-    alerta = models.CharField('Tipo de Alerta', choices=TIPO_ALERTA, max_length=2, null=True, blank=True)
+    alerta = models.CharField('Tipo de Alerta', choices=TIPO_ALERTA, max_length=2, default='SA')
     procesada = models.BooleanField('Procesada', default=False)
     operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True)
     def __str__(self):
