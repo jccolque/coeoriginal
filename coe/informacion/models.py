@@ -21,7 +21,8 @@ from .choices import TIPO_RELACION, TIPO_SEGUIMIENTO
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
 from .choices import TIPO_DOCUMENTO
 from .choices import TIPO_PERMISO
-from .choices import TIPO_TRIAJE, TIPO_GEOPOS, TIPO_ACCION_NOTIFICACION
+from .choices import TIPO_TRIAJE, TIPO_GEOPOS, TIPO_ALERTA
+from .choices import TIPO_ACCION_NOTIFICACION
 
 # Create your models here.
 class Archivo(models.Model):
@@ -160,7 +161,7 @@ class GeoPosicion(models.Model):
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     distancia = models.DecimalField('Distancia a Base', max_digits=8, decimal_places=2, default=0)
-    alerta = models.BooleanField('Posicion de Alerta', default=False)
+    alerta = models.CharField('Tipo de Alerta', choices=TIPO_ALERTA, max_length=2, null=True, blank=True)
     procesada = models.BooleanField('Procesada', default=False)
     operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True)
     def __str__(self):

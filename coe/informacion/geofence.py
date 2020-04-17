@@ -18,8 +18,9 @@ def obtener_base(num_doc):
     #Si no tenemos la cache, la generamos de CERO
     if not geopos_bases:
         geopos_bases = GeoPosicion.objects.select_related('individuo', 'individuo__appdata')
-        geopos_bases = geopos_bases.filter(tipo='ST')
+        geopos_bases = geopos_bases.filter(tipo='PC')
         geopos_bases = {g.individuo.num_doc: g for g in geopos_bases}
+        cache.set("geopos_bases", geopos_bases)
     #Ahora buscamos el de este:
     try:
         return geopos_bases[num_doc]
@@ -27,13 +28,12 @@ def obtener_base(num_doc):
         gps = GeoPosicion.objects.select_related('individuo', 'individuo__appdata')
         #No tiene, hay que generar una nueva:
         try:
-            gps = gps.get(individuo__num_doc=num_doc, tipo='ST')
+            gps = gps.get(individuo__num_doc=num_doc, tipo='PC')
             geopos_bases[num_doc] = gps
         except GeoPosicion.DoesNotExist:#Si no encontramos buscamos otra
-            gps = gps.filter(individuo__num_doc=num_doc).last()
+            gps = None
         #Devolvemos
-        cache.set("geopos_bases", geopos_bases)
-        return gps
+    return gps
 
 def renovar_base(nueva_geopos):
     geopos_bases = cache.get("geopos_bases")
@@ -47,20 +47,25 @@ def controlar_distancia(nueva_geopos):
     nueva_geopos.notif_mensaje = ""
     #Obtenemos su posicion Permitida
     gps_base = obtener_base(nueva_geopos.individuo.num_doc)
-    appdata = gps_base.individuo.appdata
-    #Calculamos diferencia
-    geodesic = Geodesic.WGS84.Inverse(gps_base.latitud, gps_base.longitud, nueva_geopos.latitud, nueva_geopos.longitud)
-    nueva_geopos.distancia = geodesic['s12']# en metros
-    if nueva_geopos.distancia > appdata.distancia_alerta:#Si tiene mas de 50 metros
-        nueva_geopos.alerta = True
-        nueva_geopos.notif_titulo = "Covid19 - Alerta por Distancia"
-        nueva_geopos.notif_mensaje = "Usted se ha alejado a "+str(int(nueva_geopos.distancia))+"mts del area permitida."
-        #Cargamos registro de seguimiento
-        seguimiento = Seguimiento()
-        seguimiento.individuo = gps_base.individuo
-        seguimiento.tipo = 'AT'
-        seguimiento.aclaracion = 'Distancia: '+str(nueva_geopos.distancia)+'mts | '+str(nueva_geopos.fecha)
-        seguimiento.save()
+    if gps_base:
+        appdata = gps_base.individuo.appdata
+        #Calculamos diferencia
+        geodesic = Geodesic.WGS84.Inverse(gps_base.latitud, gps_base.longitud, nueva_geopos.latitud, nueva_geopos.longitud)
+        nueva_geopos.distancia = geodesic['s12']# en metros
+        if nueva_geopos.distancia > appdata.distancia_alerta:#Si tiene mas de 50 metros
+            nueva_geopos.alerta = 'DA'
+            if nueva_geopos.distancia > appdata.distancia_alerta:
+                nueva_geopos.alerta = 'DC'
+            nueva_geopos.notif_titulo = "Covid19 - Alerta por Distancia"
+            nueva_geopos.notif_mensaje = "Usted se ha alejado a "+str(int(nueva_geopos.distancia))+"mts del area permitida."
+            #Cargamos registro de seguimiento
+            seguimiento = Seguimiento()
+            seguimiento.individuo = gps_base.individuo
+            seguimiento.tipo = 'AT'
+            seguimiento.aclaracion = 'Distancia: '+str(nueva_geopos.distancia)+'mts | '+str(nueva_geopos.fecha)
+            seguimiento.save()
+    else:
+        nueva_geopos.alerta = 'SC'
     return nueva_geopos
 
 def es_local(geopos):
@@ -69,7 +74,6 @@ def es_local(geopos):
     distancia = geodesic['s12']# en metros
     if distancia < DISTANCIA_MAXIMA:#Si esta dentro del radio aceptable
         return True
-
 
 #Salvoconducos
 def buscar_permiso(individuo, activo=False):

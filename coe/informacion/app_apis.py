@@ -583,9 +583,8 @@ def tracking(request):
         )
         #Chequeamos distancia:
         geopos = controlar_distancia(geopos)
-        #Guardamos solo si vale la pena
-        if geopos.distancia > 5:
-            geopos.save()
+        #Guardamos siempre por ahora:
+        geopos.save()
         #Realizamos controles avanzados
         
         #Controlamos posicion:
@@ -595,7 +594,7 @@ def tracking(request):
                 "realizado": True,
                 "prox_tracking": individuo.appdata.intervalo,#Minutos
                 "distancia": int(geopos.distancia),
-                "alerta": geopos.alerta,
+                "alerta": geopos.get_alerta_display(),
                 "notif_titulo": geopos.notif_titulo,
                 "notif_mensaje": geopos.notif_mensaje,
             },
@@ -679,9 +678,6 @@ def ver_salvoconducto(request):
 
         #Buscamos permiso
         permiso = buscar_permiso(individuo)
-        #loggeamos todo
-        logger.info("data: " + str(data))
-        logger.info("buscar_permiso: " + str(permiso))
         #Damos respuesta
         return json_permiso(permiso, "ver_salvoconducto")
     except Exception as e:
@@ -725,7 +721,7 @@ def control_salvoconducto(request):
         return json_permiso(permiso, "control_salvoconducto")
     except Exception as e:
         try:#Si logramos generar GeoPos del Control > Marcamos al infractor
-            geopos.alerta = True#La marcamos como alerta
+            geopos.alerta = 'FP'#La marcamos como alerta
             geopos.save()
         except:
             pass

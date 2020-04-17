@@ -15,3 +15,18 @@ thead input::placeholder {
     font-size: 1em;
     font-weight: normal;
 }
+
+/* Colores tr */
+tr.rojo{
+    background-color: red!important;
+    color: white;
+}
+tr.naranja{
+    background-color: rgb(214, 128, 48)!important;
+}
+tr.amarillo{
+    background-color: rgb(233, 215, 59)!important;
+}
+tr.verde{
+    background-color: rgb(65, 212, 20)!important;
+}

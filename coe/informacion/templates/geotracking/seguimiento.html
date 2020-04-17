@@ -61,7 +61,7 @@
                                             <th>Fecha</th>
                                             <th>Tipo</th>
                                             <th>Posicion</th>
-                                            <th>Aclaracion</th>
+                                            <th>Alerta</th>
                                         </tr>
                                 {% endif %}
                                 <tr class="geo_aclaracion">
@@ -71,10 +71,11 @@
                                     <td>
                                         {% if geopos.alerta %}
                                             {% if geopos.procesada %}
-                                                <b>Alerta Procesada: {{geopos.distancia}}mts de Base.</b><br>
+                                                <b>Alerta Procesada:</b><br>
                                             {% else %}
                                                 <b>ALERTA: {{geopos.distancia}}mts de Base.</b><br>
                                             {% endif %}
+                                            {{geopos.get_alerta_display}}<br>
                                         {% endif %}
                                         {{geopos.aclaracion}}
                                     </td>

@@ -22,15 +22,14 @@ def menu_geotracking(request):
 @permission_required('operadores.geotracking')
 def control_tracking(request):
     #Obtenemos Posiciones Bases
-    geoposiciones = GeoPosicion.objects.filter(tipo='ST')
+    geoposiciones = GeoPosicion.objects.filter(tipo='PC')
     #Obtenemos Alertas
-    #Obtenemos Alertas
-    alertas = GeoPosicion.objects.filter(alerta=True, procesada=False)
+    alertas = GeoPosicion.objects.exclude(alerta=None).filter(procesada=False)
     alertas = alertas.select_related(
         'individuo', 'individuo__situacion_actual',
         'individuo__domicilio_actual', "individuo__domicilio_actual__localidad"
     )
-    alertas = alertas.order_by('distancia')
+    #Solo la ultima de cada uno
     dict_alertas = {alerta.individuo.num_doc:alerta for alerta in alertas}
     alertas = list(dict_alertas.values())
     #Lanzamos monitoreo
@@ -57,7 +56,7 @@ def lista_trackeados(request):
 @permission_required('operadores.geotracking')
 def lista_alertas(request):
     #Obtenemos Alertas
-    alertas = GeoPosicion.objects.filter(alerta=True, procesada=False)
+    alertas = GeoPosicion.objects.filter(procesada=False).exclude(alerta=None).exclude(alerta='FP')
     alertas = alertas.select_related(
         'individuo', 'individuo__situacion_actual',
         'individuo__domicilio_actual', "individuo__domicilio_actual__localidad"
@@ -75,7 +74,7 @@ def lista_alertas(request):
 @permission_required('operadores.geotracking')
 def alertas_procesadas(request):
     #Obtenemos Alertas
-    alertas = GeoPosicion.objects.filter(alerta=True, procesada=True)
+    alertas = GeoPosicion.objects.filter(procesada=True)
     alertas = alertas.select_related(
         'individuo', 'individuo__situacion_actual',
         'individuo__domicilio_actual', 'individuo__domicilio_actual__localidad',
@@ -115,8 +114,9 @@ def procesar_alerta(request, geoposicion_id):
             geoposicion.save()
             GeoPosicion.objects.filter(
                 individuo=geoposicion.individuo,
-                alerta=True,
                 procesada=False
+            ).exclude(
+                alerta=None,
             ).update(
                 procesada=True,
                 operador=geoposicion.operador,
@@ -130,13 +130,12 @@ def cambiar_base(request, geoposicion_id):
     #Obtenemos la nueva base:
     geopos = GeoPosicion.objects.select_related('individuo').get(pk=geoposicion_id)
     #Desactivamos la anterior
-    GeoPosicion.objects.filter(individuo=geopos.individuo, tipo='ST').update(tipo='RG', aclaracion="Desactivada: "+str(obtener_operador(request)))
+    GeoPosicion.objects.filter(individuo=geopos.individuo, tipo='PC').update(tipo='RG', aclaracion="Desactivada: "+str(obtener_operador(request)))
     #Desactivamos todas las alarmas previas a esta alarma
-    GeoPosicion.objects.filter(individuo=geopos.individuo, alerta=True, fecha__lte=geopos.fecha).update(alerta=False, aclaracion="Desactivada por Cambiode Base.")
+    GeoPosicion.objects.filter(individuo=geopos.individuo).update(alerta=None, aclaracion="Desactivada por Cambio de Punto de Control.")
     #Generamos nuevo inicio Tracking
-    geopos.alerta = False
-    geopos.tipo = 'ST'
-    geopos.aclaracion = "INICIO TRACKING - Definido por:" + str(obtener_operador(request))
+    geopos.tipo = 'PC'
+    geopos.aclaracion = "PUNTO DE CONTROL - Definido por:" + str(obtener_operador(request))
     geopos.save()
     #Renovamos cache para proximos checks
     renovar_base(geopos)
