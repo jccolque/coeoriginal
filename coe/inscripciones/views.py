@@ -35,14 +35,14 @@ def inscripcion_salud(request):
             inscripto = Inscripto()
             inscripto.tipo = 'PS'
             inscripto.individuo = individuo
-            inscripto.profesion = form.profesion
-            inscripto.matricula = form.matricula
-            inscripto.archivo_dni = form.archivo_dni
-            inscripto.archivo_titulo = form.archivo_titulo
-            inscripto.info_extra = form.info_extra
+            inscripto.profesion = form.cleaned_data['profesion']
+            inscripto.matricula = form.cleaned_data['matricula']
+            inscripto.archivo_dni = form.cleaned_data['archivo_dni']
+            inscripto.archivo_titulo = form.cleaned_data['archivo_titulo']
+            inscripto.info_extra = form.cleaned_data['info_extra']
             inscripto.save()
             #enviar email de validacion
-            to_email = inscripto.email
+            to_email = individuo.email
             #Preparamos el correo electronico
             mail_subject = 'Inscripcion al COE2020'
             message = render_to_string('emails/acc_active_inscripcion.html', {
@@ -71,7 +71,7 @@ def inscripcion_social(request):
             individuo = Individuo.objects.get(num_doc=num_doc)
         except:
             individuo = None
-        form = ProfesionalSaludForm(request.POST, request.FILES, instance=individuo)
+        form = VoluntarioSocialForm(request.POST, request.FILES, instance=individuo)
         if form.is_valid():
             #Obtenemos CheckBoxes
             tareas = request.POST.getlist('tareas')
@@ -84,15 +84,12 @@ def inscripcion_social(request):
             inscripto = Inscripto()
             inscripto.tipo = 'VS'
             inscripto.individuo = individuo
-            inscripto.oficio = form.oficio
-            inscripto.archivo_dni = form.archivo_dni
-            inscripto.grupo_sanguineo = form.grupo_sanguineo
-            inscripto.info_extra = form.info_extra
-            #Dispositivos
-            for disp in dispositivos:
-                dispositivo = Dispositivo(inscripto=inscripto)
-                dispositivo.tipo = disp
-                dispositivo.save()
+            inscripto.oficio = form.cleaned_data['oficio']
+            inscripto.archivo_dni = form.cleaned_data['archivo_dni']
+            inscripto.grupo_sanguineo = form.cleaned_data['grupo_sanguineo']
+            if 'dona_si' in form.cleaned_data:
+                inscripto.dona_sangre = True
+            inscripto.info_extra = form.cleaned_data['info_extra']
             #Agregamos las tareas
             if tareas:
                 inscripto.save()
@@ -100,8 +97,13 @@ def inscripcion_social(request):
                     teleg = TareaElegida(inscripto=inscripto)
                     teleg.tarea = dict_tareas[int(tarea)]
                     teleg.save()
+                #Dispositivos
+                for disp in dispositivos:
+                    dispositivo = Dispositivo(inscripto=inscripto)
+                    dispositivo.tipo = disp
+                    dispositivo.save()
                 #enviar email de validacion
-                to_email = inscripto.email
+                to_email = individuo.email
                 #Preparamos el correo electronico
                 mail_subject = 'Inscripcion al COE2020'
                 message = render_to_string('emails/acc_active_inscripcion.html', {

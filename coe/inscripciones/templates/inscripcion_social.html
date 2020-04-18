@@ -61,7 +61,7 @@
                     <div class="col-sm-5">
                         <div class="bordeado">
                             <h3><b>Datos Personales</b></h3>
-                            <p><b>Numero de Documento:</b> {{form.num_doc}}</p>
+                            <p>{{form.tipo_doc}} {{form.num_doc}}</p>
                             <p><b>Documento de Identidad:</b> {{form.archivo_dni}}</p>
                             <p><b>Apellido:</b> {{form.apellidos}}</p>
                             <p><b>Nombre:</b> {{form.nombres}}</p>
@@ -93,7 +93,7 @@
                             <p><input type="radio" id="internet_si" name="internet" value="si"> Si</p>
                             <p><input type="radio" id="internet_no" name="internet" value="no"> No</p>
                             <br>
-                            <p><b>Informacion Extra:</b> {{form.info_extra}}</p>
+                            <button type="submit" style="float:right;">Cargar</button>
                         </div>
                     </div>
                     <div class="col-sm-7">
@@ -108,7 +108,7 @@
                                     {% endfor %}
                                     </ul>
                                 {% endfor %}
-                                <button type="submit" style="float:right;">Cargar</button>
+                                <p><b>Informacion Extra:</b> {{form.info_extra}}</p>
                             </ul>
                         </div>
                     </div>

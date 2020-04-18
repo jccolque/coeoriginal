@@ -1,12 +1,9 @@
 #Imports de Django
 from django.db import models
 from django.utils import timezone
-from django.core.validators import RegexValidator
 #Imports extras
 from tinymce.models import HTMLField
 #Imports del proyecto
-from core.choices import TIPO_DOCUMENTOS
-from georef.models import Localidad
 from informacion.models import Individuo
 #Imports de la app
 from .choices import TIPO_INSCRIPTO, GRUPO_SANGUINEO, TIPO_PROFESIONAL, TIPO_DISPOSITIVO
@@ -35,6 +32,8 @@ class Inscripto(models.Model):
     archivo_titulo = models.FileField('Foto Titulo', upload_to='inscripciones/titulo/', null=True, blank=True)
     info_extra = HTMLField(null=True, blank=True)
     grupo_sanguineo = models.IntegerField('Grupo Sanguineo', choices=GRUPO_SANGUINEO, null=True, blank=True)
+    dona_sangre = models.BooleanField(default=False, null=True, blank=True)
+    tiene_internet = models.BooleanField(default=False, null=True, blank=True)
     fecha = models.DateTimeField('Fecha Inscripcion', default=timezone.now)
     valido = models.BooleanField(default=False)
     disponible = models.BooleanField(default=True)
