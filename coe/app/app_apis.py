@@ -50,7 +50,7 @@ def AppConfig(request):
             #Registro:
             "Registro":
             {
-                "url": reverse("app_urls:registro"),
+                "url": reverse("app:registro"),
                 "fields_request": 
                 {
                     "dni_individuo": "str",
@@ -75,7 +75,7 @@ def AppConfig(request):
             },
             "FotoPerfil":
             {
-                "url": reverse("app_urls:foto_perfil"),
+                "url": reverse("app:foto_perfil"),
                 "fields_request": 
                 {
                     "dni_individuo": "str",
@@ -93,7 +93,7 @@ def AppConfig(request):
             #Encuesta
             "Encuesta":
             {
-                "url": reverse("app_urls:encuesta"),
+                "url": reverse("app:encuesta"),
                 "fields_request": 
                 {
                     "dni_individuo": "str",
@@ -117,7 +117,7 @@ def AppConfig(request):
             #Start Tracking
             "StartTracking":
             {
-                "url": reverse("app_urls:start_tracking"),
+                "url": reverse("app:start_tracking"),
                 "fields": 
                 {
                     "dni_individuo": "str",
@@ -137,7 +137,7 @@ def AppConfig(request):
             #Tracking
             "tracking": 
             {
-                "url": reverse("app_urls:tracking"),
+                "url": reverse("app:tracking"),
                 "fields": 
                 {
                     "dni_individuo": "str",
@@ -169,7 +169,7 @@ def AppConfig(request):
             #Obtener Salvoconducto Digital
             "ver_salvoconducto":
             {
-                "url": reverse("app_urls:ver_salvoconducto"),
+                "url": reverse("app:ver_salvoconducto"),
                 "fields":
                 {
                     "dni_individuo": "str",
@@ -197,7 +197,7 @@ def AppConfig(request):
             #Salvoconducto Digital
             "pedir_salvoconducto":
             {
-                "url": reverse("app_urls:pedir_salvoconducto"),
+                "url": reverse("app:pedir_salvoconducto"),
                 "fields":
                 {
                     "dni_individuo": "str",
@@ -232,7 +232,7 @@ def AppConfig(request):
             #Control de SalvoConducto
             "control_salvoconducto":
             {
-                "url": reverse("app_urls:control_salvoconducto"),
+                "url": reverse("app:control_salvoconducto"),
                 "fields":
                 {
                     "dni_operador": "str (Del Dueño del celular)",
@@ -262,7 +262,7 @@ def AppConfig(request):
             #Notifaciones
             "Notificaciones":
             {
-                "url": reverse("app_urls:notificacion"),
+                "url": reverse("app:notificacion"),
                 "fields":
                 {
                     "dni_individuo": "str",

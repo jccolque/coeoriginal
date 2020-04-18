@@ -322,9 +322,7 @@ def confirmar_inquilino(request, ubicacion_id, individuo_id):
     if request.method == 'POST':
         if 'confirmar' in request.POST:
             form = TrasladarIndividuoForm(request.POST)
-            print("ENTRO ACA")
             if form.is_valid():
-                print("IS VALID")
                 domicilio = Domicilio(individuo=individuo)
                 domicilio.localidad = ubicacion.localidad
                 domicilio.calle = ubicacion.calle
