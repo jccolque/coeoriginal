@@ -8,7 +8,6 @@ register = template.Library()
 #Definimos nuestros tags
 @register.simple_tag
 def ct_color_alerta(alerta):
-    print(alerta)
     if alerta == 'DC':
         return 'rojo'
     elif alerta in ('DA', 'FG'):

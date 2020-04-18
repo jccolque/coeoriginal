@@ -5,12 +5,12 @@
         <div class="row">
             <h2>Listado de Ubicaciones Estrategicas</h2>
             {% if perms.operadores.menu_georef %}
-                <a href="{% url 'georef:crear_ubicacion' %}">
+                <a class="botoncito" href="{% url 'georef:crear_ubicacion' %}">
                     Crear Ubicacion
                     <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
                 </a>
                 <br>
-                <a href="{% url 'informacion:lista_ingresos_hoteles' %}">
+                <a class="botoncito" href="{% url 'informacion:lista_ingresos_hoteles' %}">
                     Reporte de Ingreso a Hoteles
                     <img class="icons" src="/static/img/icons/lupa.png" alt="Reporte">
                 </a>

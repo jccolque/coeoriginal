@@ -16,6 +16,10 @@ thead input::placeholder {
     font-weight: normal;
 }
 
+.buttons-excel {
+    float: right;
+}
+
 /* Colores tr */
 tr.rojo{
     background-color: red!important;

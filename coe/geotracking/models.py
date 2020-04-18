@@ -1,6 +1,8 @@
 #Imports Django
 from django.utils import timezone
 from django.db import models
+#Imports Extras
+from auditlog.registry import auditlog
 #Imports del proyecto
 from operadores.models import Operador
 from informacion.models import Individuo
@@ -22,8 +24,16 @@ class GeoPosicion(models.Model):
     def __str__(self):
         return str(self.latitud) + '|' + str(self.longitud)
 
-class Controlador(models.Model):
-    operador = models.OneToOneField(Operador, on_delete=models.CASCADE, related_name="controlador")
-    controlados = models.ManyToManyField(Individuo, related_name='controlados')
+class GeOperador(models.Model):
+    operador = models.OneToOneField(Operador, on_delete=models.CASCADE, related_name="geoperador")
+    controlados = models.ManyToManyField(Individuo, related_name='geoperador')
     def __str__(self):
         return str(self.operador.nombres) + ' ' + str(self.operador.apellidos)
+    def controlados_actuales(self):
+        return self.controlados.all()#Deberiamos filtrar
+    def cantidad_controlados(self):
+        return self.controlados_actuales().count()
+
+#Auditoria
+auditlog.register(GeoPosicion)
+auditlog.register(GeOperador)

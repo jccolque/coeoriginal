@@ -4,11 +4,6 @@
     font-weight: bold;
 }
 
-button {
-    float: right;
-    margin: 15px;
-}
-
 ul, li {
     list-style-type: none;
 }

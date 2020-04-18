@@ -1,0 +1,64 @@
+{% extends 'base_informacion.html' %}
+{% load static %}
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2><b>Panel de {{geoperador}}</b></h2>
+            <div class="col-md-8">
+                <h3>Alertas Activas ({{alertas.count}})</h3>
+                <table class="listado" id="table">
+                    <thead>
+                        <tr>
+                            <th>Tipo de Alerta</th>
+                            <th>Individuo</th>
+                            <th>Situacion</th>
+                            <th>Domicilio</th>
+                            <th>Telefono</th>
+                            <th>Fecha y Hora</th>
+                            <th>Distancia</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for alerta in alertas %}
+                            {% include 'linea_alerta.html' %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <h3>Individuos Asignados Actualmente ({{geoperador.cantidad_controlados}})</h3>
+                <a class="botoncito" href="{% url 'geotracking:agregar_individuo' geoperador_id=geoperador.id %}">
+                    Asignar Nuevo Individuo
+                    <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
+                </a>
+                <table class="listado">
+                    <thead>
+                        <tr>
+                            <th>Individuo</th>
+                            <th>Telefono</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for individuo in geoperador.controlados_actuales.all %}
+                            <tr>
+                                <td>{{individuo}}</td>
+                                <td>{{individuo.telefono}}</td>
+                                <td>
+                                    <a href="{% url 'geotracking:ver_tracking' individuo_id=individuo.id %}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/tracking.png' %}">
+                                    </a>
+                                    <a href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+    </div>
+{% endblock %}

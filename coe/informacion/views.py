@@ -819,7 +819,6 @@ def del_documento(request, documento_id):
 def cargar_geoposicion(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
     if request.method == "POST":
-        print(request.POST)
         geoposicion = GeoPosicion()
         geoposicion.individuo = individuo
         geoposicion.latitud = request.POST['latitud']

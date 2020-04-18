@@ -47,8 +47,6 @@ class Responsable(models.Model):
     operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="responsables")
     fecha_asignacion = models.DateTimeField('Fecha de Asignacion', default=timezone.now)
     obligaciones = HTMLField()
-    def __str__(self):
-        return str(self.operador)
     def as_dict(self):
         return {
             'id': self.id,

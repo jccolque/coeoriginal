@@ -126,7 +126,6 @@ def eliminar_responsable(request, responsable_id):
 @permission_required('operadores.menu_tareas')
 def agregar_evento(request, tarea_id):
     tarea = Tarea.objects.get(pk=tarea_id)
-    print(tarea)
     form = EventoTareaForm(initial={'tarea': tarea, })
     if request.method == "POST":
         form = EventoTareaForm(request.POST, initial={'tarea': tarea, })

@@ -21,7 +21,7 @@ from informacion.models import Individuo, Domicilio
 from informacion.models import Atributo, Sintoma, Situacion, Seguimiento
 from geotracking.models import GeoPosicion
 from geotracking.geofence import controlar_distancia, es_local
-from geotracking.geofence import buscar_permiso, pedir_permiso, definir_fechas, json_permiso
+from permisos.functions import buscar_permiso, pedir_permiso, definir_fechas, json_permiso
 from permisos.choices import TIPO_PERMISO
 #Imports de la app
 from .models import AppData

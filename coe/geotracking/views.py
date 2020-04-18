@@ -7,10 +7,11 @@ from coe.settings import GEOPOSITION_GOOGLE_MAPS_API_KEY
 from operadores.functions import obtener_operador
 from core.forms import JustificarForm
 from informacion.models import Individuo
+from operadores.models import Operador
 #imports de la app
-from .models import GeoPosicion
+from .models import GeoPosicion, GeOperador
 from .geofence import renovar_base
-from .forms import ConfigGeoForm
+from .forms import ConfigGeoForm, NuevoGeoOperador, NuevoIndividuo
 
 #Administrar
 @permission_required('operadores.geotracking')
@@ -39,6 +40,70 @@ def control_tracking(request):
         'has_table': True,
     })
 
+@permission_required('operadores.geotracking')
+def lista_geooperadores(request):
+    #Obtenemos el operador en cuestion
+    geoperadores = GeOperador.objects.all()
+    geoperadores = geoperadores.select_related('operador', 'operador__usuario')
+    geoperadores = geoperadores.prefetch_related('controlados')
+    return render(request, "lista_geoperadores.html", {
+        'geoperadores': geoperadores,
+        'has_table': True,
+    })
+
+@permission_required('operadores.geotracking')
+def panel_geoperador(request, geoperador_id=None):
+    #Obtenemos el operador en cuestion
+    if geoperador_id:
+        geoperador = GeOperador.objects.get(pk=geoperador_id)
+    else:
+        operador = obtener_operador(request)
+        try:
+            geoperador = operador.geoperador
+        except:
+            return render(request, 'extras/error.html', {
+            'titulo': 'No existe Panel de GeOperador',
+            'error': "Usted no es un GeOperador Habilitado, si deberia tener acceso a esta seccion, por favor contacte a los administradores.",
+        })
+    #Buscamos Alertas
+    alertas = GeoPosicion.objects.exclude(alerta='SA').filter(procesada=False)
+    alertas = alertas.filter(individuo__geoperador__operador=operador)
+    #Optimizamos
+    alertas = alertas.select_related(
+        'individuo', 'individuo__situacion_actual',
+        'individuo__domicilio_actual', "individuo__domicilio_actual__localidad"
+    )
+    #Lanzamos panel
+    return render(request, "panel_geoperador.html", {
+        'geoperador': geoperador,
+        'alertas': alertas,
+        'has_table': True,
+    })
+
+#Administracion
+@permission_required('operadores.geotracking')
+def agregar_geoperador(request):
+    form = NuevoGeoOperador()
+    if request.method == "POST":
+        form = NuevoGeoOperador(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('geotracking:lista_geooperadores')
+    return render(request, "extras/generic_form.html", {'titulo': "Habilitar Nuevo GeoPerador", 'form': form, 'boton': "Habilitar", })
+
+@permission_required('operadores.geotracking')
+def agregar_individuo(request, geoperador_id):
+    form = NuevoIndividuo()
+    if request.method == "POST":
+        form = NuevoIndividuo(request.POST)
+        if form.is_valid():
+            geoperador = GeOperador.objects.get(pk=geoperador_id)
+            individuo = form.cleaned_data['individuo']
+            geoperador.controlados.add(individuo)
+            return redirect('geotracking:ver_geopanel', geoperador_id=geoperador.id)
+    return render(request, "extras/generic_form.html", {'titulo': "Agregar Individuo Seguido", 'form': form, 'boton': "Agregar", })
+
+#Listas
 @permission_required('operadores.geotracking')
 def lista_trackeados(request):
     geopos = GeoPosicion.objects.filter(tipo="ST").values_list("individuo__id", flat=True).distinct()

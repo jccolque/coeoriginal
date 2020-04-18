@@ -11,10 +11,10 @@ from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
 from coe.settings import SEND_MAIL
 from operadores.functions import obtener_operador
-from geotracking.geofence import buscar_permiso, pedir_permiso, definir_fechas
 #imports de la app
 from .models import Individuo, Permiso
 from .forms import PermisoForm, BuscarPermiso, DatosForm, FotoForm
+from .functions import buscar_permiso, pedir_permiso, definir_fechas
 
 #Publico
 def buscar_permiso_web(request):
@@ -128,7 +128,6 @@ def ver_permiso(request, permiso_id, individuo_id):
 
 @permission_required('operadores.permisos')
 def eliminar_permiso(request, permiso_id):
-    print("Damos de baja permiso")
     permiso = Permiso.objects.get(pk=permiso_id)
     permiso.begda = timezone.now() - timedelta(days=7)#Lo mandamos una semana para atras
     permiso.endda = timezone.now() - timedelta(days=7)#Lo mandamos una semana para atras
