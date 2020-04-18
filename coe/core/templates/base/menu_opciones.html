@@ -13,11 +13,11 @@
                 {% for opcion in opciones %}
                     <li><a href="/{{opcion.1}}">{{opcion.0}}</a></li>
                 {% endfor %}
+                {% if request.user.is_superuser %}
+                    <li><a href="{% url 'wservices:menu' %}">Web Services</a></li>
+                {% endif %}
                 {% if user.is_staff %}
                     <li><a href="{% url 'admin:index' %}">Administrador</a></li>
-                {% endif %}
-                {% if request.user.is_superuser %}
-                    <li><a href="{% url 'core:ws' %}">Web Services</a></li>
                 {% endif %}
                 <li><a href="{% url 'core:home_logout' %}">Cerrar Sesion</a></li>
             </ul>

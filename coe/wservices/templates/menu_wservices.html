@@ -1,0 +1,33 @@
+{% extends 'base_tareas.html' %}
+
+{% load seguridad_tags%}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">        
+                    <h1>Menu Web Services:</h1>
+                    <div class="col-md-8">
+                        <ul class="menu_botones">
+                            <li><a href="{% url 'wservices:ws'  %}">Genericos</a></li>
+                            <hr>
+                            <h2>GeoReferencias</h2>
+                            <li><a href="{% url 'wservices:ws_localidades'  %}">Situaciones</a></li>
+                            <li><a href="{% url 'wservices:ws_localidades'  %}">Localidades</a></li>
+                            <li><a href="{% url 'wservices:ws_barrios'  %}">Barrios</a></li>
+                            <hr>
+                            <h2>Choices:</h2>
+                            <li><a href="{% url 'wservices:tipo_estado'  %}">Tipos de PEstados</a></li>
+                            <li><a href="{% url 'wservices:tipo_conducta'  %}">Tipos de PConductas</a></li>
+                            <li><a href="{% url 'wservices:tipo_permiso'  %}">Tipos de Permisos</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        {% include 'users/info_user.html' %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}

@@ -6,6 +6,10 @@ from . import views as views
 #Definimos paths de la app
 app_name = 'wservices'
 urlpatterns = [
+    path('', views.menu, name='menu'),
+    #Generico
+    path('ws/', views.ws, name='ws'),
+    path('ws/<str:nombre_app>/<str:nombre_modelo>/', views.ws, name='ws'),
     #WebServices
     path('situaciones', views.ws_situaciones, name='ws_situaciones'),
     path('localidades', views.ws_localidades, name='ws_localidades'),

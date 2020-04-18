@@ -1,9 +1,6 @@
 #Import Python Standard
-import json
 #Imports de Django
 from django.shortcuts import render
-from django.apps import apps
-from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth import login, logout
@@ -13,7 +10,6 @@ from django.contrib.auth.decorators import permission_required
 from documentos.functions import ver_publicadas
 #Imports de la app
 from .models import Faq
-from .decoradores import superuser_required
 from .tokens import account_activation_token
 
 # Create your views here.
@@ -70,25 +66,3 @@ def activar_usuario_mail(request, usuario_id, token):
     else:
         texto = 'El link de activacion es invalido!'
     return render(request, 'extras/resultado.html', {'texto': texto, })
-
-#Web Servis generico para todas las apps del sistema
-#Si el modelo tiene as_dict, aparece.
-@superuser_required
-def ws(request, nombre_app=None, nombre_modelo=None):
-    if nombre_app and nombre_modelo:
-        if apps.all_models[nombre_app][nombre_modelo.lower()]:
-            modelo = apps.all_models[nombre_app][nombre_modelo.lower()]
-            if hasattr(modelo, 'as_dict'):
-                datos = modelo.objects.all()
-                datos = [d.as_dict() for d in datos]
-                return HttpResponse(json.dumps({nombre_modelo+'s': datos, "cant_registros": len(datos),}), content_type='application/json')
-
-    apps_listas = {}
-    for app, models in apps.all_models.items():
-        for model in models.values():
-            if hasattr(model, 'as_dict'):
-                if app in apps_listas:
-                    apps_listas[app].append(model._meta.model_name)
-                else:
-                    apps_listas[app] = [model._meta.model_name, ]
-    return render(request, 'ws.html', {"apps_listas": apps_listas,})
