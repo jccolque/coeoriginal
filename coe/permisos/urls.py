@@ -4,7 +4,7 @@ from django.urls import path
 from . import views as views
 
 #Definimos paths de la app
-app_name = 'permisos_urls'
+app_name = 'permisos'
 urlpatterns = [
     #Publico
     path('buscar/', views.buscar_permiso_web, name='buscar_permiso'),

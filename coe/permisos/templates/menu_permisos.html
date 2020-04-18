@@ -11,10 +11,10 @@
                     <div class="col-md-8">
                         <ul class="menu_botones">
                             {% if perms.operadores.individuos %}
-                                <li><a href="{% url 'permisos_urls:lista_activos' %}">Listado de Permisos Activos</a></li>
-                                <li><a href="{% url 'permisos_urls:lista_vencidos' %}">Listado de Permisos Vencidos</a></li>
+                                <li><a href="{% url 'permisos:lista_activos' %}">Listado de Permisos Activos</a></li>
+                                <li><a href="{% url 'permisos:lista_vencidos' %}">Listado de Permisos Vencidos</a></li>
                                 <hr>
-                                <li><a href="{% url 'permisos_urls:buscar_permiso' %}">Pedido de Permiso Publico</a></li>
+                                <li><a href="{% url 'permisos:buscar_permiso' %}">Pedido de Permiso Publico</a></li>
                             {% endif %}
 
                             {% if request.user.is_superuser %}

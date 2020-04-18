@@ -4,7 +4,7 @@ from django.urls import path
 from . import views as views
 
 #Definimos paths de la app
-app_name = 'geo_urls'
+app_name = 'geotracking'
 urlpatterns = [
     #App
     path('', views.menu_geotracking, name='menu_geotracking'),

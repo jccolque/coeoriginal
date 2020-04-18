@@ -24,8 +24,8 @@ def IdeConfig(request):
             {
                 "localidad": reverse("georef:localidad-autocomplete"),
                 "barrio": reverse("georef:barrio-autocomplete"),
-                "estados": reverse('ws_urls:tipo_estado'),
-                "conductas": reverse('ws_urls:tipo_conducta'),
+                "estados": reverse('wservices:tipo_estado'),
+                "conductas": reverse('wservices:tipo_conducta'),
                 "logs": "/archivos/logs/apis.txt",
             },
         },

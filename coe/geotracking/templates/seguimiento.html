@@ -35,7 +35,7 @@
                     <div class="col-sm-3">
                         <h4>
                             <b>Parametros:</b>
-                            <a href="{% url 'geo_urls:config_tracking' individuo_id=individuo.id %}">
+                            <a href="{% url 'geotracking:config_tracking' individuo_id=individuo.id %}">
                                 <img class="icons" src="{% static '/img/icons/config.png' %}">
                             </a>
                             <p><b>Intervalo:</b> {{individuo.appdata.intervalo}} minutos</p>
@@ -49,7 +49,7 @@
                     <div class="row">
                         <!--MAPA-->
                         <div class="col-sm-8">
-                            {% include 'geotracking/mapa_seguimiento.html' %}
+                            {% include 'mapa_seguimiento.html' %}
                         </div>
                         <!--tabla-->
                         <div class="col-sm-4 tabla_posiciones">

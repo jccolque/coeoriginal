@@ -6,7 +6,7 @@
     Validez: {{permiso.begda|date:"d/m/Y H:i"}} a {{permiso.endda|date:"d/m/Y H:i"}}
 
     A travez de este link puede acceder al mismo e imprimirlo o descargarlo:
-    http://coe.jujuy.gob.ar/{% url 'permisos_urls:ver_permiso' permiso_id=permiso.id individuo_id=individuo.id %}
+    http://coe.jujuy.gob.ar/{% url 'permisos:ver_permiso' permiso_id=permiso.id individuo_id=individuo.id %}
 
     Cuidate y Cuidanos!
 {% endautoescape %}

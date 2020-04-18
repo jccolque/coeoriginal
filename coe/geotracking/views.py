@@ -123,7 +123,7 @@ def procesar_alerta(request, geoposicion_id):
                 operador=geoposicion.operador,
                 aclaracion='Se proceso Alerta: '+str(geoposicion.id)+'. Justificativo: '+geoposicion.aclaracion
             )
-            return redirect('geo_urls:lista_alertas')
+            return redirect('geotracking:lista_alertas')
     return render(request, "extras/generic_form.html", {'titulo': "Procesar Alerta", 'form': form, 'boton': "Procesar", })
 
 @permission_required('operadores.geotracking')
@@ -143,7 +143,7 @@ def cambiar_base(request, geoposicion_id):
     #Renovamos cache para proximos checks
     renovar_base(geopos)
     #Volvemos al mapa
-    return redirect('geo_urls:ver_tracking', individuo_id=geopos.individuo.id)
+    return redirect('geotracking:ver_tracking', individuo_id=geopos.individuo.id)
 
 @permission_required('operadores.geotracking')
 def config_tracking(request, individuo_id):
@@ -161,5 +161,5 @@ def config_tracking(request, individuo_id):
             appdata.distancia_alerta = form.cleaned_data["distancia_alerta"]
             appdata.distancia_critica = form.cleaned_data["distancia_critica"]
             appdata.save()
-            return redirect('geo_urls:ver_tracking', individuo_id=individuo.id)
+            return redirect('geotracking:ver_tracking', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Configurar Parametros Individuales", 'form': form, 'boton': "Configurar", })

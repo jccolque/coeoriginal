@@ -27,7 +27,7 @@ def buscar_permiso_web(request):
                 apellidos__icontains=form.cleaned_data['apellido'])
             if individuo:
                 individuo = individuo.first()
-                return redirect('permisos_urls:pedir_permiso', individuo_id=individuo.id, num_doc=individuo.num_doc)
+                return redirect('permisos:pedir_permiso', individuo_id=individuo.id, num_doc=individuo.num_doc)
             else:
                 form.add_error(None, "No se ha encontrado a Nadie con esos Datos.")
     return render(request, "buscar_permiso.html", {'form': form, })
@@ -65,7 +65,7 @@ def pedir_permiso_web(request, individuo_id, num_doc):
                 return render(request, "ver_permiso.html", {'permiso': permiso, })  
         return render(request, "pedir_permiso.html", {'form': form, 'individuo': individuo, })
     except Individuo.DoesNotExist:
-        return redirect('permisos_urls:buscar_permiso')
+        return redirect('permisos:buscar_permiso')
 
 def completar_datos(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
@@ -74,7 +74,7 @@ def completar_datos(request, individuo_id):
         form = DatosForm(request.POST, instance=individuo)
         if form.is_valid():
             form.save()
-            return redirect('permisos_urls:pedir_permiso', individuo_id=individuo.id, num_doc=individuo.num_doc)
+            return redirect('permisos:pedir_permiso', individuo_id=individuo.id, num_doc=individuo.num_doc)
     return render(request, "extras/generic_form.html", {'titulo': "Corregir/Completar Datos", 'form': form, 'boton': "Guardar", })
 
 def subir_foto(request, individuo_id):
@@ -85,7 +85,7 @@ def subir_foto(request, individuo_id):
         if form.is_valid():
             individuo.fotografia = form.cleaned_data['fotografia']
             individuo.save()
-            return redirect('permisos_urls:pedir_permiso', individuo_id=individuo.id, num_doc=individuo.num_doc)
+            return redirect('permisos:pedir_permiso', individuo_id=individuo.id, num_doc=individuo.num_doc)
     return render(request, "extras/generic_form.html", {'titulo': "Subir Fotografia", 'form': form, 'boton': "Cargar", })
 
 #Administrar
@@ -134,5 +134,5 @@ def eliminar_permiso(request, permiso_id):
     permiso.endda = timezone.now() - timedelta(days=7)#Lo mandamos una semana para atras
     permiso.aclaracion = permiso.aclaracion + ' | Dado de baja por: ' + str(obtener_operador(request))
     permiso.save()
-    return redirect('permisos_urls:lista_activos')
+    return redirect('permisos:lista_activos')
     

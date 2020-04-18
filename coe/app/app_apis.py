@@ -40,9 +40,9 @@ def AppConfig(request):
             #WebServices
             "WebServices":
             {
-                "tipo_permisos": reverse("ws_urls:tipo_permiso"),
-                "full_localidades": reverse("ws_urls:ws_localidades"),
-                "full_barrios": reverse("ws_urls:ws_barrios"),
+                "tipo_permisos": reverse("wservices:tipo_permiso"),
+                "full_localidades": reverse("wservices:ws_localidades"),
+                "full_barrios": reverse("wservices:ws_barrios"),
                 "ac_localidad": reverse("georef:localidad-autocomplete"),
                 "ac_barrio": reverse("georef:barrio-autocomplete"),
                 "logs": "/archivos/logs/apis.txt",
