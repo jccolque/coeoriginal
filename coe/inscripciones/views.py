@@ -26,6 +26,12 @@ def inscripcion_salud(request):
         try:#Tratamos de obtener el dni
             num_doc = request.POST['num_doc']
             individuo = Individuo.objects.get(num_doc=num_doc)
+            if individuo.situacion_actual:
+                if individuo.situacion_actual.conducta in ('D', 'E'):
+                    return render(request, 'extras/error.html', {
+                        'titulo': 'Inscripcion Denegada',
+                        'error': "Usted se encuentra bajo Aislamiento, Contacte al Administrador.",
+                    })
         except:
             individuo = None
         form = ProfesionalSaludForm(request.POST, request.FILES, instance=individuo)
@@ -69,6 +75,12 @@ def inscripcion_social(request):
         try:#Tratamos de obtener el dni y el individuo
             num_doc = request.POST['num_doc']
             individuo = Individuo.objects.get(num_doc=num_doc)
+            if individuo.situacion_actual:
+                if individuo.situacion_actual.conducta in ('D', 'E'):
+                    return render(request, 'extras/error.html', {
+                        'titulo': 'Inscripcion Denegada',
+                        'error': "Usted se encuentra bajo Aislamiento, Contacte al Administrador.",
+                    })
         except:
             individuo = None
         form = VoluntarioSocialForm(request.POST, request.FILES, instance=individuo)
