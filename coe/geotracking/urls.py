@@ -18,6 +18,7 @@ urlpatterns = [
     path('ver/<int:individuo_id>', views.ver_tracking, name='ver_tracking'),
     path('procesar/<int:geoposicion_id>', views.procesar_alerta, name='procesar_alerta'),
     #Panel GeoOperador
+    path('lista/sin_geoperador', views.lista_sin_geoperador, name='lista_sin_geoperador'),
     path('lista/geooperadores', views.lista_geooperadores, name='lista_geooperadores'),
     path('agregar/geoperador', views.agregar_geoperador, name='agregar_geoperador'),
     path('panel/geooperador', views.panel_geoperador, name='panel_geoperador'),

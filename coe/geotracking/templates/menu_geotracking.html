@@ -11,12 +11,16 @@
                     <div class="col-md-8">
                         <ul class="menu_botones">
                             {% if perms.operadores.individuos %}
-                                <li><a href="{% url 'geotracking:panel_geoperador' %}">Ver Mi Panel de Control</a></li>
+                                <li><a href="{% url 'geotracking:control_tracking' %}">Sistema de Control GeoPosicional General</a></li>
                                 <hr>
+                                {% if es_geoperador %}
+                                    <li><a href="{% url 'geotracking:panel_geoperador' %}">Ver Mi Panel de Control</a></li>
+                                    <hr>
+                                {% endif %}
+                                <li><a href="{% url 'geotracking:lista_sin_geoperador' %}">Listado de Individuos Sin GeOperador</a></li>
                                 <li><a href="{% url 'geotracking:lista_geooperadores' %}">Listado de GeOperadores Habilitados</a></li>
                                 <li><a href="{% url 'geotracking:lista_alertas' %}">Listado de Alertas Activas</a></li>
                                 <li><a href="{% url 'geotracking:lista_trackeados' %}">Listado de Individuos Bajo Seguimiento</a></li>
-                                <li><a href="{% url 'geotracking:control_tracking' %}">Sistema de Control GeoPosicional General</a></li>
                                 <hr>
                                 <li><a href="{% url 'geotracking:alertas_procesadas' %}">Listado de Alertas Procesadas</a></li>
                             {% endif %}

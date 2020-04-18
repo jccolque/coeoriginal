@@ -17,7 +17,7 @@
 
             ['Lat', 'Long', 'Name'],
             
-            {% for posicion in geoposiciones %}
+            {% for posicion in alertas %}
                 [
                     {{posicion.latitud|stringformat:".5f"}},
                     {{posicion.longitud|stringformat:".5f"}},

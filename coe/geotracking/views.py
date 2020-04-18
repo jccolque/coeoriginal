@@ -16,13 +16,15 @@ from .forms import ConfigGeoForm, NuevoGeoOperador, NuevoIndividuo
 #Administrar
 @permission_required('operadores.geotracking')
 def menu_geotracking(request):
-    return render(request, 'menu_geotracking.html', {})
+    try:
+        es_geoperador = GeOperador.objects.get(operador__usuario=request.user)
+    except:
+        es_geoperador = False
+    return render(request, 'menu_geotracking.html', {'es_geoperador': es_geoperador, })
 
 #Tracking
 @permission_required('operadores.geotracking')
 def control_tracking(request):
-    #Obtenemos Posiciones Bases
-    geoposiciones = GeoPosicion.objects.filter(tipo='PC')
     #Obtenemos Alertas
     alertas = GeoPosicion.objects.exclude(alerta='SA').filter(procesada=False)
     alertas = alertas.select_related(
@@ -35,7 +37,6 @@ def control_tracking(request):
     #Lanzamos monitoreo
     return render(request, "control_tracking.html", {
         'gmkey': GEOPOSITION_GOOGLE_MAPS_API_KEY,
-        'geoposiciones': geoposiciones,
         'alertas': alertas,
         'has_table': True,
     })
@@ -67,7 +68,7 @@ def panel_geoperador(request, geoperador_id=None):
         })
     #Buscamos Alertas
     alertas = GeoPosicion.objects.exclude(alerta='SA').filter(procesada=False)
-    alertas = alertas.filter(individuo__geoperador__operador=operador)
+    alertas = alertas.filter(individuo__geoperador=geoperador)
     #Optimizamos
     alertas = alertas.select_related(
         'individuo', 'individuo__situacion_actual',
@@ -104,6 +105,26 @@ def agregar_individuo(request, geoperador_id):
     return render(request, "extras/generic_form.html", {'titulo': "Agregar Individuo Seguido", 'form': form, 'boton': "Agregar", })
 
 #Listas
+@permission_required('operadores.geotracking')
+def lista_sin_geoperador(request):
+    #Obtenemos todos los que ya estan siendo controlados
+    controlados = set()
+    for geop in GeOperador.objects.all().prefetch_related('controlados'):
+        for controlado in geop.controlados.all():
+            controlados.add(controlado)
+    #Sacamos los que no estan siendo trackeados
+    geopos = GeoPosicion.objects.filter(tipo="ST").values_list("individuo__id", flat=True).distinct()
+    geopos = geopos.exclude(individuo__in=controlados)
+    #Obtenemos individuos de interes
+    individuos = Individuo.objects.filter(id__in=geopos).select_related('situacion_actual', 'domicilio_actual')
+    #Optimizamos
+    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'situacion_actual')
+    individuos = individuos.prefetch_related('geoposiciones')
+    return render(request, "lista_trackeados.html", {
+        'individuos': individuos,
+        'has_table': True,
+    })
+
 @permission_required('operadores.geotracking')
 def lista_trackeados(request):
     geopos = GeoPosicion.objects.filter(tipo="ST").values_list("individuo__id", flat=True).distinct()
