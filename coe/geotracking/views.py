@@ -7,11 +7,10 @@ from coe.settings import GEOPOSITION_GOOGLE_MAPS_API_KEY
 from operadores.functions import obtener_operador
 from core.forms import JustificarForm
 from informacion.models import Individuo
-from operadores.models import Operador
 #imports de la app
 from .models import GeoPosicion, GeOperador
 from .geofence import renovar_base
-from .forms import ConfigGeoForm, NuevoGeoOperador, NuevoIndividuo
+from .forms import ConfigGeoForm, NuevoGeoOperador, NuevoIndividuo, AsignarGeOperador
 
 #Administrar
 @permission_required('operadores.geotracking')
@@ -102,7 +101,7 @@ def agregar_individuo(request, geoperador_id):
             individuo = form.cleaned_data['individuo']
             geoperador.controlados.add(individuo)
             return redirect('geotracking:ver_geopanel', geoperador_id=geoperador.id)
-    return render(request, "extras/generic_form.html", {'titulo': "Agregar Individuo Seguido", 'form': form, 'boton': "Agregar", })
+    return render(request, "extras/generic_form.html", {'titulo': "Agregar Individuo Seguido", 'form': form, 'boton': "Agregar", })         
 
 #Listas
 @permission_required('operadores.geotracking')
@@ -124,6 +123,18 @@ def lista_sin_geoperador(request):
         'individuos': individuos,
         'has_table': True,
     })
+
+@permission_required('operadores.geotracking')
+def asignar_geoperador(request, individuo_id):
+    form = AsignarGeOperador()
+    if request.method == "POST":
+        form = AsignarGeOperador(request.POST)
+        if form.is_valid():
+            individuo = Individuo.objects.get(pk=individuo_id)
+            geoperador = form.cleaned_data['geoperador']
+            geoperador.controlados.add(individuo)
+            return redirect('geotracking:lista_sin_geoperador')
+    return render(request, "extras/generic_form.html", {'titulo': "Asignar Controlador", 'form': form, 'boton': "Asignar", })   
 
 @permission_required('operadores.geotracking')
 def lista_trackeados(request):

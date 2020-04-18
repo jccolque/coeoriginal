@@ -19,6 +19,7 @@ urlpatterns = [
     path('procesar/<int:geoposicion_id>', views.procesar_alerta, name='procesar_alerta'),
     #Panel GeoOperador
     path('lista/sin_geoperador', views.lista_sin_geoperador, name='lista_sin_geoperador'),
+    path('asignar/geoperador/<individuo_id>', views.asignar_geoperador, name='asignar_geoperador'),
     path('lista/geooperadores', views.lista_geooperadores, name='lista_geooperadores'),
     path('agregar/geoperador', views.agregar_geoperador, name='agregar_geoperador'),
     path('panel/geooperador', views.panel_geoperador, name='panel_geoperador'),
@@ -28,5 +29,6 @@ urlpatterns = [
     path('cambiar_base/<int:geoposicion_id>', views.cambiar_base, name='cambiar_base'),
     path('config/<int:individuo_id>', views.config_tracking, name='config_tracking'),
     #Autocomplete
-    url(r'^individuos-autocomplete/$', autocomplete.IndividuosTrackeadosAutocomplete.as_view(), name='individuostrackeados-autocomplete',),
+    url(r'^individuostrackeados-autocomplete/$', autocomplete.IndividuosTrackeadosAutocomplete.as_view(), name='individuostrackeados-autocomplete',),
+    url(r'^geoperadores-autocomplete/$', autocomplete.GeOperadoresAutocomplete.as_view(), name='geoperadores-autocomplete',),
 ]

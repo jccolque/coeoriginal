@@ -48,6 +48,9 @@
                                     <a href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/lupa.png' %}">
                                     </a>
+                                    <a href="{% url 'geotracking:asignar_geoperador' individuo_id=individuo.id %}">
+                                        <img class="icons" src="{% static '/img/icons/detective.svg' %}" alt="Asignar Trackeador">
+                                    </a>
                                 </td>
                             </tr>
                         {% endwith %}

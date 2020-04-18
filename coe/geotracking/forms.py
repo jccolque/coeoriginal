@@ -28,3 +28,10 @@ class NuevoIndividuo(forms.Form):
         required= True,
         widget= autocomplete.ModelSelect2(url='geotracking:individuostrackeados-autocomplete'),
     )
+
+class AsignarGeOperador(forms.Form):
+    geoperador = forms.ModelChoiceField(
+        queryset=GeOperador.objects.all(),
+        required=True,
+        widget= autocomplete.ModelSelect2(url='geotracking:geoperadores-autocomplete'),
+    )
