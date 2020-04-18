@@ -9,7 +9,7 @@ from core.choices import TIPO_DOCUMENTOS
 from georef.models import Localidad
 from informacion.models import Individuo
 #Imports de la app
-from .choices import TIPO_INSCRIPTO, GRUPO_SANGUINEO, TIPO_PROFESIONAL
+from .choices import TIPO_INSCRIPTO, GRUPO_SANGUINEO, TIPO_PROFESIONAL, TIPO_DISPOSITIVO
 
 # Create your models here.
 class Area(models.Model):
@@ -57,3 +57,7 @@ class Inscripto(models.Model):
 class TareaElegida(models.Model):
     tarea = models.ForeignKey(Tarea, on_delete=models.CASCADE, related_name="elecciones")
     inscripto = models.ForeignKey(Inscripto, on_delete=models.CASCADE, related_name="elecciones")
+
+class Dispositivo(models.Model):
+    inscripto = models.ForeignKey(Inscripto, on_delete=models.CASCADE, related_name="dispositivos")
+    tipo = models.CharField('Tipo Dispositivo', choices=TIPO_DISPOSITIVO, max_length=2)

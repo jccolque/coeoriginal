@@ -9,6 +9,12 @@ def actualizar_individuo(form):
     except Individuo.DoesNotExist:
         individuo.save()#Lo generamos con todos los datos del Fomulario
         individuo_db = individuo
+        individuo_db.nombres = form.nombres
+        individuo_db.apellidos = form.apellidos
+    #Cargamos todos los datos que nos dio:
+    individuo_db.sexo = form.sexo
+    individuo_db.fecha_nacimiento = form.fecha_nacimiento
+    individuo.save()
     #Creamos nuevo domicilio
     domicilio = Domicilio()
     domicilio.individuo = individuo_db

@@ -14,7 +14,8 @@ from core.functions import delete_tags
 from informacion.models import Individuo
 #Impors de la app
 from .tokens import account_activation_token
-from .models import Inscripto, Area, Tarea, TareaElegida
+from .choices import TIPO_DISPOSITIVO
+from .models import Inscripto, Area, Tarea, TareaElegida, Dispositivo
 from .forms import ProfesionalSaludForm, VoluntarioSocialForm
 from .functions import actualizar_individuo
 
@@ -22,7 +23,12 @@ from .functions import actualizar_individuo
 def inscripcion_salud(request):
     form = ProfesionalSaludForm()
     if request.method == "POST":
-        form = ProfesionalSaludForm(request.POST, request.FILES)
+        try:#Tratamos de obtener el dni
+            num_doc = request.POST['num_doc']
+            individuo = Individuo.objects.get(num_doc=num_doc)
+        except:
+            individuo = None
+        form = ProfesionalSaludForm(request.POST, request.FILES, instance=individuo)
         if form.is_valid():
             individuo = actualizar_individuo(form)
             #Armamos la inscripcion:
@@ -56,12 +62,21 @@ def inscripcion_salud(request):
     })
 
 def inscripcion_social(request):
+    dispositivos = TIPO_DISPOSITIVO
     areas = Area.objects.all()
     form = VoluntarioSocialForm()
     if request.method == "POST":
-        tareas = request.POST.getlist('tareas')
-        form = VoluntarioSocialForm(request.POST, request.FILES)
+        try:#Tratamos de obtener el dni y el individuo
+            num_doc = request.POST['num_doc']
+            individuo = Individuo.objects.get(num_doc=num_doc)
+        except:
+            individuo = None
+        form = ProfesionalSaludForm(request.POST, request.FILES, instance=individuo)
         if form.is_valid():
+            #Obtenemos CheckBoxes
+            tareas = request.POST.getlist('tareas')
+            dispositivos = request.POST.getlist('dispositivos')
+            #Actualizamos Individuo
             individuo = actualizar_individuo(form)
             #Creamos diccionario de tareas
             dict_tareas = {t.id:t for t in Tarea.objects.all()}
@@ -74,16 +89,15 @@ def inscripcion_social(request):
             inscripto.grupo_sanguineo = form.grupo_sanguineo
             inscripto.info_extra = form.info_extra
             #Dispositivos
-            #form.tiene_desktop
-            #form.tiene_notebook
-            #form.tiene_telefono
-            #form.tiene_tablet
+            for disp in dispositivos:
+                dispositivo = Dispositivo(inscripto=inscripto)
+                dispositivo.tipo = disp
+                dispositivo.save()
             #Agregamos las tareas
             if tareas:
                 inscripto.save()
                 for tarea in tareas:
-                    teleg = TareaElegida()
-                    teleg.inscripto = inscripto
+                    teleg = TareaElegida(inscripto=inscripto)
                     teleg.tarea = dict_tareas[int(tarea)]
                     teleg.save()
                 #enviar email de validacion
@@ -107,6 +121,7 @@ def inscripcion_social(request):
         'form': form, 
         'boton': "Inscribirse",
         'areas': areas,
+        'dispositivos': dispositivos,
     })
 
 #Administracion

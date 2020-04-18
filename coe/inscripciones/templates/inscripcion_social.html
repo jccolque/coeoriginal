@@ -65,7 +65,9 @@
                             <p><b>Documento de Identidad:</b> {{form.archivo_dni}}</p>
                             <p><b>Apellido:</b> {{form.apellidos}}</p>
                             <p><b>Nombre:</b> {{form.nombres}}</p>
+                            <p><b>Genero:</b> {{form.sexo}}</p>
                             <p><b>Fecha de Nacimiento:</b> {{form.fecha_nacimiento}}</p>
+                            <p><b>Nacionalidad:</b> {{form.nacionalidad}}</p>
                             <p><b>Profesion u Oficio:</b> {{form.oficio}}</p>
                             <hr>
                             <p><b>Domicilio</b></p>
@@ -83,10 +85,9 @@
                             <p><input type="radio" id="donar_no" name="donar" value="no"> No</p>
                             <hr>
                             <p><b>Cuenta con alguno de estos dispositivos?</b></p>
-                            <p>{{form.tiene_desktop}} Computadora de Escritorio</p>
-                            <p>{{form.tiene_notebook}} Notebook</p>
-                            <p>{{form.tiene_telefono}} Telefono</p>
-                            <p>{{form.tiene_tablet}} Tablet</p>
+                            {% for disp in dispositivos %}
+                                <li><input type="checkbox" id="{{disp.0}}" value={{disp.0}} name="dispositivos"> {{disp.1}}</li>
+                            {% endfor %}
                             <br>
                             <p><b>Tiene conexion a Internet en su hogar?</b></p>
                             <p><input type="radio" id="internet_si" name="internet" value="si"> Si</p>

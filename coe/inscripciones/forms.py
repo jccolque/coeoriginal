@@ -10,7 +10,6 @@ from georef.models import Localidad
 from informacion.models import Individuo
 #Imports de la app
 from .choices import TIPO_PROFESIONAL, GRUPO_SANGUINEO
-from .models import Inscripto
 
 #Definimos nuestros forms
 class ProfesionalSaludForm(forms.ModelForm):
@@ -35,7 +34,7 @@ class ProfesionalSaludForm(forms.ModelForm):
         fields= '__all__'
         exclude = ('origen', 'destino', 'observaciones', 'fotografia', 'qrpath', 'situacion_actual', 'domicilio_actual')
         widgets = {
-            'fecha_nacimiento': XDSoftDatePickerInput(),
+
             'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
             'localidad': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
         }
@@ -56,11 +55,6 @@ class VoluntarioSocialForm(forms.ModelForm):
     dom_calle = forms.CharField(required=True)
     dom_numero = forms.CharField(required=True)
     dom_aclaracion = forms.CharField(required=False)
-    #Dispositivos:
-    tiene_desktop = forms.BooleanField()
-    tiene_notebook = forms.BooleanField()
-    tiene_telefono = forms.BooleanField()
-    tiene_tablet = forms.BooleanField()
     #Datos del individuo
     class Meta:
         model = Individuo

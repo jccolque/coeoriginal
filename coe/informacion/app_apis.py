@@ -379,6 +379,7 @@ def foto_perfil(request):
             image_data = b64decode(data['imagen'])
             data["imagen"] = data["imagen"][:25]+'| full |'+data["imagen"][-25:]
         except:#Si viene por form
+            num_doc = str(request.POST['dni']).upper()
             image_data = request.FILES['imagen'].read()
         #Buscamos al individuo en la db
         individuo = Individuo.objects.get(num_doc=num_doc)

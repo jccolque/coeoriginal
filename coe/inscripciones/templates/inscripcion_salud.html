@@ -28,11 +28,15 @@
                 <div class="col-sm-6 custom_form_fields">
                     <div class="bordeado">
                         <h3><b>Datos Personales</b></h3>
-                        <p><b>Numero de Documento:</b> {{form.num_doc}}</p>
+                        <p>{{form.tipo_doc}} {{form.num_doc}}</p>
                         <p><b>Apellido:</b> {{form.apellidos}}</p>
                         <p><b>Nombre:</b> {{form.nombres}}</p>
+                        <p><b>Genero:</b> {{form.sexo}}</p>
                         <p><b>Fecha de Nacimiento:</b> {{form.fecha_nacimiento}}</p>
-                        <p><b>Grupo Sanguineo:</b> {{form.grupo_sanguineo}}</p>
+                        <p><b>Nacionalidad:</b> {{form.nacionalidad}}</p>
+                        <br>
+                        <p><b>Profesion:</b> {{form.profesion}}</p>
+                        <p><b>Matricula:</b> {{form.matricula}}</p>
                         <hr>
                         <p><b>Domicilio</b></p>
                         <p><b>Localidad:</b> {{form.dom_localidad}}</p>

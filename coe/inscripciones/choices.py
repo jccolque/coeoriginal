@@ -33,3 +33,11 @@ TIPO_PROFESIONAL = (
     (92, 'Psiquiatra'),
     (99, 'Estudiantes de Carreras de Ciencias de la Salud'),
 )
+
+TIPO_DISPOSITIVO = (
+    ('DK', 'Computadora de Escritorio'),
+    ('NB', 'Notebook'),
+    ('TC', 'Telefono Celular'),
+    ('TF', 'Telefono Fijo'),
+    ('TB', 'Tablet'),
+)
