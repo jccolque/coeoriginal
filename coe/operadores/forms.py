@@ -30,7 +30,7 @@ class CrearOperadorForm(forms.ModelForm):
     class Meta:
         model = Operador
         fields= '__all__'
-        exclude = ('qrpath', 'usuario',)
+        exclude = ('qrpath', 'usuario', 'individuo')
         widgets = {
             'subcomite': autocomplete.ModelSelect2(url='operadores:subcomite-autocomplete'),
         }
@@ -45,7 +45,7 @@ class ModOperadorForm(forms.ModelForm):
     class Meta:
         model = Operador
         fields= '__all__'
-        exclude = ('qrpath', 'usuario',)
+        exclude = ('qrpath', 'usuario', 'individuo')
         widgets = {
             'subcomite': autocomplete.ModelSelect2(url='operadores:subcomite-autocomplete'),
         }

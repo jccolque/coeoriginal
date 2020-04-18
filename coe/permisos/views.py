@@ -11,10 +11,10 @@ from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
 from coe.settings import SEND_MAIL
 from operadores.functions import obtener_operador
+from geotracking.geofence import buscar_permiso, pedir_permiso, definir_fechas
 #imports de la app
 from .models import Individuo, Permiso
-from .geofence import buscar_permiso, pedir_permiso, definir_fechas
-from .permisos_form import PermisoForm, BuscarPermiso, DatosForm, FotoForm
+from .forms import PermisoForm, BuscarPermiso, DatosForm, FotoForm
 
 #Publico
 def buscar_permiso_web(request):
@@ -30,7 +30,7 @@ def buscar_permiso_web(request):
                 return redirect('permisos_urls:pedir_permiso', individuo_id=individuo.id, num_doc=individuo.num_doc)
             else:
                 form.add_error(None, "No se ha encontrado a Nadie con esos Datos.")
-    return render(request, "permisos/buscar_permiso.html", {'form': form, })
+    return render(request, "buscar_permiso.html", {'form': form, })
 
 def pedir_permiso_web(request, individuo_id, num_doc):
     try:
@@ -62,8 +62,8 @@ def pedir_permiso_web(request, individuo_id, num_doc):
                             #Enviamos el correo
                             if SEND_MAIL:
                                 email.send()
-                return render(request, "permisos/ver_permiso.html", {'permiso': permiso, })  
-        return render(request, "permisos/pedir_permiso.html", {'form': form, 'individuo': individuo, })
+                return render(request, "ver_permiso.html", {'permiso': permiso, })  
+        return render(request, "pedir_permiso.html", {'form': form, 'individuo': individuo, })
     except Individuo.DoesNotExist:
         return redirect('permisos_urls:buscar_permiso')
 
@@ -91,12 +91,12 @@ def subir_foto(request, individuo_id):
 #Administrar
 @permission_required('operadores.permisos')
 def menu_permisos(request):
-    return render(request, 'permisos/menu_permisos.html', {})
+    return render(request, 'menu_permisos.html', {})
 
 @permission_required('operadores.permisos')
 def lista_activos(request):
     permisos = Permiso.objects.filter(endda__gt=timezone.now())
-    return render(request, 'permisos/lista_permisos.html', {
+    return render(request, 'lista_permisos.html', {
         'titulo': "Permisos Activos",
         'permisos': permisos,
         'has_table': True,
@@ -105,7 +105,7 @@ def lista_activos(request):
 @permission_required('operadores.permisos')
 def lista_vencidos(request):
     permisos = Permiso.objects.filter(endda__lt=timezone.now())
-    return render(request, 'permisos/lista_permisos.html', {
+    return render(request, 'lista_permisos.html', {
         'titulo': "Permisos Vencidos",
         'permisos': permisos,
         'has_table': True,
@@ -116,7 +116,7 @@ def ver_permiso(request, permiso_id, individuo_id):
     permiso = Permiso.objects.select_related('individuo')
     permiso = permiso.get(pk=permiso_id)
     if individuo_id == permiso.individuo.id:
-        return render(request, 'permisos/ver_permiso.html', {
+        return render(request, 'ver_permiso.html', {
             'individuo': permiso.individuo,
             'permiso': permiso,
         })

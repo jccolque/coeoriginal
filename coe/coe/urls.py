@@ -45,16 +45,16 @@ urlpatterns = [
     path('tareas/', include('tareas.urls')),
     path('inventario/', include('inventario.urls')),
     path('informacion/', include('informacion.urls')),
-    path('geotracking/', include('informacion.geo_urls')),
-    path('permisos/', include('informacion.permisos_urls')),
+    path('geotracking/', include('geotracking.urls')),
+    path('permisos/', include('permisos.urls')),
     path('graficos/', include('graficos.urls')),
     path('documentos/', include('documentos.urls')),
     path('inscripciones/', include('inscripciones.urls')),
     path('background/', include('background.urls')),
     #APIS:
-    path('api_refs/', include('informacion.ws_urls')),
-    path('ide/', include('informacion.ide_urls')),
-    path('covid19/', include('informacion.app_urls')),
+    path('api_refs/', include('wservices.urls')),
+    path('ide/', include('geotracking.ide_urls')),
+    path('covid19/', include('app.urls')),
     #Manejo de Archivos Privados:
     path('archivos/', include('operadores.file_urls')),#Lo hacemos desde ahi por que depende de permisos
 ]

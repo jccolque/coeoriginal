@@ -14,11 +14,11 @@ class AppNotificationForm(forms.ModelForm):
         fields= '__all__'
         exclude = ('fecha', )
         widgets = {
-            'appdata': autocomplete.ModelSelect2(url='app_urls:appdata-autocomplete'),
+            'appdata': autocomplete.ModelSelect2(url='app:appdata-autocomplete'),
         }
 
 class SendNotificationForm(forms.Form):
-    dispositivo = forms.ModelChoiceField(queryset=FCMDevice.objects.all(), widget=autocomplete.ModelSelect2(url='app_urls:dispositivo-autocomplete'))
+    dispositivo = forms.ModelChoiceField(queryset=FCMDevice.objects.all(), widget=autocomplete.ModelSelect2(url='app:dispositivo-autocomplete'))
     titulo = forms.CharField(label="Titulo", required=True)
     texto = forms.CharField(label="Texto", widget=forms.Textarea())
     icono = forms.ChoiceField(choices=TIPO_ICONO, required=True)

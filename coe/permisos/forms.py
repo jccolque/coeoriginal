@@ -1,14 +1,13 @@
 #Imports Python
-from datetime import timedelta
 #Imports Django
 from django import forms
-from django.utils import timezone
 #Imports extra
 from dal import autocomplete
 #Imports del proyecto
 from core.widgets import XDSoftDatePickerInput, XDSoftDateTimePickerInput
+from informacion.models import Individuo
 #Imports de la app
-from .models import Individuo, Permiso
+from .models import Permiso
 
 #Formularios
 class DatosForm(forms.ModelForm):

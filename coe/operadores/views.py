@@ -14,6 +14,7 @@ from django.contrib.auth.decorators import permission_required
 from auditlog.models import LogEntry
 #Import del proyecto
 from core.forms import SearchForm, FechaForm
+from informacion.models import Individuo
 #Imports de la app
 from .functions import obtener_permisos
 from .models import SubComite, Operador, EventoOperador
@@ -96,6 +97,11 @@ def crear_operador(request):
         form = CrearOperadorForm(request.POST, request.FILES)
         if form.is_valid():
             operador = form.save(commit=False)
+            #Intentamos asignarlo a un usuario
+            try:
+                operador.individuo = Individuo.objects.get(num_doc=form.cleaned_data['num_doc'])
+            except:
+                pass
             operador.save()
             return redirect('operadores:listar_operadores')
     return render(request, "extras/generic_form.html", {'titulo': "Subir Archivo para Carga", 'form': form, 'boton': "Subir", })

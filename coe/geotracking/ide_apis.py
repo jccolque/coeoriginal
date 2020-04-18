@@ -1,28 +1,15 @@
 #Imports de python
-import copy
-import json
 import logging
-from base64 import b64decode
-from datetime import timedelta
 #Imports de Django
 from django.urls import reverse
-from django.utils import timezone
 from django.http import JsonResponse
-from django.contrib.auth import authenticate
-from django.core.files.base import ContentFile
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 #Imports del proyecto
-from coe.constantes import LAST_DATETIME
-from operadores.models import Operador
-from georef.models import Nacionalidad, Localidad
+from informacion.models import Individuo
+
 #Imports de la app
-from .choices import TIPO_PERMISO
-from .models import Individuo, AppData, Domicilio, GeoPosicion
-from .models import Atributo, Sintoma, Situacion, Seguimiento
-from .models import Permiso
-from .tokens import TokenGenerator
-from .geofence import controlar_distancia
+from .models import GeoPosicion
 
 #Definimos logger
 logger = logging.getLogger("apis")

@@ -17,14 +17,16 @@ from fcm_django.models import FCMDevice
 from core.functions import json_error
 from operadores.models import Operador
 from georef.models import Nacionalidad, Localidad
+from informacion.models import Individuo, Domicilio
+from informacion.models import Atributo, Sintoma, Situacion, Seguimiento
+from geotracking.models import GeoPosicion
+from geotracking.geofence import controlar_distancia, es_local
+from geotracking.geofence import buscar_permiso, pedir_permiso, definir_fechas, json_permiso
+from permisos.choices import TIPO_PERMISO
 #Imports de la app
-from .choices import TIPO_PERMISO
-from .models import Individuo, AppData, Domicilio, GeoPosicion
-from .models import Atributo, Sintoma, Situacion, Seguimiento
+from .models import AppData
 from .tokens import TokenGenerator
-from .geofence import controlar_distancia, es_local
-from .geofence import buscar_permiso, pedir_permiso, definir_fechas, json_permiso
-from .app_functions import obtener_dni
+from .functions import obtener_dni
 
 #Definimos logger
 logger = logging.getLogger("apis")

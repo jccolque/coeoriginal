@@ -6,9 +6,9 @@ from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 #Imports del proyecto
 from georef.models import Localidad, Barrio
-#Imports de la app
-from .choices import TIPO_ESTADO, TIPO_CONDUCTA, TIPO_PERMISO
-from .models import Situacion
+from informacion.choices import TIPO_ESTADO, TIPO_CONDUCTA
+from informacion.models import Situacion
+from permisos.choices import TIPO_PERMISO
 
 #Creamos nuestros webservices
 @require_http_methods(["GET"])

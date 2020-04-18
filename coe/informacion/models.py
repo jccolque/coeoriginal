@@ -7,7 +7,6 @@ from django.core.validators import RegexValidator
 #Imports de paquetes extras
 from tinymce.models import HTMLField
 from auditlog.registry import auditlog
-from fcm_django.models import FCMDevice
 #Imports del proyecto:
 from coe.constantes import NOIMAGE
 from coe.settings import MEDIA_ROOT
@@ -20,9 +19,7 @@ from .choices import TIPO_VEHICULO, TIPO_ESTADO, TIPO_CONDUCTA
 from .choices import TIPO_RELACION, TIPO_SEGUIMIENTO
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
 from .choices import TIPO_DOCUMENTO
-from .choices import TIPO_PERMISO
-from .choices import TIPO_TRIAJE, TIPO_GEOPOS, TIPO_ALERTA
-from .choices import TIPO_ACCION_NOTIFICACION
+
 
 # Create your models here.
 class Archivo(models.Model):
@@ -155,20 +152,6 @@ class Domicilio(models.Model):
     def nombre_corto(self):
         return self.calle + ' ' + self.numero + ', ' + self.localidad.nombre
 
-class GeoPosicion(models.Model):
-    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="geoposiciones")
-    tipo = models.CharField('Tipo GeoPosicion', max_length=2, choices=TIPO_GEOPOS, default='MS')
-    latitud = models.DecimalField('latitud', max_digits=12, decimal_places=10)
-    longitud = models.DecimalField('longitud', max_digits=12, decimal_places=10)
-    aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
-    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
-    distancia = models.DecimalField('Distancia a Base', max_digits=8, decimal_places=2, default=0)
-    alerta = models.CharField('Tipo de Alerta', choices=TIPO_ALERTA, max_length=2, default='SA')
-    procesada = models.BooleanField('Procesada', default=False)
-    operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True)
-    def __str__(self):
-        return str(self.latitud) + '|' + str(self.longitud)
-
 #Extras
 class SignosVitales(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="signos_vitales")
@@ -235,29 +218,6 @@ class Documento(models.Model):
     def __str__(self):
         return self.get_tipo_display()
 
-
-#Apps Externas
-class AppData(models.Model):
-    individuo = models.OneToOneField(Individuo, on_delete=models.CASCADE, related_name="appdata")
-    telefono = models.CharField('Telefono', max_length=50, default='+549388')
-    email = models.EmailField('Correo Electronico', null=True, blank=True)#Enviar mails
-    estado = models.CharField('Estado', choices=TIPO_TRIAJE, max_length=1, default='V')
-    device = models.OneToOneField(FCMDevice, on_delete=models.SET_NULL, null=True, blank=True, related_name="appdata")
-    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
-    #GeoTracking
-    intervalo = models.IntegerField("Intervalo entre Trackings",default=10)#Minutos
-    distancia_alerta = models.IntegerField("Distancia de Alerta", default=50)#Mts
-    distancia_critica = models.IntegerField("Distancia Critica", default=100)#Mts
-    def __str__(self):
-        return str(self.individuo) + self.get_estado_display()
-
-class AppNotificacion(models.Model):
-    appdata = models.OneToOneField(AppData, on_delete=models.CASCADE, related_name="notificacion")
-    titulo = models.CharField('titulo', max_length=100, default='', blank=False)
-    mensaje = models.CharField('mensaje', max_length=200, default='', blank=False)
-    accion = models.CharField('accion', choices=TIPO_ACCION_NOTIFICACION, max_length=2, default='SM')
-    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
-
 #Controles vehiculares
 class TrasladoVehiculo(models.Model):
     vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, related_name="traslados")
@@ -271,23 +231,6 @@ class Pasajero(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="pasajes")
     def __str__(self):
         return str(self.traslado) + ': ' + str(self.individuo)
-
-#Permisos
-class Permiso(models.Model):
-    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="permisos")
-    tipo = models.CharField('Tipo Permiso', choices=TIPO_PERMISO, max_length=1, default='C')
-    localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="permisos")
-    begda = models.DateTimeField('Inicio Permiso', default=timezone.now)
-    endda = models.DateTimeField('Fin Permiso', default=timezone.now)
-    controlador = models.BooleanField(default=False)
-    aclaracion = HTMLField(null=True, blank=True)
-    def __str__(self):
-        return self.get_tipo_display() + str(self.begda)[0:16]
-    def estado(self):
-        if self.endda > timezone.now():
-            return "Activo"
-        else:
-            return "Vencido"
 
 #Señales
 from .signals import estado_inicial
@@ -312,4 +255,3 @@ auditlog.register(Vehiculo)
 auditlog.register(Individuo)
 auditlog.register(TrasladoVehiculo)
 auditlog.register(Sintoma)
-auditlog.register(Permiso)

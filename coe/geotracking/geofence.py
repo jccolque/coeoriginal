@@ -9,8 +9,10 @@ from geographiclib.geodesic import Geodesic
 #Imports del proyecto
 from coe.constantes import LAST_DATETIME
 from coe.constantes import DISTANCIA_MAXIMA, CENTRO_LATITUD, CENTRO_LONGITUD
+from informacion.models import Seguimiento
+from permisos.models import Permiso
 #Imports de la app
-from .models import GeoPosicion, Seguimiento, Permiso
+from .models import GeoPosicion
 
 #Definimos nuestras funciones:
 def obtener_base(num_doc):

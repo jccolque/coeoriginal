@@ -8,7 +8,7 @@ from . import autocomplete
 
 
 #Definimos paths de la app
-app_name = 'app_urls'
+app_name = 'app'
 urlpatterns = [
     #App
     path('config', app_apis.AppConfig, name='AppConfig'),

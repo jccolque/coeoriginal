@@ -18,6 +18,8 @@ from georef.models import Ubicacion
 from operadores.functions import obtener_operador
 from background.tasks import crear_progress_link
 from graficos.functions import obtener_grafico
+from app.models import AppData
+from permisos.forms import FotoForm
 #imports de la app
 from .choices import TIPO_ESTADO, TIPO_CONDUCTA
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
@@ -26,10 +28,10 @@ from .models import Vehiculo, TrasladoVehiculo, Pasajero
 from .models import Individuo, SignosVitales, Relacion
 from .models import Situacion
 from .models import Seguimiento
-from .models import Domicilio, GeoPosicion
+from .models import Domicilio
 from .models import Atributo, Sintoma
 from .models import Documento
-from .models import AppData
+
 from .forms import ArchivoForm, ArchivoFormWithPass
 from .forms import VehiculoForm, TrasladoVehiculoForm
 from .forms import IndividuoForm, InquilinoForm
@@ -39,7 +41,6 @@ from .forms import SituacionForm, RelacionForm, SeguimientoForm
 from .forms import SearchIndividuoForm, SearchVehiculoForm
 from .forms import DocumentoForm, SignosVitalesForm
 from .forms import ReporteHotelesForm
-from .permisos_form import FotoForm
 from .tasks import guardar_same, guardar_epidemiologia
 from .tasks import guardar_padron_individuos, guardar_padron_domicilios
 from .functions import obtener_relacionados

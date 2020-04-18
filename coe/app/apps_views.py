@@ -4,7 +4,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 #Imports extras
 from fcm_django.models import FCMDevice
 #Imports de la app
-from .app_forms import SendNotificationForm, AppNotificationForm
+from .forms import SendNotificationForm, AppNotificationForm
 
 #NUESTRAS VISTAS:
 def download_app(request):

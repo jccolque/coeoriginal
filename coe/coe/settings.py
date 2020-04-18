@@ -56,10 +56,14 @@ INSTALLED_APPS = [
     'tareas.apps.TareasConfig',
     'inventario.apps.InventarioConfig',
     'informacion.apps.InformacionConfig',
+    'app.apps.AppConfigure',
+    'geotracking.apps.GeotrackingConfig',
+    'permisos.apps.PermisosConfig',
     'actas.apps.ActasConfig',
     'documentos.apps.DocumentosConfig',
     'background.apps.BackgroundConfig',
     'graficos.apps.GraficosConfig',
+    'wservices.apps.WservicesConfig',
 ]
 
 MIDDLEWARE = [
