@@ -42,7 +42,7 @@ class IngresoProvinciaForm(forms.ModelForm):
     class Meta:
         model = IngresoProvincia
         fields= '__all__'
-        exclude = ('fecha', 'token', 'individuos', 'plan_vuelo', 'dut')
+        exclude = ('fecha', 'token', 'individuos', 'estado', 'plan_vuelo', 'dut')
         widgets = {
             'fecha_llegada': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}, ),
             'origen': autocomplete.ModelSelect2(url='georef:provincia-autocomplete'),
