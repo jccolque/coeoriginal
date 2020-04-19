@@ -1,0 +1,30 @@
+{% extends 'base_informacion.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4 col-sm-offset-4 formulario_custom">
+                <form method="post" enctype="multipart/form-data">
+                    <h2><b>Aprobar Ingreso a la Provincia</b></h2>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p><b>Tipo:</b> {{ingreso.get_tipo_display}}</p>
+                            <p><b>Fecha de Llegada Estimada:</b> {{ingreso.fecha_llegada|date:"d/m/Y H:i"}}</p>
+                            <p><b>Origen:</b> {{ingreso.origen}}</p>
+                            <p><b>Destino:</b> {{ingreso.destino}}</p>
+                        </div>
+                        <div class="col-md-4">
+                        <h3><b>Vehiculo:</b></h3>
+                            <p><b>Marca:</b> {{ingreso.marca}}</p>
+                            <p><b>Modelo:</b> {{ingreso.modelo}}</p>
+                            <p><b>Patente:</b> {{ingreso.patente}}</p>
+                        </div>
+                    </div>
+                    {% include 'extras/generic_form-nobase.html' %}
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

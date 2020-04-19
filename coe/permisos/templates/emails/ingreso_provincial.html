@@ -1,17 +1,17 @@
 {% autoescape off %}
     Tu Ingreso Provincial a sido Registrado.
     Tipo: {{ingreso.get_tipo_display}}
-    Fecha de Llegada Estimada: {{permiso.fecha_llegada|date:"d/m/Y H:i"}}
-    Origen: {{permiso.origen}}
-    Destino: {{permiso.destino}}
+    Fecha de Llegada Estimada: {{ingreso.fecha_llegada|date:"d/m/Y H:i"}}
+    Origen: {{ingreso.origen}}
+    Destino: {{ingreso.destino}}
     
     Vehiculo:
-    Marca: {{permiso.marca}}
-    Modelo: {{permiso.modelo}}
-    Patente: {{permiso.patente}}
+    Marca: {{ingreso.marca}}
+    Modelo: {{ingreso.modelo}}
+    Patente: {{ingreso.patente}}
 
     A travez de este link puede acceder al mismo:
-    http://coe.jujuy.gob.ar/{% url 'permisos:ver_ingreso_provincial' token=permiso.token %}
+    http://coe.jujuy.gob.ar/{% url 'permisos:ver_ingreso_provincial' token=ingreso.token %}
 
     Pronto te avisaremos si fue aprobado para que puedas descargarlo,
     Cuidate y Cuidanos!

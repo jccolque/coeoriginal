@@ -97,7 +97,7 @@ def pedir_ingreso_provincial(request):
     if request.method == "POST":
         form = IngresoProvinciaForm(request.POST, request.FILES)
         if form.is_valid():
-            ingreso = form.save()   
+            ingreso = form.save()
             #Enviar email
             if SEND_MAIL:
                 to_email = ingreso.email_contacto
