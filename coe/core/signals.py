@@ -23,16 +23,16 @@ def enviar_mail_new_user(instance, created, **kwargs):
         usuario.is_active = False
         usuario.save()
         #enviar email de validacion
-        to_email = usuario.email
-        #Preparamos el correo electronico
-        mail_subject = 'Bienvenido al Sistema Centralizado COE!'
-        message = render_to_string('emails/acc_active_user.html', {
-                'usuario': usuario,
-                'raw_password': raw_password,
-                'token': account_activation_token.make_token(usuario),
-            })
-        #Instanciamos el objeto mail con destinatario
-        email = EmailMessage(mail_subject, message, to=[to_email])
-        #Enviamos el correo
         if SEND_MAIL:
+            to_email = usuario.email
+            #Preparamos el correo electronico
+            mail_subject = 'Bienvenido al Sistema Centralizado COE!'
+            message = render_to_string('emails/acc_active_user.html', {
+                    'usuario': usuario,
+                    'raw_password': raw_password,
+                    'token': account_activation_token.make_token(usuario),
+                })
+            #Instanciamos el objeto mail con destinatario
+            email = EmailMessage(mail_subject, message, to=[to_email])
+            #Enviamos el correo
             email.send()

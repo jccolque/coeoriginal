@@ -6,8 +6,27 @@ from django.http import JsonResponse
 #Imports Extras
 #Imports del proyecto
 from coe.constantes import LAST_DATETIME
-from permisos.models import Permiso
+from informacion.models import Individuo
 #Imports de la app
+from .models import Permiso
+
+#Funciones
+def actualizar_individuo(form):
+    individuo = form.save(commit=False)
+    try:
+        individuo_db = Individuo.objects.get(num_doc=individuo.num_doc)
+        #Cargamos todos los datos nuevos utiles:
+        individuo_db.sexo = individuo.sexo
+        individuo_db.fecha_nacimiento = individuo.fecha_nacimiento
+        individuo_db.nacionalidad = individuo.nacionalidad
+        individuo_db.telefono = individuo.telefono
+        individuo_db.email = individuo.email
+        #Podriamos chequear que no este en cuarentena obligatoria/aislamiento
+    except Individuo.DoesNotExist:
+        individuo_db = individuo
+    #Guardamos los datos conseguidos
+    individuo_db.save()
+    return individuo_db
 
 #Salvoconducos
 def buscar_permiso(individuo, activo=False):

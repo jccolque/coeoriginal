@@ -5,3 +5,17 @@ TIPO_PERMISO = (
     ('R', 'Responsable de Personas a Cargo'),
     ('P', 'Permiso Permanente'),
 )
+
+TIPO_INGRESO = (
+    ('P', 'Particular'),
+    ('C', 'Colectivo'),
+    ('A', 'Aereo'),
+    
+    ('O', 'Otro'),
+)
+
+ESTADO_INGRESO = (
+    ('E', 'Esperando Aprobacion'),
+    ('B', 'Dado de Baja'),
+    ('A', 'Aprobado'),
+)

@@ -26,13 +26,7 @@ def inscripcion_salud(request):
         try:#Tratamos de obtener el dni
             num_doc = request.POST['num_doc']
             individuo = Individuo.objects.get(num_doc=num_doc)
-            if individuo.situacion_actual:
-                if individuo.situacion_actual.conducta in ('D', 'E'):
-                    return render(request, 'extras/error.html', {
-                        'titulo': 'Inscripcion Denegada',
-                        'error': "Usted se encuentra bajo Aislamiento, Contacte al Administrador.",
-                    })
-        except:
+        except Individuo.DoesNotExist:
             individuo = None
         form = ProfesionalSaludForm(request.POST, request.FILES, instance=individuo)
         if form.is_valid():
@@ -48,17 +42,17 @@ def inscripcion_salud(request):
             inscripto.info_extra = form.cleaned_data['info_extra']
             inscripto.save()
             #enviar email de validacion
-            to_email = individuo.email
-            #Preparamos el correo electronico
-            mail_subject = 'Inscripcion al COE2020'
-            message = render_to_string('emails/acc_active_inscripcion.html', {
-                    'inscripto': inscripto,
-                    'token':account_activation_token.make_token(inscripto),
-                })
-            #Instanciamos el objeto mail con destinatario
-            email = EmailMessage(mail_subject, message, to=[to_email])
-            #Enviamos el correo
             if SEND_MAIL:
+                to_email = individuo.email
+                #Preparamos el correo electronico
+                mail_subject = 'Inscripcion al COE2020'
+                message = render_to_string('emails/acc_active_inscripcion.html', {
+                        'inscripto': inscripto,
+                        'token':account_activation_token.make_token(inscripto),
+                    })
+                #Instanciamos el objeto mail con destinatario
+                email = EmailMessage(mail_subject, message, to=[to_email])
+                #Enviamos el correo
                 email.send()
             return render(request, 'inscripto_exito.html', {'inscripto': inscripto, })
     return render(request, "inscripcion_salud.html", {
@@ -81,7 +75,7 @@ def inscripcion_social(request):
                         'titulo': 'Inscripcion Denegada',
                         'error': "Usted se encuentra bajo Aislamiento, Contacte al Administrador.",
                     })
-        except:
+        except Individuo.DoesNotExist:
             individuo = None
         form = VoluntarioSocialForm(request.POST, request.FILES, instance=individuo)
         if form.is_valid():
@@ -115,17 +109,16 @@ def inscripcion_social(request):
                     dispositivo.tipo = disp
                     dispositivo.save()
                 #enviar email de validacion
-                to_email = individuo.email
-                #Preparamos el correo electronico
-                mail_subject = 'Inscripcion al COE2020'
-                message = render_to_string('emails/acc_active_inscripcion.html', {
-                        'inscripto': inscripto,
-                        'token':account_activation_token.make_token(inscripto),
-                    })
-                #Instanciamos el objeto mail con destinatario
-                email = EmailMessage(mail_subject, message, to=[to_email])
-                #Enviamos el correo
                 if SEND_MAIL:
+                    to_email = individuo.email
+                    #Preparamos el correo electronico
+                    mail_subject = 'Inscripcion al COE2020'
+                    message = render_to_string('emails/acc_active_inscripcion.html', {
+                            'inscripto': inscripto,
+                            'token':account_activation_token.make_token(inscripto),
+                        })
+                    #Instanciamos el objeto mail con destinatario
+                    email = EmailMessage(mail_subject, message, to=[to_email])
                     email.send()
                 return render(request, 'inscripto_exito.html', {'inscripto': inscripto, })
             else:

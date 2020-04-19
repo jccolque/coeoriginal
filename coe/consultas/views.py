@@ -19,17 +19,16 @@ def contacto(request):
         if consulta_form.is_valid():
             consulta = consulta_form.save()
             #enviar email de validacion
-            to_email = consulta_form.cleaned_data.get('email')#Obtenemos el correo
-            #Preparamos el correo electronico
-            mail_subject = 'Confirma tu correo de respuesta por la Consultas Realizada al COE2020.'
-            message = render_to_string('emails/acc_active_consulta.html', {
-                    'consulta': consulta,
-                    'token':account_activation_token.make_token(consulta),
-                })
-            #Instanciamos el objeto mail con destinatario
-            email = EmailMessage(mail_subject, message, to=[to_email])
-            #Enviamos el correo
             if SEND_MAIL:
+                to_email = consulta_form.cleaned_data.get('email')#Obtenemos el correo
+                #Preparamos el correo electronico
+                mail_subject = 'Confirma tu correo de respuesta por la Consultas Realizada al COE2020.'
+                message = render_to_string('emails/acc_active_consulta.html', {
+                        'consulta': consulta,
+                        'token':account_activation_token.make_token(consulta),
+                    })
+                #Instanciamos el objeto mail con destinatario
+                email = EmailMessage(mail_subject, message, to=[to_email])
                 email.send()
             return render(request, 'contacto.html', {})
     else:
@@ -71,23 +70,20 @@ def ver_consulta(request, consulta_id):
             respuesta.operador = obtener_operador(request)
             respuesta.consulta = consulta
             #enviar email de respuesta
-            to_email = consulta.email
-            #Preparamos el correo electronico
-            mail_subject = 'COE2020: Respondimos tu Consulta ' + consulta.asunto
-            message = render_to_string('emails/respuesta_consulta.html', {
-                    'consulta': consulta,
-                    'respuesta':respuesta,
-                })
-            #Instanciamos el objeto mail con destinatario
-            email = EmailMessage(mail_subject, message, to=[to_email])
-            #Enviamos el correo
             if SEND_MAIL:
+                to_email = consulta.email
+                #Preparamos el correo electronico
+                mail_subject = 'COE2020: Respondimos tu Consulta ' + consulta.asunto
+                message = render_to_string('emails/respuesta_consulta.html', {
+                        'consulta': consulta,
+                        'respuesta':respuesta,
+                    })
+                #Instanciamos el objeto mail con destinatario
+                email = EmailMessage(mail_subject, message, to=[to_email])
                 email.send()
-                #La marcamos como respondida
-                consulta.respondida = True
-                consulta.save()
-                #Guardamos la respuesta
-                consulta.save()
+            #La marcamos como respondida
+            consulta.respondida = True
+            consulta.save()
             return redirect('consultas:lista_consultas')
     return render(request, 'ver_consulta.html', {"consulta": consulta, 'form': form, })
 

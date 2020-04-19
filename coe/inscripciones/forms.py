@@ -34,7 +34,7 @@ class ProfesionalSaludForm(forms.ModelForm):
         fields= '__all__'
         exclude = ('origen', 'destino', 'observaciones', 'fotografia', 'qrpath', 'situacion_actual', 'domicilio_actual')
         widgets = {
-
+            'fecha_nacimiento': XDSoftDatePickerInput(),
             'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
             'localidad': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
         }
@@ -59,7 +59,7 @@ class VoluntarioSocialForm(forms.ModelForm):
     class Meta:
         model = Individuo
         fields= '__all__'
-        exclude = ('origen', 'destino', 'observaciones', 'fotografia', 'qrpath', 'situacion_actual', 'domicilio_actual', 'tiene_internet', 'titulo', 'matricula')
+        exclude = ('origen', 'destino', 'observaciones', 'fotografia', 'qrpath', 'situacion_actual', 'domicilio_actual')
         widgets = {
             'fecha_nacimiento': XDSoftDatePickerInput(),
             'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),

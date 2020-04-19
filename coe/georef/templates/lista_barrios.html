@@ -5,7 +5,7 @@
         <div class="row">
             <h2>Listado de Barrios</h2>
             {% if perms.operadores.menu_georef %}
-                <a href="{% url 'georef:crear_barrio' %}">
+                <a class="botoncito" href="{% url 'georef:crear_barrio' %}">
                     Crear Barrio
                     <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
                 </a>

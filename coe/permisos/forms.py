@@ -7,7 +7,7 @@ from dal import autocomplete
 from core.widgets import XDSoftDatePickerInput, XDSoftDateTimePickerInput
 from informacion.models import Individuo
 #Imports de la app
-from .models import Permiso
+from .models import Permiso, IngresoProvincia
 
 #Formularios
 class DatosForm(forms.ModelForm):
@@ -36,4 +36,24 @@ class PermisoForm(forms.ModelForm):
         widgets = {
             'individuo': forms.HiddenInput(),
             'begda': XDSoftDateTimePickerInput(attrs={'label':'Fecha Ideal', 'autocomplete':'off'}, ),
+        }
+
+class IngresoProvinciaForm(forms.ModelForm):
+    class Meta:
+        model = IngresoProvincia
+        fields= '__all__'
+        exclude = ('fecha', 'token', 'individuos', 'plan_vuelo', 'dut')
+        widgets = {
+            'fecha_llegada': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}, ),
+            'origen': autocomplete.ModelSelect2(url='georef:provincia-autocomplete'),
+            'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+        }
+
+class IngresanteForm(forms.ModelForm):
+    class Meta:
+        model = Individuo
+        fields= ('num_doc', 'apellidos', 'nombres', 'sexo', 'fecha_nacimiento', 'nacionalidad', 'telefono', 'email')
+        widgets = {
+            'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
+            'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
         }

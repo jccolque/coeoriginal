@@ -5,7 +5,7 @@
         <div class="row">
             <h2>Listado de Provincias</h2>
             {% if perms.operadores.menu_georef %}
-                <a href="{% url 'georef:crear_provincia' %}">
+                <a class="botoncito" href="{% url 'georef:crear_provincia' %}">
                     Crear Provincia
                     <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
                 </a>

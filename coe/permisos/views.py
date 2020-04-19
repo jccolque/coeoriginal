@@ -11,9 +11,12 @@ from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
 from coe.settings import SEND_MAIL
 from operadores.functions import obtener_operador
+from informacion.models import Individuo
 #imports de la app
-from .models import Individuo, Permiso
+from .models import Permiso, IngresoProvincia
 from .forms import PermisoForm, BuscarPermiso, DatosForm, FotoForm
+from .forms import IngresoProvinciaForm, IngresanteForm
+from .functions import actualizar_individuo
 from .functions import buscar_permiso, pedir_permiso, definir_fechas
 
 #Publico
@@ -50,17 +53,16 @@ def pedir_permiso_web(request, individuo_id, num_doc):
                         if not permiso.pk:
                             permiso.save()
                             #Enviar email
-                            to_email = individuo.email
-                            #Preparamos el correo electronico
-                            mail_subject = 'Bienvenido al Sistema Centralizado COE!'
-                            message = render_to_string('emails/permiso_generado.html', {
-                                    'individuo': individuo,
-                                    'permiso': permiso,
-                                })
-                            #Instanciamos el objeto mail con destinatario
-                            email = EmailMessage(mail_subject, message, to=[to_email])
-                            #Enviamos el correo
                             if SEND_MAIL:
+                                to_email = individuo.email
+                                #Preparamos el correo electronico
+                                mail_subject = 'Bienvenido al Sistema Centralizado COE!'
+                                message = render_to_string('emails/permiso_generado.html', {
+                                        'individuo': individuo,
+                                        'permiso': permiso,
+                                    })
+                                #Instanciamos el objeto mail con destinatario
+                                email = EmailMessage(mail_subject, message, to=[to_email])
                                 email.send()
                 return render(request, "ver_permiso.html", {'permiso': permiso, })  
         return render(request, "pedir_permiso.html", {'form': form, 'individuo': individuo, })
@@ -87,6 +89,57 @@ def subir_foto(request, individuo_id):
             individuo.save()
             return redirect('permisos:pedir_permiso', individuo_id=individuo.id, num_doc=individuo.num_doc)
     return render(request, "extras/generic_form.html", {'titulo': "Subir Fotografia", 'form': form, 'boton': "Cargar", })
+
+#Ingreso Provincial
+def pedir_ingreso_provincial(request):
+    form = IngresoProvinciaForm()
+    if request.method == "POST":
+        form = IngresoProvinciaForm(request.POST, request.FILES)
+        if form.is_valid():
+            ingreso = form.save()   
+            #Enviar email
+            if SEND_MAIL:
+                to_email = ingreso.email_contacto
+                #Preparamos el correo electronico
+                mail_subject = 'Bienvenido al Sistema Centralizado COE!'
+                message = render_to_string('emails/ingreso_provincial.html', {
+                        'ingreso': ingreso,
+                    })
+                #Instanciamos el objeto mail con destinatario
+                email = EmailMessage(mail_subject, message, to=[to_email])
+                email.send()
+            #Enviarlo a cargar ingresantes
+            return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
+    return render(request, "extras/generic_form.html", {'titulo': "Permiso de Ingreso a Jujuy", 'form': form, 'boton': "Cargar", })
+
+#Ingreso Provincial
+def ver_ingreso_provincial(request, token):
+    ingreso = IngresoProvincia.objects.prefetch_related('individuos')
+    ingreso = ingreso.get(token=token)
+    return render(request, 'ver_ingreso_provincial.html', {
+        'ingreso': ingreso,
+        'has_table': True,
+    })
+
+#Ingreso Provincial
+def cargar_ingresante(request, ingreso_id):
+    form = IngresanteForm()
+    if request.method == "POST":
+        #obtenemos ingreso
+        ingreso = IngresoProvincia.objects.get(pk=ingreso_id)
+        try:#Tratamos de obtener el dni
+            num_doc = request.POST['num_doc']
+            individuo = Individuo.objects.get(num_doc=num_doc)
+        except Individuo.DoesNotExist:
+            individuo = None
+        form = IngresanteForm(request.POST, instance=individuo)
+        if form.is_valid():
+            #actualizamos individuo con los datos nuevos
+            individuo = actualizar_individuo(form)
+            #Lo agregamos al registro
+            ingreso.individuos.add(individuo)
+            return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Ingresante", 'form': form, 'boton': "Cargar", })
 
 #Administrar
 @permission_required('operadores.permisos')
@@ -134,4 +187,13 @@ def eliminar_permiso(request, permiso_id):
     permiso.aclaracion = permiso.aclaracion + ' | Dado de baja por: ' + str(obtener_operador(request))
     permiso.save()
     return redirect('permisos:lista_activos')
-    
+
+#Ingresos Provinciales
+@permission_required('operadores.permisos')
+def lista_ingresos(request):
+    ingresos = IngresoProvincia.objects.all()
+    return render(request, 'lista_ingresos.html', {
+        'titulo': "Ingresos Pedidos",
+        'ingresos': ingresos,
+        'has_table': True,
+    })

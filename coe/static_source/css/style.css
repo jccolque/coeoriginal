@@ -168,6 +168,14 @@ a.nolink:hover {
      color: white;
 }
 
+p.error {
+    color: red;
+    font-weight: lighter;
+    width: 100%;
+    text-align: center;
+
+}
+
 /* Tablas */
 .listado {
   width: 100%;
