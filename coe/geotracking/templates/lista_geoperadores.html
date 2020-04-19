@@ -21,21 +21,23 @@
                     </thead>
                     <tbody>
                         {% for geoperador in geoperadores %}
-                            <td>{{geoperador}}</td>
-                            <td>{{geoperador.operador.telefono}}</td>
-                            <td>
-                                {% if geoperador.operador.usuario.is_authenticated %}
-                                    Online
-                                {% else %}
-                                    {{geoperador.operador.usuario.last_login}}
-                                {% endif %}
-                            </td>
-                            <td>{{geoperador.cantidad_controlados}}</td>
-                            <td>
-                                <a href="{% url 'geotracking:ver_geopanel' geoperador_id=geoperador.id %}" target="_blank">
-                                    <img class="icons" src="/static/img/icons/control_panel.png" alt="Panel de Control">
-                                </a>
-                            </td>
+                            <tr>
+                                <td>{{geoperador}}</td>
+                                <td>{{geoperador.operador.telefono}}</td>
+                                <td>
+                                    {% if geoperador.operador.usuario.is_authenticated %}
+                                        Online
+                                    {% else %}
+                                        {{geoperador.operador.usuario.last_login}}
+                                    {% endif %}
+                                </td>
+                                <td>{{geoperador.cantidad_controlados}}</td>
+                                <td>
+                                    <a href="{% url 'geotracking:ver_geopanel' geoperador_id=geoperador.id %}" target="_blank">
+                                        <img class="icons" src="/static/img/icons/control_panel.png" alt="Panel de Control">
+                                    </a>
+                                </td>
+                            </tr>
                         {% endfor %}
                     </tbody>
                 </table>
