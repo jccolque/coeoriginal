@@ -57,3 +57,13 @@ class IngresanteForm(forms.ModelForm):
             'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
             'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
         }
+
+class DUTForm(forms.ModelForm):
+    class Meta:
+        model = IngresoProvincia
+        fields= ('dut',)
+
+class PlanVueloForm(forms.ModelForm):
+    class Meta:
+        model = IngresoProvincia
+        fields= ('plan_vuelo',)

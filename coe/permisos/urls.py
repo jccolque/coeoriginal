@@ -15,7 +15,9 @@ urlpatterns = [
     #Ingreso Provincial
     path('ingreso/', views.pedir_ingreso_provincial, name='pedir_ingreso_provincial'),
     path('ingreso/<str:token>', views.ver_ingreso_provincial, name='ver_ingreso_provincial'),
-    path('ingresantes/<int:ingreso_id>', views.cargar_ingresante, name='cargar_ingresantes'),
+    path('cargar/ingresantes/<int:ingreso_id>', views.cargar_ingresante, name='cargar_ingresantes'),
+    path('cargar/dut/<int:ingreso_id>', views.cargar_dut, name='cargar_dut'),
+    path('cargar/plan_vuelo/<int:ingreso_id>', views.cargar_plan_vuelo, name='cargar_plan_vuelo'),
     #Administracion
     #Permisos
     path('', views.menu_permisos, name='menu_permisos'),

@@ -16,6 +16,7 @@ from informacion.models import Individuo
 from .models import Permiso, IngresoProvincia
 from .forms import PermisoForm, BuscarPermiso, DatosForm, FotoForm
 from .forms import IngresoProvinciaForm, IngresanteForm
+from .forms import DUTForm, PlanVueloForm
 from .functions import actualizar_individuo
 from .functions import buscar_permiso, pedir_permiso, definir_fechas
 
@@ -140,6 +141,28 @@ def cargar_ingresante(request, ingreso_id):
             ingreso.individuos.add(individuo)
             return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Ingresante", 'form': form, 'boton': "Cargar", })
+
+def cargar_dut(request, ingreso_id):
+    form = DUTForm()
+    if request.method == "POST":
+        #obtenemos ingreso
+        ingreso = IngresoProvincia.objects.get(pk=ingreso_id)
+        form = DUTForm(request.POST, request.FILES, instance=ingreso)
+        if form.is_valid():
+            form.save()
+            return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Documento Universal de Transporte", 'form': form, 'boton': "Cargar", })
+
+def cargar_plan_vuelo(request, ingreso_id):
+    form = PlanVueloForm()
+    if request.method == "POST":
+        #obtenemos ingreso
+        ingreso = IngresoProvincia.objects.get(pk=ingreso_id)
+        form = PlanVueloForm(request.POST, request.FILES, instance=ingreso)
+        if form.is_valid():
+            form.save()
+            return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Documento Universal de Transporte", 'form': form, 'boton': "Cargar", })
 
 #Administrar
 @permission_required('operadores.permisos')
