@@ -22,7 +22,7 @@ def menu_geotracking(request):
     return render(request, 'menu_geotracking.html', {'es_geoperador': es_geoperador, })
 
 #Tracking
-@permission_required('operadores.geotracking')
+@permission_required('operadores.geotracking_admin')
 def control_tracking(request):
     #Obtenemos Alertas
     alertas = GeoPosicion.objects.exclude(alerta='SA').filter(procesada=False)
@@ -40,7 +40,7 @@ def control_tracking(request):
         'has_table': True,
     })
 
-@permission_required('operadores.geotracking')
+@permission_required('operadores.geotracking_admin')
 def lista_geooperadores(request):
     #Obtenemos el operador en cuestion
     geoperadores = GeOperador.objects.all()
@@ -84,7 +84,7 @@ def panel_geoperador(request, geoperador_id=None):
     })
 
 #Administracion
-@permission_required('operadores.geotracking')
+@permission_required('operadores.geotracking_admin')
 def agregar_geoperador(request):
     form = NuevoGeoOperador()
     if request.method == "POST":
@@ -94,7 +94,7 @@ def agregar_geoperador(request):
             return redirect('geotracking:lista_geooperadores')
     return render(request, "extras/generic_form.html", {'titulo': "Habilitar Nuevo GeoPerador", 'form': form, 'boton': "Habilitar", })
 
-@permission_required('operadores.geotracking')
+@permission_required('operadores.geotracking_admin')
 def agregar_individuo(request, geoperador_id):
     form = NuevoIndividuo()
     if request.method == "POST":
@@ -107,7 +107,7 @@ def agregar_individuo(request, geoperador_id):
     return render(request, "extras/generic_form.html", {'titulo': "Agregar Individuo Seguido", 'form': form, 'boton': "Agregar", })         
 
 #Listas
-@permission_required('operadores.geotracking')
+@permission_required('operadores.geotracking_admin')
 def lista_sin_geoperador(request):
     #Obtenemos todos los que ya estan siendo controlados
     controlados = set()
@@ -127,7 +127,7 @@ def lista_sin_geoperador(request):
         'has_table': True,
     })
 
-@permission_required('operadores.geotracking')
+@permission_required('operadores.geotracking_admin')
 def asignar_geoperador(request, individuo_id):
     form = AsignarGeOperador()
     if request.method == "POST":
@@ -139,7 +139,7 @@ def asignar_geoperador(request, individuo_id):
             return redirect('geotracking:lista_sin_geoperador')
     return render(request, "extras/generic_form.html", {'titulo': "Asignar Controlador", 'form': form, 'boton': "Asignar", })   
 
-@permission_required('operadores.geotracking')
+@permission_required('operadores.geotracking_admin')
 def lista_trackeados(request):
     geopos = GeoPosicion.objects.filter(tipo="ST").values_list("individuo__id", flat=True).distinct()
     #Obtenemos individuos de interes
@@ -152,7 +152,7 @@ def lista_trackeados(request):
         'has_table': True,
     })
 
-@permission_required('operadores.geotracking')
+@permission_required('operadores.geotracking_admin')
 def lista_alertas(request):
     #Obtenemos Alertas
     alertas = GeoPosicion.objects.filter(procesada=False).exclude(alerta='SA').exclude(alerta='FP')
@@ -170,7 +170,7 @@ def lista_alertas(request):
         'has_table': True,
     })
 
-@permission_required('operadores.geotracking')
+@permission_required('operadores.geotracking_admin')
 def alertas_procesadas(request):
     #Obtenemos Alertas
     alertas = GeoPosicion.objects.filter(procesada=True)

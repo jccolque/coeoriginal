@@ -10,11 +10,12 @@
                     <h1>Menu GeoTracking:</h1>
                     <div class="col-md-8">
                         <ul class="menu_botones">
-                            {% if perms.operadores.individuos %}
+                            {% if perms.operadores.geotracking %}
                                 {% if es_geoperador %}
                                     <li><a href="{% url 'geotracking:panel_geoperador' %}">Ver Mi Panel de Control</a></li>
                                     <hr>
                                 {% endif %}
+                                {% if perms.operadores.geotracking_admin %}
                                 <li><a href="{% url 'geotracking:control_tracking' %}">Sistema de Control GeoPosicional General</a></li>
                                 <li><a href="{% url 'geotracking:lista_geooperadores' %}">Listado de GeOperadores Habilitados</a></li>
                                 <hr>
