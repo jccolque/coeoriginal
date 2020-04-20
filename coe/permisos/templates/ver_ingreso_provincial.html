@@ -11,10 +11,12 @@
                     <div class="col-md-8">
                         <div class="row">
                             <p><b>Tipo:</b> {{ingreso.get_tipo_display}}</p>
+                            <p><b>Email de Contacto:</b> {{ingreso.email_contacto}}</p>
                             <p><b>Fecha de Llegada Estimada:</b> {{ingreso.fecha_llegada|date:"d/m/Y H:i"}}</p>
                             <p><b>Estado</b> {{ingreso.get_estado_display}}</p>
                             <p><b>Origen:</b> {{ingreso.origen}}</p>
                             <p><b>Destino:</b> {{ingreso.destino}}</p>
+                            <p><b>Permiso de Circulacion Nacional:</b> <a href="{{ingreso.permiso_nacional.url}}" target="_blank">Ver</a></p>
                         </div>
                         <hr>
                         <div class="row">
