@@ -25,11 +25,10 @@
                         <div class="col-sm-{{ancho}} no-padding enlinea">
                             {{ field.label_tag }}
                             {{ field }}
-                            {% for error in field.errors %}
-                                <p class="error">{{ error }}</p>
-                            {% endfor %}
                         </div>
-
+                        {% for error in field.errors %}
+                            <p class="error">{{ error }}</p>
+                        {% endfor %}
                     {% cerrar_alineado form field as cerrar %}
                     {% if cerrar %}
                         </div>

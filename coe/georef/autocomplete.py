@@ -15,6 +15,7 @@ class ProvinciaAutocomplete(autocomplete.Select2QuerySetView):
         #Usamos texto
         if self.q:
             qs = qs.filter(nombre__icontains=self.q)
+        qs = qs.order_by('nombre')
         return qs
 
 class DepartamentoAutocomplete(autocomplete.Select2QuerySetView):
@@ -27,6 +28,7 @@ class DepartamentoAutocomplete(autocomplete.Select2QuerySetView):
         #Usamos texto
         if self.q:
             qs = qs.filter(nombre__icontains=self.q)
+        qs = qs.order_by('nombre')
         return qs
 
 class LocalidadAutocomplete(autocomplete.Select2QuerySetView):
@@ -39,6 +41,7 @@ class LocalidadAutocomplete(autocomplete.Select2QuerySetView):
         #Usamos texto
         if self.q:
             qs = qs.filter(nombre__icontains=self.q)
+        qs = qs.order_by('nombre')
         return qs
 
 class BarrioAutocomplete(autocomplete.Select2QuerySetView):
@@ -51,6 +54,7 @@ class BarrioAutocomplete(autocomplete.Select2QuerySetView):
         #Usamos texto
         if self.q:
             qs = qs.filter(nombre__icontains=self.q)
+        qs = qs.order_by('nombre')
         return qs
 
 class NacionalidadAutocomplete(autocomplete.Select2QuerySetView):
@@ -58,4 +62,5 @@ class NacionalidadAutocomplete(autocomplete.Select2QuerySetView):
         qs = Nacionalidad.objects.all()
         if self.q:
             qs = qs.filter(nombre__icontains=self.q)
+        qs = qs.order_by('nombre')
         return qs

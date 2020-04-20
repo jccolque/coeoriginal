@@ -43,12 +43,19 @@ class IngresoProvinciaForm(forms.ModelForm):
     class Meta:
         model = IngresoProvincia
         fields= '__all__'
-        exclude = ('fecha', 'token', 'individuos', 'estado', 'plan_vuelo', 'dut')
+        exclude = ('fecha', 'token', 'individuos', 'estado', 'plan_vuelo', 'dut', 'qrpath')
         widgets = {
             'fecha_llegada': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}, ),
             'origen': autocomplete.ModelSelect2(url='georef:provincia-autocomplete'),
             'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
         }
+    def clean_fecha_llegada(self):
+        fecha_llegada = self.cleaned_data["fecha_llegada"]
+        if fecha_llegada < timezone.now():
+            raise forms.ValidationError("La fecha de llegada debe ser posterior este momento.")
+        else:
+            return self.cleaned_data
+    
 
 class IngresanteForm(forms.ModelForm):
     class Meta:
