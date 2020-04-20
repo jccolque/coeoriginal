@@ -256,9 +256,11 @@ def eliminar_permiso(request, permiso_id):
 
 #Ingresos Provinciales
 @permission_required('operadores.permisos')
-def lista_ingresos(request):
+def lista_ingresos(request, estado=None):
     ingresos = IngresoProvincia.objects.exclude(estado='B')
     ingresos = ingresos.prefetch_related('individuos')
+    if estado:
+        ingresos = ingresos.filter(estado=estado)
     return render(request, 'lista_ingresos.html', {
         'titulo': "Ingresos Pedidos",
         'ingresos': ingresos,

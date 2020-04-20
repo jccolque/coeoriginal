@@ -11,17 +11,18 @@
                     <div class="col-md-8">
                         <ul class="menu_botones">
                             {% if perms.operadores.permisos %}
+                                <h3>Ingreso Provincial</h3>
+                                <li><a href="{% url 'permisos:lista_ingresos_filtrados' estado='E' %}">Ingresos Esperando Aprobacion</a></li>
+                                <li><a href="{% url 'permisos:lista_ingresos' %}">Listado de todos los pedidos de Ingresos</a></li>
+                                <li><a href="{% url 'permisos:pedir_ingreso_provincial' %}">Pedir Ingreso Provincial a Jujuy</a></li>
+                                <hr>
                                 <h3>Permisos de Circulacion Provincial</h3>
                                 <li><a href="{% url 'permisos:lista_activos' %}">Listado de Permisos Activos</a></li>
                                 <li><a href="{% url 'permisos:lista_vencidos' %}">Listado de Permisos Vencidos</a></li>
                                 <li><a href="{% url 'permisos:buscar_permiso' %}">Pedido de Permiso Publico</a></li>
-                                <hr>
-                                <h3>Ingreso Provincial</h3>
-                                <li><a href="{% url 'permisos:lista_ingresos' %}">Listado de Ingresos Pedidos</a></li>
-                                <li><a href="{% url 'permisos:pedir_ingreso_provincial' %}">Pedir Ingreso Provincial a Jujuy</a></li>
                             {% endif %}
-
                             {% if request.user.is_superuser %}
+                                <hr>
                                 <h3>Uso Bajo Supervision:</h3>
                                 <li><a href="{% url 'admin:index' %}">Administrador</a></li>
                             {% endif %}

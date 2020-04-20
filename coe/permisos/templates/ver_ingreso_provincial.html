@@ -7,26 +7,33 @@
         <section class="informacion_basica">
             <div class="container">
                 <div class="row">
-                    <h2>Panel de Ingreso Provincial</h2>
+                    <h2><b>Panel de Ingreso Provincial</b></h2>
                     <div class="col-md-8">
                         <div class="row">
                             <div class="col-md-6">
-                                <h3><b>Estado</b> {{ingreso.get_estado_display}}</h3>
+                                <h3 style="color:{% if ingreso.estado == 'C' %}red{% elif ingreso.estado == 'E' %}orange{% elif ingreso.estado == 'A' %}green{% else %}black{% endif %};"><b>Estado</b> {{ingreso.get_estado_display}}</h3>
                                 <p><b>Tipo:</b> {{ingreso.get_tipo_display}}</p>
                                 <p><b>Email de Contacto:</b> {{ingreso.email_contacto}}</p>
                                 <p><b>Fecha de Llegada Estimada:</b> {{ingreso.fecha_llegada|date:"d/m/Y H:i"}}</p>
                                 <p><b>Origen:</b> {{ingreso.origen}}</p>
                                 <p><b>Destino:</b> {{ingreso.destino}}</p>
                                 <p><b>Permiso de Circulacion Nacional:</b> <a href="{{ingreso.permiso_nacional.url}}" target="_blank">Ver</a></p>
-                                <hr>
-                                <p><b>Aclaracion:<b><p>
-                                {{ingreso.aclaracion|safe}}
                             </div>
                             <div class="col-md-6">
-                                <div class="bordeado">
-                                    <h3>Una vez terminado el ingreso de <b>TODA</b> la infomacion requerida, presione el boton de <b>Finalizar Proceso</b>.</h3>
-                                    <br>
-                                    <p>Hasta que el estado del pedido de ingreso no se encuentre en <b>Esperando Aprobacion</b> nuestros operadores no lo analizaran.</p>
+                                <div class="bordeado importante">
+                                    {% if ingreso.estado == 'C' %}
+                                        <h3>Una vez terminado el ingreso de <b>TODA</b> la infomacion requerida, presione el boton de <b>Finalizar Proceso</b>.</h3>
+                                        <br>
+                                        <p>Hasta que el estado del pedido de ingreso no se encuentre en <b>Esperando Aprobacion</b> nuestros operadores no lo analizaran.</p>
+                                    {% elif ingreso.estado == 'E' %}
+                                        <h3>Nuestros Operadores estan analizando su requerimiento</h3>
+                                        <br>
+                                        <p>En caso de aprobarlo, le enviaremos un correo electronico a la cuenta informada para que descargue su autorizacion.</p>
+                                    {% elif ingreso.estado == 'A' %}
+                                        <h3>Su pedido fue aprobado</h3>
+                                        <br>
+                                        <p>Puede descargar la autorizacion, lo esperamos en la fecha y hora de llegada informada.</p>
+                                    {% endif %}
                                 </div>    
                             </div>
                         </div>
@@ -37,6 +44,10 @@
                                 <p><b>Marca:</b> {{ingreso.marca}}</p>
                                 <p><b>Modelo:</b> {{ingreso.modelo}}</p>
                                 <p><b>Patente:</b> {{ingreso.patente}}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><b>Aclaracion:<b><p>
+                                {{ingreso.aclaracion|safe}}
                             </div>
                             <div class="col-md-4">
                                 {% if ingreso.tipo == 'C' %}

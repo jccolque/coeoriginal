@@ -10,8 +10,6 @@ TIPO_INGRESO = (
     ('P', 'Particular en Vehiculo Propio'),
     ('C', 'Colectivo (Carga la Empresa)'),
     ('A', 'Aereo (Carga la Empresa)'),
-    
-#    ('O', 'Otro'),
 )
 
 ESTADO_INGRESO = (
