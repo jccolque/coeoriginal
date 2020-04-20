@@ -58,6 +58,11 @@ class IngresanteForm(forms.ModelForm):
             'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
             'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
         }
+    def clean(self):
+        if self.cleaned_data['telefono'] is None or self.cleaned_data['telefono'] == '+549388':
+            raise forms.ValidationError("Debe cargar un telefono.")
+        else:
+            return self.cleaned_data
 
 class DUTForm(forms.ModelForm):
     class Meta:
