@@ -1,11 +1,16 @@
 #Imports de python
+import qrcode
 #Imports de django
 from django.db import models
 from django.utils import timezone
 #Imports de paquetes extras
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import mm
 from tinymce.models import HTMLField
 from auditlog.registry import auditlog
 #Imports del proyecto
+from coe.settings import STATIC_ROOT, MEDIA_ROOT
 from georef.models import Provincia, Localidad
 from informacion.models import Individuo
 #Imports de app
@@ -45,6 +50,7 @@ class IngresoProvincia(models.Model):
     token = models.CharField('Token', max_length=25, default=token_ingreso, unique=True)
     fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
     estado = models.CharField('Estado', choices=ESTADO_INGRESO, max_length=1, default='C')
+    qrpath = models.CharField('qrpath', max_length=100, null=True, blank=True)
     #Aclaraciones
     aclaracion = HTMLField(null=True)
     #Pasajeros
@@ -52,6 +58,36 @@ class IngresoProvincia(models.Model):
     #Archivos Opcionales
     dut = models.FileField('Permiso Nacional de Circulacion', upload_to='ingresos/', null=True, blank=True)
     plan_vuelo = models.FileField('Plan de Vuelo', upload_to='ingresos/', null=True, blank=True)
+    def get_qr(self):
+        if self.qrpath:
+            return self.qrpath
+        else:
+            path = MEDIA_ROOT + '/permisos/qrcode-'+str(self.id)+'.png'
+            img = qrcode.make(self.token)
+            img.save(path)
+            relative_path = 'archivos/permisos/qrcode-'+ str(self.id)+'.png'
+            self.qrpath = relative_path
+            self.save()
+            return self.qrpath
+    def generar_pdf(self):
+        pdf = canvas.Canvas("archivos/permisos/"+self.token+".pdf", pagesize=A4)
+        pdf.drawString(10,650,"PERMISO DE INGRESO A JUJUY")
+        pdf.drawString(10,630,self.get_tipo_display())
+        pdf.drawString(10,600,"Fecha de llegada: "+str(self.fecha_llegada)[0:16])
+        pdf.drawString(10,585,"Origen del Viaje: "+str(self.origen))
+        pdf.drawString(10,570,"Destino del Viaje: "+str(self.destino))
+        pdf.drawString(10,555,"Vehiculo: "+self.marca+" "+self.modelo+" "+self.patente)
+        #Agregamos lista de pasajeros
+        if self.individuos.exists():#Si existe
+            pdf.drawString(10,530,"Pasajeros:")
+            altura=500
+            for individuo in self.individuos.all():
+                pdf.drawString(10,altura, str(individuo))
+                altura-= 20
+        #Cargamos imagenes
+        pdf.drawImage(STATIC_ROOT +'/img/logo_pdf.png', 50, 700, height=50*mm, preserveAspectRatio=True)
+        pdf.drawImage(self.get_qr(), 400, 700, 50*mm, 50*mm)
+        pdf.save()
 
 #Señales
 

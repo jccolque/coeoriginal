@@ -4,6 +4,7 @@
 
 {% load static %}
 {% load grafic_tags %}
+{% load geotracking %}
 
 {% block custom_script %}
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -16,13 +17,14 @@
       function drawChart() {
         var data = google.visualization.arrayToDataTable([
 
-            ['Lat', 'Long', 'Name'],
+            ['Lat', 'Long', 'Name', 'Marker'],
             
             {% for posicion in geoposiciones %}
                 [
                     {{posicion.latitud|stringformat:".5f"}},
                     {{posicion.longitud|stringformat:".5f"}},
-                    "{% if posicion.individuo %}<a href='{% url 'informacion:ver_individuo' individuo_id=posicion.individuo.id %}' target='_blank'>{{posicion.individuo}}</a>{% endif %}<br><b>Fecha:</b>{{posicion.fecha}}<br><a href='{% url 'geotracking:cambiar_base' geoposicion_id=posicion.pk %}'><img class='icons' src='{% static '/img/icons/house.png' %}'></a>"
+                    "{% if posicion.individuo %}<a href='{% url 'informacion:ver_individuo' individuo_id=posicion.individuo.id %}' target='_blank'>{{posicion.individuo}}</a>{% endif %}<br><b>Fecha:</b>{{posicion.fecha}}<br><a href='{% url 'geotracking:cambiar_base' geoposicion_id=posicion.pk %}'><img class='icons' src='{% static '/img/icons/house.png' %}'></a>",
+                    '{% ct_icon_map posicion %}',
                 ],
             {% endfor %}
 
@@ -33,6 +35,37 @@
         showTooltip: false,
         showInfoWindow: true,
         useMapTypeControl: true,
+        icons: {
+            hogar: {
+                normal: '{% static '/img/icons/maps/house.png' %}',
+                selected: '{% static '/img/icons/maps/house.png' %}',
+                },
+            hogar_rojo: {
+                normal: '{% static '/img/icons/maps/house_red.png' %}',
+                selected: '{% static '/img/icons/maps/house_red.png' %}',
+            },
+            alerta: {
+                normal: '{% static '/img/icons/maps/alerta.png' %}',
+                selected: '{% static '/img/icons/maps/alerta.png' %}',
+
+            },
+            alerta_procesada: {
+                normal: '{% static '/img/icons/maps/alerta_procesada.png' %}',
+                selected: '{% static '/img/icons/maps/alerta_procesada.png' %}',
+            },
+            pasitos: {
+                normal: '{% static '/img/icons/maps/steps.png' %}',
+                selected: '{% static '/img/icons/maps/steps.png' %}',
+            },
+            policia: {
+                normal: '{% static '/img/icons/maps/detective.png' %}',
+                selected: '{% static '/img/icons/maps/detective.png' %}',
+            },
+            policia_rojo: {
+                normal: '{% static '/img/icons/maps/detective_red.png' %}',
+                selected: '{% static '/img/icons/maps/detective_red.png' %}',
+            },
+        }, 
         maps: 
         {
             // Your custom mapTypeId holding custom map styles.

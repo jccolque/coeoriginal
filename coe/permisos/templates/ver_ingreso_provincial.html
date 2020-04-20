@@ -101,6 +101,8 @@
                                     <li><a href="{% url 'permisos:cargar_ingresantes' ingreso_id=ingreso.id %}">Agregar Pasajero</a></li>
                                 {% endif %}
                                 <li><a href="{% url 'permisos:finalizar_ingreso' ingreso_id=ingreso.id %}">Finalizar Proceso</a></li>
+                            {% elif ingreso.estado == 'A' %}
+                                <li><a href="{% url 'permisos:ver_ingreso_aprobado' token=ingreso.token %}">Imprimir Comprobante</a></li>
                             {% endif %}
                             {% if perms.operadores.permisos %}
                                 <hr>

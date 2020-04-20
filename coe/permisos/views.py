@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.core.mail import EmailMessage
+from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import permission_required
 #Imports extras
@@ -183,7 +184,7 @@ def finalizar_ingreso(request, ingreso_id):
         if not ingreso.individuos.exists():
             return render(request, 'extras/error.html', {
             'titulo': 'Finalizacion Denegada',
-            'error': "Usted debe informar a todos los pasajeros del Vehiculo antes de terminar el Requerimiento.",
+            'error': "Usted debe informar TODOS los pasajeros del Vehiculo antes de terminar el Requerimiento.",
         })
     elif ingreso.tipo == 'C':#Colectivos
         if not ingreso.dut:
@@ -202,8 +203,9 @@ def finalizar_ingreso(request, ingreso_id):
     ingreso.save()
     return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
 
-def ver_ingreso_aprobado(request, ingreso_id):
-    pass
+def ver_ingreso_aprobado(request, token):
+    ingreso = IngresoProvincia.objects.get(token=token)
+    return HttpResponseRedirect('/archivos/permisos/'+ingreso.token+'.pdf')
 
 #Administrar
 @permission_required('operadores.permisos')
@@ -283,6 +285,7 @@ def aprobar_ingreso(request, ingreso_id):
             #Aprobamos el Ingreso
             ingreso.estado = 'A'
             ingreso.fecha_llegada = form.cleaned_data['fecha']
+            ingreso.generar_pdf()
             ingreso.save()
             return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
     return render(request, "extras/generic_form.html", {'titulo': "Aprobar Ingreso Provincial", 'form': form, 'boton': "Aprobar", })

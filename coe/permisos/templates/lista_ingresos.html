@@ -15,6 +15,8 @@
                             <th>Destino</th>
                             <th>Vehiculo</th>
                             <th>Cant. Pasajeros</th>
+                            <th>Email de Contacto</th>
+                            <th>Telefono</th>
                             <th>Ver Detalle</th>
                         </tr>
                     </thead>
@@ -28,6 +30,11 @@
                                 <td>{{ingreso.destino}}</td>
                                 <td>{{ingreso.marca}} {{ingreso.modelo}} {{ingreso.patente}}</td>
                                 <td>{{ingreso.individuos.count}}</td>
+                                <td>{{ingreso.email_contacto}}</td>
+                                <td>
+                                    {% if ingreso.individuos.exists %}
+                                        {{ingreso.individuos.first.telefono}}</td>
+                                    {% endif %}
                                 <td>
                                     <a href="{% url 'permisos:ver_ingreso_provincial' token=ingreso.token %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/lupa.png' %}">
