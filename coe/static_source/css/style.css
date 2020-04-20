@@ -188,6 +188,12 @@ a.boton_suelto {
     text-decoration: none;
 }
 
+.bordeado {
+    border: black 1px solid;
+    border-radius: 15px;
+    padding: 20px;
+}
+
 /* Tablas */
 .listado {
   width: 100%;

@@ -179,9 +179,27 @@ def quitar_ingresante(request, ingreso_id, individuo_id):
 def finalizar_ingreso(request, ingreso_id):
     ingreso = IngresoProvincia.objects.get(pk=ingreso_id)
     #Chequear que el ingreso este finalizado
-
+    if ingreso.tipo == 'P':#Particular
+        if not ingreso.individuos.exists():
+            return render(request, 'extras/error.html', {
+            'titulo': 'Finalizacion Denegada',
+            'error': "Usted debe informar a todos los pasajeros del Vehiculo antes de terminar el Requerimiento.",
+        })
+    elif ingreso.tipo == 'C':#Colectivos
+        if not ingreso.dut:
+            return render(request, 'extras/error.html', {
+            'titulo': 'Finalizacion Denegada',
+            'error': "Usted debe Subir el Documento Universal de Transporte antes de terminar el requerimiento.",
+        })
+    elif ingreso.tipo == 'A':#Aereo
+        if not ingreso.plan_vuelo:
+            return render(request, 'extras/error.html', {
+            'titulo': 'Finalizacion Denegada',
+            'error': "Usted debe Subir el Plan de Vuelo Autorizado antes de terminar el requerimiento.",
+        })
     #Pasar a estado finalizado
-
+    ingreso.estado = 'E'
+    ingreso.save()
     return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
 
 def ver_ingreso_aprobado(request, ingreso_id):

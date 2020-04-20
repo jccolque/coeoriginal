@@ -10,13 +10,22 @@
                     <h2>Panel de Ingreso Provincial</h2>
                     <div class="col-md-8">
                         <div class="row">
-                            <h3><b>Estado</b> {{ingreso.get_estado_display}}</h3>
-                            <p><b>Tipo:</b> {{ingreso.get_tipo_display}}</p>
-                            <p><b>Email de Contacto:</b> {{ingreso.email_contacto}}</p>
-                            <p><b>Fecha de Llegada Estimada:</b> {{ingreso.fecha_llegada|date:"d/m/Y H:i"}}</p>
-                            <p><b>Origen:</b> {{ingreso.origen}}</p>
-                            <p><b>Destino:</b> {{ingreso.destino}}</p>
-                            <p><b>Permiso de Circulacion Nacional:</b> <a href="{{ingreso.permiso_nacional.url}}" target="_blank">Ver</a></p>
+                            <div class="col-md-6">
+                                <h3><b>Estado</b> {{ingreso.get_estado_display}}</h3>
+                                <p><b>Tipo:</b> {{ingreso.get_tipo_display}}</p>
+                                <p><b>Email de Contacto:</b> {{ingreso.email_contacto}}</p>
+                                <p><b>Fecha de Llegada Estimada:</b> {{ingreso.fecha_llegada|date:"d/m/Y H:i"}}</p>
+                                <p><b>Origen:</b> {{ingreso.origen}}</p>
+                                <p><b>Destino:</b> {{ingreso.destino}}</p>
+                                <p><b>Permiso de Circulacion Nacional:</b> <a href="{{ingreso.permiso_nacional.url}}" target="_blank">Ver</a></p>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bordeado">
+                                    <h3>Una vez terminado el ingreso de <b>TODA</b> la infomacion requerida, presione el boton de <b>Finalizar Proceso</b>.</h3>
+                                    <br>
+                                    <p>Hasta que el estado del pedido de ingreso no se encuentre en <b>Esperando Aprobacion</b> nuestros operadores no lo analizaran.</p>
+                                </div>    
+                            </div>
                         </div>
                         <hr>
                         <div class="row">
