@@ -73,6 +73,9 @@ def panel_geoperador(request, geoperador_id=None):
         'individuo', 'individuo__situacion_actual',
         'individuo__domicilio_actual', "individuo__domicilio_actual__localidad"
     )
+    #Dejamos una sola por individuo
+    dict_alertas = {alerta.individuo.num_doc:alerta for alerta in alertas}
+    alertas = list(dict_alertas.values())
     #Lanzamos panel
     return render(request, "panel_geoperador.html", {
         'geoperador': geoperador,

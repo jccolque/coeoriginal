@@ -85,7 +85,7 @@ class IngresoProvincia(models.Model):
                 pdf.drawString(10,altura, str(individuo))
                 altura-= 20
         #Cargamos imagenes
-        pdf.drawImage(STATIC_ROOT +'/img/logo_pdf.png', 50, 700, height=50*mm, preserveAspectRatio=True)
+        pdf.drawImage(STATIC_ROOT+'/img/logo_pdf.png', 50, 700, height=50*mm, preserveAspectRatio=True)
         pdf.drawImage(self.get_qr(), 400, 700, 50*mm, 50*mm)
         pdf.save()
 
