@@ -123,7 +123,7 @@ def ver_ingreso_provincial(request, token):
     })
 
 #Ingreso Provincial
-def cargar_ingresante(request, ingreso_id, individuo_id):
+def cargar_ingresante(request, ingreso_id, individuo_id=None):
     individuo = None
     if individuo_id:
         individuo = Individuo.objects.get(pk=individuo_id)
