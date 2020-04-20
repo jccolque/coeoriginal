@@ -32,7 +32,7 @@ class Permiso(models.Model):
 
 class IngresoProvincia(models.Model):
     tipo = models.CharField('Tipo Ingreso', choices=TIPO_INGRESO, max_length=1, default='P')
-    email_contacto = models.EmailField('Correo Electronico de Contacto', null=True, blank=True)
+    email_contacto = models.EmailField('Correo Electronico de Contacto')
     fecha_llegada = models.DateTimeField('Fecha de Llegada', default=timezone.now)
     permiso_nacional = models.FileField('Permiso Nacional de Circulacion', upload_to='ingresos/')
     origen = models.ForeignKey(Provincia, on_delete=models.CASCADE, related_name="ingresos")
