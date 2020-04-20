@@ -18,20 +18,6 @@
                         </a>
                     </div>
                     <div class="col-sm-6">
-                        <div class="elem">
-                            <a href="https://drive.google.com/uc?export=download&id=1SvTh9prm3WuSB_g1Beto2dzdmLoB_RxT">
-                                <img class="fotos"  src="{% static 'img/circular.jpeg' %}">
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-7">
-                        <a href="{% url 'inscripciones:inscripcion_salud' %}">
-                            <img class="fotos" src="{% static 'img/reclutamiento.jpeg' %}">
-                        </a>
-                    </div>
-                    <div class="col-sm-5">
                         <div class="elem small">
                             <a href="{% url 'core:consejos' %}" target="_blank">
                                 <img class="fotos" src="{% static 'img/link_salud.png' %}">
@@ -43,7 +29,20 @@
                             </a>
                         </div>
                     </div>
-                    
+                </div>
+                <div class="row">
+                    <div class="col-sm-7">
+                        <a href="{% url 'inscripciones:inscripcion_salud' %}">
+                            <img class="fotos" src="{% static 'img/reclutamiento.jpeg' %}">
+                        </a>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="elem">
+                            <a href="{% url 'permisos:pedir_ingreso_provincial' %}">
+                                <img class="fotos"  src="{% static 'img/ingresoprovincial.jpeg' %}">
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
