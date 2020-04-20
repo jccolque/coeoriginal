@@ -45,6 +45,8 @@ class IngresoProvincia(models.Model):
     token = models.CharField('Token', max_length=25, default=token_ingreso, unique=True)
     fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
     estado = models.CharField('Estado', choices=ESTADO_INGRESO, max_length=1, default='C')
+    #Aclaraciones
+    aclaracion = HTMLField(null=True)
     #Pasajeros
     individuos = models.ManyToManyField(Individuo, related_name='ingresante')
     #Archivos Opcionales

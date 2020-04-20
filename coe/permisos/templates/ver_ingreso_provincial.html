@@ -18,6 +18,9 @@
                                 <p><b>Origen:</b> {{ingreso.origen}}</p>
                                 <p><b>Destino:</b> {{ingreso.destino}}</p>
                                 <p><b>Permiso de Circulacion Nacional:</b> <a href="{{ingreso.permiso_nacional.url}}" target="_blank">Ver</a></p>
+                                <hr>
+                                <p><b>Aclaracion:<b><p>
+                                {{ingreso.aclaracion|safe}}
                             </div>
                             <div class="col-md-6">
                                 <div class="bordeado">
