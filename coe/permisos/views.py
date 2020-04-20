@@ -102,7 +102,7 @@ def pedir_ingreso_provincial(request):
             if SEND_MAIL:
                 to_email = ingreso.email_contacto
                 #Preparamos el correo electronico
-                mail_subject = 'Bienvenido al Sistema Centralizado COE!'
+                mail_subject = 'Requerimiento de Ingreso Provincial Jujuy!'
                 message = render_to_string('emails/ingreso_provincial.html', {
                         'ingreso': ingreso,
                     })

@@ -19,40 +19,46 @@
                     {% endfor %}
                     <br>
                     <h1><b>PLAN DE ACCIÓN INTEGRAL DE ADULTOS MAYORES COVID-19</b></h1>
-                    <h3>Postulación de Voluntarios de Acompañamiento Social</h3>
-                    <p>Si Ud. tiene intención de colaborar como Voluntario en el marco de la contingencia por el nuevo Coronavirus (COVID-19), lea y complete el siguiente formulario.</p>
-                    <hr>
-                    <div class="col-sm-5">
-                        <div class="bordeado">
-                            <img class="fotos" src="{% static 'img/adultos_mayores.jpeg' %}">
-                            <p>La información consignada precedentemente reviste carácter de <b>Declaración Jurada</b>.</p>
-                            <p>Solo podrán ser voluntarios las personas entre 18 años y 40 años.</p>
-                            <p>Su omisión o falsedad procederá al rechazo de la inscripción o la exclusión del registro, sin perjuicio de las sanciones que le pudiera corresponder.</p>
-                            <p>Esta Postulación será efectiva luego de entrevista efectuada por personal especializado destinado a tal fin y su correspondiente ALTA al Programa a través de la Dirección Provincial de Relaciones con la Sociedad Civil, dependiente de la Secretaría de Gobierno del Ministerio de Gobierno y Justicia, mediante la presentación de la Documentación que le sea requerida.<p>
-                        </div>
+                    <div class="col-sm-10 col-sm-offset-1">                    
+                        <h3><b>Postulación de Voluntarios de Acompañamiento Social</b></h3>
+                        <p>Si Ud. tiene intención de colaborar como Voluntario en el marco de la contingencia por el nuevo Coronavirus (COVID-19), lea y complete el siguiente formulario.</p>
+                        <p>Considerando al Voluntariado Social como alternativa de participación comunitaria contribuyendo al bienestar de la comunidad, se pone en conocimiento de los Voluntarios Sociales que su incorporación al Plan Integral del Adulto Mayor se realizará bajo el marco legal obligatorio. </p>
+                        <p>Siendo el CENOC – Centro Nacional de Organizaciones de la Comunidad, dependiente del Ministerio de Desarrollo Social de la Nación y la DiPReSCi – Dirección Provincial de Relaciones con la Sociedad Civil, dependiente de la Secretaría de Gobierno del Ministerio de Gobierno y Justicia, en la Provincia de Jujuy, los organismos responsables de la aplicación de la Ley de Voluntariado Social N° 25.855.</p>
+                        <p>El aporte que la práctica del voluntariado social realiza en nuestra sociedad, reclama de nuestro esfuerzo por trabajar en la construcción y desarrollo de espacios de cooperación con los diferentes tipos de voluntariado. De allí la necesidad de responder a cada uno de los puntos del presente formulario con responsabilidad, para que podamos incorporarlos en el espacio de trabajo adecuado.</p>
                     </div>
-                    <div class="col-sm-7">
-                        <div class="bordeado">
-                            <p><b>Importante:</b></p>
-                            <p>Declaro NO estar comprendido/a por ninguno de los grupos de riesgo que se detallan a continuación:</p>
-                            <lu>
-                                <li>Personas gestantes</li>
-                                <li>Personas inmunosuprimidas</li>
-                                <li>Personas con enfermedad cardiovascular</li>
-                                <li>Enfermedad pulmonar obstructiva crónica (EPOC)</li>
-                                <li>Enfisema congénito; Displasia broncopulmonar</li>
-                                <li>Bronquiectasias</li>
-                                <li>Fibrosis quística</li>
-                                <li>Asma Moderado o Severo</li>
-                                <li>Insuficiencia renal crónica</li>
-                                <li>Insuficiencia Hepática Crónica</li>
-                                <li>Personas con Diabetes</li>
-                                <li>Personas bajo tratamiento oncológico o diálisis</li>
-                            </lu>
-                            <p style="text-align:right;">{{form.no_grupo_riesgo}} <b>Confirmar</b></p>
-                            <br>
-                            <p>Declaro NO encontrarme cumpliendo el aislamiento domiciliario preventivo por haber ingresado en los últimos 14 días a la Provincia de Jujuy, como así también NO habitar con familiares o personas que se encuentren en esa condición.</p>
-                            <p style="text-align:right;">{{form.no_aislamiento}} <b>Confirmar</b></p>
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <div class="bordeado">
+                                <img class="fotos" src="{% static 'img/adultos_mayores.jpeg' %}">
+                                <p>La información consignada precedentemente reviste carácter de <b>Declaración Jurada</b>.</p>
+                                <p>Solo podrán ser voluntarios las personas entre 18 años y 40 años.</p>
+                                <p>Su omisión o falsedad procederá al rechazo de la inscripción o la exclusión del registro, sin perjuicio de las sanciones que le pudiera corresponder.</p>
+                                <p>Esta Postulación será efectiva luego de entrevista efectuada por personal especializado destinado a tal fin y su correspondiente ALTA al Programa a través de la Dirección Provincial de Relaciones con la Sociedad Civil, dependiente de la Secretaría de Gobierno del Ministerio de Gobierno y Justicia, mediante la presentación de la Documentación que le sea requerida.<p>
+                            </div>
+                        </div>
+                        <div class="col-sm-7">
+                            <div class="bordeado">
+                                <p><b>Importante:</b></p>
+                                <p>Declaro NO estar comprendido/a por ninguno de los grupos de riesgo que se detallan a continuación:</p>
+                                <lu>
+                                    <li>Personas gestantes</li>
+                                    <li>Personas inmunosuprimidas</li>
+                                    <li>Personas con enfermedad cardiovascular</li>
+                                    <li>Enfermedad pulmonar obstructiva crónica (EPOC)</li>
+                                    <li>Enfisema congénito; Displasia broncopulmonar</li>
+                                    <li>Bronquiectasias</li>
+                                    <li>Fibrosis quística</li>
+                                    <li>Asma Moderado o Severo</li>
+                                    <li>Insuficiencia renal crónica</li>
+                                    <li>Insuficiencia Hepática Crónica</li>
+                                    <li>Personas con Diabetes</li>
+                                    <li>Personas bajo tratamiento oncológico o diálisis</li>
+                                </lu>
+                                <p style="text-align:right;">{{form.no_grupo_riesgo}} <b>Confirmar</b></p>
+                                <br>
+                                <p>Declaro NO encontrarme cumpliendo el aislamiento domiciliario preventivo por haber ingresado en los últimos 14 días a la Provincia de Jujuy, como así también NO habitar con familiares o personas que se encuentren en esa condición.</p>
+                                <p style="text-align:right;">{{form.no_aislamiento}} <b>Confirmar</b></p>
+                            </div>
                         </div>
                     </div>
                 </div>
