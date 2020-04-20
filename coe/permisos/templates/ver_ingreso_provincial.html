@@ -10,10 +10,10 @@
                     <h2>Panel de Ingreso Provincial</h2>
                     <div class="col-md-8">
                         <div class="row">
+                            <h3><b>Estado</b> {{ingreso.get_estado_display}}</h3>
                             <p><b>Tipo:</b> {{ingreso.get_tipo_display}}</p>
                             <p><b>Email de Contacto:</b> {{ingreso.email_contacto}}</p>
                             <p><b>Fecha de Llegada Estimada:</b> {{ingreso.fecha_llegada|date:"d/m/Y H:i"}}</p>
-                            <p><b>Estado</b> {{ingreso.get_estado_display}}</p>
                             <p><b>Origen:</b> {{ingreso.origen}}</p>
                             <p><b>Destino:</b> {{ingreso.destino}}</p>
                             <p><b>Permiso de Circulacion Nacional:</b> <a href="{{ingreso.permiso_nacional.url}}" target="_blank">Ver</a></p>
@@ -27,21 +27,25 @@
                                 <p><b>Patente:</b> {{ingreso.patente}}</p>
                             </div>
                             <div class="col-md-4">
-                                {% if ingreso.dut %}
-                                    <a href="{{ingreso.dut.url}}">
-                                        <img class="fotos" src="{{ingreso.dut.url}}">
-                                    </a>
-                                {% else %}
-                                    <p class="error">Si el ingreso se realizara en colectivo, debe cargar el Documento Universal de Transporte <a href="{% url 'permisos:cargar_dut' ingreso_id=ingreso.id %}">Aqui</a></p>
+                                {% if ingreso.tipo == 'C' %}
+                                    {% if ingreso.dut %}
+                                        <a href="{{ingreso.dut.url}}">
+                                            <img class="fotos" src="{{ingreso.dut.url}}">
+                                        </a>
+                                    {% else %}
+                                        <p class="error">Debe cargar el Documento Universal de Transporte <a href="{% url 'permisos:cargar_dut' ingreso_id=ingreso.id %}">Aqui</a></p>
+                                    {% endif %}
                                 {% endif %}
                             </div>
                             <div class="col-md-4">
-                                {% if ingreso.plan_vuelo %}
-                                    <a href="{{ingreso.plan_vuelo.url}}">
-                                        <img class="fotos" src="{{ingreso.plan_vuelo.url}}">
-                                    </a>
-                                {% else %}
-                                    <p class="error">Si el ingreso se realizara en Avion, debe cargar el Plan de Vuelo Aprobado <a href="{% url 'permisos:cargar_plan_vuelo' ingreso_id=ingreso.id %}">Aqui</a></p>
+                                {% if ingreso.tipo == 'A' %}
+                                    {% if ingreso.plan_vuelo %}
+                                        <a href="{{ingreso.plan_vuelo.url}}">
+                                            <img class="fotos" src="{{ingreso.plan_vuelo.url}}">
+                                        </a>
+                                    {% else %}
+                                        <p class="error">Si el ingreso se realizara en Avion, debe cargar el Plan de Vuelo Aprobado <a href="{% url 'permisos:cargar_plan_vuelo' ingreso_id=ingreso.id %}">Aqui</a></p>
+                                    {% endif %}
                                 {% endif %}
                             </div>
                         </div>
@@ -77,11 +81,19 @@
                     </div>
                     <div class="col-md-4">
                         <ul class="menu_botones">
-                            <li><a href="{% url 'permisos:cargar_ingresantes' ingreso_id=ingreso.id %}">Agregar Pasajero</a></li>
+                            {% if ingreso.tipo == 'C' or ingreso.tipo == 'E' %}
+                                <li><a href="{% url 'permisos:mod_ingreso_provincial' ingreso_id=ingreso.id %}">Modificar Datos Basicos</a></li>
+                                {% if ingreso.tipo == 'P' %}
+                                    <li><a href="{% url 'permisos:cargar_ingresantes' ingreso_id=ingreso.id %}">Agregar Pasajero</a></li>
+                                {% endif %}
+                                <li><a href="{% url 'permisos:finalizar_ingreso' ingreso_id=ingreso.id %}">Finalizar Proceso</a></li>
+                            {% endif %}
                             {% if perms.operadores.permisos %}
                                 <hr>
-                                <li><a href="{% url 'permisos:aprobar_ingreso' ingreso_id=ingreso.id %}">Aprobar Ingreso</a></li>
-                                <li><a href="{% url 'permisos:eliminar_ingreso' ingreso_id=ingreso.id %}">Eliminar Ingreso</a></li>
+                                {% if ingreso.tipo == 'C' or ingreso.tipo == 'E' %}
+                                    <li><a href="{% url 'permisos:aprobar_ingreso' ingreso_id=ingreso.id %}">Aprobar Ingreso</a></li>
+                                    <li><a href="{% url 'permisos:eliminar_ingreso' ingreso_id=ingreso.id %}">Eliminar Ingreso</a></li>
+                                {% endif %}
                                 <li><a href="{% url 'permisos:lista_ingresos' %}">Volver al Listado de Ingresos</a></li>
                             {% endif %}
                         </ul>

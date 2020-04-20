@@ -92,10 +92,13 @@ def subir_foto(request, individuo_id):
     return render(request, "extras/generic_form.html", {'titulo': "Subir Fotografia", 'form': form, 'boton': "Cargar", })
 
 #Ingreso Provincial
-def pedir_ingreso_provincial(request):
-    form = IngresoProvinciaForm()
+def pedir_ingreso_provincial(request, ingreso_id=None):
+    ingreso = None
+    if ingreso_id:
+        ingreso = IngresoProvincia.objects.get(pk=ingreso_id)
+    form = IngresoProvinciaForm(instance=ingreso)
     if request.method == "POST":
-        form = IngresoProvinciaForm(request.POST, request.FILES)
+        form = IngresoProvinciaForm(request.POST, request.FILES, instance=ingreso)
         if form.is_valid():
             ingreso = form.save()
             #Enviar email
@@ -104,8 +107,8 @@ def pedir_ingreso_provincial(request):
                 #Preparamos el correo electronico
                 mail_subject = 'Requerimiento de Ingreso Provincial Jujuy!'
                 message = render_to_string('emails/ingreso_provincial.html', {
-                        'ingreso': ingreso,
-                    })
+                    'ingreso': ingreso,
+                })
                 #Instanciamos el objeto mail con destinatario
                 email = EmailMessage(mail_subject, message, to=[to_email])
                 email.send()
@@ -171,6 +174,14 @@ def quitar_ingresante(request, ingreso_id, individuo_id):
     ingreso = IngresoProvincia.objects.get(pk=ingreso_id)
     individuo = Individuo.objects.get(pk=individuo_id)
     ingreso.individuos.remove(individuo)
+    return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
+
+def finalizar_ingreso(request, ingreso_id):
+    ingreso = IngresoProvincia.objects.get(pk=ingreso_id)
+    #Chequear que el ingreso este finalizado
+
+    #Pasar a estado finalizado
+
     return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
 
 def ver_ingreso_aprobado(request, ingreso_id):

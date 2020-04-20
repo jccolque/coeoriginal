@@ -7,14 +7,15 @@ TIPO_PERMISO = (
 )
 
 TIPO_INGRESO = (
-    ('P', 'Particular'),
-    ('C', 'Colectivo'),
-    ('A', 'Aereo'),
+    ('P', 'Particular en Vehiculo Propio'),
+    ('C', 'Colectivo (Carga la Empresa)'),
+    ('A', 'Aereo (Carga la Empresa)'),
     
-    ('O', 'Otro'),
+#    ('O', 'Otro'),
 )
 
 ESTADO_INGRESO = (
+    ('C', 'Cargando Pedido'),
     ('E', 'Esperando Aprobacion'),
     ('B', 'Dado de Baja'),
     ('A', 'Aprobado'),

@@ -9,9 +9,3 @@ from .models import IngresoProvincia
 
 #Logger
 logger = logging.getLogger('signals')
-
-#Definimos nuestra señales
-@receiver(post_save, sender=IngresoProvincia)
-def enviar_mail_aprobacion(instance, **kwargs):
-    if instance.estado == 'A':
-        pass#Mandar mail de que fue aprobado

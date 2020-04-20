@@ -44,7 +44,7 @@ class IngresoProvincia(models.Model):
     #Interno
     token = models.CharField('Token', max_length=25, default=token_ingreso, unique=True)
     fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
-    estado = models.CharField('Estado', choices=ESTADO_INGRESO, max_length=1, default='E')
+    estado = models.CharField('Estado', choices=ESTADO_INGRESO, max_length=1, default='C')
     #Pasajeros
     individuos = models.ManyToManyField(Individuo, related_name='ingresante')
     #Archivos Opcionales
@@ -52,7 +52,6 @@ class IngresoProvincia(models.Model):
     plan_vuelo = models.FileField('Plan de Vuelo', upload_to='ingresos/', null=True, blank=True)
 
 #Señales
-from .signals import enviar_mail_aprobacion#Al Ingreso de Provincia
 
 #Auditoria
 #auditlog.register(Permiso)

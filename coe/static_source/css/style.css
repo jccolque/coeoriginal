@@ -176,6 +176,18 @@ p.error {
 
 }
 
+a.boton_suelto {
+    width: 100%;
+    padding: 25px;
+    margin: 25px!important;
+    border-radius: 10px;
+    text-align: center;
+    color: whitesmoke;
+    background-color: var(--color_primario);
+    font-weight: bold;
+    text-decoration: none;
+}
+
 /* Tablas */
 .listado {
   width: 100%;
