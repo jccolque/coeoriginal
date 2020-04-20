@@ -38,9 +38,9 @@ class IngresoProvincia(models.Model):
     origen = models.ForeignKey(Provincia, on_delete=models.CASCADE, related_name="ingresos")
     destino = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="ingresos")
     #Vehiculo
-    marca = models.CharField('Marca del Vehiculo', max_length=200, null=True, blank=True)
-    modelo = models.CharField('Modelo del Vehiculo', max_length=200, null=True, blank=True)
-    patente = models.CharField('Identificacion Patente/Codigo', max_length=200, null=True, blank=True)
+    marca = models.CharField('Marca del Vehiculo', max_length=200)
+    modelo = models.CharField('Modelo del Vehiculo', max_length=200)
+    patente = models.CharField('Identificacion Patente/Codigo', max_length=200)
     #Interno
     token = models.CharField('Token', max_length=25, default=token_ingreso, unique=True)
     fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
