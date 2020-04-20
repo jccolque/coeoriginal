@@ -48,14 +48,6 @@ class MesForm(forms.Form):
 
 class FechaForm(forms.Form):
     fecha = forms.DateField(initial=date.today(), widget=forms.SelectDateWidget())
-    def __init__(self,*args, **kwargs):
-        super(FechaForm, self).__init__(*args, **kwargs)
-        self.fields['fecha'].initial = timezone.now()
-    def clean_fecha(self):
-        if self.cleaned_data['fecha'] > date.today():
-            raise forms.ValidationError("No puede ingresar una fecha posteriores a hoy.")
-        else:
-            return self.cleaned_data['fecha']
 
 class PeriodoForm(forms.Form):
     begda = forms.DateField(label='Inicio', initial=timezone.now(), widget=forms.SelectDateWidget())

@@ -1,6 +1,7 @@
 #Imports Python
 #Imports Django
 from django import forms
+from django.utils import timezone
 #Imports extra
 from dal import autocomplete
 #Imports del proyecto
@@ -67,3 +68,10 @@ class PlanVueloForm(forms.ModelForm):
     class Meta:
         model = IngresoProvincia
         fields= ('plan_vuelo',)
+
+class AprobarForm(forms.Form):
+    fecha = forms.DateTimeField(label="Fecha Aprobada", 
+        required=True, 
+        initial=timezone.now(),
+        widget=XDSoftDateTimePickerInput()
+    )

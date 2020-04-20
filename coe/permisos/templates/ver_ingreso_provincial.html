@@ -12,6 +12,7 @@
                         <div class="row">
                             <p><b>Tipo:</b> {{ingreso.get_tipo_display}}</p>
                             <p><b>Fecha de Llegada Estimada:</b> {{ingreso.fecha_llegada|date:"d/m/Y H:i"}}</p>
+                            <p><b>Estado</b> {{ingreso.get_estado_display}}</p>
                             <p><b>Origen:</b> {{ingreso.origen}}</p>
                             <p><b>Destino:</b> {{ingreso.destino}}</p>
                         </div>
@@ -60,10 +61,10 @@
                                         <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
                                         <td>{{individuo.fecha_nacimiento}}</td>
                                         <td>
-                                            <a href="" target="_blank">
+                                            <a href="{% url 'permisos:mod_ingresantes' ingreso_id=ingreso.id individuo_id=individuo.id %}" target="_blank">
                                                 <img class="icons" src="{% static 'img/icons/change.png' %}">
                                             </a>
-                                            <a href="" target="_blank">
+                                            <a href="{% url 'permisos:quitar_ingresante' ingreso_id=ingreso.id individuo_id=individuo.id %}" target="_blank">
                                                 <img class="icons" src="{% static '/img/icons/delete.png' %}">
                                             </a>
                                         </td>
@@ -77,7 +78,8 @@
                             <li><a href="{% url 'permisos:cargar_ingresantes' ingreso_id=ingreso.id %}">Agregar Pasajero</a></li>
                             {% if perms.operadores.permisos %}
                                 <hr>
-                                <li><a href="">Aprobar Ingreso</a></li>
+                                <li><a href="{% url 'permisos:aprobar_ingreso' ingreso_id=ingreso.id %}">Aprobar Ingreso</a></li>
+                                <li><a href="{% url 'permisos:eliminar_ingreso' ingreso_id=ingreso.id %}">Eliminar Ingreso</a></li>
                                 <li><a href="{% url 'permisos:lista_ingresos' %}">Volver al Listado de Ingresos</a></li>
                             {% endif %}
                         </ul>

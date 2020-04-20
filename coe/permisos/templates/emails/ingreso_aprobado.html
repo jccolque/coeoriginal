@@ -1,0 +1,10 @@
+{% autoescape off %}
+    Tu Ingreso Provincial a sido Aprobado.
+    Fecha Aprobada de Arribo: {{ingreso.fecha_llegada|date:"d/m/Y H:i"}}
+
+    A travez de este link puede descargarlo o imprimirlo:
+    http://coe.jujuy.gob.ar/{% url 'permisos:ver_ingreso_aprobado' token=ingreso.token %}
+
+    Te esperamos,
+    Cuidate y Cuidanos!
+{% endautoescape %}

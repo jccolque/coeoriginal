@@ -16,8 +16,11 @@ urlpatterns = [
     path('ingreso/', views.pedir_ingreso_provincial, name='pedir_ingreso_provincial'),
     path('ingreso/<str:token>', views.ver_ingreso_provincial, name='ver_ingreso_provincial'),
     path('cargar/ingresantes/<int:ingreso_id>', views.cargar_ingresante, name='cargar_ingresantes'),
+    path('mod/ingresantes/<int:ingreso_id>/<int:individuo_id>', views.cargar_ingresante, name='mod_ingresantes'),
     path('cargar/dut/<int:ingreso_id>', views.cargar_dut, name='cargar_dut'),
     path('cargar/plan_vuelo/<int:ingreso_id>', views.cargar_plan_vuelo, name='cargar_plan_vuelo'),
+    path('del/ingresante/<int:ingreso_id>/<int:individuo_id>', views.quitar_ingresante, name='quitar_ingresante'),
+    path('ingreso/aprobado/<str:token>', views.ver_ingreso_aprobado, name='ver_ingreso_aprobado'),
     #Administracion
     #Permisos
     path('', views.menu_permisos, name='menu_permisos'),
@@ -27,4 +30,6 @@ urlpatterns = [
     path('eliminar/permiso/<int:permiso_id>', views.eliminar_permiso, name='eliminar_permiso'),
     #Ingresos
     path('lista/ingresos', views.lista_ingresos, name='lista_ingresos'),
+    path('aprobar/ingreso/<int:ingreso_id>', views.aprobar_ingreso, name='aprobar_ingreso'),
+    path('del/ingreso/<int:ingreso_id>', views.eliminar_ingreso, name='eliminar_ingreso'),
 ]

@@ -15,7 +15,7 @@ from informacion.models import Individuo
 #imports de la app
 from .models import Permiso, IngresoProvincia
 from .forms import PermisoForm, BuscarPermiso, DatosForm, FotoForm
-from .forms import IngresoProvinciaForm, IngresanteForm
+from .forms import IngresoProvinciaForm, IngresanteForm, AprobarForm
 from .forms import DUTForm, PlanVueloForm
 from .functions import actualizar_individuo
 from .functions import buscar_permiso, pedir_permiso, definir_fechas
@@ -123,8 +123,11 @@ def ver_ingreso_provincial(request, token):
     })
 
 #Ingreso Provincial
-def cargar_ingresante(request, ingreso_id):
-    form = IngresanteForm()
+def cargar_ingresante(request, ingreso_id, individuo_id):
+    individuo = None
+    if individuo_id:
+        individuo = Individuo.objects.get(pk=individuo_id)
+    form = IngresanteForm(instance=individuo)
     if request.method == "POST":
         #obtenemos ingreso
         ingreso = IngresoProvincia.objects.get(pk=ingreso_id)
@@ -163,6 +166,15 @@ def cargar_plan_vuelo(request, ingreso_id):
             form.save()
             return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Documento Universal de Transporte", 'form': form, 'boton': "Cargar", })
+
+def quitar_ingresante(request, ingreso_id, individuo_id):
+    ingreso = IngresoProvincia.objects.get(pk=ingreso_id)
+    individuo = Individuo.objects.get(pk=individuo_id)
+    ingreso.individuos.remove(individuo)
+    return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
+
+def ver_ingreso_aprobado(request, ingreso_id):
+    pass
 
 #Administrar
 @permission_required('operadores.permisos')
@@ -214,9 +226,41 @@ def eliminar_permiso(request, permiso_id):
 #Ingresos Provinciales
 @permission_required('operadores.permisos')
 def lista_ingresos(request):
-    ingresos = IngresoProvincia.objects.all()
+    ingresos = IngresoProvincia.objects.exclude(estado='B')
+    ingresos = ingresos.prefetch_related('individuos')
     return render(request, 'lista_ingresos.html', {
         'titulo': "Ingresos Pedidos",
         'ingresos': ingresos,
         'has_table': True,
     })
+
+@permission_required('operadores.permisos')
+def aprobar_ingreso(request, ingreso_id):
+    form = AprobarForm()
+    if request.method == 'POST':
+        ingreso = IngresoProvincia.objects.get(pk=ingreso_id)
+        form = AprobarForm(request.POST)
+        if form.is_valid():
+            if SEND_MAIL:
+                to_email = ingreso.email_contacto
+                #Preparamos el correo electronico
+                mail_subject = 'Aprobamos tu Ingreso a la Provincia Jujuy!'
+                message = render_to_string('emails/ingreso_aprobado.html', {
+                        'ingreso': ingreso,
+                    })
+                #Instanciamos el objeto mail con destinatario
+                email = EmailMessage(mail_subject, message, to=[to_email])
+                email.send()
+            #Aprobamos el Ingreso
+            ingreso.estado = 'A'
+            ingreso.fecha_llegada = form.cleaned_data['fecha']
+            ingreso.save()
+            return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
+    return render(request, "extras/generic_form.html", {'titulo': "Aprobar Ingreso Provincial", 'form': form, 'boton': "Aprobar", })
+
+@permission_required('operadores.permisos')
+def eliminar_ingreso(request, ingreso_id):
+    ingreso = IngresoProvincia.objects.get(pk=ingreso_id)
+    ingreso.estado = 'B'
+    ingreso.save()
+    return redirect('permisos:lista_ingresos')
