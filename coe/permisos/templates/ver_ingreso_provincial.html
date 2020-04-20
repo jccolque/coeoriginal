@@ -93,8 +93,10 @@
                             {% if perms.operadores.permisos %}
                                 <hr>
                                 {% if ingreso.estado == 'C' or ingreso.estado == 'E' %}
-                                    <li><a href="{% url 'permisos:aprobar_ingreso' ingreso_id=ingreso.id %}">Aprobar Ingreso</a></li>
                                     <li><a href="{% url 'permisos:eliminar_ingreso' ingreso_id=ingreso.id %}">Eliminar Ingreso</a></li>
+                                {% endif %}
+                                {% if ingreso.estado == 'E' %}
+                                    <li><a href="{% url 'permisos:aprobar_ingreso' ingreso_id=ingreso.id %}">Aprobar Ingreso</a></li>
                                 {% endif %}
                                 <li><a href="{% url 'permisos:lista_ingresos' %}">Volver al Listado de Ingresos</a></li>
                             {% endif %}
