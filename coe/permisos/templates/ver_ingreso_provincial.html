@@ -83,7 +83,7 @@
                     </div>
                     <div class="col-md-4">
                         <ul class="menu_botones">
-                            {% if ingreso.tipo == 'C' or ingreso.tipo == 'E' %}
+                            {% if ingreso.estado == 'C' or ingreso.estado == 'E' %}
                                 <li><a href="{% url 'permisos:mod_ingreso_provincial' ingreso_id=ingreso.id %}">Modificar Datos Basicos</a></li>
                                 {% if ingreso.tipo == 'P' %}
                                     <li><a href="{% url 'permisos:cargar_ingresantes' ingreso_id=ingreso.id %}">Agregar Pasajero</a></li>
@@ -92,7 +92,7 @@
                             {% endif %}
                             {% if perms.operadores.permisos %}
                                 <hr>
-                                {% if ingreso.tipo == 'C' or ingreso.tipo == 'E' %}
+                                {% if ingreso.estado == 'C' or ingreso.estado == 'E' %}
                                     <li><a href="{% url 'permisos:aprobar_ingreso' ingreso_id=ingreso.id %}">Aprobar Ingreso</a></li>
                                     <li><a href="{% url 'permisos:eliminar_ingreso' ingreso_id=ingreso.id %}">Eliminar Ingreso</a></li>
                                 {% endif %}
