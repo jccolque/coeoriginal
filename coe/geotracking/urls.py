@@ -22,13 +22,14 @@ urlpatterns = [
     path('asignar/geoperador/<individuo_id>', views.asignar_geoperador, name='asignar_geoperador'),
     path('lista/geooperadores', views.lista_geooperadores, name='lista_geooperadores'),
     path('agregar/geoperador', views.agregar_geoperador, name='agregar_geoperador'),
+    path('del/geoperador/<geoperador_id>', views.del_geoperador, name='del_geoperador'),
+    #Panel
+    path('cambiar_base/<int:geoposicion_id>', views.cambiar_base, name='cambiar_base'),
+    path('config/<int:individuo_id>', views.config_tracking, name='config_tracking'),
     path('panel/geooperador', views.panel_geoperador, name='panel_geoperador'),
     path('panel/geooperador/<int:geoperador_id>', views.panel_geoperador, name='ver_geopanel'),
     path('agregar/individuo/<int:geoperador_id>', views.agregar_individuo, name='agregar_individuo'),
     path('quitar/individuo/<int:geoperador_id>/<int:individuo_id>', views.quitar_individuo, name='quitar_individuo'),
-    #Admin
-    path('cambiar_base/<int:geoposicion_id>', views.cambiar_base, name='cambiar_base'),
-    path('config/<int:individuo_id>', views.config_tracking, name='config_tracking'),
     #Autocomplete
     url(r'^individuostrackeados-autocomplete/$', autocomplete.IndividuosTrackeadosAutocomplete.as_view(), name='individuostrackeados-autocomplete',),
     url(r'^geoperadores-autocomplete/$', autocomplete.GeOperadoresAutocomplete.as_view(), name='geoperadores-autocomplete',),

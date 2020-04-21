@@ -15,7 +15,10 @@ logger = logging.getLogger('signals')
 @receiver(post_save, sender=GeoPosicion)
 def asignar_geoperador(created, instance, **kwargs):
     if created and instance.tipo == 'ST':#Si lo ingresamos al sistema
-        #Obtenemos el que menos controlados tiene
-        geoperador = GeOperador.objects.annotate(cantidad=Count('controlados')).order_by('cantidad').first()
-        #Se lo agregamos
-        geoperador.controlados.add(instance.individuo)
+        try:
+            #Obtenemos el que menos controlados tiene
+            geoperador = GeOperador.objects.annotate(cantidad=Count('controlados')).order_by('cantidad').first()
+            #Se lo agregamos
+            geoperador.controlados.add(instance.individuo)
+        except:
+            logger.info("Falla: Aun no existen geoperadores disponibles!")

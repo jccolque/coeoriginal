@@ -1,4 +1,5 @@
 #Imports Django
+from django.db.models import Count
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import permission_required
@@ -110,8 +111,34 @@ def quitar_individuo(request, geoperador_id, individuo_id):
     geoperador = GeOperador.objects.get(pk=geoperador_id)
     geoperador.controlados.remove(individuo)
     return redirect('geotracking:ver_geopanel', geoperador_id=geoperador.id)
-    
-#Listas
+
+@permission_required('operadores.geotracking_admin')
+def asignar_geoperador(request, individuo_id):
+    form = AsignarGeOperador()
+    if request.method == "POST":
+        form = AsignarGeOperador(request.POST)
+        if form.is_valid():
+            individuo = Individuo.objects.get(pk=individuo_id)
+            geoperador = form.cleaned_data['geoperador']
+            geoperador.controlados.add(individuo)
+            return redirect('geotracking:lista_sin_geoperador')
+    return render(request, "extras/generic_form.html", {'titulo': "Asignar Controlador", 'form': form, 'boton': "Asignar", })   
+
+@permission_required('operadores.geotracking_admin')
+def del_geoperador(request, geoperador_id):
+    geoperador = GeOperador.objects.get(pk=geoperador_id)
+    #Asignamos todos sus controlados a otras personas
+    for controlado in geoperador.controlados.all():
+        try:
+            nuevo_geoperador = GeOperador.objects.exclude(pk=geoperador.pk).annotate(cantidad=Count('controlados')).order_by('cantidad').first()
+            nuevo_geoperador.controlados.add(controlado)
+        except:
+            print("No existen geoperadores, quedo huerfano.")
+    #Lo damos de baja:
+    geoperador.delete()
+    return redirect('geotracking:lista_geooperadores')
+
+#LISTAS
 @permission_required('operadores.geotracking_admin')
 def lista_sin_geoperador(request):
     #Obtenemos todos los que ya estan siendo controlados
@@ -131,18 +158,6 @@ def lista_sin_geoperador(request):
         'individuos': individuos,
         'has_table': True,
     })
-
-@permission_required('operadores.geotracking_admin')
-def asignar_geoperador(request, individuo_id):
-    form = AsignarGeOperador()
-    if request.method == "POST":
-        form = AsignarGeOperador(request.POST)
-        if form.is_valid():
-            individuo = Individuo.objects.get(pk=individuo_id)
-            geoperador = form.cleaned_data['geoperador']
-            geoperador.controlados.add(individuo)
-            return redirect('geotracking:lista_sin_geoperador')
-    return render(request, "extras/generic_form.html", {'titulo': "Asignar Controlador", 'form': form, 'boton': "Asignar", })   
 
 @permission_required('operadores.geotracking_admin')
 def lista_trackeados(request):
@@ -193,6 +208,7 @@ def alertas_procesadas(request):
         'has_table': True,
     })
 
+#Panel de GeoPerador
 @permission_required('operadores.geotracking')
 def ver_tracking(request, individuo_id):
     individuo = Individuo.objects.select_related('situacion_actual', 'domicilio_actual', 'appdata')
