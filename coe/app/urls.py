@@ -25,7 +25,8 @@ urlpatterns = [
     path('send/notificacion', apps_views.enviar_notificacion, name='enviar_notificacion'),
     path('save/notificacion', apps_views.guardar_notificacion, name='enviar_notificacion'),
     #Descarga
-    path('app', apps_views.download_app, name='download_app'),
+    path('down_app', apps_views.download_app, name='download_app'),
+    path('down_control', apps_views.download_control, name='download_control'),
     #Autocomplete:
     url(r'^appdata-autocomplete/$', autocomplete.AppDataAutocomplete.as_view(), name='appdata-autocomplete'),
     url(r'^dispositivo-autocomplete/$', autocomplete.DispositivoAutocomplete.as_view(), name='dispositivo-autocomplete'),
