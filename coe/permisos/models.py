@@ -27,6 +27,9 @@ class Permiso(models.Model):
     endda = models.DateTimeField('Fin Permiso', default=timezone.now)
     controlador = models.BooleanField(default=False)
     aclaracion = HTMLField(null=True, blank=True)
+    #Interno
+    token = models.CharField('Token', max_length=25, default=token_ingreso, unique=True)
+    fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
     def __str__(self):
         return self.get_tipo_display() + str(self.begda)[0:16]
     def estado(self):
