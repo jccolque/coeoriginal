@@ -15,6 +15,7 @@ urlpatterns = [
     path('localidades', views.ws_localidades, name='ws_localidades'),
     path('barrios', views.ws_barrios, name='ws_barrios'),
     path('barrios/<int:localidad_id>', views.ws_barrios, name='ws_barrios_filtrados'),
+    path('csv/aislados', views.csv_aislados, name='csv_aislados'),
     #Choices    
     path('tipo_estado', views.tipo_estado, name='tipo_estado'),
     path('tipo_conducta', views.tipo_conducta, name='tipo_conducta'),

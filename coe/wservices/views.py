@@ -12,7 +12,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from core.decoradores import superuser_required
 from georef.models import Localidad, Barrio
 from informacion.choices import TIPO_ESTADO, TIPO_CONDUCTA
-from informacion.models import Situacion
+from informacion.models import Individuo, Situacion
 from permisos.choices import TIPO_PERMISO
 
 # Create your views here.
@@ -43,7 +43,6 @@ def ws(request, nombre_app=None, nombre_modelo=None):
     return render(request, 'ws.html', {"apps_listas": apps_listas,})
 
 #Creamos nuestros webservices
-@require_http_methods(["GET"])
 def ws_situaciones(request, fecha=None):
     #Agregar por localidad
     estados = {}
@@ -76,7 +75,6 @@ def ws_situaciones(request, fecha=None):
         safe=False
     )
 
-@require_http_methods(["GET"])
 def tipo_estado(request):
     return JsonResponse(
         {
@@ -85,7 +83,6 @@ def tipo_estado(request):
         safe=False,
     )
 
-@require_http_methods(["GET"])
 def tipo_conducta(request):
     return JsonResponse(
         {
@@ -94,8 +91,6 @@ def tipo_conducta(request):
         safe=False,
     )
 
-
-@require_http_methods(["GET"])
 def tipo_permiso(request):
     return JsonResponse(
         {
@@ -104,13 +99,11 @@ def tipo_permiso(request):
         safe=False,
     )
 
-@require_http_methods(["GET"])
 def ws_localidades(request):
     datos = Localidad.objects.all()
     datos = [d.as_dict() for d in datos]
     return HttpResponse(json.dumps({'Localidades': datos, "cant_registros": len(datos),}), content_type='application/json')
     
-@require_http_methods(["GET"])
 def ws_barrios(request, localidad_id=None):
     datos = Barrio.objects.all()
     if localidad_id:
@@ -122,3 +115,23 @@ def ws_barrios(request, localidad_id=None):
             'barrios': datos,
             "cant_registros": len(datos),
         }), content_type='application/json')
+
+@staff_member_required
+def csv_aislados(request, localidad_id=None):
+    datos = []
+    individuos = Individuo.objects.filter(situacion_actual__conducta__in=('D','E'))
+    individuos = individuos.select_related('situacion_actual')
+    for individuo in individuos:
+        datos.append(
+            {
+                'num_doc': individuo.num_doc,
+                'nombres': individuo.nombres,
+                'apellidos': individuo.apellidos,
+                'estado': individuo.situacion_actual.estado,
+                'conducta': individuo.situacion_actual.conducta,
+                'fecha_actualizacion': str(individuo.situacion_actual.fecha)[0:16],
+                'foto': individuo.get_foto(),
+                #'qr': individuo.get_qr(),
+            }
+        )
+    return HttpResponse(json.dumps({'individuos': datos, "cant_registros": len(datos),}), content_type='application/json')
