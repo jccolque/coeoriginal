@@ -313,7 +313,7 @@ def registro(request):
         else:
             appdata = individuo.appdata
         #Procesamos telefono si lo envio
-        if not individuo.telefono == "+549388":
+        if individuo.telefono == "+549388":
             individuo.telefono = str(data["telefono"])
             individuo.save()
         else:
