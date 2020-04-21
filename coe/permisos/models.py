@@ -28,8 +28,8 @@ class Permiso(models.Model):
     controlador = models.BooleanField(default=False)
     aclaracion = HTMLField(null=True, blank=True)
     #Interno
-    token = models.CharField('Token', max_length=35, default=generar_token, unique=True)
-    fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
+    #token = models.CharField('Token', max_length=35, default=generar_token, unique=True)
+    #fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
     def __str__(self):
         return self.get_tipo_display() + str(self.begda)[0:16]
     def estado(self):
