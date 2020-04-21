@@ -23,7 +23,7 @@
                 [
                     {{posicion.latitud|stringformat:".5f"}},
                     {{posicion.longitud|stringformat:".5f"}},
-                    "{{posicion.get_tipo_display}}<br><a href='{% url 'informacion:ver_individuo' individuo_id=posicion.individuo.id %}' target='_blank'>{{posicion.individuo}}</a><br><b>Fecha:</b>{{posicion.fecha}}<br><a href='{% url 'geotracking:cambiar_base' geoposicion_id=posicion.pk %}'><img class='icons' src='{% static '/img/icons/house.png' %}'></a>",
+                    "{{posicion.get_tipo_display}}<br><a href='{% url 'informacion:ver_individuo' individuo_id=posicion.individuo.id %}' target='_blank'>{{posicion.individuo}}</a><br><b>Fecha:</b>{{posicion.fecha}}<br>{{posicion.aclaracion}}<br><a href='{% url 'geotracking:cambiar_base' geoposicion_id=posicion.pk %}'><img class='icons' style='float:right;' src='{% static '/img/icons/house.png' %}'></a>",
                     '{% ct_icon_map posicion %}',
                 ],
             {% endfor %}
