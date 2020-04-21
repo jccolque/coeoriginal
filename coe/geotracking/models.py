@@ -40,3 +40,6 @@ class GeOperador(models.Model):
 #Auditoria
 auditlog.register(GeoPosicion)
 auditlog.register(GeOperador)
+
+#Señales
+from .signals import asignar_geoperador
