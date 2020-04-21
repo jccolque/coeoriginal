@@ -9,5 +9,5 @@ from django.utils import timezone
 def ct_timestamp():
     return str(timezone.now().timestamp()).split('.')[1]
 
-def generar_token():
+def token_ingreso():
     return ct_timestamp()+''.join(random.sample(string.ascii_uppercase + string.digits, k=25))
