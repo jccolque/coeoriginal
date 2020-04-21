@@ -39,7 +39,6 @@ class IngresoProvincia(models.Model):
     tipo = models.CharField('Tipo Ingreso', choices=TIPO_INGRESO, max_length=1, default='P')
     email_contacto = models.EmailField('Correo Electronico de Contacto')
     fecha_llegada = models.DateTimeField('Fecha de Llegada', default=timezone.now)
-    permiso_nacional = models.FileField('Permiso Nacional de Circulacion', upload_to='ingresos/')
     origen = models.ForeignKey(Provincia, on_delete=models.CASCADE, related_name="ingresos")
     destino = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="ingresos")
     #Vehiculo
@@ -55,7 +54,8 @@ class IngresoProvincia(models.Model):
     aclaracion = HTMLField(null=True)
     #Pasajeros
     individuos = models.ManyToManyField(Individuo, related_name='ingresante')
-    #Archivos Opcionales
+    #Archivos
+    permiso_nacional = models.FileField('Permiso Nacional de Circulacion', upload_to='ingresos/')
     dut = models.FileField('Permiso Nacional de Circulacion', upload_to='ingresos/', null=True, blank=True)
     plan_vuelo = models.FileField('Plan de Vuelo', upload_to='ingresos/', null=True, blank=True)
     def get_qr(self):

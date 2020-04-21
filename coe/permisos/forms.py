@@ -49,12 +49,12 @@ class IngresoProvinciaForm(forms.ModelForm):
             'origen': autocomplete.ModelSelect2(url='georef:provincia-autocomplete'),
             'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
         }
-    def clean_fecha_llegada(self):
-        fecha_llegada = self.cleaned_data["fecha_llegada"]
-        if fecha_llegada < timezone.now():
-            raise forms.ValidationError("La fecha de llegada debe ser posterior este momento.")
-        else:
-            return self.cleaned_data
+    #def clean_fecha_llegada(self):
+    #    fecha_llegada = self.cleaned_data["fecha_llegada"]
+    #    if fecha_llegada < timezone.now():
+    #        raise forms.ValidationError("La fecha de llegada debe ser posterior este momento.")
+    #    else:
+    #        return self.cleaned_data
     
 
 class IngresanteForm(forms.ModelForm):

@@ -4,7 +4,7 @@ TIPO_GEOPOS = (
     ('ST', 'Inicio de Tracking/Base'),
     ('PC', 'Punto de Control'),#Lugar de referencia
     ('RG', 'Reporte de GeoPosicion'),
-    ('CG', 'Control GeoPosicion'),
+    ('CG', 'Control Permiso Digital'),
 )
 
 TIPO_ALERTA = (
