@@ -55,7 +55,7 @@ class IngresoProvinciaForm(forms.ModelForm):
     #        raise forms.ValidationError("La fecha de llegada debe ser posterior este momento.")
     #    else:
     #        return self.cleaned_data
-    
+
 
 class IngresanteForm(forms.ModelForm):
     class Meta:

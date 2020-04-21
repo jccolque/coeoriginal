@@ -104,8 +104,15 @@ def agregar_individuo(request, geoperador_id):
             individuo = form.cleaned_data['individuo']
             geoperador.controlados.add(individuo)
             return redirect('geotracking:ver_geopanel', geoperador_id=geoperador.id)
-    return render(request, "extras/generic_form.html", {'titulo': "Agregar Individuo Seguido", 'form': form, 'boton': "Agregar", })         
+    return render(request, "extras/generic_form.html", {'titulo': "Agregar Individuo Seguido", 'form': form, 'boton': "Agregar", })
 
+@permission_required('operadores.geotracking_admin')
+def quitar_individuo(request, geoperador_id, individuo_id):
+    individuo = Individuo.objects.get(pk=individuo_id)
+    geoperador = GeOperador.objects.get(pk=geoperador_id)
+    geoperador.controlados.remove(individuo)
+    return redirect('geotracking:ver_geopanel', geoperador_id=geoperador.id)
+    
 #Listas
 @permission_required('operadores.geotracking_admin')
 def lista_sin_geoperador(request):

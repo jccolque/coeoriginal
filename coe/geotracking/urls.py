@@ -25,6 +25,7 @@ urlpatterns = [
     path('panel/geooperador', views.panel_geoperador, name='panel_geoperador'),
     path('panel/geooperador/<int:geoperador_id>', views.panel_geoperador, name='ver_geopanel'),
     path('agregar/individuo/<int:geoperador_id>', views.agregar_individuo, name='agregar_individuo'),
+    path('quitar/individuo/<int:geoperador_id>/<int:individuo_id>', views.quitar_individuo, name='quitar_individuo'),
     #Admin
     path('cambiar_base/<int:geoposicion_id>', views.cambiar_base, name='cambiar_base'),
     path('config/<int:individuo_id>', views.config_tracking, name='config_tracking'),
