@@ -33,8 +33,9 @@ def ct_icon_map(geopos):
         icono = 'policia'
     #Por alerta
     if geopos.alerta != 'SA':
-        icono = 'alerta'
-        if geopos.procesada:
+        if geopos.tipo == 'RG':
+            icono = 'alerta'
+        elif geopos.procesada:
             if geopos.tipo == 'CG':
                 icono = 'policia_rojo'
             else:

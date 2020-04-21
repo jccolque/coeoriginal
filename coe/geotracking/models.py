@@ -1,6 +1,7 @@
 #Imports Django
-from django.utils import timezone
 from django.db import models
+from django.db.models import Q
+from django.utils import timezone
 #Imports Extras
 from auditlog.registry import auditlog
 #Imports del proyecto
@@ -33,6 +34,8 @@ class GeOperador(models.Model):
         return self.controlados.all()#Deberiamos filtrar
     def cantidad_controlados(self):
         return self.controlados_actuales().count()
+    def alertas_activas(self):
+        return self.controlados.filter(Q(geoposiciones__procesada=False) & ~Q(geoposiciones__alerta='SA')).distinct().count()
 
 #Auditoria
 auditlog.register(GeoPosicion)

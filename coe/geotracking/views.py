@@ -15,10 +15,7 @@ from .forms import ConfigGeoForm, NuevoGeoOperador, NuevoIndividuo, AsignarGeOpe
 #Administrar
 @permission_required('operadores.geotracking')
 def menu_geotracking(request):
-    try:
-        es_geoperador = GeOperador.objects.get(operador__usuario=request.user)
-    except:
-        es_geoperador = False
+    es_geoperador = GeOperador.objects.filter(operador__usuario=request.user).exists()
     return render(request, 'menu_geotracking.html', {'es_geoperador': es_geoperador, })
 
 #Tracking
@@ -80,6 +77,7 @@ def panel_geoperador(request, geoperador_id=None):
     return render(request, "panel_geoperador.html", {
         'geoperador': geoperador,
         'alertas': alertas,
+        'refresh': True,
         'has_table': True,
     })
 
@@ -241,7 +239,13 @@ def cambiar_base(request, geoposicion_id):
     #Desactivamos la anterior
     GeoPosicion.objects.filter(individuo=geopos.individuo, tipo='PC').update(tipo='RG', aclaracion="Desactivada: "+str(operador))
     #Desactivamos todas las alarmas
-    GeoPosicion.objects.filter(individuo=geopos.individuo).update(alerta='SA', aclaracion="Desactivada por Cambio de Punto de Control.")
+    GeoPosicion.objects.filter(individuo=geopos.individuo
+        ).exclude(
+            alerta='SA'
+        ).update(
+            procesada=True,
+            aclaracion="Desactivada por Cambio de Punto de Control. " + str(operador)
+    )
     #Generamos nuevo inicio Tracking
     geopos.tipo = 'PC'
     geopos.operador = operador

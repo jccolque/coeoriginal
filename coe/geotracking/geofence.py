@@ -65,6 +65,11 @@ def controlar_distancia(nueva_geopos):
         nueva_geopos.alerta = 'SC'
     return nueva_geopos
 
+def control_sin_movimiento(nueva_geopos):
+    #Chequeamos que se haya movido
+    #Evitamos control a la hora de dormir
+    return nueva_geopos
+
 def es_local(geopos):
     #Calculamos diferencia
     geodesic = Geodesic.WGS84.Inverse(CENTRO_LATITUD, CENTRO_LONGITUD, geopos.latitud, geopos.longitud)

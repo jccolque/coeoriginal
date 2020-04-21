@@ -20,7 +20,7 @@ from georef.models import Nacionalidad, Localidad
 from informacion.models import Individuo, Domicilio
 from informacion.models import Atributo, Sintoma, Situacion, Seguimiento
 from geotracking.models import GeoPosicion
-from geotracking.geofence import controlar_distancia, es_local
+from geotracking.geofence import controlar_distancia, control_sin_movimiento, es_local
 from permisos.functions import buscar_permiso, pedir_permiso, definir_fechas, json_permiso
 from permisos.choices import TIPO_PERMISO
 #Imports de la app
@@ -570,10 +570,10 @@ def tracking(request):
         )
         #Chequeamos distancia:
         geopos = controlar_distancia(geopos)
+        geopos = control_sin_movimiento(geopos)
         #Guardamos siempre por ahora:
         geopos.save()
         #Realizamos controles avanzados
-        
         #Controlamos posicion:
         return JsonResponse(
             {
@@ -581,8 +581,8 @@ def tracking(request):
                 "realizado": True,
                 "prox_tracking": individuo.appdata.intervalo,#Minutos
                 "distancia": int(geopos.distancia),
-                "alerta": geopos.get_alerta_display(),
-                "notif_titulo": geopos.notif_titulo,
+                "alerta": (geopos.alerta != 'SA'),
+                "notif_titulo": geopos.get_alerta_display(),
                 "notif_mensaje": geopos.notif_mensaje,
             },
             safe=False

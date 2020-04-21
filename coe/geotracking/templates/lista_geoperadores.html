@@ -16,6 +16,7 @@
                             <th>Telefono</th>
                             <th>Ultimo Ingreso</th>
                             <th>Cantidad Controlados</th>
+                            <th>Alertas Activas</th>
                             <th>Ver Detalle</th>
                         </tr>
                     </thead>
@@ -32,6 +33,7 @@
                                     {% endif %}
                                 </td>
                                 <td>{{geoperador.cantidad_controlados}}</td>
+                                <td>{{geoperador.alertas_activas}}</td>
                                 <td>
                                     <a href="{% url 'geotracking:ver_geopanel' geoperador_id=geoperador.id %}" target="_blank">
                                         <img class="icons" src="/static/img/icons/control_panel.png" alt="Panel de Control">
