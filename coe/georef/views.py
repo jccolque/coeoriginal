@@ -266,8 +266,8 @@ def upload_localidades(request):
             lines = file_data.split("\n")
             cant = 0
             #Limpiamos la base de datos:
-            Provincia.objects.all().delete()
-            p = Provincia(nombre="Jujuy")
+            #Provincia.objects.all().delete()
+            #p = Provincia(nombre="Jujuy")
             p.save()
             #GEneramos todos los elementos nuevos
             for linea in lines:

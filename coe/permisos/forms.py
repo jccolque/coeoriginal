@@ -8,6 +8,7 @@ from dal import autocomplete
 from core.widgets import XDSoftDatePickerInput, XDSoftDateTimePickerInput
 from informacion.models import Individuo
 #Imports de la app
+from .choices import TIPO_PERMISO
 from .models import Permiso, IngresoProvincia
 
 #Formularios
@@ -30,6 +31,7 @@ class BuscarPermiso(forms.Form):
     apellido = forms.CharField(label="Apellido", required=True)
 
 class PermisoForm(forms.ModelForm):
+    tipo = forms.ChoiceField(choices=TIPO_PERMISO[:-1])#Eliminamos permiso Permanente de la lista
     class Meta:
         model = Permiso
         fields= '__all__'
