@@ -16,7 +16,7 @@ from informacion.models import Individuo
 #Imports de app
 from .choices import TIPO_PERMISO
 from .choices import TIPO_INGRESO, ESTADO_INGRESO
-from .tokens import token_ingreso
+from .tokens import generar_token
 
 # Create your models here.
 class Permiso(models.Model):
@@ -28,7 +28,7 @@ class Permiso(models.Model):
     controlador = models.BooleanField(default=False)
     aclaracion = HTMLField(null=True, blank=True)
     #Interno
-    token = models.CharField('Token', max_length=25, default=token_ingreso, unique=True)
+    token = models.CharField('Token', max_length=25, default=generar_token, unique=True)
     fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
     def __str__(self):
         return self.get_tipo_display() + str(self.begda)[0:16]
@@ -49,7 +49,7 @@ class IngresoProvincia(models.Model):
     modelo = models.CharField('Modelo del Vehiculo', max_length=200)
     patente = models.CharField('Identificacion Patente/Codigo', max_length=200)
     #Interno
-    token = models.CharField('Token', max_length=25, default=token_ingreso, unique=True)
+    token = models.CharField('Token', max_length=25, default=generar_token, unique=True)
     fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
     estado = models.CharField('Estado', choices=ESTADO_INGRESO, max_length=1, default='C')
     qrpath = models.CharField('qrpath', max_length=100, null=True, blank=True)
