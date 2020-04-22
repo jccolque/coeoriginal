@@ -95,6 +95,13 @@ class IngresoProvincia(models.Model):
         pdf.drawImage(self.get_qr(), 400, 700, 50*mm, 50*mm)
         pdf.save()
 
+class Emails_Ingreso(models.Model):
+    ingreso = models.ForeignKey(IngresoProvincia, on_delete=models.CASCADE, related_name="emails_enviados")
+    fecha = models.DateTimeField('Fecha de Envio', default=timezone.now)
+    asunto = models.CharField('Asunto', max_length=100)
+    cuerpo = models.CharField('Asunto', max_length=1000)
+    operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="ingreso_emailsenviados")
+
 #Auditoria
 #auditlog.register(Permiso)
 auditlog.register(IngresoProvincia)

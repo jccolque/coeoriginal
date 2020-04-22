@@ -18,7 +18,7 @@ from informacion.models import Individuo
 from graficos.functions import obtener_grafico
 #imports de la app
 from .choices import TIPO_INGRESO, ESTADO_INGRESO
-from .models import Permiso, IngresoProvincia
+from .models import Permiso, IngresoProvincia, Emails_Ingreso
 from .forms import PermisoForm, BuscarPermiso, DatosForm, FotoForm
 from .forms import IngresoProvinciaForm, IngresanteForm, AprobarForm
 from .forms import DUTForm, PlanVueloForm
@@ -338,6 +338,8 @@ def enviar_email(request, ingreso_id):
                         'ingreso': ingreso,
                         'cuerpo': form.cleaned_data['cuerpo'],
                     })
+                #Guardamos el mail
+                Emails_Ingreso(ingreso=ingreso, asunto=mail_subject, cuerpo=form.cleaned_data['cuerpo'], operador=obtener_operador(request)).save()
                 #Instanciamos el objeto mail con destinatario
                 email = EmailMessage(mail_subject, message, to=[to_email])
                 email.send()

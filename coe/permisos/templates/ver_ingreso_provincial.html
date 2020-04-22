@@ -103,6 +103,25 @@
                                 </tbody>
                             </table>
                         {% endif %}
+                        {% if ingreso.emails_enviados.exists %}
+                            <h3>Emails Enviados al individuo</h3>
+                            <table class="listado">
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Asunto</th>
+                                    <th>Cuerpo</th>
+                                    <th>Operador</th>
+                                </tr>
+                                {% for email in ingreso.emails_enviados %}
+                                    <tr>
+                                        <td>{{email.fecha}}</th>
+                                        <td>{{email.asunto}}</th>
+                                        <td>{{email.cuerpo}}</td>
+                                        <td>{{email.operador}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        {% endif %}
                     </div>
                     <div class="col-md-4">
                         <ul class="menu_botones">
