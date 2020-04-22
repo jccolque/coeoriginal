@@ -92,9 +92,6 @@ def inscripcion_social(request):
             inscripto.individuo = individuo
             inscripto.oficio = form.cleaned_data['oficio']
             inscripto.archivo_dni = form.cleaned_data['archivo_dni']
-            inscripto.grupo_sanguineo = form.cleaned_data['grupo_sanguineo']
-            if 'dona_si' in form.cleaned_data:
-                inscripto.dona_sangre = True
             inscripto.info_extra = form.cleaned_data['info_extra']
             #Agregamos las tareas
             if tareas:

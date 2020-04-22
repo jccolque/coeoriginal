@@ -44,8 +44,7 @@ class VoluntarioSocialForm(forms.ModelForm):
     no_aislamiento = forms.BooleanField(required=True)
     oficio = forms.CharField(label="Oficio/Profesion")
     archivo_dni = forms.FileField(label="Foto del Dni")
-    grupo_sanguineo = forms.ChoiceField(choices=GRUPO_SANGUINEO)
-    info_extra = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 30}))
+    info_extra = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 10}))
     #Domicilio
     dom_localidad = forms.ModelChoiceField(
         queryset=Localidad.objects.all(),

@@ -19,21 +19,16 @@
                     {% endfor %}
                     <br>
                     <h1><b>PLAN DE ACCIÓN INTEGRAL DE ADULTOS MAYORES COVID-19</b></h1>
-                    <div class="col-sm-10 col-sm-offset-1">                    
+                    <div class="col-sm-8 col-sm-offset-2">                    
                         <h3><b>Postulación de Voluntarios de Acompañamiento Social</b></h3>
-                        <p>Si Ud. tiene intención de colaborar como Voluntario en el marco de la contingencia por el nuevo Coronavirus (COVID-19), lea y complete el siguiente formulario.</p>
-                        <p>Considerando al Voluntariado Social como alternativa de participación comunitaria contribuyendo al bienestar de la comunidad, se pone en conocimiento de los Voluntarios Sociales que su incorporación al Plan Integral del Adulto Mayor se realizará bajo el marco legal obligatorio. </p>
-                        <p>Siendo el CENOC – Centro Nacional de Organizaciones de la Comunidad, dependiente del Ministerio de Desarrollo Social de la Nación y la DiPReSCi – Dirección Provincial de Relaciones con la Sociedad Civil, dependiente de la Secretaría de Gobierno del Ministerio de Gobierno y Justicia, en la Provincia de Jujuy, los organismos responsables de la aplicación de la Ley de Voluntariado Social N° 25.855.</p>
-                        <p>El aporte que la práctica del voluntariado social realiza en nuestra sociedad, reclama de nuestro esfuerzo por trabajar en la construcción y desarrollo de espacios de cooperación con los diferentes tipos de voluntariado. De allí la necesidad de responder a cada uno de los puntos del presente formulario con responsabilidad, para que podamos incorporarlos en el espacio de trabajo adecuado.</p>
+                        <p>Si Ud. tiene intención de colaborar como Voluntario en el marco de la contingencia por el nuevo Coronavirus (COVID-19), lea y complete el siguiente formulario. Se pone en conocimiento de los Voluntarios Sociales que su incorporación al Plan de Acción Integral del Adulto Mayor Covid-19, se realizará en el marco de la Ley del Voluntariado Social N° 25.855.</p>
                     </div>
                     <div class="row">
                         <div class="col-sm-5">
                             <div class="bordeado">
                                 <img class="fotos" src="{% static 'img/adultos_mayores.jpeg' %}">
-                                <p>La información consignada precedentemente reviste carácter de <b>Declaración Jurada</b>.</p>
-                                <p>Solo podrán ser voluntarios las personas entre 18 años y 40 años.</p>
-                                <p>Su omisión o falsedad procederá al rechazo de la inscripción o la exclusión del registro, sin perjuicio de las sanciones que le pudiera corresponder.</p>
-                                <p>Esta Postulación será efectiva luego de entrevista efectuada por personal especializado destinado a tal fin y su correspondiente ALTA al Programa a través de la Dirección Provincial de Relaciones con la Sociedad Civil, dependiente de la Secretaría de Gobierno del Ministerio de Gobierno y Justicia, mediante la presentación de la Documentación que le sea requerida.<p>
+                                <p>La información consignada precedentemente reviste carácter de Declaración Jurada. Su omisión o falsedad procederá al rechazo de la inscripción o la exclusión del registro, sin perjuicio de las sanciones que le pudiera corresponder.</p>
+                                <p><b>Este formulario sólo es para las personas entre 18 años y 40 años.</b></p>
                             </div>
                         </div>
                         <div class="col-sm-7">
@@ -85,11 +80,6 @@
                             <p><b>Correo Electronico:</b> {{form.email}}</p>
                             <p><b>Telefono:</b> {{form.telefono}}</p>
                             <hr>
-                            <p><b>Grupo Sanguineo:</b> {{form.grupo_sanguineo}}</p>
-                            <p><b>Puede y Desea Donar Sangre?</b></p>
-                            <p><input type="radio" id="donar_si" name="donar" value="si"> Si</p>
-                            <p><input type="radio" id="donar_no" name="donar" value="no"> No</p>
-                            <hr>
                             <p><b>Cuenta con alguno de estos dispositivos?</b></p>
                             {% for disp in dispositivos %}
                                 <li><input type="checkbox" id="{{disp.0}}" value={{disp.0}} name="dispositivos"> {{disp.1}}</li>
@@ -102,18 +92,24 @@
                     </div>
                     <div class="col-sm-7">
                         <div class="bordeado">
-                            <p>En base a sus capacidades, habilidades y competencias indique a qué tareas de las siguientes áreas de interés se postula como voluntario:</p>
+                            <h3><b>Indique cuáles tareas son de su interés:</b></h3>
                             <ul>
                                 {% for area in areas %}
-                                    <b>{{area.nombre}}</b>
+                                    <b>{{area.nombre|title}}</b>
                                     <ul>
                                     {% for tarea in area.tareas.all %}
                                         <li> <input type="checkbox" id="{{tarea.id}}" value={{tarea.id}} name="tareas"> {{tarea.nombre}}</li>
                                     {% endfor %}
                                     </ul>
                                 {% endfor %}
-                                <p><b>Informacion Extra:</b> {{form.info_extra}}</p>
                             </ul>
+                        </div>
+                        <br>
+                        <div class="bordeado">
+                            <p><b>¿Cuenta con alguna experiencia en voluntariado social?</b></p>
+                            <li>En caso afirmativo, indique la temática y el nombre de la organización donde desarrolló el voluntariado.</li>
+                            <br>
+                            {{form.info_extra}}
                         </div>
                     </div>
                 </div>

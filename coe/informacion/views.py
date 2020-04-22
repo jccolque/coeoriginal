@@ -967,7 +967,7 @@ def reporte_basico(request):
         'sintomas': sintomas,
     })
 
-@permission_required('operadores.reportes')
+@permission_required('operadores.menu_georef')
 def lista_ingresos_hoteles(request):
     form = ReporteHotelesForm()
     if request.method == "POST":
