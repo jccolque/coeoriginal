@@ -7,10 +7,10 @@
     <div class="container">
         <div class="row">
             <br>
-            <div class="col-sm-7">
+            <div class="col-lg-7">
                 {% include "carousel.html" %}
             </div>
-            <div class="col-sm-5">
+            <div class="col-lg-5">
                 <div class="row">
                     <div class="col-sm-6">
                         <a href="{% url 'app:download_app' %}">
@@ -18,6 +18,11 @@
                         </a>
                     </div>
                     <div class="col-sm-6">
+                        <a href="{% url 'inscripciones:inscripcion_salud' %}">
+                            <img class="fotos" src="{% static 'img/reclutamiento_salud.jpeg' %}">
+                        </a>
+
+                    <!--
                         <div class="elem small">
                             <a href="{% url 'core:consejos' %}" target="_blank">
                                 <img class="fotos" src="{% static 'img/link_salud.png' %}">
@@ -28,15 +33,18 @@
                                 <img class="fotos" src="{% static 'img/transporte.jpeg' %}">
                             </a>
                         </div>
+                    -->
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-7">
-                        <a href="{% url 'inscripciones:inscripcion_salud' %}">
-                            <img class="fotos" src="{% static 'img/reclutamiento.jpeg' %}">
-                        </a>
+                    <div class="col-sm-6">
+                        <div class="elem">
+                            <a href="{% url 'inscripciones:inscripcion_social' %}" target="_blank">
+                                <img class="fotos" src="{% static 'img/reclutamiento_social.jpeg' %}">
+                            </a>
+                        </div>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-6">
                         <div class="elem">
                             <a href="{% url 'permisos:pedir_ingreso_provincial' %}">
                                 <img class="fotos"  src="{% static 'img/ingresoprovincial.jpeg' %}">

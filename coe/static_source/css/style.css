@@ -353,6 +353,7 @@ img.foto_padding {
     background: #fff;
     display: inline-block;
     margin: 10px;
+    max-width: 250px;
 }
 
 .elem.small
