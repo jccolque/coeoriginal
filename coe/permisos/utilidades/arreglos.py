@@ -13,7 +13,7 @@ def recuperar_operadores():
             content_type__model="ingresoprovincia"
         )
         for reg in regs.all():
-            if reg.changes_dict['estado'][1] == 'A':
+            if 'estado' in reg.changes_dict and reg.changes_dict['estado'][1] == 'A':
                 print('El que aprobo fue: '+str(reg.actor))
                 ingreso.operador = reg.actor.operadores.first()
                 ingreso.save()

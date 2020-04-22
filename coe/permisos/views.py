@@ -263,18 +263,8 @@ def situacion_ingresos(request):
     ingresos = IngresoProvincia.objects.all()
     ingresos = ingresos.prefetch_related('individuos')
     #Obtenemos los totales
-    totales_tipo = [(
-        tipo[0],
-        tipo[1],
-        ingresos.filter(
-            tipo=tipo[0]).count()
-        ) for tipo in TIPO_INGRESO]
-    totales_estado = [(
-        estado[0],
-        estado[1],
-        ingresos.filter(
-            estado=estado[0]).count()
-        ) for estado in ESTADO_INGRESO]
+    totales_tipo = [(tipo[0], tipo[1], ingresos.filter(tipo=tipo[0]).count()) for tipo in TIPO_INGRESO]
+    totales_estado = [(estado[0], estado[1], ingresos.filter(estado=estado[0]).count()) for estado in ESTADO_INGRESO]
     #Preparamos la lista de ingresos de hoy
     ingresos_hoy = ingresos.filter(estado='A')
     ingresos_hoy = ingresos_hoy.filter(fecha_llegada__date=timezone.now().date())
@@ -289,9 +279,9 @@ def situacion_ingresos(request):
     cantidades = {}
     for ingreso in ingresos.filter(estado='A', fecha_llegada__date__gte=timezone.now().date()):
         if date2str(ingreso.fecha_llegada.date())+'@'+ingreso.tipo[0] in cantidades:
-            cantidades[(date2str(ingreso.fecha_llegada.date()), ingreso.tipo[0])] += 1
+            cantidades[(date2str(ingreso.fecha_llegada.date())+'@'+ingreso.tipo[0])] += 1
         else:
-            cantidades[(date2str(ingreso.fecha_llegada.date()), ingreso.tipo[0])] = 1
+            cantidades[(date2str(ingreso.fecha_llegada.date())+'@'+ingreso.tipo[0])] = 1
     #Generamos grafico
     for dia in dias:
         for tipo in TIPO_INGRESO:
@@ -312,11 +302,15 @@ def situacion_ingresos(request):
 @permission_required('operadores.permisos')
 def lista_ingresos(request, estado=None, tipo=None):
     ingresos = IngresoProvincia.objects.all()
+    #Filtramos de ser necesario
     if not estado and not tipo:
         ingresos = ingresos.exclude(estado='B')
-    ingresos = ingresos.prefetch_related('individuos')
     if estado:
         ingresos = ingresos.filter(estado=estado)
+    #Optimizamos
+    ingresos = ingresos.select_related('origen', 'destino', 'operador')
+    ingresos = ingresos.prefetch_related('individuos')
+    #Lanzamos listado
     return render(request, 'lista_ingresos.html', {
         'titulo': "Ingresos Pedidos",
         'ingresos': ingresos,
@@ -350,9 +344,11 @@ def enviar_email(request, ingreso_id):
 
 @permission_required('operadores.permisos')
 def aprobar_ingreso(request, ingreso_id):
-    form = AprobarForm()
+    ingreso = IngresoProvincia.objects.get(pk=ingreso_id)
+    form = AprobarForm(initial={
+        'fecha': ingreso.fecha_llegada,
+    })
     if request.method == 'POST':
-        ingreso = IngresoProvincia.objects.get(pk=ingreso_id)
         form = AprobarForm(request.POST)
         if form.is_valid():
             if SEND_MAIL:

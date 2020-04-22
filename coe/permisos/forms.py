@@ -45,7 +45,7 @@ class IngresoProvinciaForm(forms.ModelForm):
     class Meta:
         model = IngresoProvincia
         fields= '__all__'
-        exclude = ('fecha', 'token', 'individuos', 'estado', 'plan_vuelo', 'dut', 'qrpath')
+        exclude = ('fecha', 'token', 'individuos', 'estado', 'plan_vuelo', 'dut', 'operador', 'qrpath')
         widgets = {
             'fecha_llegada': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}, ),
             'origen': autocomplete.ModelSelect2(url='georef:provincia-autocomplete'),
@@ -86,6 +86,5 @@ class PlanVueloForm(forms.ModelForm):
 class AprobarForm(forms.Form):
     fecha = forms.DateTimeField(label="Fecha Aprobada", 
         required=True, 
-        initial=timezone.now(),
         widget=XDSoftDateTimePickerInput()
     )
