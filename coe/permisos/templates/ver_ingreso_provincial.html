@@ -117,6 +117,7 @@
                             {% endif %}
                             {% if perms.operadores.permisos %}
                                 <hr>
+                                <li><a href="{% url 'permisos:enviar_email' ingreso_id=ingreso.id %}">Enviar Correo Electronico</a></li>
                                 {% if ingreso.estado == 'C' or ingreso.estado == 'E' %}
                                     <li><a href="{% url 'permisos:eliminar_ingreso' ingreso_id=ingreso.id %}">Eliminar Ingreso</a></li>
                                 {% endif %}

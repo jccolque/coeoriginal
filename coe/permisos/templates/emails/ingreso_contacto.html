@@ -1,5 +1,4 @@
 {% autoescape off %}
-    Tu Ingreso Provincial a sido Registrado.
     Tipo: {{ingreso.get_tipo_display}}
     Origen: {{ingreso.origen}}
     Destino: {{ingreso.destino}}
@@ -10,9 +9,10 @@
     Modelo: {{ingreso.modelo}}
     Patente: {{ingreso.patente}}
 
+    {{cuerpo}}
+
     A travez de este link puede acceder al mismo:
     http://coe.jujuy.gob.ar/{% url 'permisos:ver_ingreso_provincial' token=ingreso.token %}
 
-    Pronto te avisaremos si fue aprobado para que puedas descargarlo,
     Cuidate y Cuidanos!
 {% endautoescape %}

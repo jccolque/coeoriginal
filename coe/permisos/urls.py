@@ -37,4 +37,5 @@ urlpatterns = [
     path('lista/ingresos/tipo/<str:tipo>', views.lista_ingresos, name='lista_ingresos_filtro'),
     path('aprobar/ingreso/<int:ingreso_id>', views.aprobar_ingreso, name='aprobar_ingreso'),
     path('del/ingreso/<int:ingreso_id>', views.eliminar_ingreso, name='eliminar_ingreso'),
+    path('email/ingreso/<int:ingreso_id>', views.enviar_email, name='enviar_email'),
 ]

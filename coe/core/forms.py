@@ -79,5 +79,14 @@ class AuditoriaForm(forms.Form):
             raise forms.ValidationError("No puede ingresar una fecha posteriores a hoy.")
         return self.cleaned_data
 
+class EmailForm(forms.Form):
+    destinatario = forms.EmailField(label='Correo Destinatario', required=True)
+    asunto = forms.CharField(label="Asunto", required=True)
+    cuerpo = forms.CharField(label="Cuerpo", widget=forms.Textarea(), required=True)
+    def __init__(self, *args, **kwargs):
+        super(EmailForm, self).__init__(*args, **kwargs)
+        if kwargs.get('initial', None):
+            self.fields['destinatario'].widget.attrs['readonly'] = True
+
 class JustificarForm(forms.Form):
     justificacion = forms.CharField(widget=forms.Textarea())

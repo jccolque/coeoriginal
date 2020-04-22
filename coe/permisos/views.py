@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import permission_required
 #Imports extras
 #Imports del proyecto
 from coe.settings import SEND_MAIL
+from core.forms import EmailForm
 from core.functions import date2str
 from operadores.functions import obtener_operador
 from informacion.models import Individuo
@@ -287,7 +288,7 @@ def situacion_ingresos(request):
     #Optimizamos cantidades
     cantidades = {}
     for ingreso in ingresos.filter(estado='A', fecha_llegada__date__gte=timezone.now().date()):
-        if date2str(ingreso.fecha__llegada.date())+'@'+ingreso.tipo[0] in cantidades:
+        if date2str(ingreso.fecha_llegada.date())+'@'+ingreso.tipo[0] in cantidades:
             cantidades[(date2str(ingreso.fecha_llegada.date()), ingreso.tipo[0])] += 1
         else:
             cantidades[(date2str(ingreso.fecha_llegada.date()), ingreso.tipo[0])] = 1
@@ -321,6 +322,29 @@ def lista_ingresos(request, estado=None, tipo=None):
         'ingresos': ingresos,
         'has_table': True,
     })
+
+@permission_required('operadores.permisos')
+def enviar_email(request, ingreso_id):
+    ingreso = IngresoProvincia.objects.get(pk=ingreso_id)
+    form = EmailForm(initial={'destinatario': ingreso.email_contacto})
+    if request.method == "POST":
+        form = EmailForm(request.POST)
+        if form.is_valid():
+            if SEND_MAIL:
+                to_email = form.cleaned_data['destinatario']
+                #Preparamos el correo electronico
+                mail_subject = form.cleaned_data['asunto']
+                message = render_to_string('emails/ingreso_contacto.html', {
+                        'ingreso': ingreso,
+                        'cuerpo': form.cleaned_data['cuerpo'],
+                    })
+                #Instanciamos el objeto mail con destinatario
+                email = EmailMessage(mail_subject, message, to=[to_email])
+                email.send()
+        return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
+    return render(request, "extras/generic_form.html", {'titulo': "Enviar Correo Electronico", 'form': form, 'boton': "Enviar", })
+
+
 
 @permission_required('operadores.permisos')
 def aprobar_ingreso(request, ingreso_id):
