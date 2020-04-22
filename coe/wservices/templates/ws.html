@@ -6,7 +6,7 @@
                 <li><b>{{app}}</b></li>
                 <ul>
                 {% for modelo in models %}
-                     <li><a href="/ws/{{app}}/{{modelo}}">{{modelo}}</a></li>
+                     <li><a href="{% url 'wservices:ws' nombre_app=app nombre_modelo=modelo %}">{{modelo}}</a></li>
                 {% endfor %}
                 </ul> 
             </ul>  
