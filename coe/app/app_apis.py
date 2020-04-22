@@ -16,7 +16,8 @@ from fcm_django.models import FCMDevice
 #Imports del proyecto
 from core.functions import json_error
 from operadores.models import Operador
-from georef.models import Nacionalidad, Localidad
+from georef.functions import obtener_argentina
+from georef.models import Localidad
 from informacion.models import Individuo, Domicilio
 from informacion.models import Atributo, Sintoma, Situacion, Seguimiento
 from geotracking.models import GeoPosicion
@@ -290,8 +291,6 @@ def registro(request):
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
         logger.info("Intento Registro: " + str(data))
-        #Obtenemos datos basicos:
-        nac = Nacionalidad.objects.filter(nombre__icontains="Argentina").first()
         #Agarramos el dni
         num_doc = obtener_dni(data)
         #Buscamos al individuo en la db
@@ -304,7 +303,7 @@ def registro(request):
             individuo.num_doc = num_doc
             individuo.apellidos = " ".join([word.capitalize() for word in data["apellido"].split(" ")])
             individuo.nombres = " ".join([word.capitalize() for word in data["nombre"].split(" ")])
-            individuo.nacionalidad = nac
+            individuo.nacionalidad = obtener_argentina()
             individuo.observaciones = "AUTODIAGNOSTICO"
             individuo.save()
         #PROCESAMOS INFO DE APP
@@ -356,7 +355,7 @@ def registro(request):
             domicilio.localidad = Localidad.objects.first()
         domicilio.aclaracion = "AUTODIAGNOSTICO"
         #Si esta en aislamiento no queremos sacarlo, bulkcreamos.
-        if individuo.domicilio_actual and individuo.domicilio_actual.aislamiento:
+        if individuo.domicilio_actual:
             Domicilio.objects.bulk_create([domicilio])
         else:
             domicilio.save()

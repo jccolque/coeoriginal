@@ -13,6 +13,7 @@ from auditlog.registry import auditlog
 from coe.settings import STATIC_ROOT, MEDIA_ROOT
 from georef.models import Provincia, Localidad
 from informacion.models import Individuo
+from operadores.models import Operador
 #Imports de app
 from .choices import TIPO_PERMISO
 from .choices import TIPO_INGRESO, ESTADO_INGRESO
@@ -28,6 +29,7 @@ class Permiso(models.Model):
     controlador = models.BooleanField(default=False)
     aclaracion = HTMLField(null=True, blank=True)
     #Interno
+    operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True, related_name="permisos")
     #token = models.CharField('Token', max_length=35, default=generar_token, unique=True)
     #fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
     def __str__(self):
@@ -53,6 +55,7 @@ class IngresoProvincia(models.Model):
     fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
     estado = models.CharField('Estado', choices=ESTADO_INGRESO, max_length=1, default='C')
     qrpath = models.CharField('qrpath', max_length=100, null=True, blank=True)
+    operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True, related_name="ingresosprovinciales")
     #Aclaraciones
     aclaracion = HTMLField(null=True)
     #Pasajeros
@@ -91,8 +94,6 @@ class IngresoProvincia(models.Model):
         pdf.drawImage(STATIC_ROOT+'/img/logo_pdf.png', 50, 700, height=50*mm, preserveAspectRatio=True)
         pdf.drawImage(self.get_qr(), 400, 700, 50*mm, 50*mm)
         pdf.save()
-
-#Señales
 
 #Auditoria
 #auditlog.register(Permiso)

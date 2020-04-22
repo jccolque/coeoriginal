@@ -12,6 +12,7 @@
                         <ul class="menu_botones">
                             {% if perms.operadores.permisos %}
                                 <h3>Ingreso Provincial</h3>
+                                <li><a href="{% url 'permisos:situacion_ingresos' %}">Tablero de Situacion</a></li>
                                 <li><a href="{% url 'permisos:lista_ingresos_filtrados' estado='E' %}">Ingresos Esperando Aprobacion</a></li>
                                 <li><a href="{% url 'permisos:lista_ingresos' %}">Listado de todos los pedidos de Ingresos</a></li>
                                 <li><a href="{% url 'permisos:pedir_ingreso_provincial' %}">Pedir Ingreso Provincial a Jujuy</a></li>

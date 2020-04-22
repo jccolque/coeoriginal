@@ -31,8 +31,10 @@ urlpatterns = [
     path('ver/permiso/<int:permiso_id>/<int:individuo_id>', views.ver_permiso, name='ver_permiso'),
     path('eliminar/permiso/<int:permiso_id>', views.eliminar_permiso, name='eliminar_permiso'),
     #Ingresos
+    path('situacion/ingresos', views.situacion_ingresos, name='situacion_ingresos'),
     path('lista/ingresos', views.lista_ingresos, name='lista_ingresos'),
-    path('lista/ingresos/<str:estado>', views.lista_ingresos, name='lista_ingresos_filtrados'),
+    path('lista/ingresos/estado/<str:estado>', views.lista_ingresos, name='lista_ingresos_filtro'),
+    path('lista/ingresos/tipo/<str:tipo>', views.lista_ingresos, name='lista_ingresos_filtro'),
     path('aprobar/ingreso/<int:ingreso_id>', views.aprobar_ingreso, name='aprobar_ingreso'),
     path('del/ingreso/<int:ingreso_id>', views.eliminar_ingreso, name='eliminar_ingreso'),
 ]

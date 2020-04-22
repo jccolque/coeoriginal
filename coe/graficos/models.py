@@ -1,5 +1,6 @@
 #Import Django
 from django.db import models
+from django.core.cache import cache
 #Imports de la app
 from .choices import TIPO_GRAFICO
 
@@ -33,6 +34,31 @@ class Grafico(models.Model):
         #Informamos que fue Actualizado
         self.update = update_date
         self.save()
+    def reiniciar_datos(self):
+        cache.set(self.nombre, [])
+        Dato.objects.filter(columna__grafico=self).delete()
+    def bulk_dato(self, update_date, columna_nombre, fila, valor):
+        #Buscamos/Creamos la columna
+        try:
+            columna = self.columnas.get(nombre=columna_nombre)
+        except Columna.DoesNotExist:
+            cant = self.columnas.count() + 1
+            columna = Columna(grafico=self, orden=cant, nombre=columna_nombre)
+            columna.save()
+        #Agregamos el dato:
+        dato = Dato()
+        dato.grafico = self
+        dato.columna = columna
+        dato.fila = fila
+        dato.valor = valor
+        #Lo mandamos a la cache
+        datos = cache.get(self.nombre)
+        datos.append(dato)
+        cache.set(self.nombre, datos)
+    def bulk_save(self):
+        datos = cache.get(self.nombre)
+        self.reiniciar_datos()
+        Dato.objects.bulk_create(datos)
     def cabecera(self):
         #Obtenemos todo lo necesario para procesar
         return ['Fecha'] + [c.nombre for c in self.columnas.all() if c.mostrar == True]

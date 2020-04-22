@@ -11,9 +11,12 @@ from django.contrib.auth.decorators import permission_required
 #Imports extras
 #Imports del proyecto
 from coe.settings import SEND_MAIL
+from core.functions import date2str
 from operadores.functions import obtener_operador
 from informacion.models import Individuo
+from graficos.functions import obtener_grafico
 #imports de la app
+from .choices import TIPO_INGRESO, ESTADO_INGRESO
 from .models import Permiso, IngresoProvincia
 from .forms import PermisoForm, BuscarPermiso, DatosForm, FotoForm
 from .forms import IngresoProvinciaForm, IngresanteForm, AprobarForm
@@ -117,7 +120,6 @@ def pedir_ingreso_provincial(request, ingreso_id=None):
             return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
     return render(request, "extras/generic_form.html", {'titulo': "Permiso de Ingreso a Jujuy", 'form': form, 'boton': "Cargar", })
 
-#Ingreso Provincial
 def ver_ingreso_provincial(request, token):
     ingreso = IngresoProvincia.objects.prefetch_related('individuos')
     ingreso = ingreso.get(token=token)
@@ -126,7 +128,6 @@ def ver_ingreso_provincial(request, token):
         'has_table': True,
     })
 
-#Ingreso Provincial
 def cargar_ingresante(request, ingreso_id, individuo_id=None):
     individuo = None
     if individuo_id:
@@ -250,14 +251,68 @@ def eliminar_permiso(request, permiso_id):
     permiso = Permiso.objects.get(pk=permiso_id)
     permiso.begda = timezone.now() - timedelta(days=7)#Lo mandamos una semana para atras
     permiso.endda = timezone.now() - timedelta(days=7)#Lo mandamos una semana para atras
-    permiso.aclaracion = permiso.aclaracion + ' | Dado de baja por: ' + str(obtener_operador(request))
+    permiso.operador = obtener_operador(request)
+    permiso.aclaracion = permiso.aclaracion + ' | Dado de baja por: ' + str(permiso.operador)
     permiso.save()
     return redirect('permisos:lista_activos')
 
 #Ingresos Provinciales
 @permission_required('operadores.permisos')
-def lista_ingresos(request, estado=None):
-    ingresos = IngresoProvincia.objects.exclude(estado='B')
+def situacion_ingresos(request):
+    ingresos = IngresoProvincia.objects.all()
+    ingresos = ingresos.prefetch_related('individuos')
+    #Obtenemos los totales
+    totales_tipo = [(
+        tipo[0],
+        tipo[1],
+        ingresos.filter(
+            tipo=tipo[0]).count()
+        ) for tipo in TIPO_INGRESO]
+    totales_estado = [(
+        estado[0],
+        estado[1],
+        ingresos.filter(
+            estado=estado[0]).count()
+        ) for estado in ESTADO_INGRESO]
+    #Preparamos la lista de ingresos de hoy
+    ingresos_hoy = ingresos.filter(estado='A')
+    ingresos_hoy = ingresos_hoy.filter(fecha_llegada__date=timezone.now().date())
+    #GRAFICACION
+    #Fechas del Grafico
+    dias = [timezone.now() + timedelta(days=x) for x in range(0,7)]
+    dias = [dia.date() for dia in dias]
+    #Generamos Grafico de Ingresos:
+    graf_ingresos = obtener_grafico('graf_ingresos', 'Grafico Ingresos Provinciales', 'L')
+    graf_ingresos.reiniciar_datos()
+    #Optimizamos cantidades
+    cantidades = {}
+    for ingreso in ingresos.filter(estado='A', fecha_llegada__date__gte=timezone.now().date()):
+        if date2str(ingreso.fecha__llegada.date())+'@'+ingreso.tipo[0] in cantidades:
+            cantidades[(date2str(ingreso.fecha_llegada.date()), ingreso.tipo[0])] += 1
+        else:
+            cantidades[(date2str(ingreso.fecha_llegada.date()), ingreso.tipo[0])] = 1
+    #Generamos grafico
+    for dia in dias:
+        for tipo in TIPO_INGRESO:
+            try:
+                cant = cantidades[date2str(dia)+'@'+tipo[0]]
+            except:
+                cant = 0
+            graf_ingresos.bulk_dato(dia, tipo[1], date2str(dia), cant)
+    graf_ingresos.bulk_save()
+    return render(request, 'situacion_ingresos.html', {
+            'totales_tipo': totales_tipo,
+            'totales_estado': totales_estado,
+            'ingresos_hoy': ingresos_hoy,
+            'graf_ingresos': graf_ingresos,
+        }
+    )
+
+@permission_required('operadores.permisos')
+def lista_ingresos(request, estado=None, tipo=None):
+    ingresos = IngresoProvincia.objects.all()
+    if not estado and not tipo:
+        ingresos = ingresos.exclude(estado='B')
     ingresos = ingresos.prefetch_related('individuos')
     if estado:
         ingresos = ingresos.filter(estado=estado)
@@ -287,6 +342,7 @@ def aprobar_ingreso(request, ingreso_id):
             #Aprobamos el Ingreso
             ingreso.estado = 'A'
             ingreso.fecha_llegada = form.cleaned_data['fecha']
+            ingreso.operador = obtener_operador(request)
             ingreso.generar_pdf()
             ingreso.save()
             return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
@@ -296,5 +352,6 @@ def aprobar_ingreso(request, ingreso_id):
 def eliminar_ingreso(request, ingreso_id):
     ingreso = IngresoProvincia.objects.get(pk=ingreso_id)
     ingreso.estado = 'B'
+    ingreso.operador = obtener_operador(request)
     ingreso.save()
     return redirect('permisos:lista_ingresos')
