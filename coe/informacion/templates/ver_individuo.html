@@ -96,7 +96,11 @@
                             {% endwith %}
                             {% include 'utils/historial_domicilios.html' %}
                         {% else %}
-                            <h4 class="alerta">NO REGISTRA RESIDENCIA ACTUAL EN LA PROVINCIA: <a class="nolink"  href="{% url 'informacion:cargar_domicilio' individuo_id=individuo.id %}">CARGAR</a></h4>
+                            <h4 class="alerta">EL INDIVIDUO NO REGISTRA RESIDENCIA ACTUAL:
+                                <a class="nolink"  href="{% url 'informacion:cargar_domicilio' individuo_id=individuo.id %}">
+                                    CARGAR
+                                </a>
+                            </h4>
                         {% endif %}
                         
                         {{individuo.particularidades|safe}}

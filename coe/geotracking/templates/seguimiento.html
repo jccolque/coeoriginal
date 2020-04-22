@@ -12,7 +12,14 @@
                         <img class="fotografia" src="{{individuo.get_foto}}">
                     </div>
                     <div class="col-sm-5">
-                        <h2><b>{{individuo.apellidos}}, {{individuo.nombres}}</b></h2>
+                        <h2>
+                            <b>{{individuo.apellidos}}, {{individuo.nombres}}</b>
+                            {% if perms.operadores.individuos %}
+                                <a class="nolink"  href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}">
+                                    <img class="icons" src="{% static '/img/icons/change.png' %}">
+                                </a>
+                            {% endif %}
+                        </h2>
                         <!-- ESTADO -->
                         {% if individuo.situacion_actual %}
                             <h4>Estado: <b>{{individuo.situacion_actual}}</b> 
@@ -22,6 +29,28 @@
                         {% else %}
                             <h4 class="alerta">EL INDIVIDUO NO REGISTRA ESTADO ACTUAL: 
                                 <a class="nolink" href="{% url 'informacion:cargar_situacion' individuo_id=individuo.id %}">
+                                    CARGAR
+                                </a>
+                            </h4>
+                        {% endif %}
+                        {% if individuo.domicilios.exists %}
+                            {% with individuo.domicilio_actual as domicilio %}
+                                <p>
+                                    <b>Domicilio:</b> {{domicilio.calle}} {{domicilio.numero}}, {{domicilio.localidad.nombre}} | {{domicilio.aclaracion}}
+                                    <a class="nolink"  href="javascript:PopUp(2);" ><img class="icons" src="{% static '/img/icons/history.png' %}"></a>
+                                    {% with individuo.geoposicion as last_geopos %}
+                                        {% if last_geopos %}
+                                            <a class="nolink"  href="https://www.google.com/maps?q={{last_geopos.latitud|stringformat:".5f"}},{{last_geopos.longitud|stringformat:".5f"}}" target="_blank">
+                                                <img class="icons" src="{% static '/img/icons/map.png' %}">
+                                            </a>
+                                        {% endif %}
+                                    {% endwith %}
+                                </p>
+                            {% endwith %}
+                            {% include 'utils/historial_domicilios.html' %}
+                        {% else %}
+                            <h4 class="alerta">EL INDIVIDUO NO REGISTRA RESIDENCIA ACTUAL:
+                                <a class="nolink"  href="{% url 'informacion:cargar_domicilio' individuo_id=individuo.id %}">
                                     CARGAR
                                 </a>
                             </h4>
@@ -38,10 +67,10 @@
                             <a href="{% url 'geotracking:config_tracking' individuo_id=individuo.id %}">
                                 <img class="icons" src="{% static '/img/icons/config.png' %}">
                             </a>
-                            <p><b>Intervalo:</b> {{individuo.appdata.intervalo}} minutos</p>
-                            <p><b>Distancia de Alerta:</b> {{individuo.appdata.distancia_alerta}}mts</p>
-                            <p><b>Distancia Critica:</b> {{individuo.appdata.distancia_critica}}mts</p>
                         </h4>
+                        <p><b>Intervalo:</b> {{individuo.appdata.intervalo}} minutos</p>
+                        <p><b>Distancia de Alerta:</b> {{individuo.appdata.distancia_alerta}}mts</p>
+                        <p><b>Distancia Critica:</b> {{individuo.appdata.distancia_critica}}mts</p>
                     </div>
                 </div>
                 <div class"row">
