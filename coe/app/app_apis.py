@@ -326,6 +326,7 @@ def registro(request):
                 appdata.email = data["email"]
         #Registramos push_not_id
         if "push_notification_id" in data:
+            FCMDevice.objects.filter(name=individuo.num_doc).delete()
             device = FCMDevice()
             device.name = individuo.num_doc
             device.registration_id = data["push_notification_id"]
@@ -340,7 +341,6 @@ def registro(request):
         appdata.fecha = timezone.now()
         appdata.save()
         #Cargamos un nuevo domicilio:
-        Domicilio.objects.filter(individuo=individuo, aclaracion="AUTODIAGNOSTICO").delete()
         domicilio = Domicilio(individuo=individuo)
         domicilio.calle = data["direccion_calle"]
         domicilio.numero = str(data["direccion_numero"])
@@ -354,9 +354,11 @@ def registro(request):
         else:
             domicilio.localidad = Localidad.objects.first()
         domicilio.aclaracion = "AUTODIAGNOSTICO"
-        try:#Si esta en aislamiento no queremos sacarlo.
+        try:#Si esta en aislamiento no queremos sacarlo, bulkcreamos.
             if individuo.domicilio_actual.aislamiento:
                 Domicilio.objects.bulk_create([domicilio])
+            else:
+                domicilio.save()
         except:
             domicilio.save()
         #Respondemos que fue procesado
