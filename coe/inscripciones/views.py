@@ -46,7 +46,7 @@ def inscripcion_salud(request):
                 to_email = individuo.email
                 #Preparamos el correo electronico
                 mail_subject = 'Inscripcion al COE2020'
-                message = render_to_string('emails/acc_active_inscripcion.html', {
+                message = render_to_string('emails/acc_active_inscripcion_salud.html', {
                         'inscripto': inscripto,
                         'token':account_activation_token.make_token(inscripto),
                     })
@@ -110,7 +110,7 @@ def inscripcion_social(request):
                     to_email = individuo.email
                     #Preparamos el correo electronico
                     mail_subject = 'Inscripcion al COE2020'
-                    message = render_to_string('emails/acc_active_inscripcion.html', {
+                    message = render_to_string('emails/acc_active_inscripcion_social.html', {
                             'inscripto': inscripto,
                             'token':account_activation_token.make_token(inscripto),
                         })
@@ -180,7 +180,7 @@ def download_inscriptos(request):
     return response
 
 #Activar:
-def activar_inscripcion_mail(request, inscripcion_id, token):
+def activar_inscripcion(request, inscripcion_id, token):
     try:
         inscripto = Inscripto.objects.get(pk=inscripcion_id)
     except(TypeError, ValueError, OverflowError, Inscripto.DoesNotExist):

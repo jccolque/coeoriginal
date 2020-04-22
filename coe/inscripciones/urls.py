@@ -19,5 +19,5 @@ urlpatterns = [
     path('download', views.download_inscriptos, name='download_inscriptos'),
 
     #Activacion:
-    url(r'^act/(?P<inscripcion_id>[0-9]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', views.activar_inscripcion_mail, name='activar_inscripcion_mail'),
+    url(r'^act/(?P<inscripcion_id>[0-9]+)/(?P<token>[0-9A-Za-z]{1,35})/$', views.activar_inscripcion, name='activar_inscripcion'),
 ]
