@@ -140,6 +140,20 @@ section.formulario .respuesta-container {
     
 }
 
+.formulario input[type=button] {
+    width: auto!important;
+    color: white;
+    background: var(--color_oscuro);
+    border: none;
+    margin: auto;
+    font-size: 1.1em;
+    padding: 7px 20px;
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
 .formulario ul{
     list-style: none;
 }
@@ -156,6 +170,11 @@ section.formulario .respuesta-container {
     width: 100%;
     text-align: center;
 
+}
+
+.formulario p.texto{
+    text-align: center;
+    color: white;
 }
 
 .tinymce {

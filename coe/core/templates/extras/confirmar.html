@@ -1,26 +1,23 @@
 {% extends 'base/base.html' %}
 
-{% block custom_head %}
-
-{% endblock %}
-
 {% block content %}
-    <div class="confirmar container">
-        <div class="row">
-            <div class="col-sm-2"></div>
-            <div class="col-sm-8">
-                <h2>{{titulo}}</h2>
-                <p>{{message}}</p>
+    <section class="formulario">
+        <section class="formulario-container">
+            <h2>{{titulo}}</h2>
+            <p class="texto">{{message}}</p>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
                 <br>
-                <p>Seguro desea continuar?</p>
-                <div class="col-sm-4"></div>
-                <div class="col-sm-2">
-                    <a href="javascript:history.back()">Cancelar</a>
+                <p class="texto"><b>Seguro desea continuar?<b></p>
+                <div class="col-sm-4 offset-4"></div>
+                    <div class="col-sm-2">
+                        <input type="button" value="Cancelar" onclick="history.back()">
+                    </div>
+                    <div class="col-sm-2">
+                        <button type="submit">Confirmar</button>
+                    </div>
                 </div>
-                <div class="col-sm-2">
-                    <a href="si">Confirmar</a>
-                </div>
-            </div>
-        </div>
-    </div>
+            </form>
+        </section>
+    </section>
 {% endblock %}

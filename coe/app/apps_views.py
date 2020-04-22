@@ -11,7 +11,7 @@ def download_app(request):
     return redirect('https://play.google.com/store/apps/details?id=com.ga.covidjujuy_app')
 
 def download_control(request):
-    return redirect('https://mcs-apks.s3.us-east-2.amazonaws.com/apks/simmov_1.7.apk')
+    return redirect('https://mcs-apks.s3.us-east-2.amazonaws.com/apks/simmov_1.8.apk')
 
 #Enviar notificaciones
 @staff_member_required

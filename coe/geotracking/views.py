@@ -122,21 +122,28 @@ def asignar_geoperador(request, individuo_id):
             geoperador = form.cleaned_data['geoperador']
             geoperador.controlados.add(individuo)
             return redirect('geotracking:lista_sin_geoperador')
-    return render(request, "extras/generic_form.html", {'titulo': "Asignar Controlador", 'form': form, 'boton': "Asignar", })   
+    return render(request, "extras/generic_form.html", {'titulo': "Asignar Controlador", 'form': form, 'boton': "Asignar", })
 
 @permission_required('operadores.geotracking_admin')
 def del_geoperador(request, geoperador_id):
     geoperador = GeOperador.objects.get(pk=geoperador_id)
-    #Asignamos todos sus controlados a otras personas
-    for controlado in geoperador.controlados.all():
-        try:
-            nuevo_geoperador = GeOperador.objects.exclude(pk=geoperador.pk).annotate(cantidad=Count('controlados')).order_by('cantidad').first()
-            nuevo_geoperador.controlados.add(controlado)
-        except:
-            print("No existen geoperadores, quedo huerfano.")
-    #Lo damos de baja:
-    geoperador.delete()
-    return redirect('geotracking:lista_geooperadores')
+    if request.method == "POST":
+        #Asignamos todos sus controlados a otras personas
+        for controlado in geoperador.controlados.all():
+            try:
+                nuevo_geoperador = GeOperador.objects.exclude(pk=geoperador.pk).annotate(cantidad=Count('controlados')).order_by('cantidad').first()
+                nuevo_geoperador.controlados.add(controlado)
+            except:
+                print("No existen geoperadores, quedo huerfano.")
+        #Lo damos de baja:
+        geoperador.delete()
+        return redirect('geotracking:lista_geooperadores')
+    return render(request, "extras/confirmar.html", {
+            'titulo': "Eliminar GeoControlador",
+            'message': "Se reasignaran "+str(geoperador.controlados.count())+" Individuos.",
+            'has_form': True,
+        }
+    )
 
 #LISTAS
 @permission_required('operadores.geotracking_admin')
