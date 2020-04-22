@@ -10,14 +10,12 @@ def recuperar_operadores():
         print(str(ingreso)+' No tiene Operador.')
         regs = LogEntry.objects.filter(
             object_id=ingreso.pk,
-            content_type__model="ingresoprovincia",
-            changes__icontains='operador'
+            content_type__model="ingresoprovincia"
         )
         for reg in regs.all():
             if 'operador' in reg.changes_dict:
                 if 'estado' in reg.changes_dict:
                     if reg.changes_dict['estado'][1] == 'A':
-                        operador = Operador.objects.get(pk=reg.changes_dict['operador'][1])
-                        print('El que aprobo fue: '+str(operador))
-                        ingreso.operador = operador
+                        print('El que aprobo fue: '+str(reg.actor))
+                        ingreso.operador = reg.actor
                         ingreso.save()
