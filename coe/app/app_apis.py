@@ -680,13 +680,16 @@ def control_salvoconducto(request):
         #Obtenemos el operador
         operador = Operador.objects.get(num_doc=num_doc)
         #Leemos QR y parceamos
-        qr_code = data["qr_code"]
-        if "@" in qr_code:#Es un DNI
-            dni_qr = qr_code.split('@')[4]
-            #Podriamos procesar el resto de la info del tipo
-            #Fecha de Nacimiento
-        elif "-" in qr_code:#Es permiso de App
-            dni_qr = qr_code.split('-')[1]
+        if "qr_code" in data:
+            qr_code = data["qr_code"]
+            if "@" in qr_code:#Es un DNI
+                dni_qr = qr_code.split('@')[4]
+                #Podriamos procesar el resto de la info del tipo
+                #Fecha de Nacimiento
+            elif "-" in qr_code:#Es permiso de App
+                dni_qr = qr_code.split('-')[1]
+        elif "dni_controlado" in data:
+            dni_qr = data["dni_controlado"]
         #Buscamos al individuo en la db
         individuo = Individuo.objects.select_related('appdata').get(num_doc=dni_qr)
         #ACA CHEQUEAMOS TOKEN
