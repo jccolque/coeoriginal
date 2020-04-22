@@ -2,7 +2,7 @@
 from django.urls import path
 from django.conf.urls import url
 #Import de modulos personales
-from . import apps_views as apps_views
+from . import views as views
 from . import app_apis as app_apis
 from . import autocomplete
 
@@ -22,11 +22,11 @@ urlpatterns = [
     path('control/salvoconducto', app_apis.control_salvoconducto, name='control_salvoconducto'),
     path('get/notificacion', app_apis.notificacion, name='notificacion'),
     #Testing
-    path('send/notificacion', apps_views.enviar_notificacion, name='enviar_notificacion'),
-    path('save/notificacion', apps_views.guardar_notificacion, name='enviar_notificacion'),
+    path('send/notificacion', views.enviar_notificacion, name='enviar_notificacion'),
+    path('save/notificacion', views.guardar_notificacion, name='enviar_notificacion'),
     #Descarga
-    path('coe_app', apps_views.download_app, name='download_app'),
-    path('simmov_app', apps_views.download_control, name='download_control'),
+    path('coe_app', views.download_app, name='download_app'),
+    path('simmov_app', views.download_control, name='download_control'),
     #Autocomplete:
     url(r'^appdata-autocomplete/$', autocomplete.AppDataAutocomplete.as_view(), name='appdata-autocomplete'),
     url(r'^dispositivo-autocomplete/$', autocomplete.DispositivoAutocomplete.as_view(), name='dispositivo-autocomplete'),

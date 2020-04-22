@@ -30,3 +30,6 @@ class AppNotificacion(models.Model):
     mensaje = models.CharField('mensaje', max_length=200, default='', blank=False)
     accion = models.CharField('accion', choices=TIPO_ACCION_NOTIFICACION, max_length=2, default='SM')
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+
+#Señales
+from .signals import enviar_push
