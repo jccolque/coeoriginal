@@ -12,14 +12,8 @@ from .models import AppNotificacion
 @receiver(post_save, sender=AppNotificacion)
 def enviar_push(instance, created, **kwargs):
     if created:#Si creamos la local, mandamos la push.
-        device = FCMDevice.objects.get(name=
-        
-        individuo.num_doc)
-        
-        
-        
+        device = FCMDevice.objects.get(name=instance.appdata.individuo.num_doc)
         device.send_message(
-            title= ,
-            body= ,
-            color= ,
+            title= instance.titulo,
+            body= instance.mensaje,
         )

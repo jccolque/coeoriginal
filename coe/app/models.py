@@ -32,4 +32,4 @@ class AppNotificacion(models.Model):
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
 
 #Señales
-#from .signals import enviar_push
+from .signals import enviar_push
