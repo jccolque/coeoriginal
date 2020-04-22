@@ -354,12 +354,10 @@ def registro(request):
         else:
             domicilio.localidad = Localidad.objects.first()
         domicilio.aclaracion = "AUTODIAGNOSTICO"
-        try:#Si esta en aislamiento no queremos sacarlo, bulkcreamos.
-            if individuo.domicilio_actual.aislamiento:
-                Domicilio.objects.bulk_create([domicilio])
-            else:
-                domicilio.save()
-        except:
+        #Si esta en aislamiento no queremos sacarlo, bulkcreamos.
+        if individuo.domicilio_actual and individuo.domicilio_actual.aislamiento:
+            Domicilio.objects.bulk_create([domicilio])
+        else:
             domicilio.save()
         #Respondemos que fue procesado
         return JsonResponse(
