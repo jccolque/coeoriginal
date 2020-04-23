@@ -22,9 +22,9 @@ class Tarea(models.Model):
     def __str__(self):
         return self.nombre
 
-class Inscripto(models.Model):
+class Inscripcion(models.Model):
     tipo_inscripto = models.CharField(choices=TIPO_INSCRIPTO, max_length=2, default='PS')
-    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, null=True, blank=True, related_name="voluntarios")
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, null=True, blank=True, related_name="voluntariados")
     profesion = models.IntegerField('Profesion', choices=TIPO_PROFESIONAL, null=True, blank=True)
     matricula = models.CharField(max_length=20, null=True, blank=True)
     oficio = models.CharField("Profesion u Oficio", max_length=100, null=True, blank=True)
@@ -58,8 +58,8 @@ class Inscripto(models.Model):
 
 class TareaElegida(models.Model):
     tarea = models.ForeignKey(Tarea, on_delete=models.CASCADE, related_name="elecciones")
-    inscripto = models.ForeignKey(Inscripto, on_delete=models.CASCADE, related_name="elecciones")
+    inscripto = models.ForeignKey(Inscripcion, on_delete=models.CASCADE, related_name="elecciones")
 
 class Dispositivo(models.Model):
-    inscripto = models.ForeignKey(Inscripto, on_delete=models.CASCADE, related_name="dispositivos")
+    inscripto = models.ForeignKey(Inscripcion, on_delete=models.CASCADE, related_name="dispositivos")
     tipo = models.CharField('Tipo Dispositivo', choices=TIPO_DISPOSITIVO, max_length=2)

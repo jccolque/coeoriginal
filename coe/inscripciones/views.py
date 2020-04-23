@@ -15,7 +15,7 @@ from informacion.models import Individuo
 #Impors de la app
 from .tokens import account_activation_token
 from .choices import TIPO_DISPOSITIVO
-from .models import Inscripto, Area, Tarea, TareaElegida, Dispositivo
+from .models import Inscripcion, Area, Tarea, TareaElegida, Dispositivo
 from .forms import ProfesionalSaludForm, VoluntarioSocialForm
 from .functions import actualizar_individuo
 
@@ -32,7 +32,7 @@ def inscripcion_salud(request):
         if form.is_valid():
             individuo = actualizar_individuo(form)
             #Armamos la inscripcion:
-            inscripto = Inscripto()
+            inscripto = Inscripcion()
             inscripto.tipo_inscripto = 'PS'
             inscripto.individuo = individuo
             inscripto.profesion = form.cleaned_data['profesion']
@@ -89,7 +89,7 @@ def inscripcion_social(request):
             #Creamos diccionario de tareas
             dict_tareas = {t.id:t for t in Tarea.objects.all()}
             #Armamos la inscripcion:
-            inscripto = Inscripto()
+            inscripto = Inscripcion()
             inscripto.tipo_inscripto = 'VS'
             inscripto.individuo = individuo
             inscripto.oficio = form.cleaned_data['oficio']
@@ -138,7 +138,7 @@ def menu(request):
 
 @permission_required('operadores.menu_inscripciones')
 def lista_voluntarios(request, tipo_inscripto):
-    inscriptos = Inscripto.objects.filter(disponible=True, tipo_inscripto=tipo_inscripto)
+    inscriptos = Inscripcion.objects.filter(disponible=True, tipo_inscripto=tipo_inscripto)
     inscriptos = inscriptos.select_related('individuo', 'individuo__domicilio_actual', 'individuo__domicilio_actual__localidad')
     inscriptos = inscriptos.distinct()
     #Agregar buscador
@@ -162,7 +162,7 @@ def lista_voluntarios(request, tipo_inscripto):
 
 @permission_required('operadores.menu_inscripciones')
 def ver_inscripto(request, inscripto_id=None):
-    inscripto = Inscripto.objects.get(pk=inscripto_id)
+    inscripto = Inscripcion.objects.get(pk=inscripto_id)
     if inscripto.tipo_inscripto == 'PS':
         return render(request, 'ver_inscripto_salud.html', {'inscripto': inscripto, })
     elif inscripto.tipo_inscripto == 'VS':
@@ -170,7 +170,7 @@ def ver_inscripto(request, inscripto_id=None):
 
 @permission_required('operadores.menu_inscripciones')
 def download_inscriptos(request):
-    inscriptos = Inscripto.objects.all()
+    inscriptos = Inscripcion.objects.all()
     #Iniciamos la creacion del csv
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="Inscriptos.csv"'
@@ -198,10 +198,10 @@ def download_inscriptos(request):
 #Activar:
 def activar_inscripcion(request, inscripcion_id):#, token):
     try:
-        inscripto = Inscripto.objects.get(pk=inscripcion_id)
+        inscripto = Inscripcion.objects.get(pk=inscripcion_id)
         inscripto.valido = True
         inscripto.save()
         texto = 'Excelente! Su correo electronico fue validada.'
-    except(TypeError, ValueError, OverflowError, Inscripto.DoesNotExist):
+    except(TypeError, ValueError, OverflowError, Inscripcion.DoesNotExist):
         texto = 'El link de activacion es invalido!'
     return render(request, 'extras/resultado.html', {'texto': texto, })

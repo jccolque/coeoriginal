@@ -2,7 +2,7 @@
 import csv
 #Imports del proyecto
 from informacion.models import Individuo
-from inscripciones.models import Inscripto
+from inscripciones.models import Inscripcion
 from georef.functions import obtener_argentina
 
 def reasginar_inscriptos(filename):
@@ -12,7 +12,7 @@ def reasginar_inscriptos(filename):
             #Estructura: 0-num_doc	1-nombres	2-apellidos	3-telefono	4-email	5-id_registro
             print('Procesamos a: ' + row[1] + ' ' +row[2])
             try:
-                inscripto = Inscripto.objects.get(pk=row[5], individuo=None)
+                inscripto = Inscripcion.objects.get(pk=row[5], individuo=None)
                 try:
                     #Buscamos y actualizmaos individuo
                     individuo = Individuo.objects.get(num_doc=row[0])
@@ -24,8 +24,6 @@ def reasginar_inscriptos(filename):
                     individuo.nombres = row[1]
                     individuo.nacionalidad = obtener_argentina()
                     print("No existia el individuo, lo creamos.")
-                except Inscripto.DoesNotExist:
-                    print("Ya fue asignado, no hace falta.")    
                 #Terminado el proceso de sanitizacion de invidiuo:
                 individuo.telefono = row[3]
                 individuo.email = row[4]
@@ -34,5 +32,5 @@ def reasginar_inscriptos(filename):
                 inscripto.individuo = individuo
                 inscripto.save()
                 print("Salvamos registro")
-            except Inscripto.DoesNotExist:
+            except Inscripcion.DoesNotExist:
                 print("Ya fue asignado")

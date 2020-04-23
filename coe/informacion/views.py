@@ -423,7 +423,8 @@ def ver_individuo(request, individuo_id):
         'relaciones',
         'relaciones__relacionado',
         'relaciones__relacionado__situacion_actual',
-        'pasajes', 'pasajes__traslado__vehiculo')
+        'pasajes', 'pasajes__traslado__vehiculo',
+        'voluntariados')
     individuo = individuo.select_related('situacion_actual', 'domicilio_actual', 'appdata')
     individuo = individuo.get(pk=individuo_id)
     return render(request, "ver_individuo.html", {'individuo': individuo, })
