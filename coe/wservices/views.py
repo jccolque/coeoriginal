@@ -6,7 +6,6 @@ from django.utils import timezone
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods
 from django.contrib.admin.views.decorators import staff_member_required
 #Imports del proyecto
 from core.decoradores import superuser_required

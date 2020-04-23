@@ -180,20 +180,12 @@ def download_inscriptos(request):
     return response
 
 #Activar:
-def activar_inscripcion(request, inscripcion_id, token):
+def activar_inscripcion(request, inscripcion_id):#, token):
     try:
         inscripto = Inscripto.objects.get(pk=inscripcion_id)
-    except(TypeError, ValueError, OverflowError, Inscripto.DoesNotExist):
-        inscripto = None
-    if inscripto and account_activation_token.check_token(inscripto, token):
         inscripto.valido = True
-        try:
-            inscripto.individuo = Individuo.objects.get(num_doc=inscripto.num_doc)
-            #Actualizamos domicilio
-        except Individuo.DoesNotExist:
-            pass#No tenemos registrada a esa persona
         inscripto.save()
         texto = 'Excelente! Su correo electronico fue validada.'
-    else:
+    except(TypeError, ValueError, OverflowError, Inscripto.DoesNotExist):
         texto = 'El link de activacion es invalido!'
     return render(request, 'extras/resultado.html', {'texto': texto, })
