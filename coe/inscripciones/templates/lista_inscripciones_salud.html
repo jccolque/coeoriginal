@@ -3,17 +3,18 @@
 {% block content %}
     <div class="beneficiario container">
         <div class="row">
-            <h2>Listado de Inscriptos</h2>
+            <h2>Listado de Voluntarios Salud</h2>
         </div>
         <div class="row">
         <div class="col-md-12">
             <table class="listado" id="table">
                 <thead>
                     <tr>
+                        <th>Numero de Documento</th>
                         <th>Profesion</th>
                         <th>Apellido</th>
                         <th>Nombre</th>
-                        <th>Localidad</th>
+                        <th>Domicilio</th>
                         <th>Telefono</th>
                         <th>Email</th>
                         <th>Fecha Inscripcion</th>
@@ -23,10 +24,11 @@
                 <tbody>
                     {% for inscripto in inscriptos %}
                         <tr>
-                            <td>{{inscripto.get_profesion_display}}{{inscripto.oficio}}</td>
+                            <td>{{inscripto.individuo.num_doc}}</td>
+                            <td>{{inscripto.get_profesion_display}}</td>
                             <td>{{inscripto.individuo.apellidos}}</td>
                             <td>{{inscripto.individuo.nombres}}</td>
-                            <td>{{inscripto.individuo.domicilio_actual.localidad}}</td>
+                            <td>{{inscripto.individuo.domicilio_actual}}</td>
                             <td>{{inscripto.individuo.telefono}}</td>
                             <td>{{inscripto.individuo.email}}</td>
                             <td>{{inscripto.fecha}}</td>

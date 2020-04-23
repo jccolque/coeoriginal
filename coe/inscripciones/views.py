@@ -37,9 +37,11 @@ def inscripcion_salud(request):
             inscripto.individuo = individuo
             inscripto.profesion = form.cleaned_data['profesion']
             inscripto.matricula = form.cleaned_data['matricula']
+            inscripto.info_extra = form.cleaned_data['info_extra']
+            #Agregamos documentos
             inscripto.archivo_dni = form.cleaned_data['archivo_dni']
             inscripto.archivo_titulo = form.cleaned_data['archivo_titulo']
-            inscripto.info_extra = form.cleaned_data['info_extra']
+            #guardamos
             inscripto.save()
             #enviar email de validacion
             if SEND_MAIL:
@@ -91,8 +93,9 @@ def inscripcion_social(request):
             inscripto.tipo_inscripto = 'VS'
             inscripto.individuo = individuo
             inscripto.oficio = form.cleaned_data['oficio']
-            inscripto.archivo_dni = form.cleaned_data['archivo_dni']
             inscripto.info_extra = form.cleaned_data['info_extra']
+            #Agregamos documentos
+            inscripto.archivo_dni = form.cleaned_data['archivo_dni']
             #Agregamos las tareas
             if tareas:
                 inscripto.save()
@@ -136,16 +139,25 @@ def menu(request):
 @permission_required('operadores.menu_inscripciones')
 def lista_voluntarios(request, tipo_inscripto):
     inscriptos = Inscripto.objects.filter(disponible=True, tipo_inscripto=tipo_inscripto)
+    inscriptos = inscriptos.select_related('individuo', 'individuo__domicilio_actual', 'individuo__domicilio_actual__localidad')
     #Agregar buscador
     if request.method == "POST":
         form = SearchForm(request.POST)
         if form.is_valid():
             search = form.cleaned_data['search']
             inscriptos = inscriptos.filter(apellidos__icontains=search)
-    return render(request, 'lista_inscripciones.html', {
-        'inscriptos': inscriptos,
-        'has_table': True,
-    })
+    #Definimos template segun tipo
+    if tipo_inscripto == 'PS':
+        template = 'lista_inscripciones_salud.html'
+    elif tipo_inscripto == 'VS':
+        template = 'lista_inscripciones_social.html'
+    #Lanzamos template
+    return render(request, template, 
+        {
+            'inscriptos': inscriptos,
+            'has_table': True,
+        }
+    )
 
 @permission_required('operadores.menu_inscripciones')
 def ver_inscripto(request, inscripto_id=None):

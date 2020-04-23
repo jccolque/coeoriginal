@@ -1,0 +1,42 @@
+{% extends 'base_inscripciones.html' %}
+{% load static %}
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2>Listado de Voluntarios Sociales</h2>
+        </div>
+        <div class="row">
+        <div class="col-md-12">
+            <table class="listado" id="table">
+                <thead>
+                    <tr>
+                        <th>Numero de Documento</th>
+                        <th>Apellido</th>
+                        <th>Nombre</th>
+                        <th>Oficio</th>
+                        <th>Domicilio</th>
+                        <th>Telefono</th>
+                        <th>Email</th>
+                        <th>Fecha Inscripcion</th>
+                        <th>Ver Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for inscripto in inscriptos %}
+                        <tr>
+                            <td>{{inscripto.individuo.num_doc}}</td>
+                            <td>{{inscripto.oficio}}</td>
+                            <td>{{inscripto.individuo.apellidos}}</td>
+                            <td>{{inscripto.individuo.nombres}}</td>
+                            <td>{{inscripto.individuo.domicilio_actual}}</td>
+                            <td>{{inscripto.individuo.telefono}}</td>
+                            <td>{{inscripto.individuo.email}}</td>
+                            <td>{{inscripto.fecha}}</td>
+                            <td><a href="{% url 'inscripciones:ver_inscripto' inscripto_id=inscripto.id %}">Ver Resumen</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
