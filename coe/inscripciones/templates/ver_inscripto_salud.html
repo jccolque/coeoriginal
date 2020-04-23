@@ -9,23 +9,23 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-10 col-sm-offset-1">
-                        <h2><b>{{inscripto.apellidos}}, {{inscripto.nombres}}</b></h2>
+                        <h2><b>{{inscripto.individuo.apellidos}}, {{inscripto.individuo.nombres}}</b></h2>
                         <div class="col-sm-8">
                             <p>
-                                {{inscripto.get_tipo_doc_display}} {{inscripto.num_doc}}
+                                {{inscripto.individuo.get_tipo_doc_display}} {{inscripto.individuo.num_doc}}
                                 {% if inscripto.disponible %}
                                     <b>- Disponible</b>
                                 {% endif %}
                             </p>
-                            <p>Fecha de Nacimiento: {{inscripto.fecha_nacimiento}}</p>
+                            <p>Fecha de Nacimiento: {{inscripto.individuo.fecha_nacimiento}}</p>
                             <p>Profesion: {{inscripto.profesion}}</p>
                             <p>Matricula: {{inscripto.matricula}}</p>
-                            <p>Domicilio: {{inscripto.domicilio}}, {{inscripto.localidad}}</p>
+                            <p>Domicilio: {{inscripto.individuo.domicilio_actual}}</p>
                             <hr>
                             <p><b>Contacto:</b></p>
-                            <p>Telefono: {{inscripto.telefono}}</p>
+                            <p>Telefono: {{inscripto.individuo.telefono}}</p>
                             <p>
-                                Email: {{inscripto.email}}
+                                Email: {{inscripto.individuo.email}}
                                 {% if inscripto.valido %}
                                     <img class="icons" src="/static/img/icons/check.png" alt="Activar">
                                 {% endif %}

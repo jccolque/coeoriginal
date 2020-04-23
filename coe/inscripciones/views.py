@@ -140,6 +140,7 @@ def menu(request):
 def lista_voluntarios(request, tipo_inscripto):
     inscriptos = Inscripto.objects.filter(disponible=True, tipo_inscripto=tipo_inscripto)
     inscriptos = inscriptos.select_related('individuo', 'individuo__domicilio_actual', 'individuo__domicilio_actual__localidad')
+    inscriptos = inscriptos.distinct()
     #Agregar buscador
     if request.method == "POST":
         form = SearchForm(request.POST)
