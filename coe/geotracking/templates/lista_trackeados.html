@@ -19,7 +19,8 @@
                         <th>Ubicacion Actual</th>
                         <th>Situacion</th>
                         <th>Ultima Posicion Enviada</th>
-                        <th>Ultima Alerta</ht>
+                        <th>Ultima Alerta</th>
+                        <th>Operadores</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -38,6 +39,11 @@
                                     {% endwith %}
                                 </td>
                                 <td>{{ultima_alerta.fecha|date:"d/m H:i"}}: {{ultima_alerta.get_alerta_display}}</td>
+                                <td>
+                                    {% for geoperador in individuo.geoperadores.all %}
+                                        <a class="nolink" href="{% url 'geotracking:ver_geopanel' geoperador_id=geoperador.id %}">{{geoperador}}</a><br>
+                                    {% endfor %}
+                                </td>
                                 <td>
                                     <a href="{% url 'geotracking:ver_tracking' individuo_id=individuo.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/tracking.png' %}">

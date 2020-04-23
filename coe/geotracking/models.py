@@ -27,7 +27,7 @@ class GeoPosicion(models.Model):
 
 class GeOperador(models.Model):
     operador = models.OneToOneField(Operador, on_delete=models.CASCADE, related_name="geoperador")
-    controlados = models.ManyToManyField(Individuo, related_name='geoperador')
+    controlados = models.ManyToManyField(Individuo, related_name='geoperadores')
     def __str__(self):
         return str(self.operador.nombres) + ' ' + str(self.operador.apellidos)
     def controlados_actuales(self):

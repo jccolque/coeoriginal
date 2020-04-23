@@ -65,7 +65,7 @@ def panel_geoperador(request, geoperador_id=None):
         })
     #Buscamos Alertas
     alertas = GeoPosicion.objects.exclude(alerta='SA').filter(procesada=False)
-    alertas = alertas.filter(individuo__geoperador=geoperador)
+    alertas = alertas.filter(individuo__geoperadores=geoperador)
     #Optimizamos
     alertas = alertas.select_related(
         'individuo', 'individuo__situacion_actual',
@@ -173,7 +173,7 @@ def lista_trackeados(request):
     individuos = Individuo.objects.filter(id__in=geopos).select_related('situacion_actual', 'domicilio_actual')
     #Optimizamos
     individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'situacion_actual')
-    individuos = individuos.prefetch_related('geoposiciones')
+    individuos = individuos.prefetch_related('geoposiciones', 'geoperadores')
     return render(request, "lista_trackeados.html", {
         'individuos': individuos,
         'has_table': True,

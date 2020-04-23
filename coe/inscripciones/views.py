@@ -33,7 +33,7 @@ def inscripcion_salud(request):
             individuo = actualizar_individuo(form)
             #Armamos la inscripcion:
             inscripto = Inscripto()
-            inscripto.tipo = 'PS'
+            inscripto.tipo_inscripto = 'PS'
             inscripto.individuo = individuo
             inscripto.profesion = form.cleaned_data['profesion']
             inscripto.matricula = form.cleaned_data['matricula']
@@ -88,7 +88,7 @@ def inscripcion_social(request):
             dict_tareas = {t.id:t for t in Tarea.objects.all()}
             #Armamos la inscripcion:
             inscripto = Inscripto()
-            inscripto.tipo = 'VS'
+            inscripto.tipo_inscripto = 'VS'
             inscripto.individuo = individuo
             inscripto.oficio = form.cleaned_data['oficio']
             inscripto.archivo_dni = form.cleaned_data['archivo_dni']
