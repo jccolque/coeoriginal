@@ -38,7 +38,10 @@ class Inscripto(models.Model):
     valido = models.BooleanField(default=False)
     disponible = models.BooleanField(default=True)
     def __str__(self):
-        return self.apellidos + ', ' + self.nombres
+        try:
+            return self.individuo.apellidos + ', ' + self.individuo.nombres
+        except:
+            return "Sin Individuo"
     def as_dict(self):
         return {
             'id': self.id,

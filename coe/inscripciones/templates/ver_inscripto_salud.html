@@ -13,9 +13,9 @@
                         <div class="col-sm-8">
                             <p>
                                 {{inscripto.get_tipo_doc_display}} {{inscripto.num_doc}}
-                                    {% if inscripto.disponible %}
-                                        <b>- Disponible</b>
-                                    {% endif %}
+                                {% if inscripto.disponible %}
+                                    <b>- Disponible</b>
+                                {% endif %}
                             </p>
                             <p>Fecha de Nacimiento: {{inscripto.fecha_nacimiento}}</p>
                             <p>Profesion: {{inscripto.profesion}}</p>

@@ -15,6 +15,7 @@
                         <th>Nombre</th>
                         <th>Localidad</th>
                         <th>Telefono</th>
+                        <th>Email</th>
                         <th>Fecha Inscripcion</th>
                         <th>Ver Detalle</th>
                     </tr>
@@ -22,11 +23,12 @@
                 <tbody>
                     {% for inscripto in inscriptos %}
                         <tr>
-                            <td>{{inscripto.get_profesion_display}}</td>
-                            <td>{{inscripto.apellidos}}</td>
-                            <td>{{inscripto.nombres}}</td>
-                            <td>{{inscripto.localidad}}</td>
-                            <td>{{inscripto.telefono}}</td>
+                            <td>{{inscripto.get_profesion_display}}{{inscripto.oficio}}</td>
+                            <td>{{inscripto.individuo.apellidos}}</td>
+                            <td>{{inscripto.individuo.nombres}}</td>
+                            <td>{{inscripto.individuo.domicilio_actual.localidad}}</td>
+                            <td>{{inscripto.individuo.telefono}}</td>
+                            <td>{{inscripto.individuo.email}}</td>
                             <td>{{inscripto.fecha}}</td>
                             <td><a href="{% url 'inscripciones:ver_inscripto' inscripto_id=inscripto.id %}">Ver Resumen</a></td>
                         </tr>

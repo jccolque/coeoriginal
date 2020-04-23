@@ -150,7 +150,10 @@ def lista_voluntarios(request, tipo_inscripto):
 @permission_required('operadores.menu_inscripciones')
 def ver_inscripto(request, inscripto_id=None):
     inscripto = Inscripto.objects.get(pk=inscripto_id)
-    return render(request, 'ver_inscripto.html', {'inscripto': inscripto, })
+    if inscripto.tipo_inscripto == 'PS':
+        return render(request, 'ver_inscripto_salud.html', {'inscripto': inscripto, })
+    elif inscripto.tipo_inscripto == 'VS':
+        return render(request, 'ver_inscripto_social.html', {'inscripto': inscripto, })
 
 @permission_required('operadores.menu_inscripciones')
 def download_inscriptos(request):
