@@ -243,7 +243,7 @@ def AppConfig(request):
                 },
                 "fields_response": 
                 {
-                    "accion": "salvoconducto",
+                    "accion": "control_salvoconducto",
                     "realizado": "bool",
                     "tipo_permiso": "str: Descripcion del permiso",
                     "dni_individuo": "str",

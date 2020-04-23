@@ -112,7 +112,7 @@
                                     <th>Cuerpo</th>
                                     <th>Operador</th>
                                 </tr>
-                                {% for email in ingreso.emails_enviados %}
+                                {% for email in ingreso.emails_enviados.all %}
                                     <tr>
                                         <td>{{email.fecha}}</th>
                                         <td>{{email.asunto}}</th>

@@ -51,7 +51,7 @@ class IngresoProvincia(models.Model):
     modelo = models.CharField('Modelo del Vehiculo', max_length=200)
     patente = models.CharField('Identificacion Patente/Codigo', max_length=200)
     #Interno
-    token = models.CharField('Token', max_length=35, default=token_ingreso, unique=True)
+    token = models.CharField('Token', max_length=50, default=token_ingreso, unique=True)
     fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
     estado = models.CharField('Estado', choices=ESTADO_INGRESO, max_length=1, default='C')
     qrpath = models.CharField('qrpath', max_length=100, null=True, blank=True)
