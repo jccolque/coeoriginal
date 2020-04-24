@@ -1,10 +1,12 @@
 #Imports Python
-from datetime import date, datetime
+from datetime import date, datetime, time
 
 #Definimos constantes
 LAST_DATE = date(9999, 12, 30)
-LAST_DATETIME = datetime(9999,12,30,23,59)
-MAX_PASAJES = 46
+LAST_DATETIME = datetime(9999, 12, 30, 23, 59)
+#Horarios de Actividad
+TIME_INICIO = time(8, 0, 0)
+TIME_FIN = time(20, 0, 0)
 #Faltantes
 NOMAIL = 'sinemail@nomail.com'
 NODOM = 'SINDOMICILIO'

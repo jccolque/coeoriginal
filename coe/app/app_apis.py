@@ -21,7 +21,8 @@ from georef.models import Localidad
 from informacion.models import Individuo, Domicilio
 from informacion.models import Atributo, Sintoma, Situacion, Seguimiento
 from geotracking.models import GeoPosicion
-from geotracking.geofence import controlar_distancia, control_sin_movimiento, es_local
+from geotracking.geofence import controlar_distancia, control_movimiento, es_local
+from permisos.functions import horario_activo
 from permisos.functions import buscar_permiso, pedir_permiso, definir_fechas, json_permiso
 from permisos.choices import TIPO_PERMISO
 from app.models import DenunciaAnonima
@@ -572,12 +573,13 @@ def tracking(request):
             int(data["hora"][0:2]),
             int(data["hora"][2:4]),
         )
-        #Chequeamos distancia:
+        #Realizamos controles
+        if horario_activo():#Si no es hora de dormir
+            geopos = control_movimiento(geopos)
+        #Que no se aleje de lo permitido
         geopos = controlar_distancia(geopos)
-        geopos = control_sin_movimiento(geopos)
         #Guardamos siempre por ahora:
         geopos.save()
-        #Realizamos controles avanzados
         #Controlamos posicion:
         return JsonResponse(
             {

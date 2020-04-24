@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.http import JsonResponse
 #Imports Extras
 #Imports del proyecto
-from coe.constantes import LAST_DATETIME
+from coe.constantes import LAST_DATETIME, TIME_INICIO, TIME_FIN
 from informacion.models import Individuo
 #Imports de la app
 from .models import Permiso
@@ -119,3 +119,8 @@ def json_permiso(permiso, vista):
             },
             safe=False
         )
+
+def horario_activo():
+    ahora = timezone.now().time()
+    if ahora > TIME_INICIO and  ahora < TIME_FIN:
+        return True

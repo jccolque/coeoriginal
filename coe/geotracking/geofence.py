@@ -24,24 +24,43 @@ def obtener_trackeados():
 def obtener_base(num_doc):
     geopos_bases = cache.get("geopos_bases")
     #Si no tenemos la cache, la generamos de CERO
-    if not geopos_bases:
-        geopos_bases = GeoPosicion.objects.select_related('individuo', 'individuo__appdata')
+    if not geopos_bases:#Creamos la cache completa de bases si no existe
+        #Traemos solo los que siguen bajo seguimiento
+        individuos = obtener_trackeados()
+        geopos_bases = GeoPosicion.objects.filter(individuo__in=individuos)
         geopos_bases = geopos_bases.filter(tipo='PC')
-        geopos_bases = {g.individuo.num_doc: g for g in geopos_bases}
+        #Optimizamos
+        geopos_bases = geopos_bases.select_related('individuo', 'individuo__appdata')
+        #Lo transformamos en diccionario
+        geopos_bases = {g.individuo.num_doc:g for g in geopos_bases}
+        #Seteamos cache
         cache.set("geopos_bases", geopos_bases)
+    #Nos aseguramos de que este este actualizado
+    if num_doc not in geopos_bases or not geopos_bases[num_doc]:
+        geopos_bases[num_doc] = GeoPosicion.objects.filter(individuo__num_doc=num_doc, tipo='PC').last()
+        cache.set("geopos_bases", geopos_bases)#Agregamos la busqueda
     #Ahora buscamos el de este:
-    try:
-        return geopos_bases[num_doc]
-    except KeyError:
-        gps = GeoPosicion.objects.select_related('individuo', 'individuo__appdata')
-        #No tiene, hay que generar una nueva:
-        try:
-            gps = gps.get(individuo__num_doc=num_doc, tipo='PC')
-            geopos_bases[num_doc] = gps
-        except GeoPosicion.DoesNotExist:#Si no encontramos buscamos otra
-            gps = None
-        #Devolvemos
-    return gps
+    return geopos_bases[num_doc]
+
+def obtener_repeticiones(geopos):
+    geopos_movs = cache.get("geopos_movs")
+    #Si no existe cache la iniciamos
+    if not geopos_movs:
+        geopos_movs = {}
+    #Si no tenemos la cache, la generamos de CERO
+    individuo = geopos.individuo
+    if not individuo.num_doc in geopos_movs:
+        geopos_movs[individuo.num_doc] = [geopos.latitud, geopos.longitud, 0]
+    else:
+        movs = geopos_movs[individuo.num_doc]
+        if geopos.latitud == movs[0] and  geopos.longitud == movs[1]:
+            geopos_movs[individuo.num_doc][2] += 1
+        else:#Si cambio reseteamos
+            geopos_movs[individuo.num_doc] = [geopos.latitud, geopos.longitud, 0]
+    #Guardamos los cambios
+    cache.set("geopos_movs", geopos_movs)
+    #Devolvemos
+    return geopos_movs[individuo.num_doc][2]
 
 def renovar_base(nueva_geopos):
     geopos_bases = cache.get("geopos_bases")
@@ -76,14 +95,18 @@ def controlar_distancia(nueva_geopos):
         nueva_geopos.alerta = 'SC'
     return nueva_geopos
 
-def control_sin_movimiento(nueva_geopos):
-    #Chequeamos que se haya movido
-    #Evitamos control a la hora de dormir
-    return nueva_geopos
-
 def es_local(geopos):
     #Calculamos diferencia
     geodesic = Geodesic.WGS84.Inverse(CENTRO_LATITUD, CENTRO_LONGITUD, geopos.latitud, geopos.longitud)
     distancia = geodesic['s12']# en metros
     if distancia < DISTANCIA_MAXIMA:#Si esta dentro del radio aceptable
         return True
+
+def control_movimiento(nueva_geopos):
+    cant = obtener_repeticiones(nueva_geopos)
+    #Chequeamos que se haya movido
+    if cant > 6:#Mas de una hora sin mover el celular
+        nueva_geopos.alerta = 'SM'
+        nueva_geopos.aclaracion = 'Lleva ' + str(cant * 10) + 'mins sin registrar movimientos.'
+    #Evitamos control a la hora de dormir
+    return nueva_geopos
