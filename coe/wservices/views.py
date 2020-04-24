@@ -13,6 +13,7 @@ from georef.models import Localidad, Barrio
 from informacion.choices import TIPO_ESTADO, TIPO_CONDUCTA
 from informacion.models import Individuo, Situacion
 from permisos.choices import TIPO_PERMISO
+from app.choices import TIPO_DENUNCIA
 
 # Create your views here.
 @staff_member_required
@@ -94,6 +95,14 @@ def tipo_permiso(request):
     return JsonResponse(
         {
             "permisos": [{"id":tipo[0],"descripcion":tipo[1]} for tipo in TIPO_PERMISO if tipo[0] != 'P'],
+        },
+        safe=False,
+    )
+
+def tipo_denuncia(request):
+    return JsonResponse(
+        {
+            "denuncias": [{"id":tipo[0],"descripcion":tipo[1]} for tipo in TIPO_DENUNCIA],
         },
         safe=False,
     )

@@ -20,6 +20,7 @@ urlpatterns = [
     path('salvoconducto', app_apis.pedir_salvoconducto, name='pedir_salvoconducto'),
     path('get/salvoconducto', app_apis.ver_salvoconducto, name='ver_salvoconducto'),
     path('control/salvoconducto', app_apis.control_salvoconducto, name='control_salvoconducto'),
+    path('denuncia', app_apis.denuncia_anonima, name='denuncia_anonima'),
     path('get/notificacion', app_apis.notificacion, name='notificacion'),
     #Testing
     path('send/notificacion', views.enviar_notificacion, name='enviar_notificacion'),

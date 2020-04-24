@@ -16,3 +16,11 @@ TIPO_ICONO = (
     ('W', 'Warning'),
     ('C', 'Critico'),
 )
+
+TIPO_DENUNCIA = (
+    ('NC', 'No respeta la cuarentena'),
+    ('NF', 'Negocio en Falta'),
+    ('PC', 'No respeta Precios Maximos'),
+    ('SB', 'Sin Barbijo en Via Publica'),
+    ('RM', 'Reunion Ilegal de Varios individuos'),
+)

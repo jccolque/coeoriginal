@@ -24,6 +24,7 @@ from geotracking.models import GeoPosicion
 from geotracking.geofence import controlar_distancia, control_sin_movimiento, es_local
 from permisos.functions import buscar_permiso, pedir_permiso, definir_fechas, json_permiso
 from permisos.choices import TIPO_PERMISO
+from app.models import DenunciaAnonima
 #Imports de la app
 from .models import AppData
 from .tokens import TokenGenerator
@@ -403,7 +404,6 @@ def foto_perfil(request):
             safe=False
         )
     except Exception as e:
-        
         return json_error(e, "foto_perfil", logger, data)
 
 @csrf_exempt
@@ -715,6 +715,35 @@ def control_salvoconducto(request):
             pass
         e = 'El individuo no cuenta con un permiso activo.'
         return json_error(e, "control_salvoconducto", logger, data)
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def denuncia_anonima(request):
+    try:
+        data = None
+        logger.info("Denuncia Anonima: " + str(request.POST))
+        #Obtenemos los datos y guardamos
+        denuncia = DenunciaAnonima()
+        denuncia.tipo = request.POST['tipo_denuncia']
+        denuncia.descripcion = request.POST['descripcion']
+        denuncia.latitud = request.POST['latitud']
+        denuncia.longitud = request.POST['longitud']
+        #Capturamos la imagen
+        image_data = request.FILES['imagen'].read()
+        imagen_nombre = denuncia.tipo + '-' + str(timezone.now().timestamp()) + '.jpg'
+        denuncia.imagen = ContentFile(image_data, imagen_nombre)
+        #Guardamos
+        denuncia.save()
+        #Terminamos proceso
+        return JsonResponse(
+            {
+                "accion":"denuncia_anonima",
+                "realizado": True,
+            },
+            safe=False
+        )
+    except Exception as e:
+        return json_error(e, "denuncia_anonima", logger, data)
 
 @csrf_exempt
 @require_http_methods(["POST"])

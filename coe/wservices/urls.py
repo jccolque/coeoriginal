@@ -20,4 +20,5 @@ urlpatterns = [
     path('tipo_estado', views.tipo_estado, name='tipo_estado'),
     path('tipo_conducta', views.tipo_conducta, name='tipo_conducta'),
     path('tipo_permiso', views.tipo_permiso, name='tipo_permiso'),
+    path('tipo_denuncia', views.tipo_denuncia, name='tipo_denuncia'),
 ]

@@ -8,6 +8,7 @@ from informacion.models import Individuo
 #Imports de la app
 from .choices import TIPO_TRIAJE
 from .choices import TIPO_ACCION_NOTIFICACION
+from .choices import  TIPO_DENUNCIA
 
 # Create your models here.
 class AppData(models.Model):
@@ -30,6 +31,16 @@ class AppNotificacion(models.Model):
     mensaje = models.CharField('mensaje', max_length=200, default='', blank=False)
     accion = models.CharField('accion', choices=TIPO_ACCION_NOTIFICACION, max_length=2, default='SM')
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+
+class DenunciaAnonima(models.Model):
+    tipo = models.CharField('Tipo Denuncia', max_length=2, choices=TIPO_DENUNCIA, default='SC')
+    descripcion = models.TextField('Descripcion')
+    imagen = models.FileField('Imagen', upload_to='denuncias/')
+    latitud = models.DecimalField('latitud', max_digits=12, decimal_places=10)
+    longitud = models.DecimalField('longitud', max_digits=12, decimal_places=10)
+    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    def __str__(self):
+        return self.get_tipo_display() + ': ' + self.descripcion
 
 #Señales
 from .signals import enviar_push
