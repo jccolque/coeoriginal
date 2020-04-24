@@ -23,6 +23,7 @@
                             <thead>
                                 <tr>
                                     <th>Usuario</th>
+                                    <th>Num Documento</th>
                                     <th>Operador</th>
                                     <th>Grupo</th>
                                     <th>Nivel Autorizacion</th>
@@ -37,6 +38,7 @@
                                     <tr class="fila_usuario">
                                         
                                         <td>{{operador.usuario.username}}</td>
+                                        <td>{{operador.num_doc}}</td>
                                         <td>{{operador.apellidos}}, {{operador.nombres}}</td>
                                         <td>{{operador.subcomite}}</td>
                                         <td>{{operador.get_nivel_acceso_display}}</td>

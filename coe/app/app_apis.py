@@ -455,12 +455,12 @@ def encuesta(request):
         elif individuo.situacion_actual.conducta in ('A', 'B'):
             situacion.save()
         #Geoposicion
-        if data["latitud"] and data["longitud"]:
+        if float(data["latitud"]) and float(data["longitud"]):
             geopos = GeoPosicion()
             geopos.individuo = individuo
             geopos.tipo = 'AD'
-            geopos.latitud = data["latitud"]
-            geopos.longitud = data["longitud"]
+            geopos.latitud = float(data["latitud"])
+            geopos.longitud = float(data["longitud"])
             geopos.aclaracion = "AUTODIAGNOSTICO"
             if es_local(geopos):
                 geopos.save()
@@ -495,7 +495,7 @@ def start_tracking(request):
             e = "No se pudo validar Operador"
             return json_error(e, "start_tracking", logger, data)
         #Guardamos la geoposicion BASE (Eliminamos todas las anteriores)
-        if data["latitud"] == 0:
+        if float(data["latitud"]) == 0:
             return JsonResponse(
             {
                 "accion":"start_tracking",
@@ -509,8 +509,8 @@ def start_tracking(request):
         geopos = GeoPosicion()
         geopos.individuo = individuo
         geopos.tipo = 'ST'
-        geopos.latitud = data["latitud"]
-        geopos.longitud = data["longitud"]
+        geopos.latitud = float(data["latitud"])
+        geopos.longitud = float(data["longitud"])
         geopos.aclaracion = "Iniciado por: " + str(operador)
         geopos.operador = operador
         if es_local(geopos):
@@ -562,8 +562,8 @@ def tracking(request):
         geopos = GeoPosicion()
         geopos.individuo = individuo
         geopos.tipo = 'RG'
-        geopos.latitud = data["latitud"]
-        geopos.longitud = data["longitud"]
+        geopos.latitud = float(data["latitud"])
+        geopos.longitud = float(data["longitud"])
         geopos.aclaracion = "TRACKING"
         geopos.fecha = timezone.datetime(
             int(data["fecha"][0:4]),
@@ -698,8 +698,8 @@ def control_salvoconducto(request):
         geopos = GeoPosicion()
         geopos.individuo = individuo
         geopos.tipo = "CG"
-        geopos.latitud = data["latitud"]
-        geopos.longitud = data["longitud"]
+        geopos.latitud = float(data["latitud"])
+        geopos.longitud = float(data["longitud"])
         geopos.aclaracion = "Control de Salvoconducto"
         geopos.operador = operador
         geopos.save()
@@ -726,8 +726,8 @@ def denuncia_anonima(request):
         denuncia = DenunciaAnonima()
         denuncia.tipo = request.POST['tipo_denuncia']
         denuncia.descripcion = request.POST['descripcion']
-        denuncia.latitud = request.POST['latitud']
-        denuncia.longitud = request.POST['longitud']
+        denuncia.latitud = float(request.POST['latitud'])
+        denuncia.longitud = float(request.POST['longitud'])
         #Capturamos la imagen
         image_data = request.FILES['imagen'].read()
         imagen_nombre = denuncia.tipo + '-' + str(timezone.now().timestamp()) + '.jpg'
