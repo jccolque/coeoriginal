@@ -13,7 +13,10 @@ urlpatterns = [
     path('voluntario/social', views.inscripcion_social, name='inscripcion_social'),
     #Administracion
     path('', views.menu, name='menu'),
+    path('lista/tareas', views.lista_tareas, name='lista_tareas'),
     path('lista/<str:tipo_inscripto>/', views.lista_voluntarios, name='lista_voluntarios'),
+
+    path('lista/tarea/<str:tarea_id>/', views.lista_por_tarea, name='lista_por_tarea'),
 
     path('ver/<int:inscripto_id>', views.ver_inscripto, name='ver_inscripto'),
     path('download', views.download_inscriptos, name='download_inscriptos'),

@@ -22,7 +22,11 @@ def actualizar_individuo(form):
     domicilio.calle = form.cleaned_data['dom_calle']
     domicilio.numero = form.cleaned_data['dom_numero']
     domicilio.aclaracion = 'Inscripcion:' + form.cleaned_data['dom_aclaracion']
-    domicilio.save()
+    #Si tiene un domicilio actual no permitimos que lo cambie
+    if individuo_db.domicilio_actual:
+        Domicilio.objects.bulk_create([domicilio])
+    else:
+        domicilio.save()
     #Al terminar devolvemos individuo
     return individuo_db
    

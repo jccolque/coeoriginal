@@ -161,12 +161,31 @@ def lista_voluntarios(request, tipo_inscripto):
     )
 
 @permission_required('operadores.menu_inscripciones')
+def lista_por_tarea(request, tarea_id):
+    inscriptos = Inscripcion.objects.filter(disponible=True, elecciones__tarea__id=tarea_id)
+    inscriptos = inscriptos.select_related('individuo', 'individuo__domicilio_actual', 'individuo__domicilio_actual__localidad')
+    inscriptos = inscriptos.distinct()
+    return render(request, 'lista_inscripciones_social.html', 
+        {
+            'inscriptos': inscriptos,
+            'has_table': True,
+        }
+    )
+
+@permission_required('operadores.menu_inscripciones')
 def ver_inscripto(request, inscripto_id=None):
     inscripto = Inscripcion.objects.get(pk=inscripto_id)
     if inscripto.tipo_inscripto == 'PS':
         return render(request, 'ver_inscripto_salud.html', {'inscripto': inscripto, })
     elif inscripto.tipo_inscripto == 'VS':
         return render(request, 'ver_inscripto_social.html', {'inscripto': inscripto, })
+
+@permission_required('operadores.menu_inscripciones')
+def lista_tareas(request):
+    areas = Area.objects.all()
+    return render(request, "lista_tareas.html", {
+        'areas': areas,
+    })
 
 @permission_required('operadores.menu_inscripciones')
 def download_inscriptos(request):
