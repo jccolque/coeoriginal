@@ -10,7 +10,7 @@ from core.forms import JustificarForm
 from informacion.models import Individuo
 #imports de la app
 from .models import GeoPosicion, GeOperador
-from .geofence import renovar_base
+from .geofence import obtener_trackeados, renovar_base
 from .forms import ConfigGeoForm, NuevoGeoOperador, NuevoIndividuo, AsignarGeOperador
 
 #Administrar
@@ -168,12 +168,7 @@ def lista_sin_geoperador(request):
 
 @permission_required('operadores.geotracking_admin')
 def lista_trackeados(request):
-    geopos = GeoPosicion.objects.filter(tipo="ST").values_list("individuo__id", flat=True).distinct()
-    #Obtenemos individuos de interes
-    individuos = Individuo.objects.filter(id__in=geopos).select_related('situacion_actual', 'domicilio_actual')
-    #Optimizamos
-    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'situacion_actual')
-    individuos = individuos.prefetch_related('geoposiciones', 'geoperadores')
+    individuos = obtener_trackeados()
     return render(request, "lista_trackeados.html", {
         'individuos': individuos,
         'has_table': True,

@@ -5,11 +5,22 @@ from django.core.cache import cache
 from geographiclib.geodesic import Geodesic
 #Imports del proyecto
 from coe.constantes import DISTANCIA_MAXIMA, CENTRO_LATITUD, CENTRO_LONGITUD
-from informacion.models import Seguimiento
+from informacion.models import Individuo, Seguimiento
 #Imports de la app
 from .models import GeoPosicion
 
 #Definimos nuestras funciones:
+def obtener_trackeados():
+    geopos = GeoPosicion.objects.filter(tipo="ST").values_list("individuo__id", flat=True).distinct()
+    #Obtenemos individuos de interes
+    individuos = Individuo.objects.filter(id__in=geopos).select_related('situacion_actual', 'domicilio_actual')
+    #Optimizamos
+    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'situacion_actual')
+    individuos = individuos.prefetch_related('geoposiciones', 'geoperadores')
+    #Eliminamos los que terminaron el tracking:
+    individuos = individuos.exclude(seguimientos__tipo='FT')
+    return individuos
+
 def obtener_base(num_doc):
     geopos_bases = cache.get("geopos_bases")
     #Si no tenemos la cache, la generamos de CERO
