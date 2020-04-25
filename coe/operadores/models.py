@@ -101,6 +101,8 @@ class Operador(models.Model):
             ("menu_inscripciones", "Puede Acceder al menu de Inscripciones"),
             #Reportes
             ("reportes", "Acceso a todos los reportes del sistema"),
+            #Wservices
+            ("wservices", "Acceso a todos los reportes del sistema"),
             #Especiales
             ("administrador", "Puede administrar Usuarios."),
         )

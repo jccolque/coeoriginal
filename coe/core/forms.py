@@ -9,6 +9,9 @@ from dal import autocomplete
 from tinymce.widgets import TinyMCE
 #Imports del proyecto
 from coe.settings import SECRET_KEY
+from core.widgets import XDSoftDatePickerInput, XDSoftDateTimePickerInput
+#Imports de la app
+from .models import Aclaracion
 
 #Definimos nuestros formularios
 class SearchForm(forms.Form):
@@ -90,3 +93,12 @@ class EmailForm(forms.Form):
 
 class JustificarForm(forms.Form):
     justificacion = forms.CharField(widget=forms.Textarea())
+
+class AclaracionForm(forms.Form):
+    class Meta:
+        model = Aclaracion
+        fields= '__all__'
+        exclude = ('operador', )
+        widgets = {
+            'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
+        }

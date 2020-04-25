@@ -46,8 +46,8 @@
                                 {% endif %}
                             </div>
                             <div class="col-sm-4">
-                                <div class="bordeado">
-                                    {% if individuo.voluntariados.exists %}
+                                {% if individuo.voluntariados.exists %}
+                                    <div class="bordeado">
                                         <h4><b>Voluntario:</b></h4>
                                         <ul style="padding:0;">
                                             {% for inscripcion in individuo.voluntariados.all %}
@@ -62,8 +62,8 @@
                                                 {% endif %}
                                             {% endfor %}
                                         </ul>
-                                    {% endif %}
-                                </div>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                         <hr>

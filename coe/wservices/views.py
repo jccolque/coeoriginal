@@ -6,42 +6,15 @@ from django.utils import timezone
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
-from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
-from core.decoradores import superuser_required
 from georef.models import Localidad, Barrio
 from informacion.choices import TIPO_ESTADO, TIPO_CONDUCTA
 from informacion.models import Individuo, Situacion
 from permisos.choices import TIPO_PERMISO
-from app.choices import TIPO_DENUNCIA
+from denuncias.choices import TIPO_DENUNCIA
 
-# Create your views here.
-@staff_member_required
-def menu(request):
-    return render(request, 'menu_wservices.html', {})
-
-#Web Servis generico para todas las apps del sistema
-#Si el modelo tiene as_dict, aparece.
-@superuser_required
-def ws(request, nombre_app=None, nombre_modelo=None):
-    if nombre_app and nombre_modelo:
-        if apps.all_models[nombre_app][nombre_modelo.lower()]:
-            modelo = apps.all_models[nombre_app][nombre_modelo.lower()]
-            if hasattr(modelo, 'as_dict'):
-                datos = modelo.objects.all()
-                datos = [d.as_dict() for d in datos]
-                return HttpResponse(json.dumps({nombre_modelo+'s': datos, "cant_registros": len(datos),}), content_type='application/json')
-
-    apps_listas = {}
-    for app, models in apps.all_models.items():
-        for model in models.values():
-            if hasattr(model, 'as_dict'):
-                if app in apps_listas:
-                    apps_listas[app].append(model._meta.model_name)
-                else:
-                    apps_listas[app] = [model._meta.model_name, ]
-    return render(request, 'ws.html', {"apps_listas": apps_listas,})
-
+#Publicos
 #Creamos nuestros webservices
 def ws_situaciones(request, fecha=None):
     #Agregar por localidad
@@ -124,7 +97,35 @@ def ws_barrios(request, localidad_id=None):
             "cant_registros": len(datos),
         }), content_type='application/json')
 
-@staff_member_required
+#Privados
+# Create your views here.
+@permission_required('operadores.wservices')
+def menu(request):
+    return render(request, 'menu_wservices.html', {})
+
+#Web Servis generico para todas las apps del sistema
+#Si el modelo tiene as_dict, aparece.
+@permission_required('operadores.wservices')
+def ws(request, nombre_app=None, nombre_modelo=None):
+    if nombre_app and nombre_modelo:
+        if apps.all_models[nombre_app][nombre_modelo.lower()]:
+            modelo = apps.all_models[nombre_app][nombre_modelo.lower()]
+            if hasattr(modelo, 'as_dict'):
+                datos = modelo.objects.all()
+                datos = [d.as_dict() for d in datos]
+                return HttpResponse(json.dumps({nombre_modelo+'s': datos, "cant_registros": len(datos),}), content_type='application/json')
+
+    apps_listas = {}
+    for app, models in apps.all_models.items():
+        for model in models.values():
+            if hasattr(model, 'as_dict'):
+                if app in apps_listas:
+                    apps_listas[app].append(model._meta.model_name)
+                else:
+                    apps_listas[app] = [model._meta.model_name, ]
+    return render(request, 'ws.html', {"apps_listas": apps_listas,})
+
+@permission_required('operadores.individuos')
 def csv_aislados(request, localidad_id=None):
     datos = []
     individuos = Individuo.objects.filter(situacion_actual__conducta__in=('D','E'))

@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'app.apps.AppConfigure',
     'geotracking.apps.GeotrackingConfig',
     'permisos.apps.PermisosConfig',
+    'denuncias.apps.DenunciasConfig',
     'actas.apps.ActasConfig',
     'documentos.apps.DocumentosConfig',
     'background.apps.BackgroundConfig',

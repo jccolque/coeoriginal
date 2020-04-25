@@ -1,6 +1,7 @@
 #Imports de python
 #Imports django
 from django.db import models
+from django.utils import timezone
 #Extra modules import
 from tinymce.models import HTMLField
 from auditlog.registry import auditlog
@@ -24,6 +25,12 @@ class Faq(models.Model):
             "pregunta": self.pregunta,
             "respuesta": self.respuesta,
         }
+
+class Aclaracion(models.Model):
+    modelo = models.CharField('Modelo', max_length=200)
+    descripcion = models.TextField('Descripcion')
+    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name='aclaraciones')
 
 #Auditoria
 auditlog.register(Faq)

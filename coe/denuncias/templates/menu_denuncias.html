@@ -1,0 +1,39 @@
+{% extends 'base_inventario.html' %}
+
+{% load seguridad_tags%}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">
+                    <h1>Menu Denuncias:</h1>
+                    <div class="col-md-8">
+                        <ul class="menu_botones">
+                            {% if perms.operadores.denuncias %}
+                                <li><a href="{% url 'denuncias:lista_denuncias' %}">Listado de Denuncias Activas</a></li>
+                                <hr>
+                                <li><a href="{% url 'denuncias:lista_filtro_estado' estado='RE'  %}">Denuncias Resueltas</a></li>
+                                <li><a href="{% url 'denuncias:lista_filtro_estado' estado='BA'  %}">Denuncias Eliminadas</a></li>
+                                <hr>
+                            {% endif %}
+
+                            {% if perms.operadores.reportes %}
+                                <li><a href="{% url 'denuncias:menu'  %}">Situacion de Denuncias</a></li>
+                                <li><a href="{% url 'denuncias:menu' %}">Mapa de Denuncias</a></li>
+                                <hr>
+                            {% endif %}
+
+                            {% if request.user.is_superuser %}
+                                <li><a href="{% url 'admin:index' %}">Opcion del Administrador</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        {% include 'users/info_user.html' %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}

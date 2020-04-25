@@ -47,6 +47,7 @@ urlpatterns = [
     path('informacion/', include('informacion.urls')),
     path('geotracking/', include('geotracking.urls')),
     path('permisos/', include('permisos.urls')),
+    path('denuncias/', include('denuncias.urls')),
     path('graficos/', include('graficos.urls')),
     path('documentos/', include('documentos.urls')),
     path('inscripciones/', include('inscripciones.urls')),

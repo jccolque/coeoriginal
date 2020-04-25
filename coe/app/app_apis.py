@@ -25,7 +25,7 @@ from geotracking.geofence import controlar_distancia, control_movimiento, es_loc
 from permisos.functions import horario_activo
 from permisos.functions import buscar_permiso, pedir_permiso, definir_fechas, json_permiso
 from permisos.choices import TIPO_PERMISO
-from app.models import DenunciaAnonima
+from denuncias.models import DenunciaAnonima
 #Imports de la app
 from .models import AppData
 from .tokens import TokenGenerator

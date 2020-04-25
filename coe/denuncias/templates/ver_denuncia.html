@@ -1,0 +1,53 @@
+{% extends 'base_informacion.html' %}
+
+{% load seguridad_tags%}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h2>{{denuncia.fecha|date:"d/m H:i"}} - {{denuncia.get_tipo_display}}</h2>
+                        <p><b>Estado:</b> {{denuncia.get_estado_display}}</p>
+                        <hr>
+                        {{denuncia.descripcion|safe}}
+                    </div>
+                    <div class="col-md-4">
+                        <ul class="menu_botones">
+                            <li><a href="{% url 'denuncias:evolucionar_denuncia' denuncia_id=denuncia.id %}">Evolucionar Denuncia</a></li>
+                            <li><a href="{% url 'denuncias:eliminar_denuncia' denuncia_id=denuncia.id %}">Eliminar Denuncia</a></li>
+                            <li><a href="{% url 'denuncias:lista_denuncias' %}">Volver al listado</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <img class="fotos" src="{{denuncia.imagen.url}}">
+                    </div>
+                    <div class="col-md-6">
+                        {% for aclaracion in denuncia.aclaraciones.all %}
+                            {% if forloop.first %}
+                                <h3>Registros:</h3>
+                                <table class="listado">
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Aclaracion</th>
+                                        <th>Operador</th>
+                                    </tr>
+                            {% endif %}
+                            <tr class="geo_aclaracion">
+                                <td>{{aclaracion.fecha|date:"d/m H:i"}}</td>
+                                <td>{{aclaracion.descripcion}}</td>
+                                <td>{{aclaracion.operador}}</td>
+                            </tr>
+                            {% if forloop.last %}
+                                </table>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}

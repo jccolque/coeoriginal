@@ -18,7 +18,7 @@ def geotrack_sin_actualizacion():
     individuos = obtener_trackeados()
     #Quitamos los que enviaron Posicion GPS en la ultima hora:
     limite = timezone.now() - timedelta(hours=1)
-    individuos = individuos.exclude(Q(geoposiciones__fecha__gt=limite, geoposiciones__tipo='RG'))
+    individuos = individuos.exclude(geoposiciones__in=GeoPosicion.objects.filter(fecha__gt=limite, tipo='RG'))
     #Quitamos los que ya fueron infomados
     #individuos = individuos.exclude(Q(geoposiciones__alerta='FG', geoposiciones__procesada=True))
     #Recorrer y alertar

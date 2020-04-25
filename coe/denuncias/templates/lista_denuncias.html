@@ -1,0 +1,38 @@
+{% extends 'base_inventario.html' %}
+{% load static %}
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2>Denuncias</h2>
+        </div>
+        <div class="row">
+        <div class="col-md-12">
+            <table class="listado" id="table">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Fecha</th>
+                        <th>Descripcion</th>
+                        <th>Estado</th>
+                        <th>Accion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for denuncia in denuncias %}
+                        <tr>
+                            <td>{{denuncia.get_tipo_display}}</td>
+                            <td>{{denuncia.fecha}}</td>
+                            <td>{{denuncia.descripcion}}</td>
+                            <td>{{denuncia.get_estado_display}}</td>
+                            <td><a href="{% url 'denuncias:ver_denuncia' denuncia_id=denuncia.id %}" target="_blank">(Ver Detalle)</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+
