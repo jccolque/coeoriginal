@@ -1,7 +1,6 @@
 #Imports de Python
 from datetime import timedelta
 #Imports django
-from django.db.models import Q
 from django.utils import timezone
 #Imports Extras
 from background_task import background
@@ -16,8 +15,8 @@ from .geofence import obtener_trackeados
 @background(schedule=1)
 def geotrack_sin_actualizacion():
     individuos = obtener_trackeados()
-    #Quitamos los que enviaron Posicion GPS en la ultima hora:
-    limite = timezone.now() - timedelta(hours=1)
+    #Quitamos los que enviaron Posicion GPS en las ultimas 2 horas:
+    limite = timezone.now() - timedelta(hours=2)
     individuos = individuos.exclude(geoposiciones__in=GeoPosicion.objects.filter(fecha__gt=limite, tipo='RG'))
     #Quitamos los que ya fueron infomados
     #individuos = individuos.exclude(Q(geoposiciones__alerta='FG', geoposiciones__procesada=True))
@@ -29,6 +28,13 @@ def geotrack_sin_actualizacion():
         horas = int((geopos.fecha - timezone.now()).seconds / 3600)
         geopos.aclaracion = "Lleva " + str(horas) + "hrs sin informar posicion."
         geopos.save()
+        #Enviamos pushnotification para que reactive el tracking
+        notif = AppNotificacion()
+        notif.appdata = individuo.appdata
+        notif.titulo = 'Falta de Seguimiento'
+        notif.mensaje = 'Hace mas de una hora que no recibimos su posicion.'
+        notif.accion = 'SL'
+        notif.save()#Al grabar el local, se envia automaticamente por firebase
 
 @background(schedule=1)
 def finalizar_geotracking():

@@ -85,6 +85,7 @@ TIPO_ATRIBUTO = (
     ('TE', 'Es Trabajador de Empresa Estrategica'),
     ('PD', 'Se encuentra Presos/Detenidos'),
     ('CE', 'Visito Pais de Riesgo/Contacto con Extranjeros'),
+    ('CP', 'Tiene Potestad de Controlar Permisos'),
 )
 
 TIPO_SINTOMA = (

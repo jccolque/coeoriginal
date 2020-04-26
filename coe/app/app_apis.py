@@ -23,7 +23,7 @@ from informacion.models import Atributo, Sintoma, Situacion, Seguimiento
 from geotracking.models import GeoPosicion
 from geotracking.geofence import controlar_distancia, control_movimiento, es_local
 from permisos.functions import horario_activo
-from permisos.functions import buscar_permiso, pedir_permiso, definir_fechas, json_permiso
+from permisos.functions import buscar_permiso, validar_permiso, json_permiso
 from permisos.choices import TIPO_PERMISO
 from denuncias.models import DenunciaAnonima
 #Imports de la app
@@ -613,7 +613,6 @@ def pedir_salvoconducto(request):
         
         #Trabajamos
         #Obtenemos datos del pedido de permiso:
-        permiso = data["tipo_permiso"]
         fecha_ideal = timezone.datetime(
             int(data["fecha_ideal"][0:4]),
             int(data["fecha_ideal"][4:6]),
@@ -623,15 +622,12 @@ def pedir_salvoconducto(request):
         )
         #Validamos si es factible:
         permiso = buscar_permiso(individuo)
-        permiso = pedir_permiso(individuo, data["tipo_permiso"], permiso)
+        if not permiso.pk:#Si no hay un permiso guardado:
+            permiso.tipo = data["tipo_permiso"]
+            permiso.begda = fecha_ideal
+            permiso = validar_permiso(individuo, permiso)
         #Si fue aprobado, Creamos Permiso
         if permiso.aprobar:#Variable temporal
-            permiso.individuo = individuo
-            permiso.tipo = data["tipo_permiso"]
-            permiso.localidad = individuo.domicilio_actual.localidad
-            permiso.aclaracion = "Temporal: " + permiso.get_tipo_display()
-            #Generamos las fechas ideales
-            permiso = definir_fechas(permiso, fecha_ideal)#Genera begda y endda
             permiso.save()
             #Si todo salio bien
             return json_permiso(permiso, "salvoconducto")

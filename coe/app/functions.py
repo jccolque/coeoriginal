@@ -1,4 +1,3 @@
-
 #Funciones basicas:
 def obtener_dni(data):
     if "dni" in data:

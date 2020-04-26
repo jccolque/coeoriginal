@@ -1,4 +1,5 @@
 #Imports de Python
+import math
 from datetime import timedelta
 #Imports Django
 from django.utils import timezone
@@ -11,19 +12,21 @@ from django.contrib.auth.decorators import permission_required
 #Imports extras
 #Imports del proyecto
 from coe.settings import SEND_MAIL
+from core.decoradores import superuser_required
 from core.forms import EmailForm
 from core.functions import date2str
 from operadores.functions import obtener_operador
 from informacion.models import Individuo
+from informacion.functions import actualizar_individuo
 from graficos.functions import obtener_grafico
 #imports de la app
 from .choices import TIPO_INGRESO, ESTADO_INGRESO
-from .models import Permiso, IngresoProvincia, Emails_Ingreso
+from .models import NivelRestriccion, Permiso, IngresoProvincia, Emails_Ingreso
+from .forms import NivelRestriccionForm
 from .forms import PermisoForm, BuscarPermiso, DatosForm, FotoForm
 from .forms import IngresoProvinciaForm, IngresanteForm, AprobarForm
 from .forms import DUTForm, PlanVueloForm
-from .functions import actualizar_individuo
-from .functions import buscar_permiso, pedir_permiso, definir_fechas
+from .functions import buscar_permiso, validar_permiso
 
 #Publico
 def buscar_permiso_web(request):
@@ -49,27 +52,24 @@ def pedir_permiso_web(request, individuo_id, num_doc):
             form = PermisoForm(request.POST, initial={'individuo': individuo, })
             if form.is_valid():
                 permiso = buscar_permiso(individuo)
-                if not permiso:
-                    permiso = form.save(commit=False)
+                if not permiso.pk:#Si el permiso aun no fue guardado:
+                    permiso = form.save(commit=False)#Vamos a procesar el requerimiento
                     permiso.individuo = individuo
-                    permiso.localidad = individuo.domicilio_actual.localidad
-                    permiso = pedir_permiso(individuo, permiso.tipo, permiso=permiso)
+                    permiso = validar_permiso(individuo, permiso)
                     if permiso.aprobar:
-                        permiso = definir_fechas(permiso, permiso.begda)
-                        if not permiso.pk:
-                            permiso.save()
-                            #Enviar email
-                            if SEND_MAIL:
-                                to_email = individuo.email
-                                #Preparamos el correo electronico
-                                mail_subject = 'Bienvenido al Sistema Centralizado COE!'
-                                message = render_to_string('emails/permiso_generado.html', {
-                                        'individuo': individuo,
-                                        'permiso': permiso,
-                                    })
-                                #Instanciamos el objeto mail con destinatario
-                                email = EmailMessage(mail_subject, message, to=[to_email])
-                                email.send()
+                        permiso.save()
+                        #Enviar email
+                        if SEND_MAIL:
+                            to_email = individuo.email
+                            #Preparamos el correo electronico
+                            mail_subject = 'Permiso Digital Aprobado'
+                            message = render_to_string('emails/permiso_generado.html', {
+                                    'individuo': individuo,
+                                    'permiso': permiso,
+                                })
+                            #Instanciamos el objeto mail con destinatario
+                            email = EmailMessage(mail_subject, message, to=[to_email])
+                            email.send()
                 return render(request, "ver_permiso.html", {'permiso': permiso, })  
         return render(request, "pedir_permiso.html", {'form': form, 'individuo': individuo, })
     except Individuo.DoesNotExist:
@@ -214,6 +214,41 @@ def ver_ingreso_aprobado(request, token):
 def menu_permisos(request):
     return render(request, 'menu_permisos.html', {})
 
+@superuser_required
+def situacion_restricciones(request):
+    niveles = NivelRestriccion.objects.all()
+    grosor = int(math.ceil(12 / niveles.count()))
+    return render(request, 'niveles_restriccion.html', {
+        'niveles': niveles,
+        'grosor': grosor,
+    })
+
+@superuser_required
+def mod_nivelrestriccion(request, nivel_id):
+    nivel = NivelRestriccion.objects.get(pk=nivel_id)
+    form = NivelRestriccionForm(instance=nivel)
+    if request.method == "POST":
+        form = NivelRestriccionForm(request.POST, instance=nivel)
+        if form.is_valid():
+            form.save()
+            return redirect('permisos:situacion_restricciones')
+    return render(request, "extras/generic_form.html", {'titulo': "Modificar nivel de Restriccion", 'form': form, 'boton': "Modificar", })
+
+@superuser_required
+def activar_nivel(request, nivel_id):
+    nivel = NivelRestriccion.objects.get(pk=nivel_id)
+    if request.method == "POST":
+        nivel.activa = True
+        nivel.save()
+        return redirect('permisos:situacion_restricciones')
+    return render(request, "extras/confirmar.html", {
+            'titulo': "Activar Nivel "+nivel.get_color_display(),
+            'message': "Esto Modificara todos los permisos Digitales Entregados.",
+            'has_form': True,
+        }
+    )
+
+#Permisos
 @permission_required('operadores.permisos')
 def lista_activos(request):
     permisos = Permiso.objects.filter(endda__gt=timezone.now())

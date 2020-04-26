@@ -26,6 +26,11 @@ urlpatterns = [
     #Administracion
     #Permisos
     path('', views.menu_permisos, name='menu_permisos'),
+    #Niveles de Restriccion
+    path('nivel/restricciones', views.situacion_restricciones, name='situacion_restricciones'),
+    path('mod/nivel/<int:nivel_id>', views.mod_nivelrestriccion, name='mod_nivelrestriccion'),
+    path('activar/nivel/<int:nivel_id>', views.activar_nivel, name='activar_nivel'),
+    #Listados
     path('lista/activos', views.lista_activos, name='lista_activos'),
     path('lista/vencidos', views.lista_vencidos, name='lista_vencidos'),
     path('ver/permiso/<int:permiso_id>/<int:individuo_id>', views.ver_permiso, name='ver_permiso'),

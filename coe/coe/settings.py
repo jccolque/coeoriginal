@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'taggit',
     'tinymce',
     'auditlog',
+    'multiselectfield',
     'nested_inline',
     'background_task',
     'debug_toolbar',

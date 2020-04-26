@@ -9,17 +9,30 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 from tinymce.models import HTMLField
 from auditlog.registry import auditlog
+from multiselectfield import MultiSelectField
 #Imports del proyecto
 from coe.settings import STATIC_ROOT, MEDIA_ROOT
 from georef.models import Provincia, Localidad
 from informacion.models import Individuo
 from operadores.models import Operador
 #Imports de app
+from .choices import COLOR_RESTRICCION, GRUPOS_PERMITIDOS
 from .choices import TIPO_PERMISO
 from .choices import TIPO_INGRESO, ESTADO_INGRESO
 from .tokens import token_ingreso
 
 # Create your models here.
+class NivelRestriccion(models.Model):
+    color = models.CharField('Nivel de Restriccion', choices=COLOR_RESTRICCION, max_length=1, default='B', unique=True)
+    inicio_horario = models.SmallIntegerField("Hora de Inicio Actividades/f24")
+    cierre_horario = models.SmallIntegerField("Hora de cierre Actividades/f24")
+    poblacion_maxima = models.SmallIntegerField('Capacidad Adminitada en %')
+    tramites_admitidos = MultiSelectField(choices=TIPO_PERMISO)
+    duracion_permiso = models.SmallIntegerField("Duracion de Permisos Digitales", default=1)
+    grupos_permitidos = models.SmallIntegerField('Grupos Diarios', choices=GRUPOS_PERMITIDOS, default=0)
+    fecha_activacion = models.DateTimeField('Fecha de Activacion', null=True, blank=True)
+    activa = models.BooleanField(default=False)
+
 class Permiso(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="permisos")
     tipo = models.CharField('Tipo Permiso', choices=TIPO_PERMISO, max_length=1, default='C')
@@ -105,6 +118,9 @@ class Emails_Ingreso(models.Model):
     cuerpo = models.CharField('Asunto', max_length=1000)
     operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="ingreso_emailsenviados")
 
-#Auditoria
+#señales
+from .signals import activar_restriccion
+
 #auditlog.register(Permiso)
+auditlog.register(NivelRestriccion)
 auditlog.register(IngresoProvincia)

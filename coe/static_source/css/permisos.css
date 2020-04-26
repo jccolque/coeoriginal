@@ -2,3 +2,98 @@
     width: 100%;
     height: 500px;
 }
+
+.nivel {
+    padding: 5px;
+    border: black 3px solid;
+    border-radius: 20px;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.nivel-B {
+    border-color: grey;
+    background-color: rgb(219, 218, 218);
+    color: grey;
+}
+
+.nivel-V {
+    border-color: green;
+    background-color: rgb(136, 238, 136);
+    color: green;
+}
+
+.nivel-A {
+    border-color: orange;
+    background-color: rgb(219, 201, 96);
+    color: orange;
+}
+
+.nivel-R {
+    border-color: red;
+    background-color: rgb(250, 164, 164);
+    color: red;
+}
+
+.nivel-D {
+    border-color: black;
+    background-color: rgb(68, 68, 68);
+    color: white!important;
+}
+
+.activo_True {
+    color: black;
+}
+
+.activo_False {
+    color: rgb(73, 73, 73);
+}
+
+.nivel h2 {
+    font-weight: bold;
+}
+
+.nivel li {
+    text-align: justify;
+    padding-left: 10%;
+}
+
+.activar_nivel {
+    margin: auto;
+    padding-left: 25%;
+    padding-right: 25%;
+    border: black 2px solid;
+    border-radius: 5px;
+    font-weight: bold;
+    color: white;
+}
+
+.nivel-B .activar_nivel {
+    border-color: grey;
+    color: grey;
+}
+
+.nivel-V .activar_nivel {
+    border-color: green;
+    color: green;
+}
+
+.nivel-A .activar_nivel {
+    border-color: orange;
+    color: orange;
+}
+
+.nivel-R .activar_nivel {
+    border-color: red;
+    color: red;
+}
+
+.nivel-R .activar_nivel {
+    border-color: red;
+    color: red;
+}
+
+.nivel-D .activar_nivel {
+    border-color: black;
+    color: white;
+}

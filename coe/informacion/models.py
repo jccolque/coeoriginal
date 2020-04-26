@@ -116,8 +116,8 @@ class Individuo(models.Model):
         return self.geoposiciones.filter(tipo='ST').exists()
     def ultima_alerta(self):
         return self.geoposiciones.exclude(alerta='SA').last()
-    def controlador_salvoconducto(self):
-        return self.permisos.filter(controlador=True, endda__gt=timezone.now()).exists()
+    def controlador(self):
+        return self.atributos.filter(tipo='CP').exists()
 
 class Relacion(models.Model):#Origen del Dato
     tipo = models.CharField('Tipo Relacion', choices=TIPO_RELACION, max_length=2, default='F')

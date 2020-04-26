@@ -12,12 +12,12 @@ from coe.settings import SEND_MAIL
 from core.forms import SearchForm
 from core.functions import delete_tags
 from informacion.models import Individuo
+from informacion.functions import actualizar_individuo
 #Impors de la app
 from .tokens import account_activation_token
 from .choices import TIPO_DISPOSITIVO
 from .models import Inscripcion, Area, Tarea, TareaElegida, Dispositivo
 from .forms import ProfesionalSaludForm, VoluntarioSocialForm
-from .functions import actualizar_individuo
 
 # Create your views here.
 def inscripcion_salud(request):

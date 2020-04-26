@@ -2,7 +2,6 @@
 from django.db import models
 from django.utils import timezone
 #Imports Extras
-from auditlog.registry import auditlog
 from fcm_django.models import FCMDevice
 #Imports del proyecto
 from informacion.models import Individuo

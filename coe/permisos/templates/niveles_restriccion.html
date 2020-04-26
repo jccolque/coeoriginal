@@ -1,0 +1,46 @@
+{% extends 'base_permisos.html' %}
+
+{% load static %}
+{% load permisos_tags %}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <h1>Niveles de Restriccion de Permisos Digitales</h1>
+                <br>
+                <div class="row">
+                    {% for nivel in niveles %}
+                        <div class="col-lg-{{grosor}}">
+                            <div class="nivel nivel-{{nivel.color}} activo_{{nivel.activa}}">
+                                <a href="{% url 'permisos:mod_nivelrestriccion' nivel_id=nivel.pk %}">
+                                    <img class="icons nuevo_item" src="{% static '/img/icons/change.png' %}">
+                                </a>
+                                <h2>{{nivel.get_color_display}}</h2>
+                                <hr>
+                                <p><b>Actividad Laboral:</b> {{nivel.inicio_horario}} {{nivel.cierre_horario}}</p>
+                                <br>
+                                <p><b>Poblacion Permitida:</b> {{nivel.poblacion_maxima}}% de la habilitada</p>
+                                <br>
+                                <p><b>Agrupaciones de Documento Diarias:</b><br>{{nivel.get_grupos_permitidos_display}}</p>
+                                <br>
+                                <p><b>Tramites Digitales Habilitados:</b></p>
+                                {% for tramite in nivel.tramites_admitidos.choices %}
+                                    <li>{% ct_nombre_permiso tramite %} <img class="icons" src="{% ct_tiene_permiso nivel tramite %}"></li>
+                                {% endfor %}
+                                <br>
+                                <p><b>Duracion de Permisos:</b> {{nivel.duracion_permiso}}hrs</p>
+                                <hr>
+                                {% if nivel.activa %}
+                                    <p><b>Activo desde: {{nivel.fecha_activacion}}</b></p>
+                                {% else %}
+                                    <a class="activar_nivel" href="{% url 'permisos:activar_nivel' nivel_id=nivel.pk %}">Activar</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}

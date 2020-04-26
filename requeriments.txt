@@ -14,5 +14,6 @@ django-autocomplete-light==3.5.1
 django-auditlog==0.4.7
 django-background-tasks==1.2.5
 django-debug-toolbar==2.2
-django-sendgrid-v5
+django-sendgrid-v5==0.8.1
+django-multiselectfield==0.1.12
 fcm-django==0.3.4

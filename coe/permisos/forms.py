@@ -9,9 +9,15 @@ from core.widgets import XDSoftDatePickerInput, XDSoftDateTimePickerInput
 from informacion.models import Individuo
 #Imports de la app
 from .choices import TIPO_PERMISO
-from .models import Permiso, IngresoProvincia
+from .models import NivelRestriccion, Permiso, IngresoProvincia
 
 #Formularios
+class NivelRestriccionForm(forms.ModelForm):
+    class Meta:
+        model = NivelRestriccion
+        fields= '__all__'
+
+
 class DatosForm(forms.ModelForm):
     class Meta:
         model = Individuo
