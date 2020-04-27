@@ -63,9 +63,9 @@ INSTALLED_APPS = [
     'denuncias.apps.DenunciasConfig',
     'actas.apps.ActasConfig',
     'documentos.apps.DocumentosConfig',
-    'background.apps.BackgroundConfig',
     'graficos.apps.GraficosConfig',
     'wservices.apps.WservicesConfig',
+    'background.apps.BackgroundConfig',
 ]
 
 MIDDLEWARE = [
