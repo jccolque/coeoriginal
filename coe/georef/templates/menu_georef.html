@@ -11,6 +11,9 @@
                     <div class="col-md-8">
                         <ul class="menu_botones">
                             {% if perms.operadores.menu_georef %}
+                                <li><a href="{% url 'georef:lista_ubicaciones_filtradas' tipo='AI' %}">Hoteles</a></li>
+                                <li><a href="{% url 'georef:lista_ubicaciones_filtradas' tipo='IN' %}">Hospitales</a></li>
+                                <hr>
                                 <li><a href="{% url 'georef:lista_nacionalidades'  %}">Listado Nacionalidades</a></li>
                                 <li><a href="{% url 'georef:lista_provincias'  %}">Listado Provincias</a></li>
                                 <li><a href="{% url 'georef:lista_departamentos'  %}">Listado Departamentos</a></li>

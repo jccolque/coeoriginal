@@ -1,5 +1,6 @@
 #Import Python Standard
 #Imports de Django
+from django.db.models import Sum
 from django.shortcuts import render, redirect
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import permission_required
@@ -196,12 +197,30 @@ def delete_barrio(request, barrio_id):
 
 #Ubicaciones
 @permission_required('operadores.menu_georef')
-def lista_ubicaciones(request):
+def lista_ubicaciones(request, tipo=None):
+    #Definimos variables necesarias
     ubicaciones = Ubicacion.objects.all()
-    ubicaciones = ubicaciones.select_related('localidad') 
+    #Filtramos
+    if tipo:
+        ubicaciones = ubicaciones.filter(tipo=tipo)
+    #Obtenemos capacidad maxima y disponible:
+    cap_maxima = ubicaciones.aggregate(Sum('capacidad_maxima'))['capacidad_maxima__sum']
+    cap_ocupada = ubicaciones.aggregate(Sum('capacidad_ocupada'))['capacidad_ocupada__sum']
+    if cap_maxima:
+        cap_disponible = cap_maxima - cap_ocupada
+    else:
+        cap_disponible = 0
+    #Optimizamos
+    ubicaciones = ubicaciones.select_related('localidad')
+    ubicaciones = ubicaciones.prefetch_related('aislados')
+    #Lanzamos listado
     return render(request, 'lista_ubicaciones.html', {
         'ubicaciones': ubicaciones,
         'has_table': True,
+        'tipo': tipo,
+        'cap_maxima': cap_maxima,
+        'cap_ocupada': cap_ocupada,
+        'cap_disponible': cap_disponible,
     })
 
 @permission_required('operadores.menu_georef')

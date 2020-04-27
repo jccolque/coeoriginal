@@ -1,6 +1,7 @@
 {% extends 'base_informacion.html' %}
 
 {% load static %}
+{% load files_tags %}
 
 {% block content %}
     <section class="resumen">
@@ -46,14 +47,15 @@
                                 <p><b>Patente:</b> {{ingreso.patente}}</p>
                             </div>
                             <div class="col-md-4">
-                                <p><b>Aclaracion:<b><p>
+                                <p><b>Aclaracion:</b></p>
                                 {{ingreso.aclaracion|safe}}
                             </div>
                             <div class="col-md-4">
                                 {% if ingreso.tipo == 'C' %}
+                                    <p><b>Documento Universal de Transporte</b></p>
                                     {% if ingreso.dut %}
                                         <a href="{{ingreso.dut.url}}">
-                                            <img class="fotos" src="{{ingreso.dut.url}}">
+                                            {% autoescape off %}{% ct_show_file ingreso.dut %}{% endautoescape %}
                                         </a>
                                     {% else %}
                                         <p class="error">Debe cargar el Documento Universal de Transporte <a href="{% url 'permisos:cargar_dut' ingreso_id=ingreso.id %}">Aqui</a></p>
@@ -62,9 +64,10 @@
                             </div>
                             <div class="col-md-4">
                                 {% if ingreso.tipo == 'A' %}
+                                    <p><b>Plan de Vuelo</b></p>
                                     {% if ingreso.plan_vuelo %}
                                         <a href="{{ingreso.plan_vuelo.url}}">
-                                            <img class="fotos" src="{{ingreso.plan_vuelo.url}}">
+                                            {% autoescape off %}{% ct_show_file ingreso.plan_vuelo %}{% endautoescape %}
                                         </a>
                                     {% else %}
                                         <p class="error">Si el ingreso se realizara en Avion, debe cargar el Plan de Vuelo Aprobado <a href="{% url 'permisos:cargar_plan_vuelo' ingreso_id=ingreso.id %}">Aqui</a></p>

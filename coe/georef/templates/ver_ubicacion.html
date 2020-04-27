@@ -10,7 +10,8 @@
                     <h2>Ubicacion: {{ubicacion.nombre}}</h2>
                     <div class="row">
                         <div class="col-md-8">
-                            <h3>Tipo: <b>{{ubicacion.get_tipo_display}}</b></h3>
+                            <h3>Tipo:<b> {{ubicacion.get_tipo_display}}</b></h3>
+                            <p><b>Precio:</b> {{ubicacion.precio}}</p>
                             <p><b>Domicilio:</b> {{ubicacion.calle}} {{ubicacion.numero}}, {{ubicacion.localidad}}</p>
                             <p><b>Capacidad Maxima:</b> {{ubicacion.capacidad_maxima}} <b>| Disponible:</b> {{ubicacion.capacidad_disponible}}</p>
                             {% if ubicacion.latitud and ubicacion.longitud %}
@@ -53,6 +54,7 @@
                                     <th>Situacion</th>
                                     <th>Fecha de Ingreso</th>
                                     <th>Dias Faltantes</th>
+                                    <th>App</th>
                                     <th>Ver Individuo</th>
                                 </tr>
                             </thead>
@@ -65,6 +67,13 @@
                                         <td>{{aislado.situacion_actual}}</td>
                                         <td>{{aislado.domicilio_actual.fecha}}</td>
                                         <td>{{aislado.domicilio_actual.dias_faltantes}}</td>
+                                        <td>
+                                            {% if aislado.appdata %}
+                                                <img class="icons" src="/static/img/icons/check.png">
+                                            {% else %}
+                                                <img class="icons" src="/static/img/icons/wrong.png">
+                                            {% endif %}
+                                        </td>
                                         <td><a href="{% url 'informacion:ver_individuo' individuo_id=aislado.id %}" target="_blank">(Ver Individuo)</a></td>
                                     </tr>
                                 {% endfor %}

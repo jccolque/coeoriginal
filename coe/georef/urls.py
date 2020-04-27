@@ -37,6 +37,7 @@ urlpatterns = [
     path('barrio/del/<int:barrio_id>', views.delete_barrio, name='delete_barrio'),      
     
     path('ubicaciones', views.lista_ubicaciones, name='lista_ubicaciones'),
+    path('ubicaciones/tipo/<str:tipo>', views.lista_ubicaciones, name='lista_ubicaciones_filtradas'),
     path('ubicacion/crear', views.crear_ubicacion, name='crear_ubicacion'),
     path('ubicacion/mod/<int:ubicacion_id>', views.crear_ubicacion, name='mod_ubicacion'),
     path('ubicacion/del/<int:ubicacion_id>', views.delete_ubicacion, name='delete_ubicacion'),

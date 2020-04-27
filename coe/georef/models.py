@@ -95,6 +95,7 @@ class Barrio(models.Model):
 #Particularidades:
 class Ubicacion(models.Model):
     tipo = models.CharField('Tipo de Ubicacion', max_length=2, choices=TIPO_UBICACION,  default='SU')
+    costo = models.DecimalField(verbose_name="Valor Diario", max_digits=8, decimal_places=2, default=0)
     localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="ubicaciones")
     barrio = models.ForeignKey(Barrio, on_delete=models.SET_NULL, related_name="ubicaciones", null=True, blank=True)
     nombre = models.CharField('Nombre', max_length=100)
@@ -123,6 +124,11 @@ class Ubicacion(models.Model):
             "capacidad_maxima": self.capacidad_maxima,
             "capacidad_ocupada": self.capacidad_ocupada,
         }
+    def precio(self):
+        if self.costo:
+            return '$'+str(self.costo)
+        else:
+            return 'Gratuito'
     def capacidad_disponible(self):
         return self.capacidad_maxima - self.capacidad_ocupada
     def aislados_actuales(self):

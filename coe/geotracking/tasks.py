@@ -1,4 +1,6 @@
 #Imports de Python
+import logging
+import traceback
 from datetime import timedelta
 #Imports django
 from django.utils import timezone
@@ -11,6 +13,9 @@ from app.models import AppNotificacion
 #Import de la app
 from .models import GeoPosicion
 from .geofence import obtener_trackeados
+
+#Definimos logger
+logger = logging.getLogger("tasks")
 
 #Definimos tareas
 @background(schedule=1)
@@ -50,18 +55,21 @@ def finalizar_geotracking():
     individuos = individuos.exclude(seguimientos__tipo='FT')
     #Los damos de baja:
     for individuo in individuos:
-        st_geopos = individuo.filter(tipo='ST').last()
-        #Generamos seguimiento de Fin de Tracking
-        seguimiento = Seguimiento(individuo=individuo)
-        seguimiento.tipo = 'FT'
-        seguimiento.aclaracion = "Fin de Seguimiento iniciado el: " + str(st_geopos.fecha)[0:16]
-        seguimiento.save()
-        #Enviamos pushnotification para dar de baja tracking
-        notif = AppNotificacion()
-        notif.appdata = individuo.appdata
-        notif.titulo = 'Finalizo su periodo bajo Supervicion Digital'
-        notif.mensaje = 'Se han cumplido los '+str(DIAS_CUARENTENA)+' dias de seguimiento.'
-        notif.accion = 'ST'
-        notif.save()#Al grabar el local, se envia automaticamente por firebase
-        #Lo aliminamos de los seguimientos
-        individuo.geoperadores.clear()
+        try:
+            st_geopos = individuo.filter(tipo='ST').last()
+            #Generamos seguimiento de Fin de Tracking
+            seguimiento = Seguimiento(individuo=individuo)
+            seguimiento.tipo = 'FT'
+            seguimiento.aclaracion = "Fin de Seguimiento iniciado el: " + str(st_geopos.fecha)[0:16]
+            seguimiento.save()
+            #Enviamos pushnotification para dar de baja tracking
+            notif = AppNotificacion()
+            notif.appdata = individuo.appdata
+            notif.titulo = 'Finalizo su periodo bajo Supervicion Digital'
+            notif.mensaje = 'Se han cumplido los '+str(DIAS_CUARENTENA)+' dias de seguimiento.'
+            notif.accion = 'ST'
+            notif.save()#Al grabar el local, se envia automaticamente por firebase
+            #Lo aliminamos de los seguimientos
+            individuo.geoperadores.clear()
+        except Exception as error:
+            logger.info("Fallo finalizar_geotracking: "+str(error)+'\n'+str(traceback.format_exc()))

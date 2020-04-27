@@ -199,6 +199,11 @@ LOGGING = {
             'class': 'logging.FileHandler',
             'filename': 'archivos/logs/signals.txt',
         },
+        'tasks_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'archivos/logs/tasks.txt',
+        },
         'error_file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
@@ -216,6 +221,12 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
+        'tasks': {
+            'handlers': ['tasks_file', ],
+            'level': 'INFO',
+            'propagate': True,
+        },
+
         'django.request': {
             'handlers': ['error_file'],
             'level': 'ERROR',
