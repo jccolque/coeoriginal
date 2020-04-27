@@ -29,7 +29,8 @@ class NivelRestriccion(models.Model):
     poblacion_maxima = models.SmallIntegerField('Capacidad Adminitada en %')
     tramites_admitidos = MultiSelectField(choices=TIPO_PERMISO)
     duracion_permiso = models.SmallIntegerField("Duracion de Permisos Digitales", default=1)
-    grupos_permitidos = models.SmallIntegerField('Grupos Diarios', choices=GRUPOS_PERMITIDOS, default=0)
+    #grupos_permitidos = models.SmallIntegerField('Grupos Diarios', choices=GRUPOS_PERMITIDOS, default=0)
+    #DIAS_SEMANA
     fecha_activacion = models.DateTimeField('Fecha de Activacion', null=True, blank=True)
     activa = models.BooleanField(default=False)
 

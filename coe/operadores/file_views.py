@@ -33,7 +33,7 @@ def ver_operador(request, filename):
 
 @permission_required('operadores.menu_inscripciones')
 def ver_dni_inscripto(request, filename):
-    return entregar_file(request, 'inscripciones/dni/'+filename) 
+    return entregar_file(request, 'inscripciones/documentos/'+filename) 
 
 @permission_required('operadores.menu_inscripciones')
 def ver_titulo_inscripto(request, filename):

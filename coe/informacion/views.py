@@ -510,7 +510,7 @@ def lista_seguimiento(request):
     seguimientos = seguimientos.prefetch_related('individuo__atributos', 'individuo__sintomas')
     seguimientos = seguimientos.prefetch_related('individuo__seguimientos')
     #Traemos seguimientos terminados para descartar
-    seguimientos_terminados = [s.individuo for s in Seguimiento.objects.filter(tipo='F')]
+    seguimientos_terminados = [s.individuo for s in Seguimiento.objects.filter(tipo='FS')]
 #       last12hrs = timezone.now() - timedelta(hours=12)
 #       and seguimiento.fecha < last12hrs
     #Procesamos
@@ -989,6 +989,8 @@ def lista_ingresos_hoteles(request):
             individuos = individuos.prefetch_related('domicilios', 'domicilios__localidad')
             #Ordenamos
             individuos = individuos.order_by('domicilio_actual__fecha')
+            #Eliminamos repetidos
+            individuos = individuos.distinct()
             return render(request, "ingresos_hoteles.html", {
                 'individuos': individuos,
                 'begda': begda, 'endda': endda,

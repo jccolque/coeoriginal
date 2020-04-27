@@ -1,11 +1,14 @@
 #Traemos el sistema de Backgrounds
 
 #Imports de Python
-from dateutil.relativedelta import relativedelta
-from background_task import background
+from datetime import timedelta
 #Imports django
 from django.utils import timezone
+from dateutil.relativedelta import relativedelta
+#Imports extras
+from background_task import background
 #Imports del proyecto
+from coe.constantes import DIAS_CUARENTENA
 from georef.models import Nacionalidad, Departamento, Localidad
 #Import Personales
 from .models import Archivo
@@ -301,4 +304,21 @@ def guardar_padron_domicilios(lineas, archivo_id, ultimo=False):
     if ultimo:
         archivo.descripcion += "<p>FIN ARCHIVO</p>"
         archivo.procesado = True
-        archivo.save()        
+        archivo.save()
+
+@background(schedule=1)
+def baja_seguimiento():
+    #Obtenemos fecha de corte:
+    fecha_corte = timezone.now() - timedelta(days=DIAS_CUARENTENA)
+    #Obtenemos seguimientos iniciados antes de la fecha de corte
+    seguimientos = Seguimiento.objects.filter(tipo='I', fecha__lt=fecha_corte)
+    #Obtenemos todos los individuos
+    individuos = Individuo.objects.filter(seguimientos__in=seguimientos).distinct()
+    #Excluimos todos los ya dados de baja:
+    individuos = individuos.exclude(seguimientos__tipo='FS')    
+    #Los damos de baja
+    for individuo in individuos:
+        seguimiento = Seguimiento(individuo=individuo)
+        seguimiento.tipo = 'FS'
+        seguimiento.aclaracion = "Baja automatica por cumplir tiempo de cuarentena"
+        seguimiento.save()

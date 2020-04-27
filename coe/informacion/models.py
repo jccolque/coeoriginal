@@ -8,7 +8,7 @@ from django.core.validators import RegexValidator
 from tinymce.models import HTMLField
 from auditlog.registry import auditlog
 #Imports del proyecto:
-from coe.constantes import NOIMAGE
+from coe.constantes import NOIMAGE, DIAS_CUARENTENA
 from coe.settings import MEDIA_ROOT
 from operadores.models import Operador
 from core.choices import TIPO_DOCUMENTOS, TIPO_SEXO
@@ -151,6 +151,9 @@ class Domicilio(models.Model):
         return self.calle + ' ' + self.numero + ', ' + str(self.localidad.nombre)
     def nombre_corto(self):
         return self.calle + ' ' + self.numero + ', ' + self.localidad.nombre
+    def dias_faltantes(self):
+        if self.aislamiento:
+            return DIAS_CUARENTENA - (timezone.now() - self.fecha).days
 
 #Extras
 class SignosVitales(models.Model):

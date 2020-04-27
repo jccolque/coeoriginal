@@ -15,7 +15,8 @@
                         <th>Documento</th>
                         <th>Individuo</th>
                         <th>Situacion</th>
-                        <th>Ubicacion Actual</th>
+                        <th>Hotel Actual</th>
+                        <th>Fecha Ingreso</th>
                         <th>Domicilio Original</th>
                         <th>Ver</th>
                     </tr>
@@ -26,11 +27,8 @@
                             <td>{{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</td>
                             <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
                             <td>{{individuo.situacion_actual}}</td>
-                            <td>
-                                {{individuo.domicilio_actual.fecha|date:"d/m"}} | {{individuo.domicilio_actual}}
-                                <br>
-                                {{individuo.domicilio_actual.aclaracion}}
-                            </td>
+                            <td>{{individuo.domicilio_actual.ubicacion.nombre}}</td>
+                            <td>{{individuo.domicilio_actual.fecha}}</td>
                             <td>{{individuo.domicilios.first}}</td>
                             <td style="text-align:center;">
                                 <a href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">

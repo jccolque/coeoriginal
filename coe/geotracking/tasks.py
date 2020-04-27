@@ -5,6 +5,7 @@ from django.utils import timezone
 #Imports Extras
 from background_task import background
 #Imports del proyeco
+from coe.constantes import DIAS_CUARENTENA
 from informacion.models import Seguimiento
 from app.models import AppNotificacion
 #Import de la app
@@ -40,25 +41,27 @@ def geotrack_sin_actualizacion():
 def finalizar_geotracking():
     individuos = obtener_trackeados()
     #Obtenemos los que estan siendo trackeados hace mas de 14 dias:
-    inicio = timezone.now() - timedelta(days=14)
-    individuos = individuos.filter(geoposiciones__in=GeoPosicion.objects.filter(tipo='ST', fecha__lt=inicio)).distinct()
-    #Tenemos en cuenta los que le reiniciaron el geotracking
-    individuos = individuos.exclude(geoposiciones__in=GeoPosicion.objects.filter(tipo='ST', fecha__gt=inicio))
+    inicio = timezone.now() - timedelta(days=DIAS_CUARENTENA)
+    #Obtenemos trackings ya cumplidos:
+    geopos_viejas = GeoPosicion.objects.filter(tipo='ST', fecha__lt=inicio)
+    #Obtenemos individuos que deben ser liberados
+    individuos = individuos.filter(geoposiciones__in=geopos_viejas).distinct()
+    #No procesamos los que ya fueron de baja del tracking
+    individuos = individuos.exclude(seguimientos__tipo='FT')
     #Los damos de baja:
     for individuo in individuos:
-        print("Baja para: "+str(individuo))
         st_geopos = individuo.filter(tipo='ST').last()
         #Generamos seguimiento de Fin de Tracking
         seguimiento = Seguimiento(individuo=individuo)
         seguimiento.tipo = 'FT'
         seguimiento.aclaracion = "Fin de Seguimiento iniciado el: " + str(st_geopos.fecha)[0:16]
-        print(seguimiento)#seguimiento.save()
+        seguimiento.save()
         #Enviamos pushnotification para dar de baja tracking
         notif = AppNotificacion()
         notif.appdata = individuo.appdata
         notif.titulo = 'Finalizo su periodo bajo Supervicion Digital'
-        notif.mensaje = 'Se han cumplido los 14 dias de seguimiento.'
+        notif.mensaje = 'Se han cumplido los '+str(DIAS_CUARENTENA)+' dias de seguimiento.'
         notif.accion = 'ST'
-        print(notif)#notif.save()#Al grabar el local, se envia automaticamente por firebase
+        notif.save()#Al grabar el local, se envia automaticamente por firebase
         #Lo aliminamos de los seguimientos
-        print("Eliminamos controles")#individuo.geoperadores.clear()
+        individuo.geoperadores.clear()
