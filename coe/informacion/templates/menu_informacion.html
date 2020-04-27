@@ -18,6 +18,7 @@
                             {% endif %}
 
                             {% if perms.operadores.individuos %}
+                                <h3>Individuos:</h3>
                                 <li><a href="{% url 'informacion:buscar_individuo'  %}">Cargar Individuos</a></li>
                                 <li><a href="{% url 'informacion:buscador_individuos' %}">Buscador Ambiguo</a></li>
                                 <hr>
@@ -29,12 +30,14 @@
                             {% endif %}
 
                             {% if perms.operadores.vehiculos %}
+                                <h3>Vehiculos:</h3>
                                 <li><a href="{% url 'informacion:buscar_vehiculo'  %}">Buscar/Cargar Vehiculo</a></li>
                                 <li><a href="{% url 'informacion:listar_vehiculos' %}">Listar Vehiculos</a></li>
                                 <hr>
                             {% endif %}
 
                             {% if perms.operadores.archivos %}
+                                <h3>Cargas Masivas:</h3>
                                 <li><a href="{% url 'informacion:subir_archivos'  %}">Subir Archivos</a></li>
                                 <li><a href="{% url 'informacion:subir_same'  %}">Carga Masiva SAME</a></li>
                                 <li><a href="{% url 'informacion:archivos_pendientes' %}">Ver Listado de Archivos sin Procesar</a></li>

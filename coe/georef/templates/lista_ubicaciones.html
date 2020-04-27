@@ -36,8 +36,9 @@
                             <th>Nombre</th>
                             <th>Localidad</th>
                             <th>Direccion</th>
-                            <th>Capacidad Maxima</th>
-                            <th>Capacidad Disponible</th>
+                            <th>Plaza</th>
+                            <th>Ocupado</th>
+                            <th>Disponibilidad</th>
                             <th>Editar</th>
                         </tr>
                     </thead>
@@ -50,6 +51,7 @@
                                 <td>{{ubicacion.localidad.nombre}}</td>
                                 <td>{{ubicacion.calle}} {{ubicacion.numero}}{% if ubicacion.barrio %}, {{ubicacion.barrio}}{% endif %}</td>
                                 <td>{{ubicacion.capacidad_maxima}}</td>
+                                <td>{{ubicacion.capacidad_ocupada}}</td>
                                 <td>{{ubicacion.capacidad_disponible}}</td>
                                 <td>
                                     {% if ubicacion.tipo == 'AI' or ubicacion.tipo == 'IN' %}
