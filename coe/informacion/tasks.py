@@ -312,7 +312,7 @@ def baja_seguimiento():
     fecha_corte = timezone.now() - timedelta(days=DIAS_CUARENTENA)
     #Obtenemos seguimientos iniciados antes de la fecha de corte
     seguimientos = Seguimiento.objects.filter(tipo='I', fecha__lt=fecha_corte)
-    #Obtenemos todos los individuos
+    #Obtenemos todos los individuos seguidos
     individuos = Individuo.objects.filter(seguimientos__in=seguimientos).distinct()
     #Excluimos todos los ya dados de baja:
     individuos = individuos.exclude(seguimientos__tipo='FS')    

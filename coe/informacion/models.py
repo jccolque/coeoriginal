@@ -80,6 +80,8 @@ class Individuo(models.Model):
         return str(self.num_doc) + ': ' + self.apellidos + ', ' + self.nombres
     def ultimo_seguimiento(self):
         return self.seguimientos.last()
+    def domicilio_retorno(self):#El mas actualizado que no es de aislamiento
+        return self.domicilios.filter(aislamiento=False).last()
     def geoposicion(self):
         return self.geoposiciones.last()
     def localidad_actual(self):

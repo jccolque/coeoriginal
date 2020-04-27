@@ -228,7 +228,7 @@ def cargo_documento(created, instance, **kwargs):
 @receiver(post_save, sender=Seguimiento)
 def descartar_sospechoso(created, instance, **kwargs):
     #Eliminamos relacion inversa
-    if created and instance.tipo == "T":
+    if created and instance.tipo == "DT":
         situacion = Situacion()
         situacion.individuo = instance.individuo
         #El estado pasa a asintomatico

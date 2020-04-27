@@ -18,6 +18,7 @@
                         <th>Hotel Actual</th>
                         <th>Fecha Ingreso</th>
                         <th>Domicilio Original</th>
+                        <th>Localidad</th>
                         <th>Ver</th>
                     </tr>
                 </thead>
@@ -29,7 +30,8 @@
                             <td>{{individuo.situacion_actual}}</td>
                             <td>{{individuo.domicilio_actual.ubicacion.nombre}}</td>
                             <td>{{individuo.domicilio_actual.fecha}}</td>
-                            <td>{{individuo.domicilios.first}}</td>
+                            <td>{{individuo.domicilio_retorno}}</td>
+                            <td>{{individuo.domicilio_retorno.localidad.nombre}}</td>
                             <td style="text-align:center;">
                                 <a href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">
                                     <img class="icons" src="{% static '/img/icons/lupa.png' %}">
