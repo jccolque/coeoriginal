@@ -33,7 +33,7 @@ def buscar_permiso(individuo, activo=False):
         #Si individuo tiene atributo laboral damos permiso permanente:
         atributos = individuo.atributos.filter(tipo__in=('AS','PS','FP'))
         if atributos:
-            atributo = atributos.first()        
+            atributo = atributos.first()
             permiso.tipo = 'P'
             permiso.localidad = individuo.domicilio_actual.localidad
             permiso.begda = timezone.now()
@@ -42,6 +42,8 @@ def buscar_permiso(individuo, activo=False):
             permiso.save()
     #Generamos siempre variable temporal:
     permiso.aprobar = True
+    #Harcodeamos 
+    permiso.aprobar = False
     return permiso
 
 def dia_permitido(num_doc):#Definir con DNIS
