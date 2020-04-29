@@ -260,9 +260,10 @@ def enviar_email(request, inscripcion_id):
 @permission_required('operadores.menu_inscripciones')
 def avanzar_estado(request, inscripcion_id):
     inscripto = Inscripcion.objects.get(pk=inscripcion_id)
-    inscripto.estado += 1
-    inscripto.save()
-    if inscripto.estado == 4:
+    if inscripto.estado < 4:
+        inscripto.estado += 1
+        inscripto.save()
+    if inscripto.estado == 4:#Si termino el proceso
         #Le asignamos atributo de Voluntario Aprobado
         atributo = Atributo(individuo=inscripto.individuo)
         atributo.tipo = 'VA'

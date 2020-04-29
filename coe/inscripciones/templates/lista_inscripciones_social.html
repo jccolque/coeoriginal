@@ -15,6 +15,7 @@
                         <th>Nombre</th>
                         <th>Oficio</th>
                         <th>Domicilio</th>
+                        <th>Localidad</th>
                         <th>Telefono</th>
                         <th>Email</th>
                         <th>Fecha Inscripcion</th>
@@ -29,7 +30,10 @@
                             <td>{{inscripto.individuo.apellidos}}</td>
                             <td>{{inscripto.individuo.nombres}}</td>
                             <td>{{inscripto.oficio}}</td>
-                            <td>{{inscripto.individuo.domicilio_actual}}</td>
+                            {% with inscripto.individuo.domicilio_actual as dom %}
+                                <td>{{dom.calle}} {{dom.numero}}, {{dom.aclaracion}}</td>
+                                <td>{{dom.localidad.nombre}}</td>
+                            {% endwith %}
                             <td>{{inscripto.individuo.telefono}}</td>
                             <td>{{inscripto.individuo.email}}</td>
                             <td>{{inscripto.fecha}}</td>
