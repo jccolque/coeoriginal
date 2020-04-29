@@ -5,8 +5,10 @@ from django.utils import timezone
 from tinymce.models import HTMLField
 #Imports del proyecto
 from informacion.models import Individuo
+from operadores.models import Operador
 #Imports de la app
-from .choices import TIPO_INSCRIPTO, GRUPO_SANGUINEO, TIPO_PROFESIONAL, TIPO_DISPOSITIVO
+from .choices import TIPO_INSCRIPTO, ESTADO_INSCRIPTO
+from .choices import GRUPO_SANGUINEO, TIPO_PROFESIONAL, TIPO_DISPOSITIVO
 
 # Create your models here.
 class Area(models.Model):
@@ -24,11 +26,13 @@ class Tarea(models.Model):
 
 class Inscripcion(models.Model):
     tipo_inscripto = models.CharField(choices=TIPO_INSCRIPTO, max_length=2, default='PS')
+    estado = models.IntegerField(choices=ESTADO_INSCRIPTO, default=0)
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, null=True, blank=True, related_name="voluntariados")
     profesion = models.IntegerField('Profesion', choices=TIPO_PROFESIONAL, null=True, blank=True)
     matricula = models.CharField(max_length=20, null=True, blank=True)
     oficio = models.CharField("Profesion u Oficio", max_length=100, null=True, blank=True)
-    archivo_dni = models.FileField('Foto DNI', upload_to='inscripciones/documentos/')
+    frente_dni = models.FileField('Foto Frente DNI', upload_to='inscripciones/documentos/', null=True, blank=True)
+    reverso_dni = models.FileField('Foto Reverso DNI', upload_to='inscripciones/documentos/', null=True, blank=True)
     archivo_titulo = models.FileField('Foto Titulo', upload_to='inscripciones/titulo/', null=True, blank=True)
     info_extra = HTMLField(null=True, blank=True)
     #grupo_sanguineo = models.IntegerField('Grupo Sanguineo', choices=GRUPO_SANGUINEO, null=True, blank=True)
@@ -37,6 +41,11 @@ class Inscripcion(models.Model):
     fecha = models.DateTimeField('Fecha Inscripcion', default=timezone.now)
     valido = models.BooleanField(default=False)
     disponible = models.BooleanField(default=True)
+    def chequear_estado(self):
+        if self.estado == 0:
+            if self.individuo.fotografia and self.frente_dni and self.reverso_dni:
+                self.estado = 1
+                self.save()       
     def __str__(self):
         try:
             return self.individuo.apellidos + ', ' + self.individuo.nombres
@@ -45,10 +54,13 @@ class Inscripcion(models.Model):
     def as_dict(self):
         return {
             'id': self.id,
+            'tipo_inscripto': self.tipo_inscripto,
             'individuo': self.individuo.id,
             'profesion': self.get_profesion_display(),
+            'oficio': self.oficio,
             'matrícula': self.matricula,
-            'archivo_dni': str(self.archivo_dni),
+            'frente_dni': str(self.frente_dni),
+            'reverso_dni': str(self.reverso_dni),
             'archivo_título': str(self.archivo_titulo),
             'info_extra': self.info_extra,
             'fecha': str(self.fecha),
@@ -57,9 +69,16 @@ class Inscripcion(models.Model):
         }
 
 class TareaElegida(models.Model):
-    tarea = models.ForeignKey(Tarea, on_delete=models.CASCADE, related_name="elecciones")
-    inscripto = models.ForeignKey(Inscripcion, on_delete=models.CASCADE, related_name="elecciones")
+    tarea = models.ForeignKey(Tarea, on_delete=models.CASCADE, related_name="tareas")
+    inscripto = models.ForeignKey(Inscripcion, on_delete=models.CASCADE, related_name="tareas")
 
 class Dispositivo(models.Model):
     inscripto = models.ForeignKey(Inscripcion, on_delete=models.CASCADE, related_name="dispositivos")
     tipo = models.CharField('Tipo Dispositivo', choices=TIPO_DISPOSITIVO, max_length=2)
+
+class EmailsInscripto(models.Model):
+    inscripto = models.ForeignKey(Inscripcion, on_delete=models.CASCADE, related_name="emails_enviados")
+    fecha = models.DateTimeField('Fecha de Envio', default=timezone.now)
+    asunto = models.CharField('Asunto', max_length=100)
+    cuerpo = models.CharField('Asunto', max_length=1000)
+    operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="inscripcion_emailsenviados")

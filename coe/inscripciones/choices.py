@@ -4,6 +4,14 @@ TIPO_INSCRIPTO = (
     ('VS', 'Voluntarios Sociales'),
 )
 
+ESTADO_INSCRIPTO = (
+    (0, 'Inscripcion Iniciada'),
+    (1, 'Inscripcion Terminada - Esperando Aprobacion'),
+    (2, 'Pre Inscripcion Aprobada'),
+    (3, 'Llamada Telefonica Aprobada'),
+    (4, 'Tarea Asignada'),
+)
+
 GRUPO_SANGUINEO = (
     (1, 'A+'),
     (2, 'A-'),

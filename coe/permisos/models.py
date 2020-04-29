@@ -18,6 +18,7 @@ from operadores.models import Operador
 #Imports de app
 from .choices import COLOR_RESTRICCION, GRUPOS_PERMITIDOS
 from .choices import TIPO_PERMISO
+from .choices import COMBINACION_DNIxDIA
 from .choices import TIPO_INGRESO, ESTADO_INGRESO
 from .tokens import token_ingreso
 
@@ -27,10 +28,9 @@ class NivelRestriccion(models.Model):
     inicio_horario = models.SmallIntegerField("Hora de Inicio Actividades/f24")
     cierre_horario = models.SmallIntegerField("Hora de cierre Actividades/f24")
     poblacion_maxima = models.SmallIntegerField('Capacidad Adminitada en %')
-    tramites_admitidos = MultiSelectField(choices=TIPO_PERMISO)
+    tramites_admitidos = MultiSelectField(choices=TIPO_PERMISO, null=True, blank=True)
     duracion_permiso = models.SmallIntegerField("Duracion de Permisos Digitales", default=1)
-    #grupos_permitidos = models.SmallIntegerField('Grupos Diarios', choices=GRUPOS_PERMITIDOS, default=0)
-    #DIAS_SEMANA
+    grupos_diarios = MultiSelectField(choices=COMBINACION_DNIxDIA, null=True, blank=True)
     fecha_activacion = models.DateTimeField('Fecha de Activacion', null=True, blank=True)
     activa = models.BooleanField(default=False)
 

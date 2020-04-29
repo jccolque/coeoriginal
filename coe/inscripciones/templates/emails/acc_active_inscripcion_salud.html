@@ -1,7 +1,7 @@
 {% autoescape off %}
     Bienvenido {{inscripto.individuo.apellidos}}, {{incripto.individuo.nombres}}:
 
-    Tu inscripcion fue recibida con exito dentro del sistema COE2020:
+    Tu postulacion fue recibida con exito dentro del sistema COE2020:
 
     Nos indicaste los siguientes datos:
     Identificacion:{{inscripto.individuo.get_tipo_doc_display}}  {{inscripto.individuo.num_doc}}
@@ -10,7 +10,7 @@
     Telefono: {{inscripto.individuo.telefono}}
 
     Por favor ingresa a este link para validar tu correo personal y la inscripcion:
-    http://coe.jujuy.gob.ar/{% url 'inscripciones:activar_inscripcion' inscripcion_id=inscripto.pk %}
-
+    http://coe.jujuy.gob.ar/{% url 'inscripciones:activar_inscripcion' inscripto_id=inscripto.id num_doc=inscripto.individuo.num_doc %}
+    
     Muy pronto nos contactaremos con usted!
 {% endautoescape %}

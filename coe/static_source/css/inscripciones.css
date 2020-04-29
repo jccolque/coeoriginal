@@ -1,3 +1,15 @@
 li {
     list-style-type:none;
 }
+
+li.lista {
+    list-style-type:initial!important;
+}
+
+a.requerimiento {
+    border: red 3px solid;
+    font-weight: bold;
+    border-radius: 10px;
+    padding: 10px;
+    color: red;
+}

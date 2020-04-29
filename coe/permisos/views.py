@@ -217,15 +217,20 @@ def menu_permisos(request):
 @superuser_required
 def situacion_restricciones(request):
     niveles = NivelRestriccion.objects.all()
-    grosor = int(math.ceil(12 / niveles.count()))
-    return render(request, 'niveles_restriccion.html', {
-        'niveles': niveles,
-        'grosor': grosor,
-    })
+    try:
+        grosor = int(math.ceil(12 / niveles.count()))
+        return render(request, 'niveles_restriccion.html', {
+            'niveles': niveles,
+            'grosor': grosor,
+        })
+    except:
+        return redirect('permisos:crear_nivelrestriccion')
 
 @superuser_required
-def mod_nivelrestriccion(request, nivel_id):
-    nivel = NivelRestriccion.objects.get(pk=nivel_id)
+def crear_nivelrestriccion(request, nivel_id=None):
+    nivel = None
+    if nivel_id:
+        nivel = NivelRestriccion.objects.get(pk=nivel_id)
     form = NivelRestriccionForm(instance=nivel)
     if request.method == "POST":
         form = NivelRestriccionForm(request.POST, instance=nivel)

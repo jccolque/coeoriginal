@@ -3,20 +3,23 @@ import csv
 #Imports de Django
 from django.http import HttpResponse
 from django.utils import timezone
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
 from coe.settings import SEND_MAIL
-from core.forms import SearchForm
+from core.forms import SearchForm, UploadFoto
+from core.forms import EmailForm
 from core.functions import delete_tags
-from informacion.models import Individuo
+from informacion.models import Individuo, Atributo
 from informacion.functions import actualizar_individuo
+from operadores.functions import obtener_operador
 #Impors de la app
 from .tokens import account_activation_token
 from .choices import TIPO_DISPOSITIVO
 from .models import Inscripcion, Area, Tarea, TareaElegida, Dispositivo
+from .models import EmailsInscripto
 from .forms import ProfesionalSaludForm, VoluntarioSocialForm
 
 # Create your views here.
@@ -39,7 +42,7 @@ def inscripcion_salud(request):
             inscripto.matricula = form.cleaned_data['matricula']
             inscripto.info_extra = form.cleaned_data['info_extra']
             #Agregamos documentos
-            inscripto.archivo_dni = form.cleaned_data['archivo_dni']
+            inscripto.frente_dni = form.cleaned_data['frente_dni']
             inscripto.archivo_titulo = form.cleaned_data['archivo_titulo']
             #guardamos
             inscripto.save()
@@ -86,6 +89,13 @@ def inscripcion_social(request):
             dispositivos = request.POST.getlist('dispositivos')
             #Actualizamos Individuo
             individuo = actualizar_individuo(form)
+            #Evitamos Repetidos
+            individuo.voluntariados.filter(valido=False).delete()
+            if individuo.voluntariados.exists():
+                return render(request, 'extras/error.html', {
+                    'titulo': 'Inscripcion Previa Validada',
+                    'error': "Usted ya cuenta con una inscripcion valida realizada.",
+                })
             #Creamos diccionario de tareas
             dict_tareas = {t.id:t for t in Tarea.objects.all()}
             #Armamos la inscripcion:
@@ -94,8 +104,6 @@ def inscripcion_social(request):
             inscripto.individuo = individuo
             inscripto.oficio = form.cleaned_data['oficio']
             inscripto.info_extra = form.cleaned_data['info_extra']
-            #Agregamos documentos
-            inscripto.archivo_dni = form.cleaned_data['archivo_dni']
             #Agregamos las tareas
             if tareas:
                 inscripto.save()
@@ -131,6 +139,55 @@ def inscripcion_social(request):
         'dispositivos': dispositivos,
     })
 
+def ver_inscripto(request, inscripto_id, num_doc):
+    try:
+        inscripto = Inscripcion.objects.select_related('individuo', 'individuo__domicilio_actual', 'individuo__domicilio_actual__localidad')
+        inscripto = inscripto.prefetch_related('tareas', 'tareas__tarea')
+        inscripto = inscripto.get(pk=inscripto_id, individuo__num_doc=num_doc)
+        if inscripto.tipo_inscripto == 'PS':
+            return render(request, 'ver_inscripto_salud.html', {'inscripto': inscripto, })
+        elif inscripto.tipo_inscripto == 'VS':
+            inscripto.chequear_estado()
+            return render(request, 'ver_inscripto_social.html', {'inscripto': inscripto, })
+    except Inscripcion.DoesNotExist:
+        return render(request, 'extras/error.html', {
+            'titulo': 'Inscripcion Inexistente',
+            'error': "En caso de que este sea el link que le llego a su correo por favor contacte a la administracion.",
+        })
+
+def subir_foto(request, inscripto_id):
+    form = UploadFoto()
+    if request.method == "POST":
+        form = UploadFoto(request.POST, request.FILES)
+        if form.is_valid():
+            inscripto = Inscripcion.objects.get(pk=inscripto_id)
+            inscripto.individuo.fotografia = form.cleaned_data['imagen']
+            inscripto.individuo.save()
+            return redirect('inscripciones:ver_inscripto', inscripto_id=inscripto_id, num_doc=inscripto.individuo.num_doc)
+    return render(request, "extras/generic_form.html", {'titulo': "Subir Fotografia", 'form': form, 'boton': "Cargar", })
+
+def cargar_frente_dni(request, inscripto_id):
+    form = UploadFoto()
+    if request.method == "POST":
+        form = UploadFoto(request.POST, request.FILES)
+        if form.is_valid():
+            inscripto = Inscripcion.objects.get(pk=inscripto_id)
+            inscripto.frente_dni = form.cleaned_data['imagen']
+            inscripto.save()
+            return redirect('inscripciones:ver_inscripto', inscripto_id=inscripto_id, num_doc=inscripto.individuo.num_doc)
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Foto del Frente del Documento", 'form': form, 'boton': "Cargar", })
+
+def cargar_reverso_dni(request, inscripto_id):
+    form = UploadFoto()
+    if request.method == "POST":
+        form = UploadFoto(request.POST, request.FILES)
+        if form.is_valid():
+            inscripto = Inscripcion.objects.get(pk=inscripto_id)
+            inscripto.reverso_dni = form.cleaned_data['imagen']
+            inscripto.save()
+            return redirect('inscripciones:ver_inscripto', inscripto_id=inscripto_id, num_doc=inscripto.individuo.num_doc)
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Foto del Reverso del Documento", 'form': form, 'boton': "Cargar", })
+
 #Administracion
 @permission_required('operadores.menu_inscripciones')
 def menu(request):
@@ -162,7 +219,7 @@ def lista_voluntarios(request, tipo_inscripto):
 
 @permission_required('operadores.menu_inscripciones')
 def lista_por_tarea(request, tarea_id):
-    inscriptos = Inscripcion.objects.filter(disponible=True, elecciones__tarea__id=tarea_id)
+    inscriptos = Inscripcion.objects.filter(disponible=True, tareas__tarea__id=tarea_id)
     inscriptos = inscriptos.select_related('individuo', 'individuo__domicilio_actual', 'individuo__domicilio_actual__localidad')
     inscriptos = inscriptos.distinct()
     return render(request, 'lista_inscripciones_social.html', 
@@ -173,19 +230,47 @@ def lista_por_tarea(request, tarea_id):
     )
 
 @permission_required('operadores.menu_inscripciones')
-def ver_inscripto(request, inscripto_id=None):
-    inscripto = Inscripcion.objects.get(pk=inscripto_id)
-    if inscripto.tipo_inscripto == 'PS':
-        return render(request, 'ver_inscripto_salud.html', {'inscripto': inscripto, })
-    elif inscripto.tipo_inscripto == 'VS':
-        return render(request, 'ver_inscripto_social.html', {'inscripto': inscripto, })
-
-@permission_required('operadores.menu_inscripciones')
 def lista_tareas(request):
     areas = Area.objects.all()
     return render(request, "lista_tareas.html", {
         'areas': areas,
     })
+
+@permission_required('operadores.permisos')
+def enviar_email(request, inscripto_id):
+    inscripto = Inscripcion.objects.select_related('individuo').get(pk=inscripto_id)
+    form = EmailForm(initial={'destinatario': inscripto.individuo.email})
+    if request.method == "POST":
+        form = EmailForm(request.POST)
+        if form.is_valid():
+            if SEND_MAIL:
+                to_email = form.cleaned_data['destinatario']
+                #Preparamos el correo electronico
+                mail_subject = form.cleaned_data['asunto']
+                message = render_to_string('emails/inscripto_contacto.html', {
+                        'inscripto': inscripto,
+                        'cuerpo': form.cleaned_data['cuerpo'],
+                    })
+                #Guardamos el mail
+                EmailsInscripto(inscripto=inscripto, asunto=mail_subject, cuerpo=form.cleaned_data['cuerpo'], operador=obtener_operador(request)).save()
+                #Instanciamos el objeto mail con destinatario
+                email = EmailMessage(mail_subject, message, to=[to_email])
+                email.send()
+        return redirect('inscripciones:ver_inscripto', inscripto_id=inscripto_id, num_doc=inscripto.individuo.num_doc)
+    return render(request, "extras/generic_form.html", {'titulo': "Enviar Correo Electronico", 'form': form, 'boton': "Enviar", })
+
+@permission_required('operadores.menu_inscripciones')
+def avanzar_estado(request, inscripto_id):
+    inscripto = Inscripcion.objects.get(pk=inscripto_id)
+    inscripto.estado += 1
+    inscripto.save()
+    if inscripto.estado == 4:
+        #Le asignamos atributo de Voluntario Aprobado
+        atributo = Atributo(individuo=inscripto.individuo)
+        atributo.tipo = 'VA'
+        atributo.aclaracion = "Aprobado por: " + str(obtener_operador(request))
+        atributo.save()
+    return redirect('inscripciones:ver_inscripto', inscripto_id=inscripto_id, num_doc=inscripto.individuo.num_doc)
 
 @permission_required('operadores.menu_inscripciones')
 def download_inscriptos(request):
@@ -215,12 +300,12 @@ def download_inscriptos(request):
     return response
 
 #Activar:
-def activar_inscripcion(request, inscripcion_id):#, token):
+def activar_inscripcion(request, inscripcion_id, num_doc):
     try:
         inscripto = Inscripcion.objects.get(pk=inscripcion_id)
         inscripto.valido = True
         inscripto.save()
-        texto = 'Excelente! Su correo electronico fue validada.'
+        return redirect('inscripciones:ver_inscripto', inscripto_id=inscripto.id, num_doc=inscripto.individuo.num_doc)
     except(TypeError, ValueError, OverflowError, Inscripcion.DoesNotExist):
         texto = 'El link de activacion es invalido!'
     return render(request, 'extras/resultado.html', {'texto': texto, })

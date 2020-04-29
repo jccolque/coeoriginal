@@ -21,7 +21,7 @@ class UploadCsv(forms.Form):
     csvfile = forms.FileField(widget=forms.FileInput(attrs={'accept': ".csv"}))
 
 class UploadFoto(forms.Form):
-    imagen = forms.ImageField()
+    imagen = forms.FileField()
 
 class UploadCsvWithPass(forms.Form):
     csvfile = forms.FileField(label="Archivo CSV Masivo", widget=forms.FileInput(attrs={'accept': ".csv"}))

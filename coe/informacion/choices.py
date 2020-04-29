@@ -86,6 +86,7 @@ TIPO_ATRIBUTO = (
     ('PD', 'Se encuentra Presos/Detenidos'),
     ('CE', 'Visito Pais de Riesgo/Contacto con Extranjeros'),
     ('CP', 'Tiene Potestad de Controlar Permisos'),
+    ('VA', 'Voluntario Aprobado'),
 )
 
 TIPO_SINTOMA = (

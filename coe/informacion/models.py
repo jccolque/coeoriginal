@@ -258,5 +258,7 @@ from .signals import cargo_documento
 auditlog.register(Archivo)
 auditlog.register(Vehiculo)
 auditlog.register(Individuo)
+auditlog.register(Domicilio)
+auditlog.register(Seguimiento)
 auditlog.register(TrasladoVehiculo)
 auditlog.register(Sintoma)

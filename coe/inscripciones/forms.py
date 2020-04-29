@@ -16,7 +16,7 @@ class ProfesionalSaludForm(forms.ModelForm):
     #Datos profesionales
     profesion = forms.ChoiceField(choices=TIPO_PROFESIONAL)
     matricula = forms.CharField(label="Matricula")
-    archivo_dni = forms.FileField(label="Foto del Dni")
+    frente_dni = forms.FileField(label="Foto del Dni")
     archivo_titulo = forms.FileField(label="Foto del Titulo")
     info_extra = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 30}))
     #Domicilio
@@ -43,7 +43,6 @@ class VoluntarioSocialForm(forms.ModelForm):
     no_grupo_riesgo = forms.BooleanField(required=True)
     no_aislamiento = forms.BooleanField(required=True)
     oficio = forms.CharField(label="Oficio/Profesion")
-    archivo_dni = forms.FileField(label="Foto del Dni")
     info_extra = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 10}))
     #Domicilio
     dom_localidad = forms.ModelChoiceField(
