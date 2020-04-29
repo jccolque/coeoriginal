@@ -11,7 +11,7 @@
                     <div class="col-sm-9">
                         <div class="row">
                             <div class="col-sm-2">
-                                <a href="{% url 'inscripciones:subir_foto' inscripto_id=inscripto.id %}">
+                                <a href="{% url 'inscripciones:subir_foto' inscripcion_id=inscripto.id %}">
                                     <img class="fotos" src="{{inscripto.individuo.get_foto}}">
                                 </a>
                             </div>
@@ -72,22 +72,22 @@
                                 <p><b>Fotos del Documento:</b></p>
                                 <div class="col-lg-6">
                                     {% if inscripto.frente_dni %}
-                                        <a href="{% url 'inscripciones:cargar_frente_dni' inscripto_id=inscripto.id %}" style="float:right;">Remplazar Imagen</a>
+                                        <a href="{% url 'inscripciones:cargar_frente_dni' inscripcion_id=inscripto.id %}" style="float:right;">Remplazar Imagen</a>
                                         <a href="{{inscripto.frente_dni.url}}" target="_blank">
                                             <img class="fotos" src="{{inscripto.frente_dni.url}}">
                                         </a>
                                     {% else %}
-                                        <a class="requerimiento" href="{% url 'inscripciones:cargar_frente_dni' inscripto_id=inscripto.id %}">CARGAR FRENTE DEL DNI</a>
+                                        <a class="requerimiento" href="{% url 'inscripciones:cargar_frente_dni' inscripcion_id=inscripto.id %}">CARGAR FRENTE DEL DNI</a>
                                     {% endif %}
                                 </div>
                                 <div class="col-lg-6">
                                     {% if inscripto.reverso_dni %}
-                                        <a href="{% url 'inscripciones:cargar_reverso_dni' inscripto_id=inscripto.id %}" style="float:right;">Remplazar Imagen</a>
+                                        <a href="{% url 'inscripciones:cargar_reverso_dni' inscripcion_id=inscripto.id %}" style="float:right;">Remplazar Imagen</a>
                                         <a href="{{inscripto.reverso_dni.url}}" target="_blank">
                                             <img class="fotos" src="{{inscripto.reverso_dni.url}}">
                                         </a>
                                     {% else %}
-                                        <a class="requerimiento" href="{% url 'inscripciones:cargar_reverso_dni' inscripto_id=inscripto.id %}">CARGAR REVERSO DEL DNI</a>
+                                        <a class="requerimiento" href="{% url 'inscripciones:cargar_reverso_dni' inscripcion_id=inscripto.id %}">CARGAR REVERSO DEL DNI</a>
                                     {% endif %}
                                 </div>
                             </div>
@@ -160,8 +160,8 @@
                                 <hr>
                                 <h2>Menu Operador</h2>
                                 <ul class="menu_botones">
-                                    <li><a href="{% url 'inscripciones:enviar_email' inscripto_id=inscripto.id %}">Enviar Correo Electronico</a></li>
-                                    <li><a href="{% url 'inscripciones:avanzar_estado' inscripto_id=inscripto.id %}">Avanzar al siguiente Estado</a></li>
+                                    <li><a href="{% url 'inscripciones:enviar_email' inscripcion_id=inscripto.id %}">Enviar Correo Electronico</a></li>
+                                    <li><a href="{% url 'inscripciones:avanzar_estado' inscripcion_id=inscripto.id %}">Avanzar al siguiente Estado</a></li>
                                 </ul>
                             {% endif %}
                         {% endif %}

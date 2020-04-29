@@ -139,11 +139,11 @@ def inscripcion_social(request):
         'dispositivos': dispositivos,
     })
 
-def ver_inscripto(request, inscripto_id, num_doc):
+def ver_inscripto(request, inscripcion_id, num_doc):
     try:
         inscripto = Inscripcion.objects.select_related('individuo', 'individuo__domicilio_actual', 'individuo__domicilio_actual__localidad')
         inscripto = inscripto.prefetch_related('tareas', 'tareas__tarea')
-        inscripto = inscripto.get(pk=inscripto_id, individuo__num_doc=num_doc)
+        inscripto = inscripto.get(pk=inscripcion_id, individuo__num_doc=num_doc)
         if inscripto.tipo_inscripto == 'PS':
             return render(request, 'ver_inscripto_salud.html', {'inscripto': inscripto, })
         elif inscripto.tipo_inscripto == 'VS':
@@ -155,37 +155,37 @@ def ver_inscripto(request, inscripto_id, num_doc):
             'error': "En caso de que este sea el link que le llego a su correo por favor contacte a la administracion.",
         })
 
-def subir_foto(request, inscripto_id):
+def subir_foto(request, inscripcion_id):
     form = UploadFoto()
     if request.method == "POST":
         form = UploadFoto(request.POST, request.FILES)
         if form.is_valid():
-            inscripto = Inscripcion.objects.get(pk=inscripto_id)
+            inscripto = Inscripcion.objects.get(pk=inscripcion_id)
             inscripto.individuo.fotografia = form.cleaned_data['imagen']
             inscripto.individuo.save()
-            return redirect('inscripciones:ver_inscripto', inscripto_id=inscripto_id, num_doc=inscripto.individuo.num_doc)
+            return redirect('inscripciones:ver_inscripto', inscripcion_id=inscripcion_id, num_doc=inscripto.individuo.num_doc)
     return render(request, "extras/generic_form.html", {'titulo': "Subir Fotografia", 'form': form, 'boton': "Cargar", })
 
-def cargar_frente_dni(request, inscripto_id):
+def cargar_frente_dni(request, inscripcion_id):
     form = UploadFoto()
     if request.method == "POST":
         form = UploadFoto(request.POST, request.FILES)
         if form.is_valid():
-            inscripto = Inscripcion.objects.get(pk=inscripto_id)
+            inscripto = Inscripcion.objects.get(pk=inscripcion_id)
             inscripto.frente_dni = form.cleaned_data['imagen']
             inscripto.save()
-            return redirect('inscripciones:ver_inscripto', inscripto_id=inscripto_id, num_doc=inscripto.individuo.num_doc)
+            return redirect('inscripciones:ver_inscripto', inscripcion_id=inscripcion_id, num_doc=inscripto.individuo.num_doc)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Foto del Frente del Documento", 'form': form, 'boton': "Cargar", })
 
-def cargar_reverso_dni(request, inscripto_id):
+def cargar_reverso_dni(request, inscripcion_id):
     form = UploadFoto()
     if request.method == "POST":
         form = UploadFoto(request.POST, request.FILES)
         if form.is_valid():
-            inscripto = Inscripcion.objects.get(pk=inscripto_id)
+            inscripto = Inscripcion.objects.get(pk=inscripcion_id)
             inscripto.reverso_dni = form.cleaned_data['imagen']
             inscripto.save()
-            return redirect('inscripciones:ver_inscripto', inscripto_id=inscripto_id, num_doc=inscripto.individuo.num_doc)
+            return redirect('inscripciones:ver_inscripto', inscripcion_id=inscripcion_id, num_doc=inscripto.individuo.num_doc)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Foto del Reverso del Documento", 'form': form, 'boton': "Cargar", })
 
 #Administracion
@@ -237,8 +237,8 @@ def lista_tareas(request):
     })
 
 @permission_required('operadores.permisos')
-def enviar_email(request, inscripto_id):
-    inscripto = Inscripcion.objects.select_related('individuo').get(pk=inscripto_id)
+def enviar_email(request, inscripcion_id):
+    inscripto = Inscripcion.objects.select_related('individuo').get(pk=inscripcion_id)
     form = EmailForm(initial={'destinatario': inscripto.individuo.email})
     if request.method == "POST":
         form = EmailForm(request.POST)
@@ -256,12 +256,12 @@ def enviar_email(request, inscripto_id):
                 #Instanciamos el objeto mail con destinatario
                 email = EmailMessage(mail_subject, message, to=[to_email])
                 email.send()
-        return redirect('inscripciones:ver_inscripto', inscripto_id=inscripto_id, num_doc=inscripto.individuo.num_doc)
+        return redirect('inscripciones:ver_inscripto', inscripcion_id=inscripcion_id, num_doc=inscripto.individuo.num_doc)
     return render(request, "extras/generic_form.html", {'titulo': "Enviar Correo Electronico", 'form': form, 'boton': "Enviar", })
 
 @permission_required('operadores.menu_inscripciones')
-def avanzar_estado(request, inscripto_id):
-    inscripto = Inscripcion.objects.get(pk=inscripto_id)
+def avanzar_estado(request, inscripcion_id):
+    inscripto = Inscripcion.objects.get(pk=inscripcion_id)
     inscripto.estado += 1
     inscripto.save()
     if inscripto.estado == 4:
@@ -270,7 +270,7 @@ def avanzar_estado(request, inscripto_id):
         atributo.tipo = 'VA'
         atributo.aclaracion = "Aprobado por: " + str(obtener_operador(request))
         atributo.save()
-    return redirect('inscripciones:ver_inscripto', inscripto_id=inscripto_id, num_doc=inscripto.individuo.num_doc)
+    return redirect('inscripciones:ver_inscripto', inscripcion_id=inscripcion_id, num_doc=inscripto.individuo.num_doc)
 
 @permission_required('operadores.menu_inscripciones')
 def download_inscriptos(request):
@@ -305,7 +305,7 @@ def activar_inscripcion(request, inscripcion_id, num_doc):
         inscripto = Inscripcion.objects.get(pk=inscripcion_id)
         inscripto.valido = True
         inscripto.save()
-        return redirect('inscripciones:ver_inscripto', inscripto_id=inscripto.id, num_doc=inscripto.individuo.num_doc)
+        return redirect('inscripciones:ver_inscripto', inscripcion_id=inscripto.id, num_doc=inscripto.individuo.num_doc)
     except(TypeError, ValueError, OverflowError, Inscripcion.DoesNotExist):
         texto = 'El link de activacion es invalido!'
     return render(request, 'extras/resultado.html', {'texto': texto, })
