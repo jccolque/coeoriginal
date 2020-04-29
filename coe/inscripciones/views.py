@@ -53,7 +53,6 @@ def inscripcion_salud(request):
                 mail_subject = 'Inscripcion al COE2020'
                 message = render_to_string('emails/acc_active_inscripcion_salud.html', {
                         'inscripto': inscripto,
-                        'token':account_activation_token.make_token(inscripto),
                     })
                 #Instanciamos el objeto mail con destinatario
                 email = EmailMessage(mail_subject, message, to=[to_email])
@@ -123,7 +122,6 @@ def inscripcion_social(request):
                     mail_subject = 'Inscripcion al COE2020'
                     message = render_to_string('emails/acc_active_inscripcion_social.html', {
                             'inscripto': inscripto,
-                            'token':account_activation_token.make_token(inscripto),
                         })
                     #Instanciamos el objeto mail con destinatario
                     email = EmailMessage(mail_subject, message, to=[to_email])
