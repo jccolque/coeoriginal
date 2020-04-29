@@ -96,6 +96,11 @@ def validar_permiso(individuo, permiso):
     return permiso
 
 def json_permiso(permiso, vista):
+    return {
+                "action": vista,
+                "realizado": False,
+                "error": "Esta funcionalidad no se encuentra habilitada.",
+    }
     return JsonResponse(
             {
                 "action": vista,
