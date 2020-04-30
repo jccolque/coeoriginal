@@ -83,6 +83,7 @@ TIPO_ATRIBUTO = (
     ('PS', 'Es Personal de Seguridad'),
     ('FP', 'Es Funcionario Publico'),
     ('TE', 'Es Trabajador de Empresa Estrategica'),
+    ('CT', 'Posee Permiso de Circulacion Temporal'),
     ('PD', 'Se encuentra Presos/Detenidos'),
     ('CE', 'Visito Pais de Riesgo/Contacto con Extranjeros'),
     ('CP', 'Tiene Potestad de Controlar Permisos'),
