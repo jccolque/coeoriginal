@@ -132,10 +132,8 @@ class Ubicacion(models.Model):
     def capacidad_disponible(self):
         return self.capacidad_maxima - self.capacidad_ocupada
     def aislados_actuales(self):
-        #Obtenemos todos los domicilios de gente que actualmente esta en el hotel
-        doms = self.aislados.filter(individuo__domicilio_actual__ubicacion=self)
-        #Filtramos domicilios viejos (por si estuve antes tambien)
-        return [dom.individuo for dom in doms if dom.individuo.domicilio_actual == dom]
+        from informacion.models import Individuo
+        return Individuo.objects.filter(domicilio_actual__ubicacion=self)
 
 #Auditoria
 auditlog.register(Nacionalidad)

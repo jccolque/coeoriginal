@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import permission_required
 from django.contrib.admin.views.decorators import staff_member_required
 #Imports del proyecto
 from coe.settings import GEOPOSITION_GOOGLE_MAPS_API_KEY
+from coe.constantes import DIAS_CUARENTENA
 from core.decoradores import superuser_required
 from core.functions import date2str
 from core.forms import SearchForm, JustificarForm
@@ -31,7 +32,6 @@ from .models import Seguimiento
 from .models import Domicilio
 from .models import Atributo, Sintoma
 from .models import Documento
-
 from .forms import ArchivoForm, ArchivoFormWithPass
 from .forms import VehiculoForm, TrasladoVehiculoForm
 from .forms import IndividuoForm, InquilinoForm
@@ -529,6 +529,21 @@ def lista_autodiagnosticos(request):
     for appdata in appdatas:
         individuos.append(appdata.individuo)
     return render(request, "lista_autodiagnosticos.html", {
+        'individuos': individuos,
+        'has_table': True,
+    })
+
+@permission_required('operadores.individuos')
+def lista_aislados(request, estado):
+    individuos = Individuo.objects.filter(domicilio_actual__aislamiento=True)
+    #Filtramos si se requiere
+    if estado == 'finalizado':
+        limite = timezone.now() - timedelta(days=DIAS_CUARENTENA)
+        individuos = individuos.exclude(domicilio_actual__fecha__gt=limite)
+    #Optimizamos
+    individuos = individuos.select_related('nacionalidad')
+    individuos = individuos.select_related('domicilio_actual', 'situacion_actual')
+    return render(request, "lista_aislados.html", {
         'individuos': individuos,
         'has_table': True,
     })

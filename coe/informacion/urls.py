@@ -34,6 +34,7 @@ urlpatterns = [
     #Listados
     path('lista/seguimiento', views.lista_seguimiento, name='lista_seguimiento'),
     path('lista/autodiagnosticos', views.lista_autodiagnosticos, name='lista_autodiagnosticos'),
+    path('lista/aislados/<str:estado>', views.lista_aislados, name='lista_aislados'),
     #Por parametro
     path('lista/nac/<int:nacionalidad_id>', views.lista_individuos, name='lista_nacionalidad'),
     path('lista/estado/<int:estado>', views.lista_individuos, name='lista_estado'),
