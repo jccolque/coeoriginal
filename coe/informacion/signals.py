@@ -52,6 +52,15 @@ def domicilio_actual(created, instance, **kwargs):
         individuo.save()
 
 @receiver(post_save, sender=Domicilio)
+def aislamiento_seguimiento(created, instance, **kwargs):
+    if created and instance.aislamiento:
+        if not instance.individuo.seguimientos.filter(tipo='I').exists():
+            seguimiento = Seguimiento(individuo=instance.individuo)
+            seguimiento.tipo = 'I'
+            seguimiento.aclaracion = "Agregado por ingresar a Aislamiento"
+            seguimiento.save()
+
+@receiver(post_save, sender=Domicilio)
 def relacion_domicilio(created, instance, **kwargs):
     if created and not instance.aislamiento:#Que no sea sitio de aislamiento
         domicilios = Domicilio.objects.filter(
@@ -90,15 +99,14 @@ def aislados(created, instance, **kwargs):
             situacion = Situacion(individuo=individuo)
             situacion.estado = 40
         situacion.conducta = 'E'
-        situacion.aclaracion = "Aislado por cambio a locacion de AISLAMIENTO"
+        situacion.aclaracion = "Aislado por traslado a ubicacion de AISLAMIENTO"
         situacion.save()
 
 @receiver(post_save, sender=Domicilio)
 def ocupar_capacidad_ubicacion(created, instance, **kwargs):
     if created and instance.ubicacion: 
-        #Quitamos una plaza disponible:
-        instance.ubicacion.capacidad_ocupada += 1
-        instance.ubicacion.save()
+        ubicacion = instance.ubicacion
+        ubicacion.capacidad_ocupada = ubicacion.aislados_actuales().count()
 
 #Evolucionamos Estado segun relaciones
 @receiver(pre_save, sender=Domicilio)
@@ -108,7 +116,7 @@ def recuperar_capacidad_ubicacion(instance, **kwargs):
         if individuo.domicilio_actual.ubicacion:#Si estaba en alguna ubicacion
             ubicacion = individuo.domicilio_actual.ubicacion#Si previamente estaba aislado
             ubicacion.capacidad_ocupada -= 1
-            ubicacion.save()       
+            ubicacion.save()
 
 @receiver(post_save, sender=Relacion)
 def crear_relacion_inversa(created, instance, **kwargs):
@@ -132,7 +140,8 @@ def eliminar_relacion_inversa(instance, **kwargs):
 def poner_en_seguimiento(created, instance, **kwargs):
     if created and (instance.tipo == "VE"):
         seguimiento = Seguimiento(individuo=instance.individuo)
-        seguimiento.aclaracion = "Agregado Atributo en el sistema"
+        seguimiento.tipo = 'I'
+        seguimiento.aclaracion = "Agregado Atributo Vigilancia Epidemiologica en el sistema"
         seguimiento.save()
 
 @receiver(post_save, sender=Situacion)

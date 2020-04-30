@@ -9,7 +9,7 @@ from core.widgets import XDSoftDatePickerInput, XDSoftDateTimePickerInput
 from informacion.models import Individuo
 #Imports de la app
 from .choices import TIPO_PERMISO
-from .models import NivelRestriccion, Permiso, IngresoProvincia
+from .models import NivelRestriccion, Permiso, IngresoProvincia, CirculacionTemporal
 
 #Formularios
 class NivelRestriccionForm(forms.ModelForm):
@@ -58,6 +58,27 @@ class IngresoProvinciaForm(forms.ModelForm):
             'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
         }
 
+
+class IngresoProvinciaForm(forms.ModelForm):
+    class Meta:
+        model = IngresoProvincia
+        fields= '__all__'
+        exclude = ('fecha', 'token', 'individuos', 'estado', 'plan_vuelo', 'dut', 'operador', 'qrpath')
+        widgets = {
+            'fecha_llegada': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}, ),
+            'origen': autocomplete.ModelSelect2(url='georef:provincia-autocomplete'),
+            'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+        }
+
+class CirculacionTemporalForm(forms.ModelForm):
+    class Meta:
+        model = CirculacionTemporal
+        fields= '__all__'
+        exclude = ('chofer', 'acompañante', 'permiso_nacional', 'licencia_conducir', 'fecha', 'token', 'estado', 'operador', 'qrpath')
+        widgets = {
+            'origen': autocomplete.ModelSelect2(url='georef:provincia-autocomplete'),
+            'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+        }
 
 class IngresanteForm(forms.ModelForm):
     class Meta:

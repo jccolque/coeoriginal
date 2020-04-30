@@ -380,8 +380,6 @@ def enviar_email(request, ingreso_id):
         return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
     return render(request, "extras/generic_form.html", {'titulo': "Enviar Correo Electronico", 'form': form, 'boton': "Enviar", })
 
-
-
 @permission_required('operadores.permisos')
 def aprobar_ingreso(request, ingreso_id):
     ingreso = IngresoProvincia.objects.get(pk=ingreso_id)
@@ -417,3 +415,29 @@ def eliminar_ingreso(request, ingreso_id):
     ingreso.operador = obtener_operador(request)
     ingreso.save()
     return redirect('permisos:lista_ingresos')
+
+
+@permission_required('operadores.permisos')
+def pedir_circulacion_temporal(request, circulacion_id):
+    circulacion = None
+    if ingreso_id:
+        ingreso = IngresoProvincia.objects.get(pk=ingreso_id)
+    form = IngresoProvinciaForm(instance=ingreso)
+    if request.method == "POST":
+        form = IngresoProvinciaForm(request.POST, request.FILES, instance=ingreso)
+        if form.is_valid():
+            ingreso = form.save()
+            #Enviar email
+            if SEND_MAIL:
+                to_email = ingreso.email_contacto
+                #Preparamos el correo electronico
+                mail_subject = 'Requerimiento de Ingreso Provincial Jujuy!'
+                message = render_to_string('emails/ingreso_provincial.html', {
+                    'ingreso': ingreso,
+                })
+                #Instanciamos el objeto mail con destinatario
+                email = EmailMessage(mail_subject, message, to=[to_email])
+                email.send()
+            #Enviarlo a cargar ingresantes
+            return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
+    return render(request, "extras/generic_form.html", {'titulo': "Permiso de Ingreso a Jujuy", 'form': form, 'boton': "Cargar", })

@@ -66,7 +66,7 @@ def finalizar_geotracking():
             notif = AppNotificacion()
             notif.appdata = individuo.appdata
             notif.titulo = 'Finalizo su periodo bajo Supervicion Digital'
-            notif.mensaje = 'Se han cumplido los '+str(DIAS_CUARENTENA)+' dias de seguimiento.'
+            notif.mensaje = 'Se han cumplido los '+str(DIAS_CUARENTENA)+' dias de seguimiento Obligatorios.'
             notif.accion = 'ST'
             notif.save()#Al grabar el local, se envia automaticamente por firebase
             #Lo aliminamos de los seguimientos

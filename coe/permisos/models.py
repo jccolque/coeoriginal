@@ -58,8 +58,8 @@ class IngresoProvincia(models.Model):
     tipo = models.CharField('Tipo Ingreso', choices=TIPO_INGRESO, max_length=1, default='P')
     email_contacto = models.EmailField('Correo Electronico de Contacto')
     fecha_llegada = models.DateTimeField('Fecha de Llegada', default=timezone.now)
-    origen = models.ForeignKey(Provincia, on_delete=models.CASCADE, related_name="ingresos")
-    destino = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="ingresos")
+    origen = models.ForeignKey(Provincia, on_delete=models.CASCADE, related_name="ingresos_provincial")
+    destino = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="ingresos_provincial")
     #Vehiculo
     marca = models.CharField('Marca del Vehiculo', max_length=200)
     modelo = models.CharField('Modelo del Vehiculo', max_length=200)
@@ -69,7 +69,7 @@ class IngresoProvincia(models.Model):
     fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
     estado = models.CharField('Estado', choices=ESTADO_INGRESO, max_length=1, default='C')
     qrpath = models.CharField('qrpath', max_length=100, null=True, blank=True)
-    operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True, related_name="ingresosprovinciales")
+    operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True, related_name="ingresos_provinciales")
     #Aclaraciones
     aclaracion = HTMLField(null=True)
     #Pasajeros
@@ -91,18 +91,18 @@ class IngresoProvincia(models.Model):
             return self.qrpath
     def generar_pdf(self):
         pdf = canvas.Canvas("archivos/permisos/"+self.token+".pdf", pagesize=A4)
-        pdf.drawString(10,650,"PERMISO DE INGRESO A JUJUY")
-        pdf.drawString(10,630,self.get_tipo_display())
-        pdf.drawString(10,600,"Fecha de llegada: "+str(self.fecha_llegada)[0:16])
-        pdf.drawString(10,585,"Origen del Viaje: "+str(self.origen))
-        pdf.drawString(10,570,"Destino del Viaje: "+str(self.destino))
-        pdf.drawString(10,555,"Vehiculo: "+self.marca+" "+self.modelo+" "+self.patente)
+        pdf.drawString(10, 650, "PERMISO DE INGRESO A JUJUY")
+        pdf.drawString(10, 630, self.get_tipo_display())
+        pdf.drawString(10, 600, "Fecha de llegada: "+str(self.fecha_llegada)[0:16])
+        pdf.drawString(10, 585, "Origen del Viaje: "+str(self.origen))
+        pdf.drawString(10, 570, "Destino del Viaje: "+str(self.destino))
+        pdf.drawString(10, 555, "Vehiculo: "+self.marca+" "+self.modelo+" "+self.patente)
         #Agregamos lista de pasajeros
         if self.individuos.exists():#Si existe
-            pdf.drawString(10,530,"Pasajeros:")
+            pdf.drawString(10,530, "Pasajeros:")
             altura=500
             for individuo in self.individuos.all():
-                pdf.drawString(10,altura, str(individuo))
+                pdf.drawString(10, altura, str(individuo))
                 altura-= 20
         #Cargamos imagenes
         try:
@@ -113,11 +113,49 @@ class IngresoProvincia(models.Model):
         pdf.save()
 
 class Emails_Ingreso(models.Model):
-    ingreso = models.ForeignKey(IngresoProvincia, on_delete=models.CASCADE, related_name="emails_enviados")
+    ingreso = models.ForeignKey(IngresoProvincia, on_delete=models.CASCADE, related_name="emails")
     fecha = models.DateTimeField('Fecha de Envio', default=timezone.now)
     asunto = models.CharField('Asunto', max_length=100)
-    cuerpo = models.CharField('Asunto', max_length=1000)
+    cuerpo = models.CharField('Cuerpo', max_length=1000)
     operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="ingreso_emailsenviados")
+
+class CirculacionTemporal(models.Model):#Transportes de Carga
+    chofer = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="transportista")
+    acompañante = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="acompañante")
+    actividad = HTMLField(null=True)
+    origen = models.ForeignKey(Provincia, on_delete=models.CASCADE, related_name="ingresos_transporte")
+    destino = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="ingresos_transporte")
+    #Vehiculo
+    marca = models.CharField('Marca del Vehiculo', max_length=200)
+    modelo = models.CharField('Modelo del Vehiculo', max_length=200)
+    patente = models.CharField('Identificacion Patente', max_length=200)
+    #Archivos
+    permiso_nacional = models.FileField('Permiso Nacional de Circulacion', upload_to='ingresos/')
+    licencia_conducir = models.FileField('Licencia de Conducir', upload_to='ingresos/')
+    #Interno
+    token = models.CharField('Token', max_length=50, default=token_ingreso, unique=True)
+    fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
+    estado = models.CharField('Estado', choices=ESTADO_INGRESO, max_length=1, default='C')
+    qrpath = models.CharField('qrpath', max_length=100, null=True, blank=True)
+    operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True, related_name="transportes_provinciales")
+    def get_qr(self):
+        if self.qrpath:
+            return self.qrpath
+        else:
+            path = MEDIA_ROOT + '/circulacion/qrcode-'+str(self.id)+'.png'
+            img = qrcode.make(self.token)
+            img.save(path)
+            relative_path = 'archivos/circulacion/qrcode-'+ str(self.id)+'.png'
+            self.qrpath = relative_path
+            self.save()
+            return self.qrpath
+
+class Emails_Transporte(models.Model):
+    circulacion = models.ForeignKey(CirculacionTemporal, on_delete=models.CASCADE, related_name="emails")
+    fecha = models.DateTimeField('Fecha de Envio', default=timezone.now)
+    asunto = models.CharField('Asunto', max_length=100)
+    cuerpo = models.CharField('Cuerpo', max_length=1000)
+    operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="transportes_emailsenviados")
 
 #señales
 from .signals import activar_restriccion

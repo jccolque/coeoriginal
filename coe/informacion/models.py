@@ -115,7 +115,7 @@ class Individuo(models.Model):
             self.save()
             return self.qrpath
     def tracking(self):
-        return self.geoposiciones.filter(tipo='ST').exists()
+        return self.geoposiciones.exists()
     def ultima_alerta(self):
         return self.geoposiciones.exclude(alerta='SA').last()
     def controlador(self):
@@ -242,6 +242,7 @@ from .signals import estado_inicial
 from .signals import poner_en_seguimiento
 from .signals import situacion_actual
 from .signals import domicilio_actual
+from .signals import aislamiento_seguimiento
 from .signals import relacion_domicilio
 from .signals import crear_relacion_inversa
 from .signals import eliminar_relacion_inversa

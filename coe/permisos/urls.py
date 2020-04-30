@@ -23,6 +23,9 @@ urlpatterns = [
     path('cargar/plan_vuelo/<int:ingreso_id>', views.cargar_plan_vuelo, name='cargar_plan_vuelo'),
     path('del/ingresante/<int:ingreso_id>/<int:individuo_id>', views.quitar_ingresante, name='quitar_ingresante'),
     path('ingreso/aprobado/<str:token>', views.ver_ingreso_aprobado, name='ver_ingreso_aprobado'),
+    #Circulacion
+    path('circulacion/', views.pedir_circulacion_temporal, name='pedir_circulacion_temporal'),
+    path('circulacion/<int:circulacion_id>', views.pedir_circulacion_temporal, name='mod_circulacion_temporal'),
     #Administracion
     #Permisos
     path('', views.menu_permisos, name='menu_permisos'),

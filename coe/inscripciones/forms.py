@@ -18,7 +18,7 @@ class ProfesionalSaludForm(forms.ModelForm):
     matricula = forms.CharField(label="Matricula")
     frente_dni = forms.FileField(label="Foto del Dni")
     archivo_titulo = forms.FileField(label="Foto del Titulo")
-    info_extra = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 30}))
+    info_extra = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 30}), required=False)
     #Domicilio
     dom_localidad = forms.ModelChoiceField(
         queryset=Localidad.objects.all(),
@@ -43,7 +43,7 @@ class VoluntarioSocialForm(forms.ModelForm):
     no_grupo_riesgo = forms.BooleanField(required=True)
     no_aislamiento = forms.BooleanField(required=True)
     oficio = forms.CharField(label="Oficio/Profesion")
-    info_extra = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 10}))
+    info_extra = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 10}), required=False)
     #Domicilio
     dom_localidad = forms.ModelChoiceField(
         queryset=Localidad.objects.all(),

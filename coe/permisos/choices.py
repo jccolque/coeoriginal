@@ -31,8 +31,8 @@ TIPO_INGRESO = (
 ESTADO_INGRESO = (
     ('C', 'Cargando Pedido'),
     ('E', 'Esperando Aprobacion'),
-    ('B', 'Dado de Baja'),
     ('A', 'Aprobado'),
+    ('B', 'Dado de Baja'),
 )
 
 COMBINACION_DNIxDIA = (

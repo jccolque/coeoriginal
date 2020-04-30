@@ -502,24 +502,16 @@ def lista_individuos(
 @permission_required('operadores.individuos')
 def lista_seguimiento(request):
     #Obtenemos los registros
-    seguimientos = Seguimiento.objects.all()
-    seguimientos = seguimientos.exclude(tipo='F')#Eliminamos los que terminaron el seguimiento
+    individuos = Individuo.objects.filter(seguimientos__tipo__in=('I','L', 'ET'))
+    individuos = individuos.exclude(seguimientos__tipo='FS')
     #Optimizamos las busquedas
-    seguimientos = seguimientos.select_related('individuo', 'individuo__nacionalidad')
-    seguimientos = seguimientos.select_related('individuo__domicilio_actual', 'individuo__situacion_actual')
-    seguimientos = seguimientos.prefetch_related('individuo__atributos', 'individuo__sintomas')
-    seguimientos = seguimientos.prefetch_related('individuo__seguimientos')
+    individuos = individuos.select_related('nacionalidad')
+    individuos = individuos.select_related('domicilio_actual', 'situacion_actual')
+    individuos = individuos.prefetch_related('atributos', 'sintomas')
+    individuos = individuos.prefetch_related('seguimientos')
     #Traemos seguimientos terminados para descartar
-    seguimientos_terminados = [s.individuo for s in Seguimiento.objects.filter(tipo='FS')]
-#       last12hrs = timezone.now() - timedelta(hours=12)
-#       and seguimiento.fecha < last12hrs
-    #Procesamos
-    individuos = {}
-    for seguimiento in seguimientos:
-        if seguimiento.individuo.id not in individuos:
-            if not seguimiento.individuo in seguimientos_terminados:
-                individuos[seguimiento.individuo.id] = seguimiento.individuo
-    individuos = list(individuos.values())
+    last12hrs = timezone.now() - timedelta(hours=12)
+    individuos = individuos.exclude(seguimientos__fecha__gt=last12hrs)
     #Lanzamos reporte
     return render(request, "listado_seguimiento.html", {
         'individuos': individuos,
