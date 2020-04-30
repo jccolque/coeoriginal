@@ -536,6 +536,7 @@ def lista_autodiagnosticos(request):
 @permission_required('operadores.individuos')
 def lista_aislados(request, estado):
     individuos = Individuo.objects.filter(domicilio_actual__aislamiento=True)
+    individuos = individuos.exclude(domicilio_actual__ubicacion=None)
     #Filtramos si se requiere
     if estado == 'finalizado':
         limite = timezone.now() - timedelta(days=DIAS_CUARENTENA)
