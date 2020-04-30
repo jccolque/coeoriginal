@@ -21,7 +21,7 @@ urlpatterns = [
 
     path('lista/tarea/<str:tarea_id>/', views.lista_por_tarea, name='lista_por_tarea'),
 
-    path('ver/<int:inscripcion_id>/<int:num_doc>', views.ver_inscripto, name='ver_inscripto'),
+    path('ver/<int:inscripcion_id>/<str:num_doc>', views.ver_inscripto, name='ver_inscripto'),
 
     path('avanzar/estado/<int:inscripcion_id>', views.avanzar_estado, name='avanzar_estado'),
     path('email/<int:inscripcion_id>', views.enviar_email, name='enviar_email'),

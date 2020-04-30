@@ -249,7 +249,7 @@ from .signals import eliminar_relacion_inversa
 from .signals import relacion_vehiculo
 from .signals import relacionar_situacion
 from .signals import afectar_relacionados
-from .signals import aislados
+from .signals import aislar_individuo
 from .signals import ocupar_capacidad_ubicacion
 from .signals import recuperar_capacidad_ubicacion
 from .signals import cargo_signosvitales

@@ -88,7 +88,7 @@ def relacion_domicilio(created, instance, **kwargs):
 
 #Evolucionamos Estado segun Domicilio
 @receiver(post_save, sender=Domicilio)
-def aislados(created, instance, **kwargs):
+def aislar_individuo(created, instance, **kwargs):
     if created and instance.aislamiento:#Si creamos nueva posicion
         individuo = instance.individuo
         #Creamos una nueva situacion
@@ -106,7 +106,7 @@ def aislados(created, instance, **kwargs):
 def ocupar_capacidad_ubicacion(created, instance, **kwargs):
     if created and instance.ubicacion: 
         ubicacion = instance.ubicacion
-        ubicacion.capacidad_ocupada = ubicacion.aislados_actuales().count()
+        ubicacion.capacidad_ocupada = len(ubicacion.aislados_actuales())
 
 #Evolucionamos Estado segun relaciones
 @receiver(pre_save, sender=Domicilio)

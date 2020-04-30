@@ -52,11 +52,11 @@
                                         <ul style="padding:0;">
                                             {% for inscripcion in individuo.voluntariados.all %}
                                                 {% if inscripcion.tipo_inscripto == 'PS' %}
-                                                    <a href="{% url 'inscripciones:ver_inscripto'  inscripto_id=inscripcion.id num_doc=individuo.num_doc %}" target="_blank">
+                                                    <a href="{% url 'inscripciones:ver_inscripto'  inscripcion_id=inscripcion.id num_doc=individuo.num_doc %}" target="_blank">
                                                         <li>{{inscripcion.get_profesion_display}}</li>
                                                     </a>
                                                 {% elif inscripcion.tipo_inscripto == 'VS' %}
-                                                    <a href="{% url 'inscripciones:ver_inscripto'  inscripto_id=inscripcion.id num_doc=individuo.num_doc %}" target="_blank">
+                                                    <a href="{% url 'inscripciones:ver_inscripto'  inscripcion_id=inscripcion.id num_doc=individuo.num_doc %}" target="_blank">
                                                         <li>{{inscripcion.oficio}}</li>
                                                     </a>
                                                 {% endif %}
