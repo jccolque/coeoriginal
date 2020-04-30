@@ -132,7 +132,7 @@ class Ubicacion(models.Model):
     def capacidad_disponible(self):
         return self.capacidad_maxima - self.capacidad_ocupada
     def aislados_actuales(self):
-        return self.aislados.filter(individuo__ubicacion_actual__ubicacion=self)
+        return self.aislados.filter(individuo__domicilio_actual__ubicacion=self)
 
 #Auditoria
 auditlog.register(Nacionalidad)
