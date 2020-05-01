@@ -8,5 +8,6 @@ class InformacionConfig(AppConfig):
     def ready(self):
         agregar_menu(self)
         #Informacion:
-        from informacion.tasks import baja_seguimiento
+        from informacion.tasks import baja_seguimiento, baja_aislamiento
         baja_seguimiento(repeat=3600*12)#Cada 12 horas
+        baja_aislamiento(repeat=3600*12)#Cada 12 horas

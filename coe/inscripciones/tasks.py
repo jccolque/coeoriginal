@@ -16,7 +16,7 @@ from .models import Inscripcion
 logger = logging.getLogger("tasks")
 
 #Definimos tareas
-@background(schedule=1)
+@background(schedule=75)
 def reintentar_validar():
     if SEND_MAIL:
         limite = timezone.now() - timedelta(days=4)

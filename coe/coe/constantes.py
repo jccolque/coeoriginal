@@ -4,7 +4,7 @@ from datetime import date, datetime, time
 #Definimos constantes
 LAST_DATE = date(9999, 12, 30)
 LAST_DATETIME = datetime(9999, 12, 30, 23, 59)
-DIAS_CUARENTENA = 14
+DIAS_CUARENTENA = 13
 
 #Horarios de Actividad
 TIME_INICIO = time(8, 0, 0)

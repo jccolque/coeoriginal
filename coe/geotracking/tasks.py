@@ -18,8 +18,9 @@ from .geofence import obtener_trackeados
 logger = logging.getLogger("tasks")
 
 #Definimos tareas
-@background(schedule=1)
+@background(schedule=60)
 def geotrack_sin_actualizacion():
+    logger.info("GeoTrackings Sin actualizar")
     individuos = obtener_trackeados()
     #Quitamos los que enviaron Posicion GPS en las ultimas 2 horas:
     limite = timezone.now() - timedelta(hours=2)
@@ -28,22 +29,29 @@ def geotrack_sin_actualizacion():
     #individuos = individuos.exclude(Q(geoposiciones__alerta='FG', geoposiciones__procesada=True))
     #Recorrer y alertar
     for individuo in individuos:
-        geopos = individuo.geoposicion()
-        geopos.alerta = 'FG'
-        geopos.procesada = False
-        horas = int((geopos.fecha - timezone.now()).seconds / 3600)
-        geopos.aclaracion = "Lleva " + str(horas) + "hrs sin informar posicion."
-        geopos.save()
-        #Enviamos pushnotification para que reactive el tracking
-        notif = AppNotificacion()
-        notif.appdata = individuo.appdata
-        notif.titulo = 'Falta de Seguimiento'
-        notif.mensaje = 'Hace mas de una hora que no recibimos su posicion.'
-        notif.accion = 'SL'
-        notif.save()#Al grabar el local, se envia automaticamente por firebase
+        logger.info("Procesamos: " + str(individuo))
+        try:
+            geopos = individuo.geoposiciones.last()
+            geopos.alerta = 'FG'
+            geopos.procesada = False
+            horas = int((geopos.fecha - timezone.now()).seconds / 3600)
+            geopos.aclaracion = "Lleva " + str(horas) + "hrs sin informar posicion."
+            geopos.save()
+            #eliminamos si tiene una notificacion esperando
+            AppNotificacion.objects.filter(appdata=individuo.appdata).delete()
+            #Enviamos pushnotification para que reactive el tracking
+            notif = AppNotificacion()
+            notif.appdata = individuo.appdata
+            notif.titulo = 'Falta de Seguimiento'
+            notif.mensaje = 'Hace mas de ' + str(horas) + ' que no recibimos su posicion.'
+            notif.accion = 'SL'
+            notif.save()#Al grabar el local, se envia automaticamente por firebase
+        except Exception as error:
+            logger.info("Fallo finalizar_geotracking: "+str(error)+'\n'+str(traceback.format_exc()))
 
-@background(schedule=1)
+@background(schedule=45)
 def finalizar_geotracking():
+    logger.info("Realizamos la finalizacion de los Geotrackings")
     individuos = obtener_trackeados()
     #Obtenemos los que estan siendo trackeados hace mas de 14 dias:
     inicio = timezone.now() - timedelta(days=DIAS_CUARENTENA)
@@ -55,6 +63,7 @@ def finalizar_geotracking():
     individuos = individuos.exclude(seguimientos__tipo='FT')
     #Los damos de baja:
     for individuo in individuos:
+        logger.info("Procesamos: " + str(individuo))
         try:
             st_geopos = individuo.filter(tipo='ST').last()
             #Generamos seguimiento de Fin de Tracking
@@ -63,6 +72,9 @@ def finalizar_geotracking():
             seguimiento.aclaracion = "Fin de Seguimiento iniciado el: " + str(st_geopos.fecha)[0:16]
             seguimiento.save()
             #Enviamos pushnotification para dar de baja tracking
+            #eliminamos si tiene una notificacion esperando
+            AppNotificacion.objects.filter(appdata=individuo.appdata).delete()
+            #Creamos nueva Notificacion
             notif = AppNotificacion()
             notif.appdata = individuo.appdata
             notif.titulo = 'Finalizo su periodo bajo Supervicion Digital'

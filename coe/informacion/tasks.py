@@ -1,6 +1,8 @@
 #Traemos el sistema de Backgrounds
 
 #Imports de Python
+import logging
+import traceback
 from datetime import timedelta
 #Imports django
 from django.utils import timezone
@@ -15,6 +17,9 @@ from .models import Archivo
 from .models import Individuo, Domicilio
 from .models import Seguimiento
 from .models import Situacion, Sintoma, Atributo
+
+#Definimos logger
+logger = logging.getLogger("tasks")
 
 #Reconocedores
 Rsintomas = [
@@ -308,6 +313,7 @@ def guardar_padron_domicilios(lineas, archivo_id, ultimo=False):
 
 @background(schedule=1)
 def baja_seguimiento():
+    logger.info("Iniciamos Baja de Seguimiento")
     #Obtenemos fecha de corte:
     fecha_corte = timezone.now() - timedelta(days=DIAS_CUARENTENA)
     #Obtenemos seguimientos iniciados antes de la fecha de corte
@@ -318,7 +324,57 @@ def baja_seguimiento():
     individuos = individuos.exclude(seguimientos__tipo='FS')    
     #Los damos de baja
     for individuo in individuos:
-        seguimiento = Seguimiento(individuo=individuo)
-        seguimiento.tipo = 'FS'
-        seguimiento.aclaracion = "Baja automatica por cumplir tiempo de cuarentena"
-        seguimiento.save()
+        try:
+            seguimiento = Seguimiento(individuo=individuo)
+            seguimiento.tipo = 'FS'
+            seguimiento.aclaracion = "Baja automatica por cumplir tiempo de cuarentena"
+            seguimiento.save()
+            logger.info("Procesamos a: " + str(individuo))
+        except Exception as error:
+            logger.info("Fallo baja_aislamiento: "+str(error)+'\n'+str(traceback.format_exc()))        
+
+@background(schedule=15)
+def baja_aislamiento():
+    logger.info("Iniciamos Baja de Aislamiento")
+    #Obtenemos fecha de corte:
+    fecha_corte = timezone.now() - timedelta(days=DIAS_CUARENTENA)
+    #Obtener aislados
+    individuos = Individuo.objects.filter(situacion_actual__conducta='E')#Obtenemos a todos los aislados
+    individuos = individuos.exclude(situacion_actual__fecha__gt=fecha_corte)#Evitamos a los que siguen en cuarentena
+    #Damos de baja el aislamiento
+    for individuo in individuos:
+        try:
+            #Lo sacamos de aislamiento
+            situacion = Situacion(individuo=individuo)
+            situacion.estado = 11
+            situacion.conducta = 'C'
+            situacion.aclaracion = "Baja por Cumplimiento de Cuarentena"
+            situacion.save()  #  Guardamos
+            logger.info("Procesamos a: " + str(individuo))
+        except Exception as error:
+            logger.info("Fallo baja_aislamiento: "+str(error)+'\n'+str(traceback.format_exc()))
+
+@background(schedule=30)
+def devolver_domicilio():
+    logger.info("Iniciamos el Cambio de Domicilio")
+    #Obtenemos fecha de corte:
+    fecha_corte = timezone.now() - timedelta(days=DIAS_CUARENTENA)
+    #Obtener aislados
+    individuos = Individuo.objects.filter(domicilio_actual__aislado=True)
+    individuos = individuos.exclude(domicilio_actual__ubicacion=None)#Quitamos los que no estan en hoteles
+    #Les buscamos posible nuevo domicilio
+    for individuo in individuos:
+        try:
+            dom = individuo.domicilios.filter(aislado=False).last()
+            #Si tiene un domicilio valido que no es de aislamiento
+            if not dom:
+                dom = individuo.domicilio_actual
+            #Lo blanqueamos para crearlo como nuevo:
+            dom.pk = None
+            dom.aislamiento = False
+            dom.aclaracion = "Movido Automaticamente por final de Cuarentena."
+            dom.fecha = None
+            dom.save()
+            logger.info("Procesamos a: " + str(individuo))
+        except Exception as error:
+            logger.info("Fallo Cambio de Domicilio: "+str(error)+'\n'+str(traceback.format_exc()))
