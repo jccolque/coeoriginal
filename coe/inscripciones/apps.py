@@ -9,4 +9,4 @@ class InscripcionesConfig(AppConfig):
         agregar_menu(self)
         #Lanzamos background jobs
         from .tasks import reintentar_validar
-        reintentar_validar(repeat=3600*24)#Cada 12 horas
+        reintentar_validar(repeat=3600*24, verbose_name="reintentar_validar")#Cada 24 horas
