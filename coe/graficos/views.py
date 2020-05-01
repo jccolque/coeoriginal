@@ -2,7 +2,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import permission_required
 #Imports del Proyecto
-from coe.credenciales import GEOPOSITION_GOOGLE_MAPS_API_KEY
+try:
+    from coe.credenciales import GEOPOSITION_GOOGLE_MAPS_API_KEY
+except:
+    GEOPOSITION_GOOGLE_MAPS_API_KEY = ''
 #Imports de la app
 from .models import Grafico, Columna, Dato
 from .forms import GraficoForm, ColumnaForm, DatoForm
