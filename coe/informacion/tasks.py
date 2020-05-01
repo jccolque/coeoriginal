@@ -370,7 +370,7 @@ def devolver_domicilio():
     #Obtenemos fecha de corte:
     fecha_corte = timezone.now() - timedelta(days=DIAS_CUARENTENA)
     #Obtener aislados
-    individuos = Individuo.objects.filter(domicilio_actual__aislado=True)
+    individuos = Individuo.objects.filter(domicilio_actual__aislamiento=True)
     individuos = individuos.exclude(domicilio_actual__ubicacion=None)#Quitamos los que no estan en hoteles
     #Les buscamos posible nuevo domicilio
     for individuo in individuos:
