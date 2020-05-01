@@ -342,7 +342,7 @@ def baja_seguimiento():
             logger.info("Fallo baja_aislamiento: "+str(error)+'\n'+str(traceback.format_exc()))
     logger.info("Finalizamos Baja de Seguimiento\n")
 
-@background(schedule=10)
+@background(schedule=5)
 def baja_aislamiento():
     logger.info("Iniciamos Baja de Aislamiento")
     #Obtenemos fecha de corte:
@@ -364,7 +364,7 @@ def baja_aislamiento():
             logger.info("Fallo baja_aislamiento: "+str(error)+'\n'+str(traceback.format_exc()))
     logger.info("Finalizamos Baja de Aislamiento\n")
 
-@background(schedule=20)
+@background(schedule=10)
 def devolver_domicilio():
     logger.info("Iniciamos el Cambio de Domicilio")
     #Obtenemos fecha de corte:

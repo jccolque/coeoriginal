@@ -8,6 +8,13 @@ class InformacionConfig(AppConfig):
     def ready(self):
         agregar_menu(self)
         #Informacion:
-        from informacion.tasks import baja_seguimiento, baja_aislamiento
-        baja_seguimiento(repeat=3600*12, verbose_name="baja_seguimiento")#Cada 12 horas
-        baja_aislamiento(repeat=3600*12, verbose_name="baja_aislamiento")#Cada 12 horas
+        from background_task.models import Task
+        if not Task.objects.filter(verbose_name="baja_seguimiento").exists():
+            from informacion.tasks import baja_seguimiento
+            baja_seguimiento(repeat=3600*12, verbose_name="baja_seguimiento")#Cada 12 horas
+        if not Task.objects.filter(verbose_name="baja_aislamiento").exists():
+            from informacion.tasks import baja_aislamiento
+            baja_aislamiento(repeat=3600*12, verbose_name="baja_aislamiento")#Cada 12 horas
+        if not Task.objects.filter(verbose_name="devolver_domicilio").exists():
+            from informacion.tasks import devolver_domicilio
+            devolver_domicilio(repeat=3600*8, verbose_name="devolver_domicilio")#Cada 12 horas

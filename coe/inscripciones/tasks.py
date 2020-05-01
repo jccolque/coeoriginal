@@ -17,7 +17,7 @@ from .models import Inscripcion
 logger = logging.getLogger("tasks")
 
 #Definimos tareas
-@background(schedule=50)
+@background(schedule=20)
 def reintentar_validar():
     logger.info("Iniciamos envio de mails de Re validacion")
     if SEND_MAIL:
