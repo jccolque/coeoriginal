@@ -51,6 +51,7 @@ Rriesgos = ['HIPER', 'TENSION', 'DBT', 'DIABE', 'EMBARA', 'INMUN', 'ASMA', 'BRON
 
 @background(schedule=1)
 def guardar_same(lineas, archivo_id, ultimo=False):
+    logger.info("Iniciamos Carga Same")
     archivo = Archivo.objects.get(pk=archivo_id)
     if not archivo.descripcion:
         archivo.descripcion = "<h3>Inicia la carga Background SAME: "+str(timezone.now())+"</h3>"
@@ -127,9 +128,11 @@ def guardar_same(lineas, archivo_id, ultimo=False):
         archivo.descripcion += "<p>FIN ARCHIVO</p>"
         archivo.procesado = True
         archivo.save()
+    logger.info("Finalizamos Carga Same\n")
 
 @background(schedule=1)
 def guardar_epidemiologia(lineas, archivo_id, ultimo=False):
+    logger.info("Iniciamos Carga de Epidemiologia")
     archivo = Archivo.objects.get(pk=archivo_id)
     if not archivo.descripcion:
         archivo.descripcion = "<h3>Inicia la carga Background Epidemiologia: "+str(timezone.now())+"</h3>"
@@ -225,9 +228,11 @@ def guardar_epidemiologia(lineas, archivo_id, ultimo=False):
         archivo.descripcion += "<p>FIN ARCHIVO</p>"
         archivo.procesado = True
         archivo.save()
+    logger.info("Finalizamos Carga Epidemiologia\n")
 
 @background(schedule=1)
 def guardar_padron_individuos(lineas, archivo_id, ultimo=False):
+    logger.info("Iniciamos carga del Padron")
     archivo = Archivo.objects.get(pk=archivo_id)
     if not archivo.descripcion:
         archivo.descripcion = "<h3>Inicia la carga Masiva del Padron: "+str(timezone.now())+"</h3>"
@@ -264,9 +269,11 @@ def guardar_padron_individuos(lineas, archivo_id, ultimo=False):
         archivo.descripcion += "<p>FIN ARCHIVO</p>"
         archivo.procesado = True
         archivo.save()
+    logger.info("Finalizamos carga del Padron\n")
         
 @background(schedule=1)
 def guardar_padron_domicilios(lineas, archivo_id, ultimo=False):
+    logger.info("Iniciamos Carga del Padron")
     archivo = Archivo.objects.get(pk=archivo_id)
     if not archivo.descripcion:
         archivo.descripcion = "<h3>Inicia la carga Masiva de Domicilios del Padron: "+str(timezone.now())+"</h3>"
@@ -310,6 +317,7 @@ def guardar_padron_domicilios(lineas, archivo_id, ultimo=False):
         archivo.descripcion += "<p>FIN ARCHIVO</p>"
         archivo.procesado = True
         archivo.save()
+    logger.info("Finalizamos carga de Domicilio del Padron\n")
 
 @background(schedule=1)
 def baja_seguimiento():
@@ -324,14 +332,15 @@ def baja_seguimiento():
     individuos = individuos.exclude(seguimientos__tipo='FS')    
     #Los damos de baja
     for individuo in individuos:
+        logger.info("Procesamos a: " + str(individuo))
         try:
             seguimiento = Seguimiento(individuo=individuo)
             seguimiento.tipo = 'FS'
             seguimiento.aclaracion = "Baja automatica por cumplir tiempo de cuarentena"
             seguimiento.save()
-            logger.info("Procesamos a: " + str(individuo))
         except Exception as error:
-            logger.info("Fallo baja_aislamiento: "+str(error)+'\n'+str(traceback.format_exc()))        
+            logger.info("Fallo baja_aislamiento: "+str(error)+'\n'+str(traceback.format_exc()))
+    logger.info("Finalizamos Baja de Seguimiento\n")
 
 @background(schedule=15)
 def baja_aislamiento():
@@ -343,6 +352,7 @@ def baja_aislamiento():
     individuos = individuos.exclude(situacion_actual__fecha__gt=fecha_corte)#Evitamos a los que siguen en cuarentena
     #Damos de baja el aislamiento
     for individuo in individuos:
+        logger.info("Procesamos a: " + str(individuo))
         try:
             #Lo sacamos de aislamiento
             situacion = Situacion(individuo=individuo)
@@ -350,9 +360,9 @@ def baja_aislamiento():
             situacion.conducta = 'C'
             situacion.aclaracion = "Baja por Cumplimiento de Cuarentena"
             situacion.save()  #  Guardamos
-            logger.info("Procesamos a: " + str(individuo))
         except Exception as error:
             logger.info("Fallo baja_aislamiento: "+str(error)+'\n'+str(traceback.format_exc()))
+    logger.info("Finalizamos Baja de Aislamiento\n")
 
 @background(schedule=30)
 def devolver_domicilio():
@@ -364,6 +374,7 @@ def devolver_domicilio():
     individuos = individuos.exclude(domicilio_actual__ubicacion=None)#Quitamos los que no estan en hoteles
     #Les buscamos posible nuevo domicilio
     for individuo in individuos:
+        logger.info("Procesamos a: " + str(individuo))
         try:
             dom = individuo.domicilios.filter(aislado=False).last()
             #Si tiene un domicilio valido que no es de aislamiento
@@ -375,6 +386,6 @@ def devolver_domicilio():
             dom.aclaracion = "Movido Automaticamente por final de Cuarentena."
             dom.fecha = None
             dom.save()
-            logger.info("Procesamos a: " + str(individuo))
         except Exception as error:
             logger.info("Fallo Cambio de Domicilio: "+str(error)+'\n'+str(traceback.format_exc()))
+    logger.info("Finalizamos devoluciones a Domicilios\n")

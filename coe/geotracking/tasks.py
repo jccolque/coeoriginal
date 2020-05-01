@@ -39,13 +39,16 @@ def geotrack_sin_actualizacion():
             geopos.save()
             #eliminamos si tiene una notificacion esperando
             AppNotificacion.objects.filter(appdata=individuo.appdata).delete()
-            #Enviamos pushnotification para que reactive el tracking
-            notif = AppNotificacion()
-            notif.appdata = individuo.appdata
-            notif.titulo = 'Falta de Seguimiento'
-            notif.mensaje = 'Hace mas de ' + str(horas) + ' que no recibimos su posicion.'
-            notif.accion = 'SL'
-            notif.save()#Al grabar el local, se envia automaticamente por firebase
+            #Creamos nueva Notificacion
+            try:
+                notif = AppNotificacion()
+                notif.appdata = individuo.appdata
+                notif.titulo = 'Falta de Seguimiento'
+                notif.mensaje = 'Hace mas de ' + str(horas) + ' que no recibimos su posicion.'
+                notif.accion = 'SL'
+                notif.save()#Al grabar el local, se envia automaticamente por firebase
+            except:
+                logger.info("No se pudo enviar Notificacion")
         except Exception as error:
             logger.info("Fallo finalizar_geotracking: "+str(error)+'\n'+str(traceback.format_exc()))
 
