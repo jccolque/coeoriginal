@@ -65,7 +65,7 @@ def finalizar_geotracking():
     for individuo in individuos:
         logger.info("Procesamos: " + str(individuo))
         try:
-            st_geopos = individuo.filter(tipo='ST').last()
+            st_geopos = individuo.geoposiciones.filter(tipo='ST').last()
             #Generamos seguimiento de Fin de Tracking
             seguimiento = Seguimiento(individuo=individuo)
             seguimiento.tipo = 'FT'
@@ -75,12 +75,15 @@ def finalizar_geotracking():
             #eliminamos si tiene una notificacion esperando
             AppNotificacion.objects.filter(appdata=individuo.appdata).delete()
             #Creamos nueva Notificacion
-            notif = AppNotificacion()
-            notif.appdata = individuo.appdata
-            notif.titulo = 'Finalizo su periodo bajo Supervicion Digital'
-            notif.mensaje = 'Se han cumplido los '+str(DIAS_CUARENTENA)+' dias de seguimiento Obligatorios.'
-            notif.accion = 'ST'
-            notif.save()#Al grabar el local, se envia automaticamente por firebase
+            try:
+                notif = AppNotificacion()
+                notif.appdata = individuo.appdata
+                notif.titulo = 'Finalizo su periodo bajo Supervicion Digital'
+                notif.mensaje = 'Se han cumplido los '+str(DIAS_CUARENTENA)+' dias de seguimiento Obligatorios.'
+                notif.accion = 'ST'
+                notif.save()#Al grabar el local, se envia automaticamente por firebase
+            except:
+                logger.info("No se pudo enviar Notificacion")
             #Lo aliminamos de los seguimientos
             individuo.geoperadores.clear()
         except Exception as error:
