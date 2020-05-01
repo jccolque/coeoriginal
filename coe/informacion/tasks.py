@@ -364,6 +364,28 @@ def baja_aislamiento():
             logger.info("Fallo baja_aislamiento: "+str(error)+'\n'+str(traceback.format_exc()))
     logger.info("Finalizamos Baja de Aislamiento\n")
 
+@background(schedule=5)
+def baja_cuarentena():
+    logger.info("Iniciamos Baja de Cuarentena Obligatoria")
+    #Obtenemos fecha de corte:
+    fecha_corte = timezone.now() - timedelta(days=DIAS_CUARENTENA)
+    #Obtener aislados
+    individuos = Individuo.objects.filter(situacion_actual__conducta='D')#Obtenemos a todos los aislados
+    individuos = individuos.exclude(situacion_actual__fecha__gt=fecha_corte)#Evitamos a los que siguen en cuarentena
+    #Damos de baja el aislamiento
+    for individuo in individuos:
+        logger.info("Procesamos a: " + str(individuo))
+        try:
+            #Lo sacamos de aislamiento
+            situacion = Situacion(individuo=individuo)
+            situacion.estado = 11
+            situacion.conducta = 'C'
+            situacion.aclaracion = "Baja por Cumplimiento de Cuarentena"
+            situacion.save()  #  Guardamos
+        except Exception as error:
+            logger.info("Fallo baja_cuarentena: "+str(error)+'\n'+str(traceback.format_exc()))
+    logger.info("Finalizamos Baja de Cuarentena Obligatoria\n")
+
 @background(schedule=10)
 def devolver_domicilio():
     logger.info("Iniciamos el Cambio de Domicilio")

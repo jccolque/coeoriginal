@@ -1,5 +1,6 @@
 #Imports Django
 from django.apps import AppConfig
+from django.db import OperationalError
 #Imports del Proyecto
 from core.functions import agregar_menu
 
@@ -19,5 +20,8 @@ class InformacionConfig(AppConfig):
             if not Task.objects.filter(verbose_name="devolver_domicilio").exists():
                 from informacion.tasks import devolver_domicilio
                 devolver_domicilio(repeat=3600*8, verbose_name="devolver_domicilio")#Cada 12 horas
-        except:
+            if not Task.objects.filter(verbose_name="baja_cuarentena").exists():
+                from informacion.tasks import baja_cuarentena
+                baja_cuarentena(repeat=3600*8, verbose_name="baja_cuarentena")#Cada 12 horas
+        except OperationalError:
             pass  #  Por si no existe

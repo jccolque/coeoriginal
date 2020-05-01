@@ -1,5 +1,6 @@
 #Imports Django
 from django.apps import AppConfig
+from django.db import OperationalError
 #Imports del Proyecto
 from core.functions import agregar_menu
 
@@ -16,5 +17,5 @@ class GeotrackingConfig(AppConfig):
             if not Task.objects.filter(verbose_name="finalizar_geotracking").exists():
                 from geotracking.tasks import finalizar_geotracking
                 finalizar_geotracking(repeat=3600*12, verbose_name="finalizar_geotracking")#Cada 12 horas
-        except:
+        except OperationalError:
             pass #Por si no existe
