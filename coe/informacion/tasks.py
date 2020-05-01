@@ -398,7 +398,7 @@ def devolver_domicilio():
     for individuo in individuos:
         logger.info("Procesamos a: " + str(individuo))
         try:
-            dom = individuo.domicilios.filter(aislado=False).last()
+            dom = individuo.domicilios.filter(aislamiento=False).last()
             #Si tiene un domicilio valido que no es de aislamiento
             if not dom:
                 dom = individuo.domicilio_actual

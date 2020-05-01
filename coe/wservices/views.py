@@ -126,7 +126,7 @@ def ws(request, nombre_app=None, nombre_modelo=None):
     return render(request, 'ws.html', {"apps_listas": apps_listas,})
 
 @permission_required('operadores.individuos')
-def csv_aislados(request, localidad_id=None):
+def ws_aislados(request, localidad_id=None):
     datos = []
     individuos = Individuo.objects.filter(situacion_actual__conducta__in=('D','E'))
     individuos = individuos.select_related('situacion_actual')
