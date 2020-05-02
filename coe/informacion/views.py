@@ -506,7 +506,7 @@ def lista_seguimiento(request):
     individuos = individuos.exclude(seguimientos__tipo='FS')
     #Optimizamos las busquedas
     individuos = individuos.select_related('nacionalidad')
-    individuos = individuos.select_related('domicilio_actual', 'situacion_actual')
+    individuos = individuos.select_related('domicilio_actual', 'situacion_actual', 'seguimiento_actual')
     individuos = individuos.prefetch_related('atributos', 'sintomas')
     #Traemos seguimientos terminados para descartar
     last12hrs = timezone.now() - timedelta(hours=12)

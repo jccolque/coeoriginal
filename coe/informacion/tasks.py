@@ -350,7 +350,7 @@ def baja_aislamiento():
     fecha_corte = timezone.now() - timedelta(days=DIAS_CUARENTENA)
     #Obtener aislados
     individuos = Individuo.objects.filter(situacion_actual__conducta='E')#Obtenemos a todos los aislados
-    individuos = individuos.exclude(situacion_actual__fecha__gt=fecha_corte)#Evitamos a los que siguen en cuarentena
+    individuos = individuos.exclude(situacion_actual__fecha__gt=fecha_corte)#Evitamos a los que tienen que seguir aislados
     #Damos de baja el aislamiento
     for individuo in individuos:
         logger.info("Procesamos a: " + str(individuo))
@@ -372,7 +372,7 @@ def baja_cuarentena():
     fecha_corte = timezone.now() - timedelta(days=DIAS_CUARENTENA)
     #Obtener aislados
     individuos = Individuo.objects.filter(situacion_actual__conducta='D')#Obtenemos a todos los aislados
-    individuos = individuos.exclude(situacion_actual__fecha__gt=fecha_corte)#Evitamos a los que siguen en cuarentena
+    individuos = individuos.exclude(situacion_actual__fecha__gt=fecha_corte)#Evitamos a los que tienen que seguir en cuarentena
     #Damos de baja el aislamiento
     for individuo in individuos:
         logger.info("Procesamos a: " + str(individuo))
@@ -394,6 +394,7 @@ def devolver_domicilio():
     fecha_corte = timezone.now() - timedelta(days=DIAS_CUARENTENA)
     #Obtener aislados
     individuos = Individuo.objects.filter(domicilio_actual__aislamiento=True)
+    individuos = individuos.exclude(domicilio_actual__fecha__gt=fecha_corte)
     individuos = individuos.exclude(domicilio_actual__ubicacion=None)#Quitamos los que no estan en hoteles
     #Les buscamos posible nuevo domicilio
     for individuo in individuos:
@@ -408,7 +409,7 @@ def devolver_domicilio():
             dom.aislamiento = False
             dom.numero += '(pk:' + str(individuo.pk) + ')'
             dom.aclaracion = "Movido Automaticamente por final de Cuarentena."
-            dom.fecha = None
+            dom.fecha = timezone.now()
             dom.save()
         except Exception as error:
             logger.info("Fallo Cambio de Domicilio: " + str(individuo))

@@ -20,7 +20,7 @@ function defaultLatlng() {
 function iniciarGmap() {
 	var minimapDiv = document.getElementById("minimap");
 	var opcionesMapa = {
-		zoom: 10,
+		zoom: 12,
 		center: defaultLatlng(),
 		styles: [{
 			"featureType": "poi",
