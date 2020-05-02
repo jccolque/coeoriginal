@@ -41,8 +41,8 @@ from .forms import SituacionForm, RelacionForm, SeguimientoForm
 from .forms import SearchIndividuoForm, SearchVehiculoForm
 from .forms import DocumentoForm, SignosVitalesForm
 from .forms import ReporteHotelesForm
-from .tasks import guardar_same, guardar_epidemiologia
-from .tasks import guardar_padron_individuos, guardar_padron_domicilios
+from .upload_tasks import guardar_same, guardar_epidemiologia
+from .upload_tasks import guardar_padron_individuos, guardar_padron_domicilios
 from .functions import obtener_relacionados
 
 #Administrar

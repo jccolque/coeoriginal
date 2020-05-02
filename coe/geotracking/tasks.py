@@ -20,14 +20,13 @@ logger = logging.getLogger("tasks")
 #Definimos tareas
 @background(schedule=1)
 def geotrack_sin_actualizacion():
-    logger.info("GeoTrackings Sin actualizar")
+    logger.info("\nGeoTrackings Sin actualizar")
     individuos = obtener_trackeados()
+    #Quitamos los que ya generamos alerta y aun no se proceso
+    individuos = individuos.exclude(geoposiciones__in=GeoPosicion.objects.filter(tipo='FG', procesada=False))
     #Quitamos los que enviaron Posicion GPS en las ultimas 2 horas:
     limite = timezone.now() - timedelta(hours=2)
-    individuos = individuos.exclude(geoposiciones__in=GeoPosicion.objects.filter(fecha__gt=limite, tipo='RG'))
-    #Quitamos los que ya generamos alerta hoy
-    limite = timezone.now() - timedelta(days=1)
-    individuos = individuos.exclude(geoposiciones__in=GeoPosicion.objects.filter(fecha__gt=limite, tipo='FG', procesada=False))
+    individuos = individuos.exclude(geoposiciones__in=GeoPosicion.objects.filter(fecha__gt=limite, tipo='RG'))    
     #Recorrer y alertar
     for individuo in individuos:
         logger.info("Procesamos: " + str(individuo))
@@ -48,14 +47,15 @@ def geotrack_sin_actualizacion():
                 notif.mensaje = 'Hace mas de ' + str(horas) + ' que no recibimos su posicion.'
                 notif.accion = 'SL'
                 notif.save()#Al grabar el local, se envia automaticamente por firebase
+                logger.info("Notificado Via App")
             except:
                 logger.info("No se pudo enviar Notificacion")
         except Exception as error:
-            logger.info("Fallo finalizar_geotracking: "+str(error)+'\n'+str(traceback.format_exc()))
+            logger.info("Fallo: "+str(error)+':\n'+str(traceback.format_exc()))
 
 @background(schedule=30)
 def finalizar_geotracking():
-    logger.info("Realizamos la finalizacion de los Geotrackings")
+    logger.info("\nRealizamos la finalizacion de los Geotrackings")
     individuos = obtener_trackeados()
     #Obtenemos los que estan siendo trackeados hace mas de 14 dias:
     inicio = timezone.now() - timedelta(days=DIAS_CUARENTENA)
@@ -86,9 +86,10 @@ def finalizar_geotracking():
                 notif.mensaje = 'Se han cumplido los '+str(DIAS_CUARENTENA)+' dias de seguimiento Obligatorios.'
                 notif.accion = 'ST'
                 notif.save()#Al grabar el local, se envia automaticamente por firebase
+                logger.info("Notificado Via App")
             except:
                 logger.info("No se pudo enviar Notificacion")
             #Lo aliminamos de los seguimientos
             individuo.geoperadores.clear()
         except Exception as error:
-            logger.info("Fallo finalizar_geotracking: "+str(error)+'\n'+str(traceback.format_exc()))
+            logger.info("Fallo finalizar_geotracking: "+str(error)+':\n'+str(traceback.format_exc()))
