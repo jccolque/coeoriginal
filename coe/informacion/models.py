@@ -75,11 +75,10 @@ class Individuo(models.Model):
     #Actuales
     situacion_actual = models.OneToOneField('Situacion', on_delete=models.SET_NULL, related_name="situacion_actual", null=True, blank=True)
     domicilio_actual = models.OneToOneField('Domicilio', on_delete=models.SET_NULL, related_name="domicilio_actual", null=True, blank=True)
+    seguimiento_actual = models.OneToOneField('Seguimiento', on_delete=models.SET_NULL, related_name="seguimiento_actual", null=True, blank=True)
     #Funciones
     def __str__(self):
         return str(self.num_doc) + ': ' + self.apellidos + ', ' + self.nombres
-    def ultimo_seguimiento(self):
-        return self.seguimientos.last()
     def domicilio_retorno(self):#El mas actualizado que no es de aislamiento
         return self.domicilios.filter(aislamiento=False).last()
     def geoposicion(self):
@@ -158,20 +157,6 @@ class Domicilio(models.Model):
             return DIAS_CUARENTENA - (timezone.now() - self.fecha).days
 
 #Extras
-class SignosVitales(models.Model):
-    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="signos_vitales")
-    tension_sistolica = models.IntegerField('Tension Sistolica')
-    tension_diastolica = models.IntegerField('Tension Diastolica')
-    frec_cardiaca = models.IntegerField('Frecuencia Cardiaca')
-    frec_respiratoria = models.IntegerField('Frecuencia Respiratoria')
-    temperatura = models.DecimalField('Temperatura', max_digits=4, decimal_places=2)
-    sat_oxigeno = models.IntegerField('Saturacion de Oxigeno')
-    glucemia = models.IntegerField('Glucemia')
-    observaciones = HTMLField(null=True, blank=True)
-    fecha = models.DateTimeField('Fecha Subido', default=timezone.now)
-    def __str__(self):
-        return str(self.individuo) + ' de ' + str(self.fecha)
-
 class Situacion(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="situaciones")
     estado = models.IntegerField('Estado de Seguimiento', choices=TIPO_ESTADO, default=11)
@@ -193,6 +178,20 @@ class Atributo(models.Model):
         ordering = ['fecha', ]
     def __str__(self):
         return str(self.individuo) + ': ' + self.get_tipo_display() + ' ' + str(self.fecha)
+
+class SignosVitales(models.Model):
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="signos_vitales")
+    tension_sistolica = models.IntegerField('Tension Sistolica')
+    tension_diastolica = models.IntegerField('Tension Diastolica')
+    frec_cardiaca = models.IntegerField('Frecuencia Cardiaca')
+    frec_respiratoria = models.IntegerField('Frecuencia Respiratoria')
+    temperatura = models.DecimalField('Temperatura', max_digits=4, decimal_places=2)
+    sat_oxigeno = models.IntegerField('Saturacion de Oxigeno')
+    glucemia = models.IntegerField('Glucemia')
+    observaciones = HTMLField(null=True, blank=True)
+    fecha = models.DateTimeField('Fecha Subido', default=timezone.now)
+    def __str__(self):
+        return str(self.individuo) + ' de ' + str(self.fecha)
 
 class Sintoma(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="sintomas")
@@ -243,6 +242,7 @@ if not LOADDATA:
     from .signals import poner_en_seguimiento
     from .signals import situacion_actual
     from .signals import domicilio_actual
+    from .signals import seguimiento_actual
     from .signals import aislamiento_seguimiento
     from .signals import relacion_domicilio
     from .signals import crear_relacion_inversa

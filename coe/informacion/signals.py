@@ -51,6 +51,13 @@ def domicilio_actual(created, instance, **kwargs):
         individuo.domicilio_actual = instance
         individuo.save()
 
+@receiver(post_save, sender=Seguimiento)
+def seguimiento_actual(created, instance, **kwargs):
+    if created:
+        individuo = instance.individuo
+        individuo.seguimiento_actual = instance
+        individuo.save()
+
 @receiver(post_save, sender=Domicilio)
 def aislamiento_seguimiento(created, instance, **kwargs):
     if created and instance.aislamiento:

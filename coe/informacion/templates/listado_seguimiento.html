@@ -12,6 +12,7 @@
                     <tr>
                         <th>Documento</th>
                         <th>Individuo</th>
+                        <th>Telefono</th>
                         <th>Nacionalidad</th>
                         <th>Situacion</th>
                         <th>Atributo</th>
@@ -25,6 +26,7 @@
                         <tr>
                             <td>{{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</td>
                             <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
+                            <td>{{individuo.telefono}}</td>
                             <td>{{individuo.nacionalidad}}</td>
                             <td>{{individuo.situacion_actual}}</td>
                             <td>
@@ -38,7 +40,7 @@
                                 {% endfor %}
                             </td>
                             <td>
-                                {{individuo.ultimo_seguimiento}}
+                                {{individuo.seguimiento_actual}}
                             </td>
                             <td><a href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">(Ver Detalle)</a></td>
                         </tr>
