@@ -5,6 +5,7 @@ from django.utils import timezone
 #Imports Extras
 from auditlog.registry import auditlog
 #Imports del proyecto
+from coe.settings import LOADDATA
 from operadores.models import Operador
 from informacion.models import Individuo
 #Imports de la app
@@ -37,10 +38,11 @@ class GeOperador(models.Model):
     def alertas_activas(self):
         return self.controlados.filter(Q(geoposiciones__procesada=False) & ~Q(geoposiciones__alerta='SA')).distinct().count()
 
-#Auditoria
-auditlog.register(GeoPosicion)
-auditlog.register(GeOperador)
+if not LOADDATA:
+    #Auditoria
+    auditlog.register(GeoPosicion)
+    auditlog.register(GeOperador)
 
-#Señales
-from .signals import asignar_geoperador
-from .signals import inicio_seguimiento
+    #Señales
+    from .signals import asignar_geoperador
+    from .signals import inicio_seguimiento

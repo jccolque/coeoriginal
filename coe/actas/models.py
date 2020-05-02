@@ -5,6 +5,7 @@ from django.utils import timezone
 from tinymce.models import HTMLField
 from auditlog.registry import auditlog
 #Imports del proyecto
+from coe.settings import LOADDATA
 from operadores.models import Operador
 #Imports de la app
 from .choices import TIPO_ACTA
@@ -40,6 +41,7 @@ class Participe(models.Model):
             'operador': self.operador.id,
         }
 
-#Auditoria
-auditlog.register(Acta)
-auditlog.register(Participe)
+if not LOADDATA:
+    #Auditoria
+    auditlog.register(Acta)
+    auditlog.register(Participe)

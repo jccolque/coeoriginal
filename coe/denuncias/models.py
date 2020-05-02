@@ -4,6 +4,7 @@ from django.utils import timezone
 #Imports Extras
 from auditlog.registry import auditlog
 #Imports del proyecto
+from coe.settings import LOADDATA
 from core.models import Aclaracion
 #Imports de la app
 from .choices import  TIPO_DENUNCIA, ESTADO_DENUNCIA
@@ -21,5 +22,6 @@ class DenunciaAnonima(models.Model):
     def __str__(self):
         return self.get_tipo_display() + ': ' + self.descripcion
 
-#Auditoria
-auditlog.register(DenunciaAnonima)
+if not LOADDATA:
+    #Auditoria
+    auditlog.register(DenunciaAnonima)

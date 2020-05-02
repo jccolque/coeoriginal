@@ -8,8 +8,8 @@ from django.core.validators import RegexValidator
 from tinymce.models import HTMLField
 from auditlog.registry import auditlog
 #Imports del proyecto:
+from coe.settings import MEDIA_ROOT, LOADDATA
 from coe.constantes import NOIMAGE, DIAS_CUARENTENA
-from coe.settings import MEDIA_ROOT
 from operadores.models import Operador
 from core.choices import TIPO_DOCUMENTOS, TIPO_SEXO
 from georef.models import Nacionalidad, Localidad, Ubicacion
@@ -237,29 +237,28 @@ class Pasajero(models.Model):
     def __str__(self):
         return str(self.traslado) + ': ' + str(self.individuo)
 
-#Señales
-from .signals import estado_inicial
-from .signals import poner_en_seguimiento
-from .signals import situacion_actual
-from .signals import domicilio_actual
-from .signals import aislamiento_seguimiento
-from .signals import relacion_domicilio
-from .signals import crear_relacion_inversa
-from .signals import eliminar_relacion_inversa
-from .signals import relacion_vehiculo
-from .signals import relacionar_situacion
-from .signals import afectar_relacionados
-from .signals import aislar_individuo
-from .signals import ocupar_capacidad_ubicacion
-from .signals import recuperar_capacidad_ubicacion
-from .signals import cargo_signosvitales
-from .signals import cargo_documento
+if not LOADDATA:
+    #Señales
+    from .signals import estado_inicial
+    from .signals import poner_en_seguimiento
+    from .signals import situacion_actual
+    from .signals import domicilio_actual
+    from .signals import aislamiento_seguimiento
+    from .signals import relacion_domicilio
+    from .signals import crear_relacion_inversa
+    from .signals import eliminar_relacion_inversa
+    from .signals import relacion_vehiculo
+    from .signals import relacionar_situacion
+    from .signals import afectar_relacionados
+    from .signals import aislar_individuo
+    from .signals import cargo_signosvitales
+    from .signals import cargo_documento
 
-#Auditoria
-auditlog.register(Archivo)
-auditlog.register(Vehiculo)
-auditlog.register(Individuo)
-auditlog.register(Domicilio)
-auditlog.register(Seguimiento)
-auditlog.register(TrasladoVehiculo)
-auditlog.register(Sintoma)
+    #Auditoria
+    auditlog.register(Archivo)
+    auditlog.register(Vehiculo)
+    auditlog.register(Individuo)
+    auditlog.register(Domicilio)
+    auditlog.register(Seguimiento)
+    auditlog.register(TrasladoVehiculo)
+    auditlog.register(Sintoma)

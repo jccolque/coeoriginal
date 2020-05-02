@@ -4,6 +4,7 @@ from django.db import models
 from tinymce.models import HTMLField
 from auditlog.registry import auditlog
 #Imports del proyecto
+from coe.settings import LOADDATA
 from operadores.models import Operador
 
 # Create your models here.
@@ -29,6 +30,7 @@ class Respuesta(models.Model):
     def __str__(self):
         return str(self.consulta) + ": " + self.respuesta
 
-#Auditoria
-auditlog.register(Consulta)
-auditlog.register(Respuesta)
+if not LOADDATA:
+    #Auditoria
+    auditlog.register(Consulta)
+    auditlog.register(Respuesta)

@@ -3,7 +3,6 @@ from django.urls import path
 from django.conf.urls import url
 #Import de modulos personales
 from . import views
-#from . import autocomplete
 
 #Definimos paths de la app
 app_name = 'inscripciones'

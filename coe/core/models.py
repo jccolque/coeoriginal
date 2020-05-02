@@ -6,6 +6,7 @@ from django.utils import timezone
 from tinymce.models import HTMLField
 from auditlog.registry import auditlog
 #Imports del proyecto
+from coe.settings import LOADDATA
 from operadores.models import Operador
 
 #Modelos
@@ -32,7 +33,9 @@ class Aclaracion(models.Model):
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name='aclaraciones')
 
-#Auditoria
-auditlog.register(Faq)
-#Señales
-from core.signals import enviar_mail_new_user
+if not LOADDATA:
+    #Señales
+    from .signals import enviar_mail_new_user
+
+    #Auditoria
+    auditlog.register(Faq)

@@ -8,10 +8,9 @@ from django.contrib.auth.models import User
 from auditlog.registry import auditlog
 from tinymce.models import HTMLField
 #Imports del proyecto:
-from coe.settings import MEDIA_ROOT
+from coe.settings import MEDIA_ROOT, LOADDATA
 from coe.constantes import NOIMAGE
 from core.choices import TIPO_DOCUMENTOS
-#from core.api import obtener_organismos
 #improts de la app
 from .choices import TIPO_EVENTO, NIVELES_SEGURIDAD
 
@@ -155,7 +154,9 @@ class EventoOperador(models.Model):
             'tipo': self.get_tipo_display(),
             'fecha': str(self.fecha),
         }
-#Auditoria
-auditlog.register(SubComite)
-auditlog.register(Operador)
-auditlog.register(User)
+
+if not LOADDATA:
+    #Auditoria
+    auditlog.register(SubComite)
+    auditlog.register(Operador)
+    auditlog.register(User)

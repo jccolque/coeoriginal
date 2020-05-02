@@ -8,6 +8,8 @@ from django.contrib.auth.models import User
 from tinymce.models import HTMLField
 from taggit.managers import TaggableManager
 from auditlog.registry import auditlog
+#Imports del proyecto
+from coe.settings import LOADDATA
 #Imports de la app
 
 #Create your models here.
@@ -36,5 +38,6 @@ class Noticia(models.Model):
             'destacada': self.destacada,
         }
 
-#Auditoria
-auditlog.register(Noticia)
+if not LOADDATA:
+    #Auditoria
+    auditlog.register(Noticia)

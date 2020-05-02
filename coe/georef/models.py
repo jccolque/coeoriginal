@@ -3,6 +3,8 @@ from django.db import models
 #Imports de paquetes extras
 from auditlog.registry import auditlog
 from tinymce.models import HTMLField
+#Imports del proyecto
+from coe.settings import LOADDATA
 #Imports de la app
 from .choices import TIPO_UBICACION
 
@@ -100,7 +102,6 @@ class Ubicacion(models.Model):
     barrio = models.ForeignKey(Barrio, on_delete=models.SET_NULL, related_name="ubicaciones", null=True, blank=True)
     nombre = models.CharField('Nombre', max_length=100)
     capacidad_maxima = models.IntegerField('Capacidad Maxima Permitida', default=50)
-    capacidad_ocupada = models.IntegerField('Capacidad Ocupada', default=0)
     calle = models.CharField('Calle', max_length=200)
     numero = models.CharField('Numero', max_length=100)
     telefono = models.CharField('Telefono', max_length=50, default='+549388', null=True, blank=True)
@@ -122,7 +123,7 @@ class Ubicacion(models.Model):
             "latitud": self.latitud,
             "longitud": self.longitud,
             "capacidad_maxima": self.capacidad_maxima,
-            "capacidad_ocupada": self.capacidad_ocupada,
+            "capacidad_ocupada": self.capacidad_ocupada(),
         }
     def precio(self):
         if self.costo:
@@ -130,15 +131,18 @@ class Ubicacion(models.Model):
         else:
             return 'Gratuito'
     def capacidad_disponible(self):
-        return self.capacidad_maxima - self.capacidad_ocupada
+        return self.capacidad_maxima - self.capacidad_ocupada()
     def aislados_actuales(self):
         from informacion.models import Individuo
         return Individuo.objects.filter(domicilio_actual__ubicacion=self)
+    def capacidad_ocupada(self):
+        return self.aislados_actuales().count()
 
-#Auditoria
-auditlog.register(Nacionalidad)
-auditlog.register(Provincia)
-auditlog.register(Departamento)
-auditlog.register(Localidad)
-auditlog.register(Barrio)
-auditlog.register(Ubicacion)
+if not LOADDATA:
+    #Auditoria
+    auditlog.register(Nacionalidad)
+    auditlog.register(Provincia)
+    auditlog.register(Departamento)
+    auditlog.register(Localidad)
+    auditlog.register(Barrio)
+    auditlog.register(Ubicacion)

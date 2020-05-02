@@ -5,6 +5,7 @@ from django.utils import timezone
 from tinymce.models import HTMLField
 from auditlog.registry import auditlog
 #Imports del proyecto
+from coe.settings import LOADDATA
 from operadores.models import Operador
 from tareas.models import Tarea
 #Imports de la app
@@ -112,6 +113,8 @@ class EventoItem(models.Model):
             'fecha': str(self.fecha),
             'detalle': self.detalle,
         }
-#Auditoria
-auditlog.register(Item)
-auditlog.register(EventoItem)
+
+if not LOADDATA:
+    #Auditoria
+    auditlog.register(Item)
+    auditlog.register(EventoItem)

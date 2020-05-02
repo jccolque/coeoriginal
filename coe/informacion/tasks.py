@@ -338,8 +338,9 @@ def baja_seguimiento():
             seguimiento.tipo = 'FS'
             seguimiento.aclaracion = "Baja automatica por cumplir tiempo de cuarentena"
             seguimiento.save()
+            #Aqui deberiamos enviar el doc de baja de cuarentena
         except Exception as error:
-            logger.info("Fallo baja_aislamiento: "+str(error)+'\n'+str(traceback.format_exc()))
+            logger.info("Fallo baja_aislamiento: " + str(individuo))
     logger.info("Finalizamos Baja de Seguimiento\n")
 
 @background(schedule=5)
@@ -361,7 +362,7 @@ def baja_aislamiento():
             situacion.aclaracion = "Baja por Cumplimiento de Cuarentena"
             situacion.save()  #  Guardamos
         except Exception as error:
-            logger.info("Fallo baja_aislamiento: "+str(error)+'\n'+str(traceback.format_exc()))
+            logger.info("Fallo baja_aislamiento: " + str(individuo))
     logger.info("Finalizamos Baja de Aislamiento\n")
 
 @background(schedule=5)
@@ -383,7 +384,7 @@ def baja_cuarentena():
             situacion.aclaracion = "Baja por Cumplimiento de Cuarentena"
             situacion.save()  #  Guardamos
         except Exception as error:
-            logger.info("Fallo baja_cuarentena: "+str(error)+'\n'+str(traceback.format_exc()))
+            logger.info("Fallo baja_cuarentena de: " + str(individuo))
     logger.info("Finalizamos Baja de Cuarentena Obligatoria\n")
 
 @background(schedule=10)
@@ -405,9 +406,10 @@ def devolver_domicilio():
             #Lo blanqueamos para crearlo como nuevo:
             dom.pk = None
             dom.aislamiento = False
+            dom.numero += '(pk:' + str(individuo.pk) + ')'
             dom.aclaracion = "Movido Automaticamente por final de Cuarentena."
             dom.fecha = None
             dom.save()
         except Exception as error:
-            logger.info("Fallo Cambio de Domicilio: "+str(error)+'\n'+str(traceback.format_exc()))
+            logger.info("Fallo Cambio de Domicilio: " + str(individuo))
     logger.info("Finalizamos devoluciones a Domicilios\n")

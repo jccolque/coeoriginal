@@ -205,7 +205,7 @@ def lista_ubicaciones(request, tipo=None):
         ubicaciones = ubicaciones.filter(tipo=tipo)
     #Obtenemos capacidad maxima y disponible:
     cap_maxima = ubicaciones.aggregate(Sum('capacidad_maxima'))['capacidad_maxima__sum']
-    cap_ocupada = ubicaciones.aggregate(Sum('capacidad_ocupada'))['capacidad_ocupada__sum']
+    cap_ocupada = sum([u.capacidad_ocupada() for u in ubicaciones])
     if cap_maxima:
         cap_disponible = cap_maxima - cap_ocupada
     else:

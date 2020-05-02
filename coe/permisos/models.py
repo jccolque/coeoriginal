@@ -11,7 +11,7 @@ from tinymce.models import HTMLField
 from auditlog.registry import auditlog
 from multiselectfield import MultiSelectField
 #Imports del proyecto
-from coe.settings import STATIC_ROOT, MEDIA_ROOT
+from coe.settings import STATIC_ROOT, MEDIA_ROOT, LOADDATA
 from georef.models import Provincia, Localidad
 from informacion.models import Individuo
 from operadores.models import Operador
@@ -157,9 +157,11 @@ class Emails_Transporte(models.Model):
     cuerpo = models.CharField('Cuerpo', max_length=1000)
     operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="transportes_emailsenviados")
 
-#señales
-from .signals import activar_restriccion
+if not LOADDATA:
+    #señales
+    from .signals import activar_restriccion
 
-#auditlog.register(Permiso)
-auditlog.register(NivelRestriccion)
-auditlog.register(IngresoProvincia)
+    #Auditoria
+    auditlog.register(Permiso)
+    auditlog.register(NivelRestriccion)
+    auditlog.register(IngresoProvincia)

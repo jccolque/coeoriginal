@@ -5,6 +5,7 @@ from django.utils import timezone
 from tinymce.models import HTMLField
 from auditlog.registry import auditlog
 #Imports del proyecto
+from coe.settings import LOADDATA
 from operadores.models import SubComite, Operador
 #Imports de la app
 from .choices import TIPO_PRIORIDAD, TIPO_EVENTO_TAREA
@@ -79,7 +80,8 @@ class EventoTarea(models.Model):
             'detalle': self.detalle,
         }
 
-#Auditoria
-auditlog.register(Tarea)
-auditlog.register(Responsable)
-auditlog.register(EventoTarea)
+if not LOADDATA:
+    #Auditoria
+    auditlog.register(Tarea)
+    auditlog.register(Responsable)
+    auditlog.register(EventoTarea)

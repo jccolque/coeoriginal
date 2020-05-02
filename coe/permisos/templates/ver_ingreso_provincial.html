@@ -19,6 +19,9 @@
                                 <p><b>Origen:</b> {{ingreso.origen}}</p>
                                 <p><b>Destino:</b> {{ingreso.destino}}</p>
                                 <p><b>Permiso de Circulacion Nacional:</b> <a href="{{ingreso.permiso_nacional.url}}" target="_blank">Ver</a></p>
+                                <hr>
+                                    <p><b>Todas las personas que lleguen a Jujuy, deberán realizar la cuarentena en un hotel pago por el pasajero o lugar informado por el COE, sin excepción.</b></p>
+                                <hr>
                             </div>
                             <div class="col-md-6">
                                 <div class="bordeado importante">
@@ -77,13 +80,15 @@
                         </div>
                         {% if ingreso.tipo == 'P' %}
                             <hr>
-                            <h3>Pasajeros:</h3>
+                            <h3>Cargar Totalidad de Pasajeros en Vehículo:</h3>
                             <table class="listado" id="table">
                                 <thead>
                                     <tr>
                                         <th>Numero Documento</th>
                                         <th>Nombre y Apellido</th>
                                         <th>Fecha de Nacimiento</th>
+                                        <th>Correo Electronico</th>
+                                        <th>Telefono</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -93,6 +98,8 @@
                                             <td>{{individuo.num_doc}}</td>
                                             <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
                                             <td>{{individuo.fecha_nacimiento}}</td>
+                                            <td>{{individuo.email}}</td>
+                                            <td>{{individuo.telefono}}</td>
                                             <td>
                                                 <a href="{% url 'permisos:mod_ingresantes' ingreso_id=ingreso.id individuo_id=individuo.id %}" target="_blank">
                                                     <img class="icons" src="{% static 'img/icons/change.png' %}">
