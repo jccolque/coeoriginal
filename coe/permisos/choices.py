@@ -28,6 +28,12 @@ TIPO_INGRESO = (
     ('A', 'Aereo (Carga la Empresa)'),
 )
 
+TIPO_CIRCULACION = (
+    ('CC', 'Carga y Descarga Comercial'),
+    ('TP', 'Transporte de Paso (No se Detiene en la provincia)'),
+    ('TP', 'Transporte de Pasajeros'),
+)
+
 ESTADO_INGRESO = (
     ('C', 'Cargando Pedido'),
     ('E', 'Esperando Aprobacion'),

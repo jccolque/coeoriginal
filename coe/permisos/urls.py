@@ -26,7 +26,16 @@ urlpatterns = [
     #Circulacion
     path('circulacion/', views.pedir_circulacion_temporal, name='pedir_circulacion_temporal'),
     path('circulacion/<int:circulacion_id>', views.pedir_circulacion_temporal, name='mod_circulacion_temporal'),
-    #Administracion
+    path('circulacion/<str:token>', views.ver_circulacion_temporal, name='ver_circulacion_temporal'),
+    path('circ/subir/permiso_nac/<str:token>', views.circ_subir_permiso_nac, name='circ_subir_permiso_nac'),
+    path('circ/subir/licencia/<str:token>', views.circ_subir_licencia, name='circ_subir_licencia'),
+    path('circ/cargar/chofer/<str:token>', views.circ_cargar_chofer, name='circ_cargar_chofer'),
+    path('circ/cargar/chofer/<str:token>/<int:individuo_id>', views.circ_cargar_chofer, name='circ_mod_chofer'),
+    path('circ/cargar/acomp/<str:token>', views.circ_cargar_acomp, name='circ_cargar_acomp'),
+    path('circ/cargar/acomp/<str:token>/<int:individuo_id>', views.circ_cargar_acomp, name='circ_mod_acomp'),
+    path('circ/comprobante/<str:token>', views.ver_comprobante_circulacion, name='ver_comprobante_circulacion'),
+    path('circ/finalizar/<str:token>', views.finalizar_circulacion, name='finalizar_circulacion'),
+    #  Administracion
     #Permisos
     path('', views.menu_permisos, name='menu_permisos'),
     #Niveles de Restriccion
@@ -46,5 +55,12 @@ urlpatterns = [
     path('lista/ingresos/tipo/<str:tipo>', views.lista_ingresos, name='lista_ingresos_filtro'),
     path('aprobar/ingreso/<int:ingreso_id>', views.aprobar_ingreso, name='aprobar_ingreso'),
     path('del/ingreso/<int:ingreso_id>', views.eliminar_ingreso, name='eliminar_ingreso'),
-    path('email/ingreso/<int:ingreso_id>', views.enviar_email, name='enviar_email'),
+    path('email/ingreso/<int:ingreso_id>', views.ingreso_enviar_email, name='ingreso_enviar_email'),
+    #Circulacion Temporal
+    path('lista/circulaciones', views.lista_circulaciones, name='lista_circulaciones'),
+    path('lista/circulaciones/estado/<str:estado>', views.lista_circulaciones, name='lista_circulaciones_filtro'),
+    path('lista/circulaciones/tipo/<str:tipo>', views.lista_circulaciones, name='lista_circulaciones_filtro'),
+    path('del/circulaciones/<int:circulacion_id>', views.eliminar_circulacion, name='eliminar_circulacion'),
+    path('reactivar/circulacion/<int:circulacion_id>', views.reactivar_circulacion, name='reactivar_circulacion'),
+    path('email/circulaciones/<int:circulacion_id>', views.circulacion_enviar_email, name='circulacion_enviar_email'),
 ]

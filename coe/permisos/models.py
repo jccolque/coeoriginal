@@ -1,23 +1,26 @@
 #Imports de python
+import io
 import qrcode
 #Imports de django
 from django.db import models
 from django.utils import timezone
+from django.utils.html import strip_tags
 #Imports de paquetes extras
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
+from PyPDF2 import PdfFileWriter, PdfFileReader
 from tinymce.models import HTMLField
 from auditlog.registry import auditlog
 from multiselectfield import MultiSelectField
 #Imports del proyecto
-from coe.settings import STATIC_ROOT, MEDIA_ROOT, LOADDATA
+from coe.settings import BASE_DIR, STATIC_ROOT, MEDIA_ROOT, LOADDATA
 from georef.models import Provincia, Localidad
 from informacion.models import Individuo
 from operadores.models import Operador
 #Imports de app
 from .choices import COLOR_RESTRICCION, GRUPOS_PERMITIDOS
-from .choices import TIPO_PERMISO
+from .choices import TIPO_PERMISO, TIPO_CIRCULACION
 from .choices import COMBINACION_DNIxDIA
 from .choices import TIPO_INGRESO, ESTADO_INGRESO
 from .tokens import token_ingreso
@@ -78,6 +81,11 @@ class IngresoProvincia(models.Model):
     permiso_nacional = models.FileField('Permiso Nacional de Circulacion', upload_to='ingresos/')
     dut = models.FileField('Permiso Nacional de Circulacion', upload_to='ingresos/', null=True, blank=True)
     plan_vuelo = models.FileField('Plan de Vuelo', upload_to='ingresos/', null=True, blank=True)
+    def telefono(self):
+        try:
+            return self.individuos.all()[0].telefono
+        except:
+            return 'Sin informar'
     def get_qr(self):
         if self.qrpath:
             return self.qrpath
@@ -107,8 +115,8 @@ class IngresoProvincia(models.Model):
         #Cargamos imagenes
         try:
             pdf.drawImage(STATIC_ROOT+'/img/logo_pdf.png', 50, 700, height=50*mm, preserveAspectRatio=True)
-        except:
-            print("Salio sin logo.")
+        except Exception as e:
+            print("No logro cargar logo." + str(e))
         pdf.drawImage(self.get_qr(), 400, 700, 50*mm, 50*mm)
         pdf.save()
 
@@ -120,8 +128,10 @@ class Emails_Ingreso(models.Model):
     operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="ingreso_emailsenviados")
 
 class CirculacionTemporal(models.Model):#Transportes de Carga
-    chofer = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="transportista")
-    acompañante = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="acompañante")
+    tipo = models.CharField('Tipo Circulacion', choices=TIPO_CIRCULACION, max_length=2, default='CC')
+    email_contacto = models.EmailField('Correo Electronico de Contacto')
+    chofer = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="transportista", null=True, blank=True)
+    acompañante = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="acompañante", null=True, blank=True)
     actividad = HTMLField(null=True)
     origen = models.ForeignKey(Provincia, on_delete=models.CASCADE, related_name="ingresos_transporte")
     destino = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="ingresos_transporte")
@@ -130,14 +140,21 @@ class CirculacionTemporal(models.Model):#Transportes de Carga
     modelo = models.CharField('Modelo del Vehiculo', max_length=200)
     patente = models.CharField('Identificacion Patente', max_length=200)
     #Archivos
-    permiso_nacional = models.FileField('Permiso Nacional de Circulacion', upload_to='ingresos/')
-    licencia_conducir = models.FileField('Licencia de Conducir', upload_to='ingresos/')
+    permiso_nacional = models.FileField('Permiso Nacional de Circulacion', upload_to='ingresos/', null=True, blank=True)
+    licencia_conducir = models.FileField('Licencia de Conducir', upload_to='ingresos/', null=True, blank=True)
     #Interno
     token = models.CharField('Token', max_length=50, default=token_ingreso, unique=True)
     fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
     estado = models.CharField('Estado', choices=ESTADO_INGRESO, max_length=1, default='C')
     qrpath = models.CharField('qrpath', max_length=100, null=True, blank=True)
-    operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True, related_name="transportes_provinciales")
+    def listo(self):
+        #Chequeamos que haya cargado permiso y licencia
+        lista = hasattr(self, 'permiso_nacional') and hasattr(self, 'licencia_conducir')
+        if lista:#Chequeamos que haya cargado Chofer
+            lista = hasattr(self, 'chofer')
+        if lista:#Chequeamos que chofer tenga App
+            lista = hasattr(self.chofer, 'appdata')
+        return lista
     def get_qr(self):
         if self.qrpath:
             return self.qrpath
@@ -149,13 +166,56 @@ class CirculacionTemporal(models.Model):#Transportes de Carga
             self.qrpath = relative_path
             self.save()
             return self.qrpath
+    def generar_pdf(self):
+        packet = io.BytesIO()
+        # Se crear un nuevo pdf utilizando ReportLab
+        pdf = canvas.Canvas(packet, pagesize=A4)
+        #escribimos textos del pdf
+        #Fechamos
+        pdf.setFont('Times-Roman', 9)
+        pdf.drawString(475, 680, str(timezone.now())[0:16])
+        #Armamos documento
+        pdf.setFont('Times-Roman', 18)
+        pdf.drawString(30, 650, "PERMISO DE CIRCULACION TEMPORAL")
+        pdf.setFont('Times-Roman', 12)
+        pdf.drawString(30, 630, "Tipo: " + self.get_tipo_display())
+        pdf.drawString(30, 585, "Origen del Viaje: "+str(self.origen))
+        pdf.drawString(30, 570, "Destino del Viaje: "+str(self.destino))
+        pdf.drawString(30, 555, "Vehiculo: " + self.marca + " " + self.modelo + " - Patente" + self.patente)
+        pdf.drawString(30, 540, "Actividad: " + strip_tags(self.actividad))
+        #Datos del Chofer
+        pdf.line(200, 520, 400, 520)
+        pdf.drawString(30, 500, "Chofer: "+str(self.chofer))
+        pdf.drawString(45, 485, "Telefono: "+ self.chofer.telefono)
+        if self.acompañante:
+            pdf.drawString(30, 460, "Chofer: "+str(self.acompañante))
+            pdf.drawString(45, 445, "Telefono: "+ self.acompañante.telefono)
+        #Agregamos licencia de conducir
+        pdf.line(200, 420, 400, 420)
+        pdf.drawString(30, 400, "Licencia de Conducir: ")
+        pdf.drawImage(BASE_DIR+self.licencia_conducir.url, 50, 230, 75*mm, 50*mm)
+        #Grabamos el PDF
+        pdf.save()
+        packet.seek(0)
+        nuevo_pdf = PdfFileReader(packet)
+        # Leemos el pdf base
+        existe_pdf = PdfFileReader(STATIC_ROOT+'/archivos/plantilla_nota.pdf', "rb")
+        salida = PdfFileWriter()
+        # Se agregan los datos de la persona que será dada de alta, al pdf ya existente
+        pagina = existe_pdf.getPage(0)
+        pagina.mergePage(nuevo_pdf.getPage(0))
+        salida.addPage(pagina)
+        #Finalmente se escribe la salida, en un archivo real
+        outputStream = open(MEDIA_ROOT+'/circulacion/'+self.token+".pdf", "wb")
+        salida.write(outputStream)
+        outputStream.close()  
 
-class Emails_Transporte(models.Model):
+class Emails_Circulacion(models.Model):
     circulacion = models.ForeignKey(CirculacionTemporal, on_delete=models.CASCADE, related_name="emails")
     fecha = models.DateTimeField('Fecha de Envio', default=timezone.now)
     asunto = models.CharField('Asunto', max_length=100)
     cuerpo = models.CharField('Cuerpo', max_length=1000)
-    operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="transportes_emailsenviados")
+    operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="circulacion_emailsenviados")
 
 if not LOADDATA:
     #señales

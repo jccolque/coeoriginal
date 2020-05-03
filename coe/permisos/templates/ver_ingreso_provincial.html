@@ -80,7 +80,7 @@
                         </div>
                         {% if ingreso.tipo == 'P' %}
                             <hr>
-                            <h3>Cargar Totalidad de Pasajeros en Vehículo:</h3>
+                            <h3><b>Cargar Totalidad de Pasajeros en Vehículo:</b></h3>
                             <table class="listado" id="table">
                                 <thead>
                                     <tr>
@@ -89,6 +89,7 @@
                                         <th>Fecha de Nacimiento</th>
                                         <th>Correo Electronico</th>
                                         <th>Telefono</th>
+                                        <th>App Instalada</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -101,6 +102,13 @@
                                             <td>{{individuo.email}}</td>
                                             <td>{{individuo.telefono}}</td>
                                             <td>
+                                                {% if individuo.appdata %}
+                                                    <img class="icons" src="/static/img/icons/check.png">
+                                                {% else %}
+                                                    <img class="icons" src="/static/img/icons/wrong.png">
+                                                {% endif %}
+                                            </td>
+                                            <td>
                                                 <a href="{% url 'permisos:mod_ingresantes' ingreso_id=ingreso.id individuo_id=individuo.id %}" target="_blank">
                                                     <img class="icons" src="{% static 'img/icons/change.png' %}">
                                                 </a>
@@ -112,6 +120,11 @@
                                     {% endfor %}
                                 </tbody>
                             </table>
+                            {% if falta_app %}
+                                <p class="error">Los Pasajeros deben tener la app COVID19 Jujuy Instalada y haberse registrado.</p>
+                                <p class="error"><b>Descargar Aqui:</b> <a href="https://play.google.com/store/apps/details?id=com.ga.covidjujuy_app" target="_blank">Google Play</a></p>
+                            {% endif %}
+                            <hr>
                         {% endif %}
                         {% if ingreso.emails_enviados.exists %}
                             <h3>Emails Enviados al individuo</h3>
@@ -136,17 +149,20 @@
                     <div class="col-md-4">
                         <ul class="menu_botones">
                             {% if ingreso.estado == 'C' or ingreso.estado == 'E' %}
-                                <li><a href="{% url 'permisos:mod_ingreso_provincial' ingreso_id=ingreso.id %}">Modificar Datos Basicos</a></li>
+                                <li><a href="{% url 'permisos:mod_ingreso_provincial' ingreso_id=ingreso.id %}">Modificar Datos de Ingreso</a></li>
                                 {% if ingreso.tipo == 'P' %}
                                     <li><a href="{% url 'permisos:cargar_ingresantes' ingreso_id=ingreso.id %}">Agregar Pasajero</a></li>
                                 {% endif %}
+                            {% if ingreso.estado == 'C' %}
                                 <li><a href="{% url 'permisos:finalizar_ingreso' ingreso_id=ingreso.id %}">Finalizar Proceso</a></li>
+                            {% endif %}
                             {% elif ingreso.estado == 'A' %}
                                 <li><a href="{% url 'permisos:ver_ingreso_aprobado' token=ingreso.token %}">Imprimir Comprobante</a></li>
                             {% endif %}
                             {% if perms.operadores.permisos %}
                                 <hr>
-                                <li><a href="{% url 'permisos:enviar_email' ingreso_id=ingreso.id %}">Enviar Correo Electronico</a></li>
+                                <p><b>Operadores</b></p>
+                                <li><a href="{% url 'permisos:ingreso_enviar_email' ingreso_id=ingreso.id %}">Enviar Correo Electronico</a></li>
                                 {% if ingreso.estado == 'C' or ingreso.estado == 'E' %}
                                     <li><a href="{% url 'permisos:eliminar_ingreso' ingreso_id=ingreso.id %}">Eliminar Ingreso</a></li>
                                 {% endif %}

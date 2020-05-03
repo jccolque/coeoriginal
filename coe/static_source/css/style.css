@@ -189,6 +189,7 @@ a.boton_suelto {
 }
 
 .bordeado {
+    text-align: center;
     border: black 1px solid;
     border-radius: 15px;
     padding: 20px;

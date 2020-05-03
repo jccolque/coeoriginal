@@ -1,0 +1,10 @@
+{% autoescape off %}
+    {{ circulacion.chofer.apellidos }},{{ circulacion.chofer.nombres }}:
+
+    Tu Permiso de Circulacion Temporal fue aprobado.
+
+    A travez de este link puede acceder al mismo e imprimirlo o descargarlo:
+    http://coe.jujuy.gob.ar/{% url 'permisos:ver_comprobante_circulacion' token=circulacion.token %}
+
+    Cuidate y Cuidanos!
+{% endautoescape %}

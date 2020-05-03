@@ -123,5 +123,7 @@ TIPO_DOCUMENTO = (
     ('AS', 'Analisis de Sangre'),
     ('AO', 'Analisis de Orina'),
     ('LB', 'Laboratorio'),
+    ('DI', 'Documento de Identidad'),
+    ('LC', 'Licencia de Conducir'),
     ('OT', 'Otros'),
 )

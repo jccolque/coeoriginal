@@ -1,0 +1,17 @@
+{% autoescape off %}
+    Tipo: {{circulacion.get_tipo_display}}
+    Origen: {{circulacion.origen}}
+    Destino: {{circulacion.destino}}
+    
+    Vehiculo:
+    Marca: {{circulacion.marca}}
+    Modelo: {{circulacion.modelo}}
+    Patente: {{circulacion.patente}}
+
+    {{cuerpo}}
+
+    A travez de este link puede acceder al mismo:
+    http://coe.jujuy.gob.ar/{% url 'permisos:ver_circulacion_temporal' token=circulacion.token %}
+
+    Cuidate y Cuidanos!
+{% endautoescape %}

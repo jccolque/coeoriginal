@@ -1,0 +1,17 @@
+{% autoescape off %}
+    La solicitud de circulacion para la provincia de Jujuy ha sido ingresada y requiere que complete un conjunto de requisitos.
+    
+    Tipo: {{circulacion.get_tipo_display}}
+    Origen: {{circulacion.origen}}
+    Destino: {{circulacion.destino}}
+    
+    Vehiculo:
+    Marca: {{circulacion.marca}}
+    Modelo: {{circulacion.modelo}}
+    Patente: {{circulacion.patente}}
+
+    A travez de este link puede acceder al panel de su solicitud:
+    http://coe.jujuy.gob.ar/{% url 'permisos:ver_circulacion_temporal' token=circulacion.token %}
+
+    Cuidate y Cuidanos!
+{% endautoescape %}

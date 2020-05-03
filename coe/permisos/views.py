@@ -13,18 +13,21 @@ from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
 from coe.settings import SEND_MAIL
 from core.decoradores import superuser_required
-from core.forms import EmailForm
+from core.forms import EmailForm, UploadFoto
 from core.functions import date2str
 from operadores.functions import obtener_operador
-from informacion.models import Individuo
+from informacion.models import Individuo, Atributo
 from informacion.functions import actualizar_individuo
 from graficos.functions import obtener_grafico
 #imports de la app
 from .choices import TIPO_INGRESO, ESTADO_INGRESO
-from .models import NivelRestriccion, Permiso, IngresoProvincia, Emails_Ingreso
+from .models import NivelRestriccion, Permiso
+from .models import IngresoProvincia, Emails_Ingreso
+from .models import CirculacionTemporal, Emails_Circulacion
 from .forms import NivelRestriccionForm
 from .forms import PermisoForm, BuscarPermiso, DatosForm, FotoForm
 from .forms import IngresoProvinciaForm, IngresanteForm, AprobarForm
+from .forms import CirculacionTemporalForm
 from .forms import DUTForm, PlanVueloForm
 from .functions import buscar_permiso, validar_permiso
 
@@ -62,7 +65,7 @@ def pedir_permiso_web(request, individuo_id, num_doc):
                         if SEND_MAIL:
                             to_email = individuo.email
                             #Preparamos el correo electronico
-                            mail_subject = 'Permiso Digital Aprobado'
+                            mail_subject = 'COE2020 Permiso Digital Aprobado'
                             message = render_to_string('emails/permiso_generado.html', {
                                     'individuo': individuo,
                                     'permiso': permiso,
@@ -110,7 +113,7 @@ def pedir_ingreso_provincial(request, ingreso_id=None):
             if SEND_MAIL:
                 to_email = ingreso.email_contacto
                 #Preparamos el correo electronico
-                mail_subject = 'Requerimiento de Ingreso Provincial Jujuy!'
+                mail_subject = 'COE2020 Requerimiento de Ingreso Provincial Jujuy!'
                 message = render_to_string('emails/ingreso_provincial.html', {
                     'ingreso': ingreso,
                 })
@@ -126,6 +129,7 @@ def ver_ingreso_provincial(request, token):
     ingreso = ingreso.get(token=token)
     return render(request, 'ver_ingreso_provincial.html', {
         'ingreso': ingreso,
+        'falta_app': ingreso.individuos.filter(appdata=None).exists(),
         'has_table': True,
     })
 
@@ -146,7 +150,7 @@ def cargar_ingresante(request, ingreso_id, individuo_id=None):
         if form.is_valid():
             #actualizamos individuo con los datos nuevos
             individuo = actualizar_individuo(form)
-            individuo.origen = ingreso.origen
+            #individuo.origen = ingreso.origen
             individuo.destino = ingreso.destino
             individuo.save()
             #Lo agregamos al registro
@@ -211,6 +215,146 @@ def finalizar_ingreso(request, ingreso_id):
 def ver_ingreso_aprobado(request, token):
     ingreso = IngresoProvincia.objects.get(token=token)
     return HttpResponseRedirect('/archivos/permisos/'+ingreso.token+'.pdf')
+
+#CIRCULACION
+def pedir_circulacion_temporal(request, circulacion_id=None):
+    circulacion = None
+    if circulacion_id:
+        circulacion = CirculacionTemporal.objects.get(pk=circulacion_id)
+    form = CirculacionTemporalForm(instance=circulacion)
+    if request.method == "POST":
+        form = CirculacionTemporalForm(request.POST, request.FILES, instance=circulacion)
+        if form.is_valid():
+            circulacion = form.save()
+            #Enviar email
+            if SEND_MAIL:
+                to_email = ingreso.email_contacto
+                #Preparamos el correo electronico
+                mail_subject = 'COE2020 Requerimiento de Circulacion Temporal - Provincial Jujuy!'
+                message = render_to_string('emails/circulacion_temporal.html', {
+                    'circulacion': circulacion,
+                })
+                #Instanciamos el objeto mail con destinatario
+                email = EmailMessage(mail_subject, message, to=[to_email])
+                email.send()
+            #Enviarlo a cargar ingresantes
+            return redirect('permisos:ver_circulacion_temporal', token=circulacion.token)
+    return render(request, "extras/generic_form.html", {'titulo': "Permiso de Circulacion Temporal - Jujuy", 'form': form, 'boton': "Cargar", })
+
+def ver_circulacion_temporal(request, token):
+    #Optimizamos busqueda
+    circulaciones = CirculacionTemporal.objects.select_related('chofer', 'acompañante')
+    circulaciones = circulaciones.select_related('origen', 'destino')
+    #Buscamos el indicado
+    circulacion = circulaciones.get(token=token)
+    #Mostramos panel
+    return render(request, 'ver_circulacion_temporal.html', {
+        'circulacion': circulacion,
+    })
+
+def circ_subir_permiso_nac(request, token):
+    form = UploadFoto()
+    if request.method == "POST":
+        #obtenemos ingreso
+        form = UploadFoto(request.POST, request.FILES)
+        if form.is_valid():
+            circulacion = CirculacionTemporal.objects.get(token=token)
+            circulacion.permiso_nacional = form.cleaned_data['imagen']
+            circulacion.save()
+            return redirect('permisos:ver_circulacion_temporal', token=circulacion.token)
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Permiso Nacional de Circulacion", 'form': form, 'boton': "Cargar", })
+
+def circ_subir_licencia(request, token):
+    form = UploadFoto()
+    if request.method == "POST":
+        #obtenemos ingreso
+        form = UploadFoto(request.POST, request.FILES)
+        if form.is_valid():
+            circulacion = CirculacionTemporal.objects.get(token=token)
+            circulacion.licencia_conducir = form.cleaned_data['imagen']
+            #Podriamos agregar ese doc al individuo
+            circulacion.save()
+            return redirect('permisos:ver_circulacion_temporal', token=circulacion.token)
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Permiso Nacional de Circulacion", 'form': form, 'boton': "Cargar", })
+
+def circ_cargar_chofer(request, token, individuo_id=None):
+    individuo = None
+    if individuo_id:
+        individuo = Individuo.objects.get(pk=individuo_id)
+    form = IngresanteForm(instance=individuo)
+    if request.method == "POST":
+        #obtenemos ingreso
+        form = IngresanteForm(request.POST, instance=individuo)
+        if form.is_valid():
+            circulacion = CirculacionTemporal.objects.get(token=token)
+            #actualizamos individuo con los datos nuevos
+            individuo = actualizar_individuo(form)
+            #individuo.origen = circulacion.origen
+            individuo.destino = circulacion.destino
+            individuo.save()
+            #Lo agregamos al registro
+            circulacion.chofer = individuo
+            circulacion.save()
+            return redirect('permisos:ver_circulacion_temporal', token=circulacion.token)
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Chofer", 'form': form, 'boton': "Cargar", })
+
+def circ_cargar_acomp(request, token, individuo_id=None):
+    individuo = None
+    if individuo_id:
+        individuo = Individuo.objects.get(pk=individuo_id)
+    form = IngresanteForm(instance=individuo)
+    if request.method == "POST":
+        #obtenemos ingreso
+        form = IngresanteForm(request.POST, instance=individuo)
+        if form.is_valid():
+            circulacion = CirculacionTemporal.objects.get(token=token)
+            #actualizamos individuo con los datos nuevos
+            individuo = actualizar_individuo(form)
+            #individuo.origen = circulacion.origen
+            individuo.destino = circulacion.destino
+            individuo.save()
+            #Lo agregamos al registro
+            circulacion.acompañante = individuo
+            circulacion.save()
+            return redirect('permisos:ver_circulacion_temporal', token=circulacion.token)
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Acompañante", 'form': form, 'boton': "Cargar", })
+
+def finalizar_circulacion(request, token):
+    circulacion = CirculacionTemporal.objects.get(token=token)
+    # Dar atributos de Circulacion Temporal a chofer y acompañante
+    atributo = Atributo(individuo=circulacion.chofer)
+    atributo.tipo = 'CT'
+    atributo.aclaracion = "Obtenido por Circulacion id: " + str(circulacion.pk)
+    atributo.save()
+    if circulacion.acompañante:
+        atributo = Atributo(individuo=circulacion.acompañante)
+        atributo.tipo = 'CT'
+        atributo.aclaracion = "Obtenido por Circulacion id: " + str(circulacion.pk)
+        atributo.save()
+    # Generar PDF con permiso de circulacion
+    circulacion.generar_pdf()
+    # Enviar Mail de Aprobacion
+    if SEND_MAIL:
+        to_email = circulacion.email_contacto
+        #Preparamos el correo electronico
+        mail_subject = 'COE2020 Permiso de Circulacion Temporal Otorgado'
+        message = render_to_string('emails/circulacion_generada.html', {
+            'circulacion': circulacion,
+        })
+        #Instanciamos el objeto mail con destinatario
+        email = EmailMessage(mail_subject, message, to=[to_email])
+        email.send()
+    # Evolucionar circulacion > Aprobada
+    circulacion.estado = 'A'
+    #Guardamos cambios
+    circulacion.save()
+    #volvemos a mostrar el panel
+    return redirect('permisos:ver_circulacion_temporal', token=circulacion.token)
+
+def ver_comprobante_circulacion(request, token):
+    circulacion = CirculacionTemporal.objects.get(token=token)
+    circulacion.generar_pdf()
+    return HttpResponseRedirect('/archivos/circulacion/'+circulacion.token+'.pdf')
 
 #Administrar
 @permission_required('operadores.permisos')
@@ -361,7 +505,7 @@ def lista_ingresos(request, estado=None, tipo=None):
     })
 
 @permission_required('operadores.permisos')
-def enviar_email(request, ingreso_id):
+def ingreso_enviar_email(request, ingreso_id):
     ingreso = IngresoProvincia.objects.get(pk=ingreso_id)
     form = EmailForm(initial={'destinatario': ingreso.email_contacto})
     if request.method == "POST":
@@ -395,7 +539,7 @@ def aprobar_ingreso(request, ingreso_id):
             if SEND_MAIL:
                 to_email = ingreso.email_contacto
                 #Preparamos el correo electronico
-                mail_subject = 'Aprobamos tu Ingreso a la Provincia Jujuy!'
+                mail_subject = 'COE2020 Aprobamos tu Ingreso a la Provincia Jujuy!'
                 message = render_to_string('emails/ingreso_aprobado.html', {
                         'ingreso': ingreso,
                     })
@@ -419,28 +563,60 @@ def eliminar_ingreso(request, ingreso_id):
     ingreso.save()
     return redirect('permisos:lista_ingresos')
 
+#Circulacion Temporal
+@permission_required('operadores.permisos')
+def lista_circulaciones(request, estado=None, tipo=None):
+    circulaciones = CirculacionTemporal.objects.all()
+    #Filtramos de ser necesario
+    if not estado and not tipo:
+        circulaciones = circulaciones.exclude(estado='B')
+    if estado:
+        circulaciones = circulaciones.filter(estado=estado)
+    if tipo:
+        circulaciones = circulaciones.filter(tipo=tipo)
+    #Optimizamos
+    circulaciones = circulaciones.select_related('origen', 'destino')
+    circulaciones = circulaciones.prefetch_related('chofer')
+    #Lanzamos listado
+    return render(request, 'lista_circulaciones.html', {
+        'titulo': "Permisos de Circulacion Temporales",
+        'circulaciones': circulaciones,
+        'has_table': True,
+    })
 
 @permission_required('operadores.permisos')
-def pedir_circulacion_temporal(request, circulacion_id):
-    circulacion = None
-    if ingreso_id:
-        ingreso = IngresoProvincia.objects.get(pk=ingreso_id)
-    form = IngresoProvinciaForm(instance=ingreso)
+def eliminar_circulacion(request, circulacion_id):
+    circulacion = CirculacionTemporal.objects.get(pk=circulacion_id)
+    circulacion.estado = 'B'
+    circulacion.save()
+    return redirect('permisos:lista_circulaciones')
+
+@permission_required('operadores.permisos')
+def reactivar_circulacion(request, circulacion_id):
+    circulacion = CirculacionTemporal.objects.get(pk=circulacion_id)
+    circulacion.estado = 'C'
+    circulacion.save()
+    return redirect('permisos:ver_circulacion_temporal', token=circulacion.token)
+
+@permission_required('operadores.permisos')
+def circulacion_enviar_email(request, circulacion_id):
+    circulacion = CirculacionTemporal.objects.get(pk=circulacion_id)
+    form = EmailForm(initial={'destinatario': circulacion.email_contacto})
     if request.method == "POST":
-        form = IngresoProvinciaForm(request.POST, request.FILES, instance=ingreso)
+        form = EmailForm(request.POST)
         if form.is_valid():
-            ingreso = form.save()
-            #Enviar email
             if SEND_MAIL:
-                to_email = ingreso.email_contacto
+                to_email = form.cleaned_data['destinatario']
                 #Preparamos el correo electronico
-                mail_subject = 'Requerimiento de Ingreso Provincial Jujuy!'
-                message = render_to_string('emails/ingreso_provincial.html', {
-                    'ingreso': ingreso,
-                })
+                mail_subject = form.cleaned_data['asunto']
+                message = render_to_string('emails/circulacion_contacto.html', {
+                        'circulacion': circulacion,
+                        'cuerpo': form.cleaned_data['cuerpo'],
+                    })
+                #Guardamos el mail
+                Emails_Circulacion(circulacion=circulacion, asunto=mail_subject, cuerpo=form.cleaned_data['cuerpo'], operador=obtener_operador(request)).save()
                 #Instanciamos el objeto mail con destinatario
                 email = EmailMessage(mail_subject, message, to=[to_email])
                 email.send()
-            #Enviarlo a cargar ingresantes
-            return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
-    return render(request, "extras/generic_form.html", {'titulo': "Permiso de Ingreso a Jujuy", 'form': form, 'boton': "Cargar", })
+        return redirect('permisos:ver_circulacion_temporal', token=circulacion.token)
+    return render(request, "extras/generic_form.html", {'titulo': "Enviar Correo Electronico", 'form': form, 'boton': "Enviar", })
