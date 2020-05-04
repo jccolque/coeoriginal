@@ -138,7 +138,7 @@ class Individuo(models.Model):
     #     packet.seek(0)
     #     nuevo_pdf = PdfFileReader(packet)
     #     # Leemos el pdf base
-    #     existe_pdf = PdfFileReader(STATIC_ROOT+'/archivos/plantilla_aislamiento.pdf', "rb")
+    #     existe_pdf = PdfFileReader(STATIC_ROOT+'/archivo/plantilla_aislamiento.pdf', "rb")
     #     salida = PdfFileWriter()
     #     # Se agregan los datos de la persona que será dada de alta, al pdf ya existente
     #     pagina = existe_pdf.getPage(0)

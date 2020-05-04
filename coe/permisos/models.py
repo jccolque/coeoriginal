@@ -129,7 +129,7 @@ class IngresoProvincia(models.Model):
         packet.seek(0)
         nuevo_pdf = PdfFileReader(packet)
         # Leemos el pdf base
-        existe_pdf = PdfFileReader(STATIC_ROOT+'/archivos/plantilla_nota.pdf', "rb")
+        existe_pdf = PdfFileReader(STATIC_ROOT+'/archivo/plantilla_nota.pdf', "rb")
         salida = PdfFileWriter()
         # Se agregan los datos de la persona que será dada de alta, al pdf ya existente
         pagina = existe_pdf.getPage(0)
@@ -169,11 +169,11 @@ class CirculacionTemporal(models.Model):#Transportes de Carga
     qrpath = models.CharField('qrpath', max_length=100, null=True, blank=True)
     def listo(self):
         #Chequeamos que haya cargado permiso y licencia
-        lista = hasattr(self, 'permiso_nacional') and hasattr(self, 'licencia_conducir')
+        lista = (self.permiso_nacional is not None) and (self.licencia_conducir is not None)
         if lista:#Chequeamos que haya cargado Chofer
-            lista = hasattr(self, 'chofer')
+            lista = (self.chofer is not None)
         if lista:#Chequeamos que chofer tenga App
-            lista = hasattr(self.chofer, 'appdata')
+            lista = (self.chofer.appdata is not None)
         return lista
     def get_qr(self):
         if self.qrpath:
@@ -221,7 +221,7 @@ class CirculacionTemporal(models.Model):#Transportes de Carga
         packet.seek(0)
         nuevo_pdf = PdfFileReader(packet)
         # Leemos el pdf base
-        existe_pdf = PdfFileReader(STATIC_ROOT+'/archivos/plantilla_nota.pdf', "rb")
+        existe_pdf = PdfFileReader(STATIC_ROOT+'/archivo/plantilla_nota.pdf', "rb")
         salida = PdfFileWriter()
         # Se agregan los datos de la persona que será dada de alta, al pdf ya existente
         pagina = existe_pdf.getPage(0)
