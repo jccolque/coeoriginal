@@ -236,3 +236,8 @@ def descartar_sospechoso(created, instance, **kwargs):
             situacion.conducta = instance.individuo.situacion_actual.conducta
         situacion.aclaracion = 'Descartado' + instance.aclaracion
         situacion.save()
+
+@receiver(post_save, sender=Atributo)
+def iniciar_tracking_transportistas(created, instance, **kwargs):
+    if created and instance.tipo == "CT":
+        pass  #  INICIAMOS TRACKING DEL INDIVIDUO

@@ -1,5 +1,6 @@
 #Imports de python
 import qrcode
+import io
 #Realizamos imports de Django
 from django.db import models
 from django.utils import timezone
@@ -7,8 +8,9 @@ from django.core.validators import RegexValidator
 #Imports de paquetes extras
 from tinymce.models import HTMLField
 from auditlog.registry import auditlog
+from PyPDF2 import PdfFileWriter, PdfFileReader
 #Imports del proyecto:
-from coe.settings import MEDIA_ROOT, LOADDATA
+from coe.settings import BASE_DIR, STATIC_ROOT, MEDIA_ROOT, LOADDATA
 from coe.constantes import NOIMAGE, DIAS_CUARENTENA
 from operadores.models import Operador
 from core.choices import TIPO_DOCUMENTOS, TIPO_SEXO
@@ -19,6 +21,11 @@ from .choices import TIPO_VEHICULO, TIPO_ESTADO, TIPO_CONDUCTA
 from .choices import TIPO_RELACION, TIPO_SEGUIMIENTO
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
 from .choices import TIPO_DOCUMENTO
+#Imports de paquetes extras
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import mm
+
 
 
 # Create your models here.
@@ -119,6 +126,30 @@ class Individuo(models.Model):
         return self.geoposiciones.exclude(alerta='SA').last()
     def controlador(self):
         return self.atributos.filter(tipo='CP').exists()
+    # def pdf_alta_aislamiento(self):
+    #     packet = io.BytesIO()
+    #     #Se crea un pdf utilizando reportLab
+    #     pdf = canvas.Canvas(packet, pagesize = A4)
+    #     cadena = self.apellidos + self.nombres + self.get_tipo_doc_display() + str(self.num_doc)
+    #     pdf.setFont('Times-Roman', 12)
+    #     pdf.drawString(85, 625, cadena)
+    #     pdf.save()
+    #     # Nos movemos al comienzo del búfer StringIO
+    #     packet.seek(0)
+    #     nuevo_pdf = PdfFileReader(packet)
+    #     # Leemos el pdf base
+    #     existe_pdf = PdfFileReader(STATIC_ROOT+'/archivos/plantilla_aislamiento.pdf', "rb")
+    #     salida = PdfFileWriter()
+    #     # Se agregan los datos de la persona que será dada de alta, al pdf ya existente
+    #     pagina = existe_pdf.getPage(0)
+    #     pagina.mergePage(nuevo_pdf.getPage(0))
+    #     salida.addPage(pagina)
+    #     # Finalmente se escribe la salida, en un archivo real
+    #     outputStream = open(MEDIA_ROOT+'/permisos/'+self.token+".pdf", "wb")
+    #     salida.write(outputStream)
+    #     outputStream.close()
+
+
 
 class Relacion(models.Model):#Origen del Dato
     tipo = models.CharField('Tipo Relacion', choices=TIPO_RELACION, max_length=2, default='F')
@@ -253,6 +284,7 @@ if not LOADDATA:
     from .signals import aislar_individuo
     from .signals import cargo_signosvitales
     from .signals import cargo_documento
+    from .signals import iniciar_tracking_transportistas
 
     #Auditoria
     auditlog.register(Archivo)

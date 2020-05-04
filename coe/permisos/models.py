@@ -91,34 +91,54 @@ class IngresoProvincia(models.Model):
             return self.qrpath
         else:
             path = MEDIA_ROOT + '/permisos/qrcode-'+str(self.id)+'.png'
-            img = qrcode.make(self.token)
+            img = qrcode.make(self.token)#TIENE QUE SER URL A: redirect> 'permisos:ver_ingreso_aprobado' token=ingreso.token
             img.save(path)
             relative_path = 'archivos/permisos/qrcode-'+ str(self.id)+'.png'
             self.qrpath = relative_path
             self.save()
             return self.qrpath
     def generar_pdf(self):
-        pdf = canvas.Canvas("archivos/permisos/"+self.token+".pdf", pagesize=A4)
-        pdf.drawString(10, 650, "PERMISO DE INGRESO A JUJUY")
-        pdf.drawString(10, 630, self.get_tipo_display())
-        pdf.drawString(10, 600, "Fecha de llegada: "+str(self.fecha_llegada)[0:16])
-        pdf.drawString(10, 585, "Origen del Viaje: "+str(self.origen))
-        pdf.drawString(10, 570, "Destino del Viaje: "+str(self.destino))
-        pdf.drawString(10, 555, "Vehiculo: "+self.marca+" "+self.modelo+" "+self.patente)
+        packet = io.BytesIO()
+        # Se crear un nuevo pdf utilizando ReportLab        
+        pdf = canvas.Canvas(packet, pagesize=A4)
+        #escribimos textos del pdf
+        #Fechamos
+        pdf.setFont('Times-Roman', 9)
+        pdf.drawString(475, 680, str(timezone.now())[0:16])
+        #Armamos documento de permiso de ingreso a Jujuy
+        pdf.setFont('Times-Roman', 18)
+        pdf.drawString(20, 650, "PERMISO DE INGRESO A JUJUY")
+        pdf.setFont('Times-Roman', 12)
+        pdf.drawString(30, 630, self.get_tipo_display())
+        pdf.drawString(30, 600, "Fecha de llegada: "+str(self.fecha_llegada)[0:16])
+        pdf.drawString(30, 585, "Origen del Viaje: "+str(self.origen))
+        pdf.drawString(30, 570, "Destino del Viaje: "+str(self.destino))
+        pdf.drawString(30, 555, "Vehiculo: "+self.marca+" "+self.modelo+" "+self.patente)
+        #Agregamos una linea
+        pdf.line(200, 520, 400, 520)
         #Agregamos lista de pasajeros
         if self.individuos.exists():#Si existe
-            pdf.drawString(10,530, "Pasajeros:")
+            pdf.drawString(30,530, "Pasajeros:")
             altura=500
             for individuo in self.individuos.all():
-                pdf.drawString(10, altura, str(individuo))
+                pdf.drawString(30, altura, str(individuo))
                 altura-= 20
-        #Cargamos imagenes
-        try:
-            pdf.drawImage(STATIC_ROOT+'/img/logo_pdf.png', 50, 700, height=50*mm, preserveAspectRatio=True)
-        except Exception as e:
-            print("No logro cargar logo." + str(e))
-        pdf.drawImage(self.get_qr(), 400, 700, 50*mm, 50*mm)
+        pdf.drawImage(self.get_qr(), 420, 520, 50*mm, 50*mm)
         pdf.save()
+        #Se comienza el procedimiento para mergear pdfs
+        packet.seek(0)
+        nuevo_pdf = PdfFileReader(packet)
+        # Leemos el pdf base
+        existe_pdf = PdfFileReader(STATIC_ROOT+'/archivos/plantilla_nota.pdf', "rb")
+        salida = PdfFileWriter()
+        # Se agregan los datos de la persona que será dada de alta, al pdf ya existente
+        pagina = existe_pdf.getPage(0)
+        pagina.mergePage(nuevo_pdf.getPage(0))
+        salida.addPage(pagina)
+        #Finalmente se escribe la salida, en un archivo real
+        outputStream = open(MEDIA_ROOT+'/permisos/'+self.token+".pdf", "wb")
+        salida.write(outputStream)
+        outputStream.close()
 
 class Emails_Ingreso(models.Model):
     ingreso = models.ForeignKey(IngresoProvincia, on_delete=models.CASCADE, related_name="emails")
@@ -160,13 +180,13 @@ class CirculacionTemporal(models.Model):#Transportes de Carga
             return self.qrpath
         else:
             path = MEDIA_ROOT + '/circulacion/qrcode-'+str(self.id)+'.png'
-            img = qrcode.make(self.token)
+            img = qrcode.make(self.token)#TIENE QUE SER URL A: redirect> 'permisos:ver_ingreso_aprobado' token=ingreso.token
             img.save(path)
             relative_path = 'archivos/circulacion/qrcode-'+ str(self.id)+'.png'
             self.qrpath = relative_path
             self.save()
             return self.qrpath
-    def generar_pdf(self):
+    def generar_pdf(self):  ##### AGREGAR QR
         packet = io.BytesIO()
         # Se crear un nuevo pdf utilizando ReportLab
         pdf = canvas.Canvas(packet, pagesize=A4)
@@ -194,6 +214,8 @@ class CirculacionTemporal(models.Model):#Transportes de Carga
         pdf.line(200, 420, 400, 420)
         pdf.drawString(30, 400, "Licencia de Conducir: ")
         pdf.drawImage(BASE_DIR+self.licencia_conducir.url, 50, 230, 75*mm, 50*mm)
+        #Agregamos Codigo QR
+        pdf.drawImage(self.get_qr(), 420, 520, 50*mm, 50*mm)
         #Grabamos el PDF
         pdf.save()
         packet.seek(0)

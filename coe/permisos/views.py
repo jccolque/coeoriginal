@@ -214,6 +214,7 @@ def finalizar_ingreso(request, ingreso_id):
 
 def ver_ingreso_aprobado(request, token):
     ingreso = IngresoProvincia.objects.get(token=token)
+    ingreso.generar_pdf()
     return HttpResponseRedirect('/archivos/permisos/'+ingreso.token+'.pdf')
 
 #CIRCULACION
