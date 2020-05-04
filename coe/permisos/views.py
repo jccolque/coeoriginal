@@ -229,7 +229,7 @@ def pedir_circulacion_temporal(request, circulacion_id=None):
             circulacion = form.save()
             #Enviar email
             if SEND_MAIL:
-                to_email = ingreso.email_contacto
+                to_email = circulacion.email_contacto
                 #Preparamos el correo electronico
                 mail_subject = 'COE2020 Requerimiento de Circulacion Temporal - Provincial Jujuy!'
                 message = render_to_string('emails/circulacion_temporal.html', {
