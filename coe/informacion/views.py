@@ -533,16 +533,15 @@ def lista_autodiagnosticos(request):
     })
 
 @permission_required('operadores.individuos')
-def lista_aislados(request, estado):
+def lista_aislados(request):
     individuos = Individuo.objects.filter(domicilio_actual__aislamiento=True)
     individuos = individuos.exclude(domicilio_actual__ubicacion=None)
-    #Filtramos si se requiere
-    if estado == 'finalizado':
-        limite = timezone.now() - timedelta(days=DIAS_CUARENTENA)
-        individuos = individuos.exclude(domicilio_actual__fecha__gt=limite)
     #Optimizamos
     individuos = individuos.select_related('nacionalidad')
-    individuos = individuos.select_related('domicilio_actual', 'situacion_actual')
+    individuos = individuos.select_related('situacion_actual')
+    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__ubicacion')
+    individuos = individuos.select_related('appdata')
+    #Lanzamos reporte
     return render(request, "lista_aislados.html", {
         'individuos': individuos,
         'has_table': True,
@@ -571,7 +570,10 @@ def cargar_domicilio(request, individuo_id=None, domicilio_id=None):
 def volver_domicilio(request, domicilio_id):
     nuevo_domicilio = Domicilio.objects.get(pk=domicilio_id)
     nuevo_domicilio.pk = None
-    nuevo_domicilio.aclaracion = "Devuelto al Hogar por " + str(obtener_operador(request))
+    if nuevo_domicilio.ubicacion:
+        nuevo_domicilio.aclaracion = "Devuelto a " + nuevo_domicilio.ubicacion.nombre + " por " + str(obtener_operador(request))
+    else:
+        nuevo_domicilio.aclaracion = "Devuelto a Hogar por " + str(obtener_operador(request))
     nuevo_domicilio.fecha = timezone.now()
     nuevo_domicilio.save()
     return redirect('informacion:ver_individuo', individuo_id=nuevo_domicilio.individuo.id)

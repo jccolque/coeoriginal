@@ -78,7 +78,7 @@ class IngresoProvincia(models.Model):
     #Pasajeros
     individuos = models.ManyToManyField(Individuo, related_name='ingresante')
     #Archivos
-    permiso_nacional = models.FileField('Permiso Nacional de Circulacion', upload_to='ingresos/')
+    permiso_nacional = models.FileField('Permiso Nacional de Circulacion', upload_to='ingresos/', null=True, blank=True)
     dut = models.FileField('Permiso Nacional de Circulacion', upload_to='ingresos/', null=True, blank=True)
     plan_vuelo = models.FileField('Plan de Vuelo', upload_to='ingresos/', null=True, blank=True)
     def telefono(self):

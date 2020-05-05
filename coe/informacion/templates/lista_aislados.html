@@ -7,8 +7,7 @@
         <section class="informacion_basica">
             <div class="container">
                 <div class="row">        
-                    <h2>Lista de Aislados</h2>
-                    <a class="botoncito" href="{% url 'informacion:lista_aislados' estado='todos' %}">Ver Todos</a>
+                    <h2>Lista de individuos actualmente Aislados</h2>
                     <div class="col-sm-12"></div>
                         <table class="listado" id="table">
                             <thead>
@@ -19,7 +18,6 @@
                                     <th>Ubicacion</th>
                                     <th>Situacion</th>
                                     <th>Fecha de Ingreso</th>
-                                    <th>Dias Faltantes</th>
                                     <th>App</th>
                                     <th>Ver Individuo</th>
                                 </tr>
@@ -33,12 +31,11 @@
                                         <td>{{aislado.domicilio_actual.ubicacion.nombre}}</td>
                                         <td>{{aislado.situacion_actual}}</td>
                                         <td>{{aislado.domicilio_actual.fecha}}</td>
-                                        <td>{{aislado.domicilio_actual.dias_faltantes}}</td>
                                         <td>
                                             {% if aislado.appdata %}
-                                                <img class="icons" src="/static/img/icons/check.png">
+                                                <img class="icons nolink" src="/static/img/icons/check.png">
                                             {% else %}
-                                                <img class="icons" src="/static/img/icons/wrong.png">
+                                                <img class="icons nolink" src="/static/img/icons/wrong.png">
                                             {% endif %}
                                         </td>
                                         <td><a href="{% url 'informacion:ver_individuo' individuo_id=aislado.id %}" target="_blank">(Ver Individuo)</a></td>

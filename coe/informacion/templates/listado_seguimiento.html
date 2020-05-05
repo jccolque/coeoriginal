@@ -3,7 +3,8 @@
 {% block content %}
     <div class="beneficiario container">
         <div class="row">
-            <h2>Seguimiento Individuos Bajo Vigilancia</h2>
+            <h2>Seguimiento Epidemiologico</h2>
+            <p>Individuos que no reciben Seguimiento en las ultimas 12 horas</p>
         </div>
         <div class="row">
         <div class="col-md-12">
@@ -15,34 +16,29 @@
                         <th>Telefono</th>
                         <th>Nacionalidad</th>
                         <th>Situacion</th>
-                        <th>Atributo</th>
-                        <th>Sintomas</th>
                         <th>Ultima Actualizacion</th>
-                        <th>Ver Detalle</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for individuo in individuos %}
                         <tr>
-                            <td>{{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</td>
+                            <td>{{individuo.num_doc}}</td>
                             <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
                             <td>{{individuo.telefono}}</td>
                             <td>{{individuo.nacionalidad}}</td>
                             <td>{{individuo.situacion_actual}}</td>
                             <td>
-                                {% for atributo in individuo.atributos.all%}
-                                    <li>{{atributo.get_tipo_display}}</li>
-                                {% endfor %}
-                            </td>
-                            <td>
-                                {% for sintoma in individuo.sintomas.all%}
-                                    <li>{{sintoma.get_tipo_display}}</li>
-                                {% endfor %}
-                            </td>
-                            <td>
                                 {{individuo.seguimiento_actual}}
                             </td>
-                            <td><a href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">(Ver Detalle)</a></td>
+                            <td>
+                                <a href="{% url 'informacion:cargar_seguimiento' individuo_id=individuo.id %}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/add_call.png' %}">
+                                </a>
+                                <a href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                </a>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>

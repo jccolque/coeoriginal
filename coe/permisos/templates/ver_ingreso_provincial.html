@@ -18,10 +18,6 @@
                                 <p><b>Fecha de Llegada Estimada:</b> {{ingreso.fecha_llegada|date:"d/m/Y H:i"}}</p>
                                 <p><b>Origen:</b> {{ingreso.origen}}</p>
                                 <p><b>Destino:</b> {{ingreso.destino}}</p>
-                                <p><b>Permiso de Circulacion Nacional:</b> <a href="{{ingreso.permiso_nacional.url}}" target="_blank">Ver</a></p>
-                                <hr>
-                                    <p><b>Todas las personas que lleguen a Jujuy, deberán realizar la cuarentena en un hotel pago por el pasajero o lugar informado por el COE, sin excepción.</b></p>
-                                <hr>
                             </div>
                             <div class="col-md-6">
                                 <div class="bordeado importante">
@@ -39,6 +35,10 @@
                                         <p>Puede descargar la autorizacion, lo esperamos en la fecha y hora de llegada informada.</p>
                                     {% endif %}
                                 </div>    
+                            </div>
+                            <div class="col-sm-12">
+                                <hr>
+                                <p><b>Todas las personas que lleguen a Jujuy, deberán realizar la cuarentena en un hotel pago por el pasajero o lugar definido por el COE, sin excepción.</b></p>
                             </div>
                         </div>
                         <hr>
@@ -78,73 +78,6 @@
                                 {% endif %}
                             </div>
                         </div>
-                        {% if ingreso.tipo == 'P' %}
-                            <hr>
-                            <h3><b>Cargar Totalidad de Pasajeros en Vehículo:</b></h3>
-                            <table class="listado" id="table">
-                                <thead>
-                                    <tr>
-                                        <th>Numero Documento</th>
-                                        <th>Nombre y Apellido</th>
-                                        <th>Fecha de Nacimiento</th>
-                                        <th>Correo Electronico</th>
-                                        <th>Telefono</th>
-                                        <th>App Instalada</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for individuo in ingreso.individuos.all %}
-                                        <tr>
-                                            <td>{{individuo.num_doc}}</td>
-                                            <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
-                                            <td>{{individuo.fecha_nacimiento}}</td>
-                                            <td>{{individuo.email}}</td>
-                                            <td>{{individuo.telefono}}</td>
-                                            <td>
-                                                {% if individuo.appdata %}
-                                                    <img class="icons" src="/static/img/icons/check.png">
-                                                {% else %}
-                                                    <img class="icons" src="/static/img/icons/wrong.png">
-                                                {% endif %}
-                                            </td>
-                                            <td>
-                                                <a href="{% url 'permisos:mod_ingresantes' ingreso_id=ingreso.id individuo_id=individuo.id %}" target="_blank">
-                                                    <img class="icons" src="{% static 'img/icons/change.png' %}">
-                                                </a>
-                                                <a href="{% url 'permisos:quitar_ingresante' ingreso_id=ingreso.id individuo_id=individuo.id %}" target="_blank">
-                                                    <img class="icons" src="{% static '/img/icons/delete.png' %}">
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                            {% if falta_app %}
-                                <p class="error">Los Pasajeros deben tener la app COVID19 Jujuy Instalada y haberse registrado.</p>
-                                <p class="error"><b>Descargar Aqui:</b> <a href="https://play.google.com/store/apps/details?id=com.ga.covidjujuy_app" target="_blank">Google Play</a></p>
-                            {% endif %}
-                            <hr>
-                        {% endif %}
-                        {% if ingreso.emails_enviados.exists %}
-                            <h3>Emails Enviados al individuo</h3>
-                            <table class="listado">
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Asunto</th>
-                                    <th>Cuerpo</th>
-                                    <th>Operador</th>
-                                </tr>
-                                {% for email in ingreso.emails_enviados.all %}
-                                    <tr>
-                                        <td>{{email.fecha}}</th>
-                                        <td>{{email.asunto}}</th>
-                                        <td>{{email.cuerpo}}</td>
-                                        <td>{{email.operador}}</td>
-                                    </tr>
-                                {% endfor %}
-                            </table>
-                        {% endif %}
                     </div>
                     <div class="col-md-4">
                         <ul class="menu_botones">
@@ -172,6 +105,90 @@
                                 <li><a href="{% url 'permisos:lista_ingresos' %}">Volver al Listado de Ingresos</a></li>
                             {% endif %}
                         </ul>
+                    </div>
+                </div>
+                <div class="row"></div>
+                    {% if ingreso.tipo == 'P' %}
+                        <hr>
+                        <h3><b>Cargar Totalidad de Pasajeros en Vehículo:</b></h3>
+                        <table class="listado" id="table">
+                            <thead>
+                                <tr>
+                                    <th>Numero Documento</th>
+                                    <th>Nombre y Apellido</th>
+                                    <th>Fecha de Nacimiento</th>
+                                    <th>Correo Electronico</th>
+                                    <th>Telefono</th>
+                                    <th>Domicilio origen</th>
+                                    <th>Domicilio Destino</th>
+                                    <th>App Instalada</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for individuo in ingreso.individuos.all %}
+                                    <tr>
+                                        <td>{{individuo.num_doc}}</td>
+                                        <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
+                                        <td>{{individuo.fecha_nacimiento}}</td>
+                                        <td>{{individuo.email}}</td>
+                                        <td>{{individuo.telefono}}</td>
+                                        <td>
+                                            {% with individuo.domicilio_origen as domicilio_origen %}
+                                                {% if domicilio_origen %}
+                                                    {{domicilio_origen}}
+                                                {% else %}
+                                                    <img class="icons" src="/static/img/icons/wrong.png">
+                                                {% endif %}
+                                            {% endwith %}
+                                        </td>
+                                        <td>{{individuo.domicilio_actual}}</td>
+                                        <td>
+                                            {% if individuo.appdata %}
+                                                <img class="icons" src="/static/img/icons/check.png">
+                                            {% else %}
+                                                <img class="icons" src="/static/img/icons/wrong.png">
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'permisos:mod_ingresantes' ingreso_id=ingreso.id individuo_id=individuo.id %}" target="_blank">
+                                                <img class="icons" src="{% static 'img/icons/change.png' %}">
+                                            </a>
+                                            <a href="{% url 'permisos:quitar_ingresante' ingreso_id=ingreso.id individuo_id=individuo.id %}" target="_blank">
+                                                <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% if falta_app %}
+                            <p class="error">Los Pasajeros deben tener la app COVID19 Jujuy Instalada y haberse registrado.</p>
+                            <p class="error"><b>Descargar Aqui:</b> <a href="https://play.google.com/store/apps/details?id=com.ga.covidjujuy_app" target="_blank">Google Play</a></p>
+                        {% endif %}
+                        <hr>
+                    {% endif %}
+                    <hr>
+                    <div class="row">
+                        {% if ingreso.emails_enviados.exists %}
+                            <h3>Emails Enviados al individuo</h3>
+                            <table class="listado">
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Asunto</th>
+                                    <th>Cuerpo</th>
+                                    <th>Operador</th>
+                                </tr>
+                                {% for email in ingreso.emails_enviados.all %}
+                                    <tr>
+                                        <td>{{email.fecha}}</th>
+                                        <td>{{email.asunto}}</th>
+                                        <td>{{email.cuerpo}}</td>
+                                        <td>{{email.operador}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        {% endif %}
                     </div>
                 </div>
             </div>

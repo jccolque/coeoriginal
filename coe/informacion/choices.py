@@ -64,6 +64,7 @@ TIPO_SEGUIMIENTO = (
     ('AT', 'Alerta Tracking'),
     ('FT', 'Baja Tracking'),
     ('TA', 'Traslado a Aislamiento'),
+    ('DF', 'Domicilio Fuera de la Provincia')
 )
 
 TIPO_RELACION = (

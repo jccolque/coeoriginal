@@ -27,7 +27,7 @@ from .models import CirculacionTemporal, Emails_Circulacion
 from .forms import NivelRestriccionForm
 from .forms import PermisoForm, BuscarPermiso, DatosForm, FotoForm
 from .forms import IngresoProvinciaForm, IngresanteForm, AprobarForm
-from .forms import CirculacionTemporalForm
+from .forms import CirculacionTemporalForm, TemporalesForm
 from .forms import DUTForm, PlanVueloForm
 from .functions import buscar_permiso, validar_permiso
 
@@ -146,7 +146,7 @@ def cargar_ingresante(request, ingreso_id, individuo_id=None):
             individuo = Individuo.objects.get(num_doc=num_doc)
         except Individuo.DoesNotExist:
             individuo = None
-        form = IngresanteForm(request.POST, instance=individuo)
+        form = IngresanteForm(request.POST, request.FILES, instance=individuo)
         if form.is_valid():
             #actualizamos individuo con los datos nuevos
             individuo = actualizar_individuo(form)
@@ -156,7 +156,7 @@ def cargar_ingresante(request, ingreso_id, individuo_id=None):
             #Lo agregamos al registro
             ingreso.individuos.add(individuo)
             return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
-    return render(request, "extras/generic_form.html", {'titulo': "Cargar Ingresante", 'form': form, 'boton': "Cargar", })
+    return render(request, "cargar_ingresante.html", {'titulo': "Cargar Ingresante", 'form': form, 'boton': "Cargar", })
 
 def cargar_dut(request, ingreso_id):
     form = DUTForm()
@@ -276,16 +276,16 @@ def circ_subir_licencia(request, token):
             #Podriamos agregar ese doc al individuo
             circulacion.save()
             return redirect('permisos:ver_circulacion_temporal', token=circulacion.token)
-    return render(request, "extras/generic_form.html", {'titulo': "Cargar Permiso Nacional de Circulacion", 'form': form, 'boton': "Cargar", })
+    return render(request, "cargar_ingresante.html", {'titulo': "Cargar Chofer", 'form': form, 'boton': "Cargar", })
 
 def circ_cargar_chofer(request, token, individuo_id=None):
     individuo = None
     if individuo_id:
         individuo = Individuo.objects.get(pk=individuo_id)
-    form = IngresanteForm(instance=individuo)
+    form = TemporalesForm(instance=individuo)
     if request.method == "POST":
         #obtenemos ingreso
-        form = IngresanteForm(request.POST, instance=individuo)
+        form = TemporalesForm(request.POST, instance=individuo)
         if form.is_valid():
             circulacion = CirculacionTemporal.objects.get(token=token)
             #actualizamos individuo con los datos nuevos
@@ -297,16 +297,16 @@ def circ_cargar_chofer(request, token, individuo_id=None):
             circulacion.chofer = individuo
             circulacion.save()
             return redirect('permisos:ver_circulacion_temporal', token=circulacion.token)
-    return render(request, "extras/generic_form.html", {'titulo': "Cargar Chofer", 'form': form, 'boton': "Cargar", })
+    return render(request, "cargar_ingresante.html", {'titulo': "Cargar Acompañante", 'form': form, 'boton': "Cargar", })
 
 def circ_cargar_acomp(request, token, individuo_id=None):
     individuo = None
     if individuo_id:
         individuo = Individuo.objects.get(pk=individuo_id)
-    form = IngresanteForm(instance=individuo)
+    form = TemporalesForm(instance=individuo)
     if request.method == "POST":
         #obtenemos ingreso
-        form = IngresanteForm(request.POST, instance=individuo)
+        form = TemporalesForm(request.POST, instance=individuo)
         if form.is_valid():
             circulacion = CirculacionTemporal.objects.get(token=token)
             #actualizamos individuo con los datos nuevos

@@ -50,6 +50,26 @@
                             {{inscripto.info_extra|safe}}
                         </div>
                     </div>
+                    <hr>
+                    {% if inscripto.emails_enviados.exists %}
+                        <h3>Emails Enviados al individuo</h3>
+                        <table class="listado">
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Asunto</th>
+                                <th>Cuerpo</th>
+                                <th>Operador</th>
+                            </tr>
+                            {% for email in circulacion.emails_enviados.all %}
+                                <tr>
+                                    <td>{{email.fecha}}</th>
+                                    <td>{{email.asunto}}</th>
+                                    <td>{{email.cuerpo}}</td>
+                                    <td>{{email.operador}}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% endif %}
                 </div>
             </div>
         </section>

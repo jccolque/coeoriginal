@@ -145,6 +145,7 @@ a.nolink:hover {
 }
 
 .main_documentos li {
+    list-style: none;
     padding: 5px;
     color: white;
 }

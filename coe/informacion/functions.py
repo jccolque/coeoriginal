@@ -1,5 +1,5 @@
 #Imports del proyecto
-from informacion.models import Individuo, Domicilio
+from informacion.models import Individuo, Domicilio, Documento, Seguimiento
 
 #Definimos nuestras funciones reutilizables
 def obtener_relacionados(individuo, relaciones):
@@ -26,17 +26,33 @@ def actualizar_individuo(form):
     #Guardamos los datos conseguidos
     individuo_db.save()
     #Creamos nuevo domicilio
+    if 'dom_origen' in form.cleaned_data:
+        seg = Seguimiento(individuo=individuo_db)
+        seg.tipo = 'DF'
+        seg.aclaracion = form.cleaned_data['dom_origen']
+        seg.save()
     if 'dom_localidad' in form.cleaned_data:
-        domicilio = Domicilio()
-        domicilio.individuo = individuo_db
+        domicilio = Domicilio(individuo=individuo_db)
         domicilio.localidad = form.cleaned_data['dom_localidad']
         domicilio.calle = form.cleaned_data['dom_calle']
         domicilio.numero = form.cleaned_data['dom_numero']
         domicilio.aclaracion = 'Inscripcion:' + form.cleaned_data['dom_aclaracion']
         #Si tiene un domicilio actual no permitimos que lo cambie
         if individuo_db.domicilio_actual:
-            Domicilio.objects.bulk_create([domicilio])
+            Domicilio.objects.bulk_create([domicilio])#Bulkupdate no genera signals
         else:
-            domicilio.save()
-        #Al terminar devolvemos individuo
+            domicilio.save()#esto impacta sobre su domicilio_actual
+    if 'frente_dni' in form.cleaned_data:
+        doc = Documento(individuo=individuo_db)
+        doc.tipo = 'DI'
+        doc.archivo = form.cleaned_data['frente_dni']
+        doc.aclaracion = "Frente: Inscripcion de Ingreso a Jujuy"
+        doc.save()
+    if 'reverso_dni' in form.cleaned_data:
+        doc = Documento(individuo=individuo_db)
+        doc.tipo = 'DI'
+        doc.archivo = form.cleaned_data['reverso_dni']
+        doc.aclaracion = "Reverso: Inscripcion de Ingreso a Jujuy"
+        doc.save()
+    #Al terminar devolvemos el individuo
     return individuo_db
