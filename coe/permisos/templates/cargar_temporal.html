@@ -24,7 +24,7 @@
                             <div class="bordeado">
                                 <p>La información consignada precedentemente reviste carácter de Declaración Jurada.</p>
                                 <p>Su omisión o falsedad procederá al rechazo de la inscripción o la exclusión del registro, sin perjuicio de las sanciones que le pudiera corresponder.</p>
-                                <img class="fotos" src="{% static 'img/ingresoprovincial.jpeg' %}">
+                                <img class="fotos" src="{% static 'img/circulaciontemporal.jpeg' %}">
                             </div>
                         </div>
                         <div class="col-lg-7">
@@ -38,11 +38,6 @@
                                 <p><b>Nacionalidad:</b> {{form.nacionalidad}}</p>
                                 <p><b>Domicilio actual:</b> {{form.dom_origen}}</p>
                                 <hr>
-                                <p><b>Domicilio Destino:</b></p>
-                                <p><b>Localidad:</b> {{form.dom_localidad}}</p>
-                                <p><b>Calle:</b> {{form.dom_calle}} <b>Numero:</b> {{form.dom_numero}}</p>
-                                <p><b>Barrio:</b> {{form.dom_aclaracion}}</p>
-                                <hr>
                                 <p><b>Contacto</b></p>
                                 <p><b>Correo Electronico:</b> {{form.email}}</p>
                                 <p><b>Telefono:</b> {{form.telefono}}</p>
@@ -50,7 +45,7 @@
                                 <p><b>Documentos Necesarios</b></p>
                                 <p><b>Frente del DNI:</b> {{form.frente_dni}}</p>
                                 <p><b>Reverso del DNI:</b> {{form.reverso_dni}}</p>
-                                <button type="submit">Agregar Ingresante</button>
+                                <button type="submit">Cargar Ingresante</button>
                             </div>
                         </div>
                     </div>

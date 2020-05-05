@@ -276,7 +276,7 @@ def circ_subir_licencia(request, token):
             #Podriamos agregar ese doc al individuo
             circulacion.save()
             return redirect('permisos:ver_circulacion_temporal', token=circulacion.token)
-    return render(request, "cargar_ingresante.html", {'titulo': "Cargar Chofer", 'form': form, 'boton': "Cargar", })
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Licencia de Conducir", 'form': form, 'boton': "Cargar", })
 
 def circ_cargar_chofer(request, token, individuo_id=None):
     individuo = None
@@ -285,7 +285,7 @@ def circ_cargar_chofer(request, token, individuo_id=None):
     form = TemporalesForm(instance=individuo)
     if request.method == "POST":
         #obtenemos ingreso
-        form = TemporalesForm(request.POST, instance=individuo)
+        form = TemporalesForm(request.POST, request.FILES, instance=individuo)
         if form.is_valid():
             circulacion = CirculacionTemporal.objects.get(token=token)
             #actualizamos individuo con los datos nuevos
@@ -297,7 +297,7 @@ def circ_cargar_chofer(request, token, individuo_id=None):
             circulacion.chofer = individuo
             circulacion.save()
             return redirect('permisos:ver_circulacion_temporal', token=circulacion.token)
-    return render(request, "cargar_ingresante.html", {'titulo': "Cargar Acompañante", 'form': form, 'boton': "Cargar", })
+    return render(request, "cargar_temporal.html", {'titulo': "Cargar Chofer", 'form': form, 'boton': "Cargar", })
 
 def circ_cargar_acomp(request, token, individuo_id=None):
     individuo = None
@@ -306,7 +306,7 @@ def circ_cargar_acomp(request, token, individuo_id=None):
     form = TemporalesForm(instance=individuo)
     if request.method == "POST":
         #obtenemos ingreso
-        form = TemporalesForm(request.POST, instance=individuo)
+        form = TemporalesForm(request.POST, request.FILES, instance=individuo)
         if form.is_valid():
             circulacion = CirculacionTemporal.objects.get(token=token)
             #actualizamos individuo con los datos nuevos
@@ -318,7 +318,7 @@ def circ_cargar_acomp(request, token, individuo_id=None):
             circulacion.acompañante = individuo
             circulacion.save()
             return redirect('permisos:ver_circulacion_temporal', token=circulacion.token)
-    return render(request, "extras/generic_form.html", {'titulo': "Cargar Acompañante", 'form': form, 'boton': "Cargar", })
+    return render(request, "cargar_temporal.html", {'titulo': "Cargar Acompañante", 'form': form, 'boton': "Cargar", })
 
 def finalizar_circulacion(request, token):
     circulacion = CirculacionTemporal.objects.get(token=token)
