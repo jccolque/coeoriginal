@@ -57,7 +57,7 @@
 
                         </div>
                     <div class="row">
-                        <a class="botoncito" href="{% url 'permisos:iniciar_circulacion' circulacion_id=circulacion.id %}">
+                        <a class="botoncito" href="{% url 'permisos:iniciar_control_circulacion' circulacion_id=circulacion.id %}">
                             Nuevo Registro
                             <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
                         </a>
@@ -84,7 +84,7 @@
                                             <td>{{registro.fecha_final}}</td>
                                         {% else %}
                                             <td colspan="2" style="text-align: center;">
-                                                <a href="{% url 'permisos:finalizar_circulacion' registro_id=registro.id %}" class="nolink">
+                                                <a href="{% url 'permisos:finalizar_control_circulacion' registro_id=registro.id %}" class="nolink">
                                                     <b>Cargar Salida</b>
                                                     <img class="icons" src="/static/img/icons/logout.png" alt="Marcar Egreso">
                                                 </a>

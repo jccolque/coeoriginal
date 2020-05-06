@@ -1,6 +1,7 @@
 {% extends 'base_inscripciones.html' %}
 
 {% load static %}
+{% load files_tags %}
 
 {% block content %}
     <section class="resumen">
@@ -11,166 +12,210 @@
                         <div class="row">
                             <h2><b>{{proyecto.nombre}}</b></h2>
                             <div class="row">
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <p><b>Documento/Propuesta:</b> <a href="{{proyecto.documento.url}}">Descargar Aqui.</a></p>
-                                    <p><b>Oficio:</b> {{inscripto.oficio}}</p>
-                                    <p><b>Domicilio:</b> {{inscripto.individuo.domicilio_actual}}</p>
-                                    <p><b>Telefono:</b> {{inscripto.individuo.telefono}}</p>
-                                    <p>
-                                        <b>Email:</b> {{inscripto.individuo.email}}
-                                        {% if inscripto.valido %}
-                                            <img class="icons" src="/static/img/icons/check.png" alt="valido">
-                                        {% endif %}
-                                    </p>
+                                    <p><b>Email:</b> {{proyecto.email_contacto}}</p>
                                 </div>
-                                <div class="col-lg-6" style="height: 10em;overflow: auto;">
-                                    <p><b>Aclaraciones</b></p>
-                                    {{inscripto.info_extra|safe}}
+                                <div class="col-lg-8" style="height: 10em;overflow: auto;">
+                                    <p><b>Descripcion:</b></p>
+                                    {{proyecto.descripcion|safe}}
                                 </div>
                             </div>
                         </div>
                         <hr>
                         <div class="row">
-                        <!--Documentacion -->
+                        <!--Institucional -->
                             <div class="col-lg-4">
-                                <h3><b>Tareas Seleccionadas:</b></h3>
-                                <div class="row">
-                                    <ul>
-                                        {% for tarea in inscripto.tareas.all %}
-                                            <li class="lista">{{tarea.tarea}}</li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                                <hr>
-                                <h3><b>Dispositivos Disponibles:</b></h3>
-                                <div class="row">
-                                    <ul>
-                                        {% for dispositivo in inscripto.dispositivos.all %}
-                                            <li class="lista">{{dispositivo.get_tipo_display}}</li>
-                                        {% endfor %}
-                                        {% if inscripto.tiene_internet %}
-                                            <li class="lista"><b>Tiene Internet</b></li>
-                                        {% endif %}
-                                    </ul>
-                                </div>
+                                <h3><b>Informacion Institucional:</b></h3>
+                                <p><b>Nombre Escuela:</b> {{proyecto.escuela_nombre}}</p>
+                                <p><b>Localidad:</b> {{proyecto.escuela_localidad.nombre}}</p>
+                                <p><b>Telefono:</b> {{proyecto.escuela_telefono}}</p>
                             </div>
-                            <div class="col-lg-6">
-                                <p><b>Fotos del Documento:</b></p>
-                                <div class="col-lg-6">
-                                    {% if inscripto.frente_dni %}
-                                        <a href="{% url 'inscripciones:cargar_frente_dni' inscripcion_id=inscripto.id %}" style="float:right;">Remplazar Imagen</a>
-                                        <a href="{{inscripto.frente_dni.url}}" target="_blank">
-                                            <img class="fotos" src="{{inscripto.frente_dni.url}}">
-                                        </a>
+                            <div class="col-lg-4">
+                                <p><b>Aval Institucional:</b></p>
+                                {% with proyecto.escuela_aval as aval %}
+                                    {% if aval %}
+                                        <p><b></b>{% autoescape off %}{% ct_show_file aval %}{% endautoescape %}</p>
                                     {% else %}
-                                        <a class="requerimiento" href="{% url 'inscripciones:cargar_frente_dni' inscripcion_id=inscripto.id %}">CARGAR FRENTE DEL DNI</a>
+                                        <div class="bordeado importante">
+                                            <p><b>Cargar Aval Institucional</b></p>
+                                            <a href="{% url 'inscripciones:cargar_aval_institucional' token=proyecto.token %}">
+                                                <img class="iconsx2" src="{% static 'img/icons/add_pic.png' %}">
+                                            </a>
+                                        </div>
                                     {% endif %}
-                                </div>
-                                <div class="col-lg-6">
-                                    {% if inscripto.reverso_dni %}
-                                        <a href="{% url 'inscripciones:cargar_reverso_dni' inscripcion_id=inscripto.id %}" style="float:right;">Remplazar Imagen</a>
-                                        <a href="{{inscripto.reverso_dni.url}}" target="_blank">
-                                            <img class="fotos" src="{{inscripto.reverso_dni.url}}">
-                                        </a>
+                                {% endwith %}
+                            </div>
+                            <div class="col-lg-4">
+                                <p><b>Reponsable Institucional (Profesor):</b></p><br>
+                                {% with proyecto.responsable as responsable %}
+                                    {% if responsable %}
+                                        <p>
+                                            <b>{{responsable.apellidos}}, {{responsable.nombres}}</b>
+                                            <a href="{% url 'inscripciones:mod_responsable_institucional' token=proyecto.token individuo_id=responsable.id %}" target="_blank">
+                                                <img class="icons" src="{% static '/img/icons/change.png' %}">
+                                            </a>
+                                        </p>
+                                        <p><b>{{responsable.get_tipo_doc_display}} {{responsable.num_doc}}</b></p>
+                                        <p><b>Domicilio:</b> {{responsable.domicilio_actual}}</p>
+                                        <p><b>Telefono:</b> {{responsable.telefono}}</p>
+                                        <p><b>Email:</b> {{responsable.email}}</p>
                                     {% else %}
-                                        <a class="requerimiento" href="{% url 'inscripciones:cargar_reverso_dni' inscripcion_id=inscripto.id %}">CARGAR REVERSO DEL DNI</a>
+                                        <div class="bordeado importante">
+                                            <p><b>Cargar Responsable Institucional</b></p>
+                                            <a href="{% url 'inscripciones:cargar_responsable_institucional' token=proyecto.token %}">
+                                                <img class="iconsx2" src="{% static 'img/icons/add_person.png' %}">
+                                            </a>
+                                        </div>
                                     {% endif %}
-                                </div>
+                                {% endwith %}
                             </div>
                         </div>
-                        <hr>
-                        {% if inscripto.emails_enviados.exists %}
-                            <h3>Emails Enviados al individuo</h3>
-                            <table class="listado">
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Asunto</th>
-                                    <th>Cuerpo</th>
-                                    <th>Operador</th>
-                                </tr>
-                                {% for email in circulacion.emails_enviados.all %}
-                                    <tr>
-                                        <td>{{email.fecha}}</th>
-                                        <td>{{email.asunto}}</th>
-                                        <td>{{email.cuerpo}}</td>
-                                        <td>{{email.operador}}</td>
-                                    </tr>
-                                {% endfor %}
-                            </table>
-                        {% endif %}
                     </div>
                     <div class="col-sm-3">
-                        <h2><b>Estado:</b><br> {{inscripto.get_estado_display}}</h2>
-                        <hr>
-                        <p><b>Tareas Pendientes:</b></p>
-                        {% if inscripto.estado == 0 %}<!--Recien inscripto-->
-                            <ul>
-                                <li class="lista">
-                                    Carga Fotografia del Postulante
-                                    {% if inscripto.individuo.fotografia %}
-                                        <img class="icons" src="/static/img/icons/check.png">
-                                    {% else %}
-                                        <img class="icons" src="/static/img/icons/wrong.png">
-                                    {% endif %}
-                                </li>
-                                <li class="lista">
-                                    Cargar Foto del Frente del DNI
-                                    {% if inscripto.frente_dni %}
-                                        <img class="icons" src="/static/img/icons/check.png">
-                                    {% else %}
-                                        <img class="icons" src="/static/img/icons/wrong.png">
-                                    {% endif %}
-                                </li>
-                                <li class="lista">
-                                    Cargar Foto del Reverso del DNI
-                                    {% if inscripto.reverso_dni %}
-                                        <img class="icons" src="/static/img/icons/check.png">
-                                    {% else %}
-                                        <img class="icons" src="/static/img/icons/wrong.png">
-                                    {% endif %}
-                                </li>
-                                <li class="lista">
-                                    Registrarse en la App Covid19 Jujuy
-                                    {% if inscripto.individuo.appdata %}
-                                        <img class="icons" src="/static/img/icons/check.png">
-                                    {% else %}
-                                        <img class="icons" src="/static/img/icons/wrong.png">
-                                    {% endif %}
-                                </li>
-                            </ul>
-                        {% elif inscripto.estado == 1 %}
-                            <p>Su inscripcion esta siendo evaluada, lo contactaremos para informarle cuando sea aprobada.</p>
-                        {% elif inscripto.estado == 2 %}
-                            <ul>
-                                <li class="lista">
-                                    Correo Electronico Enviado
-                                    <img class="icons" src="/static/img/icons/check.png">
-                                </li>
-                                <li class="lista">
-                                    Ver Videos Instructivos
-                                    <img class="icons" src="/static/img/icons/wrong.png">
-                                </li>
-                                <li class="lista">
-                                    Recibir Entrevista Telefonica
-                                    <img class="icons" src="/static/img/icons/wrong.png">
-                                </li>
-                            </ul>
-                        {% elif inscripto.estado == 3 %}
-                            <p>Un encargado regional lo contactara para coordinar sus tareas como voluntario Social</p>
-                        {% elif inscripto.estado == 4 %}
-                            <p>Individuo Realizando tareas de voluntariado Social</p>
-                        {% endif %}
-
-                        {% if perms.operadores.menu_inscripciones %}
-                            {% if not inscripto.estado == 4 %}
-                                <hr>
-                                <h2>Menu Operador</h2>
-                                <ul class="menu_botones">
-                                    <li><a href="{% url 'inscripciones:enviar_email' inscripcion_id=inscripto.id %}">Enviar Correo Electronico</a></li>
-                                    <li><a href="{% url 'inscripciones:avanzar_estado' inscripcion_id=inscripto.id %}">Avanzar al siguiente Estado</a></li>
+                            <h2><b>Estado:</b><br> {{proyecto.get_estado_display}}</h2>
+                            <hr>
+                            <p><b>Tareas Pendientes:</b></p>
+                            {% if proyecto.estado == 0 %}<!--Recien inscripto-->
+                                <ul>
+                                    <li class="lista">
+                                        Carga Documento Propuesta de Proyecto 
+                                        {% if proyecto.documento %}
+                                            <img class="icons" src="/static/img/icons/check.png">
+                                        {% else %}
+                                            <img class="icons" src="/static/img/icons/wrong.png">
+                                        {% endif %}
+                                    </li>
+                                    <li class="lista">
+                                        Cargar Aval Institucional
+                                        {% if proyecto.escuela_aval %}
+                                            <img class="icons" src="/static/img/icons/check.png">
+                                        {% else %}
+                                            <img class="icons" src="/static/img/icons/wrong.png">
+                                        {% endif %}
+                                    </li>
+                                    <li class="lista">
+                                        Cargar Responsable Academico
+                                        {% if proyecto.responsable %}
+                                            <img class="icons" src="/static/img/icons/check.png">
+                                        {% else %}
+                                            <img class="icons" src="/static/img/icons/wrong.png">
+                                        {% endif %}
+                                    </li>
+                                    <li class="lista">
+                                        Cargar Voluntarios
+                                        {% if proyecto.voluntarios.exists %}
+                                            <img class="icons" src="/static/img/icons/check.png">
+                                        {% else %}
+                                            <img class="icons" src="/static/img/icons/wrong.png">
+                                        {% endif %}
+                                    </li>
                                 </ul>
+                            {% elif inscripto.estado == 1 %}
+                                <p>Su inscripcion esta siendo evaluada, lo contactaremos para informarle cuando sea aprobada.</p>
+                            {% elif inscripto.estado == 3 %}
+                                <p>Un encargado regional lo contactara para coordinar todo lo referente a su proyecto.</p>
+                            {% elif inscripto.estado == 4 %}
+                                <p>Proyecto en Progreso</p>
                             {% endif %}
-                        {% endif %}
+    
+                            {% if perms.operadores.menu_inscripciones %}
+                                {% if not inscripto.estado == 4 %}
+                                    <hr>
+                                    <h2>Menu Operador</h2>
+                                    <ul class="menu_botones">
+                                        <li><a href="">Enviar Correo Electronico</a></li>
+                                        <li><a href="">Avanzar al siguiente Estado</a></li>
+                                    </ul>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <!-- Voluntarios -->
+                    <div class="row">
+                        <h2>Cargar La Totalidad de Voluntarios Estudiantiles</h2>
+                        <a class="botoncito" href="{% url 'inscripciones:cargar_voluntario' token=proyecto.token %}">
+                            Agregar Voluntario
+                            <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
+                        </a>
+                        <table class="listado">
+                            <thead>
+                                <tr>
+                                    <th>Numero Documento</th>
+                                    <th>Nombre y Apellido</th>
+                                    <th>Fecha de Nacimiento</th>
+                                    <th>Correo Electronico</th>
+                                    <th>Telefono</th>
+                                    <th>Domicilio</th>
+                                    <th>Padre Cargado</th>
+                                    <th>Autorizacion Cargada</th>
+                                    <th>App Instalada</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for individuo in proyecto.voluntarios.all %}
+                                    <tr>
+                                        <td>{{individuo.num_doc}}</td>
+                                        <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
+                                        <td>{{individuo.fecha_nacimiento}}</td>
+                                        <td>{{individuo.email}}</td>
+                                        <td>{{individuo.telefono}}</td>
+                                        <td>{{individuo.domicilio_actual}}</td>
+                                        
+                                        {% if individuo.familiar %}
+                                            <td>
+                                                <img class="icons" src="/static/img/icons/check.png">
+                                            </td>
+                                        {% else %}
+                                            <td style="text-align: center; background-color: rgb(238, 89, 89);">
+                                                <a href="{% url 'inscripciones:cargar_tutor' token=proyecto.token voluntario_id=individuo.id %}">
+                                                    <img class="iconsx2" src="{% static 'img/icons/add_person.png' %}">
+                                                </a>
+                                            </td>
+                                        {% endif %}
+                                        
+                                        {% if individuo.voluntario_autorizado %}
+                                            <td>
+                                                <img class="icons" src="/static/img/icons/check.png">
+                                            </td>
+                                        {% else %}
+                                            <td style="text-align: center; background-color: rgb(238, 89, 89);">
+                                                <a href="{% url 'inscripciones:cargar_autorizacion' token=proyecto.token voluntario_id=individuo.id %}">
+                                                    <img class="iconsx2" src="{% static 'img/icons/add_pic.png' %}">
+                                                </a>
+                                            </td>
+                                        {% endif %}
+
+                                        {% if individuo.appdata %}
+                                            <td>
+                                                <img class="icons" src="/static/img/icons/check.png">
+                                            </td>
+                                        {% else %}
+                                            <td style="text-align: center; background-color: rgb(238, 89, 89);">
+                                                <a href="{% url 'app:download_app' %}">
+                                                    <img class="iconsx2" src="/static/img/icons/install_app.png">
+                                                </a>
+                                            </td>
+                                        {% endif %}
+                                        <!--Acciones-->
+                                        <td>
+                                            <a href="{% url 'inscripciones:mod_voluntario_proyecto' token=proyecto.token individuo_id=individuo.id %}" target="_blank">
+                                                <img class="icons" src="{% static 'img/icons/change.png' %}">
+                                            </a>
+                                            <a href="{% url 'inscripciones:quitar_voluntario_proyecto' token=proyecto.token individuo_id=individuo.id %}" target="_blank">
+                                                <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                            </a>
+                                            {% if perms.operadores.individuos %}
+                                                <a href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">
+                                                    <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                                </a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

@@ -83,6 +83,7 @@ TIPO_ATRIBUTO = (
     ('AS', 'Es Agente de Salud'),
     ('PS', 'Es Personal de Seguridad'),
     ('FP', 'Es Funcionario Publico'),
+    ('EP', 'Es Empleado Publico'),
     ('TE', 'Es Trabajador de Empresa Estrategica'),
     ('CT', 'Posee Permiso de Circulacion Temporal'),
     ('PD', 'Se encuentra Presos/Detenidos'),
@@ -128,5 +129,6 @@ TIPO_DOCUMENTO = (
     ('CT', 'Certificado Temporal de Aislamiento en Domicilio'),
     ('DI', 'Documento de Identidad'),
     ('LC', 'Licencia de Conducir'),
+    ('AT', 'Autorizacion Voluntariado - Tutor'),
     ('OT', 'Otros'),
 )

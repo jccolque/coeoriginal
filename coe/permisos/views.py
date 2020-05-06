@@ -665,7 +665,7 @@ def control_circulacion(request):
     return render(request, "extras/generic_form.html", {'titulo': "Buscar Permiso de Circulacion", 'form': form, 'boton': "Buscar", })
 
 @permission_required('operadores.frontera')
-def iniciar_circulacion(request, circulacion_id):
+def iniciar_control_circulacion(request, circulacion_id):
     form = InicioCirculacionForm()
     if request.method == "POST":
         form = InicioCirculacionForm(request.POST)
@@ -681,7 +681,7 @@ def iniciar_circulacion(request, circulacion_id):
     return render(request, "extras/generic_form.html", {'titulo': "Inicio de Circulacion", 'form': form, 'boton': "Iniciar", })
 
 @permission_required('operadores.frontera')
-def finalizar_circulacion(request, registro_id):
+def finalizar_control_circulacion(request, registro_id):
     form = FinalCirculacionForm()
     if request.method == "POST":
         form = FinalCirculacionForm(request.POST)

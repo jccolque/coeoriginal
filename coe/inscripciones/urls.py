@@ -25,7 +25,14 @@ urlpatterns = [
     path('inscripto/email/<int:inscripcion_id>', views.enviar_email, name='enviar_email'),
     #Proyecto
     path('proyecto/panel/<str:token>/', views.panel_proyecto, name='panel_proyecto'),
-
+    path('proyecto/aval/<str:token>/', views.cargar_aval_institucional, name='cargar_aval_institucional'),
+    path('proyecto/responsable/<str:token>/', views.cargar_responsable_institucional, name='cargar_responsable_institucional'),
+    path('proyecto/responsable/<str:token>/<int:individuo_id>', views.cargar_responsable_institucional, name='mod_responsable_institucional'),
+    path('proyecto/voluntario/<str:token>/', views.cargar_voluntario, name='cargar_voluntario'),
+    path('mod/voluntario/<str:token>/<int:individuo_id>', views.cargar_voluntario, name='mod_voluntario_proyecto'),
+    path('del/voluntario/<str:token>/<int:individuo_id>', views.quitar_voluntario_proyecto, name='quitar_voluntario_proyecto'),
+    path('proyecto/cargar/tutor/<str:token>/<int:voluntario_id>', views.cargar_tutor, name='cargar_tutor'),
+    path('proyecto/cargar/autorizacion/<str:token>/<int:voluntario_id>', views.cargar_autorizacion, name='cargar_autorizacion'),
     #Activacion:
     path('act/<int:inscripcion_id>/<int:num_doc>', views.activar_inscripcion, name='activar_inscripcion'),
 ]

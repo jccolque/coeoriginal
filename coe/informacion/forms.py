@@ -217,7 +217,7 @@ class DocumentoForm(forms.ModelForm):
     class Meta:
         model = Documento
         fields= '__all__'
-        exclude = ('individuo', )
+        exclude = ('individuo', 'activo')
         widgets = {
             'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
         }

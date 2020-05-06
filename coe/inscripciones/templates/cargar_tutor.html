@@ -1,0 +1,60 @@
+{% extends 'base_inscripciones.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <form method="post" enctype="multipart/form-data" autocomplete="off">
+                <div class="row">
+                    <br>
+                    {% csrf_token %}
+                    <!-- Mostramos errores -->
+                    {% for field in form %}
+                        {% if field.errors %}
+                            <li>
+                                <b>{{ field.label }}: {{ field.errors|striptags }}</b>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    <br>
+                    <h1><b>{{titulo}}</b></h1>
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <div class="bordeado">
+                                <p>La información consignada precedentemente reviste carácter de Declaración Jurada.</p>
+                                <p>Su omisión o falsedad procederá al rechazo de la inscripción o la exclusión del registro, sin perjuicio de las sanciones que le pudiera corresponder.</p>
+                                <img class="fotos" src="{% static 'img/voluntariado_estudiantil.png' %}">
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="bordeado" style="text-align:justify;">
+                                <h3><b>Datos del Tutor para {{voluntario}}</b></h3>
+                                <p><b>Documento:</b> {{form.num_doc}}</p>
+                                <p><b>Apellido:</b> {{form.apellidos}}</p>
+                                <p><b>Nombre:</b> {{form.nombres}}</p>
+                                <p><b>Genero:</b> {{form.sexo}}</p>
+                                <p><b>Fecha de Nacimiento:</b> {{form.fecha_nacimiento}}</p>
+                                <p><b>Nacionalidad:</b> {{form.nacionalidad}}</p>
+                                <hr>
+                                <p><b>Domicilio:</b></p>
+                                <p><b>Localidad:</b> {{form.dom_localidad}}</p>
+                                <p><b>Calle:</b> {{form.dom_calle}} <b>Numero:</b> {{form.dom_numero}}</p>
+                                <p><b>Barrio:</b> {{form.dom_aclaracion}}</p>
+                                <hr>
+                                <p><b>Contacto</b></p>
+                                <p><b>Correo Electronico:</b> {{form.email}}</p>
+                                <p><b>Telefono:</b> {{form.telefono}}</p>
+                                <hr>
+                                <p><b>Documentos Necesarios</b></p>
+                                <p><b>Frente del DNI:</b> {{form.frente_dni}}</p>
+                                <p><b>Reverso del DNI:</b> {{form.reverso_dni}}</p>
+                                <button type="submit">Cargar Voluntario</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

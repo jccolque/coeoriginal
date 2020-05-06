@@ -43,16 +43,18 @@ def actualizar_individuo(form):
         else:
             domicilio.save()#esto impacta sobre su domicilio_actual
     if 'frente_dni' in form.cleaned_data:
+        Documento.objects.filter(individuo=individuo_db, tipo='DI', aclaracion="Frente").update(activo=False)
         doc = Documento(individuo=individuo_db)
         doc.tipo = 'DI'
         doc.archivo = form.cleaned_data['frente_dni']
-        doc.aclaracion = "Frente: Inscripcion de Ingreso a Jujuy"
+        doc.aclaracion = "Frente"
         doc.save()
     if 'reverso_dni' in form.cleaned_data:
+        Documento.objects.filter(individuo=individuo_db, tipo='DI', aclaracion="Reverso").update(activo=False)
         doc = Documento(individuo=individuo_db)
         doc.tipo = 'DI'
         doc.archivo = form.cleaned_data['reverso_dni']
-        doc.aclaracion = "Reverso: Inscripcion de Ingreso a Jujuy"
+        doc.aclaracion = "Reverso"
         doc.save()
     #Al terminar devolvemos el individuo
     return individuo_db

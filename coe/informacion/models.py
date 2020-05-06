@@ -131,6 +131,11 @@ class Individuo(models.Model):
         return self.geoposiciones.exclude(alerta='SA').last()
     def controlador(self):
         return self.atributos.filter(tipo='CP').exists()
+    def familiar(self):
+        return self.relaciones.filter(tipo="F").last()
+    def voluntario_autorizado(self):
+        return self.documentos.filter(tipo='AT').last()
+
     # def pdf_alta_aislamiento(self):
     #     packet = io.BytesIO()
     #     #Se crea un pdf utilizando reportLab
@@ -153,8 +158,6 @@ class Individuo(models.Model):
     #     outputStream = open(MEDIA_ROOT+'/permisos/'+self.token+".pdf", "wb")
     #     salida.write(outputStream)
     #     outputStream.close()
-
-
 
 class Relacion(models.Model):#Origen del Dato
     tipo = models.CharField('Tipo Relacion', choices=TIPO_RELACION, max_length=2, default='F')
@@ -255,8 +258,9 @@ class Documento(models.Model):
     archivo = models.FileField('Archivo', upload_to='informacion/individuo/documentos/')
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha Subido', default=timezone.now)
+    activo = models.BooleanField(default=True)
     def __str__(self):
-        return self.get_tipo_display()
+        return self.get_tipo_display() + ': ' + self.aclaracion
 
 #Controles vehiculares
 class TrasladoVehiculo(models.Model):

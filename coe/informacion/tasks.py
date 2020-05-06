@@ -107,10 +107,11 @@ def devolver_domicilio():
             #Si tiene un domicilio valido que no es de aislamiento
             if not dom:
                 dom = individuo.domicilio_actual
-            #Lo blanqueamos para crearlo como nuevo:
+                dom.ubicacion = None
+                dom.aislamiento = False
+                dom.numero += '(pk:' + str(individuo.pk) + ')'
+            #Blanqueamos campos para crearlo como nuevo:
             dom.pk = None
-            dom.aislamiento = False
-            dom.numero += '(pk:' + str(individuo.pk) + ')'
             dom.aclaracion = "Movido Automaticamente por final de Cuarentena."
             dom.fecha = timezone.now()
             dom.save()

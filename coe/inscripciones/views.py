@@ -12,7 +12,7 @@ from coe.settings import SEND_MAIL
 from core.forms import SearchForm, UploadFoto
 from core.forms import EmailForm
 from core.functions import delete_tags
-from informacion.models import Individuo, Atributo
+from informacion.models import Individuo, Atributo, Relacion, Documento
 from informacion.functions import actualizar_individuo
 from operadores.functions import obtener_operador
 #Impors de la app
@@ -21,7 +21,8 @@ from .choices import TIPO_DISPOSITIVO
 from .models import Inscripcion, Area, Tarea, TareaElegida, Dispositivo
 from .models import ProyectoEstudiantil
 from .models import EmailsInscripto
-from .forms import ProfesionalSaludForm, VoluntarioSocialForm, ProyectoEstudiantilForm
+from .forms import ProfesionalSaludForm, VoluntarioSocialForm
+from .forms import ProyectoEstudiantilForm, IndividuoForm
 
 # Create your views here.
 def inscripcion_salud(request):
@@ -341,6 +342,7 @@ def panel_proyecto(request, token=None):
     #Lanzamos panel
     return render(request, "panel_proyecto.html", {'proyecto': proyecto})
 
+@permission_required('operadores.menu_inscripciones')
 def lista_proyectos(request):
     proyectos = ProyectoEstudiantil.objects.all()
     #Filtro
@@ -353,3 +355,131 @@ def lista_proyectos(request):
         'proyectos': proyectos,
         'has_table': True,
     })
+
+def cargar_aval_institucional(request, token=None):
+    form = UploadFoto()
+    if request.method == "POST":
+        form = UploadFoto(request.POST, request.FILES)
+        if form.is_valid():
+            proyecto = ProyectoEstudiantil.objects.get(token=token)
+            proyecto.escuela_aval = form.cleaned_data['imagen']
+            proyecto.save()
+            return redirect('inscripciones:panel_proyecto', token=proyecto.token)
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Aval Institucional", 'form': form, 'boton': "Cargar", })
+
+def cargar_responsable_institucional(request, token=None, individuo_id=None):
+    if individuo_id:
+        individuo = Individuo.objects.get(pk=individuo_id)
+        form = IndividuoForm(instance=individuo,
+                    initial={
+                        'dom_localidad': individuo.domicilio_actual.localidad,
+                        'dom_calle': individuo.domicilio_actual.calle,
+                        'dom_numero': individuo.domicilio_actual.numero,
+                        'dom_aclaracion': individuo.domicilio_actual.aclaracion,
+                        'frente_dni': getattr(individuo.documentos.filter(tipo='DI', aclaracion='Frente').last(), 'archivo', None),
+                        'reverso_dni': getattr(individuo.documentos.filter(tipo='DI', aclaracion='Reverso').last(), 'archivo', None),
+                    })
+    else:
+        form = IndividuoForm()
+    if request.method == "POST":
+        #obtenemos ingreso
+        proyecto = ProyectoEstudiantil.objects.get(token=token)
+        try:#Tratamos de obtener el dni
+            num_doc = request.POST['num_doc']
+            individuo = Individuo.objects.get(num_doc=num_doc)
+        except Individuo.DoesNotExist:
+            individuo = None
+        form = IndividuoForm(request.POST, request.FILES, instance=individuo)
+        if form.is_valid():
+            #actualizamos individuo con los datos nuevos
+            individuo = actualizar_individuo(form)
+            #Le agregamos el atributo de Educacion >>> SOLO SI ESTA APROBADO
+            #Atributo.objects.filter(individuo=individuo, tipo='EP').delete()
+            #atributo = Atributo(individuo=individuo)
+            #atributo.tipo = 'EP'
+            #atributo.aclaracion = 'Docente de ' + proyecto.escuela_nombre
+            #atributo.save()
+            #Agregamos el responsable:
+            proyecto.responsable = individuo
+            proyecto.save()
+            return redirect('inscripciones:panel_proyecto', token=proyecto.token)
+    return render(request, "cargar_responsable.html", {'titulo': "Cargar Responsable Institucional", 'form': form, })
+
+def cargar_voluntario(request, token, individuo_id=None):
+    if individuo_id:
+        individuo = Individuo.objects.get(pk=individuo_id)
+        form = IndividuoForm(instance=individuo,
+                    initial={
+                        'dom_localidad': individuo.domicilio_actual.localidad,
+                        'dom_calle': individuo.domicilio_actual.calle,
+                        'dom_numero': individuo.domicilio_actual.numero,
+                        'dom_aclaracion': individuo.domicilio_actual.aclaracion,
+                        'frente_dni': getattr(individuo.documentos.filter(tipo='DI', aclaracion='Frente').last(), 'archivo', None),
+                        'reverso_dni': getattr(individuo.documentos.filter(tipo='DI', aclaracion='Reverso').last(), 'archivo', None),
+                    })
+    else:
+        form = IndividuoForm()
+    if request.method == "POST":
+        #obtenemos ingreso
+        proyecto = ProyectoEstudiantil.objects.get(token=token)
+        try:#Tratamos de obtener el dni
+            num_doc = request.POST['num_doc']
+            individuo = Individuo.objects.get(num_doc=num_doc)
+        except Individuo.DoesNotExist:
+            individuo = None
+        form = IndividuoForm(request.POST, request.FILES, instance=individuo)
+        if form.is_valid():
+            #actualizamos individuo con los datos nuevos
+            individuo = actualizar_individuo(form)
+            #Agregamos el voluntario:
+            proyecto.voluntarios.add(individuo)
+            proyecto.save()
+            return redirect('inscripciones:panel_proyecto', token=proyecto.token)
+    return render(request, "cargar_voluntario.html", {'titulo': "Cargar Voluntario", 'form': form, })
+
+def quitar_voluntario_proyecto(request, token, individuo_id):
+    proyecto = ProyectoEstudiantil.objects.get(token=token)
+    individuo = Individuo.objects.get(pk=individuo_id)
+    proyecto.voluntarios.remove(individuo)
+    return redirect('inscripciones:panel_proyecto', token=proyecto.token)
+
+def cargar_tutor(request, token, voluntario_id):
+    voluntario = Individuo.objects.get(pk=voluntario_id)
+    form = IndividuoForm()
+    if request.method == "POST":
+        #obtenemos ingreso
+        proyecto = ProyectoEstudiantil.objects.get(token=token)
+        try:#Tratamos de obtener el dni del tutor
+            num_doc = request.POST['num_doc']
+            tutor = Individuo.objects.get(num_doc=num_doc)
+        except Individuo.DoesNotExist:
+            tutor = None
+        form = IndividuoForm(request.POST, request.FILES, instance=tutor)
+        if form.is_valid():
+            #actualizamos individuo con los datos nuevos
+            tutor = actualizar_individuo(form)
+            #Agregamos relacion con voluntario
+            relacion = Relacion(tipo='F')
+            relacion.individuo = voluntario
+            relacion.relacionado = tutor
+            relacion.aclaracion = "Tutor informado para Proyecto Estudiantil"
+            relacion.save()
+            #Lanzamos panel
+            return redirect('inscripciones:panel_proyecto', token=proyecto.token)
+    return render(request, "cargar_tutor.html", {'titulo': "Cargar Tutor", 'form': form, 'voluntario': voluntario, })
+
+def cargar_autorizacion(request, token, voluntario_id):
+    form = UploadFoto()
+    if request.method == "POST":
+        form = UploadFoto(request.POST, request.FILES)
+        if form.is_valid():
+            proyecto = ProyectoEstudiantil.objects.get(token=token)
+            voluntario = Individuo.objects.get(pk=voluntario_id)
+            #Cargamos el documento
+            doc = Documento(individuo=voluntario)
+            doc.tipo = 'AT'
+            doc.archivo = form.cleaned_data['imagen']
+            doc.aclaracion = "Para Proyecto: " + proyecto.nombre
+            doc.save()
+            return redirect('inscripciones:panel_proyecto', token=proyecto.token)
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Aval Institucional", 'form': form, 'boton': "Cargar", })
