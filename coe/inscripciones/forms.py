@@ -10,6 +10,7 @@ from georef.models import Localidad
 from informacion.models import Individuo
 #Imports de la app
 from .choices import TIPO_PROFESIONAL, GRUPO_SANGUINEO
+from .models import ProyectoEstudiantil
 
 #Definimos nuestros forms
 class ProfesionalSaludForm(forms.ModelForm):
@@ -62,4 +63,13 @@ class VoluntarioSocialForm(forms.ModelForm):
             'fecha_nacimiento': XDSoftDatePickerInput(),
             'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
             'localidad': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+        }
+
+class ProyectoEstudiantilForm(forms.ModelForm):
+    class Meta:
+        model = ProyectoEstudiantil
+        fields= '__all__'
+        exclude = ('escuela_aval', 'responsable', 'voluntarios', 'token', 'estado', 'fecha',)
+        widgets = {
+            'escuela_localidad': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
         }

@@ -14,8 +14,12 @@
                             <li><a href="{% url 'inscripciones:lista_voluntarios' tipo_inscripto='VS'  %}">Ver Listado de Voluntarios Sociales</a></li>
                             <li><a href="{% url 'inscripciones:lista_tareas' %}">Filtrar Por Tarea</a></li>
                             <hr>
+                            <li><a href="{% url 'inscripciones:lista_proyectos' %}">Ver Listado de Proyectos Estudiantiles</a></li>
+                            <hr>
+                            <h3>Inscripciones Publicas</h3>
                             <li><a href="{% url 'inscripciones:inscripcion_salud'  %}">Inscripcion Voluntario de Salud</a></li>
                             <li><a href="{% url 'inscripciones:inscripcion_social'  %}">Inscripcion Voluntario Social</a></li>
+                            <li><a href="{% url 'inscripciones:inscripcion_proyecto'  %}">Inscripcion Proyecto Estudiantil</a></li>
                             <hr>
                             {% if request.user.is_superuser %}
                                 <li><a href="{% url 'documentos:menu' %}">Opcion del Administrador</a></li>

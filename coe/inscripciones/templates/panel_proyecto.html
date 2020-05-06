@@ -1,0 +1,180 @@
+{% extends 'base_inscripciones.html' %}
+
+{% load static %}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <div class="row">
+                            <h2><b>{{proyecto.nombre}}</b></h2>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p><b>Documento/Propuesta:</b> <a href="{{proyecto.documento.url}}">Descargar Aqui.</a></p>
+                                    <p><b>Oficio:</b> {{inscripto.oficio}}</p>
+                                    <p><b>Domicilio:</b> {{inscripto.individuo.domicilio_actual}}</p>
+                                    <p><b>Telefono:</b> {{inscripto.individuo.telefono}}</p>
+                                    <p>
+                                        <b>Email:</b> {{inscripto.individuo.email}}
+                                        {% if inscripto.valido %}
+                                            <img class="icons" src="/static/img/icons/check.png" alt="valido">
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <div class="col-lg-6" style="height: 10em;overflow: auto;">
+                                    <p><b>Aclaraciones</b></p>
+                                    {{inscripto.info_extra|safe}}
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                        <!--Documentacion -->
+                            <div class="col-lg-4">
+                                <h3><b>Tareas Seleccionadas:</b></h3>
+                                <div class="row">
+                                    <ul>
+                                        {% for tarea in inscripto.tareas.all %}
+                                            <li class="lista">{{tarea.tarea}}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <hr>
+                                <h3><b>Dispositivos Disponibles:</b></h3>
+                                <div class="row">
+                                    <ul>
+                                        {% for dispositivo in inscripto.dispositivos.all %}
+                                            <li class="lista">{{dispositivo.get_tipo_display}}</li>
+                                        {% endfor %}
+                                        {% if inscripto.tiene_internet %}
+                                            <li class="lista"><b>Tiene Internet</b></li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <p><b>Fotos del Documento:</b></p>
+                                <div class="col-lg-6">
+                                    {% if inscripto.frente_dni %}
+                                        <a href="{% url 'inscripciones:cargar_frente_dni' inscripcion_id=inscripto.id %}" style="float:right;">Remplazar Imagen</a>
+                                        <a href="{{inscripto.frente_dni.url}}" target="_blank">
+                                            <img class="fotos" src="{{inscripto.frente_dni.url}}">
+                                        </a>
+                                    {% else %}
+                                        <a class="requerimiento" href="{% url 'inscripciones:cargar_frente_dni' inscripcion_id=inscripto.id %}">CARGAR FRENTE DEL DNI</a>
+                                    {% endif %}
+                                </div>
+                                <div class="col-lg-6">
+                                    {% if inscripto.reverso_dni %}
+                                        <a href="{% url 'inscripciones:cargar_reverso_dni' inscripcion_id=inscripto.id %}" style="float:right;">Remplazar Imagen</a>
+                                        <a href="{{inscripto.reverso_dni.url}}" target="_blank">
+                                            <img class="fotos" src="{{inscripto.reverso_dni.url}}">
+                                        </a>
+                                    {% else %}
+                                        <a class="requerimiento" href="{% url 'inscripciones:cargar_reverso_dni' inscripcion_id=inscripto.id %}">CARGAR REVERSO DEL DNI</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        {% if inscripto.emails_enviados.exists %}
+                            <h3>Emails Enviados al individuo</h3>
+                            <table class="listado">
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Asunto</th>
+                                    <th>Cuerpo</th>
+                                    <th>Operador</th>
+                                </tr>
+                                {% for email in circulacion.emails_enviados.all %}
+                                    <tr>
+                                        <td>{{email.fecha}}</th>
+                                        <td>{{email.asunto}}</th>
+                                        <td>{{email.cuerpo}}</td>
+                                        <td>{{email.operador}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        {% endif %}
+                    </div>
+                    <div class="col-sm-3">
+                        <h2><b>Estado:</b><br> {{inscripto.get_estado_display}}</h2>
+                        <hr>
+                        <p><b>Tareas Pendientes:</b></p>
+                        {% if inscripto.estado == 0 %}<!--Recien inscripto-->
+                            <ul>
+                                <li class="lista">
+                                    Carga Fotografia del Postulante
+                                    {% if inscripto.individuo.fotografia %}
+                                        <img class="icons" src="/static/img/icons/check.png">
+                                    {% else %}
+                                        <img class="icons" src="/static/img/icons/wrong.png">
+                                    {% endif %}
+                                </li>
+                                <li class="lista">
+                                    Cargar Foto del Frente del DNI
+                                    {% if inscripto.frente_dni %}
+                                        <img class="icons" src="/static/img/icons/check.png">
+                                    {% else %}
+                                        <img class="icons" src="/static/img/icons/wrong.png">
+                                    {% endif %}
+                                </li>
+                                <li class="lista">
+                                    Cargar Foto del Reverso del DNI
+                                    {% if inscripto.reverso_dni %}
+                                        <img class="icons" src="/static/img/icons/check.png">
+                                    {% else %}
+                                        <img class="icons" src="/static/img/icons/wrong.png">
+                                    {% endif %}
+                                </li>
+                                <li class="lista">
+                                    Registrarse en la App Covid19 Jujuy
+                                    {% if inscripto.individuo.appdata %}
+                                        <img class="icons" src="/static/img/icons/check.png">
+                                    {% else %}
+                                        <img class="icons" src="/static/img/icons/wrong.png">
+                                    {% endif %}
+                                </li>
+                            </ul>
+                        {% elif inscripto.estado == 1 %}
+                            <p>Su inscripcion esta siendo evaluada, lo contactaremos para informarle cuando sea aprobada.</p>
+                        {% elif inscripto.estado == 2 %}
+                            <ul>
+                                <li class="lista">
+                                    Correo Electronico Enviado
+                                    <img class="icons" src="/static/img/icons/check.png">
+                                </li>
+                                <li class="lista">
+                                    Ver Videos Instructivos
+                                    <img class="icons" src="/static/img/icons/wrong.png">
+                                </li>
+                                <li class="lista">
+                                    Recibir Entrevista Telefonica
+                                    <img class="icons" src="/static/img/icons/wrong.png">
+                                </li>
+                            </ul>
+                        {% elif inscripto.estado == 3 %}
+                            <p>Un encargado regional lo contactara para coordinar sus tareas como voluntario Social</p>
+                        {% elif inscripto.estado == 4 %}
+                            <p>Individuo Realizando tareas de voluntariado Social</p>
+                        {% endif %}
+
+                        {% if perms.operadores.menu_inscripciones %}
+                            {% if not inscripto.estado == 4 %}
+                                <hr>
+                                <h2>Menu Operador</h2>
+                                <ul class="menu_botones">
+                                    <li><a href="{% url 'inscripciones:enviar_email' inscripcion_id=inscripto.id %}">Enviar Correo Electronico</a></li>
+                                    <li><a href="{% url 'inscripciones:avanzar_estado' inscripcion_id=inscripto.id %}">Avanzar al siguiente Estado</a></li>
+                                </ul>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}
+

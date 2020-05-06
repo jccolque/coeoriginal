@@ -1,0 +1,14 @@
+{% autoescape off %}
+    Bienvenido al Sistema COE2020
+
+    Hemos recibido la pre inscripcion de tu proyecto:
+    {{proyecto.nombre}}
+    Para la Escuela {{proyecto.escuela_nombre}} en {{proyecto.escuela_localidad}}.
+
+    Necesitamos que completes algunos pasos mas para validar tu Inscripcion.
+
+    Desde este link podras continuar cuando quieras avanzando con la misma:
+    http://coe.jujuy.gob.ar/{% url 'inscripciones:panel_proyecto' token=proyecto.token %}
+
+    Muy pronto nos contactaremos con usted!
+{% endautoescape %}

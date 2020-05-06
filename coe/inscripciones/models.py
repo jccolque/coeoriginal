@@ -4,11 +4,13 @@ from django.utils import timezone
 #Imports extras
 from tinymce.models import HTMLField
 #Imports del proyecto
+from georef.models import Localidad
 from informacion.models import Individuo
 from operadores.models import Operador
 #Imports de la app
 from .choices import TIPO_INSCRIPTO, ESTADO_INSCRIPTO
 from .choices import GRUPO_SANGUINEO, TIPO_PROFESIONAL, TIPO_DISPOSITIVO
+from .tokens import token_inscripcion
 
 # Create your models here.
 class Area(models.Model):
@@ -82,3 +84,25 @@ class EmailsInscripto(models.Model):
     asunto = models.CharField('Asunto', max_length=100)
     cuerpo = models.CharField('Asunto', max_length=1000)
     operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="inscripcion_emailsenviados")
+
+#Voluntarios Estudiantiles
+class ProyectoEstudiantil(models.Model):
+    #Proyecto
+    nombre = models.CharField('Nombre del Proyecto', max_length=200)
+    documento = models.FileField('Documento del Proyecto', upload_to='inscripciones/estudiantil/', null=True, blank=True)
+    descripcion = HTMLField()
+    email_contacto = models.EmailField('Correo Electronico de Contacto')
+    #Institucion
+    escuela_nombre = models.CharField('Nombre de la Escuela', max_length=200)
+    escuela_localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="proyectos_estudiantiles")
+    escuela_telefono = models.CharField('Telefono Institucion', max_length=50)
+    escuela_aval = models.FileField('Aval Institucional', upload_to='inscripciones/estudiantil/', null=True, blank=True)
+    #Reponsable
+    responsable = models.ForeignKey(Individuo, on_delete=models.CASCADE, null=True, blank=True, related_name="responsable_estudiantil")
+    #Voluntarios
+    voluntarios = models.ManyToManyField(Individuo, related_name='voluntario_estudiantil')
+    #Campos internos
+    token = models.CharField('Token', max_length=50, default=token_inscripcion, unique=True)
+    estado = models.IntegerField(choices=ESTADO_INSCRIPTO, default=0)
+    fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
+    

@@ -19,8 +19,9 @@ from operadores.functions import obtener_operador
 from .tokens import account_activation_token
 from .choices import TIPO_DISPOSITIVO
 from .models import Inscripcion, Area, Tarea, TareaElegida, Dispositivo
+from .models import ProyectoEstudiantil
 from .models import EmailsInscripto
-from .forms import ProfesionalSaludForm, VoluntarioSocialForm
+from .forms import ProfesionalSaludForm, VoluntarioSocialForm, ProyectoEstudiantilForm
 
 # Create your views here.
 def inscripcion_salud(request):
@@ -308,3 +309,47 @@ def activar_inscripcion(request, inscripcion_id, num_doc):
     except(TypeError, ValueError, OverflowError, Inscripcion.DoesNotExist):
         texto = 'El link de activacion es invalido!'
     return render(request, 'extras/resultado.html', {'texto': texto, })
+
+#Proyecto Estudiantil
+def inscripcion_proyecto(request, token=None):
+    proyecto = None
+    if token:
+        proyecto = ProyectoEstudiantil.objects.get(token=token)
+    form = ProyectoEstudiantilForm(instance=proyecto)
+    if request.method == "POST":
+        form = ProyectoEstudiantilForm(request.POST, request.FILES, instance=proyecto)
+        if form.is_valid():
+            proyecto = form.save()
+            if SEND_MAIL:
+                to_email = proyecto.email_contacto
+                #Preparamos el correo electronico
+                mail_subject = "COE - Proyecto Estudiantil 2020"
+                message = render_to_string('emails/inscripcion_proyecto.html', {
+                        'proyecto': proyecto,
+                    })
+                email = EmailMessage(mail_subject, message, to=[to_email])
+                email.send()
+            return redirect('inscripciones:panel_proyecto', token=proyecto.token)
+    return render(request, "inscripcion_proyecto.html", {'form': form})
+
+def panel_proyecto(request, token=None):
+    proyecto = ProyectoEstudiantil.objects.select_related('escuela_localidad')
+    proyecto = proyecto.select_related('responsable')
+    proyecto = proyecto.prefetch_related('voluntarios')
+    #Buscamos el proyecto
+    proyecto = proyecto.get(token=token)
+    #Lanzamos panel
+    return render(request, "panel_proyecto.html", {'proyecto': proyecto})
+
+def lista_proyectos(request):
+    proyectos = ProyectoEstudiantil.objects.all()
+    #Filtro
+    #Optimizacion
+    proyectos = proyectos.select_related('escuela_localidad')
+    proyectos = proyectos.select_related('responsable')
+    proyectos = proyectos.prefetch_related('voluntarios')
+    #Lanzamos listado
+    return render(request, "lista_proyectos.html", {
+        'proyectos': proyectos,
+        'has_table': True,
+    })
