@@ -22,30 +22,32 @@
                     <div class="row">
                         <div class="col-lg-5">
                             <div class="bordeado">
+                                <p>Este formulario es para aquellos que desean volver a la provincia con su vehiculo particular, o administran una empresa comercial de traslados.</p>
+                                <p>Si usted Posee un Boleto de Colectivo u Avion la empresa responsable del mismo realizara este tramite.</p>
+                                <hr>
                                 <p>La información consignada precedentemente reviste carácter de Declaración Jurada.</p>
                                 <p>Su omisión o falsedad procederá al rechazo de la inscripción o la exclusión del registro, sin perjuicio de las sanciones que le pudiera corresponder.</p>
-                                <img class="fotos" src="{% static 'img/circulaciontemporal.png' %}">
+                                <img class="fotos" src="{% static 'img/ingresoprovincial.png' %}">
                             </div>
                         </div>
                         <div class="col-lg-7">
                             <div class="bordeado" style="text-align:justify;">
-                                <h3><b>Datos del Ingresante</b></h3>
-                                <p><b>Documento:</b> {{form.num_doc}}</p>
-                                <p><b>Apellido:</b> {{form.apellidos}}</p>
-                                <p><b>Nombre:</b> {{form.nombres}}</p>
-                                <p><b>Genero:</b> {{form.sexo}}</p>
-                                <p><b>Fecha de Nacimiento:</b> {{form.fecha_nacimiento}}</p>
-                                <p><b>Nacionalidad:</b> {{form.nacionalidad}}</p>
-                                <p><b>Domicilio actual:</b> {{form.dom_origen}}</p>
+                                <h3><b>Datos del Vehiculo</b></h3>
+                                <p><b>Tipo Ingreso:</b> {{form.tipo}}</p>
+                                <p><b>Email de Contacto:</b> {{form.email_contacto}} <i>(A travez del mismo lo contactaremos)</i></p>
+                                <p><b>Fecha ideal de Llegada:</b> {{form.fecha_llegada}}</p>
+                                <p><b>Provincia de Origen:</b> {{form.origen}}</p>
+                                <p><b>Destino Final:</b> {{form.destino}}</p>
                                 <hr>
-                                <p><b>Contacto</b></p>
-                                <p><b>Correo Electronico:</b> {{form.email}}</p>
-                                <p><b>Telefono:</b> {{form.telefono}}</p>
+                                <p><b>Datos del Vehiculo</b></p>
+                                <p><b>Marca:</b> {{form.marca}}</p>
+                                <p><b>Modelo:</b> {{form.modelo}}</p>
+                                <p><b>Patente:</b> {{form.patente}}</p>
                                 <hr>
-                                <p><b>Documentos Necesarios</b></p>
-                                <p><b>Frente del DNI:</b> {{form.frente_dni}}</p>
-                                <p><b>Reverso del DNI:</b> {{form.reverso_dni}}</p>
-                                <button type="submit">Cargar Ingresante</button>
+                                <p><b>Aclaraciones Pertinentes:</b></p>
+                                {{form.aclaracion}}
+                                <br>
+                                <button type="submit">Iniciar Pedido de Ingreso</button>
                             </div>
                         </div>
                     </div>

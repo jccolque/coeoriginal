@@ -1,0 +1,104 @@
+{% extends 'base_informacion.html' %}
+
+{% load static %}
+{% load files_tags %}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">
+                    <h2><b>Panel de Circulacion Temporal</b></h2>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h3><b>Vehiculo:</b></h3>
+                                <p><b>Marca:</b> {{circulacion.marca}}</p>
+                                <p><b>Modelo:</b> {{circulacion.modelo}}</p>
+                                <p><b>Patente:</b> {{circulacion.patente}}</p>
+                            </div>
+                            <div class="col-md-3">
+                                <p><b>Actividad:</b> {{circulacion.get_tipo_display}}</p>
+                                <hr>
+                                {{circulacion.actividad|safe}}
+                            </div>
+                            <div class="col-sm-3"><!--CHOFER-->
+                                <p><b><u>Chofer</u></b></p>
+                                <p><b>Documento:</b> {{circulacion.chofer.num_doc}}</p>
+                                <p><b>Apellido y Nombre:</b> {{circulacion.chofer.apellidos}}, {{circulacion.chofer.nombres}}</p>
+                                <p><b>Fecha de Nacimiento:</b> {{circulacion.chofer.fecha_nacimiento}}</p>
+                                <p><b>Telefono:</b> {{circulacion.chofer.telefono}}</p>
+                                <p><b>Aplicacion Instalada:</b> 
+                                    {% if circulacion.chofer.appdata %}
+                                        <img class="icons" src="/static/img/icons/check.png">
+                                    {% else %}
+                                        <img class="icons" src="/static/img/icons/wrong.png">
+                                    {% endif %}
+                                </p>
+                            </div>
+                            {% if circulacion.acompañante %}
+                                <div class="col-sm-3"><!--Acompañante-->
+                                    <p><b><u>Acompañante</u></b></p>
+                                    <p><b>Documento:</b> {{circulacion.acompañante.num_doc}}</p>
+                                    <p><b>Apellido y Nombre:</b> {{circulacion.acompañante.apellidos}}, {{circulacion.acompañante.nombres}}</p>
+                                    <p><b>Fecha de Nacimiento:</b> {{circulacion.acompañante.fecha_nacimiento}}</p>
+                                    <p><b>Telefono:</b> {{circulacion.acompañante.telefono}}</p>
+                                    <p><b>Aplicacion Instalada:</b> 
+                                        {% if circulacion.acompañante.appdata %}
+                                            <img class="icons" src="/static/img/icons/check.png">
+                                        {% else %}
+                                            <img class="icons" src="/static/img/icons/wrong.png">
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <hr>
+                        <div class="row">
+
+                        </div>
+                    <div class="row">
+                        <a class="botoncito" href="{% url 'permisos:iniciar_circulacion' circulacion_id=circulacion.id %}">
+                            Nuevo Registro
+                            <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
+                        </a>
+                        <table class="listado" id="table">
+                            <thead>
+                                <tr>
+                                    <th>Destino Circulacion</th>
+                                    <th>Control Inicial</th>
+                                    <th>Fecha de Inicio</th>
+                                    <th>Control Final</th>
+                                    <th>Fecha de Final</th>
+                                    <th>Tiempo Permitido</th>
+                                    <th>Horas Reales</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for registro in circulacion.registros.all reversed %}
+                                    <tr>
+                                        <td>{{registro.destino.nombre}}</td>
+                                        <td>{{registro.get_control_inicio_display}}</td>
+                                        <td>{{registro.fecha_inicio}}</td>
+                                        {% if registro.control_final %}
+                                            <td>{{registro.get_control_final_display}}</td>
+                                            <td>{{registro.fecha_final}}</td>
+                                        {% else %}
+                                            <td colspan="2" style="text-align: center;">
+                                                <a href="{% url 'permisos:finalizar_circulacion' registro_id=registro.id %}" class="nolink">
+                                                    <b>Cargar Salida</b>
+                                                    <img class="icons" src="/static/img/icons/logout.png" alt="Marcar Egreso">
+                                                </a>
+                                            </td>
+                                        {% endif %}
+                                        <td>{{registro.tiempo_permitido}}</td>
+                                        <td>{{registro.tiempo_real|floatformat:2}}hrs</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}

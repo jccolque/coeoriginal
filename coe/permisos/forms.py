@@ -9,7 +9,7 @@ from core.widgets import XDSoftDatePickerInput, XDSoftDateTimePickerInput
 from georef.models import Localidad
 from informacion.models import Individuo
 #Imports de la app
-from .choices import TIPO_PERMISO
+from .choices import TIPO_PERMISO, FRONTERA_CONTROL
 from .models import NivelRestriccion, Permiso, IngresoProvincia, CirculacionTemporal
 
 #Formularios
@@ -17,7 +17,6 @@ class NivelRestriccionForm(forms.ModelForm):
     class Meta:
         model = NivelRestriccion
         fields= '__all__'
-
 
 class DatosForm(forms.ModelForm):
     class Meta:
@@ -58,7 +57,6 @@ class IngresoProvinciaForm(forms.ModelForm):
             'origen': autocomplete.ModelSelect2(url='georef:provincia-autocomplete'),
             'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
         }
-
 
 class IngresoProvinciaForm(forms.ModelForm):
     class Meta:
@@ -152,3 +150,17 @@ class AprobarForm(forms.Form):
         required=True, 
         widget=XDSoftDateTimePickerInput()
     )
+
+class InicioCirculacionForm(forms.Form):
+    control = forms.ChoiceField(choices=FRONTERA_CONTROL, label="Punto Fronterizo")
+    destino = forms.ModelChoiceField(
+        label="Destino de la Circulacion",
+        queryset=Localidad.objects.all(),
+        widget=autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+        required=True,
+    )
+    tiempo_permitido = forms.IntegerField(label="Tiempo Permitido")
+
+class FinalCirculacionForm(forms.Form):
+    control = forms.ChoiceField(choices=FRONTERA_CONTROL, label="Punto Fronterizo")
+    aclaraciones = forms.CharField(widget=forms.Textarea(attrs={"rows": 5, "cols": 20}))

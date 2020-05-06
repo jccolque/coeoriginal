@@ -34,3 +34,7 @@ tr.amarillo{
 tr.verde{
     background-color: rgb(65, 212, 20)!important;
 }
+
+.minitexto {
+    font-size: smaller;
+}

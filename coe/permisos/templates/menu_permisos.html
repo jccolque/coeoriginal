@@ -29,6 +29,11 @@
                                 <li><a href="{% url 'permisos:lista_vencidos' %}">Listado de Permisos Vencidos</a></li>
                                 <li><a href="{% url 'permisos:buscar_permiso' %}">Pedido de Permiso Publico</a></li>
                             {% endif %}
+                            {% if perms.operadores.frontera %}
+                                <h3>Control de Fronteras</h3>
+                                <li><a href="{% url 'permisos:control_circulacion' %}">Control de Ingreso/Egreso</a></li>
+                                <li><a href="{% url 'permisos:lista_frontera' %}">Lista de Movimientos Fronterizos</a></li>
+                            {% endif %}
                             {% if request.user.is_superuser %}
                                 <hr>
                                 <h3>Uso Bajo Supervision:</h3>

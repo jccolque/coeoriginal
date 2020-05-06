@@ -13,31 +13,6 @@
             <div class="col-lg-5">
                 <div class="row">
                     <div class="col-sm-6">
-                        <a href="{% url 'app:download_app' %}">
-                            <img class="fotos" src="{% static 'img/download_app.jpg' %}">
-                        </a>
-                    </div>
-                    <div class="col-sm-6">
-                        <a href="{% url 'inscripciones:inscripcion_salud' %}">
-                            <img class="fotos" src="{% static 'img/reclutamiento_salud.jpeg' %}">
-                        </a>
-
-                    <!--
-                        <div class="elem small">
-                            <a href="{% url 'core:consejos' %}" target="_blank">
-                                <img class="fotos" src="{% static 'img/link_salud.png' %}">
-                            </a>
-                        </div>
-                        <div class="elem small full-size-img">
-                            <a href="http://coe.jujuy.gob.ar/noticias/49" target="_blank">
-                                <img class="fotos" src="{% static 'img/transporte.jpeg' %}">
-                            </a>
-                        </div>
-                    -->
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-6">
                         <div class="elem">
                             <a href="{% url 'inscripciones:inscripcion_social' %}" target="_blank">
                                 <img class="fotos" src="{% static 'img/reclutamiento_social.jpeg' %}">
@@ -45,9 +20,28 @@
                         </div>
                     </div>
                     <div class="col-sm-6">
+                        <a href="{% url 'inscripciones:inscripcion_salud' %}">
+                            <img class="fotos" src="{% static 'img/reclutamiento_salud.jpeg' %}">
+                        </a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <a href="{% url 'app:download_app' %}">
+                            <img class="fotos" src="{% static 'img/download_app.jpg' %}">
+                        </a>
+                    </div>
+                    <div class="col-sm-4">
                         <div class="elem">
                             <a href="{% url 'permisos:pedir_ingreso_provincial' %}">
-                                <img class="fotos"  src="{% static 'img/ingresoprovincial.jpeg' %}">
+                                <img class="fotos"  src="{% static 'img/ingresoprovincial.png' %}">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="elem">
+                            <a href="{% url 'permisos:pedir_circulacion_temporal' %}">
+                                <img class="fotos"  src="{% static 'img/circulaciontemporal.png' %}">
                             </a>
                         </div>
                     </div>

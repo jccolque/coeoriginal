@@ -63,4 +63,10 @@ urlpatterns = [
     path('del/circulaciones/<int:circulacion_id>', views.eliminar_circulacion, name='eliminar_circulacion'),
     path('reactivar/circulacion/<int:circulacion_id>', views.reactivar_circulacion, name='reactivar_circulacion'),
     path('email/circulaciones/<int:circulacion_id>', views.circulacion_enviar_email, name='circulacion_enviar_email'),
+    #Control de Fronteras
+    path('circ/control/frontera', views.control_circulacion, name='control_circulacion'),
+    path('circ/panel/<str:token>', views.panel_circulacion, name='panel_circulacion'),
+    path('circ/control/iniciar/<int:circulacion_id>', views.iniciar_circulacion, name='iniciar_circulacion'),
+    path('circ/control/finalizar/<int:registro_id>', views.finalizar_circulacion, name='finalizar_circulacion'),
+    path('circ/lista/frontera', views.lista_frontera, name='lista_frontera'),
 ]

@@ -41,3 +41,14 @@
 .info_user {
     color: black;
 }
+
+.menu_botones .medio_boton {
+    text-align: center;
+    margin: 15px;
+    background: var(--color_primario);
+    border-radius: 4px;
+    font-family: "arial-black";
+    font-size: 14px;
+    padding: 12px 25px;
+    cursor: pointer;
+}

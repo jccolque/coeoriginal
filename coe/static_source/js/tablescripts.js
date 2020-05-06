@@ -20,7 +20,6 @@ $(document).ready(function() {
         dom: 'Bfrtip',
         "pageLength": 50,
 
-        //orderCellsTop: true,
         fixedHeader: true,
 
         buttons: [

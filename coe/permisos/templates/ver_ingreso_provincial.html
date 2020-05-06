@@ -15,9 +15,9 @@
                                 <h3 style="color:{% if ingreso.estado == 'C' %}red{% elif ingreso.estado == 'E' %}orange{% elif ingreso.estado == 'A' %}green{% else %}black{% endif %};"><b>Estado</b> {{ingreso.get_estado_display}}</h3>
                                 <p><b>Tipo:</b> {{ingreso.get_tipo_display}}</p>
                                 <p><b>Email de Contacto:</b> {{ingreso.email_contacto}}</p>
-                                <p><b>Fecha de Llegada Estimada:</b> {{ingreso.fecha_llegada|date:"d/m/Y H:i"}}</p>
                                 <p><b>Origen:</b> {{ingreso.origen}}</p>
-                                <p><b>Destino:</b> {{ingreso.destino}}</p>
+                                <p><b>Destino:</b> {{ingreso.destino.nombre}}</p>
+                                <p><b>Fecha de Llegada Estimada:</b> {{ingreso.fecha_llegada|date:"d/m/Y H:i"}}</p>
                             </div>
                             <div class="col-md-6">
                                 <div class="bordeado importante">
@@ -35,10 +35,6 @@
                                         <p>Puede descargar la autorizacion, lo esperamos en la fecha y hora de llegada informada.</p>
                                     {% endif %}
                                 </div>    
-                            </div>
-                            <div class="col-sm-12">
-                                <hr>
-                                <p><b>Todas las personas que lleguen a Jujuy, deberán realizar la cuarentena en un hotel pago por el pasajero o lugar definido por el COE, sin excepción.</b></p>
                             </div>
                         </div>
                         <hr>
@@ -111,6 +107,7 @@
                     {% if ingreso.tipo == 'P' %}
                         <hr>
                         <h3><b>Cargar Totalidad de Pasajeros en Vehículo:</b></h3>
+                        <p><b>Todas las personas que lleguen a Jujuy, deberán realizar la cuarentena en un hotel pago por el pasajero o lugar definido por el COE, sin excepción.</b></p>
                         <table class="listado" id="table">
                             <thead>
                                 <tr>
@@ -163,14 +160,13 @@
                             </tbody>
                         </table>
                         {% if falta_app %}
-                            <p class="error">Los Pasajeros deben tener la app COVID19 Jujuy Instalada y haberse registrado.</p>
+                            <p class="error">Los Pasajeros deben tener la app <b>COVID19 Jujuy</b> Instalada y haberse registrado.</p>
                             <p class="error"><b>Descargar Aqui:</b> <a href="https://play.google.com/store/apps/details?id=com.ga.covidjujuy_app" target="_blank">Google Play</a></p>
                         {% endif %}
                         <hr>
                     {% endif %}
-                    <hr>
-                    <div class="row">
-                        {% if ingreso.emails_enviados.exists %}
+                    {% if ingreso.emails_enviados.exists %}
+                        <div class="row">
                             <h3>Emails Enviados al individuo</h3>
                             <table class="listado">
                                 <tr>
@@ -188,8 +184,8 @@
                                     </tr>
                                 {% endfor %}
                             </table>
-                        {% endif %}
-                    </div>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </section>

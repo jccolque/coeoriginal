@@ -20,7 +20,8 @@ from informacion.models import Individuo
 from operadores.models import Operador
 #Imports de app
 from .choices import COLOR_RESTRICCION, GRUPOS_PERMITIDOS
-from .choices import TIPO_PERMISO, TIPO_CIRCULACION
+from .choices import TIPO_PERMISO, TIPO_ACTIVIDAD
+from .choices import FRONTERA_CONTROL
 from .choices import COMBINACION_DNIxDIA
 from .choices import TIPO_INGRESO, ESTADO_INGRESO
 from .tokens import token_ingreso
@@ -148,7 +149,7 @@ class Emails_Ingreso(models.Model):
     operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="ingreso_emailsenviados")
 
 class CirculacionTemporal(models.Model):#Transportes de Carga
-    tipo = models.CharField('Tipo Circulacion', choices=TIPO_CIRCULACION, max_length=2, default='CC')
+    tipo = models.IntegerField('Actividad Excenta', choices=TIPO_ACTIVIDAD, default=1)
     email_contacto = models.EmailField('Correo Electronico de Contacto')
     chofer = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="transportista", null=True, blank=True)
     acompañante = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="acompañante", null=True, blank=True)
@@ -239,10 +240,28 @@ class Emails_Circulacion(models.Model):
     cuerpo = models.CharField('Cuerpo', max_length=1000)
     operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="circulacion_emailsenviados")
 
+class RegistroCirculacion(models.Model):
+    circulacion = models.ForeignKey(CirculacionTemporal, on_delete=models.CASCADE, related_name="registros")
+    #Inicio
+    control_inicio = models.IntegerField('Lugar de Control de Inicio', choices=FRONTERA_CONTROL, default=1)
+    fecha_inicio = models.DateTimeField('Fecha de Inicio Circulacion', default=timezone.now)
+    destino = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="destino_transporte", null=True, blank=True)#Default=circulacion.destino
+    tiempo_permitido = models.IntegerField('Horas Permitidas', default=6)
+    #Final
+    control_final = models.IntegerField('Lugar de Control Final', choices=FRONTERA_CONTROL, null=True, blank=True)
+    fecha_final = models.DateTimeField('Fecha de Fin Circulacion', default=timezone.now, null=True, blank=True)
+    aclaraciones = models.TextField('Aclaraciones en Salida', null=True, blank=True)
+    class Meta:
+        ordering = ('fecha_inicio', )
+    def tiempo_real(self):
+        if self.fecha_final:
+            return (self.fecha_final - self.fecha_inicio).total_seconds() * 3600
+        else:
+            return 0
+
 if not LOADDATA:
     #señales
     from .signals import activar_restriccion
-
     #Auditoria
     auditlog.register(Permiso)
     auditlog.register(NivelRestriccion)

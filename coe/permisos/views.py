@@ -17,18 +17,20 @@ from core.forms import EmailForm, UploadFoto
 from core.functions import date2str
 from operadores.functions import obtener_operador
 from informacion.models import Individuo, Atributo
+from informacion.forms import SearchIndividuoForm
 from informacion.functions import actualizar_individuo
 from graficos.functions import obtener_grafico
 #imports de la app
-from .choices import TIPO_INGRESO, ESTADO_INGRESO
+from .choices import TIPO_INGRESO, TIPO_ACTIVIDAD, ESTADO_INGRESO
 from .models import NivelRestriccion, Permiso
 from .models import IngresoProvincia, Emails_Ingreso
-from .models import CirculacionTemporal, Emails_Circulacion
+from .models import CirculacionTemporal, Emails_Circulacion, RegistroCirculacion
 from .forms import NivelRestriccionForm
 from .forms import PermisoForm, BuscarPermiso, DatosForm, FotoForm
 from .forms import IngresoProvinciaForm, IngresanteForm, AprobarForm
 from .forms import CirculacionTemporalForm, TemporalesForm
 from .forms import DUTForm, PlanVueloForm
+from .forms import InicioCirculacionForm, FinalCirculacionForm
 from .functions import buscar_permiso, validar_permiso
 
 #Publico
@@ -122,7 +124,7 @@ def pedir_ingreso_provincial(request, ingreso_id=None):
                 email.send()
             #Enviarlo a cargar ingresantes
             return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
-    return render(request, "extras/generic_form.html", {'titulo': "Permiso de Ingreso a Jujuy", 'form': form, 'boton': "Cargar", })
+    return render(request, "pedir_ingreso.html", {'titulo': "Permiso de Ingreso a Jujuy", 'form': form, 'boton': "Cargar", })
 
 def ver_ingreso_provincial(request, token):
     ingreso = IngresoProvincia.objects.prefetch_related('individuos')
@@ -240,7 +242,12 @@ def pedir_circulacion_temporal(request, circulacion_id=None):
                 email.send()
             #Enviarlo a cargar ingresantes
             return redirect('permisos:ver_circulacion_temporal', token=circulacion.token)
-    return render(request, "extras/generic_form.html", {'titulo': "Permiso de Circulacion Temporal - Jujuy", 'form': form, 'boton': "Cargar", })
+    return render(request, "pedir_circulacion.html", {
+        'titulo': "Permiso de Circulacion Temporal - Jujuy",
+        'form': form,
+        'TIPO_ACTIVIDAD': TIPO_ACTIVIDAD,
+        }
+    )
 
 def ver_circulacion_temporal(request, token):
     #Optimizamos busqueda
@@ -621,3 +628,85 @@ def circulacion_enviar_email(request, circulacion_id):
                 email.send()
         return redirect('permisos:ver_circulacion_temporal', token=circulacion.token)
     return render(request, "extras/generic_form.html", {'titulo': "Enviar Correo Electronico", 'form': form, 'boton': "Enviar", })
+
+#Control de Frontera
+@permission_required('operadores.frontera')
+def panel_circulacion(request, token):
+    #Optimizamos
+    circulacion = CirculacionTemporal.objects.select_related('chofer', 'acompañante')
+    circulacion = circulacion.select_related('origen', 'destino')
+    #Filtramos
+    circulacion = circulacion.get(token=token)
+    #Mostramos el panel
+    return render(request, 'panel_circulacion.html', {
+        'circulacion': circulacion,
+        'has_table': True,
+    })
+
+@permission_required('operadores.frontera')
+def control_circulacion(request):
+    form = SearchIndividuoForm()
+    if request.method == "POST":
+        form = SearchIndividuoForm(request.POST)
+        if form.is_valid():
+            #Traemos el documento
+            num_doc = form.cleaned_data["num_doc"]
+            #Buscamos el permiso
+            circulacion = CirculacionTemporal.objects.filter(estado="A", chofer__num_doc=num_doc).last()
+            if not circulacion:
+                circulacion = CirculacionTemporal.objects.filter(estado="A", acompañante__num_doc=num_doc).last()
+            if not circulacion:
+                return render(request, 'extras/error.html', {
+                    'titulo': 'Permiso de Circulacion Inexistente',
+                    'error': "El individuo indicado no esta registrado como chofer u acompañante de ningun Permiso de Circulacion Aprobado.",
+                })
+            #Vamos al panel de ingreso:
+            return redirect('permisos:panel_circulacion', token=circulacion.token)
+    return render(request, "extras/generic_form.html", {'titulo': "Buscar Permiso de Circulacion", 'form': form, 'boton': "Buscar", })
+
+@permission_required('operadores.frontera')
+def iniciar_circulacion(request, circulacion_id):
+    form = InicioCirculacionForm()
+    if request.method == "POST":
+        form = InicioCirculacionForm(request.POST)
+        if form.is_valid():
+            circulacion = CirculacionTemporal.objects.get(pk=circulacion_id)
+            #Construimos nuevo registro:
+            registro = RegistroCirculacion(circulacion=circulacion)
+            registro.control_inicio = form.cleaned_data['control']
+            registro.destino = form.cleaned_data['destino']
+            registro.tiempo_permitido = form.cleaned_data['tiempo_permitido']
+            registro.save()
+            return redirect('permisos:panel_circulacion', token=circulacion.token)
+    return render(request, "extras/generic_form.html", {'titulo': "Inicio de Circulacion", 'form': form, 'boton': "Iniciar", })
+
+@permission_required('operadores.frontera')
+def finalizar_circulacion(request, registro_id):
+    form = FinalCirculacionForm()
+    if request.method == "POST":
+        form = FinalCirculacionForm(request.POST)
+        if form.is_valid():
+            #Completamos el registro
+            registro = RegistroCirculacion.objects.get(pk=registro_id)
+            registro.control_final = form.cleaned_data['control']
+            registro.aclaraciones = form.cleaned_data['aclaraciones']
+            registro.save()
+            return redirect('permisos:panel_circulacion', token=registro.circulacion.token)
+    return render(request, "extras/generic_form.html", {'titulo': "Final de Circulacion", 'form': form, 'boton': "Finalizar", })
+
+@permission_required('operadores.fronteras')
+def lista_frontera(request):
+    registros = RegistroCirculacion.objects.all()
+    #Filtramos:
+    if request.method == "POST":
+        pass
+    #Optimizamos:
+    registros = registros.select_related('circulacion')
+    registros = registros.select_related('circulacion__chofer', 'circulacion__origen')
+    #Lanzamos listado
+    return render(request, 'lista_registros.html', {
+        'registros': registros,
+        'has_table': True,
+    })
+
+    

@@ -124,6 +124,8 @@ TIPO_DOCUMENTO = (
     ('AS', 'Analisis de Sangre'),
     ('AO', 'Analisis de Orina'),
     ('LB', 'Laboratorio'),
+    ('AC', 'Certificado de Alta de Cuarentena'),
+    ('CT', 'Certificado Temporal de Aislamiento en Domicilio'),
     ('DI', 'Documento de Identidad'),
     ('LC', 'Licencia de Conducir'),
     ('OT', 'Otros'),

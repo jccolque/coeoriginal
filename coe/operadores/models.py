@@ -86,9 +86,12 @@ class Operador(models.Model):
             ("archivos", "Puede Crear Archivos."),
             ("vehiculos", "Puede Crear/Modificar Informacion de Vehiculo."),
             ("individuos", "Puede Crear/Modificar Informacion de Individuos."),
+            #GeoTracking
             ("geotracking", "Puede Monitorear el Tracking de Individuos."),
             ("geotracking_admin", "Puede Administrar Sistema de GeTracking."),
+            #Permisos:
             ("permisos", "Puede administrar los permisos de Circulacion."),
+            ("fronteras", "Personal de Control en Fronteras."),
             #Graficos:
             ("menu_graficos", "Puede Administrar los Graficos"),
             #Actas:

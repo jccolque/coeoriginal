@@ -13,13 +13,13 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <h3 style="color:{% if circulacion.estado == 'C' %}red{% elif circulacion.estado == 'E' %}orange{% elif circulacion.estado == 'A' %}green{% else %}black{% endif %};"><b>Estado</b> {{circulacion.get_estado_display}}</h3>
-                                <p><b>Tipo:</b> {{circulacion.get_tipo_display}}</p>
                                 <p><b>Email de Contacto:</b> {{circulacion.email_contacto}}</p>
                                 <p><b>Origen:</b> {{circulacion.origen}}</p>
                                 <p><b>Destino:</b> {{circulacion.destino}}</p>
                             </div>
                             <div class="col-md-6">
-                                <p><b>Actividad:</b></p>
+                                <p><b>Actividad:</b> {{circulacion.get_tipo_display}}</p>
+                                <hr>
                                 {{circulacion.actividad|safe}}
                             </div>
                         </div>
@@ -140,7 +140,7 @@
                                     </tr>
                             </tbody>
                         </table>
-                        <p class="error">Chofer y Acompañante deben tener la app COVID19 Jujuy Instalada y haberse registrado.</p>
+                        <p class="error">Chofer y Acompañante deben tener la app <b>COVID19 Jujuy</b> Instalada y haberse registrado.</p>
                         <p class="error"><b>Descargar Aqui:</b> <a href="https://play.google.com/store/apps/details?id=com.ga.covidjujuy_app" target="_blank">Google Play</a></p>
                         <hr>
                         {% if circulacion.emails_enviados.exists %}
@@ -229,7 +229,8 @@
                                 {% else %}
                                     <li><a href="{% url 'permisos:eliminar_circulacion' circulacion_id=circulacion.id %}">Eliminar Circulacion</a></li>
                                 {% endif %}
-                                <li><a href="{% url 'permisos:lista_circulaciones' %}">Volver al Listado de Circulacion Temporal</a></li>
+                                <li><a href="{% url 'permisos:panel_circulacion' token=circulacion.token %}">Ver Panel de Circulacion</a></li>
+                                <li><a href="{% url 'permisos:lista_circulaciones' %}">Volver al Listado General</a></li>
                             {% endif %}
                         </ul>
                     </div>
