@@ -24,11 +24,12 @@
                             <div class="bordeado">
                                 <p>Este formulario aplica solamente a aquellas personas que por motivos de fuerza mayor deban realizar ingresos temporales a la provincia de jujuy.</p>
                                 <p>Para poder realizar el mismo se debe cumplir uno de los siguientes criterios:</p>
-                                <ul>
-                                    {% for tipo in TIPO_ACTIVIDAD %}
-                                        <li>{{tipo.1}}</li>
-                                    {% endfor %}
-                                </ul>
+                                <ol>
+                                    <li>1- Contar con Permiso de Circulacion Nacional</li>
+                                    <li>2- Completar el formulario inicial</li>
+                                    <li>2- Completar los pasos posteriores (Recibira un Email a su casilla de contacto)</li>
+                                    <li>4- Registrarse en la aplicacion COVID-19 (<a href="https://play.google.com/store/apps/details?id=com.ga.covidjujuy_app" target="_blank">instalar</a>)</li>
+                                </ol>
                                 <hr>
                                 <p>La información consignada precedentemente reviste carácter de Declaración Jurada.</p>
                                 <p>Su omisión o falsedad procederá al rechazo de la inscripción o la exclusión del registro, sin perjuicio de las sanciones que le pudiera corresponder.</p>
@@ -48,7 +49,7 @@
                                 <p><b>Modelo:</b> {{form.modelo}}</p>
                                 <p><b>Patente:</b> {{form.patente}}</p>
                                 <hr>
-                                <p><b>Describa lo mejor posible la actividad que debe realizar:</b></p>
+                                <p><b>Describa lo mejor posible la actividad que realizara:</b></p>
                                 {{form.actividad}}
                                 <br>
                                 <button type="submit">Iniciar Pedido de Ingreso</button>

@@ -244,13 +244,15 @@ class RegistroCirculacion(models.Model):
     circulacion = models.ForeignKey(CirculacionTemporal, on_delete=models.CASCADE, related_name="registros")
     #Inicio
     control_inicio = models.IntegerField('Lugar de Control de Inicio', choices=FRONTERA_CONTROL, default=1)
-    fecha_inicio = models.DateTimeField('Fecha de Inicio Circulacion', default=timezone.now)
     destino = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="destino_transporte", null=True, blank=True)#Default=circulacion.destino
+    cant_inicio = models.IntegerField('Cantidad Pasajeros', default=1)
     tiempo_permitido = models.IntegerField('Horas Permitidas', default=6)
+    fecha_inicio = models.DateTimeField('Fecha de Inicio Circulacion', default=timezone.now)
     #Final
     control_final = models.IntegerField('Lugar de Control Final', choices=FRONTERA_CONTROL, null=True, blank=True)
-    fecha_final = models.DateTimeField('Fecha de Fin Circulacion', default=timezone.now, null=True, blank=True)
+    cant_final = models.IntegerField('Cantidad Pasajeros', default=1)
     aclaraciones = models.TextField('Aclaraciones en Salida', null=True, blank=True)
+    fecha_final = models.DateTimeField('Fecha de Fin Circulacion', default=timezone.now, null=True, blank=True)
     class Meta:
         ordering = ('fecha_inicio', )
     def tiempo_real(self):

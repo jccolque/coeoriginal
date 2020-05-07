@@ -65,8 +65,10 @@ TIPO_ACTIVIDAD = (
 FRONTERA_CONTROL = (
     (1, "Pampa Blanca"),
     (2, "Rio Piedras"),
-    (3, "La Quiaca"),
-    (4, "Jama"),
+    (3, "Puesto del Marques"),
+    (4, "La estrella"),
+    (5, "Jama"),
+    (10, "Leon"),
 )
 
 COMBINACION_DNIxDIA = (
