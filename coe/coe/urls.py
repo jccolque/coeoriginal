@@ -57,7 +57,7 @@ urlpatterns = [
     path('ide/', include('geotracking.ide_urls')),
     path('covid19/', include('app.urls')),
     #Manejo de Archivos Privados:
-    path('archivos/', include('operadores.file_urls')),#Lo hacemos desde ahi por que depende de permisos
+    #path('archivos/', include('operadores.file_urls')),#Lo hacemos desde ahi por que depende de permisos
 ]
 #Agregamos destinos de Archivos Estaticos
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
