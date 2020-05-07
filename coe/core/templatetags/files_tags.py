@@ -1,7 +1,6 @@
 #Imports de Python
 #Imports de Django
 from django import template
-
 #Iniciamos el registro de tags en el procesador de templates
 register = template.Library()
 

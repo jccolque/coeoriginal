@@ -160,6 +160,18 @@ def cargar_ingresante(request, ingreso_id, individuo_id=None):
             return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
     return render(request, "cargar_ingresante.html", {'titulo': "Cargar Ingresante", 'form': form, 'boton': "Cargar", })
 
+def ingreso_subir_permiso_nac(request, token):
+    form = UploadFoto()
+    if request.method == "POST":
+        #obtenemos ingreso
+        form = UploadFoto(request.POST, request.FILES)
+        if form.is_valid():
+            ingreso = IngresoProvincia.objects.get(token=token)
+            ingreso.permiso_nacional = form.cleaned_data['imagen']
+            ingreso.save()
+            return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Permiso Nacional de Circulacion", 'form': form, 'boton': "Cargar", })
+
 def cargar_dut(request, ingreso_id):
     form = DUTForm()
     if request.method == "POST":
@@ -359,6 +371,20 @@ def finalizar_circulacion(request, token):
     #volvemos a mostrar el panel
     return redirect('permisos:ver_circulacion_temporal', token=circulacion.token)
 
+def circ_del_chofer(request, token):
+    circulacion = CirculacionTemporal.objects.get(token=token)
+    Atributo.objects.filter(individuo=circulacion.chofer, tipo='CT', aclaracion__icontains=str(circulacion.pk)).delete()
+    circulacion.chofer = None
+    circulacion.save()
+    return redirect('permisos:ver_circulacion_temporal', token=circulacion.token)
+
+def circ_del_acomp(request, token):
+    circulacion = CirculacionTemporal.objects.get(token=token)
+    Atributo.objects.filter(individuo=circulacion.acompañante, tipo='CT', aclaracion__icontains=str(circulacion.pk)).delete()
+    circulacion.acompañante = None
+    circulacion.save()
+    return redirect('permisos:ver_circulacion_temporal', token=circulacion.token)
+
 def ver_comprobante_circulacion(request, token):
     circulacion = CirculacionTemporal.objects.get(token=token)
     circulacion.generar_pdf()
@@ -508,6 +534,20 @@ def lista_ingresos(request, estado=None, tipo=None):
     #Lanzamos listado
     return render(request, 'lista_ingresos.html', {
         'titulo': "Ingresos Pedidos",
+        'ingresos': ingresos,
+        'has_table': True,
+    })
+
+@permission_required('operadores.permisos')
+def lista_nacion(request):
+    ingresos = IngresoProvincia.objects.filter(estado='E', tipo="P")
+    ingresos = ingresos.filter()
+    #Optimizamos
+    ingresos = ingresos.select_related('origen', 'destino', 'operador')
+    ingresos = ingresos.prefetch_related('individuos', 'individuos__domicilio_actual', 'individuos__domicilio_actual__localidad')
+    #Lanzamos listado
+    return render(request, 'lista_nacion.html', {
+        'titulo': "Ingresos Aprobados para Descargar",
         'ingresos': ingresos,
         'has_table': True,
     })
@@ -675,6 +715,7 @@ def iniciar_control_circulacion(request, circulacion_id):
             registro = RegistroCirculacion(circulacion=circulacion)
             registro.control_inicio = form.cleaned_data['control']
             registro.destino = form.cleaned_data['destino']
+            registro.cant_inicio = form.cleaned_data['cant_inicio']
             registro.tiempo_permitido = form.cleaned_data['tiempo_permitido']
             registro.save()
             return redirect('permisos:panel_circulacion', token=circulacion.token)
@@ -689,6 +730,7 @@ def finalizar_control_circulacion(request, registro_id):
             #Completamos el registro
             registro = RegistroCirculacion.objects.get(pk=registro_id)
             registro.control_final = form.cleaned_data['control']
+            registro.cant_final = form.cleaned_data['cant_final']
             registro.aclaraciones = form.cleaned_data['aclaraciones']
             registro.save()
             return redirect('permisos:panel_circulacion', token=registro.circulacion.token)
@@ -708,5 +750,3 @@ def lista_frontera(request):
         'registros': registros,
         'has_table': True,
     })
-
-    

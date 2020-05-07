@@ -1,0 +1,75 @@
+{% extends 'base_informacion.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class="beneficiario container" style="overflow-x:scroll;">
+        <div class="row">
+            <h2><b>Listado de Pedidos para Autorizacion Nacional</b></h2>
+            <div class="col-md-12">
+                <table class="listado" id="table">
+                    <thead>
+                        <tr>
+                            <th>Estado</th>
+                            <th>Fecha de llegada estimada</th>
+                            <th>Número de tramite</th>
+
+                            <th>DNI</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Sexo</th>
+                            <th>Celular</th>
+                            <th>Email</th>
+
+                            <th>Patente</th>
+                            
+                            <th>Provincia de Origen</th>
+                            <th>Localidad de Origen</th>
+                            <th>Dirección de origen</th>
+
+                            <th>Provincia destino</th>
+                            <th>Localidad destino</th>
+                            <th>Domicilio destino</th>
+                            
+                            <th>Observaciones</th>
+                            <th>Cantidad de autorizaciones</th>
+                            <th>cantidad de personas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ingreso in ingresos %}
+                            {% for pasajero in ingreso.individuos.all %}
+                                <tr>
+                                    <td>{{ingreso.get_estado_display}}</td>
+                                    <td>{{ingreso.fecha_llegada}}</td>
+                                    <td>{{ingreso.pk}}</td>
+        
+                                    <td>{{pasajero.num_doc}}</td>
+                                    <td>{{pasajero.nombres}}</td>
+                                    <td>{{pasajero.apellidos}}</td>
+                                    <td>{{pasajero.sexo}}</td>
+                                    <td>{{pasajero.telefono}}</td>
+                                    <td>{{pasajero.email}}</td>
+
+                                    <td>{{ingreso.patente}}</td>
+
+                                    <td>{{ingreso.origen.nombre}}</td>
+                                    <td></td>
+                                    <td>{{pasajero.domicilio_origen}}</td>
+
+                                    <td>Jujuy</td>
+                                    <td>{{pasajero.domicilio_actual.localidad.nombre}}</td>
+                                    <td>{{pasajero.domicilio_actual.calle}} {{pasajero.domicilio_actual.numero}}</td>
+
+                                    <td>{{ingreso.aclaracion|safe}}</td>
+                                    <td>1</td>
+                                    <td>{{ingreso.individuos.count}}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

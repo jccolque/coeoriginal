@@ -34,7 +34,7 @@
                             <div class="col-md-4">
                                 {% if circulacion.permiso_nacional %}
                                     <p><b>Permiso de Circulacion Nacional:</b></p>
-                                    <a href="{{circulacion.permiso_nacional}}">
+                                    <a href="{{circulacion.permiso_nacional.url}}" target="_blank">
                                         {% autoescape off %}{% ct_show_file circulacion.permiso_nacional %}{% endautoescape %}
                                     </a>
                                 {% else %}
@@ -49,7 +49,7 @@
                             <div class="col-md-4">
                                 {% if circulacion.licencia_conducir %}
                                     <p><b>Licencia de Conducir:</b></p>
-                                    <a href="{{circulacion.licencia_conducir}}">
+                                    <a href="{{circulacion.licencia_conducir.url}}" target="_blank">
                                         {% autoescape off %}{% ct_show_file circulacion.licencia_conducir %}{% endautoescape %}
                                     </a>
                                 {% else %}
@@ -103,7 +103,7 @@
                                                     <img class="icons" src="{% static 'img/icons/add_person.png' %}">
                                                 </a>
                                             {% endif %}
-                                            <a href="" target="_blank">
+                                            <a href="{% url 'permisos:circ_del_chofer' token=circulacion.token %}" target="_blank">
                                                 <img class="icons" src="{% static '/img/icons/delete.png' %}">
                                             </a>
                                         </td>
@@ -133,7 +133,7 @@
                                                     <img class="icons" src="{% static 'img/icons/add_person.png' %}">
                                                 </a>
                                             {% endif %}
-                                            <a href="" target="_blank">
+                                            <a href="{% url 'permisos:circ_del_acomp' token=circulacion.token %}" target="_blank">
                                                 <img class="icons" src="{% static '/img/icons/delete.png' %}">
                                             </a>
                                         </td>

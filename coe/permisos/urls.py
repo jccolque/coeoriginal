@@ -19,6 +19,7 @@ urlpatterns = [
     path('cargar/ingresantes/<int:ingreso_id>', views.cargar_ingresante, name='cargar_ingresantes'),
     path('finalizar/ingreso/<int:ingreso_id>', views.finalizar_ingreso, name='finalizar_ingreso'),
     path('mod/ingresantes/<int:ingreso_id>/<int:individuo_id>', views.cargar_ingresante, name='mod_ingresantes'),
+    path('ingreso/subir/permiso_nac/<str:token>', views.ingreso_subir_permiso_nac, name='ingreso_subir_permiso_nac'),
     path('cargar/dut/<int:ingreso_id>', views.cargar_dut, name='cargar_dut'),
     path('cargar/plan_vuelo/<int:ingreso_id>', views.cargar_plan_vuelo, name='cargar_plan_vuelo'),
     path('del/ingresante/<int:ingreso_id>/<int:individuo_id>', views.quitar_ingresante, name='quitar_ingresante'),
@@ -35,6 +36,8 @@ urlpatterns = [
     path('circ/cargar/acomp/<str:token>/<int:individuo_id>', views.circ_cargar_acomp, name='circ_mod_acomp'),
     path('circ/comprobante/<str:token>', views.ver_comprobante_circulacion, name='ver_comprobante_circulacion'),
     path('circ/finalizar/<str:token>', views.finalizar_circulacion, name='finalizar_circulacion'),
+    path('circ/del/chofer/<str:token>', views.circ_del_chofer, name='circ_del_chofer'),
+    path('circ/del/acomp/<str:token>', views.circ_del_acomp, name='circ_del_acomp'),
     #  Administracion
     #Permisos
     path('', views.menu_permisos, name='menu_permisos'),
@@ -48,6 +51,7 @@ urlpatterns = [
     path('lista/vencidos', views.lista_vencidos, name='lista_vencidos'),
     path('ver/permiso/<int:permiso_id>/<int:individuo_id>', views.ver_permiso, name='ver_permiso'),
     path('eliminar/permiso/<int:permiso_id>', views.eliminar_permiso, name='eliminar_permiso'),
+    path('lista/nacion', views.lista_nacion, name='lista_nacion'),
     #Ingresos
     path('situacion/ingresos', views.situacion_ingresos, name='situacion_ingresos'),
     path('lista/ingresos', views.lista_ingresos, name='lista_ingresos'),

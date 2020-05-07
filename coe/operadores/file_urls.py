@@ -16,4 +16,6 @@ urlpatterns = [
     #Inscripciones
     path('inscripciones/documentos/<str:filename>', file_views.ver_dni_inscripto, name='ver_dni_inscripto'),
     path('inscripciones/titulo/<str:filename>', file_views.ver_titulo_inscripto, name='ver_titulo_inscripto'),
+    #Permisos
+    
 ]

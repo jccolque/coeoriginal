@@ -159,8 +159,10 @@ class InicioCirculacionForm(forms.Form):
         widget=autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
         required=True,
     )
+    cant_inicio = forms.IntegerField(label="Cantidad Pasajeros")
     tiempo_permitido = forms.IntegerField(label="Tiempo Permitido")
 
 class FinalCirculacionForm(forms.Form):
     control = forms.ChoiceField(choices=FRONTERA_CONTROL, label="Punto Fronterizo")
+    cant_final = forms.IntegerField(label="Cantidad Pasajeros")
     aclaraciones = forms.CharField(widget=forms.Textarea(attrs={"rows": 5, "cols": 20}))
