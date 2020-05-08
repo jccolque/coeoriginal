@@ -499,54 +499,6 @@ def lista_individuos(
         'has_table': True,
     })
 
-@permission_required('operadores.individuos')
-def lista_seguimiento(request):
-    #Obtenemos los registros
-    individuos = Individuo.objects.filter(seguimientos__tipo__in=('I','L', 'ET'))
-    individuos = individuos.exclude(seguimientos__tipo='FS')
-    #Optimizamos las busquedas
-    individuos = individuos.select_related('nacionalidad')
-    individuos = individuos.select_related('domicilio_actual', 'situacion_actual', 'seguimiento_actual')
-    individuos = individuos.prefetch_related('atributos', 'sintomas')
-    #Traemos seguimientos terminados para descartar
-    last12hrs = timezone.now() - timedelta(hours=12)
-    individuos = individuos.exclude(seguimientos__fecha__gt=last12hrs)
-    #Lanzamos reporte
-    return render(request, "listado_seguimiento.html", {
-        'individuos': individuos,
-        'has_table': True,
-    })
-
-
-@permission_required('operadores.individuos')
-def lista_autodiagnosticos(request):
-    individuos = []
-    appdatas = AppData.objects.all().order_by('-estado')
-    appdatas = appdatas.select_related('individuo')
-    appdatas = appdatas.prefetch_related('individuo__situacion_actual')
-    appdatas = appdatas.order_by('estado')
-    for appdata in appdatas:
-        individuos.append(appdata.individuo)
-    return render(request, "lista_autodiagnosticos.html", {
-        'individuos': individuos,
-        'has_table': True,
-    })
-
-@permission_required('operadores.individuos')
-def lista_aislados(request):
-    individuos = Individuo.objects.filter(domicilio_actual__aislamiento=True)
-    individuos = individuos.exclude(domicilio_actual__ubicacion=None)
-    #Optimizamos
-    individuos = individuos.select_related('nacionalidad')
-    individuos = individuos.select_related('situacion_actual')
-    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__ubicacion')
-    individuos = individuos.select_related('appdata')
-    #Lanzamos reporte
-    return render(request, "lista_aislados.html", {
-        'individuos': individuos,
-        'has_table': True,
-    })
-
 #CARGA DE ELEMENTOS
 @permission_required('operadores.individuos')
 def cargar_domicilio(request, individuo_id=None, domicilio_id=None):

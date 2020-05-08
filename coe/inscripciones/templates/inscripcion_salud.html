@@ -19,13 +19,7 @@
                 <br>
                 <h1><b>PLAN DE VOLUNTARIOS PROFESIONALES DE SALUD COVID-19</b></h1>
                 <h3>Postulación de Profesionales de la Salud</h3>
-                <div class="col-lg-4">
-                    <div class="bordeado">
-                        <img class="fotos" src="{% static 'img/reclutamiento.jpeg' %}">
-                        <p>La información consignada precedentemente reviste carácter de <b>Declaración Jurada</b>.</p>
-                    </div>
-                </div>
-                <div class="col-lg-6 custom_form_fields">
+                <div class="col-lg-6">
                     <div class="bordeado">
                         <h3><b>Datos Personales</b></h3>
                         <p>{{form.tipo_doc}} {{form.num_doc}}</p>
@@ -49,7 +43,13 @@
                         <hr>
                         <p><b>Documentacion:</b></p>
                         <p><b>Documento de Identidad</b> {{form.frente_dni}}</p>
-                        <p><b>Titulo</b> {{form.archivo_titulo}}</p>
+                        <p><b>Titulo Profesional</b> {{form.archivo_titulo}}</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="bordeado">
+                        <p>La información consignada precedentemente reviste carácter de <b>Declaración Jurada</b>.</p>
+                        <img class="fotos" src="{% static 'img/reclutamiento_salud.jpeg' %}">
                         <p><b>Informacion Extra:</b> {{form.info_extra}}</p>
                     </div>
                 </div>

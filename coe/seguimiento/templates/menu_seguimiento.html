@@ -1,0 +1,44 @@
+{% extends 'base_informacion.html' %}
+
+{% load seguridad_tags%}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">        
+                    <h1>Menu Seguimiento:</h1>
+                    <div class="col-md-8">
+                        <ul class="menu_botones">
+                            {% if perms.operadores.seguimiento %}
+                                {% if es_vigia %}
+                                    <li><a href="{% url 'seguimiento:mi_panel' %}">Ver Mi Panel de Control</a></li>
+                                {% endif %}
+                                {% if perms.operadores.seguimiento_admin %}
+                                    <hr>
+                                    <li><a href="{% url 'seguimiento:lista_vigias' %}">Lista de Vigilantes Habilitados</a></li>
+                                    <hr>
+                                    <li><a href="{% url 'seguimiento:lista_sin_vigias' %}">Listado de Individuos Sin Seguimiento</a></li>
+                                    <li><a href="{% url 'seguimiento:lista_seguimientos' %}">Listado de Individuos Bajo Seguimiento</a></li>
+                                    <hr>
+                                    <h3>Otras Listas:</h3>
+                                    <li><a href="{% url 'seguimiento:lista_autodiagnosticos' %}">Listado de Autodiagnosticos</a></li>
+                                    <li><a href="{% url 'seguimiento:lista_aislados' %}">Listado de Aislados</a></li>
+                                {% endif %}
+                            {% endif %}
+
+                            {% if request.user.is_superuser %}
+                                <hr>
+                                <h3>Uso Bajo Supervision:</h3>
+                                <li><a href="{% url 'admin:index' %}">Administrador</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        {% include 'users/info_user.html' %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}

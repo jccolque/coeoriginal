@@ -18,14 +18,13 @@
                                 <p><b>Origen:</b> {{ingreso.origen}}</p>
                                 <p><b>Destino:</b> {{ingreso.destino.nombre}}</p>
                                 <p><b>Fecha de Llegada Estimada:</b> {{ingreso.fecha_llegada|date:"d/m/Y H:i"}}</p>
-                                <p>
-                                    <b>Permiso de Circulacion Nacional:</b> 
-                                    {% if ingreso.permiso_nacional %}
-                                        <a href="{{ingreso.permiso_nacional.url}}">Ver</a>
-                                    {% else %}
-                                        <a href="{% url 'permisos:ingreso_subir_permiso_nac' token=ingreso.token %}" style="font-weight:bold;color:red;">CARGAR</a>
-                                    {% endif %}
-                                </p>
+                                <p><b>Permiso de Circulacion Nacional:</b>
+                                {% if ingreso.permiso_nacional %}
+                                    <a href="{{ingreso.permiso_nacional.url}}">Ver Documento</a>
+                                {% else %}
+                                    <a href="{% url 'permisos:ingreso_subir_permiso_nac' token=ingreso.token %}" style="font-weight:bold;color:red;">CARGAR</a><br>
+                                    <i>Si usted carga este documento podemos acelerar la Aprobacion de su Permiso de Ingreso a Jujuy.</i>
+                                {% endif %}
                             </div>
                             <div class="col-md-6">
                                 <div class="bordeado importante">

@@ -75,8 +75,9 @@ class Operador(models.Model):
             ("subcomites", "Puede Crear/Modificar SubComites"),
             ("operadores", "Puede Crear/Modificar Operadores"),
             ("auditar_operadores", "Puede Auditar Operadores"),
+            ("administrador", "Puede administrar Usuarios."),
             #Georef
-            ("menu_georef", "Puede Administrar Informacion Geografica"),
+            ("menu_georef", "Puede Administrar Informacion Geografica/Ubicaciones"),
             #Inventario
             ("menu_inventario", "Puede Acceder al menu Inventario"),
             #Tareas:
@@ -86,6 +87,9 @@ class Operador(models.Model):
             ("archivos", "Puede Crear Archivos."),
             ("vehiculos", "Puede Crear/Modificar Informacion de Vehiculo."),
             ("individuos", "Puede Crear/Modificar Informacion de Individuos."),
+            #Seguimiento:
+            ("seguimiento", "Puede Realizar Seguimiento de Individuos."),
+            ("seguimiento_admin", "Puede Administrar Sistema de Seguimiento."),
             #GeoTracking
             ("geotracking", "Puede Monitorear el Tracking de Individuos."),
             ("geotracking_admin", "Puede Administrar Sistema de GeTracking."),
@@ -102,11 +106,9 @@ class Operador(models.Model):
             #Inscripciones:
             ("menu_inscripciones", "Puede Acceder al menu de Inscripciones"),
             #Reportes
-            ("reportes", "Acceso a todos los reportes del sistema"),
+            ("reportes", "Puede Acceso a todos los reportes del sistema"),
             #Wservices
-            ("wservices", "Acceso a todos los reportes del sistema"),
-            #Especiales
-            ("administrador", "Puede administrar Usuarios."),
+            ("wservices", "Puede Acceso a los WebServices del Sistema"),            
         )
     def __str__(self):
         return self.apellidos + ', ' + self.nombres

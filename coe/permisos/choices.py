@@ -36,13 +36,13 @@ ESTADO_INGRESO = (
 )
 
 TIPO_ACTIVIDAD = (
-    (1, 'Personal de Salud, Fuerzas de seguridad, Fuerzas Armadas, actividad migratoria, servicio meteorológico nacional, bomberos y control de tráfico aéreo.'),
-    (2, 'Autoridades superiores de los gobiernos nacional, provinciales, municipales y de la Ciudad Autónoma de Buenos Aires Trabajadores y trabajadoras del sector público nacional, provincial, municipal y de la Ciudad Autónoma de Buenos Aires, convocados para garantizar actividades esenciales requeridas por las respectivas autoridades.'),
+    (1, 'Personal de Salud, Fuerzas de seguridad, Fuerzas Armadas, actividad Migratoria, Servicio Meteorológico Nacional, Bomberos y Control de tráfico aéreo.'),
+    (2, 'Trabajadores del sector público nacional, provincial, municipal, convocados para garantizar actividades esenciales requeridas por las respectivas autoridades.'),
     (3, 'Personal de los servicios de justicia de turno, conforme establezcan las autoridades competentes.'),
-    (4, 'Personal diplomático y consular extranjero acreditado ante el gobierno argentino, en el marco de la Convención de Viena sobre Relaciones Diplomáticas y la Convención de Viena de 1963 sobre Relaciones Consulares y al personal de los organismos internacionales acreditados ante el gobierno argentino, de la Cruz Roja y Cascos Blancos.'),
-    (5, 'Personas que deban asistir a otras con discapacidad; familiares que necesiten asistencia; a personas mayores; a niños, a niñas y a adolescentes.'),
+    (4, 'Personal diplomático y consular extranjero acreditado ante el gobierno argentino, de la Cruz Roja y Cascos Blancos.'),
+    (5, 'Personas que deban asistir a otras con discapacidad o familiares que necesiten asistencia.'),
     (6, 'Personas que deban atender una situación de fuerza mayor.'),
-    (7, 'Personas afectadas a la realización de servicios funerarios, entierros y cremaciones. En tal marco, no se autorizan actividades que signifiquen reunión de personas.'),
+    (7, 'Personas afectadas a la realización de servicios funerarios, entierros y cremaciones.'),
     (8, 'Personas afectadas a la atención de comedores escolares, comunitarios y merenderos.'),
     (9, 'Personal que se desempeña en los servicios de comunicación audiovisuales, radiales y gráficos.'),
     (10, 'Personal afectado a obra pública.'),
@@ -59,7 +59,7 @@ TIPO_ACTIVIDAD = (
     (21, 'Servicios postales y de distribución de paquetería.'),
     (22, 'Servicios esenciales de vigilancia, limpieza y guardia.'),
     (23, 'Guardias mínimas que aseguren la operación y mantenimiento de Yacimientos de Petróleo y Gas, plantas de tratamiento y/o refinación de Petróleo y gas, transporte y distribución de energía eléctrica, combustibles líquidos, petróleo y gas, estaciones expendedoras de combustibles y generadores de energía eléctrica.'),
-    (24, 'S.E. Casa de Moneda, servicios de cajeros automáticos, transporte de caudales y todas aquellas actividades que el BANCO CENTRAL DE LA REPÚBLICA ARGENTINA disponga imprescindibles para garantizar el funcionamiento del sistema de pagos.'),
+    (24, 'Casa de Moneda, servicios de cajeros automáticos, transporte de caudales y todas aquellas actividades que el BANCO CENTRAL DE LA REPÚBLICA ARGENTINA disponga imprescindibles.'),
 )
 
 FRONTERA_CONTROL = (

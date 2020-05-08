@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'tareas.apps.TareasConfig',
     'inventario.apps.InventarioConfig',
     'informacion.apps.InformacionConfig',
+    'seguimiento.apps.SeguimientoConfig',
     'app.apps.AppConfigure',
     'geotracking.apps.GeotrackingConfig',
     'permisos.apps.PermisosConfig',

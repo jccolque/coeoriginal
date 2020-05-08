@@ -1,5 +1,5 @@
 {% autoescape off %}
-    Tu Ingreso Provincial a sido Aprobado.
+    Tu Ingreso Provincial ha sido Aprobado.
     Fecha Aprobada de Arribo: {{ingreso.fecha_llegada|date:"d/m/Y H:i"}}
 
     Al ingresar a la provincia debera hacer cuarentena OBLIGATORIAMENTE en alguno de los hoteles habilitados(Sujeto a disponibilidad):
@@ -25,7 +25,7 @@
     ABRA PAMPA
     Hotel Suizo: $500 por persona (comidas opcional costo adicional)
 
-    A travez de este link puede descargarlo o imprimir si permiso aprobado:
+    A través de este link puede descargarlo o imprimir si permiso aprobado:
     http://coe.jujuy.gob.ar/{% url 'permisos:ver_ingreso_aprobado' token=ingreso.token %}
 
     Te esperamos,
