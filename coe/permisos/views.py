@@ -17,7 +17,6 @@ from core.forms import EmailForm, UploadFoto
 from core.functions import date2str
 from operadores.functions import obtener_operador
 from informacion.models import Individuo, Atributo
-from informacion.forms import SearchIndividuoForm
 from informacion.functions import actualizar_individuo
 from graficos.functions import obtener_grafico
 #imports de la app
@@ -30,6 +29,7 @@ from .forms import PermisoForm, BuscarPermiso, DatosForm, FotoForm
 from .forms import IngresoProvinciaForm, IngresanteForm, AprobarForm
 from .forms import CirculacionTemporalForm, TemporalesForm
 from .forms import DUTForm, PlanVueloForm
+from .forms import SearchCirculacion
 from .forms import InicioCirculacionForm, FinalCirculacionForm
 from .functions import buscar_permiso, validar_permiso
 
@@ -695,9 +695,9 @@ def panel_circulacion(request, token):
 
 @permission_required('operadores.frontera')
 def control_circulacion(request):
-    form = SearchIndividuoForm()
+    form = SearchCirculacion()
     if request.method == "POST":
-        form = SearchIndividuoForm(request.POST)
+        form = SearchCirculacion(request.POST)
         if form.is_valid():
             #Traemos el documento
             num_doc = form.cleaned_data["num_doc"]

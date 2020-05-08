@@ -21,7 +21,7 @@ from georef.models import Nacionalidad, Localidad, Ubicacion
 #Imports de la app
 from .choices import TIPO_IMPORTANCIA, TIPO_ARCHIVO
 from .choices import TIPO_VEHICULO, TIPO_ESTADO, TIPO_CONDUCTA
-from .choices import TIPO_RELACION, TIPO_SEGUIMIENTO
+from .choices import TIPO_RELACION
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
 from .choices import TIPO_DOCUMENTO
 
@@ -263,27 +263,11 @@ class Pasajero(models.Model):
     def __str__(self):
         return str(self.traslado) + ': ' + str(self.individuo)
 
-
-#Para Eliminar
-class Seguimiento(models.Model):
-    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="seguimientos_eliminar")
-    tipo = models.CharField('Tipo Seguimiento', choices=TIPO_SEGUIMIENTO, max_length=2, default='I')
-    aclaracion = HTMLField()
-    fecha = models.DateTimeField('Fecha del Seguimiento', default=timezone.now)
-    class Meta:
-        ordering = ['fecha', ]
-    def __str__(self):
-        return str(self.fecha)[0:16] + ': ' + self.get_tipo_display() + ': ' + self.aclaracion
-
-
 if not LOADDATA:
     #Señales
     from .signals import estado_inicial
-    from .signals import poner_en_seguimiento
     from .signals import situacion_actual
     from .signals import domicilio_actual
-    
-    from .signals import aislamiento_seguimiento
     from .signals import relacion_domicilio
     from .signals import crear_relacion_inversa
     from .signals import eliminar_relacion_inversa
@@ -294,6 +278,7 @@ if not LOADDATA:
     from .signals import cargo_signosvitales
     from .signals import cargo_documento
     from .signals import iniciar_tracking_transportistas
+    from .signals import poner_en_seguimiento
 
     #Auditoria
     auditlog.register(Archivo)

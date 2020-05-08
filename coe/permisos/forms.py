@@ -151,6 +151,10 @@ class AprobarForm(forms.Form):
         widget=XDSoftDateTimePickerInput()
     )
 
+class SearchCirculacion(forms.Form):
+    num_doc = forms.CharField(label="Documento de Identidad", required=False)
+    patente = forms.CharField(label="Dominio", required=False)
+
 class InicioCirculacionForm(forms.Form):
     control = forms.ChoiceField(choices=FRONTERA_CONTROL, label="Punto Fronterizo")
     destino = forms.ModelChoiceField(

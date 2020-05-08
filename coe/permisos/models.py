@@ -159,7 +159,8 @@ class CirculacionTemporal(models.Model):#Transportes de Carga
     #Vehiculo
     marca = models.CharField('Marca del Vehiculo', max_length=200)
     modelo = models.CharField('Modelo del Vehiculo', max_length=200)
-    patente = models.CharField('Identificacion Patente', max_length=200)
+    patente = models.CharField('Dominio', max_length=200)
+    titular = models.CharField('Titular del Vehiculo', max_length=200)
     #Archivos
     permiso_nacional = models.FileField('Permiso Nacional de Circulacion', upload_to='ingresos/', null=True, blank=True)
     licencia_conducir = models.FileField('Licencia de Conducir', upload_to='ingresos/', null=True, blank=True)

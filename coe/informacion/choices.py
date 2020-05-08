@@ -49,24 +49,6 @@ TIPO_CONDUCTA = (
     ('H', 'Enterrado'),
 )
 
-TIPO_SEGUIMIENTO = (
-    ('I', 'Inclusion al Sistema'),
-    ('L', 'Llamada Telefonica'),
-    ('M', 'Reporte Medico'),
-    ('C', 'Cronologia'),
-    ('E', 'Epicrisis'),
-    ('ET', 'Esperando Resultados'),
-    ('CT', 'Confirmado por Test'),
-    ('DT', 'Descartado por Test'),
-    ('A', 'Autodiagnostico'),
-    ('FS', 'Fin del Seguimiento/Alta'),
-    ('IT', 'Inicio Tracking'),
-    ('AT', 'Alerta Tracking'),
-    ('FT', 'Baja Tracking'),
-    ('TA', 'Traslado a Aislamiento'),
-    ('DF', 'Domicilio Fuera de la Provincia')
-)
-
 TIPO_RELACION = (
     ('F', 'Familiar'),
     ('CE', 'Contacto Bajo Riesgo'),

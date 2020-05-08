@@ -34,6 +34,11 @@ def estado_inicial(created, instance, **kwargs):
                 atributo.individuo = instance
                 atributo.tipo = 'PR'
                 atributo.save()
+        #Creamos inicializacion
+        seguimiento = Seguimiento(individuo=instance)
+        seguimiento.tipo = "I"
+        seguimiento.aclaracion = "Ingreso al sistema"
+        seguimiento.save()
 
 @receiver(post_save, sender=Pasajero)
 def relacion_vehiculo(created, instance, **kwargs):
@@ -52,15 +57,6 @@ def domicilio_actual(created, instance, **kwargs):
         individuo = instance.individuo
         individuo.domicilio_actual = instance
         individuo.save()
-
-@receiver(post_save, sender=Domicilio)
-def aislamiento_seguimiento(created, instance, **kwargs):
-    if created and instance.aislamiento:
-        if not instance.individuo.seguimientos.filter(tipo='I').exists():
-            seguimiento = Seguimiento(individuo=instance.individuo)
-            seguimiento.tipo = 'I'
-            seguimiento.aclaracion = "Agregado por ingresar a Aislamiento"
-            seguimiento.save()
 
 @receiver(post_save, sender=Domicilio)
 def relacion_domicilio(created, instance, **kwargs):
@@ -121,14 +117,6 @@ def eliminar_relacion_inversa(instance, **kwargs):
     inversa = instance.inversa()
     if inversa:
         inversa.delete()
-
-@receiver(post_save, sender=Atributo)
-def poner_en_seguimiento(created, instance, **kwargs):
-    if created and (instance.tipo == "VE"):
-        seguimiento = Seguimiento(individuo=instance.individuo)
-        seguimiento.tipo = 'I'
-        seguimiento.aclaracion = "Agregado Atributo Vigilancia Epidemiologica en el sistema"
-        seguimiento.save()
 
 @receiver(post_save, sender=Situacion)
 def situacion_actual(created, instance, **kwargs):
@@ -204,6 +192,20 @@ def relacionar_situacion(created, instance, **kwargs):
             sit.aclaracion = "Relacion Detectada por el sistema"
             sit.save()
 
+@receiver(post_save, sender=Atributo)
+def iniciar_tracking_transportistas(created, instance, **kwargs):
+    if created and instance.tipo == "CT":
+        pass  #  INICIAMOS TRACKING DEL INDIVIDUO
+
+#Creamos Seguimientos
+@receiver(post_save, sender=Domicilio)
+def poner_en_seguimiento(created, instance, **kwargs):
+    if created and instance.aislamiento:
+        atributo = Atributo(individuo=instance.individuo)
+        atributo.tipo = 'VE'
+        atributo.aclaracion = "Por Ingreso a Aislamiento."
+        atributo.save()
+
 @receiver(post_save, sender=SignosVitales)
 def cargo_signosvitales(created, instance, **kwargs):
     if created:
@@ -219,8 +221,3 @@ def cargo_documento(created, instance, **kwargs):
         seguimiento.tipo = 'M'
         seguimiento.aclaracion = "Se Cargo Documento " + instance.get_tipo_display()
         seguimiento.save()
-
-@receiver(post_save, sender=Atributo)
-def iniciar_tracking_transportistas(created, instance, **kwargs):
-    if created and instance.tipo == "CT":
-        pass  #  INICIAMOS TRACKING DEL INDIVIDUO

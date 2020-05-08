@@ -317,7 +317,7 @@
                             {% endif %}
                             <tr>
                                 <td>{{seguimiento.get_tipo_display}}</td>
-                                <td>{{seguimiento.aclaracion}}</td>
+                                <td>{{seguimiento.aclaracion|safe}}</td>
                                 <td>{{seguimiento.fecha}}</td>
                                 <td>
                                     <a class="nolink"  href="{% url 'seguimiento:mod_seguimiento' individuo_id=individuo.id seguimiento_id=seguimiento.id %}">

@@ -4,6 +4,7 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 #imports Extras
 #Imports del proyecto
+from informacion.models import Situacion
 #Imports de la app
 from .models import Seguimiento
 
