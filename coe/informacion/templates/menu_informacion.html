@@ -22,11 +22,6 @@
                                 <li><a href="{% url 'informacion:buscar_individuo'  %}">Cargar Individuos</a></li>
                                 <li><a href="{% url 'informacion:buscador_individuos' %}">Buscador Ambiguo</a></li>
                                 <hr>
-                                <li><a href="{% url 'informacion:lista_seguimiento'  %}">Seguimiento Epidemiologico</a></li>
-                                <li><a href="{% url 'informacion:lista_aislados' %}">Individuos en Aislamiento/Internacion</a></li>
-                                <li><a href="{% url 'informacion:lista_conducta' conducta='B' %}">Individuos Esperando Evaluacion</a></li>
-                                <li><a href="{% url 'informacion:lista_autodiagnosticos'  %}">Listar Autodiagnosticos</a></li>
-                                <hr>
                             {% endif %}
 
                             {% if perms.operadores.vehiculos %}

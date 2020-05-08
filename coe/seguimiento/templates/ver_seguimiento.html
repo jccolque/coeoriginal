@@ -61,60 +61,28 @@
                         <p>Telefono: <a href="skype:{{individuo.telefono}}?call">{{individuo.telefono}}</a></p>
                         <p>Email: {{individuo.email}}</p>
                     </div>
-                    <div class="col-sm-3">
-                        <h4>
-                            <b>Parametros:</b>
-                            <a href="{% url 'geotracking:config_tracking' individuo_id=individuo.id %}">
-                                <img class="icons" src="{% static '/img/icons/config.png' %}">
-                            </a>
-                        </h4>
-                        <p><b>Intervalo:</b> {{individuo.appdata.intervalo}} minutos</p>
-                        <p><b>Distancia de Alerta:</b> {{individuo.appdata.distancia_alerta}}mts</p>
-                        <p><b>Distancia Critica:</b> {{individuo.appdata.distancia_critica}}mts</p>
-                    </div>
                 </div>
-                <div class"row">
+                <div class="row">
                     <hr>
-                    <div class="row">
-                        <!--MAPA-->
-                        <div class="col-sm-8">
-                            {% include 'mapa_seguimiento.html' %}
-                        </div>
-                        <!--tabla-->
-                        <div class="col-sm-4 tabla_posiciones">
-                            {% for geopos in geoposiciones %}
-                                {% if forloop.first %}
-                                    <h3>Registros:</h3>
-                                    <table class="listado">
-                                        <tr>
-                                            <th>Fecha</th>
-                                            <th>Tipo</th>
-                                            <th>Posicion</th>
-                                            <th>Alerta</th>
-                                        </tr>
-                                {% endif %}
-                                <tr class="geo_aclaracion">
-                                    <td>{{geopos.fecha|date:"d/m H:i"}}</td>
-                                    <td>{{geopos.get_tipo_display}}</td>
-                                    <td>{{geopos.latitud|stringformat:".5f"}}/{{geopos.longitud|stringformat:".5f"}}</td>
-                                    <td>
-                                        {% if geopos.alerta %}
-                                            {% if geopos.procesada %}
-                                                <b>Alerta Procesada:</b><br>
-                                            {% else %}
-                                                <b>ALERTA: {{geopos.distancia}}mts de Base.</b><br>
-                                            {% endif %}
-                                            {{geopos.get_alerta_display}}<br>
-                                        {% endif %}
-                                        {{geopos.aclaracion}}
-                                    </td>
+                    <h2><b>Seguimientos Realizados</b></h2>
+                    <table class="listado" id="table">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Fecha</th>
+                                <th>Aclaracion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for seguimiento in individuo.seguimientos.all reversed %}
+                                <tr>
+                                    <td>{{seguimiento.get_tipo_display}}</td>
+                                    <td>{{seguimiento.fecha}}</td>
+                                    <td>{{seguimiento.aclaracion|safe}}</td>
                                 </tr>
-                                {% if forloop.last %}
-                                    </table>
-                                {% endif %}
                             {% endfor %}
-                        </div>
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </section>

@@ -50,14 +50,6 @@ def lista_seguimientos(request):
         'has_table': True,
     })
 
-@permission_required('operadores.seguimiento_admin')
-def esperando_alta_seguimiento(request):
-    pass
-
-@permission_required('operadores.seguimiento_admin')
-def altas_seguimiento(request):
-    pass
-
 #Administracion
 @permission_required('operadores.seguimiento_admin')
 def lista_sin_vigias(request):
@@ -175,10 +167,13 @@ def panel_vigia(request, vigia_id=None):
         'has_table': True,
     })
 
-
 @permission_required('operadores.seguimiento')
 def ver_seguimiento(request, individuo_id):
-    pass 
+    individuo = Individuo.objects.get(pk=individuo_id)
+    return render(request, "ver_seguimiento.html", {
+        'individuo': individuo,
+        }
+    )
 
 #Otros listados
 @permission_required('operadores.individuos')
@@ -209,3 +204,13 @@ def lista_aislados(request):
         'individuos': individuos,
         'has_table': True,
     })
+
+
+#ALTAS SEGUIMIENTO
+@permission_required('operadores.seguimiento_admin')
+def esperando_alta_seguimiento(request):
+    pass
+
+@permission_required('operadores.seguimiento_admin')
+def altas_seguimiento(request):
+    pass
