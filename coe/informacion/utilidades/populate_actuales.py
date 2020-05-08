@@ -2,7 +2,8 @@
 from django.utils import timezone
 #imports de la app
 from informacion.models import Individuo
-from informacion.models import Domicilio, Situacion, Seguimiento
+from informacion.models import Domicilio, Situacion
+from seguimiento.models import Seguimiento
 
 def domicilios_actuales():
     #Actualizamos Domicilios

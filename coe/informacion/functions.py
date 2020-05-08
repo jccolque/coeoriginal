@@ -1,5 +1,6 @@
 #Imports del proyecto
-from informacion.models import Individuo, Domicilio, Documento, Seguimiento
+from informacion.models import Individuo, Domicilio, Documento
+from seguimiento.models import Seguimiento
 
 #Definimos nuestras funciones reutilizables
 def obtener_relacionados(individuo, relaciones):

@@ -8,7 +8,10 @@ from django.core.validators import RegexValidator
 #Imports de paquetes extras
 from tinymce.models import HTMLField
 from auditlog.registry import auditlog
-from PyPDF2 import PdfFileWriter, PdfFileReader
+#from PyPDF2 import PdfFileWriter, PdfFileReader
+#from reportlab.pdfgen import canvas
+#from reportlab.lib.pagesizes import A4
+#from reportlab.lib.units import mm
 #Imports del proyecto:
 from coe.settings import BASE_DIR, STATIC_ROOT, MEDIA_ROOT, LOADDATA
 from coe.constantes import NOIMAGE, DIAS_CUARENTENA
@@ -21,12 +24,6 @@ from .choices import TIPO_VEHICULO, TIPO_ESTADO, TIPO_CONDUCTA
 from .choices import TIPO_RELACION, TIPO_SEGUIMIENTO
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
 from .choices import TIPO_DOCUMENTO
-#Imports de paquetes extras
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.units import mm
-
-
 
 # Create your models here.
 class Archivo(models.Model):
@@ -82,7 +79,7 @@ class Individuo(models.Model):
     #Actuales
     situacion_actual = models.OneToOneField('Situacion', on_delete=models.SET_NULL, related_name="situacion_actual", null=True, blank=True)
     domicilio_actual = models.OneToOneField('Domicilio', on_delete=models.SET_NULL, related_name="domicilio_actual", null=True, blank=True)
-    seguimiento_actual = models.OneToOneField('Seguimiento', on_delete=models.SET_NULL, related_name="seguimiento_actual", null=True, blank=True)
+    seguimiento_actual = models.OneToOneField('seguimiento.Seguimiento', on_delete=models.SET_NULL, related_name="seguimiento_actual", null=True, blank=True)
     #Funciones
     def __str__(self):
         return str(self.num_doc) + ': ' + self.apellidos + ', ' + self.nombres
@@ -242,16 +239,6 @@ class Sintoma(models.Model):
     def __str__(self):
         return self.get_tipo_display() + ': ' + str(self.fecha)
 
-class Seguimiento(models.Model):
-    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="seguimientos")
-    tipo = models.CharField('Tipo Seguimiento', choices=TIPO_SEGUIMIENTO, max_length=2, default='I')
-    aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
-    fecha = models.DateTimeField('Fecha del Seguimiento', default=timezone.now)
-    class Meta:
-        ordering = ['fecha', ]
-    def __str__(self):
-        return str(self.fecha)[0:16] + ': ' + self.get_tipo_display() + ': ' + self.aclaracion
-
 class Documento(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="documentos")
     tipo = models.CharField('Tipo de Documento', choices=TIPO_DOCUMENTO, max_length=12, default='HM')
@@ -276,13 +263,26 @@ class Pasajero(models.Model):
     def __str__(self):
         return str(self.traslado) + ': ' + str(self.individuo)
 
+
+#Para Eliminar
+class Seguimiento(models.Model):
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="seguimientos_eliminar")
+    tipo = models.CharField('Tipo Seguimiento', choices=TIPO_SEGUIMIENTO, max_length=2, default='I')
+    aclaracion = HTMLField()
+    fecha = models.DateTimeField('Fecha del Seguimiento', default=timezone.now)
+    class Meta:
+        ordering = ['fecha', ]
+    def __str__(self):
+        return str(self.fecha)[0:16] + ': ' + self.get_tipo_display() + ': ' + self.aclaracion
+
+
 if not LOADDATA:
     #Señales
     from .signals import estado_inicial
     from .signals import poner_en_seguimiento
     from .signals import situacion_actual
     from .signals import domicilio_actual
-    from .signals import seguimiento_actual
+    
     from .signals import aislamiento_seguimiento
     from .signals import relacion_domicilio
     from .signals import crear_relacion_inversa
@@ -300,6 +300,5 @@ if not LOADDATA:
     auditlog.register(Vehiculo)
     auditlog.register(Individuo)
     auditlog.register(Domicilio)
-    auditlog.register(Seguimiento)
     auditlog.register(TrasladoVehiculo)
     auditlog.register(Sintoma)

@@ -19,12 +19,10 @@ from georef.models import Ubicacion
 from operadores.functions import obtener_operador
 from informacion.models import Individuo, SignosVitales, Relacion
 from informacion.models import Situacion
-from informacion.models import Seguimiento
-from informacion.forms import SeguimientoForm
 from app.models import AppData
 #imports de la app
-from .models import Vigia
-from .forms import NuevoVigia, NuevoIndividuo
+from .models import Seguimiento, Vigia
+from .forms import SeguimientoForm, NuevoVigia, NuevoIndividuo
 from .functions import obtener_bajo_seguimiento
 
 #Menu
@@ -32,19 +30,48 @@ from .functions import obtener_bajo_seguimiento
 def menu_seguimiento(request):
     return render(request, 'menu_seguimiento.html', {})
 
+#Administracion de Seguimientos
+#Seguimiento
+@permission_required('operadores.individuos')
+def cargar_seguimiento(request, individuo_id, seguimiento_id=None):
+    seguimiento = None
+    if seguimiento_id:
+        seguimiento = Seguimiento.objects.get(pk=seguimiento_id)
+    individuo = Individuo.objects.get(pk=individuo_id)
+    form = SeguimientoForm(instance=seguimiento, initial={'individuo': individuo, })
+    if request.method == "POST":
+        form = SeguimientoForm(request.POST, instance=seguimiento)
+        if form.is_valid():
+            seguimiento = form.save(commit=False)
+            seguimiento.individuo = individuo
+            form.save()
+            return render(request, "extras/close.html")
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Seguimiento", 'form': form, 'boton': "Cargar", })
+
+@permission_required('operadores.individuos')
+def del_seguimiento(request, seguimiento_id=None):
+    seguimiento = Seguimiento.objects.get(pk=seguimiento_id)
+    individuo = seguimiento.individuo
+    seguimiento.delete()
+    return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+
+#Listados
 @permission_required('operadores.seguimiento_admin')
 def lista_seguimientos(request):
     #Obtenemos los registros
     individuos = obtener_bajo_seguimiento()
+    #Filtramos por los que tienen vigia
+    individuos = individuos.exclude(vigiladores=None)
     #Optimizamos las busquedas
     individuos = individuos.select_related('nacionalidad')
-    individuos = individuos.select_related('domicilio_actual', 'situacion_actual', 'seguimiento_actual')
-    individuos = individuos.prefetch_related('atributos', 'sintomas')
+    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad')
+    individuos = individuos.select_related('situacion_actual', 'seguimiento_actual')
+    individuos = individuos.prefetch_related('vigiladores', 'vigiladores__operador')
     #Traemos seguimientos terminados para descartar
     #last12hrs = timezone.now() - timedelta(hours=12)
     #individuos = individuos.exclude(seguimientos__fecha__gt=last12hrs)
     #Lanzamos reporte
-    return render(request, "listado_seguimiento.html", {
+    return render(request, "lista_seguimientos.html", {
         'individuos': individuos,
         'has_table': True,
     })
@@ -52,10 +79,15 @@ def lista_seguimientos(request):
 #Administracion
 @permission_required('operadores.seguimiento_admin')
 def lista_sin_vigias(request):
-    sin_vigia = obtener_bajo_seguimiento()
-    sin_vigia = sin_vigia.filter(vigilador=None)
-    return render(request, "listado_seguimiento.html", {
-        'individuos': sin_vigia,
+    individuos = obtener_bajo_seguimiento()
+    individuos = individuos.filter(vigiladores=None)
+    #Optimizamos las busquedas
+    individuos = individuos.select_related('nacionalidad')
+    individuos = individuos.select_related('domicilio_actual', 'situacion_actual', 'seguimiento_actual')
+    individuos = individuos.prefetch_related('vigiladores')
+    #Lanzamos Reporte
+    return render(request, "lista_seguimientos.html", {
+        'individuos': individuos,
         'has_table': True,
     })
 
@@ -205,7 +237,6 @@ def lista_aislados(request):
         'individuos': individuos,
         'has_table': True,
     })
-
 
 #ALTAS SEGUIMIENTO
 @permission_required('operadores.seguimiento_admin')

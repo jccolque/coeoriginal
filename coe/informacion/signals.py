@@ -8,9 +8,11 @@ from django.db.models.signals import pre_save
 from django.db.models.signals import post_save, post_delete
 #imports Extras
 from dateutil.relativedelta import relativedelta
+#Imports del proyecto
+from seguimiento.models import Seguimiento
 #Imports de la app
 from .models import Pasajero
-from .models import Individuo, Domicilio, Situacion, Relacion, Seguimiento
+from .models import Individuo, Domicilio, Situacion, Relacion
 from .models import Atributo, SignosVitales, Documento
 
 #Logger
@@ -49,13 +51,6 @@ def domicilio_actual(created, instance, **kwargs):
     if created:
         individuo = instance.individuo
         individuo.domicilio_actual = instance
-        individuo.save()
-
-@receiver(post_save, sender=Seguimiento)
-def seguimiento_actual(created, instance, **kwargs):
-    if created:
-        individuo = instance.individuo
-        individuo.seguimiento_actual = instance
         individuo.save()
 
 @receiver(post_save, sender=Domicilio)
@@ -224,18 +219,6 @@ def cargo_documento(created, instance, **kwargs):
         seguimiento.tipo = 'M'
         seguimiento.aclaracion = "Se Cargo Documento " + instance.get_tipo_display()
         seguimiento.save()
-
-@receiver(post_save, sender=Seguimiento)
-def descartar_sospechoso(created, instance, **kwargs):
-    #Eliminamos relacion inversa
-    if created and instance.tipo == "DT":
-        situacion = Situacion()
-        situacion.individuo = instance.individuo
-        #El estado pasa a asintomatico
-        if instance.individuo.situacion_actual:#Si tenia conducta actual
-            situacion.conducta = instance.individuo.situacion_actual.conducta
-        situacion.aclaracion = 'Descartado' + instance.aclaracion
-        situacion.save()
 
 @receiver(post_save, sender=Atributo)
 def iniciar_tracking_transportistas(created, instance, **kwargs):

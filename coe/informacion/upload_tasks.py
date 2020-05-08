@@ -12,10 +12,10 @@ from background_task import background
 #Imports del proyecto
 from coe.constantes import DIAS_CUARENTENA
 from georef.models import Nacionalidad, Departamento, Localidad
+from seguimiento.models import Seguimiento
 #Import Personales
 from .models import Archivo
 from .models import Individuo, Domicilio
-from .models import Seguimiento
 from .models import Situacion, Sintoma, Atributo
 
 #Definimos logger

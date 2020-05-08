@@ -8,7 +8,7 @@ from django.utils import timezone
 from background_task import background
 #Imports del proyeco
 from coe.constantes import DIAS_CUARENTENA
-from informacion.models import Seguimiento
+from seguimiento.models import Seguimiento
 from app.models import AppNotificacion
 #Import de la app
 from .models import GeoPosicion

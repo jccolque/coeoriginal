@@ -6,7 +6,8 @@ from django.core.cache import cache
 from geographiclib.geodesic import Geodesic
 #Imports del proyecto
 from coe.constantes import DISTANCIA_MAXIMA, CENTRO_LATITUD, CENTRO_LONGITUD
-from informacion.models import Individuo, Seguimiento
+from informacion.models import Individuo
+from seguimiento.models import Seguimiento
 #Imports de la app
 from .models import GeoPosicion
 

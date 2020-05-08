@@ -6,7 +6,7 @@ from django.db.models.signals import post_save
 from django.db.models import Count
 #imports Extras
 #Imports del proyecto
-from informacion.models import Seguimiento
+from seguimiento.models import Seguimiento
 #Imports de la app
 from .models import GeoPosicion, GeOperador
 

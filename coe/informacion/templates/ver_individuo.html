@@ -320,10 +320,10 @@
                                 <td>{{seguimiento.aclaracion}}</td>
                                 <td>{{seguimiento.fecha}}</td>
                                 <td>
-                                    <a class="nolink"  href="{% url 'informacion:mod_seguimiento' individuo_id=individuo.id seguimiento_id=seguimiento.id %}">
+                                    <a class="nolink"  href="{% url 'seguimiento:mod_seguimiento' individuo_id=individuo.id seguimiento_id=seguimiento.id %}">
                                         <img class="icons" src="{% static '/img/icons/change.png' %}">
                                     </a>
-                                    <a class="nolink"  href="{% url 'informacion:del_seguimiento' seguimiento_id=seguimiento.id %}">
+                                    <a class="nolink"  href="{% url 'seguimiento:del_seguimiento' seguimiento_id=seguimiento.id %}">
                                         <img class="icons" src="{% static '/img/icons/delete.png' %}">
                                     </a>
                                 </td>
@@ -366,12 +366,12 @@
                             <li><a href="{% url 'informacion:cargar_geoposicion' individuo_id=individuo.id %}" >Asignar GeoPosicion</a></li>
                             <li><a href="{% url 'informacion:elegir_ubicacion' individuo_id=individuo.id %}">Trasladar Aislacion/Internacion</a></li>
                             <hr>
-                            <li><a href="{% url 'informacion:cargar_signosvitales' individuo_id=individuo.id %}">Cargar Signos Vitales</a></li>
-                            <li><a href="{% url 'informacion:cargar_documento' individuo_id=individuo.id %}">Cargar Documento</a></li>
-                            <li><a href="{% url 'informacion:cargar_sintoma' individuo_id=individuo.id  %}">Cargar Sintomas</a></li>
-                            <li><a href="{% url 'informacion:cargar_atributo' individuo_id=individuo.id %}">Cargar Atributo de Control</a></li>
-                            <li><a href="{% url 'informacion:cargar_relacion' individuo_id=individuo.id %}">Cargar Relacion</a></li>
-                            <li><a href="{% url 'informacion:cargar_seguimiento' individuo_id=individuo.id %}">Cargar Seguimiento</a></li>
+                            <li><a href="{% url 'informacion:cargar_signosvitales' individuo_id=individuo.id %}" target="_blank">Cargar Signos Vitales</a></li>
+                            <li><a href="{% url 'informacion:cargar_documento' individuo_id=individuo.id %}" target="_blank">Cargar Documento</a></li>
+                            <li><a href="{% url 'informacion:cargar_sintoma' individuo_id=individuo.id  %}" target="_blank">Cargar Sintomas</a></li>
+                            <li><a href="{% url 'informacion:cargar_atributo' individuo_id=individuo.id %}" target="_blank">Cargar Atributo de Control</a></li>
+                            <li><a href="{% url 'informacion:cargar_relacion' individuo_id=individuo.id %}" target="_blank">Cargar Relacion</a></li>
+                            <li><a href="{% url 'seguimiento:cargar_seguimiento' individuo_id=individuo.id %}" target="_blank">Cargar Seguimiento</a></li>
                         </ul>
                     </div>
                 </div>

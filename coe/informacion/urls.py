@@ -65,10 +65,6 @@ urlpatterns = [
     path('cargar/situacion/<int:individuo_id>', views.cargar_situacion, name='cargar_situacion'),
     path('mod/situacion/<int:situacion_id>', views.cargar_situacion, name='mod_situacion'),
     path('del/situacion/<int:situacion_id>', views.del_situacion, name='del_situacion'),
-    #Seguimiento
-    path('cargar/seguimiento/<int:individuo_id>', views.cargar_seguimiento, name='cargar_seguimiento'),
-    path('mod/seguimiento/<int:individuo_id>/<int:seguimiento_id>', views.cargar_seguimiento, name='mod_seguimiento'),
-    path('del/seguimiento/<int:seguimiento_id>', views.del_seguimiento, name='del_seguimiento'),
     #Relacion
     path('cargar/relacion/<int:individuo_id>', views.cargar_relacion, name='cargar_relacion'),
     path('mod/relacion/<int:individuo_id>/<int:relacion_id>', views.cargar_relacion, name='mod_relacion'),

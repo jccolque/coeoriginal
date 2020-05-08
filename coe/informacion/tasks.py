@@ -14,7 +14,6 @@ from georef.models import Nacionalidad, Departamento, Localidad
 #Import Personales
 from .models import Archivo
 from .models import Individuo, Domicilio
-from .models import Seguimiento
 from .models import Situacion, Sintoma, Atributo
 
 #Definimos logger

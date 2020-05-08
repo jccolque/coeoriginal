@@ -4,11 +4,21 @@ from django import forms
 from dal import autocomplete
 #Imports del proyecto
 from informacion.models import Individuo
+from core.widgets import XDSoftDatePickerInput, XDSoftDateTimePickerInput
 #Imports de la app
-from .models import Vigia
+from .models import Seguimiento, Vigia
 from .functions import obtener_bajo_seguimiento
 
 #Definimos nuestros forms aqui:
+class SeguimientoForm(forms.ModelForm):
+    class Meta:
+        model = Seguimiento
+        fields= '__all__'
+        exclude = ('individuo', )
+        widgets = {
+            'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
+        }
+
 class NuevoVigia(forms.ModelForm):
     class Meta:
         model = Vigia

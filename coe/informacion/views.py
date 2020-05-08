@@ -16,6 +16,7 @@ from core.functions import date2str
 from core.forms import SearchForm, JustificarForm
 from georef.models import Nacionalidad
 from georef.models import Ubicacion
+from seguimiento.models import Seguimiento
 from operadores.functions import obtener_operador
 from background.tasks import crear_progress_link
 from graficos.functions import obtener_grafico
@@ -28,7 +29,6 @@ from .models import Archivo
 from .models import Vehiculo, TrasladoVehiculo, Pasajero
 from .models import Individuo, SignosVitales, Relacion
 from .models import Situacion
-from .models import Seguimiento
 from .models import Domicilio
 from .models import Atributo, Sintoma
 from .models import Documento
@@ -37,7 +37,7 @@ from .forms import VehiculoForm, TrasladoVehiculoForm
 from .forms import IndividuoForm, InquilinoForm
 from .forms import BuscadorIndividuosForm, TrasladarIndividuoForm
 from .forms import DomicilioForm, AtributoForm, SintomaForm
-from .forms import SituacionForm, RelacionForm, SeguimientoForm
+from .forms import SituacionForm, RelacionForm
 from .forms import SearchIndividuoForm, SearchVehiculoForm
 from .forms import DocumentoForm, SignosVitalesForm
 from .forms import ReporteHotelesForm
@@ -616,7 +616,7 @@ def cargar_situacion(request, individuo_id=None, situacion_id=None):
             situacion = form.save(commit=False)
             situacion.individuo = individuo
             situacion.save()
-            return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+            return render(request, "extras/close.html")
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Situacion", 'form': form, 'boton': "Cargar", }) 
 
 @permission_required('operadores.individuos')
@@ -646,7 +646,7 @@ def cargar_signosvitales(request, individuo_id, signosvitales_id=None):
             signosvitales = form.save(commit=False)
             signosvitales.individuo = individuo
             form.save()
-            return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+            return render(request, "extras/close.html")
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Signos Vitales", 'form': form, 'boton': "Cargar", })
 
 @permission_required('operadores.individuos')
@@ -654,30 +654,6 @@ def del_signosvitales(request, signosvitales_id):
     signosvitales = SignosVitales.objects.get(pk=signosvitales_id)
     individuo = signosvitales.individuo
     signosvitales.delete()
-    return redirect('informacion:ver_individuo', individuo_id=individuo.id)
-
-#Seguimiento
-@permission_required('operadores.individuos')
-def cargar_seguimiento(request, individuo_id, seguimiento_id=None):
-    seguimiento = None
-    if seguimiento_id:
-        seguimiento = Seguimiento.objects.get(pk=seguimiento_id)
-    individuo = Individuo.objects.get(pk=individuo_id)
-    form = SeguimientoForm(instance=seguimiento, initial={'individuo': individuo, })
-    if request.method == "POST":
-        form = SeguimientoForm(request.POST, instance=seguimiento)
-        if form.is_valid():
-            seguimiento = form.save(commit=False)
-            seguimiento.individuo = individuo
-            form.save()
-            return redirect('informacion:ver_individuo', individuo_id=individuo.id)
-    return render(request, "extras/generic_form.html", {'titulo': "Cargar Seguimiento", 'form': form, 'boton': "Cargar", })
-
-@permission_required('operadores.individuos')
-def del_seguimiento(request, seguimiento_id=None):
-    seguimiento = Seguimiento.objects.get(pk=seguimiento_id)
-    individuo = seguimiento.individuo
-    seguimiento.delete()
     return redirect('informacion:ver_individuo', individuo_id=individuo.id)
 
 #Relacion
@@ -694,7 +670,7 @@ def cargar_relacion(request, individuo_id, relacion_id=None):
             relacion = form.save(commit=False)
             relacion.individuo = individuo
             form.save()
-            return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+            return render(request, "extras/close.html")
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Relacion", 'form': form, 'boton': "Cargar", }) 
 
 @permission_required('operadores.individuos')
@@ -718,7 +694,7 @@ def cargar_atributo(request, individuo_id, atributo_id=None):
             sintoma = form.save(commit=False)
             sintoma.individuo = individuo
             sintoma.save()
-            return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+            return render(request, "extras/close.html")
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Atributo", 'form': form, 'boton': "Cargar", })
 
 @permission_required('operadores.individuos')
@@ -742,7 +718,7 @@ def cargar_sintoma(request, individuo_id, sintoma_id=None):
             sintoma = form.save(commit=False)
             sintoma.individuo = individuo
             sintoma.save()
-            return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+            return render(request, "extras/close.html")
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Sintoma", 'form': form, 'boton': "Cargar", })
 
 @permission_required('operadores.individuos')
@@ -766,7 +742,7 @@ def cargar_documento(request, individuo_id, documento_id=None):
             documento = form.save(commit=False)
             documento.individuo = individuo
             documento.save()
-            return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+            return render(request, "extras/close.html")
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Documento", 'form': form, 'boton': "Cargar", })
 
 @permission_required('operadores.individuos')
@@ -790,7 +766,7 @@ def cargar_geoposicion(request, individuo_id):
         else:
             geoposicion.aclaracion = "Carga Manual de " + str(obtener_operador(request))
         geoposicion.save()
-        return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+        return render(request, "extras/close.html")
     return render(request, "extras/gmap_form.html", {
         'objetivo': individuo, 
         'gkey': GEOPOSITION_GOOGLE_MAPS_API_KEY,

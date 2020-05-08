@@ -1,5 +1,6 @@
 #Imports del proyecto
-from informacion.models import Individuo, Seguimiento
+from informacion.models import Individuo
+from seguimiento.models import Seguimiento
 
 def agregar_seguimiento():
     #Obtenemos todos los individuos que hayan estado aislados

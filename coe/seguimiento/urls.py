@@ -10,10 +10,13 @@ app_name = 'seguimiento'
 urlpatterns = [
     #App
     path('', views.menu_seguimiento, name='menu_seguimiento'),
-    #Tracking
+    #Base
     path('lista/seguimientos', views.lista_seguimientos, name='lista_seguimientos'),
     path('ver/<int:individuo_id>', views.ver_seguimiento, name='ver_seguimiento'),
-    
+    #Seguimiento
+    path('cargar/seguimiento/<int:individuo_id>', views.cargar_seguimiento, name='cargar_seguimiento'),
+    path('mod/seguimiento/<int:individuo_id>/<int:seguimiento_id>', views.cargar_seguimiento, name='mod_seguimiento'),
+    path('del/seguimiento/<int:seguimiento_id>', views.del_seguimiento, name='del_seguimiento'),
     #Administracion
     path('lista/vigias', views.lista_vigias, name='lista_vigias'),
     path('agregar/vigia', views.agregar_vigia, name='agregar_vigia'),

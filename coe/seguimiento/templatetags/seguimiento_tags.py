@@ -9,11 +9,11 @@ register = template.Library()
 #Definimos nuestros tags
 @register.simple_tag
 def ct_horas_desde(fecha):
-    return (timezone.now() - fecha).total_seconds() / 3600
+    return int((timezone.now() - fecha).total_seconds() / 3600)
 
 @register.simple_tag
 def ct_color_alerta(seguimiento):
-    horas = (timezone.now() - fecha).total_seconds() / 3600
+    horas = (timezone.now() - seguimiento.fecha).total_seconds() / 3600
     if horas > 48:
         return 'rojo'
     elif horas > 24:

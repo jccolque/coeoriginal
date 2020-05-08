@@ -1,7 +1,7 @@
 from informacion.choices import TIPO_ATRIBUTO, TIPO_SINTOMA
 from informacion.models import Atributo, TipoAtributo
 from informacion.models import Sintoma, TipoSintoma
-from informacion.models import Seguimiento
+from seguimiento.models import Seguimiento
 
 def unificar_atributos():
     old = TipoAtributo.objects.get(nombre='Mantener Seguimiento')

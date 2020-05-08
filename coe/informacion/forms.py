@@ -12,7 +12,7 @@ from georef.models import Localidad, Ubicacion
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
 from .models import Vehiculo, TrasladoVehiculo
 from .models import Individuo, Domicilio, SignosVitales, Atributo, Sintoma
-from .models import Situacion, Archivo, Relacion, Seguimiento
+from .models import Situacion, Archivo, Relacion
 from .models import Documento
 
 #Definimos nuestros forms
@@ -71,7 +71,7 @@ class IndividuoForm(forms.ModelForm):
     class Meta:
         model = Individuo
         fields= '__all__'
-        exclude = ('fotografia', 'qrpath', )
+        exclude = ('seguimiento_actual', 'fotografia', 'qrpath', )
         widgets = {
             'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
             'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
@@ -103,7 +103,7 @@ class InquilinoForm(forms.ModelForm):
     class Meta:
         model = Individuo
         fields= '__all__'
-        exclude = ('fotografia', 'qrpath', )
+        exclude = ('seguimiento_actual', 'fotografia', 'qrpath', )
         widgets = {
             'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
             'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
@@ -176,15 +176,6 @@ class SignosVitalesForm(forms.ModelForm):
         self.nolabel = ['', ]
         self.alinear = [('tension_sistolica', 'tension_diastolica'), ]
         super(SignosVitalesForm, self).__init__(*args, **kwargs)
-
-class SeguimientoForm(forms.ModelForm):
-    class Meta:
-        model = Seguimiento
-        fields= '__all__'
-        exclude = ('individuo', )
-        widgets = {
-            'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
-        }
 
 class RelacionForm(forms.ModelForm):
     class Meta:

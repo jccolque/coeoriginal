@@ -1,6 +1,7 @@
 from informacion.models import Individuo
-from informacion.models import Situacion, Domicilio, Sintoma, Atributo, Seguimiento
+from informacion.models import Situacion, Domicilio, Sintoma, Atributo
 from informacion.models import AppData, GeoPosicion
+from seguimiento.models import Seguimiento
 
 #Vamos a limpiar todos los repetidos que no sean actual
 def limpiar_situacion():
