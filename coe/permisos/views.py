@@ -699,12 +699,18 @@ def control_circulacion(request):
     if request.method == "POST":
         form = SearchCirculacion(request.POST)
         if form.is_valid():
-            #Traemos el documento
-            num_doc = form.cleaned_data["num_doc"]
             #Buscamos el permiso
-            circulacion = CirculacionTemporal.objects.filter(estado="A", chofer__num_doc=num_doc).last()
-            if not circulacion:
-                circulacion = CirculacionTemporal.objects.filter(estado="A", acompañante__num_doc=num_doc).last()
+            #Traemos DNI
+            num_doc = form.cleaned_data["num_doc"]
+            if num_doc:
+                circulacion = CirculacionTemporal.objects.filter(chofer__num_doc=num_doc).last()
+                if not circulacion:
+                    circulacion = CirculacionTemporal.objects.filter(acompañante__num_doc=num_doc).last()
+            #Traemos patente
+            patente = form.cleaned_data["patente"]
+            if patente:
+                circulacion = CirculacionTemporal.objects.filter(patente=patente).last()
+            #Si no lo encontro
             if not circulacion:
                 return render(request, 'extras/error.html', {
                     'titulo': 'Permiso de Circulacion Inexistente',

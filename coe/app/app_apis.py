@@ -18,6 +18,7 @@ from core.functions import json_error
 from operadores.models import Operador
 from georef.functions import obtener_argentina
 from georef.models import Localidad
+from informacion.models import Individuo
 from informacion.models import Atributo, Sintoma, Situacion
 from seguimiento.models import Seguimiento
 from geotracking.models import GeoPosicion
