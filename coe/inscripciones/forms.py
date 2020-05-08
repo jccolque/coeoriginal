@@ -70,9 +70,6 @@ class ProyectoEstudiantilForm(forms.ModelForm):
         model = ProyectoEstudiantil
         fields= '__all__'
         exclude = ('escuela_aval', 'responsable', 'voluntarios', 'token', 'estado', 'fecha',)
-        #widgets = {
-        #    'escuela_localidad': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
-        #}
 
 class IndividuoForm(forms.ModelForm):
     #Domicilio en jujuy

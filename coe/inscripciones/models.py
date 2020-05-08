@@ -94,7 +94,7 @@ class ProyectoEstudiantil(models.Model):
     email_contacto = models.EmailField('Correo Electronico de Contacto')
     #Institucion
     escuela_nombre = models.CharField('Nombre de la Escuela', max_length=200)
-    #escuela_localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="proyectos_estudiantiles")
+    escuela_localidad = models.CharField('Localidad', max_length=200)
     escuela_telefono = models.CharField('Telefono Institucion', max_length=50)
     escuela_aval = models.FileField('Aval Institucional', upload_to='inscripciones/estudiantil/', null=True, blank=True)
     #Reponsable
