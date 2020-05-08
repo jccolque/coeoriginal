@@ -35,8 +35,7 @@ def menu_seguimiento(request):
 @permission_required('operadores.seguimiento_admin')
 def lista_seguimientos(request):
     #Obtenemos los registros
-    individuos = Individuo.objects.filter(seguimientos__tipo__in=('I','L', 'ET'))
-    individuos = individuos.exclude(seguimientos__tipo='FS')
+    individuos = obtener_bajo_seguimiento()
     #Optimizamos las busquedas
     individuos = individuos.select_related('nacionalidad')
     individuos = individuos.select_related('domicilio_actual', 'situacion_actual', 'seguimiento_actual')
@@ -123,7 +122,7 @@ def agregar_vigilado(request, vigia_id):
         if form.is_valid():
             vigia = Vigia.objects.get(pk=vigia_id)
             vigia.controlados.add(form.cleaned_data['individuo'])
-            return redirect('geotracking:ver_panel', vigia_id=vigia.id)
+            return redirect('seguimiento:ver_panel', vigia_id=vigia.id)
     return render(request, "extras/generic_form.html", {'titulo': "Agregar Individuo Seguido", 'form': form, 'boton': "Agregar", })
 
 @permission_required('operadores.seguimiento')
@@ -134,7 +133,7 @@ def quitar_vigilado(request, vigia_id, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
     #Damos de baja
     vigia.controlados.remove(individuo)
-    return redirect('geotracking:ver_panel', vigia_id=vigia.id)
+    return redirect('seguimiento:ver_panel', vigia_id=vigia.id)
 
 #Panel
 @permission_required('operadores.seguimiento')
@@ -152,12 +151,14 @@ def panel_vigia(request, vigia_id=None):
             'error': "Usted no es un Vigilante Habilitado, si deberia tener acceso a esta seccion, por favor contacte a los administradores.",
         })
     #Buscamos Alertas
-    last12hrs = timezone.now() - timedelta(hours=12)
-    individuos = vigia.controlados.filter(seguimiento_actual__fecha__lt=last12hrs)
+    last24hrs = timezone.now() - timedelta(hours=24)
+    individuos = vigia.controlados.filter(seguimiento_actual__fecha__lt=last24hrs)
+    individuos = individuos.order_by('seguimiento_actual__fecha')
     #Optimizamos
     individuos = individuos.select_related(
         'situacion_actual',
-        'domicilio_actual', "domicilio_actual__localidad"
+        'domicilio_actual', "domicilio_actual__localidad",
+        'seguimiento_actual',
     )
     #Lanzamos panel
     return render(request, "panel_vigia.html", {

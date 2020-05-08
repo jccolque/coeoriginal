@@ -16,10 +16,6 @@ class Vigia(models.Model):
     controlados = models.ManyToManyField(Individuo, related_name='vigilador')
     def __str__(self):
         return str(self.operador.nombres) + ' ' + str(self.operador.apellidos)
-    def controlados_actuales(self):
-        return self.controlados.all()#Deberiamos filtrar
-    def cantidad_controlados(self):
-        return self.controlados_actuales().count()
     def alertas_activas(self):
         limite = timezone.now() - timedelta(hours=12)
         return self.controlados.exclude(seguimientos__fecha__gt=limite).count()

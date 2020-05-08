@@ -1,3 +1,5 @@
+#Imports Django
+from django.db.models import Count
 #Imports del proyecto
 from informacion.models import Individuo, Atributo
 #Imports de la app
@@ -27,13 +29,13 @@ def asignar_vigilancia():
     activar_vigilancia()
     individuos = obtener_bajo_seguimiento()
     #No procesamos a los que ya estan bajo un vigia
-    individuos = individuos.filter(vigia=None)
-    print("Asignaremos: " + str(individuos.count) + " individuos.")
+    individuos = individuos.filter(vigilador=None)
+    print("Asignaremos: " + str(individuos.count()) + " individuos.")
     #Procesamos
     for individuo in individuos:
         print("Asignamos a " + str(individuo))
         try:
             nuevo_vigia = Vigia.objects.all().annotate(cantidad=Count('controlados')).order_by('cantidad').first()
-            nuevo_vigia.controlados.add(controlado)
+            nuevo_vigia.controlados.add(individuo)
         except:
             print("No hay vigias")

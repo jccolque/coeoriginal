@@ -32,7 +32,7 @@
                                         {{vigia.operador.usuario.last_login}}
                                     {% endif %}
                                 </td>
-                                <td>{{vigia.cantidad_controlados}}</td>
+                                <td>{{vigia.controlados.count}}</td>
                                 <td>{{vigia.alertas_activas}}</td>
                                 <td>
                                     <a href="{% url 'seguimiento:ver_panel' vigia_id=vigia.id %}" target="_blank">

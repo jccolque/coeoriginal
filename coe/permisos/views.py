@@ -129,8 +129,11 @@ def pedir_ingreso_provincial(request, ingreso_id=None):
 def ver_ingreso_provincial(request, token):
     ingreso = IngresoProvincia.objects.prefetch_related('individuos')
     ingreso = ingreso.get(token=token)
+    #Calcular Limite para eliminacion
+    limite = int(72 - (timezone.now() - ingreso.fecha).total_seconds() / 3600)
     return render(request, 'ver_ingreso_provincial.html', {
         'ingreso': ingreso,
+        'limite': limite,
         'falta_app': ingreso.individuos.filter(appdata=None).exists(),
         'has_table': True,
     })
@@ -203,7 +206,7 @@ def quitar_ingresante(request, ingreso_id, individuo_id):
 def finalizar_ingreso(request, ingreso_id):
     ingreso = IngresoProvincia.objects.get(pk=ingreso_id)
     #Chequear que el ingreso este finalizado
-    if ingreso.tipo == 'P':#Particular
+    if ingreso.tipo == 'P' or ingreso.tipo == 'T':#Particular o Taxi
         if not ingreso.individuos.exists():
             return render(request, 'extras/error.html', {
             'titulo': 'Finalizacion Denegada',
@@ -541,7 +544,7 @@ def lista_ingresos(request, estado=None, tipo=None):
 @permission_required('operadores.permisos')
 def lista_nacion(request):
     ingresos = IngresoProvincia.objects.filter(estado='E', tipo="P")
-    ingresos = ingresos.filter()
+    ingresos = ingresos.filter(permiso_nacional=None)
     #Optimizamos
     ingresos = ingresos.select_related('origen', 'destino', 'operador')
     ingresos = ingresos.prefetch_related('individuos', 'individuos__domicilio_actual', 'individuos__domicilio_actual__localidad')
@@ -574,6 +577,13 @@ def ingreso_enviar_email(request, ingreso_id):
                 email.send()
         return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
     return render(request, "extras/generic_form.html", {'titulo': "Enviar Correo Electronico", 'form': form, 'boton': "Enviar", })
+
+@permission_required('operadores.permisos')
+def ingreso_enviado(request, ingreso_id):
+    ingreso = IngresoProvincia.objects.get(pk=ingreso_id)
+    ingreso.estado = 'N'
+    ingreso.save()
+    return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
 
 @permission_required('operadores.permisos')
 def aprobar_ingreso(request, ingreso_id):

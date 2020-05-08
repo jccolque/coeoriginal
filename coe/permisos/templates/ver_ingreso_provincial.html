@@ -20,9 +20,10 @@
                                 <p><b>Fecha de Llegada Estimada:</b> {{ingreso.fecha_llegada|date:"d/m/Y H:i"}}</p>
                                 <p><b>Permiso de Circulacion Nacional:</b>
                                 {% if ingreso.permiso_nacional %}
-                                    <a href="{{ingreso.permiso_nacional.url}}">Ver Documento</a>
+                                    <a href="{{ingreso.permiso_nacional.url}}">Ver Documento</a><br>
+                                    <a href="{% url 'permisos:ingreso_subir_permiso_nac' token=ingreso.token %}" style="font-weight:bold;color:red;">(Cambiar Archivo)</a>
                                 {% else %}
-                                    <a href="{% url 'permisos:ingreso_subir_permiso_nac' token=ingreso.token %}" style="font-weight:bold;color:red;">CARGAR</a><br>
+                                    <a href="{% url 'permisos:ingreso_subir_permiso_nac' token=ingreso.token %}">CARGAR</a><br>
                                     <i>Si usted carga este documento podemos acelerar la Aprobacion de su Permiso de Ingreso a Jujuy.</i>
                                 {% endif %}
                             </div>
@@ -30,8 +31,14 @@
                                 <div class="bordeado importante">
                                     {% if ingreso.estado == 'C' %}
                                         <h3>Una vez terminado el ingreso de <b>TODA</b> la infomacion requerida, presione el boton de <b>Finalizar Proceso</b>.</h3>
+                                        <p>Su Requerimiento sera eliminado en {{limite}}hrs si no lo finaliza.</p>
                                         <br>
                                         <p>Hasta que el estado del pedido de ingreso no se encuentre en <b>Esperando Aprobacion</b> nuestros operadores no lo analizaran.</p>
+                                    {% elif ingreso.estado == 'N' %}
+                                        <h3>Su requerimiento fue enviado a Nacion.</h3>
+                                        <br>
+                                        <p>En caso de que reciba la autorizacion personalmente, comuniquelo a <a mailto="coe@jujuy.gob.ar">coe@jujuy.gob.ar</a></p>
+                                        <p>Si lo recibimos nosotros lo cargaremos y aprobaremos su permiso.</p>
                                     {% elif ingreso.estado == 'E' %}
                                         <h3>Nuestros Operadores estan analizando su requerimiento</h3>
                                         <br>
@@ -84,9 +91,9 @@
                     </div>
                     <div class="col-md-4">
                         <ul class="menu_botones">
-                            {% if ingreso.estado == 'C' or ingreso.estado == 'E' %}
+                            {% if ingreso.estado == 'C' %}
                                 <li><a href="{% url 'permisos:mod_ingreso_provincial' ingreso_id=ingreso.id %}">Modificar Datos de Ingreso</a></li>
-                                {% if ingreso.tipo == 'P' %}
+                                {% if ingreso.tipo == 'P' or ingreso.tipo == 'T' %}
                                     <li><a href="{% url 'permisos:cargar_ingresantes' ingreso_id=ingreso.id %}">Agregar Pasajero</a></li>
                                 {% endif %}
                             {% if ingreso.estado == 'C' %}
@@ -102,7 +109,10 @@
                                 {% if ingreso.estado == 'C' or ingreso.estado == 'E' %}
                                     <li><a href="{% url 'permisos:eliminar_ingreso' ingreso_id=ingreso.id %}">Eliminar Ingreso</a></li>
                                 {% endif %}
-                                {% if ingreso.estado == 'E' and ingreso.permiso_nacional %}
+                                {% if ingreso.estado == 'E' %}
+                                    <li><a href="{% url 'permisos:ingreso_enviado' ingreso_id=ingreso.id %}">Enviado a Nacion</a></li>
+                                {% endif %}
+                                {% if ingreso.estado == 'N' or ingreso.permiso_nacional %}
                                     <li><a href="{% url 'permisos:aprobar_ingreso' ingreso_id=ingreso.id %}">Aprobar Ingreso</a></li>
                                 {% endif %}
                                 <li><a href="{% url 'permisos:lista_ingresos' %}">Volver al Listado de Ingresos</a></li>
@@ -111,9 +121,9 @@
                     </div>
                 </div>
                 <div class="row"></div>
-                    {% if ingreso.tipo == 'P' %}
+                    {% if ingreso.tipo == 'P' or ingreso.tipo == 'T' %}
                         <hr>
-                        <h3><b>Cargar Totalidad de Pasajeros en Vehículo:</b></h3>
+                        <h3><b>Cargar Totalidad de Pasajeros en Vehículo (Incluido el Chofer):</b></h3>
                         <p><b>Todas las personas que lleguen a Jujuy, deberán realizar la cuarentena en un hotel pago por el pasajero o lugar definido por el COE, sin excepción.</b></p>
                         <table class="listado" id="table">
                             <thead>

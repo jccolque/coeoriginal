@@ -4,6 +4,7 @@ from django.contrib import admin
 
 #Imports de la app
 from .models import Documento, Version
+from .models import Protocolo
 
 #Definimos los inlines:
 class VersionInline(admin.TabularInline):
@@ -17,5 +18,10 @@ class DocumentoAdmin(admin.ModelAdmin):
     list_filter = ['subcomite', ]
     inlines = [VersionInline]
 
+class ProtocoloAdmin(admin.ModelAdmin):
+    model = Protocolo
+    search_fields = ['actividad']
+
 # Register your models here.
 admin.site.register(Documento, DocumentoAdmin)
+admin.site.register(Protocolo, ProtocoloAdmin)

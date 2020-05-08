@@ -23,6 +23,12 @@ class Documento(models.Model):
         else:
             return None
 
+class Protocolo(models.Model):
+    actividad = models.CharField('Actividad', max_length=200)
+    archivo = models.FileField('Archivo', upload_to='protocolos/')
+    fecha = models.DateTimeField('Fecha Subido', default=timezone.now)
+    activo = models.BooleanField(default=True)
+
 class Version(models.Model):
     documento = models.ForeignKey(Documento, on_delete=models.CASCADE, related_name='versiones')
     archivo = models.FileField('Archivo', upload_to='documentos/', null=True, blank=True)
