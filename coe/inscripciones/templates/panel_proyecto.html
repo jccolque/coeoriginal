@@ -38,7 +38,7 @@
                                         <p><b></b>{% autoescape off %}{% ct_show_file aval %}{% endautoescape %}</p>
                                     {% else %}
                                         <div class="bordeado importante">
-                                            <p><b>Cargar Aval Institucional</b></p>
+                                            <p><b>Cargar Aval Institucional <a href="{% static 'archivo/proyecto/anexo2.pdf' %}">(Anexo 2)</a></b></p>
                                             <a href="{% url 'inscripciones:cargar_aval_institucional' token=proyecto.token %}">
                                                 <img class="iconsx2" src="{% static 'img/icons/add_pic.png' %}">
                                             </a>
@@ -95,7 +95,7 @@
                                         {% endif %}
                                     </li>
                                     <li class="lista">
-                                        Cargar Responsable Academico
+                                        Cargar Responsable Institucional
                                         {% if proyecto.responsable %}
                                             <img class="icons" src="/static/img/icons/check.png">
                                         {% else %}
@@ -183,7 +183,8 @@
                                             <td style="text-align: center; background-color: rgb(238, 89, 89);">
                                                 <a href="{% url 'inscripciones:cargar_autorizacion' token=proyecto.token voluntario_id=individuo.id %}">
                                                     <img class="iconsx2" src="{% static 'img/icons/add_pic.png' %}">
-                                                </a>
+                                                </a><br>
+                                                <a href="{% static 'archivo/proyecto/anexo4.pdf' %}">(Obtener Anexo 4)</a>
                                             </td>
                                         {% endif %}
 

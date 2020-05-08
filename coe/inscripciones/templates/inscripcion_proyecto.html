@@ -20,7 +20,7 @@
                 <h1><b>Voluntariado Estudiantil - MI PROMO AYUDA 2020</b></h1>
                 <div class="col-lg-4">
                     <div class="bordeado">
-                        <h3>Lee las bases y condiciones <a href="">Aqui</a></h3>
+                        <h3>Lee las bases y condiciones <a href="{% static 'archivo/proyecto/anexo1.pdf' %}">Aqui</a></h3>
                         <img class="fotos" src="{% static 'img/proyecto_estudiantil.gif' %}" loop="infinite" >
                     </div>
                 </div>
@@ -28,7 +28,7 @@
                     <div class="bordeado" style="text-align:justify;">
                         <h3><b>Datos del Proyecto</b></h3>
                         <p><b>Nombre del Proyecto:</b> {{form.nombre}}</p>
-                        <p><b>Documento:</b> {{form.documento}} <i>(Adjuntar archivo respetando del <a href="">Anexo 3</a>)</i></p>
+                        <p><b>Documento:</b> {{form.documento}} <i>(Adjuntar archivo respetando el formato de <a href="{% static 'archivo/proyecto/anexo3.pdf' %}">Anexo 3</a>)</i></p>
                         <p><b>Descripcion Breve:</b></p>
                         {{form.descripcion}}
                         <hr>
