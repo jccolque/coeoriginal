@@ -325,7 +325,7 @@ def inscripcion_proyecto(request, token=None):
                 to_email = proyecto.email_contacto
                 #Preparamos el correo electronico
                 mail_subject = "COE - Proyecto Estudiantil 2020"
-                message = render_to_string('emails/inscripcion_proyecto.html', {
+                message = render_to_string('emails/acc_active_proyecto_estudiantil.html', {
                         'proyecto': proyecto,
                     })
                 email = EmailMessage(mail_subject, message, to=[to_email])
