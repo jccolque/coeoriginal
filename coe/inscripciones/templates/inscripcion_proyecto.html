@@ -18,10 +18,10 @@
                 {% endfor %}
                 <br>
                 <h1><b>Voluntariado Estudiantil - MI PROMO AYUDA 2020</b></h1>
-                <h3>Lee las bases y condiciones <a href="">Aqui</a></h3>
                 <div class="col-lg-4">
                     <div class="bordeado">
-                        <img class="fotos" src="{% static 'img/reclutamiento.jpeg' %}">
+                        <h3>Lee las bases y condiciones <a href="">Aqui</a></h3>
+                        <img class="fotos" src="{% static 'img/proyecto_estudiantil.gif' %}" loop="infinite" >
                     </div>
                 </div>
                 <div class="col-lg-8 custom_form_fields">
@@ -34,7 +34,6 @@
                         <hr>
                         <p><b>Datos de la Escuela:</b></p>
                         <p><b>Nombre de la Institucion:</b> {{form.escuela_nombre}}</p>
-                        <p><b>Localidad:</b> {{form.escuela_localidad}}</p>
                         <p><b>Telefono:</b> {{form.escuela_telefono}}</p>
                         <hr>
                         <p><b>Datos de Contacto:</b></p>
