@@ -558,7 +558,7 @@ def lista_nacion(request):
 
 @permission_required('operadores.permisos')
 def lista_ingresos_completos(request):
-    ingresos = IngresoProvincia.objects.filter(estado='E', tipo="P")
+    ingresos = IngresoProvincia.objects.filter(estado='E')
     ingresos = ingresos.exclude(permiso_nacional='')
     #Optimizamos
     ingresos = ingresos.select_related('origen', 'destino', 'operador')
