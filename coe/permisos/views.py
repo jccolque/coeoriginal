@@ -544,16 +544,33 @@ def lista_ingresos(request, estado=None, tipo=None):
 @permission_required('operadores.permisos')
 def lista_nacion(request):
     ingresos = IngresoProvincia.objects.filter(estado='E', tipo="P")
-    ingresos = ingresos.filter(permiso_nacional=None)
+    ingresos = ingresos.filter(permiso_nacional='')
     #Optimizamos
     ingresos = ingresos.select_related('origen', 'destino', 'operador')
     ingresos = ingresos.prefetch_related('individuos', 'individuos__domicilio_actual', 'individuos__domicilio_actual__localidad')
+    ingresos = ingresos.prefetch_related('individuos__documentos')
     #Lanzamos listado
     return render(request, 'lista_nacion.html', {
         'titulo': "Ingresos Aprobados para Descargar",
         'ingresos': ingresos,
         'has_table': True,
     })
+
+@permission_required('operadores.permisos')
+def lista_ingresos_completos(request):
+    ingresos = IngresoProvincia.objects.filter(estado='E', tipo="P")
+    ingresos = ingresos.exclude(permiso_nacional='')
+    #Optimizamos
+    ingresos = ingresos.select_related('origen', 'destino', 'operador')
+    ingresos = ingresos.prefetch_related('individuos', 'individuos__domicilio_actual', 'individuos__domicilio_actual__localidad')
+    ingresos = ingresos.prefetch_related('individuos__documentos')
+    #Lanzamos listado
+    return render(request, 'lista_ingresos.html', {
+        'titulo': "Ingresos Completos Esperando Aprobacion",
+        'ingresos': ingresos,
+        'has_table': True,
+    })
+
 
 @permission_required('operadores.permisos')
 def ingreso_enviar_email(request, ingreso_id):

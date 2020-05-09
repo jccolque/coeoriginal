@@ -57,6 +57,7 @@ urlpatterns = [
     path('lista/ingresos', views.lista_ingresos, name='lista_ingresos'),
     path('lista/ingresos/estado/<str:estado>', views.lista_ingresos, name='lista_ingresos_filtro'),
     path('lista/ingresos/tipo/<str:tipo>', views.lista_ingresos, name='lista_ingresos_filtro'),
+    path('lista/ingresos/completos', views.lista_ingresos_completos, name='lista_ingresos_completos'),
     path('ingreso/enviado/<int:ingreso_id>', views.ingreso_enviado, name='ingreso_enviado'),
     path('aprobar/ingreso/<int:ingreso_id>', views.aprobar_ingreso, name='aprobar_ingreso'),
     path('del/ingreso/<int:ingreso_id>', views.eliminar_ingreso, name='eliminar_ingreso'),
