@@ -72,6 +72,7 @@
                                     <th>Nombre y Apellido</th>
                                     <th>Fecha de Nacimiento</th>
                                     <th>Correo Electronico</th>
+                                    <th>Documentos</th>
                                     <th>Telefono</th>
                                     <th>App Instalada</th>
                                     <th>Acciones</th>
@@ -86,6 +87,11 @@
                                         <td>{{circulacion.chofer.fecha_nacimiento}}</td>
                                         <td>{{circulacion.chofer.email}}</td>
                                         <td>{{circulacion.chofer.telefono}}</td>
+                                        <td>
+                                            {% for doc in circulacion.chofer.get_dnis %}
+                                                <a href="{{doc.archivo.url}}" target="_blank">{{doc.aclaracion}}</a><br>
+                                            {% endfor %}
+                                        </td>
                                         <td>
                                             {% if circulacion.chofer.appdata %}
                                                 <img class="icons" src="/static/img/icons/check.png">
@@ -116,6 +122,11 @@
                                         <td>{{circulacion.acompañante.fecha_nacimiento}}</td>
                                         <td>{{circulacion.acompañante.email}}</td>
                                         <td>{{circulacion.acompañante.telefono}}</td>
+                                        <td>
+                                            {% for doc in circulacion.acompañante.get_dnis %}
+                                                <a href="{{doc.archivo.url}}" target="_blank">{{doc.aclaracion}}</a><br>
+                                            {% endfor %}
+                                        </td>
                                         <td>
                                             {% if circulacion.acompañante.appdata %}
                                                 <img class="icons" src="/static/img/icons/check.png">

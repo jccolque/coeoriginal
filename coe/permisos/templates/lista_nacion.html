@@ -53,10 +53,9 @@
                                     <td>{{pasajero.email}}</td>
                                     <td>
                                         {% for doc in individuo.get_dnis %}
-                                            <a href="{{doc.url}}" target="_blank">{{doc.aclaracion}}</a><br>
+                                            <a href="{{doc.archivo.url}}" target="_blank">{{doc.aclaracion}}</a><br>
                                         {% endfor %}
                                     </td>
-
                                     <td>{{ingreso.patente}}</td>
 
                                     <td>{{ingreso.origen.nombre}}</td>
