@@ -135,6 +135,7 @@
                                     <th>Telefono</th>
                                     <th>Domicilio origen</th>
                                     <th>Domicilio Destino</th>
+                                    <th>Documentos</th>
                                     <th>App Instalada</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -157,6 +158,11 @@
                                             {% endwith %}
                                         </td>
                                         <td>{{individuo.domicilio_actual}}</td>
+                                        <td>
+                                            {% for doc in individuo.get_dnis %}
+                                                <a href="{{doc.url}}" target="_blank">{{doc.aclaracion}}</a><br>
+                                            {% endfor %}
+                                        </td>
                                         <td>
                                             {% if individuo.appdata %}
                                                 <img class="icons" src="/static/img/icons/check.png">

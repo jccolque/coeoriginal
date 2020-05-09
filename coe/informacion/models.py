@@ -122,6 +122,8 @@ class Individuo(models.Model):
             self.qrpath = relative_path
             self.save()
             return self.qrpath
+    def get_dnis(self):
+        return self.documentos.filter(tipo='DI')
     def tracking(self):
         return self.geoposiciones.exists()
     def ultima_alerta(self):
@@ -242,7 +244,7 @@ class Sintoma(models.Model):
 class Documento(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="documentos")
     tipo = models.CharField('Tipo de Documento', choices=TIPO_DOCUMENTO, max_length=12, default='HM')
-    archivo = models.FileField('Archivo', upload_to='informacion/individuo/documentos/')
+    archivo = models.FileField('Archivo', upload_to='informacion/individuos/documentos/')
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha Subido', default=timezone.now)
     activo = models.BooleanField(default=True)
