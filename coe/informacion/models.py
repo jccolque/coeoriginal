@@ -123,7 +123,7 @@ class Individuo(models.Model):
             self.save()
             return self.qrpath
     def get_dnis(self):
-        return [doc for doc in self.documentos.all if doc.tipo == 'DI']
+        return [doc for doc in self.documentos.all() if doc.tipo == 'DI']
     def tracking(self):
         return self.geoposiciones.exists()
     def ultima_alerta(self):
