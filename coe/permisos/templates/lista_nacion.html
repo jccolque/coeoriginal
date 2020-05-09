@@ -52,7 +52,7 @@
                                     <td>{{pasajero.telefono}}</td>
                                     <td>{{pasajero.email}}</td>
                                     <td>
-                                        {% for doc in individuo.get_dnis %}
+                                        {% for doc in pasajero.get_dnis %}
                                             <a href="{{doc.archivo.url}}" target="_blank">{{doc.aclaracion}}</a><br>
                                         {% endfor %}
                                     </td>
