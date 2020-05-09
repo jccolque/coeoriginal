@@ -13,7 +13,7 @@ class SeguimientoConfig(AppConfig):
             if not DEBUG:
                 from background_task.models import Task
                 if not Task.objects.filter(verbose_name="baja_seguimiento").exists():
-                    from informacion.tasks import baja_seguimiento
+                    from seguimiento.tasks import baja_seguimiento
                     baja_seguimiento(repeat=3600*12, verbose_name="baja_seguimiento")#Cada 12 horas
         except OperationalError:
             pass  #  Por si no existe
