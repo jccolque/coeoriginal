@@ -96,13 +96,18 @@
                             <hr><!--Capacitaciones y Turno -->
                             <div class="row">
                                 <div class="col-lg-8">
-                                    <li class="lista">
-                                        {% for capacitacion in capacitaciones %}
-                                            <a href="{% url 'inscripciones:ver_capacitacion' token=inscripto.token capacitacion_id=capacitacion.id %}" target="_blank">
-                                                Ver {{capacitaciones.nombre}} <img class="icons" src="/static/img/icons/video.png">
-                                            </a>
-                                        {% endfor %}
-                                    </li>
+                                    {% for capacitacion in capacitaciones %}
+                                        <li class="lista">
+                                            {% if capacitacion in inscripto.capacitaciones.all %}
+                                                {{capacitaciones.nombre}}
+                                                <img class="icons" src="/static/img/icons/check.png">
+                                            {% else %}
+                                                <a href="{% url 'inscripciones:ver_capacitacion' token=inscripto.token capacitacion_id=capacitacion.id %}" target="_blank">
+                                                    Ver {{capacitaciones.nombre}} <img class="icons" src="/static/img/icons/video.png">
+                                                </a>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
                                 </div>
                                 <div class="col-lg-4">
                                     <h3>Seleccion de Turno:</h3>
