@@ -19,9 +19,9 @@ logger = logging.getLogger("tasks")
 #Definimos tareas
 @background(schedule=20)
 def reintentar_validar():
-    logger.info("Iniciamos envio de mails de Re validacion")
+    logger.info("\nreintentar_validar")
     if SEND_MAIL:
-        limite = timezone.now() - timedelta(days=4)
+        limite = timezone.now() - timedelta(days=3)
         inscriptos = Inscripcion.objects.filter(valido=False, fecha__gt=limite)
         for inscripto in inscriptos:
             logger.info("Procesamos a:" + str(inscripto.individuo))
@@ -37,4 +37,9 @@ def reintentar_validar():
                 email.send()
             except Exception as error:
                 logger.info("Fallo revalidacion: "+str(error)+'\n'+str(traceback.format_exc()))
-    logger.info("Terminamos envio de mails\n")
+        #Damos de baja los que ya cumplieron 3 dias y no validaron
+        inscriptos = Inscripcion.objects.filter(valido=False, fecha__lt=limite)
+        for inscripto in inscriptos:
+            inscripto.estado = 99
+            inscripto.save()
+    logger.info("reintentar_validar\n")

@@ -1,0 +1,14 @@
+{% autoescape off %}
+    {{inscripto.individuo.apellidos}}, {{inscripto.individuo.nombres}}:
+    Su inscripción ha sido exitosa.
+
+    Bienvenido al "Plan Integral del Voluntariado Social para el Adulto Mayor en el marco del COVID-19.; para terminar su inscripción debe solicitar turno para la firma presencial del Acuerdo Básico Común.
+    Puede Obtener su turno desde el panel de Inscripcion:
+    http://coe.jujuy.gob.ar/{% url 'inscripciones:ver_inscripto' inscripcion_id=inscripto.id num_doc=inscripto.individuo.num_doc %}
+    
+    A continuación, puedes completar el siguiente formulario y llevarlo impreso para su firma, y de esta manera agilizaremos la firma del Acuerdo Básico Común.
+    http://coe.jujuy.gob.ar/static/archivo/social/anexo1.pdf
+
+    Dudas o consultas al 0388-154613621 o al correo voluntariadojujuy@gmail.com
+    Cuidate y Cuidanos!
+{% endautoescape %}

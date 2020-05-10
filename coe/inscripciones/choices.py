@@ -7,9 +7,9 @@ TIPO_INSCRIPTO = (
 ESTADO_INSCRIPTO = (
     (0, 'Inscripcion Iniciada'),
     (1, 'Inscripcion Terminada - Esperando Aprobacion'),
-    (2, 'Pre Inscripcion Aprobada'),
-    (3, 'Llamada Telefonica Aprobada'),
-    (4, 'Tarea Asignada'),
+    (2, 'Capacitaciones'),
+    (3, 'Turno Para firmar Acuerdo Basico Pedido'),
+    (4, 'Inscripcion Finalizada'),
 )
 
 GRUPO_SANGUINEO = (

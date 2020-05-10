@@ -92,6 +92,23 @@
                                 </div>
                             </div>
                         </div>
+                        {% if capacitaciones %}
+                            <hr><!--Capacitaciones y Turno -->
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <li class="lista">
+                                        {% for capacitacion in capacitaciones %}
+                                            <a href="{% url 'inscripciones:ver_capacitacion' token=inscripto.token capacitacion_id=capacitacion.id %}" target="_blank">
+                                                Ver {{capacitaciones.nombre}} <img class="icons" src="/static/img/icons/video.png">
+                                            </a>
+                                        {% endfor %}
+                                    </li>
+                                </div>
+                                <div class="col-lg-4">
+                                    OBTENER TURNO
+                                </div>
+                            </div>
+                        {% endif %}
                         <hr>
                         {% if inscripto.emails_enviados.exists %}
                             <h3>Emails Enviados al individuo</h3>
@@ -143,36 +160,32 @@
                                         <img class="icons" src="/static/img/icons/wrong.png">
                                     {% endif %}
                                 </li>
-                                <li class="lista">
-                                    Registrarse en la App Covid19 Jujuy
-                                    {% if inscripto.individuo.appdata %}
-                                        <img class="icons" src="/static/img/icons/check.png">
-                                    {% else %}
-                                        <img class="icons" src="/static/img/icons/wrong.png">
-                                    {% endif %}
-                                </li>
                             </ul>
                         {% elif inscripto.estado == 1 %}
-                            <p>Su inscripcion esta siendo evaluada, lo contactaremos para informarle cuando sea aprobada.</p>
-                        {% elif inscripto.estado == 2 %}
+                            <p>Su inscripcion esta siendo evaluada, lo enviaremos un correo electronico una vez aprobada.</p>
+                        {% elif inscripto.estado == 2 or inscripto.estado == 3 %}
                             <ul>
-                                <li class="lista">
-                                    Correo Electronico Enviado
-                                    <img class="icons" src="/static/img/icons/check.png">
-                                </li>
-                                <li class="lista">
-                                    Ver Videos Instructivos
-                                    <img class="icons" src="/static/img/icons/wrong.png">
-                                </li>
-                                <li class="lista">
-                                    Recibir Entrevista Telefonica
-                                    <img class="icons" src="/static/img/icons/wrong.png">
-                                </li>
+                                {% for capacitacion in capacitaciones %}
+                                    <li class="lista">
+                                        {{capacitacion.nombre}}
+                                        {% if capacitacion in inscripto.capacitaciones.all %}
+                                            <img class="icons" src="/static/img/icons/check.png">
+                                        {% else %}
+                                            <img class="icons" src="/static/img/icons/wrong.png">
+                                        {% endif %}
+                                    </li>                                
+                                {% if inscripto.estado == 2 %}
+                                    <li class="lista">
+                                        Obtener Turno para Firma de Acuerdo Basico
+                                        <img class="icons" src="/static/img/icons/wrong.png">
+                                    </li>
+                                {% else %}
+                                    <p><b>Presentese a firmar el acuerdo basico:</b></p>
+                                    DATOS DEL TURNO
+                                {% endif %}
                             </ul>
-                        {% elif inscripto.estado == 3 %}
-                            <p>Un encargado regional lo contactara para coordinar sus tareas como voluntario Social</p>
                         {% elif inscripto.estado == 4 %}
-                            <p>Individuo Realizando tareas de voluntariado Social</p>
+                            <p><b>Su Inscripcion se encuentra finalizada, nos contactaremos personalmente con usted a partir de este momento.</b></p>
                         {% endif %}
 
                         {% if perms.operadores.menu_inscripciones %}

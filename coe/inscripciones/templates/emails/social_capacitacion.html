@@ -1,0 +1,14 @@
+{% autoescape off %}
+    {{inscripto.individuo.apellidos}}, {{inscripto.individuo.nombres}}:
+    Su inscripción ha sido Pre Aprobada.
+
+    Bienvenido al "Plan Integral del Voluntariado Social para el Adulto Mayor en el marco del COVID-19:
+
+    Ya se encuentran disponibles los videos de Capacitacion que debe observar completamente para continuar con el proceso:
+    
+    Por favor acceda a su panel de Inscripcion:
+    http://coe.jujuy.gob.ar/{% url 'inscripciones:ver_inscripto' inscripcion_id=inscripto.id num_doc=inscripto.individuo.num_doc %}
+
+    Dudas o consultas al 0388-154613621 o al correo voluntariadojujuy@gmail.com
+    Cuidate y Cuidanos!
+{% endautoescape %}

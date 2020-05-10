@@ -82,6 +82,9 @@ class IndividuoForm(forms.ModelForm):
             'dom_aislamiento': forms.HiddenInput(),
             'dom_ubicacion': forms.HiddenInput(),
         }
+    #def __init__(self, *args, **kwargs):
+    #    super(IndividuoForm, self).__init__(*args, **kwargs)
+    #Si tiene domicili actual poner estos campos en NO EDITABLES    
 
 class InquilinoForm(forms.ModelForm):
     atributos = forms.MultipleChoiceField(

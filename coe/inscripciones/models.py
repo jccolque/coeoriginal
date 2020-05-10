@@ -26,6 +26,12 @@ class Tarea(models.Model):
     def __str__(self):
         return self.nombre
 
+class Capacitacion(models.Model):
+    tipo = models.CharField(choices=TIPO_INSCRIPTO, max_length=2, default='VS')
+    nombre = models.CharField('Nombre Capacitacion', max_length=100)
+    link = models.URLField('Link')
+
+#Modelos primarios
 class Inscripcion(models.Model):
     tipo_inscripto = models.CharField(choices=TIPO_INSCRIPTO, max_length=2, default='PS')
     estado = models.IntegerField(choices=ESTADO_INSCRIPTO, default=0)
@@ -40,6 +46,7 @@ class Inscripcion(models.Model):
     #grupo_sanguineo = models.IntegerField('Grupo Sanguineo', choices=GRUPO_SANGUINEO, null=True, blank=True)
     #dona_sangre = models.BooleanField(default=False, null=True, blank=True)
     tiene_internet = models.BooleanField(default=False, null=True, blank=True)
+    capacitaciones = models.ManyToManyField(Capacitacion)
     fecha = models.DateTimeField('Fecha Inscripcion', default=timezone.now)
     valido = models.BooleanField(default=False)
     disponible = models.BooleanField(default=True)

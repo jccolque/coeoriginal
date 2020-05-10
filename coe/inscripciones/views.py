@@ -188,6 +188,16 @@ def cargar_reverso_dni(request, inscripcion_id):
             return redirect('inscripciones:ver_inscripto', inscripcion_id=inscripcion_id, num_doc=inscripto.individuo.num_doc)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Foto del Reverso del Documento", 'form': form, 'boton': "Cargar", })
 
+def ver_capacitacion(request, token, capacitacion_id):
+    #Obtenemos ambos objetos
+    inscripto = Inscripcion.objects.get(token=video_id)
+    capacitacion = Capacitacion.objects.get(id=capacitacion_id)
+    #chequeamos que haya visto el anterior
+    #Marcamos como vista la capacitacion
+    inscripto.capacitaciones.add(capacitacion)
+    #Generamos el link de la misma
+    return redirect(capacitacion.url)
+
 #Administracion
 @permission_required('operadores.menu_inscripciones')
 def menu(request):
@@ -265,12 +275,35 @@ def avanzar_estado(request, inscripcion_id):
     if inscripto.estado < 4:
         inscripto.estado += 1
         inscripto.save()
+    if inscripto.estado == 3:#Si termino la capacitacion
+        if SEND_MAIL:
+            to_email = inscripto.individuo.email
+            mail_subject = 'COE2020 - Inscripcion Pre-Aprobada'
+            #Preparamos el correo electronico
+            mail_subject = 'COE2020 - Inscripcion Pre-Aprobada'
+            message = render_to_string('emails/social_capacitacion.html', {
+                    'inscripto': inscripto,
+                })
+            #Instanciamos el objeto mail con destinatario
+            email = EmailMessage(mail_subject, message, to=[to_email])
+            email.send()
     if inscripto.estado == 4:#Si termino el proceso
         #Le asignamos atributo de Voluntario Aprobado
         atributo = Atributo(individuo=inscripto.individuo)
         atributo.tipo = 'VA'
         atributo.aclaracion = "Aprobado por: " + str(obtener_operador(request))
         atributo.save()
+        #Enviamos mail de aprobacion:
+        if SEND_MAIL:
+            to_email = inscripto.individuo.email
+            #Preparamos el correo electronico
+            mail_subject = 'COE2020 - Inscripcion Aprobada'
+            message = render_to_string('emails/social_aprobada.html', {
+                    'inscripto': inscripto,
+                })
+            #Instanciamos el objeto mail con destinatario
+            email = EmailMessage(mail_subject, message, to=[to_email])
+            email.send()
     return redirect('inscripciones:ver_inscripto', inscripcion_id=inscripcion_id, num_doc=inscripto.individuo.num_doc)
 
 @permission_required('operadores.menu_inscripciones')

@@ -249,12 +249,10 @@ def cargar_individuo(request, traslado_id=None, individuo_id=None, num_doc=None)
                 individuo.domicilio_actual = individuo.domicilios.last()
                 individuo.save()
             #Generamos modelos externos:
+            if form.cleaned_data['dom_localidad']:
             #Si cambio el domicilio Actual:
-            if not individuo.domicilio_actual or (
-                form.cleaned_data['dom_calle'] != individuo.domicilio_actual.calle
-                ):
+                if not individuo.domicilio_actual or (form.cleaned_data['dom_calle'] != individuo.domicilio_actual.calle):
                 #Creamos domicilio
-                if form.cleaned_data['dom_localidad']:
                     domicilio = Domicilio()
                     domicilio.individuo = individuo
                     domicilio.localidad = form.cleaned_data['dom_localidad']
