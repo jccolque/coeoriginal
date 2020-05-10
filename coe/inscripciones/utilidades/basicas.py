@@ -13,7 +13,7 @@ from background_task import background
 from inscripciones.models import Inscripcion
 
 def continuar_inscripcion():
-    inscriptos = Inscripcion.objects.filter(valido=True, tipo='VS')
+    inscriptos = Inscripcion.objects.filter(valido=True, tipo_inscripto='VS')
     total = inscriptos.count()
     print("Tenemos " + str(total) + " Inscriptos que comunicar.")
     index = 0
