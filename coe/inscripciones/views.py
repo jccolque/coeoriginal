@@ -192,9 +192,9 @@ def cargar_reverso_dni(request, inscripcion_id):
             return redirect('inscripciones:ver_inscripto', inscripcion_id=inscripcion_id, num_doc=inscripto.individuo.num_doc)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Foto del Reverso del Documento", 'form': form, 'boton': "Cargar", })
 
-def ver_capacitacion(request, token, capacitacion_id):
+def ver_capacitacion(request, inscripto_id, capacitacion_id):
     #Obtenemos ambos objetos
-    inscripto = Inscripcion.objects.get(token=video_id)
+    inscripto = Inscripcion.objects.get(pk=inscripto_id)
     capacitacion = Capacitacion.objects.get(id=capacitacion_id)
     #chequeamos que haya visto el anterior
     #Marcamos como vista la capacitacion

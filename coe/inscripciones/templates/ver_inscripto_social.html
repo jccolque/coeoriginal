@@ -102,7 +102,7 @@
                                                 {{capacitaciones.nombre}}
                                                 <img class="icons" src="/static/img/icons/check.png">
                                             {% else %}
-                                                <a href="{% url 'inscripciones:ver_capacitacion' token=inscripto.token capacitacion_id=capacitacion.id %}" target="_blank">
+                                                <a href="{% url 'inscripciones:ver_capacitacion' inscripto_id=inscripto.id capacitacion_id=capacitacion.id %}" target="_blank">
                                                     Ver {{capacitaciones.nombre}} <img class="icons" src="/static/img/icons/video.png">
                                                 </a>
                                             {% endif %}

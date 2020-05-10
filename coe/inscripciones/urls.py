@@ -15,7 +15,7 @@ urlpatterns = [
     path('frente_dni/<int:inscripcion_id>', views.cargar_frente_dni, name='cargar_frente_dni'),
     path('reverso_dni/<int:inscripcion_id>', views.cargar_reverso_dni, name='cargar_reverso_dni'),
     path('ver/<int:inscripcion_id>/<str:num_doc>', views.ver_inscripto, name='ver_inscripto'),
-    path('ver/capacitacion/<str:token>/<int:capacitacion_id>', views.ver_capacitacion, name='ver_capacitacion'),
+    path('ver/capacitacion/<int:inscripto_id>/<int:capacitacion_id>', views.ver_capacitacion, name='ver_capacitacion'),
     #Administracion
     path('', views.menu, name='menu'),
     path('lista/tareas', views.lista_tareas, name='lista_tareas'),
