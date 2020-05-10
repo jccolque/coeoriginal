@@ -47,6 +47,7 @@
                             <hr><!--Capacitaciones y Turno -->
                             <div class="row">
                                 <div class="col-lg-8">
+                                    <h3><b>Capacitacion:</b></h3>
                                     {% for capacitacion in capacitaciones %}
                                         <li class="lista">
                                             {% if capacitacion in inscripto.capacitaciones.all %}
@@ -61,8 +62,8 @@
                                     {% endfor %}
                                 </div>
                                 <div class="col-lg-4">
-                                    <h3>Seleccion de Turno:</h3>
-                                    (En construccion, en pocos minutos podra Seleccionarlo.)
+                                    <h3><b>Seleccion de Turno:</b></h3>
+                                    (En construccion, en pocos minutos podra obtener el suyo.)
                                 </div>
                             </div>
                         {% endif %}
