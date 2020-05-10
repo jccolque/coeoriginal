@@ -200,7 +200,7 @@ def ver_capacitacion(request, inscripto_id, capacitacion_id):
     #Marcamos como vista la capacitacion
     inscripto.capacitaciones.add(capacitacion)
     #Generamos el link de la misma
-    return redirect(capacitacion.url)
+    return redirect(capacitacion.link)
 
 #Administracion
 @permission_required('operadores.menu_inscripciones')

@@ -43,6 +43,29 @@
                                 </div>
                             </div>
                         </div>
+                        {% if capacitaciones %}
+                            <hr><!--Capacitaciones y Turno -->
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    {% for capacitacion in capacitaciones %}
+                                        <li class="lista">
+                                            {% if capacitacion in inscripto.capacitaciones.all %}
+                                                {{capacitacion.nombre}}
+                                                <img class="icons" src="/static/img/icons/check.png">
+                                            {% else %}
+                                                <a href="{% url 'inscripciones:ver_capacitacion' inscripto_id=inscripto.id capacitacion_id=capacitacion.id %}" target="_blank">
+                                                    Ver {{capacitacion.nombre}} <img class="icons" src="/static/img/icons/video.png">
+                                                </a>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </div>
+                                <div class="col-lg-4">
+                                    <h3>Seleccion de Turno:</h3>
+                                    (En construccion, en pocos minutos podra Seleccionarlo.)
+                                </div>
+                            </div>
+                        {% endif %}
                         <hr>
                         <div class="row">
                         <!--Documentacion -->
@@ -92,29 +115,6 @@
                                 </div>
                             </div>
                         </div>
-                        {% if capacitaciones %}
-                            <hr><!--Capacitaciones y Turno -->
-                            <div class="row">
-                                <div class="col-lg-8">
-                                    {% for capacitacion in capacitaciones %}
-                                        <li class="lista">
-                                            {% if capacitacion in inscripto.capacitaciones.all %}
-                                                {{capacitaciones.nombre}}
-                                                <img class="icons" src="/static/img/icons/check.png">
-                                            {% else %}
-                                                <a href="{% url 'inscripciones:ver_capacitacion' inscripto_id=inscripto.id capacitacion_id=capacitacion.id %}" target="_blank">
-                                                    Ver {{capacitaciones.nombre}} <img class="icons" src="/static/img/icons/video.png">
-                                                </a>
-                                            {% endif %}
-                                        </li>
-                                    {% endfor %}
-                                </div>
-                                <div class="col-lg-4">
-                                    <h3>Seleccion de Turno:</h3>
-                                    (En construccion, en pocos minutos podra Seleccionarlo.)
-                                </div>
-                            </div>
-                        {% endif %}
                         <hr>
                         {% if inscripto.emails_enviados.exists %}
                             <h3>Emails Enviados al individuo</h3>
