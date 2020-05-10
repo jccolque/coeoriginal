@@ -19,6 +19,7 @@ from operadores.functions import obtener_operador
 from .tokens import account_activation_token
 from .choices import TIPO_DISPOSITIVO
 from .models import Inscripcion, Area, Tarea, TareaElegida, Dispositivo
+from .models import Capacitacion
 from .models import ProyectoEstudiantil
 from .models import EmailsInscripto
 from .forms import ProfesionalSaludForm, VoluntarioSocialForm
@@ -148,7 +149,10 @@ def ver_inscripto(request, inscripcion_id, num_doc):
             return render(request, 'ver_inscripto_salud.html', {'inscripto': inscripto, })
         elif inscripto.tipo_inscripto == 'VS':
             inscripto.chequear_estado()
-            return render(request, 'ver_inscripto_social.html', {'inscripto': inscripto, })
+            return render(request, 'ver_inscripto_social.html', {
+                'inscripto': inscripto, 
+                'capacitaciones': Capacitacion.objects.filter(tipo=inscripto.tipo_inscripto),
+            })
     except Inscripcion.DoesNotExist:
         return render(request, 'extras/error.html', {
             'titulo': 'Inscripcion Inexistente',
