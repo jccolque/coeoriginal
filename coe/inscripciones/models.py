@@ -4,7 +4,7 @@ from django.utils import timezone
 #Imports extras
 from tinymce.models import HTMLField
 #Imports del proyecto
-from georef.models import Localidad
+from georef.models import Localidad, Ubicacion
 from informacion.models import Individuo
 from operadores.models import Operador
 #Imports de la app
@@ -34,6 +34,11 @@ class Capacitacion(models.Model):
     class Meta:
         ordering = ['orden', ]
 
+class Turno(models.Model):
+    lugar = models.ForeignKey(Ubicacion, on_delete=models.CASCADE, related_name='turnos')
+    dia = models.DateField("Dia del Turno")
+    hora = models.TimeField("Horario del Turno")
+
 #Modelos primarios
 class Inscripcion(models.Model):
     tipo_inscripto = models.CharField(choices=TIPO_INSCRIPTO, max_length=2, default='PS')
@@ -50,14 +55,27 @@ class Inscripcion(models.Model):
     #dona_sangre = models.BooleanField(default=False, null=True, blank=True)
     tiene_internet = models.BooleanField(default=False, null=True, blank=True)
     capacitaciones = models.ManyToManyField(Capacitacion)
+    turno = models.ForeignKey(Turno, on_delete=models.SET_NULL, null=True, blank=True)
     fecha = models.DateTimeField('Fecha Inscripcion', default=timezone.now)
     valido = models.BooleanField(default=False)
     disponible = models.BooleanField(default=True)
     def chequear_estado(self):
-        if self.estado == 0:
+        if self.estado == 0:#Inscripcion Iniciada
             if self.individuo.fotografia and self.frente_dni and self.reverso_dni:
                 self.estado = 1
-                self.save()       
+                self.save()
+        if self.estado == 1:#Inscripcion Terminada - Esperando Aprobacion
+            #Automatizamos por orden de desarrollo humano
+            self.estado = 2
+            self.save()
+        if self.estado == 2:#Capacitaciones
+            if self.capacitaciones.count() == Capacitacion.objects.filter(tipo=self.tipo_inscripto).count():
+                self.estado = 3
+                self.save()
+        if self.estado == 3:#Turno Para firmar Acuerdo Basico Pedido
+            if self.turno:
+                self.estado = 4
+                self.save()
     def __str__(self):
         try:
             return self.individuo.apellidos + ', ' + self.individuo.nombres

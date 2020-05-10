@@ -108,6 +108,9 @@ class Ubicacion(models.Model):
     aclaracion = HTMLField(null=True, blank=True)
     latitud = models.DecimalField('latitud', max_digits=12, decimal_places=10, null=True)
     longitud = models.DecimalField('longitud', max_digits=12, decimal_places=10, null=True)
+    hora_inicio = models.TimeField('Horario De apertura', null=True, blank=True)
+    hora_cierre = models.TimeField('Horario De Cierre', null=True, blank=True)
+    duracion_turno = models.SmallIntegerField('Duracion en minutos del Turno', default=20)
     def __str__(self):
         return self.get_tipo_display() + ':' + self.nombre + ", " + str(self.localidad)
     def as_dict(self):
@@ -137,6 +140,8 @@ class Ubicacion(models.Model):
         return Individuo.objects.filter(domicilio_actual__ubicacion=self)
     def capacidad_ocupada(self):
         return self.aislados_actuales().count()
+
+
 
 if not LOADDATA:
     #Auditoria
