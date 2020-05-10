@@ -250,16 +250,17 @@ def cargar_individuo(request, traslado_id=None, individuo_id=None, num_doc=None)
                 individuo.save()
             #Generamos modelos externos:
             if form.cleaned_data['dom_localidad']:
+                domicilio = Domicilio()
+                domicilio.individuo = individuo
+                domicilio.localidad = form.cleaned_data['dom_localidad']
+                domicilio.calle = form.cleaned_data['dom_calle']
+                domicilio.numero = form.cleaned_data['dom_numero']
+                domicilio.aclaracion = form.cleaned_data['dom_aclaracion']
             #Si cambio el domicilio Actual:
-                if not individuo.domicilio_actual or (form.cleaned_data['dom_calle'] != individuo.domicilio_actual.calle):
-                #Creamos domicilio
-                    domicilio = Domicilio()
-                    domicilio.individuo = individuo
-                    domicilio.localidad = form.cleaned_data['dom_localidad']
-                    domicilio.calle = form.cleaned_data['dom_calle']
-                    domicilio.numero = form.cleaned_data['dom_numero']
-                    domicilio.aclaracion = form.cleaned_data['dom_aclaracion']
+                if individuo.domicilio_actual in None:
                     domicilio.save()
+                else:
+                    Domicilio.objects.bulk_create([domicilio, ])
             #Creamos atributos
             atributos = form.cleaned_data['atributos']
             individuo.atributos.all().delete()

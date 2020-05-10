@@ -11,7 +11,7 @@ TIPO_SEGUIMIENTO = (
     ('FS', 'Fin del Seguimiento/Alta'),
     ('IT', 'Inicio Tracking'),
     ('AT', 'Alerta Tracking'),
-    ('FT', 'Baja Tracking'),
+    ('FT', 'Finalizacion del Tracking'),
     ('TA', 'Traslado a Aislamiento'),
     ('DF', 'Domicilio Fuera de la Provincia')
 )

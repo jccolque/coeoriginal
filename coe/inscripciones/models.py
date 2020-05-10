@@ -27,9 +27,12 @@ class Tarea(models.Model):
         return self.nombre
 
 class Capacitacion(models.Model):
+    orden = models.SmallIntegerField(verbose_name="Orden de Visualizacion")
     tipo = models.CharField(choices=TIPO_INSCRIPTO, max_length=2, default='VS')
     nombre = models.CharField('Nombre Capacitacion', max_length=100)
     link = models.URLField('Link')
+    class Meta:
+        ordering = ['orden', ]
 
 #Modelos primarios
 class Inscripcion(models.Model):

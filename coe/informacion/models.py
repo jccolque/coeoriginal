@@ -134,7 +134,6 @@ class Individuo(models.Model):
         return self.relaciones.filter(tipo="F").last()
     def voluntario_autorizado(self):
         return self.documentos.filter(tipo='AT').last()
-
     # def pdf_alta_aislamiento(self):
     #     packet = io.BytesIO()
     #     #Se crea un pdf utilizando reportLab
@@ -279,7 +278,7 @@ if not LOADDATA:
     from .signals import aislar_individuo
     from .signals import cargo_signosvitales
     from .signals import cargo_documento
-    from .signals import iniciar_tracking_transportistas
+    #from .signals import iniciar_tracking_transportistas
     from .signals import poner_en_seguimiento
 
     #Auditoria

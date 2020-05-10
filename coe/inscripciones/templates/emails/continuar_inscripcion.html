@@ -1,0 +1,10 @@
+{% autoescape off %}
+    {{inscripto.individuo.apellidos}}, {{inscripto.individuo.nombres}}:
+
+    Ya puedes continuar con tu inscripcion, por favor ingresa al siguiente link y continua con la misma:
+    http://coe.jujuy.gob.ar/{% url 'inscripciones:ver_inscripto' inscripcion_id=inscripto.id num_doc=inscripto.individuo.num_doc %}
+
+    Cuanto termines con las capacitaciones puedes pedir tu turno para presentarte a firmar el Convenio Basico con nosotros!
+
+    Cuidate y Cuidanos!
+{% endautoescape %}

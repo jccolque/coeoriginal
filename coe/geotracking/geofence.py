@@ -21,6 +21,9 @@ def obtener_trackeados():
     individuos = individuos.prefetch_related('geoposiciones', 'geoperadores')
     #Eliminamos los que terminaron el tracking:
     individuos = individuos.exclude(seguimientos__tipo='FT')
+    #Nos quedamos solo con los que estan en Cuarentena o Aislamiento
+    individuos = individuos.filter(situacion_actual__conducta__in=('D', 'E'))
+    #Entregamos ese listado de Individuos
     return individuos
 
 def obtener_base(num_doc):

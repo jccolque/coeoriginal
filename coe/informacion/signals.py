@@ -9,7 +9,7 @@ from django.db.models.signals import post_save, post_delete
 #imports Extras
 from dateutil.relativedelta import relativedelta
 #Imports del proyecto
-from seguimiento.models import Seguimiento
+from seguimiento.models import Seguimiento, Vigia
 #Imports de la app
 from .models import Pasajero
 from .models import Individuo, Domicilio, Situacion, Relacion
@@ -22,6 +22,7 @@ logger = logging.getLogger('signals')
 @receiver(post_save, sender=Individuo)
 def estado_inicial(created, instance, **kwargs):
     if created:
+        logger.info("Creamos a: " + str(instance))
         #Situacion Inicial:
         situacion = Situacion()
         situacion.individuo = instance
@@ -92,7 +93,9 @@ def aislar_individuo(created, instance, **kwargs):
         #Creamos una nueva situacion
         if individuo.situacion_actual:
             situacion = individuo.situacion_actual
-            situacion.pk = None
+            if individuo.situacion_actual.conducta not in ('D', 'E'):
+                situacion.pk = None
+                situacion.fecha = timezone.now()
         else:
             situacion = Situacion(individuo=individuo)
             situacion.estado = 40
@@ -192,19 +195,28 @@ def relacionar_situacion(created, instance, **kwargs):
             sit.aclaracion = "Relacion Detectada por el sistema"
             sit.save()
 
-@receiver(post_save, sender=Atributo)
-def iniciar_tracking_transportistas(created, instance, **kwargs):
-    if created and instance.tipo == "CT":
-        pass  #  INICIAMOS TRACKING DEL INDIVIDUO
+#@receiver(post_save, sender=Atributo)
+#def iniciar_tracking_transportistas(created, instance, **kwargs):
+#    if created and instance.tipo == "CT":
+#        pass  #  INICIAMOS TRACKING DEL INDIVIDUO
 
 #Creamos Seguimientos
 @receiver(post_save, sender=Domicilio)
 def poner_en_seguimiento(created, instance, **kwargs):
     if created and instance.aislamiento:
-        atributo = Atributo(individuo=instance.individuo)
+        individuo = instance.individuo
+        #Generamos atributo de vigilancia
+        atributo = Atributo(individuo=individuo)
         atributo.tipo = 'VE'
         atributo.aclaracion = "Por Ingreso a Aislamiento."
         atributo.save()
+        #Lo ponemos en seguimiento:
+        try:
+            vigia = Vigia.objects.all().annotate(cantidad=Count('controlados')).order_by('cantidad').first()
+            vigia.controlados.add(individuo)
+        except:
+            logger.info("No existen Vigias, " + str(individuo) + " quedo sin vigilante.")
+        
 
 @receiver(post_save, sender=SignosVitales)
 def cargo_signosvitales(created, instance, **kwargs):
