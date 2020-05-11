@@ -1,10 +1,17 @@
+#Imports de python
+from datetime import timedelta
+#Import Django
+from django.utils import timezone
+#Imports del proyecto
+from coe.constantes import DIAS_CUARENTENA
 from informacion.models import Individuo
 from informacion.models import Situacion, Domicilio, Sintoma, Atributo
 from geotracking.models import GeoPosicion
 from app.models import AppData
 from seguimiento.models import Seguimiento
 
-def arreglar_aislamiento():
+#Funciones
+def eliminar_aislamientos_duplicados():
     aislados = Individuo.objects.filter(situacion_actual__conducta__in=('D', 'E'))
     aislados = aislados.select_related('situacion_actual')
     aislados = aislados.prefetch_related('situaciones')
@@ -18,6 +25,36 @@ def arreglar_aislamiento():
             aislado.situacion_actual.save()
             aislado.situaciones.filter(conducta__in=('D','E')).exclude(pk=aislado.situacion_actual.pk).delete()
             
+def bajas_automaticas():
+    individuos = Individuo.objects.filter(situacion_actual__conducta__in=('D', 'E'))
+    #Obtenemos todos los que ya llevan 16 dias de cuarentena
+    limite = timezone.now() - timedelta(days=DIAS_CUARENTENA + 2)
+    individuos = individuos.filter(situacion_actual__fecha__lt=limite)
+    #Los damos de baja a la fuerza:
+    for individuo in individuos:
+        #Lo quitamos de Seguimiento
+        seguimiento = Seguimiento(individuo=individuo)
+        seguimiento.tipo = 'FS'
+        seguimiento.aclaracion = "Baja automatizada"
+        seguimiento.save()
+        #Lo damos de Alta de Aislamiento
+        situacion = Situacion(individuo=individuo)
+        seguimiento.aclaracion = "Baja automatizada"
+        situacion.save()
+        #Le cambiamos el domicilio
+        dom = individuo.domicilios.filter(aislamiento=False).last()#Buscamos el ultimo conocido comun
+        if not dom:#Si no existe
+            dom = individuo.domicilio_actual#usamos el de aislamiento
+            dom.ubicacion = None#Pero blanqueado
+            dom.aislamiento = False
+            dom.numero += '(pk:' + str(individuo.pk) + ')'#Agregamos 'salt' para evitar relaciones
+        #Blanqueamos campos para crearlo como nuevo:
+        dom.pk = None
+        dom.aclaracion = "Baja automatizada"
+        dom.fecha = timezone.now()
+        dom.save()
+
+
 
 #Vamos a limpiar todos los repetidos que no sean actual
 def limpiar_situacion():
