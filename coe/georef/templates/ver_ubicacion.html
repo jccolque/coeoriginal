@@ -96,8 +96,8 @@
                                 <tbody>
                                     {% for turno in ubicacion.turnos_inscripciones.all %}
                                         <tr>
-                                            <td>{{turno.fecha}}</td>
-                                            <td>{{turno.hora}}</td>
+                                            <td>{{turno.fecha.date}}</td>
+                                            <td>{{turno.fecha.time}}</td>
                                             <td>{{turno.inscripto.individuo.num_doc}}</td>
                                             <td>{{turno.inscripto.individuo.apellidos}}, {{turno.inscripto.individuo.nombres}}</td>
                                             <td>{{turno.inscripto.individuo.telefono}}</td>
