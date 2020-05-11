@@ -32,6 +32,7 @@ def bajas_automaticas():
     individuos = individuos.filter(situacion_actual__fecha__lt=limite)
     #Los damos de baja a la fuerza:
     for individuo in individuos:
+        print("Sacamos de Aislamiento pk:" + str(individuo.pk) + ' - ' + str(individuo))
         #Lo quitamos de Seguimiento
         seguimiento = Seguimiento(individuo=individuo)
         seguimiento.tipo = 'FS'
@@ -53,8 +54,6 @@ def bajas_automaticas():
         dom.aclaracion = "Baja automatizada"
         dom.fecha = timezone.now()
         dom.save()
-
-
 
 #Vamos a limpiar todos los repetidos que no sean actual
 def limpiar_situacion():
