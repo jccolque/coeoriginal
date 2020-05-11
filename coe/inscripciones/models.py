@@ -67,7 +67,7 @@ class Inscripcion(models.Model):
                 self.estado = 3
                 self.save()
         if self.estado == 3:#Turno Para firmar Acuerdo Basico Pedido
-            if self.turno:
+            if self.turnos.exists():
                 self.estado = 4
                 self.save()
     def __str__(self):

@@ -67,7 +67,7 @@
                                         {% for ubicacion in ubicaciones %}
                                             <li>
                                                 <a href="{% url 'inscripciones:turnero' ubicacion_id=ubicacion.id inscripto_id=inscripto.id %}" target="_blank">
-                                                    {{ubicacion.nombre}} ({{ubicacion.localidad}})
+                                                    {{ubicacion.nombre}} ({{ubicacion.localidad.nombre}})
                                                 </a>
                                             </li>
                                         {% endfor %}
