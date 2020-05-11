@@ -224,7 +224,7 @@ def turnero(request, ubicacion_id, inscripto_id, fecha=None, hora=None):
                     #Chequeamos la cantidad de turnos sacados:
                     ocupados = ubicacion.turnos_inscripciones.filter(fecha=temp_fecha).count()
                     if ubicacion.capacidad_maxima > ocupados:
-                        turnos.append([dia.strftime("%Y-%m-%d"), temp.strftime("%H:%M"), ubicacion.capacidad_maxima - ocupados])
+                        turnos.append([temp_fecha.strftime("%Y-%m-%d"), temp_fecha.strftime("%H:%M"), ubicacion.capacidad_maxima - ocupados])
                     #Agregamos 20minutos
                     temp_fecha += timedelta(minutes=ubicacion.duracion_turno)
         #Tenemos el bloque completo de turnos disponibles
