@@ -1,22 +1,26 @@
 {% extends 'base_inscripciones.html' %}
 
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 offset-lg-2">
-                <h2>Bienvenido {{inscripto.individuo}}</h2>
-                <p>Selecciona el turno que prefieras para {{ubicacion}}</p>
-                <br>
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
                 <div class="row">
-                    {% for turno in turnos %}
-                        <div class="col-sm-2 turnito">
-                            <p>{{turno.0}} {{turno.1}}</p>
-                            <p>(Quedan {{turno.2}} Disponibles)</p>
-                            <a href="{% url 'inscripciones:turno_seleccionado' ubicacion_id=ubicacion.id inscripto_id=inscripto.id fecha=turno.0 hora=turno.1 %}">Pedir Turno</a>
+                    <div class="col-lg-8 offset-lg-2">
+                        <h2>Bienvenido {{inscripto.individuo}}</h2>
+                        <p>Selecciona el turno que prefieras para {{ubicacion}}</p>
+                        <br>
+                        <div class="row">
+                            {% for turno in turnos %}
+                                <div class="col-sm-2 turnito">
+                                    <p>{{turno.0}} {{turno.1}}</p>
+                                    <p>(Quedan {{turno.2}} Disponibles)</p>
+                                    <a href="{% url 'inscripciones:turno_seleccionado' ubicacion_id=ubicacion.id inscripto_id=inscripto.id fecha=turno.0 hora=turno.1 %}">Pedir Turno</a>
+                                </div>
+                            {% endfor %}
                         </div>
-                    {% endfor %}
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
+    </section>
 {% endblock %}

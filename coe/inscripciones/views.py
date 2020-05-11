@@ -228,17 +228,19 @@ def turnero(request, ubicacion_id, inscripto_id, fecha=None, hora=None):
                     #Agregamos 20minutos
                     temp_fecha += timedelta(minutes=ubicacion.duracion_turno)
         #Tenemos el bloque completo de turnos disponibles
-        return render(request, 'elegir_turno.html', {
+        return render(request, "elegir_turno.html", {
             'inscripto': inscripto,
             'ubicacion': ubicacion,
-            'turnos': turnos,
+            'turnos': turnos, 
         })
     else:  #  Si selecciono una fecha
+        #Creamos el turno
         turno = Turno()
         turno.ubicacion = ubicacion
         turno.fecha = parse_datetime(fecha + ' ' + hora)#super bizzarre tool
         turno.inscripto = inscripto
         turno.save()
+        #Volvemos al panel
         return redirect('inscripciones:ver_inscripto', inscripcion_id=inscripto.id, num_doc=inscripto.individuo.num_doc)
 
 #Administracion
