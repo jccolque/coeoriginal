@@ -1,6 +1,6 @@
 #imports de Python
 import csv
-from datetime import datetime, timedelta
+from datetime import time, datetime, timedelta
 #Imports de Django
 from django.http import HttpResponse
 from django.utils import timezone
@@ -219,15 +219,14 @@ def turnero(request, ubicacion_id, inscripto_id, fecha=None, hora=None):
         turnos = []
         for dia in dias:#Por cada uno de los dias
             if dia.weekday() < 5:#si es laborable
-                temp = ubicacion.hora_inicio#Empezamos desde el primer momento del dia
-                while temp < ubicacion.hora_cierre:#
-                    temp_fecha = datetime.combine(dia, temp)
+                temp_fecha = datetime.combine(dia, ubicacion.hora_inicio)#Empezamos desde el primer momento del dia
+                while temp_fecha.time() < ubicacion.hora_cierre:#
                     #Chequeamos la cantidad de turnos sacados:
                     ocupados = ubicacion.turnos_inscripciones.filter(fecha=temp_fecha).count()
                     if ubicacion.capacidad_maxima > ocupados:
                         turnos.append([dia.strftime("%Y-%m-%d"), temp.strftime("%H:%M"), ubicacion.capacidad_maxima - ocupados])
                     #Agregamos 20minutos
-                    temp += timedelta(minutes=20)
+                    temp_fecha += timedelta(minutes=ubicacion.duracion_turno)
         #Tenemos el bloque completo de turnos disponibles
         return render(request, 'elegir_turno.html', {
             'inscripto': inscripto,
