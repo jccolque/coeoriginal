@@ -1,13 +1,14 @@
 #Imports de Python
 import io
 #Imports de django
-from coe.settings import STATIC_ROOT, MEDIA_ROOT
+from django.core.files import File
 #Imports Extras:
 from PyPDF2 import PdfFileWriter, PdfFileReader
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 #Imports del Proyeto
+from coe.settings import STATIC_ROOT, MEDIA_ROOT
 from informacion.models import Individuo
 #Imports de la app
 from .models import Vigia
@@ -22,9 +23,9 @@ def creamos_doc_alta(individuo):
     packet = io.BytesIO()
     #Se crea un pdf utilizando reportLab
     pdf = canvas.Canvas(packet, pagesize = A4)
-    cadena = individuo.apellidos + individuo.nombres + individuo.get_tipo_doc_display() + str(individuo.num_doc)
     pdf.setFont('Times-Roman', 12)
-    pdf.drawString(85, 625, cadena)
+    pdf.drawString(85, 635, individuo.apellidos + ', ' + individuo.nombres + ' - ' + individuo.get_tipo_doc_display() + ': ' + str(individuo.num_doc))
+    pdf.drawString(85, 620, "Inicio Su Aislamiento el dia: " + str(individuo.situaciones.filter(conducta__in=('D','E')).last().fecha.date()) + '.')
     pdf.save()
     # Nos movemos al comienzo del búfer StringIO
     packet.seek(0)
@@ -37,6 +38,9 @@ def creamos_doc_alta(individuo):
     pagina.mergePage(nuevo_pdf.getPage(0))
     salida.addPage(pagina)
     # Finalmente se escribe la salida, en un archivo real
-    outputStream = open(MEDIA_ROOT+'/informacion/altas/'+individuo.num_doc+".pdf", "wb")
+    path = MEDIA_ROOT+'/informacion/altas/'+individuo.num_doc+".pdf"
+    outputStream = open(path, "wb")
     salida.write(outputStream)
     outputStream.close()
+    #Devolvemos el archivo para guardar:
+    return '/informacion/altas/'+individuo.num_doc+".pdf"

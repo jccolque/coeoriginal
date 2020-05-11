@@ -1,11 +1,13 @@
-#Imports Django
+#Imports de python
 from datetime import timedelta
+#Imports Django
 from django.db.models import Count
 from django.db.models import Q
 from django.utils import timezone
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
+from django.core.files.base import File
 from django.contrib.auth.decorators import permission_required
 from django.contrib.admin.views.decorators import staff_member_required
 #Imports del proyecto
@@ -18,7 +20,7 @@ from georef.models import Nacionalidad
 from georef.models import Ubicacion
 from operadores.functions import obtener_operador
 from informacion.models import Individuo, SignosVitales, Relacion
-from informacion.models import Situacion
+from informacion.models import Situacion, Documento
 from app.models import AppData
 #imports de la app
 from .models import Seguimiento, Vigia
@@ -235,7 +237,7 @@ def lista_aislados(request):
     individuos = individuos.select_related('appdata')
     individuos = individuos.prefetch_related('vigiladores', 'vigiladores__operador')
     #Lanzamos reporte
-    return render(request, "lista_seguimiento.html", {
+    return render(request, "lista_seguimientos.html", {
         'individuos': individuos,
         'has_table': True,
     })
@@ -265,6 +267,11 @@ def dar_alta(request, individuo_id):
     if request.method == "POST":
         #Obtenemos al operador
         operador = str(obtener_operador(request))
+        #Generar documento de alta de aislamiento:
+        doc = Documento(individuo=individuo)
+        doc.tipo = 'AC'
+        doc.archivo.name = creamos_doc_alta(individuo)
+        doc.save()
         #Lo quitamos de Seguimiento
         seguimiento = Seguimiento(individuo=individuo)
         seguimiento.tipo = 'FS'
@@ -274,9 +281,6 @@ def dar_alta(request, individuo_id):
         situacion = Situacion(individuo=individuo)
         seguimiento.aclaracion = "Baja confirmada por: " + operador
         situacion.save()
-        #Generar documento de alta de aislamiento:
-        # al individuo tipo = ('AC', 'Certificado de Alta de Cuarentena'),
-        archivo = creamos_doc_alta(individuo)
         #Le cambiamos el domicilio
         dom = individuo.domicilios.filter(aislamiento=False).last()#Buscamos el ultimo conocido comun
         if not dom:#Si no existe
@@ -300,4 +304,15 @@ def dar_alta(request, individuo_id):
 
 @permission_required('operadores.seguimiento_admin')
 def altas_realizadas(request):
-    pass
+    individuos = Individuo.objects.filter(documentos__tipo='AC')
+    #Optimizamos
+    individuos = individuos.select_related('nacionalidad')
+    individuos = individuos.select_related('situacion_actual')
+    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'domicilio_actual__ubicacion')
+    individuos = individuos.select_related('appdata')
+    individuos = individuos.prefetch_related('vigiladores', 'vigiladores__operador')
+    #Lanzamos reporte
+    return render(request, "lista_altas_realizadas.html", {
+        'individuos': individuos,
+        'has_table': True,
+    })
