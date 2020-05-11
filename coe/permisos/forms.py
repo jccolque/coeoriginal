@@ -72,7 +72,7 @@ class IngresoProvinciaForm(forms.ModelForm):
 class CirculacionTemporalForm(forms.ModelForm):
     class Meta:
         model = CirculacionTemporal
-        fields= ('tipo', 'email_contacto', 'marca', 'modelo', 'patente', 'origen', 'destino', 'actividad')
+        fields= ('tipo', 'email_contacto', 'marca', 'modelo', 'patente', 'titular', 'origen', 'destino', 'actividad')
         exclude = ('chofer', 'acompañante', 'permiso_nacional', 'licencia_conducir', 'fecha', 'token', 'estado', 'operador', 'qrpath')
         widgets = {
             'origen': autocomplete.ModelSelect2(url='georef:provincia-autocomplete'),
