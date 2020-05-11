@@ -5,12 +5,12 @@ from django import forms
 from dal import autocomplete
 from tinymce.widgets import TinyMCE
 #Imports del proyecto
-from core.widgets import XDSoftDatePickerInput
-from georef.models import Localidad
+from core.widgets import XDSoftDatePickerInput, XDSoftDateTimePickerInput
+from georef.models import Localidad, Ubicacion
 from informacion.models import Individuo
 #Imports de la app
 from .choices import TIPO_PROFESIONAL, GRUPO_SANGUINEO
-from .models import ProyectoEstudiantil
+from .models import ProyectoEstudiantil, Turno
 
 #Definimos nuestros forms
 class ProfesionalSaludForm(forms.ModelForm):
@@ -87,7 +87,7 @@ class IndividuoForm(forms.ModelForm):
     #Base Individuo
     class Meta:
         model = Individuo
-        fields= (
+        fields = (
             'num_doc', 'apellidos', 'nombres', 'sexo', 'fecha_nacimiento', 'nacionalidad', 'telefono', 'email',
             'dom_localidad', 'dom_calle', 'dom_numero', 'dom_aclaracion',
             'frente_dni', 'reverso_dni',
@@ -101,3 +101,30 @@ class IndividuoForm(forms.ModelForm):
             raise forms.ValidationError("Debe cargar un telefono.")
         else:
             return self.cleaned_data
+
+class TurnoForm(forms.ModelForm):
+    class Meta:
+        model = Turno
+        fields= '__all__'
+        exclude = ('inscripto',)
+        widgets = {
+            'fecha' : XDSoftDateTimePickerInput(attrs={'autocomplete':'off'})
+        }
+    def __init__(self, user, *args, **kwargs):
+        super(TurnoForm, self).__init__(*args, **kwargs)
+        #Filtramos Ubicaciones solo Atencion al publico
+        self.fields['ubicacion'].queryset = Ubicacion.objects.filter(tipo='AP')
+    def clean(self):
+        ubicacion = self.cleaned_data['ubicacion']
+        #Chequeamos dia:
+        fecha = self.cleaned_data['fecha'].date()
+        if fecha.weekday() > 4:
+            raise forms.ValidationError("Solo se entregan turnos de lunes a viernes")
+        #Chequeamos Horario
+        hora = self.cleaned_data['fecha'].time()
+        if hora < ubicacion.hora_inicio:
+            raise forms.ValidationError("Debe ser Posterio al horario de Inicio: " + str(ubicacion.hora_inicio))
+        if hora > ubicacion.hora_cierre:
+            raise forms.ValidationError("Debe ser Anterior al horario de Cierre: " + str(ubicacion.hora_cierre))
+        return self.cleaned_data
+

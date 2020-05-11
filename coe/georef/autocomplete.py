@@ -5,6 +5,14 @@ from dal import autocomplete
 from .models import Departamento, Provincia, Localidad, Barrio
 from .models import Nacionalidad
 
+class NacionalidadAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = Nacionalidad.objects.all()
+        if self.q:
+            qs = qs.filter(nombre__icontains=self.q)
+        qs = qs.order_by('nombre')
+        return qs
+
 class ProvinciaAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = Provincia.objects.all()
@@ -52,14 +60,6 @@ class BarrioAutocomplete(autocomplete.Select2QuerySetView):
         if localidad:
             qs = qs.filter(localidad=localidad)
         #Usamos texto
-        if self.q:
-            qs = qs.filter(nombre__icontains=self.q)
-        qs = qs.order_by('nombre')
-        return qs
-
-class NacionalidadAutocomplete(autocomplete.Select2QuerySetView):
-    def get_queryset(self):
-        qs = Nacionalidad.objects.all()
         if self.q:
             qs = qs.filter(nombre__icontains=self.q)
         qs = qs.order_by('nombre')

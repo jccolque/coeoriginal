@@ -34,11 +34,6 @@ class Capacitacion(models.Model):
     class Meta:
         ordering = ['orden', ]
 
-class Turno(models.Model):
-    lugar = models.ForeignKey(Ubicacion, on_delete=models.CASCADE, related_name='turnos')
-    dia = models.DateField("Dia del Turno")
-    hora = models.TimeField("Horario del Turno")
-
 #Modelos primarios
 class Inscripcion(models.Model):
     tipo_inscripto = models.CharField(choices=TIPO_INSCRIPTO, max_length=2, default='PS')
@@ -55,7 +50,6 @@ class Inscripcion(models.Model):
     #dona_sangre = models.BooleanField(default=False, null=True, blank=True)
     tiene_internet = models.BooleanField(default=False, null=True, blank=True)
     capacitaciones = models.ManyToManyField(Capacitacion)
-    turno = models.ForeignKey(Turno, on_delete=models.SET_NULL, null=True, blank=True)
     fecha = models.DateTimeField('Fecha Inscripcion', default=timezone.now)
     valido = models.BooleanField(default=False)
     disponible = models.BooleanField(default=True)
@@ -105,6 +99,13 @@ class TareaElegida(models.Model):
 class Dispositivo(models.Model):
     inscripto = models.ForeignKey(Inscripcion, on_delete=models.CASCADE, related_name="dispositivos")
     tipo = models.CharField('Tipo Dispositivo', choices=TIPO_DISPOSITIVO, max_length=2)
+
+class Turno(models.Model):
+    ubicacion = models.ForeignKey(Ubicacion, on_delete=models.CASCADE, related_name='turnos_inscripciones')
+    fecha = models.DateTimeField("Dia y Hora del Turno")
+    inscripto = models.ForeignKey(Inscripcion, on_delete=models.SET_NULL, null=True, blank=True, related_name="turnos")
+    class Meta:
+        ordering = ['fecha']
 
 class EmailsInscripto(models.Model):
     inscripto = models.ForeignKey(Inscripcion, on_delete=models.CASCADE, related_name="emails_enviados")

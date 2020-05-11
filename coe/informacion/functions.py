@@ -29,7 +29,7 @@ def actualizar_individuo(form):
     #Creamos nuevo domicilio
     if 'dom_origen' in form.cleaned_data:
         seg = Seguimiento(individuo=individuo_db)
-        seg.tipo = 'DF'
+        seg.tipo = 'DF'#Domicilio Foraneo
         seg.aclaracion = form.cleaned_data['dom_origen']
         seg.save()
     if 'dom_localidad' in form.cleaned_data:

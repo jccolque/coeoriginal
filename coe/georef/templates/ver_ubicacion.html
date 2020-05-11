@@ -44,41 +44,69 @@
                         </div>
                     </div>
                     <div class="col-sm-12"></div>
-                        <h4><b>Listado de Aislados Actuales:</b></h4>
-                        <table class="listado" id="table">
-                            <thead>
-                                <tr>
-                                    <th>Documento</th>
-                                    <th>Apellidos</th>
-                                    <th>Nombres</th>
-                                    <th>Situacion</th>
-                                    <th>Fecha de Ingreso</th>
-                                    <th>Dias Faltantes</th>
-                                    <th>App</th>
-                                    <th>Ver Individuo</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for aislado in ubicacion.aislados_actuales %}
+                        {% if ubicacion.tipo == 'AI' or ubicacion.tipo == 'IN' %}
+                            <h4><b>Listado de Aislados Actuales:</b></h4>
+                            <table class="listado" id="table">
+                                <thead>
                                     <tr>
-                                        <td>{{aislado.num_doc}}</td>
-                                        <td>{{aislado.apellidos}}</td>
-                                        <td>{{aislado.nombres}}</td>
-                                        <td>{{aislado.situacion_actual}}</td>
-                                        <td>{{aislado.domicilio_actual.fecha}}</td>
-                                        <td>{{aislado.domicilio_actual.dias_faltantes}}</td>
-                                        <td>
-                                            {% if aislado.appdata %}
-                                                <img class="icons" src="/static/img/icons/check.png">
-                                            {% else %}
-                                                <img class="icons" src="/static/img/icons/wrong.png">
-                                            {% endif %}
-                                        </td>
-                                        <td><a href="{% url 'informacion:ver_individuo' individuo_id=aislado.id %}" target="_blank">(Ver Individuo)</a></td>
+                                        <th>Documento</th>
+                                        <th>Apellidos</th>
+                                        <th>Nombres</th>
+                                        <th>Situacion</th>
+                                        <th>Fecha de Ingreso</th>
+                                        <th>Dias Faltantes</th>
+                                        <th>App</th>
+                                        <th>Ver Individuo</th>
                                     </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {% for aislado in ubicacion.aislados_actuales %}
+                                        <tr>
+                                            <td>{{aislado.num_doc}}</td>
+                                            <td>{{aislado.apellidos}}</td>
+                                            <td>{{aislado.nombres}}</td>
+                                            <td>{{aislado.situacion_actual}}</td>
+                                            <td>{{aislado.domicilio_actual.fecha}}</td>
+                                            <td>{{aislado.domicilio_actual.dias_faltantes}}</td>
+                                            <td>
+                                                {% if aislado.appdata %}
+                                                    <img class="icons" src="/static/img/icons/check.png">
+                                                {% else %}
+                                                    <img class="icons" src="/static/img/icons/wrong.png">
+                                                {% endif %}
+                                            </td>
+                                            <td><a href="{% url 'informacion:ver_individuo' individuo_id=aislado.id %}" target="_blank">(Ver Individuo)</a></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% elif ubicacion.tipo == 'AP' %}
+                            <h4><b>Listado de Turnos Entregados:</b></h4>
+                            <table class="listado" id="table">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Hora</th>
+                                        <th>Documento</th>
+                                        <th>Individuo</th>
+                                        <th>Telefono</th>
+                                        <th>Ver Inscripcion</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for turno in ubicacion.turnos_inscripciones.all %}
+                                        <tr>
+                                            <td>{{turno.fecha}}</td>
+                                            <td>{{turno.hora}}</td>
+                                            <td>{{turno.inscripcion.individuo.num_doc}}</td>
+                                            <td>{{turno.inscripcion.individuo.apellidos}}, {{turno.inscripcion.individuo.nombres}}</td>
+                                            <td>{{turno.inscripcion.individuo.telefono}}</td>
+                                            <td><a href="{% url 'inscripciones:ver_inscripto' inscripcion_id=turno.inscripcion.id num_doc=turno.inscripcion.individuo.num_doc %}" target="_blank">(Ver Inscripcion)</a></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% endif %}
                     </div>
                 </div>
             </div>

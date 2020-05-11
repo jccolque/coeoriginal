@@ -238,8 +238,11 @@ def crear_ubicacion(request, ubicacion_id=None):
 
 @permission_required('operadores.menu_georef')
 def ver_ubicacion(request, ubicacion_id=None):
+    #Optimizamos
     ubicacion = Ubicacion.objects.select_related('localidad', 'barrio')
     ubicacion = ubicacion.prefetch_related('aislados')
+    ubicacion = ubicacion.prefetch_related('turnos_inscripciones', 'turnos_inscripciones__inscripto', 'turnos_inscripciones__inscripto__individuo')
+    #Traemos la correspondiente
     ubicacion = ubicacion.get(pk=ubicacion_id)
     return render(request, 'ver_ubicacion.html', {
         'ubicacion': ubicacion,

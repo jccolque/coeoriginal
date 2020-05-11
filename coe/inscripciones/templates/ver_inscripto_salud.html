@@ -8,9 +8,9 @@
         <section class="informacion_basica">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-10 col-sm-offset-1">
+                    <div class="col-md-10 col-lg-offset-1">
                         <h2><b>{{inscripto.individuo.apellidos}}, {{inscripto.individuo.nombres}}</b></h2>
-                        <div class="col-sm-8">
+                        <div class="col-lg-8">
                             <p>
                                 {{inscripto.individuo.get_tipo_doc_display}} {{inscripto.individuo.num_doc}}
                                 {% if inscripto.disponible %}
@@ -32,20 +32,20 @@
                             </p>
                             <hr>                        
                             <p><b>Documentacion:<b></p>
-                            <div class="col-sm-6">
+                            <div class="col-lg-6">
                                 <p>Foto Documento:</p>
                                 <a href="{{inscripto.frente_dni.url}}" target="_blank">
                                     <img class="fotos" src="{{inscripto.frente_dni.url}}">
                                 </a>
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-lg-6">
                                 <p>Foto Titulo:</p>
                                 <a href="{{inscripto.archivo_titulo.url}}" target="_blank">
                                     <img class="fotos" src="{{inscripto.archivo_titulo.url}}">
                                 </a>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-lg-4">
                             <h3><b>Aclaraciones<b></h3>
                             {{inscripto.info_extra|safe}}
                         </div>

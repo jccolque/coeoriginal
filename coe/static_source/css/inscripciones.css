@@ -13,3 +13,11 @@ a.requerimiento {
     padding: 10px;
     color: red;
 }
+
+.turnito {
+    border: grey 1px solid;
+    font-weight: bold;
+    border-radius: 10px;
+    padding: 10px;
+    color: black;
+}

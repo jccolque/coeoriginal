@@ -1,8 +1,10 @@
 #imports de Python
 import csv
+from datetime import datetime, timedelta
 #Imports de Django
 from django.http import HttpResponse
 from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 from django.shortcuts import render, redirect
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
@@ -12,6 +14,7 @@ from coe.settings import SEND_MAIL
 from core.forms import SearchForm, UploadFoto
 from core.forms import EmailForm
 from core.functions import delete_tags
+from georef.models import Ubicacion
 from informacion.models import Individuo, Atributo, Relacion, Documento
 from informacion.functions import actualizar_individuo
 from operadores.functions import obtener_operador
@@ -152,6 +155,7 @@ def ver_inscripto(request, inscripcion_id, num_doc):
             return render(request, 'ver_inscripto_social.html', {
                 'inscripto': inscripto, 
                 'capacitaciones': Capacitacion.objects.filter(tipo=inscripto.tipo_inscripto),
+                'ubicaciones': Ubicacion.objects.filter(tipo='AP'),
             })
     except Inscripcion.DoesNotExist:
         return render(request, 'extras/error.html', {
@@ -201,6 +205,42 @@ def ver_capacitacion(request, inscripto_id, capacitacion_id):
     inscripto.capacitaciones.add(capacitacion)
     #Generamos el link de la misma
     return redirect(capacitacion.link)
+
+def turnero(request, ubicacion_id, inscripto_id, fecha=None, hora=None):
+    #Obtenemos el inscripto
+    inscripto = Inscripcion.objects.select_related('individuo')
+    inscripto = inscripto.get(pk=inscripto_id)
+    #Obtenemos la ubicacion
+    ubicacion = Ubicacion.objects.prefetch_related('turnos_inscripciones')
+    ubicacion = ubicacion.get(pk=ubicacion_id)
+    if not fecha:#Si no selecciono ninguna
+        #Generamos turnos
+        dias = [timezone.now().date() + timedelta(days=x) for x in range(1,8)]
+        turnos = []
+        for dia in dias:#Por cada uno de los dias
+            if dia.weekday() < 5:#si es laborable
+                temp = ubicacion.hora_inicio#Empezamos desde el primer momento del dia
+                while temp < ubicacion.hora_cierre:#
+                    temp_fecha = datetime.combine(dia, temp)
+                    #Chequeamos la cantidad de turnos sacados:
+                    ocupados = ubicacion.turnos_inscripciones.filter(fecha=temp_fecha).count()
+                    if ubicacion.capacidad_maxima > ocupados:
+                        turnos.append([dia.strftime("%Y-%m-%d"), temp.strftime("%H:%M"), ubicacion.capacidad_maxima - ocupados])
+                    #Agregamos 20minutos
+                    temp_fecha += timedelta(minutes=20)
+        #Tenemos el bloque completo de turnos disponibles
+        return render(request, 'elegir_turno.html', {
+            'inscripto': inscripto,
+            'ubicacion': ubicacion,
+            'turnos': turnos,
+        })
+    else:  #  Si selecciono una fecha
+        turno = Turno()
+        turno.ubicacion = ubicacion
+        turno.fecha = parse_datetime(fecha + ' ' + hora)#super bizzarre tool
+        turno.inscripto = inscripto
+        turno.save()
+        return redirect('inscripciones:ver_inscripto', inscripcion_id=inscripto.id, num_doc=inscripto.individuo.num_doc)
 
 #Administracion
 @permission_required('operadores.menu_inscripciones')
