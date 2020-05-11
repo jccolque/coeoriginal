@@ -62,12 +62,17 @@
                                     {% endfor %}
                                 </div>
                                 <div class="col-lg-5">
-                                    {% if inscripcion.turnos.exists %}
+                                    {% if inscripto.turnos.exists %}
                                         <h3><b>Turno pedido para realizar tramite presencial:</b></h3>
-                                        {% with inscripcion.turnos.last as turno %}
-                                            Ubicacion: {{turno.ubicacion.nombre}} ({{turno.ubicacion.localidad.nombre}})
-                                            Fecha: {{turno.fecha.date}}
-                                            Hora: {{turno.fecha.time}}
+                                        {% with inscripto.turnos.last as turno %}
+                                            <p><b>Ubicacion:</b> {{turno.ubicacion.nombre}}</p>
+                                            <p><b>Direccion:</b> {{turno.ubicacion.calle}} {{turno.ubicacion.numero}}</p>
+                                            <p><b>Localidad:</b> {{turno.ubicacion.localidad.nombre}}</p>
+                                            <hr>
+                                            <p><b>Fecha:</b> {{turno.fecha.date}}</p>
+                                            <p><b>Hora:</b> {{turno.fecha.time}}</p>
+                                            
+                                            <p>Por favor sea puntual, tendra 5 minutos de tolerancia.</p>
                                         {% endwith %}
                                     {% else %}
                                         <h3><b>Seleccione el Lugar donde desea realizar el tramite presencial:</b></h3>
@@ -203,7 +208,7 @@
                                 {% if inscripto.estado == 2 %}
                                     <li class="lista">
                                         Obtener Turno para Firma de Acuerdo Basico
-                                        {% if inscripcion.turnos.exists %}
+                                        {% if inscripto.turnos.exists %}
                                             <img class="icons" src="/static/img/icons/check.png">
                                         {% else %}
                                             <img class="icons" src="/static/img/icons/wrong.png">
