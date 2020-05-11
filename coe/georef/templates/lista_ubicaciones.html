@@ -54,7 +54,7 @@
                                 <td>{{ubicacion.capacidad_ocupada}}</td>
                                 <td>{{ubicacion.capacidad_disponible}}</td>
                                 <td>
-                                    {% if ubicacion.tipo == 'AI' or ubicacion.tipo == 'IN' %}
+                                    {% if ubicacion.tipo == 'AI' or ubicacion.tipo == 'IN' or ubicacion.tipo == 'AP' %}
                                         <a href="{% url 'georef:ver_ubicacion' ubicacion_id=ubicacion.id %}" class="nolink">
                                             <img class="icons" src="{% static '/img/icons/lupa.png' %}">
                                         </a>

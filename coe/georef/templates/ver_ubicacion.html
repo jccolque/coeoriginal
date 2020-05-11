@@ -101,7 +101,11 @@
                                             <td>{{turno.inscripcion.individuo.num_doc}}</td>
                                             <td>{{turno.inscripcion.individuo.apellidos}}, {{turno.inscripcion.individuo.nombres}}</td>
                                             <td>{{turno.inscripcion.individuo.telefono}}</td>
-                                            <td><a href="{% url 'inscripciones:ver_inscripto' inscripcion_id=turno.inscripcion.id num_doc=turno.inscripcion.individuo.num_doc %}" target="_blank">(Ver Inscripcion)</a></td>
+                                            <td>
+                                                <a href="{% url 'inscripciones:ver_inscripto' inscripcion_id=turno.inscripcion.id num_doc=turno.inscripcion.individuo.num_doc %}" target="_blank">
+                                                    <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                                </a>
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>

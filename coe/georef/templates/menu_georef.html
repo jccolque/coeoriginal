@@ -13,6 +13,7 @@
                             {% if perms.operadores.menu_georef %}
                                 <li><a href="{% url 'georef:lista_ubicaciones_filtradas' tipo='AI' %}">Hoteles</a></li>
                                 <li><a href="{% url 'georef:lista_ubicaciones_filtradas' tipo='IN' %}">Hospitales</a></li>
+                                <li><a href="{% url 'georef:lista_ubicaciones_filtradas' tipo='AP' %}">Atencion al Publico(Turnos)</a></li>
                                 <hr>
                                 <li><a href="{% url 'georef:lista_nacionalidades'  %}">Listado Nacionalidades</a></li>
                                 <li><a href="{% url 'georef:lista_provincias'  %}">Listado Provincias</a></li>
