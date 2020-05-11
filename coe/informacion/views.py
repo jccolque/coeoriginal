@@ -1,5 +1,5 @@
 #Imports Django
-from datetime import timedelta
+from datetime import datetime, timedelta, time
 from django.db.models import Count
 from django.db.models import Q
 from django.utils import timezone
@@ -327,7 +327,7 @@ def confirmar_inquilino(request, ubicacion_id, individuo_id):
                 domicilio.calle = ubicacion.calle
                 domicilio.numero = ubicacion.numero
                 domicilio.aclaracion = ubicacion.nombre + " Habitacion:" + form.cleaned_data['habitacion']
-                domicilio.fecha = form.cleaned_data['fecha']
+                domicilio.fecha = datetime.combine(form.cleaned_data['fecha'].date(), time(6,0))#Horario Fijo
                 domicilio.aislamiento = True
                 domicilio.ubicacion = ubicacion
                 domicilio.save()

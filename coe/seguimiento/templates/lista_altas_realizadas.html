@@ -16,6 +16,7 @@
                         <th>Situacion</th>
                         <th>Domicilio</th>
                         <th>Localidad</th>
+                        <th>Fecha</th>
                         <th>Alta Realizada</th>
                         <th>Acciones</th>
                     </tr>
@@ -29,9 +30,8 @@
                             <td>{{individuo.situacion_actual}}</td>
                             <td>{{individuo.domicilio_actual.calle}} {{individuo.domicilio_actual.numero}}</td>
                             <td>{{individuo.domicilio_actual.localidad.nombre}}</td>
-                            <td>
-                                {{individuo.seguimiento_actual}}
-                            </td>
+                            <td>{{individuo.seguimiento_actual.fecha|date}}</td>
+                            <td>{{individuo.seguimiento_actual.aclaracion}}</td>
                             <td>
                                 <a class="nolink" href="/archivos/informacion/altas/{{individuo.num_doc}}.pdf" target="_blank">
                                     <img class="icons" src="{% static '/img/icons/history.png' %}">
