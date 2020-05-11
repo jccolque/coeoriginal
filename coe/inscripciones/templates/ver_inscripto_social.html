@@ -67,10 +67,10 @@
                                         {% for ubicacion in ubicaciones %}
                                             <li>
                                                 <a href="{% url 'inscripciones:turnero' ubicacion_id=ubicacion.id inscripto_id=inscripto.id %}" target="_blank">
-                                                    {{ubicacion.nombre}}
+                                                    {{ubicacion.nombre}} ({{ubicacion.localidad}})
                                                 </a>
                                             </li>
-                                        {% endif %}
+                                        {% endfor %}
                                     </ul>
                                     <p><i>Turnos de Lunes a Viernes de 8 a 19 horas.</i></p>
                                 </div>

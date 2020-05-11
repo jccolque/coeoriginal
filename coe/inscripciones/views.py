@@ -227,7 +227,7 @@ def turnero(request, ubicacion_id, inscripto_id, fecha=None, hora=None):
                     if ubicacion.capacidad_maxima > ocupados:
                         turnos.append([dia.strftime("%Y-%m-%d"), temp.strftime("%H:%M"), ubicacion.capacidad_maxima - ocupados])
                     #Agregamos 20minutos
-                    temp_fecha += timedelta(minutes=20)
+                    temp += timedelta(minutes=20)
         #Tenemos el bloque completo de turnos disponibles
         return render(request, 'elegir_turno.html', {
             'inscripto': inscripto,
