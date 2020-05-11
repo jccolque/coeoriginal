@@ -22,6 +22,7 @@ from operadores.functions import obtener_operador
 from .tokens import account_activation_token
 from .choices import TIPO_DISPOSITIVO
 from .models import Inscripcion, Area, Tarea, TareaElegida, Dispositivo
+from .models import Turno
 from .models import Capacitacion
 from .models import ProyectoEstudiantil
 from .models import EmailsInscripto
