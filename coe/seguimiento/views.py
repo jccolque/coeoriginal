@@ -63,7 +63,7 @@ def cargar_seguimiento(request, individuo_id, seguimiento_id=None):
     if seguimiento_id:
         seguimiento = Seguimiento.objects.get(pk=seguimiento_id)
     individuo = Individuo.objects.get(pk=individuo_id)
-    form = SeguimientoForm(instance=seguimiento, initial={'individuo': individuo, })
+    form = SeguimientoForm(instance=seguimiento, initial={'individuo': individuo, 'tipo': 'L'})
     if request.method == "POST":
         form = SeguimientoForm(request.POST, instance=seguimiento)
         if form.is_valid():
@@ -209,15 +209,16 @@ def panel_vigia(request, vigia_id=None):
             'error': "Usted no es un Vigilante Habilitado, si deberia tener acceso a esta seccion, por favor contacte a los administradores.",
         })
     #Buscamos Alertas
-    last24hrs = timezone.now() - timedelta(hours=24)
-    individuos = vigia.controlados.filter(seguimiento_actual__fecha__lt=last24hrs)
-    individuos = individuos.order_by('seguimiento_actual__fecha')
+    last12hrs = timezone.now() - timedelta(hours=12)
+    individuos = vigia.controlados.filter(Q(seguimiento_actual__fecha__lt=last12hrs) | Q(seguimiento_actual=None))
     #Optimizamos
     individuos = individuos.select_related(
         'situacion_actual',
         'domicilio_actual', "domicilio_actual__localidad",
         'seguimiento_actual',
     )
+    #Ordenamos por fecha
+    individuos = individuos.order_by('seguimiento_actual__fecha')
     #Lanzamos panel
     return render(request, "panel_vigia.html", {
         'vigia': vigia,

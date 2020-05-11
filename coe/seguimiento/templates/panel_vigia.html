@@ -30,8 +30,15 @@
                                 <td>{{individuo.situacion_actual}}</td>
                                 <td>{{individuo.domicilio_actual}}</td>
                                 <td>{{individuo.telefono}}</td>
-                                <td>{{individuo.seguimiento_actual.get_tipo_display}}: {{individuo.seguimiento_actual.aclaracion}}</td>
-                                <td>{{individuo.seguimiento_actual.fecha|date:"d/m H:i"}}</td>
+                                {% if individuo.seguimiento_actual %}
+                                    <td>{{individuo.seguimiento_actual.get_tipo_display}}: {{individuo.seguimiento_actual.aclaracion}}</td>
+                                    <td>{{individuo.seguimiento_actual.fecha|date:"d/m H:i"}}</td>
+                                {% else %}
+                                    {% with individuo.seguimientos.last as seguimiento %}
+                                        <td>{{seguimiento.get_tipo_display}}: {{seguimiento.aclaracion}}</td>
+                                        <td>{{seguimiento.fecha|date:"d/m H:i"}}</td>
+                                    {% endwith %}
+                                {% endif %}
                                 <td>
                                     <a href="{% url 'seguimiento:cargar_seguimiento' individuo_id=individuo.id %}" class="nolink" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/add_call.png' %}">

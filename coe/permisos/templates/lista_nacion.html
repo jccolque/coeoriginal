@@ -35,6 +35,7 @@
                             <th>Observaciones</th>
                             <th>Cantidad de autorizaciones</th>
                             <th>cantidad de personas</th>
+                            <th>Link Enviado</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -69,6 +70,7 @@
                                     <td>{{ingreso.aclaracion|safe}}</td>
                                     <td>1</td>
                                     <td>{{ingreso.individuos.count}}</td>
+                                    <td>http://coe.jujuy.gob.ar{% url 'permisos:ingreso_enviado' ingreso_id=ingreso.id %}</td>
                                 </tr>
                             {% endfor %}
                         {% endfor %}

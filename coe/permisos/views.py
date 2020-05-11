@@ -549,7 +549,7 @@ def lista_nacion(request):
     #Optimizamos
     ingresos = ingresos.select_related('origen', 'destino', 'operador')
     ingresos = ingresos.prefetch_related('individuos', 'individuos__domicilio_actual', 'individuos__domicilio_actual__localidad')
-    ingresos = ingresos.prefetch_related('individuos__documentos')
+    ingresos = ingresos.prefetch_related('individuos__documentos', 'individuos__seguimientos')
     #Lanzamos listado
     return render(request, 'lista_nacion.html', {
         'titulo': "Ingresos Aprobados para Descargar",

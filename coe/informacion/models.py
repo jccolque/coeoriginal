@@ -80,10 +80,9 @@ class Individuo(models.Model):
     def __str__(self):
         return str(self.num_doc) + ': ' + self.apellidos + ', ' + self.nombres
     def domicilio_origen(self):
-        try:
-            return self.seguimientos.filter(tipo='DF').last().aclaracion
-        except:
-            return None
+        doms = [s.aclaracion for s in self.seguimientos.all() if s.tipo=='DF']
+        if doms:
+            return doms[-1]
     def domicilio_retorno(self):#El mas actualizado que no es de aislamiento
         return self.domicilios.filter(aislamiento=False).last()
     def geoposicion(self):

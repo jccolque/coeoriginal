@@ -13,7 +13,7 @@ class IndividuosVigiladosAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = obtener_bajo_seguimiento()
         if self.q:
-            qs = qs.filter(Q(apellidos__icontains=self.q) | Q(num_doc__icontains=self.q))
+            qs = qs.filter(Q(apellidos__icontains=self.q) | Q(num_doc__icontains=self.q)).distinct()
         return qs
 
 class VigiasAutocomplete(autocomplete.Select2QuerySetView):
