@@ -103,7 +103,7 @@ class Dispositivo(models.Model):
 class Turno(models.Model):
     ubicacion = models.ForeignKey(Ubicacion, on_delete=models.CASCADE, related_name='turnos_inscripciones')
     fecha = models.DateTimeField("Dia y Hora del Turno", default=timezone.now)
-    inscripto = models.ForeignKey(Inscripcion, on_delete=models.CASCADE, related_name="turnos")
+    inscripto = models.ForeignKey(Inscripcion, on_delete=models.CASCADE, null=True, blank=True, related_name="turnos")
     class Meta:
         ordering = ['fecha']
 

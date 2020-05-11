@@ -31,11 +31,11 @@
                                 <td>{{individuo.domicilio_actual}}</td>
                                 <td>{{individuo.telefono}}</td>
                                 {% if individuo.seguimiento_actual %}
-                                    <td>{{individuo.seguimiento_actual.get_tipo_display}}: {{individuo.seguimiento_actual.aclaracion}}</td>
+                                    <td>{{individuo.seguimiento_actual.get_tipo_display}}: {{individuo.seguimiento_actual.aclaracion|safe}}</td>
                                     <td>{{individuo.seguimiento_actual.fecha|date:"d/m H:i"}}</td>
                                 {% else %}
                                     {% with individuo.seguimientos.last as seguimiento %}
-                                        <td>{{seguimiento.get_tipo_display}}: {{seguimiento.aclaracion}}</td>
+                                        <td>{{seguimiento.get_tipo_display}}: {{seguimiento.aclaracion|safe}}</td>
                                         <td>{{seguimiento.fecha|date:"d/m H:i"}}</td>
                                     {% endwith %}
                                 {% endif %}

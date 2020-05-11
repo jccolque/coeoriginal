@@ -37,6 +37,9 @@
                             <ul class="menu_botones">
                                 <li><a href="{% url 'georef:mod_ubicacion' ubicacion_id=ubicacion.id %}">Modificar ubicacion</a></li>
                                 <li><a href="{% url 'informacion:buscar_inquilino' ubicacion_id=ubicacion.id %}">Alojar Individuo</a></li>
+                                {% if ubicacion.tipo == 'AP' %}
+                                    <li><a href="{% url 'inscripciones:editar_turnos' ubicacion_id=ubicacion.id %}">Editar Turnos</a></li>
+                                {% endif %}
                                 {% if request.user.is_superuser %}
                                     <li><a href="{% url 'georef:delete_ubicacion' ubicacion_id=ubicacion.id %}">Eliminar Ubicacion</a></li>
                                 {% endif %}
@@ -96,18 +99,20 @@
                                 </thead>
                                 <tbody>
                                     {% for turno in ubicacion.turnos_inscripciones.all %}
-                                        <tr>
-                                            <td>{{turno.fecha.date}}</td>
-                                            <td>{{turno.fecha|time}}</td>
-                                            <td>{{turno.inscripto.individuo.num_doc}}</td>
-                                            <td>{{turno.inscripto.individuo.apellidos}}, {{turno.inscripto.individuo.nombres}}</td>
-                                            <td>{{turno.inscripto.individuo.telefono}}</td>
-                                            <td>
-                                                <a href="{% url 'inscripciones:ver_inscripto' inscripcion_id=turno.inscripto.id num_doc=turno.inscripto.individuo.num_doc %}" target="_blank">
-                                                    <img class="icons" src="{% static '/img/icons/lupa.png' %}">
-                                                </a>
-                                            </td>
-                                        </tr>
+                                        {% if turno.inscripto %}
+                                            <tr>
+                                                <td>{{turno.fecha.date}}</td>
+                                                <td>{{turno.fecha|time}}</td>
+                                                <td>{{turno.inscripto.individuo.num_doc}}</td>
+                                                <td>{{turno.inscripto.individuo.apellidos}}, {{turno.inscripto.individuo.nombres}}</td>
+                                                <td>{{turno.inscripto.individuo.telefono}}</td>
+                                                <td>
+                                                    <a href="{% url 'inscripciones:ver_inscripto' inscripcion_id=turno.inscripto.id num_doc=turno.inscripto.individuo.num_doc %}" target="_blank">
+                                                        <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endif %}
                                     {% endfor %}
                                 </tbody>
                             </table>

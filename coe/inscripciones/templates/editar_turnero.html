@@ -1,0 +1,26 @@
+{% extends 'base_inscripciones.html' %}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 offset-lg-2">
+                        <h2>Edicion del turnero</h2>
+                        <br>
+                        <div class="row">
+                            {% for turno in turnos %}
+                                <div class="col-sm-2 turnito">
+                                    <p>Dia: {{turno.0|date:"l"}} ({{turno.0}})</p>
+                                    <p>Horario: {{turno.1}}</p>
+                                    <p>Disponibles: {{turno.2}}</p>
+                                    <a href="{% url 'inscripciones:bajar_turno' ubicacion_id=ubicacion.id fecha=turno.0 hora=turno.1 %}">Bajar Turno</a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}

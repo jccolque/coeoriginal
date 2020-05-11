@@ -53,7 +53,9 @@ def buscar_alta_aislamiento(request):
 #Menu
 @permission_required('operadores.seguimiento')
 def menu_seguimiento(request):
-    return render(request, 'menu_seguimiento.html', {})
+    return render(request, 'menu_seguimiento.html', {
+        'es_vigia': Vigia.objects.filter(operador=obtener_operador(request)).exists(),
+    })
 
 #Administracion de Seguimientos
 #Seguimiento

@@ -17,6 +17,8 @@ urlpatterns = [
     path('ver/<int:inscripcion_id>/<str:num_doc>', views.ver_inscripto, name='ver_inscripto'),
     path('ver/capacitacion/<int:inscripto_id>/<int:capacitacion_id>', views.ver_capacitacion, name='ver_capacitacion'),
     #Turnos
+    path('turnero/editar/<int:ubicacion_id>', views.editar_turnos, name='editar_turnos'),
+    url(r'turnero/bajar/(?P<ubicacion_id>[0-9]+)/(?P<fecha>\d{4}-\d{2}-\d{2})/(?P<hora>\d{2}:\d{2})/$', views.bajar_turno, name='bajar_turno'),
     path('turnero/<int:ubicacion_id>/<int:inscripto_id>/', views.turnero, name='turnero'),
     url(r'turnero/(?P<ubicacion_id>[0-9]+)/(?P<inscripto_id>[0-9]+)/(?P<fecha>\d{4}-\d{2}-\d{2})/(?P<hora>\d{2}:\d{2})/$', views.turnero, name='turno_seleccionado'),
     #Administracion

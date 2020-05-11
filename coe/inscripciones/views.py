@@ -208,6 +208,44 @@ def ver_capacitacion(request, inscripto_id, capacitacion_id):
     #Generamos el link de la misma
     return redirect(capacitacion.link)
 
+@permission_required('operadores.menu_inscripciones')
+def editar_turnos(request, ubicacion_id):
+    #Obtenemos la ubicacion
+    ubicacion = Ubicacion.objects.prefetch_related('turnos_inscripciones')
+    ubicacion = ubicacion.get(pk=ubicacion_id)
+    #Generamos turnos
+    dias = [timezone.now().date() + timedelta(days=x) for x in range(1,5)]
+    turnos = []
+    for dia in dias:#Por cada uno de los dias
+        if dia.weekday() < 5:#si es laborable
+            temp_fecha = datetime.combine(dia, ubicacion.hora_inicio)#Empezamos desde el primer momento del dia
+            while temp_fecha.time() < ubicacion.hora_cierre:#
+                #Chequeamos la cantidad de turnos sacados:
+                ocupados = ubicacion.turnos_inscripciones.filter(fecha=temp_fecha).count()
+                #Por que carajo no anda: 
+                # ocupados = sum([1 for t in ubicacion.turnos_inscripciones.all() if t.fecha == temp_fecha])
+                # Pero si anda: 
+                # ocupados = sum([1 for t in ubicacion.turnos_inscripciones.filter(fecha==temp_fecha)])
+                if ubicacion.capacidad_maxima > ocupados:
+                    turnos.append([temp_fecha.strftime("%Y-%m-%d"), temp_fecha.strftime("%H:%M"), ubicacion.capacidad_maxima - ocupados])
+                #Agregamos 20minutos
+                temp_fecha += timedelta(minutes=ubicacion.duracion_turno)
+    #Tenemos el bloque completo de turnos disponibles
+    return render(request, "editar_turnero.html", {
+        'ubicacion': ubicacion,
+        'turnos': turnos, 
+    })
+
+@permission_required('operadores.menu_inscripciones')
+def bajar_turno(request, ubicacion_id, fecha=None, hora=None):
+    turno = Turno()
+    turno.ubicacion = Ubicacion.objects.get(pk=ubicacion_id)
+    turno.fecha = parse_datetime(fecha + ' ' + hora)#super bizzarre tool
+    for x in range(0, turno.ubicacion.capacidad_maxima):
+        turno.save()
+        turno.pk = None
+    return redirect('inscripciones:editar_turnos', ubicacion_id=turno.ubicacion.id)
+
 def turnero(request, ubicacion_id, inscripto_id, fecha=None, hora=None):
     #Obtenemos el inscripto
     inscripto = Inscripcion.objects.select_related('individuo')
@@ -217,14 +255,14 @@ def turnero(request, ubicacion_id, inscripto_id, fecha=None, hora=None):
     ubicacion = ubicacion.get(pk=ubicacion_id)
     if not fecha:#Si no selecciono ninguna
         #Generamos turnos
-        dias = [timezone.now().date() + timedelta(days=x) for x in range(1,8)]
+        dias = [timezone.now().date() + timedelta(days=x) for x in range(1,5)]
         turnos = []
         for dia in dias:#Por cada uno de los dias
             if dia.weekday() < 5:#si es laborable
                 temp_fecha = datetime.combine(dia, ubicacion.hora_inicio)#Empezamos desde el primer momento del dia
                 while temp_fecha.time() < ubicacion.hora_cierre:#
                     #Chequeamos la cantidad de turnos sacados:
-                    ocupados = sum([1 for x in ubicacion.turnos_inscripciones.all() if x.fecha == temp_fecha]) 
+                    ocupados = ubicacion.turnos_inscripciones.filter(fecha=temp_fecha).count()
                     if ubicacion.capacidad_maxima > ocupados:
                         turnos.append([temp_fecha.strftime("%Y-%m-%d"), temp_fecha.strftime("%H:%M"), ubicacion.capacidad_maxima - ocupados])
                     #Agregamos 20minutos
