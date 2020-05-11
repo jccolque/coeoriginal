@@ -11,7 +11,7 @@ from coe.settings import LOADDATA
 from operadores.models import Operador
 from informacion.models import Individuo
 #Imports de la app
-from .choices import TIPO_SEGUIMIENTO
+from .choices import TIPO_SEGUIMIENTO, TIPO_VIGIA
 
 # Create your models here.
 class Seguimiento(models.Model):
@@ -25,6 +25,7 @@ class Seguimiento(models.Model):
         return str(self.fecha)[0:16] + ': ' + self.get_tipo_display() + ': ' + self.aclaracion
 
 class Vigia(models.Model):
+    tipo = models.CharField('Tipo Vigia', choices=TIPO_VIGIA, max_length=1, default='E')
     operador = models.OneToOneField(Operador, on_delete=models.CASCADE, related_name="vigia")
     controlados = models.ManyToManyField(Individuo, related_name='vigiladores')
     def __str__(self):
@@ -37,5 +38,3 @@ if not LOADDATA:
     #Auditoria
     auditlog.register(Seguimiento)
     auditlog.register(Vigia)
-    #Señales
-    from .signals import seguimiento_actual

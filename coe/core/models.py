@@ -34,8 +34,5 @@ class Aclaracion(models.Model):
     operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name='aclaraciones')
 
 if not LOADDATA:
-    #Señales
-    from .signals import enviar_mail_new_user
-
     #Auditoria
     auditlog.register(Faq)

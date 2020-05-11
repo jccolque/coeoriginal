@@ -4,7 +4,6 @@ from django.utils import timezone
 #Imports Extras
 from fcm_django.models import FCMDevice
 #Imports del proyecto
-from coe.settings import LOADDATA
 from informacion.models import Individuo
 #Imports de la app
 from .choices import TIPO_TRIAJE
@@ -31,8 +30,4 @@ class AppNotificacion(models.Model):
     mensaje = models.CharField('mensaje', max_length=200, default='', blank=False)
     accion = models.CharField('accion', choices=TIPO_ACCION_NOTIFICACION, max_length=2, default='SM')
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
-
-if not LOADDATA:
-    #Señales
-    from .signals import enviar_push
 

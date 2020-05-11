@@ -507,6 +507,8 @@ def cargar_domicilio(request, individuo_id=None, domicilio_id=None):
     if domicilio_id:
         domicilio = Domicilio.objects.get(pk=domicilio_id)
         individuo = domicilio.individuo
+        domicilio.fecha = timezone.now()#le renovamos la fecha
+    #Cargamos formulario
     form = DomicilioForm(instance=domicilio)
     if request.method == "POST":
         form = DomicilioForm(request.POST, instance=domicilio)
@@ -599,14 +601,15 @@ def trasladar(request, individuo_id, ubicacion_id, vehiculo_id):
 #Situacion
 @permission_required('operadores.individuos')
 def cargar_situacion(request, individuo_id=None, situacion_id=None):
-    situacion = Situacion()
     if individuo_id:
         individuo = Individuo.objects.get(pk=individuo_id)
         #Generamos nueva situacion a partir de la anterio
-        situacion = individuo.situacion_actual
+        situacion = individuo.get_situacion()
     elif situacion_id:
         situacion = Situacion.objects.get(pk=situacion_id)
         individuo = situacion.individuo
+    #Le actualizamos la fecha
+    situacion.fecha = timezone.now()
     form = SituacionForm(instance=situacion)
     #Trabajamos
     if request.method == "POST":

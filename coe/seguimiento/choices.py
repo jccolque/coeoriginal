@@ -15,3 +15,8 @@ TIPO_SEGUIMIENTO = (
     ('TA', 'Traslado a Aislamiento'),
     ('DF', 'Domicilio Fuera de la Provincia')
 )
+
+TIPO_VIGIA = (
+    ('E', 'Vigilancia Epidemiologica'),
+    ('M', 'Salud Mental'),
+)

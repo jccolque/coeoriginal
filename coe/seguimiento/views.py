@@ -23,7 +23,7 @@ from app.models import AppData
 #imports de la app
 from .models import Seguimiento, Vigia
 from .forms import SeguimientoForm, NuevoVigia, NuevoIndividuo
-from .functions import obtener_bajo_seguimiento
+from .functions import obtener_bajo_seguimiento, creamos_doc_alta
 
 #Menu
 @permission_required('operadores.seguimiento')
@@ -64,7 +64,7 @@ def lista_seguimientos(request):
     individuos = individuos.exclude(vigiladores=None)
     #Optimizamos las busquedas
     individuos = individuos.select_related('nacionalidad')
-    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad')
+    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'domicilio_actual__ubicacion')
     individuos = individuos.select_related('situacion_actual', 'seguimiento_actual')
     individuos = individuos.prefetch_related('vigiladores', 'vigiladores__operador')
     #Traemos seguimientos terminados para descartar
@@ -83,8 +83,9 @@ def lista_sin_vigias(request):
     individuos = individuos.filter(vigiladores=None)
     #Optimizamos las busquedas
     individuos = individuos.select_related('nacionalidad')
-    individuos = individuos.select_related('domicilio_actual', 'situacion_actual', 'seguimiento_actual')
-    individuos = individuos.prefetch_related('vigiladores')
+    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'domicilio_actual__ubicacion')
+    individuos = individuos.select_related('situacion_actual', 'seguimiento_actual')
+    individuos = individuos.prefetch_related('vigiladores', 'vigiladores__operador')
     #Lanzamos Reporte
     return render(request, "lista_seguimientos.html", {
         'individuos': individuos,
@@ -230,10 +231,11 @@ def lista_aislados(request):
     #Optimizamos
     individuos = individuos.select_related('nacionalidad')
     individuos = individuos.select_related('situacion_actual')
-    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__ubicacion')
+    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'domicilio_actual__ubicacion')
     individuos = individuos.select_related('appdata')
+    individuos = individuos.prefetch_related('vigiladores', 'vigiladores__operador')
     #Lanzamos reporte
-    return render(request, "lista_aislados.html", {
+    return render(request, "lista_seguimiento.html", {
         'individuos': individuos,
         'has_table': True,
     })
@@ -241,8 +243,61 @@ def lista_aislados(request):
 #ALTAS SEGUIMIENTO
 @permission_required('operadores.seguimiento_admin')
 def esperando_alta_seguimiento(request):
-    pass
+    individuos = Individuo.objects.filter(situacion_actual__conducta__in=('D', 'E'))
+    #Optimizamos
+    individuos = individuos.select_related('nacionalidad')
+    individuos = individuos.select_related('situacion_actual')
+    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'domicilio_actual__ubicacion')
+    individuos = individuos.select_related('appdata')
+    individuos = individuos.prefetch_related('vigiladores', 'vigiladores__operador')
+    #Filtramos los que falta solo 2 dias
+    limite = timezone.now() - timedelta(days=DIAS_CUARENTENA - 2)
+    individuos = individuos.filter(situacion_actual__fecha__lt=limite)
+    #Lanzamos reporte
+    return render(request, "lista_para_alta.html", {
+        'individuos': individuos,
+        'has_table': True,
+    })
 
 @permission_required('operadores.seguimiento_admin')
-def altas_seguimiento(request):
+def dar_alta(request, individuo_id):
+    individuo = Individuo.objects.get(pk=individuo_id)
+    if request.method == "POST":
+        #Obtenemos al operador
+        operador = str(obtener_operador(request))
+        #Lo quitamos de Seguimiento
+        seguimiento = Seguimiento(individuo=individuo)
+        seguimiento.tipo = 'FS'
+        seguimiento.aclaracion = "Baja confirmada por: " + operador
+        seguimiento.save()
+        #Lo damos de Alta de Aislamiento
+        situacion = Situacion(individuo=individuo)
+        seguimiento.aclaracion = "Baja confirmada por: " + operador
+        situacion.save()
+        #Generar documento de alta de aislamiento:
+        # al individuo tipo = ('AC', 'Certificado de Alta de Cuarentena'),
+        archivo = creamos_doc_alta(individuo)
+        #Le cambiamos el domicilio
+        dom = individuo.domicilios.filter(aislamiento=False).last()#Buscamos el ultimo conocido comun
+        if not dom:#Si no existe
+            dom = individuo.domicilio_actual#usamos el de aislamiento
+            dom.ubicacion = None#Pero blanqueado
+            dom.aislamiento = False
+            dom.numero += '(pk:' + str(individuo.pk) + ')'#Agregamos 'salt' para evitar relaciones
+        #Blanqueamos campos para crearlo como nuevo:
+        dom.pk = None
+        dom.aclaracion = "Baja confirmada por: " + operador
+        dom.fecha = timezone.now()
+        dom.save()
+        #Volvemos a la lista
+        return redirect('seguimiento:esperando_alta_seguimiento')
+    return render(request, "extras/confirmar.html", {
+            'titulo': "Dar de Alta a " + str(individuo),
+            'message': "Si realiza esta accion quedara registrada por su usuario.",
+            'has_form': True,
+        }
+    )
+
+@permission_required('operadores.seguimiento_admin')
+def altas_realizadas(request):
     pass

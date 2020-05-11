@@ -62,6 +62,7 @@ TIPO_ATRIBUTO = (
     ('DE', 'Denuncia Externa'),
     ('IP', 'Informado Por'),
     ('VE', 'Vigilancia Epidemiologica'),
+    ('VM', 'Vigilancia Salud Mental'),
     ('AS', 'Es Agente de Salud'),
     ('PS', 'Es Personal de Seguridad'),
     ('FP', 'Es Funcionario Publico'),

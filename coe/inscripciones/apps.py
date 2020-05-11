@@ -1,3 +1,6 @@
+#Imports de python
+import logging
+import traceback
 #Imports Django
 from django.apps import AppConfig
 from django.db import OperationalError
@@ -17,4 +20,5 @@ class InscripcionesConfig(AppConfig):
                     from .tasks import reintentar_validar
                     reintentar_validar(repeat=3600*24, verbose_name="reintentar_validar")#Cada 24 horas
         except OperationalError:
-            pass  # Por si no existe
+            logger = logging.getLogger("tasks")
+            logger.info("Falla: "+str(traceback.format_exc()))

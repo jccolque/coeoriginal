@@ -1,14 +1,21 @@
+#Imports de python
+import logging
+import traceback
 #Imports Django
 from django.apps import AppConfig
 from django.db import OperationalError
 #Imports del Proyecto
-from coe.settings import DEBUG
+from coe.settings import DEBUG, LOADDATA
 from core.functions import agregar_menu
 
 class GeotrackingConfig(AppConfig):
     name = 'geotracking'
     def ready(self):
         agregar_menu(self)
+        #Señales
+        if not LOADDATA:
+            from .signals import asignar_geoperador
+            from .signals import inicio_seguimiento
         #Tareas Background:
         try:
             if not DEBUG:
@@ -20,4 +27,5 @@ class GeotrackingConfig(AppConfig):
                     from geotracking.tasks import finalizar_geotracking
                     finalizar_geotracking(repeat=3600*12, verbose_name="finalizar_geotracking")#Cada 12 horas
         except OperationalError:
-            pass #Por si no existe
+            logger = logging.getLogger("tasks")
+            logger.info("Falla: "+str(traceback.format_exc()))

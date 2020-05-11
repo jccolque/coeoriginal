@@ -263,8 +263,6 @@ class RegistroCirculacion(models.Model):
             return 0
 
 if not LOADDATA:
-    #señales
-    from .signals import activar_restriccion
     #Auditoria
     auditlog.register(Permiso)
     auditlog.register(NivelRestriccion)

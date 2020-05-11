@@ -8,10 +8,6 @@ from django.core.validators import RegexValidator
 #Imports de paquetes extras
 from tinymce.models import HTMLField
 from auditlog.registry import auditlog
-#from PyPDF2 import PdfFileWriter, PdfFileReader
-#from reportlab.pdfgen import canvas
-#from reportlab.lib.pagesizes import A4
-#from reportlab.lib.units import mm
 #Imports del proyecto:
 from coe.settings import BASE_DIR, STATIC_ROOT, MEDIA_ROOT, LOADDATA
 from coe.constantes import NOIMAGE, DIAS_CUARENTENA
@@ -126,6 +122,9 @@ class Individuo(models.Model):
         return [doc for doc in self.documentos.all() if doc.tipo == 'DI']
     def tracking(self):
         return self.geoposiciones.exists()
+    def dias_faltantes(self):
+        if self.situacion_actual.conducta in ('D', 'E'):
+            return DIAS_CUARENTENA - (timezone.now() - self.situacion_actual.fecha).days
     def ultima_alerta(self):
         return self.geoposiciones.exclude(alerta='SA').last()
     def controlador(self):
@@ -134,28 +133,6 @@ class Individuo(models.Model):
         return self.relaciones.filter(tipo="F").last()
     def voluntario_autorizado(self):
         return self.documentos.filter(tipo='AT').last()
-    # def pdf_alta_aislamiento(self):
-    #     packet = io.BytesIO()
-    #     #Se crea un pdf utilizando reportLab
-    #     pdf = canvas.Canvas(packet, pagesize = A4)
-    #     cadena = self.apellidos + self.nombres + self.get_tipo_doc_display() + str(self.num_doc)
-    #     pdf.setFont('Times-Roman', 12)
-    #     pdf.drawString(85, 625, cadena)
-    #     pdf.save()
-    #     # Nos movemos al comienzo del búfer StringIO
-    #     packet.seek(0)
-    #     nuevo_pdf = PdfFileReader(packet)
-    #     # Leemos el pdf base
-    #     existe_pdf = PdfFileReader(STATIC_ROOT+'/archivo/plantilla_aislamiento.pdf', "rb")
-    #     salida = PdfFileWriter()
-    #     # Se agregan los datos de la persona que será dada de alta, al pdf ya existente
-    #     pagina = existe_pdf.getPage(0)
-    #     pagina.mergePage(nuevo_pdf.getPage(0))
-    #     salida.addPage(pagina)
-    #     # Finalmente se escribe la salida, en un archivo real
-    #     outputStream = open(MEDIA_ROOT+'/permisos/'+self.token+".pdf", "wb")
-    #     salida.write(outputStream)
-    #     outputStream.close()
 
 class Relacion(models.Model):#Origen del Dato
     tipo = models.CharField('Tipo Relacion', choices=TIPO_RELACION, max_length=2, default='F')
@@ -189,9 +166,6 @@ class Domicilio(models.Model):
         return self.calle + ' ' + self.numero + ', ' + str(self.localidad.nombre)
     def nombre_corto(self):
         return self.calle + ' ' + self.numero + ', ' + self.localidad.nombre
-    def dias_faltantes(self):
-        if self.aislamiento:
-            return DIAS_CUARENTENA - (timezone.now() - self.fecha).days
 
 #Extras
 class Situacion(models.Model):
@@ -265,22 +239,6 @@ class Pasajero(models.Model):
         return str(self.traslado) + ': ' + str(self.individuo)
 
 if not LOADDATA:
-    #Señales
-    from .signals import estado_inicial
-    from .signals import situacion_actual
-    from .signals import domicilio_actual
-    from .signals import relacion_domicilio
-    from .signals import crear_relacion_inversa
-    from .signals import eliminar_relacion_inversa
-    from .signals import relacion_vehiculo
-    from .signals import relacionar_situacion
-    from .signals import afectar_relacionados
-    from .signals import aislar_individuo
-    from .signals import cargo_signosvitales
-    from .signals import cargo_documento
-    #from .signals import iniciar_tracking_transportistas
-    from .signals import poner_en_seguimiento
-
     #Auditoria
     auditlog.register(Archivo)
     auditlog.register(Vehiculo)

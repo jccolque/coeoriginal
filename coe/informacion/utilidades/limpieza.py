@@ -1,7 +1,23 @@
 from informacion.models import Individuo
 from informacion.models import Situacion, Domicilio, Sintoma, Atributo
-from informacion.models import AppData, GeoPosicion
+from geotracking.models import GeoPosicion
+from app.models import AppData
 from seguimiento.models import Seguimiento
+
+def arreglar_aislamiento():
+    aislados = Individuo.objects.filter(situacion_actual__conducta__in=('D', 'E'))
+    aislados = aislados.select_related('situacion_actual')
+    aislados = aislados.prefetch_related('situaciones')
+    #Recorremos los aislados
+    for aislado in aislados:
+        #Verificamos los que tienen mas de un aislamiento
+        if sum([1 for s in aislado.situaciones.all() if s.conducta == 'D' or s.conducta == 'E']) > 1:
+            sit_original = aislado.situaciones.filter(conducta__in=('D','E')).order_by('fecha').first()
+            print("Arreglamos a: " + str(aislado))
+            aislado.situacion_actual.fecha = sit_original.fecha
+            aislado.situacion_actual.save()
+            aislado.situaciones.filter(conducta__in=('D','E')).exclude(pk=aislado.situacion_actual.pk).delete()
+            
 
 #Vamos a limpiar todos los repetidos que no sean actual
 def limpiar_situacion():

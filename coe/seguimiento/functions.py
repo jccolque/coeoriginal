@@ -1,3 +1,12 @@
+#Imports de Python
+import io
+#Imports de django
+from coe.settings import STATIC_ROOT, MEDIA_ROOT
+#Imports Extras:
+from PyPDF2 import PdfFileWriter, PdfFileReader
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import mm
 #Imports del Proyeto
 from informacion.models import Individuo
 #Imports de la app
@@ -8,3 +17,26 @@ def obtener_bajo_seguimiento():
     individuos = Individuo.objects.filter(atributos__tipo='VE')
     individuos = individuos.exclude(seguimientos__tipo='FS')
     return individuos
+
+def creamos_doc_alta(individuo):
+    packet = io.BytesIO()
+    #Se crea un pdf utilizando reportLab
+    pdf = canvas.Canvas(packet, pagesize = A4)
+    cadena = individuo.apellidos + individuo.nombres + individuo.get_tipo_doc_display() + str(individuo.num_doc)
+    pdf.setFont('Times-Roman', 12)
+    pdf.drawString(85, 625, cadena)
+    pdf.save()
+    # Nos movemos al comienzo del búfer StringIO
+    packet.seek(0)
+    nuevo_pdf = PdfFileReader(packet)
+    # Leemos el pdf base
+    existe_pdf = PdfFileReader(STATIC_ROOT+'/archivo/plantilla_aislamiento.pdf', "rb")
+    salida = PdfFileWriter()
+    # Se agregan los datos de la persona que será dada de alta, al pdf ya existente
+    pagina = existe_pdf.getPage(0)
+    pagina.mergePage(nuevo_pdf.getPage(0))
+    salida.addPage(pagina)
+    # Finalmente se escribe la salida, en un archivo real
+    outputStream = open(MEDIA_ROOT+'/informacion/altas/'+individuo.num_doc+".pdf", "wb")
+    salida.write(outputStream)
+    outputStream.close()

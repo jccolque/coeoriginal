@@ -13,6 +13,10 @@ urlpatterns = [
     #Base
     path('lista/seguimientos', views.lista_seguimientos, name='lista_seguimientos'),
     path('ver/<int:individuo_id>', views.ver_seguimiento, name='ver_seguimiento'),
+    #Lista Para Liberar:
+    path('lista/esperando/alta', views.esperando_alta_seguimiento, name='esperando_alta_seguimiento'),
+    path('dar/alta/<int:individuo_id>', views.dar_alta, name='dar_alta'),
+    path('lista/altas/realizadas', views.altas_realizadas, name='altas_realizadas'),
     #Seguimiento
     path('cargar/seguimiento/<int:individuo_id>', views.cargar_seguimiento, name='cargar_seguimiento'),
     path('mod/seguimiento/<int:individuo_id>/<int:seguimiento_id>', views.cargar_seguimiento, name='mod_seguimiento'),

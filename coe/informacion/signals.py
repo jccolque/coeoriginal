@@ -9,7 +9,6 @@ from django.db.models.signals import post_save, post_delete
 #imports Extras
 from dateutil.relativedelta import relativedelta
 #Imports del proyecto
-from seguimiento.models import Seguimiento, Vigia
 #Imports de la app
 from .models import Pasajero
 from .models import Individuo, Domicilio, Situacion, Relacion
@@ -21,7 +20,7 @@ logger = logging.getLogger('signals')
 #Definimos nuestra señales
 @receiver(post_save, sender=Individuo)
 def estado_inicial(created, instance, **kwargs):
-    if created:
+    if created and not instance.situacion_actual:
         logger.info("Creamos a: " + str(instance))
         #Situacion Inicial:
         situacion = Situacion()
@@ -35,11 +34,6 @@ def estado_inicial(created, instance, **kwargs):
                 atributo.individuo = instance
                 atributo.tipo = 'PR'
                 atributo.save()
-        #Creamos inicializacion
-        seguimiento = Seguimiento(individuo=instance)
-        seguimiento.tipo = "I"
-        seguimiento.aclaracion = "Ingreso al sistema"
-        seguimiento.save()
 
 @receiver(post_save, sender=Pasajero)
 def relacion_vehiculo(created, instance, **kwargs):
@@ -88,20 +82,16 @@ def relacion_domicilio(created, instance, **kwargs):
 #Evolucionamos Estado segun Domicilio
 @receiver(post_save, sender=Domicilio)
 def aislar_individuo(created, instance, **kwargs):
-    if created and instance.ubicacion:#Si creamos nueva posicion
+    if created and instance.ubicacion:#Si lo mandamos a aislamiento
         individuo = instance.individuo
-        #Creamos una nueva situacion
-        if individuo.situacion_actual:
-            situacion = individuo.situacion_actual
-            if individuo.situacion_actual.conducta not in ('D', 'E'):
-                situacion.pk = None
-                situacion.fecha = timezone.now()
-        else:
+        #Obtenemos situacion actual
+        situacion_actual = individuo.get_situacion()
+        #Si no esta en aislamiento
+        if situacion_actual.conducta not in ('D', 'E'):
             situacion = Situacion(individuo=individuo)
-            situacion.estado = 40
-        situacion.conducta = 'E'
-        situacion.aclaracion = "Aislado por traslado a ubicacion de Aislamiento/Internacion"
-        situacion.save()
+            situacion.conducta = 'E'
+            situacion.aclaracion = "Aislado por traslado a ubicacion de Aislamiento/Internacion"
+            situacion.save()
 
 @receiver(post_save, sender=Relacion)
 def crear_relacion_inversa(created, instance, **kwargs):
@@ -188,7 +178,7 @@ def relacionar_situacion(created, instance, **kwargs):
                 sit.estado = 31
             if situ_actual.estado == 40:#Sospechoso
                 sit.estado = 32
-                sit.conducta = 'D'
+                sit.conducta = 'C'
             if situ_actual.estado == 50:#Confirmado
                 sit.estado = 40
                 sit.conducta = 'D'
@@ -199,37 +189,3 @@ def relacionar_situacion(created, instance, **kwargs):
 #def iniciar_tracking_transportistas(created, instance, **kwargs):
 #    if created and instance.tipo == "CT":
 #        pass  #  INICIAMOS TRACKING DEL INDIVIDUO
-
-#Creamos Seguimientos
-@receiver(post_save, sender=Domicilio)
-def poner_en_seguimiento(created, instance, **kwargs):
-    if created and instance.aislamiento:
-        individuo = instance.individuo
-        #Generamos atributo de vigilancia
-        atributo = Atributo(individuo=individuo)
-        atributo.tipo = 'VE'
-        atributo.aclaracion = "Por Ingreso a Aislamiento."
-        atributo.save()
-        #Lo ponemos en seguimiento:
-        try:
-            vigia = Vigia.objects.all().annotate(cantidad=Count('controlados')).order_by('cantidad').first()
-            vigia.controlados.add(individuo)
-        except:
-            logger.info("No existen Vigias, " + str(individuo) + " quedo sin vigilante.")
-        
-
-@receiver(post_save, sender=SignosVitales)
-def cargo_signosvitales(created, instance, **kwargs):
-    if created:
-        seguimiento = Seguimiento(individuo=instance.individuo)
-        seguimiento.tipo = 'E'
-        seguimiento.aclaracion = "Se Informaron Signos vitales"
-        seguimiento.save()
-
-@receiver(post_save, sender=Documento)
-def cargo_documento(created, instance, **kwargs):
-    if created:
-        seguimiento = Seguimiento(individuo=instance.individuo)
-        seguimiento.tipo = 'M'
-        seguimiento.aclaracion = "Se Cargo Documento " + instance.get_tipo_display()
-        seguimiento.save()
