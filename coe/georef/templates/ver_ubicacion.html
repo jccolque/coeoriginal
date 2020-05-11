@@ -4,6 +4,7 @@
 {% load tz %}
 
 {% block content %}
+    {% localtime on %}
     <section class="resumen">
         <section class="informacion_basica">
             <div class="container">
@@ -98,7 +99,7 @@
                                     {% for turno in ubicacion.turnos_inscripciones.all %}
                                         <tr>
                                             <td>{{turno.fecha.date}}</td>
-                                            <td>{{turno.fecha.time | localtime }}</td>
+                                            <td>{{turno.fecha.time}}</td>
                                             <td>{{turno.inscripto.individuo.num_doc}}</td>
                                             <td>{{turno.inscripto.individuo.apellidos}}, {{turno.inscripto.individuo.nombres}}</td>
                                             <td>{{turno.inscripto.individuo.telefono}}</td>
@@ -117,4 +118,5 @@
             </div>
         </section>
     </section>
+    {% endlocaltime %}
 {% endblock %}

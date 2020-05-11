@@ -5,6 +5,7 @@
 {% load tz %}
 
 {% block content %}
+    {% localtime on %}
     <section class="resumen">
         <section class="informacion_basica">
             <div class="container">
@@ -71,7 +72,7 @@
                                             <p><b>Localidad:</b> {{turno.ubicacion.localidad.nombre}}</p>
                                             <hr>
                                             <p><b>Fecha:</b> {{turno.fecha.date}}</p>
-                                            <p><b>Hora:</b> {{turno.fecha.time | localtime }}</p>
+                                            <p><b>Hora:</b> {{turno.fecha.time}}</p>
                                             
                                             <p>Por favor sea puntual, tendra 5 minutos de tolerancia.</p>
                                         {% endwith %}
@@ -239,5 +240,6 @@
             </div>
         </section>
     </section>
+    {% endlocaltime %}
 {% endblock %}
 
