@@ -1,37 +1,22 @@
 {% extends 'base_inscripciones.html' %}
 
-{% load static %}
-
 {% block content %}
     <div class="container">
         <div class="row">
-            {% if turno %}
-                <div class="col-lg-6 offset-lg-3">
-                    <h2>{{turno.inscripto.individuo}} su turno fue entregado con exito!</h2>
-                    <br>
-                    <p><b>Ubicacion:</b> {{turno.ubicacion}}</p>
-                    <p><b>Fecha:</b> {{turno.fecha.date}}</p>
-                    <p><b>Hora:</b> {{turno.fecha.date}}</p>
-                    <br>
-                    <p>Se le ruega ser puntual, tendrá 5 minutos de tolerancia.</p>  
-                    <p>Ya puede regresar a su panel de inscripcion <a href="{% url 'inscripciones:ver_inscripto' inscripcion_id=turno.inscripto.id num_doc=turno.inscripto.individuo.num_doc %}">Aqui</a></p>
+            <div class="col-lg-8 offset-lg-2">
+                <h2>Bienvenido {{inscripto.individuo}}</h2>
+                <p>Selecciona el turno que prefieras para {{ubicacion}}</p>
+                <br>
+                <div class="row">
+                    {% for turno in turnos %}
+                        <div class="col-sm-2 turnito">
+                            <p>{{turno.0}} {{turno.1}}</p>
+                            <p>(Quedan {{turno.2}} Disponibles)</p>
+                            <a href="{% url 'inscripciones:turno_seleccionado' ubicacion_id=ubicacion.id inscripto_id=inscripto.id fecha=turno.0 hora=turno.1 %}">Pedir Turno</a>
+                        </div>
+                    {% endfor %}
                 </div>
-            {% else %}
-                <div class="col-lg-8 offset-lg-2">
-                    <h2>Bienvenido {{inscripto.individuo}}</h2>
-                    <p>Selecciona el turno que prefieras para {{ubicacion}}</p>
-                    <hr>
-                    <div class="row">
-                        {% for turno in turnos %}
-                            <div class="col-sm-2 turnito">
-                                <p>{{turno.0}}</p>
-                                <p>(Quedan {{turno.2}})</p>
-                                <a href="{% url 'inscripciones:turno_seleccionado' ubicacion_id=ubicacion.id inscripto_id=inscripto.id fecha=turno.0 hora=turno.1 %}">Pedir Turno</a>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            {% endif %}
+            </div>
         </div>
     </div>
 {% endblock %}
