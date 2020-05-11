@@ -2,6 +2,7 @@
 
 {% load static %}
 {% load seguridad_tags%}
+{% load tz %}
 
 {% block content %}
     <section class="resumen">
@@ -70,7 +71,7 @@
                                             <p><b>Localidad:</b> {{turno.ubicacion.localidad.nombre}}</p>
                                             <hr>
                                             <p><b>Fecha:</b> {{turno.fecha.date}}</p>
-                                            <p><b>Hora:</b> {{turno.fecha.time}}</p>
+                                            <p><b>Hora:</b> {{turno.fecha.time | localtime }}</p>
                                             
                                             <p>Por favor sea puntual, tendra 5 minutos de tolerancia.</p>
                                         {% endwith %}
