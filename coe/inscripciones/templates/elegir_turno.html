@@ -12,8 +12,9 @@
                         <div class="row">
                             {% for turno in turnos %}
                                 <div class="col-sm-2 turnito">
-                                    <p>{{turno.0}} {{turno.1}}</p>
-                                    <p>(Quedan {{turno.2}} Disponibles)</p>
+                                    <p>Dia: {{turno.0|date:"l"}} ({{turno.0}})</p>
+                                    <p>Horario: {{turno.1}}</p>
+                                    <p>{{turno.2}} Disponibles</p>
                                     <a href="{% url 'inscripciones:turno_seleccionado' ubicacion_id=ubicacion.id inscripto_id=inscripto.id fecha=turno.0 hora=turno.1 %}">Pedir Turno</a>
                                 </div>
                             {% endfor %}
