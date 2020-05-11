@@ -62,17 +62,26 @@
                                     {% endfor %}
                                 </div>
                                 <div class="col-lg-5">
-                                    <h3><b>Seleccione el Lugar donde desea realizar el tramite presencial:</b></h3>
-                                    <ul>
-                                        {% for ubicacion in ubicaciones %}
-                                            <li>
-                                                <a href="{% url 'inscripciones:turnero' ubicacion_id=ubicacion.id inscripto_id=inscripto.id %}" target="_blank">
-                                                    {{ubicacion.nombre}} ({{ubicacion.localidad.nombre}})
-                                                </a>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                    <p><i>Turnos de Lunes a Viernes de 8 a 19 horas.</i></p>
+                                    {% if inscripcion.turnos.exists %}
+                                        <h3><b>Turno pedido para realizar tramite presencial:</b></h3>
+                                        {% with inscripcion.turnos.last as turno %}
+                                            Ubicacion: {{turno.ubicacion.nombre}} ({{turno.ubicacion.localidad.nombre}})
+                                            Fecha: {{turno.fecha.date}}
+                                            Hora: {{turno.fecha.time}}
+                                        {% endwith %}
+                                    {% else %}
+                                        <h3><b>Seleccione el Lugar donde desea realizar el tramite presencial:</b></h3>
+                                        <ul>
+                                            {% for ubicacion in ubicaciones %}
+                                                <li>
+                                                    <a href="{% url 'inscripciones:turnero' ubicacion_id=ubicacion.id inscripto_id=inscripto.id %}" target="_blank">
+                                                        {{ubicacion.nombre}} ({{ubicacion.localidad.nombre}})
+                                                    </a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                        <p><i>Turnos de Lunes a Viernes de 8 a 19 horas.</i></p>
+                                    {% endif %}
                                 </div>
                             </div>
                         {% endif %}
@@ -194,7 +203,11 @@
                                 {% if inscripto.estado == 2 %}
                                     <li class="lista">
                                         Obtener Turno para Firma de Acuerdo Basico
-                                        <img class="icons" src="/static/img/icons/wrong.png">
+                                        {% if inscripcion.turnos.exists %}
+                                            <img class="icons" src="/static/img/icons/check.png">
+                                        {% else %}
+                                            <img class="icons" src="/static/img/icons/wrong.png">
+                                        {% endif %}
                                     </li>
                                 {% else %}
                                     <p><b>Presentese a firmar el acuerdo basico:</b></p>
