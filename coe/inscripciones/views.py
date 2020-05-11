@@ -148,6 +148,7 @@ def ver_inscripto(request, inscripcion_id, num_doc):
     try:
         inscripto = Inscripcion.objects.select_related('individuo', 'individuo__domicilio_actual', 'individuo__domicilio_actual__localidad')
         inscripto = inscripto.prefetch_related('tareas', 'tareas__tarea')
+        inscripto = inscripto.prefetch_related('capacitaciones')
         inscripto = inscripto.get(pk=inscripcion_id, individuo__num_doc=num_doc)
         if inscripto.tipo_inscripto == 'PS':
             return render(request, 'ver_inscripto_salud.html', {'inscripto': inscripto, })
@@ -223,7 +224,7 @@ def turnero(request, ubicacion_id, inscripto_id, fecha=None, hora=None):
                 temp_fecha = datetime.combine(dia, ubicacion.hora_inicio)#Empezamos desde el primer momento del dia
                 while temp_fecha.time() < ubicacion.hora_cierre:#
                     #Chequeamos la cantidad de turnos sacados:
-                    ocupados = ubicacion.turnos_inscripciones.filter(fecha=temp_fecha).count()
+                    ocupados = sum([1 for x in ubicacion.turnos_inscripciones.all() if x.fecha == temp_fecha]) 
                     if ubicacion.capacidad_maxima > ocupados:
                         turnos.append([temp_fecha.strftime("%Y-%m-%d"), temp_fecha.strftime("%H:%M"), ubicacion.capacidad_maxima - ocupados])
                     #Agregamos 20minutos

@@ -1,11 +1,8 @@
 {% extends 'base_inscripciones.html' %}
 
 {% load static %}
-{% load seguridad_tags%}
-{% load tz %}
 
 {% block content %}
-    {% localtime on %}
     <section class="resumen">
         <section class="informacion_basica">
             <div class="container">
@@ -71,8 +68,8 @@
                                             <p><b>Direccion:</b> {{turno.ubicacion.calle}} {{turno.ubicacion.numero}}</p>
                                             <p><b>Localidad:</b> {{turno.ubicacion.localidad.nombre}}</p>
                                             <hr>
-                                            <p><b>Fecha:</b> {{turno.fecha.date}}</p>
-                                            <p><b>Hora:</b> {{turno.fecha.time}}</p>
+                                            <p><b>Fecha:</b> {{turno.fecha|date}}</p>
+                                            <p><b>Hora:</b> {{turno.fecha|time}} hrs</p>
                                             
                                             <p>Por favor sea puntual, tendra 5 minutos de tolerancia.</p>
                                         {% endwith %}
@@ -240,6 +237,5 @@
             </div>
         </section>
     </section>
-    {% endlocaltime %}
 {% endblock %}
 
