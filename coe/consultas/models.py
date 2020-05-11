@@ -10,7 +10,7 @@ from operadores.models import Operador
 # Create your models here.
 class Consulta(models.Model):
     autor = models.CharField('Nombre y Apellido', max_length=100)
-    email = models.EmailField('Correo Electronico Personal')
+    email = models.EmailField('Correo Electronico')
     telefono = models.CharField('Telefono', max_length=100, blank=True, null=True)
     asunto = models.CharField('Asunto', max_length=100)
     descripcion = HTMLField()

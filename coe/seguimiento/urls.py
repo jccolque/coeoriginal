@@ -8,7 +8,9 @@ from . import autocomplete
 #Definimos paths de la app
 app_name = 'seguimiento'
 urlpatterns = [
-    #App
+    #Publico:
+    path('alta', views.buscar_alta_aislamiento, name='buscar_alta_aislamiento'),
+    #Menu
     path('', views.menu_seguimiento, name='menu_seguimiento'),
     #Base
     path('lista/seguimientos', views.lista_seguimientos, name='lista_seguimientos'),

@@ -136,6 +136,10 @@ class BuscadorIndividuosForm(forms.Form):
         else:
             return self.cleaned_data
 
+class BuscarIndividuoSeguro(forms.Form):
+    num_doc = forms.CharField(label="Num Doc", required=True)
+    apellido = forms.CharField(label="Apellido", required=True)
+
 class SearchVehiculoForm(forms.Form):
     identificacion = forms.CharField(label="Patente/Identificacion", required=True)
 

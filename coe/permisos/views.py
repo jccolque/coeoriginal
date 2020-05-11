@@ -18,6 +18,7 @@ from core.functions import date2str
 from operadores.functions import obtener_operador
 from informacion.models import Individuo, Atributo
 from informacion.functions import actualizar_individuo
+from informacion.forms import BuscarIndividuoSeguro
 from graficos.functions import obtener_grafico
 #imports de la app
 from .choices import TIPO_INGRESO, TIPO_ACTIVIDAD, ESTADO_INGRESO
@@ -25,7 +26,7 @@ from .models import NivelRestriccion, Permiso
 from .models import IngresoProvincia, Emails_Ingreso
 from .models import CirculacionTemporal, Emails_Circulacion, RegistroCirculacion
 from .forms import NivelRestriccionForm
-from .forms import PermisoForm, BuscarPermiso, DatosForm, FotoForm
+from .forms import PermisoForm, DatosForm, FotoForm
 from .forms import IngresoProvinciaForm, IngresanteForm, AprobarForm
 from .forms import CirculacionTemporalForm, TemporalesForm
 from .forms import DUTForm, PlanVueloForm
@@ -35,9 +36,9 @@ from .functions import buscar_permiso, validar_permiso
 
 #Publico
 def buscar_permiso_web(request):
-    form = BuscarPermiso()
+    form = BuscarIndividuoSeguro()
     if request.method == 'POST':
-        form = BuscarPermiso(request.POST)
+        form = BuscarIndividuoSeguro(request.POST)
         if form.is_valid():
             individuo = Individuo.objects.filter(
                 num_doc=form.cleaned_data['num_doc'],

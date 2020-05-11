@@ -32,10 +32,6 @@ class FotoForm(forms.ModelForm):
         model = Individuo
         fields= ('fotografia', )
 
-class BuscarPermiso(forms.Form):
-    num_doc = forms.CharField(label="Num Doc", required=True)
-    apellido = forms.CharField(label="Apellido", required=True)
-
 class PermisoForm(forms.ModelForm):
     tipo = forms.ChoiceField(choices=TIPO_PERMISO[:-1])#Eliminamos permiso Permanente de la lista
     class Meta:

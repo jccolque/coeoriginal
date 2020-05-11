@@ -21,11 +21,34 @@ from georef.models import Ubicacion
 from operadores.functions import obtener_operador
 from informacion.models import Individuo, SignosVitales, Relacion
 from informacion.models import Situacion, Documento
+from informacion.forms import BuscarIndividuoSeguro
 from app.models import AppData
 #imports de la app
 from .models import Seguimiento, Vigia
 from .forms import SeguimientoForm, NuevoVigia, NuevoIndividuo
 from .functions import obtener_bajo_seguimiento, creamos_doc_alta
+
+#Publico
+def buscar_alta_aislamiento(request):
+    form = BuscarIndividuoSeguro()
+    if request.method == 'POST':
+        form = BuscarIndividuoSeguro(request.POST)
+        if form.is_valid():
+            individuo = Individuo.objects.filter(
+                num_doc=form.cleaned_data['num_doc'],
+                apellidos__icontains=form.cleaned_data['apellido']).first()
+            if individuo:
+                alta = individuo.documentos.filter(tipo='AC').first()
+                if alta:
+                    return redirect(alta.archivo.url)
+                else:
+                    if individuo.situacion_actual.conducta in ('D', 'E'):
+                        form.add_error(None, "El individuo no cuenta con Alta de Cuarentena.")
+                    else:
+                        form.add_error(None, "El individuo no se encuentra en situacion de Aislamiento.")
+            else:
+                form.add_error(None, "No se ha encontrado a Nadie con esos Datos.")
+    return render(request, "buscar_permiso.html", {'form': form, })
 
 #Menu
 @permission_required('operadores.seguimiento')
@@ -267,20 +290,31 @@ def dar_alta(request, individuo_id):
     if request.method == "POST":
         #Obtenemos al operador
         operador = str(obtener_operador(request))
+        
         #Generar documento de alta de aislamiento:
         doc = Documento(individuo=individuo)
         doc.tipo = 'AC'
         doc.archivo.name = creamos_doc_alta(individuo)
         doc.save()
+        
         #Lo quitamos de Seguimiento
         seguimiento = Seguimiento(individuo=individuo)
         seguimiento.tipo = 'FS'
         seguimiento.aclaracion = "Baja confirmada por: " + operador
         seguimiento.save()
+
+        #Lo sacamos de los panel:
+        vigiladores = individuo.vigiladores.all()
+        individuo.vigiladores.clear()
+        #Asignamos nuevos vigilados al que quedo libre
+        for vigilador in vigiladores:
+            vigilador.controlados.add(obtener_bajo_seguimiento().order_by('situacion_actual__fecha').filter(vigiladores=None).first())
+        
         #Lo damos de Alta de Aislamiento
         situacion = Situacion(individuo=individuo)
         seguimiento.aclaracion = "Baja confirmada por: " + operador
         situacion.save()
+        
         #Le cambiamos el domicilio
         dom = individuo.domicilios.filter(aislamiento=False).last()#Buscamos el ultimo conocido comun
         if not dom:#Si no existe
@@ -293,6 +327,7 @@ def dar_alta(request, individuo_id):
         dom.aclaracion = "Baja confirmada por: " + operador
         dom.fecha = timezone.now()
         dom.save()
+        
         #Volvemos a la lista
         return redirect('seguimiento:esperando_alta_seguimiento')
     return render(request, "extras/confirmar.html", {

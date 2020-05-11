@@ -51,8 +51,11 @@ def poner_en_seguimiento(created, instance, **kwargs):
         atributo.save()
         #Lo ponemos en seguimiento:
         try:
-            vigia = Vigia.objects.filter(tipo='S').annotate(cantidad=Count('controlados')).order_by('cantidad').first()
-            vigia.controlados.add(individuo)
+            vigias = Vigia.objects.filter(tipo='S').annotate(cantidad=Count('controlados')).order_by('cantidad')
+            for vigia in vigias:
+                if vigia.max_controlados > vigia.controlados.count():
+                    vigia.controlados.add(individuo)
+                    break#Lo cargamos, terminamos
         except:
             logger.info("No existen Vigias, " + str(individuo) + " quedo sin vigilante.")
 
@@ -60,8 +63,11 @@ def poner_en_seguimiento(created, instance, **kwargs):
 def seguimiento_mental(created, instance, **kwargs):
     if created and instance.tipo == 'VM':
         try:
-            vigia = Vigia.objects.filter(tipo='M').annotate(cantidad=Count('controlados')).order_by('cantidad').first()
-            vigia.controlados.add(instance.individuo)
+            vigias = Vigia.objects.filter(tipo='M').annotate(cantidad=Count('controlados')).order_by('cantidad').first()
+            for vigia in vigias:
+                if vigia.max_controlados > vigia.controlados.count():
+                    vigia.controlados.add(individuo)
+                    break#Lo cargamos, terminamos
         except:
             logger.info("No existen Vigias, " + str(instance.individuo) + " quedo sin vigilante.")
 

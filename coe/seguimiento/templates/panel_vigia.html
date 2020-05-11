@@ -33,7 +33,7 @@
                                 <td>{{individuo.seguimiento_actual.get_tipo_display}}: {{individuo.seguimiento_actual.aclaracion}}</td>
                                 <td>{{individuo.seguimiento_actual.fecha|date:"d/m H:i"}}</td>
                                 <td>
-                                    <a href="{% url 'informacion:cargar_seguimiento' individuo_id=individuo.id %}" class="nolink" target="_blank">
+                                    <a href="{% url 'seguimiento:cargar_seguimiento' individuo_id=individuo.id %}" class="nolink" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/add_call.png' %}">
                                     </a>
                                     <a href="{% url 'seguimiento:ver_seguimiento' individuo_id=individuo.id %}" class="nolink" target="_blank">
