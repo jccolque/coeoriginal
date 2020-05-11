@@ -98,11 +98,11 @@
                                         <tr>
                                             <td>{{turno.fecha}}</td>
                                             <td>{{turno.hora}}</td>
-                                            <td>{{turno.inscripcion.individuo.num_doc}}</td>
-                                            <td>{{turno.inscripcion.individuo.apellidos}}, {{turno.inscripcion.individuo.nombres}}</td>
-                                            <td>{{turno.inscripcion.individuo.telefono}}</td>
+                                            <td>{{turno.inscripto.individuo.num_doc}}</td>
+                                            <td>{{turno.inscripto.individuo.apellidos}}, {{turno.inscripto.individuo.nombres}}</td>
+                                            <td>{{turno.inscripto.individuo.telefono}}</td>
                                             <td>
-                                                <a href="{% url 'inscripciones:ver_inscripto' inscripcion_id=turno.inscripcion.id num_doc=turno.inscripcion.individuo.num_doc %}" target="_blank">
+                                                <a href="{% url 'inscripciones:ver_inscripto' inscripcion_id=turno.inscripto.id num_doc=turno.inscripto.individuo.num_doc %}" target="_blank">
                                                     <img class="icons" src="{% static '/img/icons/lupa.png' %}">
                                                 </a>
                                             </td>
