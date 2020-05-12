@@ -122,8 +122,11 @@ class Individuo(models.Model):
     def tracking(self):
         return self.geoposiciones.exists()
     def dias_faltantes(self):
-        if self.situacion_actual.conducta in ('D', 'E'):
+        sit = self.get_situacion():
+        if sit.conducta in ('D', 'E'):
             return DIAS_CUARENTENA - (timezone.now() - self.situacion_actual.fecha).days
+        else:
+            return 'Sin Aislamiento'
     def ultima_alerta(self):
         return self.geoposiciones.exclude(alerta='SA').last()
     def controlador(self):
