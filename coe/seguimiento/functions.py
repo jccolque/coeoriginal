@@ -2,6 +2,7 @@
 import io
 #Imports de django
 from django.core.files import File
+from django.db.models import Q
 #Imports Extras:
 from PyPDF2 import PdfFileWriter, PdfFileReader
 from reportlab.pdfgen import canvas
@@ -15,8 +16,9 @@ from .models import Vigia
 
 #Definimos funciones
 def obtener_bajo_seguimiento():
-    individuos = Individuo.objects.filter(atributos__tipo='VE')
+    individuos = Individuo.objects.filter(Q(atributos__tipo='VE') | Q(situacion_actual__conducta__in=('D', 'E')))
     individuos = individuos.exclude(seguimientos__tipo='FS')
+    individuos = individuos.distinct()
     return individuos
 
 def creamos_doc_alta(individuo):
