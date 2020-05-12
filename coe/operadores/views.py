@@ -105,6 +105,8 @@ def crear_operador(request):
             #Creamos usuario
             if form.cleaned_data['new_user']:#Si marco el check:
                 operador.usuario = crear_usuario(operador)
+                operador.save()
+                return redirect('operadores:modificar_usuario', operador_id=operador.id)
             #Guardamos
             operador.save()
             return redirect('operadores:listar_operadores')

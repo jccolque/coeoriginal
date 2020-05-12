@@ -79,8 +79,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     #Auditoria:
     'auditlog.middleware.AuditlogMiddleware',
-    #DEBUG:
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'coe.urls'
@@ -160,22 +158,6 @@ TINYMCE_DEFAULT_CONFIG = {
     'height': '500px',
 }
 
-#Definimos todos los paneles del debug que queremos disponibles:
-DEBUG_TOOLBAR_PANELS = [
-    'debug_toolbar.panels.versions.VersionsPanel',
-    'debug_toolbar.panels.timer.TimerPanel',
-    'debug_toolbar.panels.settings.SettingsPanel',
-    'debug_toolbar.panels.headers.HeadersPanel',
-    'debug_toolbar.panels.request.RequestPanel',
-    'debug_toolbar.panels.sql.SQLPanel',
-    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
-    'debug_toolbar.panels.templates.TemplatesPanel',
-    'debug_toolbar.panels.cache.CachePanel',
-    'debug_toolbar.panels.signals.SignalsPanel',
-    'debug_toolbar.panels.logging.LoggingPanel',
-    'debug_toolbar.panels.redirects.RedirectsPanel',
-]
-
 #Email config
 SERVER_EMAIL = 'user@domain.com'
 EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
@@ -237,6 +219,13 @@ LOGGING = {
     },
 }
 
+#Logout
+MIDDLEWARE.append('django.contrib.sessions.middleware.SessionMiddleware')
+MIDDLEWARE.append('django_session_timeout.middleware.SessionTimeoutMiddleware')
+SESSION_EXPIRE_SECONDS = 60 * 30 # expira en 30minutos
+SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_SAVE_EVERY_REQUEST = True
 
 #APIS
 GEOPOSITION_GOOGLE_MAPS_API_KEY = ''
@@ -245,6 +234,23 @@ GEOPOSITION_GOOGLE_MAPS_API_KEY = ''
 if DEBUG:
     SEND_MAIL = False
     INTERNAL_IPS = ['127.0.0.1',]#Comentar esta linea para no usar!
+    #DEBUG:
+    MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+    #Definimos todos los paneles del debug que queremos disponibles:
+    DEBUG_TOOLBAR_PANELS = [
+        'debug_toolbar.panels.versions.VersionsPanel',
+        'debug_toolbar.panels.timer.TimerPanel',
+        'debug_toolbar.panels.settings.SettingsPanel',
+        'debug_toolbar.panels.headers.HeadersPanel',
+        'debug_toolbar.panels.request.RequestPanel',
+        'debug_toolbar.panels.sql.SQLPanel',
+        'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+        'debug_toolbar.panels.templates.TemplatesPanel',
+        'debug_toolbar.panels.cache.CachePanel',
+        'debug_toolbar.panels.signals.SignalsPanel',
+        'debug_toolbar.panels.logging.LoggingPanel',
+        'debug_toolbar.panels.redirects.RedirectsPanel',
+    ]
 else:
     SEND_MAIL = True
 

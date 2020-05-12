@@ -23,9 +23,9 @@ class GeotrackingConfig(AppConfig):
                 if not Task.objects.filter(verbose_name="geotrack_sin_actualizacion").exists():
                     from geotracking.tasks import geotrack_sin_actualizacion
                     geotrack_sin_actualizacion(repeat=3600 * 6, verbose_name="geotrack_sin_actualizacion")#Cada una hora
-                if not Task.objects.filter(verbose_name="finalizar_geotracking").exists():
-                    from geotracking.tasks import finalizar_geotracking
-                    finalizar_geotracking(repeat=3600*12, verbose_name="finalizar_geotracking")#Cada 12 horas
+                #if not Task.objects.filter(verbose_name="finalizar_geotracking").exists():
+                #    from geotracking.tasks import finalizar_geotracking
+                #    finalizar_geotracking(repeat=3600*12, verbose_name="finalizar_geotracking")#Cada 12 horas
         except OperationalError:
             logger = logging.getLogger("tasks")
             logger.info("Falla: "+str(traceback.format_exc()))

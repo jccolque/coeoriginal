@@ -22,7 +22,7 @@ from operadores.functions import obtener_operador
 from informacion.models import Individuo, SignosVitales, Relacion
 from informacion.models import Situacion, Documento
 from informacion.forms import BuscarIndividuoSeguro
-from app.models import AppData
+from app.models import AppData, AppNotificacion
 #imports de la app
 from .models import Seguimiento, Vigia
 from .forms import SeguimientoForm, NuevoVigia, NuevoIndividuo
@@ -320,6 +320,17 @@ def dar_alta(request, individuo_id):
         situacion = Situacion(individuo=individuo)
         seguimiento.aclaracion = "Baja confirmada por: " + operador
         situacion.save()
+
+        #Le damos de baja el seguimiento de tracking si tenia:
+        individuo.geoperadores.clear()
+        if individuo.appdata:
+            AppNotificacion.objects.filter(appdata=individuo.appdata).delete()
+            notif = AppNotificacion()
+            notif.appdata = individuo.appdata
+            notif.titulo = 'Finalizo su periodo bajo Supervicion Digital'
+            notif.mensaje = 'Se han cumplido los '+str(DIAS_CUARENTENA)+' dias de seguimiento Obligatorios.'
+            notif.accion = 'ST'
+            notif.save()#Al grabar el local, se envia automaticamente por firebase
         
         #Le cambiamos el domicilio
         dom = individuo.domicilios.filter(aislamiento=False).last()#Buscamos el ultimo conocido comun

@@ -244,10 +244,9 @@ def cargar_individuo(request, traslado_id=None, individuo_id=None, num_doc=None)
             #Le cargamos el ultimo domicilio y situacion
             if not individuo.situacion_actual:
                 individuo.situacion_actual = individuo.situaciones.last()
-                individuo.save()
             if not individuo.domicilio_actual:
                 individuo.domicilio_actual = individuo.domicilios.last()
-                individuo.save()
+            individuo.save()
             #Generamos modelos externos:
             if form.cleaned_data['dom_localidad']:
                 domicilio = Domicilio()
