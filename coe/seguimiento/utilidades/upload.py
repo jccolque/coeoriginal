@@ -44,8 +44,8 @@ def crear_vigias(filename):
                 #Se lo agregamos:
             #Otorgamos Solo permisos para vigilancia:
             permisos = Permission.objects.filter(content_type__app_label='operadores', content_type__model='operador')
-            new_user.user_permissions.add(permisos.get(codename='individuos'))
-            new_user.user_permissions.add(permisos.get(codename='seguimiento'))
+            new_operador.usuario.user_permissions.add(permisos.get(codename='individuos'))
+            new_operador.usuario.user_permissions.add(permisos.get(codename='seguimiento'))
             #Creamos vigilante
             if row[6] in ('E', 'M'):
                 vigia = Vigia()
@@ -55,7 +55,7 @@ def crear_vigias(filename):
                 vigia.save()
                 print("Creamos Vigia")
             elif row[6] == 'A':
-                new_user.user_permissions.add(permisos.get(codename='seguimiento_admin'))
+                new_operador.usuario.user_permissions.add(permisos.get(codename='seguimiento_admin'))
                 print("Creamos Administrador de Seguimiento.")
 
                 
