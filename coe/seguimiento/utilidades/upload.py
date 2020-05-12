@@ -39,10 +39,9 @@ def crear_vigias(filename):
             if not new_operador.usuario:
                 #Creamos usuario:
                 new_operador.usuario = crear_usuario(new_operador)
-                print("Creamos usuario: " + new_user.username)
-                #Se lo agregamos:
-                new_operador.usuario = new_user
                 new_operador.save()
+                print("Creamos usuario: " + new_operador.usuario.username)
+                #Se lo agregamos:
             #Otorgamos Solo permisos para vigilancia:
             permisos = Permission.objects.filter(content_type__app_label='operadores', content_type__model='operador')
             new_user.user_permissions.add(permisos.get(codename='individuos'))
