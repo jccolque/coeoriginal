@@ -9,12 +9,19 @@ from django.db.models.signals import post_save
 from informacion.models import Individuo, Domicilio
 from informacion.models import Situacion, Atributo, SignosVitales, Documento
 #Imports de la app
-from .models import Seguimiento
+from .models import Seguimiento, Vigia
 
 #Logger
 logger = logging.getLogger('signals')
 
 #Definimos señales
+@receiver(post_save, sender=Seguimiento)
+def seguimiento_actual(created, instance, **kwargs):
+    if created:
+        individuo = instance.individuo
+        individuo.seguimiento_actual = instance
+        individuo.save()
+
 @receiver(post_save, sender=Individuo)
 def iniciar_seguimiento(created, instance, **kwargs):
     if created and not instance.situacion_actual:
@@ -23,13 +30,6 @@ def iniciar_seguimiento(created, instance, **kwargs):
         seguimiento.tipo = "I"
         seguimiento.aclaracion = "Ingreso al sistema"
         seguimiento.save()
-
-@receiver(post_save, sender=Seguimiento)
-def seguimiento_actual(created, instance, **kwargs):
-    if created:
-        individuo = instance.individuo
-        individuo.seguimiento_actual = instance
-        individuo.save()
 
 @receiver(post_save, sender=Seguimiento)
 def descartar_sospechoso(created, instance, **kwargs):
@@ -50,27 +50,30 @@ def poner_en_seguimiento(created, instance, **kwargs):
         atributo.tipo = 'VE'
         atributo.aclaracion = "Por Ingreso a Aislamiento."
         atributo.save()
-        #Lo ponemos en seguimiento:
-        try:
-            vigias = Vigia.objects.filter(tipo='S').annotate(cantidad=Count('controlados')).order_by('cantidad')
-            for vigia in vigias:
-                if vigia.max_controlados > vigia.controlados.count():
-                    vigia.controlados.add(individuo)
-                    break#Lo cargamos, terminamos
-        except:
-            logger.info("No existen Vigias, " + str(individuo) + " quedo sin vigilante.")
 
 @receiver(post_save, sender=Atributo)
-def seguimiento_mental(created, instance, **kwargs):
-    if created and instance.tipo == 'VM':
-        try:
-            vigias = Vigia.objects.filter(tipo='M').annotate(cantidad=Count('controlados')).order_by('cantidad').first()
-            for vigia in vigias:
-                if vigia.max_controlados > vigia.controlados.count():
-                    vigia.controlados.add(individuo)
-                    break#Lo cargamos, terminamos
-        except:
-            logger.info("No existen Vigias, " + str(instance.individuo) + " quedo sin vigilante.")
+def buscar_controlador(created, instance, **kwargs):
+    if created:
+        #Si es vigilancia Epidemiologica
+        if instance.tipo == 'VE':
+            try:
+                vigias = Vigia.objects.filter(tipo='E').annotate(cantidad=Count('controlados'))
+                for vigia in vigias.order_by('cantidad'):
+                    if vigia.max_controlados > vigia.cantidad:
+                        vigia.controlados.add(instance.individuo)
+                        break#Lo cargamos, terminamos
+            except:
+                logger.info("No existen Vigias, " + str(instance.individuo) + " quedo sin vigilante.")
+        #Si es Vigilancia de Salud Mental
+        if instance.tipo == 'VM':
+            try:
+                vigias = Vigia.objects.filter(tipo='M').annotate(cantidad=Count('controlados'))
+                for vigia in vigias.order_by('cantidad'):
+                    if vigia.max_controlados > vigia.cantidad:
+                        vigia.controlados.add(instance.individuo)
+                        break#Lo cargamos, terminamos
+            except:
+                logger.info("No existen Vigias, " + str(instance.individuo) + " quedo sin vigilante.")
 
 @receiver(post_save, sender=SignosVitales)
 def cargo_signosvitales(created, instance, **kwargs):

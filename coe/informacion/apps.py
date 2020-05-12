@@ -25,12 +25,6 @@ class InformacionConfig(AppConfig):
             from .signals import relacionar_situacion
             from .signals import afectar_relacionados
             from .signals import aislar_individuo
-            #Seguimientos
-            from seguimiento.signals import iniciar_seguimiento
-            from seguimiento.signals import poner_en_seguimiento
-            from seguimiento.signals import seguimiento_mental
-            from seguimiento.signals import cargo_signosvitales
-            from seguimiento.signals import cargo_documento
         # #Background Jobs
         # try:
         #     if not DEBUG:

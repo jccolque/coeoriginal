@@ -12,6 +12,12 @@ class SeguimientoConfig(AppConfig):
         #Cargamos signals
         if not LOADDATA:
             from .signals import seguimiento_actual
+            from .signals import iniciar_seguimiento
+            from .signals import descartar_sospechoso
+            from .signals import poner_en_seguimiento
+            from .signals import buscar_controlador
+            from .signals import cargo_signosvitales
+            from .signals import cargo_documento
         # #Lanzamos background jobs
         # try:
         #     if not DEBUG:
