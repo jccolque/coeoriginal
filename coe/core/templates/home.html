@@ -13,17 +13,20 @@
             <div class="col-lg-5">
                 <div class="row">
                     <div class="col-sm-6">
-                        <a href="{% url 'app:download_app' %}">
-                            <img class="fotos" src="{% static 'img/download_app.jpg' %}">
-                        </a>
-                    </div>
-                    <div class="col-sm-6">
                         <a href="{% url 'inscripciones:inscripcion_salud' %}">
                             <img class="fotos" src="{% static 'img/reclutamiento_salud.jpeg' %}">
                         </a>
 
                         <a href="{% url 'inscripciones:inscripcion_proyecto' %}">
                             <img class="fotos" src="{% static 'img/proyecto_estudiantil.gif' %}">
+                        </a>
+                    </div>
+                    <div class="col-sm-6">
+                        <a href="{% url 'app:download_app' %}">
+                            <img class="fotos" src="{% static 'img/download_app.jpg' %}">
+                        </a>
+                        <a href="{% url 'seguimiento:buscar_alta_aislamiento' %}">
+                            <img class="fotos" src="{% static 'img/obtener_alta.png' %}">
                         </a>
                     </div>
                 </div>
