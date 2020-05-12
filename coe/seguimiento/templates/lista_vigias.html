@@ -27,15 +27,9 @@
                                 <td>{{vigia.get_tipo_display}}</td>
                                 <td>{{vigia}}</td>
                                 <td>{{vigia.operador.telefono}}</td>
-                                <td>
-                                    {% if vigia.operador.usuario.is_authenticated %}
-                                        Online
-                                    {% else %}
-                                        {{vigia.operador.usuario.last_login}}
-                                    {% endif %}
-                                </td>
+                                <td>{{vigia.operador.usuario.last_login}}</td>
                                 <td>{{vigia.controlados.count}}</td>
-                                <td>{{vigia.alertas_activas}}</td>
+                                <td>{{vigia.alertas}}</td>
                                 <td>
                                     <a href="{% url 'seguimiento:ver_panel' vigia_id=vigia.id %}" target="_blank">
                                         <img class="icons" src="/static/img/icons/control_panel.png" alt="Panel de Control">

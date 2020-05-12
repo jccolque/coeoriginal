@@ -27,6 +27,7 @@ class BuscarOperadorForm(forms.Form):
     )
 
 class CrearOperadorForm(forms.ModelForm):
+    new_user = forms.BooleanField(label="Crear Usuario", initial=False)
     class Meta:
         model = Operador
         fields= '__all__'

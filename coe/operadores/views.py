@@ -16,7 +16,7 @@ from auditlog.models import LogEntry
 from core.forms import SearchForm, FechaForm
 from informacion.models import Individuo
 #Imports de la app
-from .functions import obtener_permisos
+from .functions import obtener_permisos, crear_usuario
 from .models import SubComite, Operador, EventoOperador
 from .forms import SubComiteForm, BuscarOperadorForm, CrearOperadorForm
 from .forms import ModOperadorForm, ModPassword, AuditoriaForm
@@ -102,6 +102,10 @@ def crear_operador(request):
                 operador.individuo = Individuo.objects.get(num_doc=form.cleaned_data['num_doc'])
             except:
                 pass
+            #Creamos usuario
+            if form.cleaned_data['new_user']:#Si marco el check:
+                operador.usuario = crear_usuario(operador)
+            #Guardamos
             operador.save()
             return redirect('operadores:listar_operadores')
     return render(request, "extras/generic_form.html", {'titulo': "Subir Archivo para Carga", 'form': form, 'boton': "Subir", })
@@ -134,20 +138,14 @@ def mod_operador(request, operador_id=None):
         form = ModOperadorForm(request.POST, request.FILES, instance=operador)
         if form.is_valid():
             operador = form.save(commit=False)
-            #Primero creamos el usuario
-            #Que sea nivel_seg = "R"
+            #Si nos dio un username
             if form.cleaned_data['username']:
-                if not usuario:
-                    usuario = User()
-                    usuario.username = form.cleaned_data['username']
-                    usuario.is_active=False
-                #Cargamos datos del Form
-                usuario.email = operador.email
-                usuario.first_name = operador.nombres
-                usuario.last_name = operador.apellidos
-                usuario.is_staff = True                    
-                usuario.save()
-                operador.usuario = usuario
+                if not operador.usuario:
+                    operador.usuario = crear_usuario(operador)
+                    operador.save()
+                if operador.usuario.username != form.cleaned_data['username']:
+                    operador.usuario.username = form.cleaned_data['username']
+                    operador.usuario.save()
             #Reiniciamos sus permisos:
             if usuario:
                 for permiso in obtener_permisos():

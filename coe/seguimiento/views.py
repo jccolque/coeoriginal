@@ -137,6 +137,9 @@ def lista_vigias(request):
     vigias = Vigia.objects.all()
     vigias = vigias.select_related('operador', 'operador__usuario')
     vigias = vigias.prefetch_related('controlados')
+    #Obtenemos valor:
+    limite = timezone.now() - timedelta(hours=12)
+    vigias = vigias.annotate(alertas=Count('controlados', controlados__seguimiento_actual__fecha__lt=limite))
     #Lanzamos listado
     return render(request, "lista_vigias.html", {
         'vigias': vigias,

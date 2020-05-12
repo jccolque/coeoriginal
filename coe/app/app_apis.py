@@ -359,7 +359,7 @@ def registro(request):
         domicilio.aclaracion = "AUTODIAGNOSTICO"
         #Si esta en aislamiento no queremos sacarlo, bulkcreamos.
         if individuo.domicilio_actual:
-            Domicilio.objects.bulk_create([domicilio])
+            Domicilio.objects.bulk_create([domicilio, ])
         else:
             domicilio.save()
         #Respondemos que fue procesado
@@ -454,8 +454,8 @@ def encuesta(request):
         situacion.aclaracion = "AUTODIAGNOSTICO"
         if not individuo.situacion_actual:
             situacion.save()
-        elif individuo.situacion_actual.conducta in ('A', 'B'):
-            situacion.save()
+        else:
+            Situacion.objects.bulk_create([situacion, ])
         #Geoposicion
         if float(data["latitud"]) and float(data["longitud"]):
             geopos = GeoPosicion()

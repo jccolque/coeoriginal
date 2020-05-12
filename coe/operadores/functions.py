@@ -1,5 +1,7 @@
-#Imports de la app
+#Imports django
+from django.contrib.auth.models import User
 from django.contrib.auth.models import Permission
+#Imports de la app
 from .models import Operador
 
 #Definimos funciones del modulo
@@ -15,4 +17,30 @@ def obtener_permisos(usuario=None):
     else:
         return Permission.objects.filter(
             content_type__app_label='operadores',
-            content_type__model='operador').exclude(name__contains='Can ').order_by('id')
+            content_type__model='operador').exclude(name__contains='Can ').order_by('name')
+
+def generar_username(operador):
+    nombre = operador.nombres.lower().replace(' ','')
+    apellido = operador.apellidos.lower().replace(' ','')
+    x = 1
+    incorrecto = True
+    while incorrecto:
+        username = nombre[0:x] + apellido
+        if User.objects.filter(username=username).exists():
+            x += 1
+            if x == len(nombre):
+                return str(operador.num_doc)
+        else:
+            incorrecto = False
+    return username
+
+def crear_usuario(operador):
+    usuario = User()
+    usuario.username = generar_username(operador)
+    usuario.is_active=False
+    usuario.email = operador.email
+    usuario.first_name = operador.nombres
+    usuario.last_name = operador.apellidos
+    usuario.is_staff = True
+    usuario.save()
+    return usuario

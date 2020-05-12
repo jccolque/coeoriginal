@@ -17,7 +17,7 @@ from .choices import TIPO_EVENTO, NIVELES_SEGURIDAD
 # Create your models here.
 class SubComite(models.Model):
     nombre = models.CharField('Nombre', max_length=100, unique=True)
-    descripcion = HTMLField()
+    descripcion = HTMLField(null=True)
     activo = models.BooleanField(default=True)
     class Meta:
         verbose_name = 'Modulo'
@@ -68,47 +68,46 @@ class Operador(models.Model):
         ordering = ['apellidos', 'nombres']
         permissions = (
             #Home
-            ("menu_core", "Puede Acceder al Sistema Principal"),
-            ("consultas", "Puede Acceder al Sistema de Consultas"),
+            ("consultas", "Sistema de Consultas"),
             #Operadores:
-            ("menu_operadores", "Puede Acceder al menu de Operadores"),
-            ("subcomites", "Puede Crear/Modificar SubComites"),
-            ("operadores", "Puede Crear/Modificar Operadores"),
-            ("auditar_operadores", "Puede Auditar Operadores"),
-            ("administrador", "Puede administrar Usuarios."),
+            ("menu_operadores", "Menu de Operadores"),
+            ("subcomites", "Crear/Modificar SubComites"),
+            ("operadores", "Crear/Modificar Operadores"),
+            ("auditar_operadores", "Auditar Operadores"),
+            ("administrador", "Administrar Usuarios."),
             #Georef
-            ("menu_georef", "Puede Administrar Informacion Geografica/Ubicaciones"),
+            ("menu_georef", "Informacion Geografica/Ubicaciones"),
             #Inventario
-            ("menu_inventario", "Puede Acceder al menu Inventario"),
+            ("menu_inventario", "Menu Inventario"),
             #Tareas:
-            ("menu_tareas", "Puede Acceder al menu de Tareas"),
+            ("menu_tareas", "Menu de Tareas"),
             #Informacion:
-            ("menu_informacion", "Puede Acceder al menu de Informacion"),
-            ("archivos", "Puede Crear Archivos."),
-            ("vehiculos", "Puede Crear/Modificar Informacion de Vehiculo."),
-            ("individuos", "Puede Crear/Modificar Informacion de Individuos."),
+            ("menu_informacion", "Menu de Informacion"),
+            ("archivos", "Crear Archivos."),
+            ("vehiculos", "Informacion de Vehiculo."),
+            ("individuos", "Informacion de Individuos."),
             #Seguimiento:
-            ("seguimiento", "Puede Realizar Seguimiento de Individuos."),
-            ("seguimiento_admin", "Puede Administrar Sistema de Seguimiento."),
+            ("seguimiento", "Monitor Seguimiento de Individuos."),
+            ("seguimiento_admin", "Administrar Sistema de Seguimiento."),
             #GeoTracking
-            ("geotracking", "Puede Monitorear el Tracking de Individuos."),
-            ("geotracking_admin", "Puede Administrar Sistema de GeTracking."),
+            ("geotracking", "Monitore Tracking de Individuos."),
+            ("geotracking_admin", "Administrador Sistema de GeTracking."),
             #Permisos:
-            ("permisos", "Puede administrar los permisos de Circulacion."),
+            ("permisos", "Permisos de Circulacion."),
             ("fronteras", "Personal de Control en Fronteras."),
             #Graficos:
-            ("menu_graficos", "Puede Administrar los Graficos"),
+            ("menu_graficos", "Administrar Graficos"),
             #Actas:
-            ("menu_actas", "Puede Acceder al menu de Actas"),
+            ("menu_actas", "Menu de Actas"),
             #Documentos
-            ("menu_documentos", "Puede Acceder al menu de Documentos"),
+            ("menu_documentos", "Menu de Documentos"),
             ("documentos", "Puede Administrar Documentos"),
             #Inscripciones:
-            ("menu_inscripciones", "Puede Acceder al menu de Inscripciones"),
+            ("menu_inscripciones", "Menu de Inscripciones"),
             #Reportes
-            ("reportes", "Puede Acceso a todos los reportes del sistema"),
+            ("reportes", "Reportes del sistema"),
             #Wservices
-            ("wservices", "Puede Acceso a los WebServices del Sistema"),            
+            ("wservices", "WebServices del Sistema"),            
         )
     def __str__(self):
         return self.apellidos + ', ' + self.nombres
