@@ -40,7 +40,7 @@ urlpatterns = [
     path('cargar/pasajero/<int:traslado_id>', views.buscar_individuo, name='buscar_pasajero'),
     path('cargar/pasajero/<int:traslado_id>/nuevo/<int:individuo_id>/', views.cargar_individuo, name='cargar_pasajero'),
     path('cargar/pasajero/<int:traslado_id>/nuevo/<str:num_doc>/', views.cargar_individuo, name='cargar_pasajero_nuevo'),
-    path('mod/individuo/<int:individuo_id>', views.cargar_individuo, name='mod_individuo'),
+    path('mod/individuo/<int:individuo_id>', views.mod_individuo, name='mod_individuo'),
     #cambios:
     path('mod/telefono/<int:individuo_id>', views.mod_telefono, name='mod_telefono'),
     path('mod/email/<int:individuo_id>', views.mod_email, name='mod_email'),

@@ -48,6 +48,18 @@ class TrasladoVehiculoForm(forms.ModelForm):
         }
 
 class IndividuoForm(forms.ModelForm):
+    class Meta:
+        model = Individuo
+        fields= '__all__'
+        exclude = ('domicilio_actual', 'seguimiento_actual', 'situacion_actual', 'fotografia', 'qrpath', )
+        widgets = {
+            'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
+            'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
+            'origen': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
+            'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+        }
+
+class FullIndividuoForm(forms.ModelForm):
     dom_localidad = forms.ModelChoiceField(
         queryset=Localidad.objects.all(),
         widget=autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
@@ -71,7 +83,7 @@ class IndividuoForm(forms.ModelForm):
     class Meta:
         model = Individuo
         fields= '__all__'
-        exclude = ('seguimiento_actual', 'fotografia', 'qrpath', )
+        exclude = ('domicilio_actual', 'seguimiento_actual', 'situacion_actual', 'fotografia', 'qrpath', )
         widgets = {
             'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
             'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),

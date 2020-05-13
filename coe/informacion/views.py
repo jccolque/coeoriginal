@@ -34,7 +34,7 @@ from .models import Atributo, Sintoma
 from .models import Documento
 from .forms import ArchivoForm, ArchivoFormWithPass
 from .forms import VehiculoForm, TrasladoVehiculoForm
-from .forms import IndividuoForm, InquilinoForm
+from .forms import IndividuoForm, FullIndividuoForm, InquilinoForm
 from .forms import BuscadorIndividuosForm, TrasladarIndividuoForm
 from .forms import DomicilioForm, AtributoForm, SintomaForm
 from .forms import SituacionForm, RelacionForm
@@ -206,37 +206,11 @@ def buscar_individuo(request, traslado_id=None):
     return render(request, "extras/generic_form.html", {'titulo': "Indicar Documento de Individuo", 'form': form, 'boton': "Buscar", })
 
 @permission_required('operadores.individuos')
-def cargar_individuo(request, traslado_id=None, individuo_id=None, num_doc=None):
-    individuo = None
-    if individuo_id:#Si manda individuo es para modificar
-        individuo = Individuo.objects.get(pk=individuo_id)
-        domicilio_actual = individuo.domicilio_actual
-        if domicilio_actual:
-            form = IndividuoForm(
-                instance=individuo,
-                initial={
-                    'dom_localidad': individuo.localidad_actual,
-                    'dom_calle': domicilio_actual.calle,
-                    'dom_numero': domicilio_actual.numero,
-                    'dom_aclaracion': domicilio_actual.aclaracion,
-                    'dom_aislamiento': domicilio_actual.aislamiento,
-                    'atributos': [a.tipo for a in individuo.atributos.all()],
-                    'sintomas': [s.tipo for s in individuo.sintomas.all()],
-                }
-            )
-        else:
-            form = IndividuoForm(
-                instance=individuo,
-                initial={
-                    'atributos': [a.tipo for a in individuo.atributos.all()],
-                    'sintomas': [s.tipo for s in individuo.sintomas.all()],
-                }
-            )
-    else:
-        form = IndividuoForm(initial={"num_doc":num_doc})
+def cargar_individuo(request, traslado_id=None, num_doc=None):
+    form = FullIndividuoForm(initial={"num_doc":num_doc})
     #Analizamos si mando informacion:
     if request.method == "POST":
-        form = IndividuoForm(request.POST, instance=individuo)
+        form = FullIndividuoForm(request.POST)
         if form.is_valid():
             operador = obtener_operador(request)
             individuo = form.save(commit=False)
@@ -284,6 +258,17 @@ def cargar_individuo(request, traslado_id=None, individuo_id=None, num_doc=None)
                 return redirect('informacion:ver_vehiculo', vehiculo_id=traslado.vehiculo.id)
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "cargar_individuo.html", {'titulo': "Cargar Individuo", 'form': form, 'boton': "Cargar", })
+
+@permission_required('operadores.individuos')
+def mod_individuo(request, individuo_id):
+    individuo = Individuo.objects.get(pk=individuo_id)
+    form = IndividuoForm(instance=individuo)
+    if request.method == 'POST':
+        form = IndividuoForm(request.POST, instance=individuo)
+        if form.is_valid():
+            form.save()
+            return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+    return render(request, "extras/generic_form.html", {'titulo': "Modificar Individuo", 'form': form, 'boton': "Modificar", })
 
 @permission_required('operadores.individuos')
 def cargar_fotografia(request, individuo_id):

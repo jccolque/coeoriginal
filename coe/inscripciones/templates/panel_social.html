@@ -61,7 +61,7 @@
                                     {% endfor %}
                                 </div>
                                 <div class="col-lg-5">
-                                    {% if inscripto.turnos.exists %}
+                                    {% if inscripto.turno_activo %}
                                         <h3><b>Turno pedido para realizar tramite presencial:</b></h3>
                                         {% with inscripto.turnos.last as turno %}
                                             <p><b>Ubicacion:</b> {{turno.ubicacion.nombre}}</p>

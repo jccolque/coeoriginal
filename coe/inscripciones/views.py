@@ -151,10 +151,10 @@ def ver_inscripto(request, inscripcion_id, num_doc):
         inscripto = inscripto.prefetch_related('capacitaciones')
         inscripto = inscripto.get(pk=inscripcion_id, individuo__num_doc=num_doc)
         if inscripto.tipo_inscripto == 'PS':
-            return render(request, 'ver_inscripto_salud.html', {'inscripto': inscripto, })
+            return render(request, 'panel_salud.html', {'inscripto': inscripto, })
         elif inscripto.tipo_inscripto == 'VS':
             inscripto.chequear_estado()
-            return render(request, 'ver_inscripto_social.html', {
+            return render(request, 'panel_social.html', {
                 'inscripto': inscripto, 
                 'capacitaciones': Capacitacion.objects.filter(tipo=inscripto.tipo_inscripto),
                 'ubicaciones': Ubicacion.objects.filter(tipo='AP'),

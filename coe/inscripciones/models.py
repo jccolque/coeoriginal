@@ -75,6 +75,8 @@ class Inscripcion(models.Model):
             return self.individuo.apellidos + ', ' + self.individuo.nombres
         except:
             return "Sin Individuo"
+    def turno_activo(self):
+        return self.turnos.filter(fecha__gt=timezone.now()).exists()
     def as_dict(self):
         return {
             'id': self.id,
