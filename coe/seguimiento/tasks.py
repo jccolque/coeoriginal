@@ -50,6 +50,6 @@ def baja_seguimiento():
 def altas_masivas(inds_ids, operador_id):
     #Obtenemos todos los individuos
     individuos = Individuo.objects.filter(id__in=inds_ids)
-    operador = Operador.objects.get(pk=operador_pk)
+    operador = Operador.objects.get(pk=operador_id)
     for individuo in individuos:
         realizar_alta(individuo, operador)
