@@ -78,8 +78,18 @@
                             </div>
                             <div class="col-sm-5">
                                 <h4><b>Contacto:</b></h4>
-                                <p>Telefono: {{individuo.telefono}}</p>
-                                <p>Email: {{individuo.email}}</p>
+                                <p>
+                                    Telefono: {{individuo.telefono}}
+                                    <a href="{% url 'informacion:mod_telefono' individuo_id=individuo.id %}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/change.png' %}" alt="Modificar">
+                                    </a>
+                                </p>
+                                <p>
+                                    Email: {{individuo.email}}
+                                    <a href="{% url 'informacion:mod_email' individuo_id=individuo.id %}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/change.png' %}" alt="Modificar">
+                                    </a>
+                                </p>
                                 <!--Seguimiento-->
                                 {% if individuo.tracking %}
                                     <p>

@@ -29,7 +29,12 @@
                                 <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
                                 <td>{{individuo.situacion_actual}}</td>
                                 <td>{{individuo.domicilio_actual}}</td>
-                                <td>{{individuo.telefono}}</td>
+                                <td>
+                                    {{individuo.telefono}}
+                                    <a class="nolink" href="{% url 'informacion:mod_telefono' individuo_id=individuo.id %}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/change.png' %}" alt="Modificar">
+                                    </a>
+                                </td>
                                 {% if individuo.seguimiento_actual %}
                                     <td>{{individuo.seguimiento_actual.get_tipo_display}}: {{individuo.seguimiento_actual.aclaracion|safe}}</td>
                                     <td>{{individuo.seguimiento_actual.fecha|date:"d/m H:i"}}</td>
@@ -40,10 +45,13 @@
                                     {% endwith %}
                                 {% endif %}
                                 <td>
-                                    <a href="{% url 'seguimiento:cargar_seguimiento' individuo_id=individuo.id %}" class="nolink" target="_blank">
+                                    <a class="nolink" href="{% url 'informacion:cargar_atributo' individuo_id=individuo.id tipo='VM' %}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/crazy.png' %}">
+                                    </a>
+                                    <a class="nolink" href="{% url 'seguimiento:cargar_seguimiento' individuo_id=individuo.id %}" class="nolink" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/add_call.png' %}">
                                     </a>
-                                    <a href="{% url 'seguimiento:ver_seguimiento' individuo_id=individuo.id %}" class="nolink" target="_blank">
+                                    <a class="nolink" href="{% url 'seguimiento:ver_seguimiento' individuo_id=individuo.id %}" class="nolink" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/lupa.png' %}">
                                     </a>
                                 </td>

@@ -13,7 +13,7 @@ from coe.settings import GEOPOSITION_GOOGLE_MAPS_API_KEY
 from coe.constantes import DIAS_CUARENTENA
 from core.decoradores import superuser_required
 from core.functions import date2str
-from core.forms import SearchForm, JustificarForm
+from core.forms import SearchForm, JustificarForm, TextoForm, EmailForm
 from georef.models import Nacionalidad
 from georef.models import Ubicacion
 from seguimiento.models import Seguimiento
@@ -498,6 +498,33 @@ def lista_individuos(
     })
 
 #CARGA DE ELEMENTOS
+#Modificar Telefono
+@permission_required('operadores.individuos')
+def mod_telefono(request, individuo_id=None):
+    individuo = Individuo.objects.get(pk=individuo_id)
+    form = TextoForm(initial={'texto':individuo.telefono})
+    if request.method == 'POST':
+        form = TextoForm(request.POST)
+        if form.is_valid():
+            individuo.telefono = form.cleaned_data['texto']
+            individuo.save()
+            return render(request, "extras/close.html")
+    return render(request, "extras/generic_form.html", {'titulo': "Cambiar Telefono", 'form': form, 'boton': "Modificar", })
+
+#Modificar Email
+@permission_required('operadores.individuos')
+def mod_email(request, individuo_id=None):
+    individuo = Individuo.objects.get(pk=individuo_id)
+    form = EmailForm(initial={'email':individuo.email})
+    if request.method == 'POST':
+        form = EmailForm(request.POST)
+        if form.is_valid():
+            individuo.email = form.cleaned_data['email']
+            individuo.save()
+            return render(request, "extras/close.html")
+    return render(request, "extras/generic_form.html", {'titulo': "Cambiar Email", 'form': form, 'boton': "Modificar", })
+
+#Domicilio
 @permission_required('operadores.individuos')
 def cargar_domicilio(request, individuo_id=None, domicilio_id=None):
     domicilio = None
@@ -683,8 +710,8 @@ def del_relacion(request, relacion_id):
 
 #Atributos
 @permission_required('operadores.individuos')
-def cargar_atributo(request, individuo_id, atributo_id=None):
-    atributo = None
+def cargar_atributo(request, individuo_id, atributo_id=None, tipo=None):
+    atributo = Atributo(tipo=tipo)
     if atributo_id:
         atributo = Atributo.objects.get(pk=atributo_id)
     form = AtributoForm(instance=atributo)

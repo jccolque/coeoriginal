@@ -23,6 +23,13 @@ class UploadCsv(forms.Form):
 class UploadFoto(forms.Form):
     imagen = forms.FileField()
 
+class TextoForm(forms.Form):
+    texto = forms.CharField(initial='+549388')
+
+class EmailForm(forms.Form):
+    email = forms.EmailField(label='Email')
+
+
 class UploadCsvWithPass(forms.Form):
     csvfile = forms.FileField(label="Archivo CSV Masivo", widget=forms.FileInput(attrs={'accept': ".csv"}))
     passwd = forms.CharField(label="Password de Administrador", max_length=100, widget=forms.PasswordInput)

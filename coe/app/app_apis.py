@@ -599,6 +599,26 @@ def tracking(request):
 
 @csrf_exempt
 @require_http_methods(["POST"])
+def ver_salvoconducto(request):
+    try:
+        data = None
+        #Recibimos el json
+        data = json.loads(request.body.decode("utf-8"))
+        #Agarramos el dni
+        num_doc = obtener_dni(data)
+        #Buscamos al individuo en la db
+        individuo = Individuo.objects.select_related('appdata').get(num_doc=num_doc)
+        #ACA CHEQUEAMOS TOKEN
+
+        #Buscamos permiso
+        permiso = buscar_permiso(individuo)
+        #Damos respuesta
+        return json_permiso(permiso, "ver_salvoconducto")
+    except Exception as e:
+        return json_error(e, "ver_salvoconducto", logger, data)
+
+@csrf_exempt
+@require_http_methods(["POST"])
 def pedir_salvoconducto(request):
     try:
         data = None
@@ -646,26 +666,6 @@ def pedir_salvoconducto(request):
             )
     except Exception as e:
         return json_error(e, "salvoconducto", logger, data)
-
-@csrf_exempt
-@require_http_methods(["POST"])
-def ver_salvoconducto(request):
-    try:
-        data = None
-        #Recibimos el json
-        data = json.loads(request.body.decode("utf-8"))
-        #Agarramos el dni
-        num_doc = obtener_dni(data)
-        #Buscamos al individuo en la db
-        individuo = Individuo.objects.select_related('appdata').get(num_doc=num_doc)
-        #ACA CHEQUEAMOS TOKEN
-
-        #Buscamos permiso
-        permiso = buscar_permiso(individuo)
-        #Damos respuesta
-        return json_permiso(permiso, "ver_salvoconducto")
-    except Exception as e:
-        return json_error(e, "ver_salvoconducto", logger, data)
 
 @csrf_exempt
 @require_http_methods(["POST"])

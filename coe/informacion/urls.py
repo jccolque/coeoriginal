@@ -41,6 +41,9 @@ urlpatterns = [
     path('cargar/pasajero/<int:traslado_id>/nuevo/<int:individuo_id>/', views.cargar_individuo, name='cargar_pasajero'),
     path('cargar/pasajero/<int:traslado_id>/nuevo/<str:num_doc>/', views.cargar_individuo, name='cargar_pasajero_nuevo'),
     path('mod/individuo/<int:individuo_id>', views.cargar_individuo, name='mod_individuo'),
+    #cambios:
+    path('mod/telefono/<int:individuo_id>', views.mod_telefono, name='mod_telefono'),
+    path('mod/email/<int:individuo_id>', views.mod_email, name='mod_email'),
     #Domicilio
     path('cargar/domicilio/<int:individuo_id>', views.cargar_domicilio, name='cargar_domicilio'),
     path('mod/domicilio/<int:domicilio_id>', views.cargar_domicilio, name='mod_domicilio'),
@@ -71,6 +74,7 @@ urlpatterns = [
     path('del/relacion/<int:relacion_id>', views.del_relacion, name='del_relacion'),
     #Atributos
     path('cargar/atributo/<int:individuo_id>', views.cargar_atributo, name='cargar_atributo'),
+    path('cargar/atributo/<int:individuo_id>/tipo/<str:tipo>', views.cargar_atributo, name='cargar_atributo'),
     path('mod/atributo/<int:individuo_id>/<int:atributo_id>', views.cargar_atributo, name='mod_atributo'),
     path('del/atributo/<int:atributo_id>', views.del_atributo, name='del_atributo'),
     #Sintoma
