@@ -63,12 +63,12 @@ def menu_seguimiento(request):
 #Administracion de Seguimientos
 #Seguimiento
 @permission_required('operadores.individuos')
-def cargar_seguimiento(request, individuo_id, seguimiento_id=None):
+def cargar_seguimiento(request, individuo_id, seguimiento_id=None, tipo=None):
     seguimiento = None
     if seguimiento_id:
         seguimiento = Seguimiento.objects.get(pk=seguimiento_id)
     individuo = Individuo.objects.get(pk=individuo_id)
-    form = SeguimientoForm(instance=seguimiento, initial={'individuo': individuo, 'tipo': 'L'})
+    form = SeguimientoForm(instance=seguimiento, initial={'individuo': individuo, 'tipo': tipo})
     if request.method == "POST":
         form = SeguimientoForm(request.POST, instance=seguimiento)
         if form.is_valid():

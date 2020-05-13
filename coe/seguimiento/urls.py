@@ -21,6 +21,7 @@ urlpatterns = [
     path('lista/altas/realizadas', views.altas_realizadas, name='altas_realizadas'),
     #Seguimiento
     path('cargar/seguimiento/<int:individuo_id>', views.cargar_seguimiento, name='cargar_seguimiento'),
+    path('cargar/seguimiento/<int:individuo_id>/tipo/<str:tipo>', views.cargar_seguimiento, name='cargar_seguimiento'),
     path('mod/seguimiento/<int:individuo_id>/<int:seguimiento_id>', views.cargar_seguimiento, name='mod_seguimiento'),
     path('del/seguimiento/<int:seguimiento_id>', views.del_seguimiento, name='del_seguimiento'),
     #Administracion

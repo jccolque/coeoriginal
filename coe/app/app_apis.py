@@ -609,7 +609,6 @@ def ver_salvoconducto(request):
         #Buscamos al individuo en la db
         individuo = Individuo.objects.select_related('appdata').get(num_doc=num_doc)
         #ACA CHEQUEAMOS TOKEN
-
         #Buscamos permiso
         permiso = buscar_permiso(individuo)
         #Damos respuesta
@@ -631,21 +630,19 @@ def pedir_salvoconducto(request):
         individuo = Individuo.objects.prefetch_related('permisos')
         individuo = individuo.get(num_doc=num_doc)
         #ACA CHEQUEAMOS TOKEN
-        
-        #Trabajamos
-        #Obtenemos datos del pedido de permiso:
-        fecha_ideal = timezone.datetime(
-            int(data["fecha_ideal"][0:4]),
-            int(data["fecha_ideal"][4:6]),
-            int(data["fecha_ideal"][6:8]),
-            int(data["hora_ideal"][0:2]),
-            int(data["hora_ideal"][2:4]),
-        )
+
         #Validamos si es factible:
         permiso = buscar_permiso(individuo)
-        if not permiso.pk:#Si no hay un permiso guardado:
+        #Con lo obtenido
+        if not permiso.pk:#Si es permiso RECIEN Creado:
             permiso.tipo = data["tipo_permiso"]
-            permiso.begda = fecha_ideal
+            permiso.begda = timezone.datetime(
+                int(data["fecha_ideal"][0:4]),
+                int(data["fecha_ideal"][4:6]),
+                int(data["fecha_ideal"][6:8]),
+                int(data["hora_ideal"][0:2]),
+                int(data["hora_ideal"][2:4]),
+            )
             permiso = validar_permiso(individuo, permiso)
         #Si fue aprobado, Creamos Permiso
         if permiso.aprobar:#Variable temporal

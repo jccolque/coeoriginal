@@ -23,7 +23,7 @@ def buscar_permiso(individuo, activo=False):
     permisos = Permiso.objects.filter(individuo=individuo, endda__gt=timezone.now())
     permisos = permisos.select_related('individuo', 'individuo__domicilio_actual')
     if activo:#Si es control de Activo
-        permisos = permisos.filter(begda__lt=timezone.now())
+        permisos = permisos.filter(begda__lt=timezone.now())#Solo aplica en control de permisos
     #Obtenemos el mas cercano:
     permiso = permisos.first()
     if not permiso:
@@ -96,11 +96,16 @@ def validar_permiso(individuo, permiso):
     return permiso
 
 def json_permiso(permiso, vista):
-    return {
+    return JsonResponse(
+            {
                 "action": vista,
                 "realizado": False,
                 "error": "Esta funcionalidad no se encuentra habilitada.",
-    }
+            },
+            safe=False,
+            status=400,
+        )
+    #Esto para cuando decidamos que queremos habilitarlo.
     return JsonResponse(
             {
                 "action": vista,

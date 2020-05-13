@@ -48,7 +48,7 @@
                                     <a class="nolink" href="{% url 'informacion:cargar_atributo' individuo_id=individuo.id tipo='VM' %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/crazy.png' %}">
                                     </a>
-                                    <a class="nolink" href="{% url 'seguimiento:cargar_seguimiento' individuo_id=individuo.id %}" class="nolink" target="_blank">
+                                    <a class="nolink" href="{% url 'seguimiento:cargar_seguimiento' individuo_id=individuo.id tipo='L' %}" class="nolink" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/add_call.png' %}">
                                     </a>
                                     <a class="nolink" href="{% url 'seguimiento:ver_seguimiento' individuo_id=individuo.id %}" class="nolink" target="_blank">
