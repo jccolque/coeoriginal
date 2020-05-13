@@ -18,12 +18,3 @@ class SeguimientoConfig(AppConfig):
             from .signals import buscar_controlador
             from .signals import cargo_signosvitales
             from .signals import cargo_documento
-        # #Lanzamos background jobs
-        # try:
-        #     if not DEBUG:
-        #         from background_task.models import Task
-        #         if not Task.objects.filter(verbose_name="baja_seguimiento").exists():
-        #             from seguimiento.tasks import baja_seguimiento
-        #             baja_seguimiento(repeat=3600*12, verbose_name="baja_seguimiento")#Cada 12 horas
-        # except OperationalError:
-        #     pass  #  Por si no existe

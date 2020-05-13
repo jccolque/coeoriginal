@@ -8,6 +8,8 @@
         <div class="row">
             <div class="col-sm-6">
                 {% if form %}
+                    <br><br>
+                    <p><b>Antes de Realizarnos una consulta por favor, revisa las preguntas frecuentes <a href="{% url 'core:faqs' %}">Aqui</a>.</b></p>
                     {% include "extras/generic_form-nobase.html" %}
                 {% else %}
                     <div class="resultado row">
@@ -80,6 +82,7 @@
                             <li>Fisanotti, Juan Pedro</li>
                             <li>Torres, Martin</li>
                             <li>Colletti, Carla</li>
+                            <li>Gaspar, Brenda Elizabeth</li>
                             <li>Baca, Jose Fernando</li>
                         </ul>
                     </li>

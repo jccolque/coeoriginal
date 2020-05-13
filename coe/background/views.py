@@ -14,8 +14,11 @@ def lista_background(request):
         }
     )
 
-def ver_background(request, task_id):
-    task = Progress_Links.objects.get(pk=task_id)
+def ver_background(request, task_id=None, task_name=None):
+    if task_id:
+        task = Progress_Links.objects.get(pk=task_id)
+    elif task_name:
+        task = Progress_Links.objects.get(tarea=task_name)
     return render(request, 'ver_background.html', {
         "task": task,
         "refresh": True }

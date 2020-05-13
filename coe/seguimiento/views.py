@@ -23,10 +23,13 @@ from informacion.models import Individuo, SignosVitales, Relacion
 from informacion.models import Situacion, Documento
 from informacion.forms import BuscarIndividuoSeguro
 from app.models import AppData, AppNotificacion
+from background.functions import crear_progress_link
 #imports de la app
 from .models import Seguimiento, Vigia
 from .forms import SeguimientoForm, NuevoVigia, NuevoIndividuo
-from .functions import obtener_bajo_seguimiento, creamos_doc_alta
+from .functions import obtener_bajo_seguimiento
+from .functions import realizar_alta, creamos_doc_alta
+from .tasks import altas_masivas
 
 #Publico
 def buscar_alta_aislamiento(request):
@@ -166,7 +169,7 @@ def del_vigia(request, vigia_id):
                 nuevo_vigia = Vigia.objects.exclude(pk=vigia.pk).annotate(cantidad=Count('controlados')).order_by('cantidad').first()
                 nuevo_vigia.controlados.add(controlado)
             except:
-                print("No existen geoperadores, quedo huerfano.")
+                pass
         #Lo damos de baja:
         vigia.delete()
         return redirect('seguimiento:lista_vigias')
@@ -274,77 +277,43 @@ def lista_aislados(request):
 #ALTAS SEGUIMIENTO
 @permission_required('operadores.seguimiento_admin')
 def esperando_alta_seguimiento(request):
-    individuos = Individuo.objects.filter(situacion_actual__conducta__in=('D', 'E'))
-    #Optimizamos
-    individuos = individuos.select_related('nacionalidad')
-    individuos = individuos.select_related('situacion_actual')
-    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'domicilio_actual__ubicacion')
-    individuos = individuos.select_related('appdata')
-    individuos = individuos.prefetch_related('vigiladores', 'vigiladores__operador')
-    #Filtramos los que falta solo 2 dias
-    limite = timezone.now() - timedelta(days=DIAS_CUARENTENA - 2)
-    individuos = individuos.filter(situacion_actual__fecha__lt=limite)
-    #Lanzamos reporte
-    return render(request, "lista_para_alta.html", {
-        'individuos': individuos,
-        'has_table': True,
-    })
+    if request.method == 'POST':#Si mandaron grupo de altas masivas
+        #Obtenemos al operador
+        operador = obtener_operador(request)
+        #Obtenemos los individuos marcados
+        ids = request.POST.getlist('alta')
+        #Definimos la tarea
+        tarea = crear_progress_link(str(operador)+":altas_masivas("+str(timezone.now())[0:16].replace(' ','')+")")
+        #Fragmentamos los usuarios en grupos
+        frag_size = 10#Dividimos en fragmentos de 25
+        segmentos = [ids[x:x+frag_size] for x in range(0, len(ids), frag_size)]
+        #Lanzamos la tarea
+        for segmento in segmentos:
+            altas_masivas(segmento, operador.pk, queue=tarea)
+        return redirect('background:ver_background', task_name=tarea)
+    else:
+        individuos = Individuo.objects.filter(situacion_actual__conducta__in=('D', 'E'))
+        #Optimizamos
+        individuos = individuos.select_related('nacionalidad')
+        individuos = individuos.select_related('situacion_actual')
+        individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'domicilio_actual__ubicacion')
+        individuos = individuos.select_related('appdata')
+        individuos = individuos.prefetch_related('vigiladores', 'vigiladores__operador')
+        #Filtramos los que falta solo 2 dias
+        limite = timezone.now() - timedelta(days=DIAS_CUARENTENA - 2)
+        individuos = individuos.filter(situacion_actual__fecha__lt=limite)
+        #Lanzamos reporte
+        return render(request, "lista_para_alta.html", {
+            'individuos': individuos,
+            'has_table': True,
+        })
 
 @permission_required('operadores.seguimiento_admin')
 def dar_alta(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
     if request.method == "POST":
         #Obtenemos al operador
-        operador = str(obtener_operador(request))
-        
-        #Generar documento de alta de aislamiento:
-        doc = Documento(individuo=individuo)
-        doc.tipo = 'AC'
-        doc.archivo.name = creamos_doc_alta(individuo)
-        doc.save()
-        
-        #Lo quitamos de Seguimiento
-        seguimiento = Seguimiento(individuo=individuo)
-        seguimiento.tipo = 'FS'
-        seguimiento.aclaracion = "Baja confirmada por: " + operador
-        seguimiento.save()
-
-        #Lo sacamos de los panel:
-        vigiladores = individuo.vigiladores.all()
-        individuo.vigiladores.clear()
-        #Asignamos nuevos vigilados al que quedo libre
-        for vigilador in vigiladores:
-            vigilador.controlados.add(obtener_bajo_seguimiento().order_by('situacion_actual__fecha').filter(vigiladores=None).first())
-        
-        #Lo damos de Alta de Aislamiento
-        situacion = Situacion(individuo=individuo)
-        seguimiento.aclaracion = "Baja confirmada por: " + operador
-        situacion.save()
-
-        #Le damos de baja el seguimiento de tracking si tenia:
-        individuo.geoperadores.clear()
-        if individuo.appdata:
-            AppNotificacion.objects.filter(appdata=individuo.appdata).delete()
-            notif = AppNotificacion()
-            notif.appdata = individuo.appdata
-            notif.titulo = 'Finalizo su periodo bajo Supervicion Digital'
-            notif.mensaje = 'Se han cumplido los '+str(DIAS_CUARENTENA)+' dias de seguimiento Obligatorios.'
-            notif.accion = 'ST'
-            notif.save()#Al grabar el local, se envia automaticamente por firebase
-        
-        #Le cambiamos el domicilio
-        dom = individuo.domicilios.filter(aislamiento=False).last()#Buscamos el ultimo conocido comun
-        if not dom:#Si no existe
-            dom = individuo.domicilio_actual#usamos el de aislamiento
-            dom.ubicacion = None#Pero blanqueado
-            dom.aislamiento = False
-            dom.numero += '(pk:' + str(individuo.pk) + ')'#Agregamos 'salt' para evitar relaciones
-        #Blanqueamos campos para crearlo como nuevo:
-        dom.pk = None
-        dom.aclaracion = "Baja confirmada por: " + operador
-        dom.fecha = timezone.now()
-        dom.save()
-        
+        realizar_alta(individuo, obtener_operador(request))
         #Volvemos a la lista
         return redirect('seguimiento:esperando_alta_seguimiento')
     return render(request, "extras/confirmar.html", {

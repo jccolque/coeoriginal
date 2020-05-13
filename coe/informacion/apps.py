@@ -25,19 +25,3 @@ class InformacionConfig(AppConfig):
             from .signals import relacionar_situacion
             from .signals import afectar_relacionados
             from .signals import aislar_individuo
-        # #Background Jobs
-        # try:
-        #     if not DEBUG:
-        #         from background_task.models import Task
-        #         if not Task.objects.filter(verbose_name="baja_aislamiento").exists():
-        #             from informacion.tasks import baja_aislamiento
-        #             baja_aislamiento(repeat=3600*12, verbose_name="baja_aislamiento")#Cada 12 horas
-        #         if not Task.objects.filter(verbose_name="devolver_domicilio").exists():
-        #             from informacion.tasks import devolver_domicilio
-        #             devolver_domicilio(repeat=3600*8, verbose_name="devolver_domicilio")#Cada 12 horas
-        #         if not Task.objects.filter(verbose_name="baja_cuarentena").exists():
-        #             from informacion.tasks import baja_cuarentena
-        #             baja_cuarentena(repeat=3600*8, verbose_name="baja_cuarentena")#Cada 12 horas
-        # except OperationalError:
-        #     logger = logging.getLogger("tasks")
-        #     logger.info("Falla: "+str(traceback.format_exc()))

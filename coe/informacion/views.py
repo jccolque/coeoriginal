@@ -18,7 +18,7 @@ from georef.models import Nacionalidad
 from georef.models import Ubicacion
 from seguimiento.models import Seguimiento
 from operadores.functions import obtener_operador
-from background.tasks import crear_progress_link
+from background.functions import crear_progress_link
 from graficos.functions import obtener_grafico
 from app.models import AppData
 from permisos.forms import FotoForm
@@ -256,7 +256,7 @@ def cargar_individuo(request, traslado_id=None, individuo_id=None, num_doc=None)
                 domicilio.numero = form.cleaned_data['dom_numero']
                 domicilio.aclaracion = form.cleaned_data['dom_aclaracion']
             #Si cambio el domicilio Actual:
-                if individuo.domicilio_actual is None:
+                if not individuo.domicilio_actual:
                     domicilio.save()
                 else:
                     Domicilio.objects.bulk_create([domicilio, ])

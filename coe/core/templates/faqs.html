@@ -14,7 +14,7 @@
                     {% for faq in faqs %}
                     <li>
                         <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#{{ faq.id }}" aria-expanded="false" aria-controls="collapseExample">
-                        {{ faq.pregunta }}
+                            {{ faq.pregunta }}
                         </button>
                         <div id="{{ faq.id }}" class="collapse in texto-explicativo">{{ faq.respuesta | safe }}</div>
                     </li>
@@ -29,8 +29,4 @@
             <p>Por favor comience a agregar contenido: <a href="{% url 'admin:core_faq_add' %}"> Aqui.</a></p>
         </div>
     {% endif %}
-{% endblock %}
-
-{% block custom_scripts %}
-        <script type="text/javascript" src="{% static 'js/faqs.js' %}"></script>
 {% endblock %}

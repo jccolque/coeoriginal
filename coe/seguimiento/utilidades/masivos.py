@@ -10,6 +10,7 @@ from operadores.functions import crear_usuario
 from inscripciones.models import Inscripcion
 #Imports de la app
 from seguimiento.models import Vigia
+from seguimiento.functions import realizar_alta
 
 def crear_vigias(filename):
     #obtenemos el comite de vigilancia Epidemiologica
@@ -58,4 +59,16 @@ def crear_vigias(filename):
                 new_operador.usuario.user_permissions.add(permisos.get(codename='seguimiento_admin'))
                 print("Creamos Administrador de Seguimiento.")
 
-                
+def altas_masivas(filename):
+    #Procesamos el archivo
+    with open(filename) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        for row in csv_reader:
+            try:
+                individuo = Individuo.objects.get(num_doc=row[0])
+                realizar_alta(individuo, 'Archivo CSV Masivo')
+                print("Alta generada para:" + str(individuo))
+            except Individuo.DoesNotExist:
+                print("No existe DNI: " + row[0])
+
+            

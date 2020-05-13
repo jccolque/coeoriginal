@@ -134,7 +134,7 @@ def del_geoperador(request, geoperador_id):
                 nuevo_geoperador = GeOperador.objects.exclude(pk=geoperador.pk).annotate(cantidad=Count('controlados')).order_by('cantidad').first()
                 nuevo_geoperador.controlados.add(controlado)
             except:
-                print("No existen geoperadores, quedo huerfano.")
+                pass
         #Lo damos de baja:
         geoperador.delete()
         return redirect('geotracking:lista_geooperadores')

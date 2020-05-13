@@ -12,8 +12,10 @@ from background_task import background
 from coe.constantes import DIAS_CUARENTENA
 from georef.models import Nacionalidad, Departamento, Localidad
 from informacion.models import Individuo
+from operadores.models import Operador
 #Import Personales
 from .models import Seguimiento
+from .functions import realizar_alta
 
 #Definimos logger
 logger = logging.getLogger("tasks")
@@ -43,3 +45,11 @@ def baja_seguimiento():
         except Exception as error:
             logger.info("Fallo baja_aislamiento: " + str(individuo))
     logger.info("Finalizamos Baja de Seguimiento\n")
+
+@background(schedule=1)
+def altas_masivas(inds_ids, operador_id):
+    #Obtenemos todos los individuos
+    individuos = Individuo.objects.filter(id__in=inds_ids)
+    operador = Operador.objects.get(pk=operador_pk)
+    for individuo in individuos:
+        realizar_alta(individuo, operador)

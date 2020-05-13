@@ -7,47 +7,59 @@
         </div>
         <div class="row">
         <div class="col-md-12">
-            <table class="listado" id="table">
-                <thead>
-                    <tr>
-                        <th>Documento</th>
-                        <th>Individuo</th>
-                        <th>Telefono</th>
-                        <th>Situacion</th>
-                        <th>Domicilio</th>
-                        <th>Localidad</th>
-                        <th>Dias Restantes</th>
-                        <th>Responsable</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for individuo in individuos %}
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <table class="listado" id="table">
+                    <thead>
                         <tr>
-                            <td>{{individuo.num_doc}}</td>
-                            <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
-                            <td>{{individuo.telefono}}</td>
-                            <td>{{individuo.situacion_actual}}</td>
-                            <td>{{individuo.domicilio_actual.calle}} {{individuo.domicilio_actual.numero}}</td>
-                            <td>{{individuo.domicilio_actual.localidad.nombre}}</td>
-                            <td>{{individuo.dias_faltantes}}</td>
-                            <td>
-                                {% for vigia in individuo.vigiladores.all %}
-                                    <p><a href="{% url 'seguimiento:ver_panel' vigia_id=vigia.id %}">{{vigia}}</a></p>
-                                {% endfor %}
-                            </td>
-                            <td>
-                                <a class="nolink" href="{% url 'seguimiento:dar_alta' individuo_id=individuo.pk %}" target="_blank">
-                                    <img class="icons" src="{% static '/img/icons/check.png' %}">
-                                </a>
-                                <a class="nolink" href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">
-                                    <img class="icons" src="{% static '/img/icons/lupa.png' %}">
-                                </a>
-                            </td>
+                            <th>Documento</th>
+                            <th>Individuo</th>
+                            <th>Telefono</th>
+                            <th>Situacion</th>
+                            <th>Domicilio</th>
+                            <th>Localidad</th>
+                            <th>Dias Restantes</th>
+                            <th>Responsable</th>
+                            <th>Alta Masiva</th>
+                            <th>Acciones</th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {% for individuo in individuos %}
+                            <tr>
+                                <td>{{individuo.num_doc}}</td>
+                                <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
+                                <td>{{individuo.telefono}}</td>
+                                <td>{{individuo.situacion_actual}}</td>
+                                
+                                {% if individuo.domicilio_actual.ubicacion %}
+                                    <td>Alojamiento: {{individuo.domicilio_actual.ubicacion.nombre}}</td>
+                                {% else %}
+                                    <td>{{individuo.domicilio_actual.calle}} {{individuo.domicilio_actual.numero}}</td>
+                                {% endif %}
+                                
+                                <td>{{individuo.domicilio_actual.localidad.nombre}}</td>
+                                <td>{{individuo.dias_faltantes}}</td>
+                                <td>
+                                    {% for vigia in individuo.vigiladores.all %}
+                                        <p><a href="{% url 'seguimiento:ver_panel' vigia_id=vigia.id %}">{{vigia}}</a></p>
+                                    {% endfor %}
+                                </td>
+                                <td><input type="checkbox" id="{{individuo.id}}" value={{individuo.id}} name="alta"></td>
+                                <td>
+                                    <a class="nolink" href="{% url 'seguimiento:dar_alta' individuo_id=individuo.pk %}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/check.png' %}">
+                                    </a>
+                                    <a class="nolink" href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <button type="submit" style="float:right;">Realizar Alta Masiva</button>
+            </form>
         </div>
     </div>
 {% endblock %}

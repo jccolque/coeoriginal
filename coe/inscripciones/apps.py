@@ -12,13 +12,7 @@ class InscripcionesConfig(AppConfig):
     name = 'inscripciones'
     def ready(self):
         agregar_menu(self)
-        #Lanzamos background jobs
-        try:
-            if not DEBUG:
-                from background_task.models import Task
-                if not Task.objects.filter(verbose_name="reintentar_validar").exists():
-                    from .tasks import reintentar_validar
-                    reintentar_validar(repeat=3600*24, verbose_name="reintentar_validar")#Cada 24 horas
-        except OperationalError:
-            logger = logging.getLogger("tasks")
-            logger.info("Falla: "+str(traceback.format_exc()))
+        #BackgroundJobs
+        from background.functions import inicializar_background_job
+        from .tasks import reintentar_validar
+        inicializar_background_job(reintentar_validar, 24, 'reintentar_validar')
