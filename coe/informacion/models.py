@@ -101,6 +101,10 @@ class Individuo(models.Model):
             situacion.aclaracion = "Iniciada por Sistema"
             situacion.save()
             return situacion
+    def aislado(self):
+        sit = self.get_situacion()
+        if sit.conducta in ('D', 'E'):
+            return True
     def get_foto(self):
         if self.fotografia:
             return self.fotografia.url

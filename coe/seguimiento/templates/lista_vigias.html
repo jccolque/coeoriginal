@@ -34,6 +34,9 @@
                                     <a href="{% url 'seguimiento:ver_panel' vigia_id=vigia.id %}" target="_blank">
                                         <img class="icons" src="/static/img/icons/control_panel.png" alt="Panel de Control">
                                     </a>
+                                    <a href="{% url 'seguimiento:mod_vigia' vigia_id=vigia.id %}">
+                                        <img class="icons" src="{% static '/img/icons/change.png' %}">
+                                    </a>
                                     <a href="{% url 'seguimiento:del_vigia' vigia_id=vigia.id %}">
                                         <img class="icons" src="{% static '/img/icons/delete.png' %}">
                                     </a>

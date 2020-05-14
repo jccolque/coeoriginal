@@ -27,6 +27,7 @@ urlpatterns = [
     #Administracion
     path('lista/vigias', views.lista_vigias, name='lista_vigias'),
     path('agregar/vigia', views.agregar_vigia, name='agregar_vigia'),
+    path('mod/vigia/<vigia_id>', views.agregar_vigia, name='mod_vigia'),
     path('del/vigia/<vigia_id>', views.del_vigia, name='del_vigia'),
     path('lista/sin/vigias', views.lista_sin_vigias, name='lista_sin_vigias'),
     #Otros Listados

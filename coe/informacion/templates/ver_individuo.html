@@ -27,7 +27,7 @@
                                 <!-- ESTADO -->
                                 {% if individuo.situacion_actual %}
                                     <h4>Estado: <b>{{individuo.situacion_actual}}</b> 
-                                        <a class="nolink" href="{% url 'informacion:cargar_situacion' individuo_id=individuo.id %}">
+                                        <a class="nolink" href="{% url 'informacion:cargar_situacion' individuo_id=individuo.id %}" target="_blank">
                                             <img class="icons" src="{% static '/img/icons/change.png' %}">
                                         </a>
                                         <a class="nolink"  href="javascript:PopUp(1);" ><img class="icons" src="{% static '/img/icons/history.png' %}"></a>
@@ -35,7 +35,7 @@
                                     {% include 'utils/historial_situaciones.html' %}
                                 {% else %}
                                     <h4 class="alerta">EL INDIVIDUO NO REGISTRA ESTADO ACTUAL: 
-                                        <a class="nolink" href="{% url 'informacion:cargar_situacion' individuo_id=individuo.id %}">
+                                        <a class="nolink" href="{% url 'informacion:cargar_situacion' individuo_id=individuo.id %}" target="_blank">
                                             CARGAR
                                         </a>
                                     </h4>
@@ -382,6 +382,9 @@
                             <li><a href="{% url 'informacion:cargar_atributo' individuo_id=individuo.id %}" target="_blank">Cargar Atributo de Control</a></li>
                             <li><a href="{% url 'informacion:cargar_relacion' individuo_id=individuo.id %}" target="_blank">Cargar Relacion</a></li>
                             <li><a href="{% url 'seguimiento:cargar_seguimiento' individuo_id=individuo.id %}" target="_blank">Cargar Seguimiento</a></li>
+                            {% if perms.operadores.seguimiento_admin and individuo.aislado %}
+                                <li><a href="{% url 'seguimiento:dar_alta' individuo_id=individuo.id %}" target="_blank">Dar Alta Seguimiento</a></li>
+                            {% endif %}
                         </ul>
                     </div>
                 </div>

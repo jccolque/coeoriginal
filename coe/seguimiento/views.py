@@ -130,9 +130,9 @@ def asignar_vigia(request, individuo_id):
         form = AsignarVigia(request.POST)
         if form.is_valid():
             individuo = Individuo.objects.get(pk=individuo_id)
-            geoperador = form.cleaned_data['geoperador']
-            geoperador.controlados.add(individuo)
-            return redirect('geotracking:lista_sin_geoperador')
+            vigia = form.cleaned_data['vigia']
+            vigia.controlados.add(individuo)
+            return redirect('seguimiento:lista_sin_vigias')
     return render(request, "extras/generic_form.html", {'titulo': "Asignar Controlador", 'form': form, 'boton': "Asignar", })
 
 @permission_required('operadores.seguimiento_admin')
@@ -150,8 +150,11 @@ def lista_vigias(request):
     })
 
 @permission_required('operadores.seguimiento_admin')
-def agregar_vigia(request):
-    form = NuevoVigia()
+def agregar_vigia(request, vigia_id=None):
+    vigia = None
+    if vigia_id:
+        vigia = Vigia.objects.get(pk=vigia_id)
+    form = NuevoVigia(instance=vigia)
     if request.method == "POST":
         form = NuevoVigia(request.POST)
         if form.is_valid():

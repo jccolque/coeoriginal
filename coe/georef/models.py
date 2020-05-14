@@ -111,6 +111,7 @@ class Ubicacion(models.Model):
     hora_inicio = models.TimeField('Horario De apertura', null=True, blank=True)
     hora_cierre = models.TimeField('Horario De Cierre', null=True, blank=True)
     duracion_turno = models.SmallIntegerField('Duracion en minutos del Turno', default=20)
+    bajo_seguimiento = models.BooleanField(default=True)
     def __str__(self):
         return self.get_tipo_display() + ':' + self.nombre + ", " + str(self.localidad)
     def as_dict(self):
