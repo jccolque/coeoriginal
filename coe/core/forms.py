@@ -26,9 +26,8 @@ class UploadFoto(forms.Form):
 class TextoForm(forms.Form):
     texto = forms.CharField(initial='+549388')
 
-class EmailForm(forms.Form):
+class ChangeEmailForm(forms.Form):
     email = forms.EmailField(label='Email')
-
 
 class UploadCsvWithPass(forms.Form):
     csvfile = forms.FileField(label="Archivo CSV Masivo", widget=forms.FileInput(attrs={'accept': ".csv"}))

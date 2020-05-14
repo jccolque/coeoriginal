@@ -212,10 +212,13 @@ class CirculacionTemporal(models.Model):#Transportes de Carga
         if self.acompañante:
             pdf.drawString(30, 460, "Chofer: "+str(self.acompañante))
             pdf.drawString(45, 445, "Telefono: "+ self.acompañante.telefono)
-        #Agregamos licencia de conducir
-        pdf.line(200, 420, 400, 420)
-        pdf.drawString(30, 400, "Licencia de Conducir: ")
-        pdf.drawImage(BASE_DIR+self.licencia_conducir.url, 50, 230, 75*mm, 50*mm)
+        try:
+            #Agregamos licencia de conducir
+            pdf.line(200, 420, 400, 420)
+            pdf.drawString(30, 400, "Licencia de Conducir: ")
+            pdf.drawImage(BASE_DIR+self.licencia_conducir.url, 50, 230, 75*mm, 50*mm)
+        except:
+            pass # No subio una imagen
         #Agregamos Codigo QR
         pdf.drawImage(self.get_qr(), 420, 520, 50*mm, 50*mm)
         #Grabamos el PDF

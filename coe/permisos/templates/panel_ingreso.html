@@ -136,6 +136,7 @@
                                     <th>Domicilio origen</th>
                                     <th>Domicilio Destino</th>
                                     <th>Documentos</th>
+                                    <th>Permiso Nacional</th>
                                     <th>App Instalada</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -162,6 +163,24 @@
                                             {% for doc in individuo.get_dnis %}
                                                 <a href="{{doc.archivo.url}}" target="_blank">{{doc.aclaracion}}</a><br>
                                             {% endfor %}
+                                        </td>
+                                        <td>
+                                            {% with individuo.permiso_nacional as permiso %}
+                                                {% if permiso %}
+                                                    <a href="{{permiso.url}}" target="_blank">
+                                                        <img class="icons" src="{% static '/img/icons/history.png' %}">
+                                                    </a>
+                                                    <br>
+                                                    <a href="{% url 'informacion:mod_documento' documento_id=permiso.id %}" target="_blank">
+                                                        Remplazar
+                                                    </a>
+                                                {% else %}
+                                                    <img class="icons" src="/static/img/icons/wrong.png"><br>
+                                                    <a href="{% url 'informacion:cargar_documento' individuo_id=individuo.id tipo='PN' %}" target="_blank">
+                                                        Cargar
+                                                    </a>
+                                                {% endif %}
+                                            {% endwith %}
                                         </td>
                                         <td>
                                             {% if individuo.appdata %}

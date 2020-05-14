@@ -10,9 +10,10 @@
                         <tr>
                             <th>Tipo</th>
                             <th>Estado</th>
-                            <th>Fecha Llegada</th>
+                            <th>Fecha Pedido</th>
                             <th>Origen</th>
                             <th>Destino</th>
+                            <th>Fecha Llegada</th>
                             <th>Vehiculo</th>
                             <th>Cant. Pasajeros</th>
                             <th>Email de Contacto</th>
@@ -26,9 +27,10 @@
                             <tr>
                                 <td>{{ingreso.get_tipo_display}}</td>
                                 <td>{{ingreso.get_estado_display}}</td>
-                                <td>{{ingreso.fecha_llegada|date:"d/m/Y H:i"}}</td>
+                                <td>{{ingreso.fecha|date:"d/m/Y"}}</td>
                                 <td>{{ingreso.origen}}</td>
                                 <td>{{ingreso.destino.nombre}}</td>
+                                <td>{{ingreso.fecha_llegada|date:"d/m/Y H:i"}}</td>
                                 <td>{{ingreso.marca}} {{ingreso.modelo}} {{ingreso.patente}}</td>
                                 <td>{{ingreso.individuos.count}}</td>
                                 <td>{{ingreso.email_contacto}}</td>

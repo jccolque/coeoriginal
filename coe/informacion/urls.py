@@ -83,6 +83,7 @@ urlpatterns = [
     path('del/sintoma/<int:sintoma_id>', views.del_sintoma, name='del_sintoma'),
     #Documentos
     path('cargar/documento/<int:individuo_id>', views.cargar_documento, name='cargar_documento'),
+    path('cargar/documento/<int:individuo_id>/tipo/<str:tipo>', views.cargar_documento, name='cargar_documento'),
     path('mod/documento/<int:individuo_id>/<int:documento_id>', views.cargar_documento, name='mod_documento'),
     path('del/documento/<int:documento_id>', views.del_documento, name='del_documento'),
     #Geopos

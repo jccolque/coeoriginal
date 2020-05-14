@@ -214,12 +214,12 @@ a.boton_suelto {
 .listado {
   width: 100%;
   border-collapse: collapse;
+  text-align: center;
 }
 
 .listado td, th {
     font-weight: normal;
     border: 1px solid #dddddd;
-    text-align: left;
     padding: 8px;
 }
 

@@ -132,7 +132,7 @@ def ver_ingreso_provincial(request, token):
     ingreso = ingreso.get(token=token)
     #Calcular Limite para eliminacion
     limite = int(72 - (timezone.now() - ingreso.fecha).total_seconds() / 3600)
-    return render(request, 'ver_ingreso_provincial.html', {
+    return render(request, 'panel_ingreso.html', {
         'ingreso': ingreso,
         'limite': limite,
         'falta_app': ingreso.individuos.filter(appdata=None).exists(),
@@ -272,7 +272,7 @@ def ver_circulacion_temporal(request, token):
     #Buscamos el indicado
     circulacion = circulaciones.get(token=token)
     #Mostramos panel
-    return render(request, 'ver_circulacion_temporal.html', {
+    return render(request, 'panel_circulacion.html', {
         'circulacion': circulacion,
     })
 
@@ -706,7 +706,7 @@ def panel_circulacion(request, token):
     #Filtramos
     circulacion = circulacion.get(token=token)
     #Mostramos el panel
-    return render(request, 'panel_circulacion.html', {
+    return render(request, 'ver_circulaciones.html', {
         'circulacion': circulacion,
         'has_table': True,
     })

@@ -112,6 +112,7 @@ TIPO_DOCUMENTO = (
     ('CT', 'Certificado Temporal de Aislamiento en Domicilio'),
     ('DI', 'Documento de Identidad'),
     ('LC', 'Licencia de Conducir'),
+    ('PN', 'Permiso de Circulacion Nacional'),
     ('AT', 'Autorizacion Voluntariado - Tutor'),
     ('OT', 'Otros'),
 )

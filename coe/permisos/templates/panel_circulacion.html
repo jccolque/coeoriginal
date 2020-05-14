@@ -9,91 +9,242 @@
             <div class="container">
                 <div class="row">
                     <h2><b>Panel de Circulacion Temporal</b></h2>
+                    <div class="col-md-8">
                         <div class="row">
-                            <div class="col-md-3">
-                                <h3><b>Vehiculo:</b></h3>
-                                <p><b>Marca:</b> {{circulacion.marca}}</p>
-                                <p><b>Modelo:</b> {{circulacion.modelo}}</p>
-                                <p><b>Patente:</b> {{circulacion.patente}}</p>
+                            <div class="col-md-6">
+                                <h3 style="color:{% if circulacion.estado == 'C' %}red{% elif circulacion.estado == 'E' %}orange{% elif circulacion.estado == 'A' %}green{% else %}black{% endif %};"><b>Estado</b> {{circulacion.get_estado_display}}</h3>
+                                <p><b>Email de Contacto:</b> {{circulacion.email_contacto}}</p>
+                                <p><b>Origen:</b> {{circulacion.origen}}</p>
+                                <p><b>Destino:</b> {{circulacion.destino}}</p>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-6">
                                 <p><b>Actividad:</b> {{circulacion.get_tipo_display}}</p>
                                 <hr>
                                 {{circulacion.actividad|safe}}
                             </div>
-                            <div class="col-sm-3"><!--CHOFER-->
-                                <p><b><u>Chofer</u></b></p>
-                                <p><b>Documento:</b> {{circulacion.chofer.num_doc}}</p>
-                                <p><b>Apellido y Nombre:</b> {{circulacion.chofer.apellidos}}, {{circulacion.chofer.nombres}}</p>
-                                <p><b>Fecha de Nacimiento:</b> {{circulacion.chofer.fecha_nacimiento}}</p>
-                                <p><b>Telefono:</b> {{circulacion.chofer.telefono}}</p>
-                                <p><b>Aplicacion Instalada:</b> 
-                                    {% if circulacion.chofer.appdata %}
-                                        <img class="icons" src="/static/img/icons/check.png">
-                                    {% else %}
-                                        <img class="icons" src="/static/img/icons/wrong.png">
-                                    {% endif %}
-                                </p>
-                            </div>
-                            {% if circulacion.acompañante %}
-                                <div class="col-sm-3"><!--Acompañante-->
-                                    <p><b><u>Acompañante</u></b></p>
-                                    <p><b>Documento:</b> {{circulacion.acompañante.num_doc}}</p>
-                                    <p><b>Apellido y Nombre:</b> {{circulacion.acompañante.apellidos}}, {{circulacion.acompañante.nombres}}</p>
-                                    <p><b>Fecha de Nacimiento:</b> {{circulacion.acompañante.fecha_nacimiento}}</p>
-                                    <p><b>Telefono:</b> {{circulacion.acompañante.telefono}}</p>
-                                    <p><b>Aplicacion Instalada:</b> 
-                                        {% if circulacion.acompañante.appdata %}
-                                            <img class="icons" src="/static/img/icons/check.png">
-                                        {% else %}
-                                            <img class="icons" src="/static/img/icons/wrong.png">
-                                        {% endif %}
-                                    </p>
-                                </div>
-                            {% endif %}
                         </div>
                         <hr>
-                    </div>
-                    <div class="row">
-                        <a class="botoncito" href="{% url 'permisos:iniciar_control_circulacion' circulacion_id=circulacion.id %}">
-                            Nuevo Registro
-                            <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
-                        </a>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h3><b>Vehiculo:</b></h3>
+                                <p><b>Marca:</b> {{circulacion.marca}}</p>
+                                <p><b>Modelo:</b> {{circulacion.modelo}}</p>
+                                <p><b>Patente:</b> {{circulacion.patente}}</p>
+                                <p><b>Titular:</b> {{circulacion.titular}}</p>
+                            </div>
+                            <div class="col-md-4">
+                                {% if circulacion.permiso_nacional %}
+                                    <p><b>Permiso de Circulacion Nacional:</b></p>
+                                    <a href="{{circulacion.permiso_nacional.url}}" target="_blank">
+                                        {% autoescape off %}{% ct_show_file circulacion.permiso_nacional %}{% endautoescape %}
+                                    </a>
+                                {% else %}
+                                    <div class="bordeado importante">
+                                        <p><b>Cargar Permiso de Circulacion Nacional</b></p>
+                                        <a href="{% url 'permisos:circ_subir_permiso_nac' token=circulacion.token %}">
+                                            <img class="iconsx4" src="{% static 'img/icons/upload_image.png' %}">
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                {% if circulacion.licencia_conducir %}
+                                    <p><b>Licencia de Conducir:</b></p>
+                                    <a href="{{circulacion.licencia_conducir.url}}" target="_blank">
+                                        {% autoescape off %}{% ct_show_file circulacion.licencia_conducir %}{% endautoescape %}
+                                    </a>
+                                {% else %}
+                                    <div class="bordeado importante">
+                                        <p><b>Cargar Licencia de Conducir</b></p>
+                                        <a href="{% url 'permisos:circ_subir_licencia' token=circulacion.token %}">
+                                            <img class="iconsx4" src="{% static 'img/icons/upload_image.png' %}">
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <hr>
+                        <h3><b>Cargar Datos de Chofer y Acompañante(Si corresponde):</b></h3>
                         <table class="listado" id="table">
                             <thead>
                                 <tr>
-                                    <th>Destino Circulacion</th>
-                                    <th>Control Inicial</th>
-                                    <th>Fecha de Inicio</th>
-                                    <th>Control Final</th>
-                                    <th>Fecha de Final</th>
-                                    <th>Tiempo Permitido</th>
-                                    <th>Horas Reales</th>
+                                    <th>Tipo</th>
+                                    <th>Numero Documento</th>
+                                    <th>Nombre y Apellido</th>
+                                    <th>Fecha de Nacimiento</th>
+                                    <th>Correo Electronico</th>
+                                    <th>Documentos</th>
+                                    <th>Telefono</th>
+                                    <th>App Instalada</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for registro in circulacion.registros.all reversed %}
+                                    <!--CHOFER-->
                                     <tr>
-                                        <td>{{registro.destino.nombre}}</td>
-                                        <td>{{registro.get_control_inicio_display}}</td>
-                                        <td>{{registro.fecha_inicio}}</td>
-                                        {% if registro.control_final %}
-                                            <td>{{registro.get_control_final_display}}</td>
-                                            <td>{{registro.fecha_final}}</td>
-                                        {% else %}
-                                            <td colspan="2" style="text-align: center;">
-                                                <a href="{% url 'permisos:finalizar_control_circulacion' registro_id=registro.id %}" class="nolink">
-                                                    <b>Cargar Salida</b>
-                                                    <img class="icons" src="/static/img/icons/logout.png" alt="Marcar Egreso">
+                                        <td>Chofer</td>
+                                        <td>{{circulacion.chofer.num_doc}}</td>
+                                        <td>{{circulacion.chofer.apellidos}}, {{circulacion.chofer.nombres}}</td>
+                                        <td>{{circulacion.chofer.fecha_nacimiento}}</td>
+                                        <td>{{circulacion.chofer.email}}</td>
+                                        <td>{{circulacion.chofer.telefono}}</td>
+                                        <td>
+                                            {% for doc in circulacion.chofer.get_dnis %}
+                                                <a href="{{doc.archivo.url}}" target="_blank">{{doc.aclaracion}}</a><br>
+                                            {% endfor %}
+                                        </td>
+                                        <td>
+                                            {% if circulacion.chofer.appdata %}
+                                                <img class="icons" src="/static/img/icons/check.png">
+                                            {% else %}
+                                                <img class="icons" src="/static/img/icons/wrong.png">
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if circulacion.chofer %}
+                                            <a href="{% url 'permisos:circ_mod_chofer' token=circulacion.token individuo_id=circulacion.chofer.pk %}" target="_blank">
+                                                    <img class="icons" src="{% static 'img/icons/change.png' %}">
                                                 </a>
-                                            </td>
-                                        {% endif %}
-                                        <td>{{registro.tiempo_permitido}}</td>
-                                        <td>{{registro.tiempo_real|floatformat:2}}hrs</td>
+                                            {% else %}
+                                                <a href="{% url 'permisos:circ_cargar_chofer' token=circulacion.token %}" target="_blank">
+                                                    <img class="icons" src="{% static 'img/icons/add_person.png' %}">
+                                                </a>
+                                            {% endif %}
+                                            <a href="{% url 'permisos:circ_del_chofer' token=circulacion.token %}" target="_blank">
+                                                <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                            </a>
+                                        </td>
                                     </tr>
-                                {% endfor %}
+                                    <!--Acompañante-->
+                                    <tr>
+                                        <td>Acompañante</td>
+                                        <td>{{circulacion.acompañante.num_doc}}</td>
+                                        <td>{{circulacion.acompañante.apellidos}}, {{circulacion.acompañante.nombres}}</td>
+                                        <td>{{circulacion.acompañante.fecha_nacimiento}}</td>
+                                        <td>{{circulacion.acompañante.email}}</td>
+                                        <td>{{circulacion.acompañante.telefono}}</td>
+                                        <td>
+                                            {% for doc in circulacion.acompañante.get_dnis %}
+                                                <a href="{{doc.archivo.url}}" target="_blank">{{doc.aclaracion}}</a><br>
+                                            {% endfor %}
+                                        </td>
+                                        <td>
+                                            {% if circulacion.acompañante.appdata %}
+                                                <img class="icons" src="/static/img/icons/check.png">
+                                            {% else %}
+                                                <img class="icons" src="/static/img/icons/wrong.png">
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if circulacion.acompañante %}
+                                            <a href="{% url 'permisos:circ_mod_acomp' token=circulacion.token individuo_id=circulacion.acompañante.pk %}" target="_blank">
+                                                    <img class="icons" src="{% static 'img/icons/change.png' %}">
+                                                </a>
+                                            {% else %}
+                                            <a href="{% url 'permisos:circ_cargar_acomp' token=circulacion.token %}" target="_blank">
+                                                    <img class="icons" src="{% static 'img/icons/add_person.png' %}">
+                                                </a>
+                                            {% endif %}
+                                            <a href="{% url 'permisos:circ_del_acomp' token=circulacion.token %}" target="_blank">
+                                                <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                            </a>
+                                        </td>
+                                    </tr>
                             </tbody>
                         </table>
+                        <p class="error">Chofer y Acompañante deben tener la app <b>COVID19 Jujuy</b> Instalada y haberse registrado.</p>
+                        <p class="error"><b>Descargar Aqui:</b> <a href="https://play.google.com/store/apps/details?id=com.ga.covidjujuy_app" target="_blank">Google Play</a></p>
+                        <hr>
+                        {% if circulacion.emails_enviados.exists %}
+                            <h3>Emails Enviados al individuo</h3>
+                            <table class="listado">
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Asunto</th>
+                                    <th>Cuerpo</th>
+                                    <th>Operador</th>
+                                </tr>
+                                {% for email in circulacion.emails_enviados.all %}
+                                    <tr>
+                                        <td>{{email.fecha}}</th>
+                                        <td>{{email.asunto}}</th>
+                                        <td>{{email.cuerpo}}</td>
+                                        <td>{{email.operador}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        {% endif %}
+                    </div>
+                    <!-- Menu-->
+                    <div class="col-md-4">
+                        <div class="bordeado importante">
+                            {% if circulacion.estado == 'C' %}
+                                {% if circulacion.listo %}
+                                    <h3>Proceso Terminado</h3>
+                                    <p>Si esta conforme con todos los datos cargados presione "Finalizar Proceso".</p>
+                                {% else %}
+                                    <h3>Pasos Requeridos para obtener Permiso</h3>
+                                    <ul>
+                                        <li class="lista">
+                                            Cargar Permiso de Circulacion Nacional
+                                            {% if circulacion.permiso_nacional %}
+                                                <img class="icons" src="/static/img/icons/check.png">
+                                            {% else %}
+                                                <img class="icons" src="/static/img/icons/wrong.png">
+                                            {% endif %}
+                                        </li>
+                                        <li class="lista">
+                                            Cargar Licencia de Conducir
+                                            {% if circulacion.licencia_conducir %}
+                                                <img class="icons" src="/static/img/icons/check.png">
+                                            {% else %}
+                                                <img class="icons" src="/static/img/icons/wrong.png">
+                                            {% endif %}
+                                        </li>
+                                        <li class="lista">Cargar Chofer del Vehiculo
+                                            {% if circulacion.chofer %}
+                                                <img class="icons" src="/static/img/icons/check.png">
+                                            {% else %}
+                                                <img class="icons" src="/static/img/icons/wrong.png">
+                                            {% endif %}
+                                        </li>
+                                        <li class="lista">Descargar y Registrarse en la App
+                                            {% if circulacion.chofer.appdata %}
+                                                <img class="icons" src="/static/img/icons/check.png">
+                                            {% else %}
+                                                <img class="icons" src="/static/img/icons/wrong.png">
+                                            {% endif %}
+                                        </li>
+                                    </ul>
+                                {% endif %}
+                            {% elif circulacion.estado == 'A' %}
+                                <h3>Su pedido fue aprobado</h3>
+                                <p>Ya puede descargar la autorizacion.</p>
+                            {% endif %}
+                        </div>
+                        <ul class="menu_botones">
+                            <hr>
+                            {% if circulacion.estado == 'C' %}
+                                <li><a href="{% url 'permisos:mod_circulacion_temporal' circulacion_id=circulacion.id %}">Modificar Datos de Ingreso</a></li>
+                                {% if circulacion.listo %}
+                                    <li><a href="{% url 'permisos:finalizar_circulacion' token=circulacion.token %}">Finalizar Proceso</a></li>
+                                {% endif %}
+                            {% elif circulacion.estado == 'A' %}
+                                <li><a href="{% url 'permisos:ver_comprobante_circulacion' token=circulacion.token %}">Imprimir Comprobante</a></li>
+                            {% endif %}
+                            {% if perms.operadores.permisos %}
+                                <hr>
+                                <p><b>Operadores</b></p>
+                                <li><a href="{% url 'permisos:circulacion_enviar_email' circulacion_id=circulacion.id %}">Enviar Correo Electronico</a></li>
+                                {% if circulacion.estado == 'B' %}
+                                    <li><a href="{% url 'permisos:reactivar_circulacion' circulacion_id=circulacion.id %}">Reactivar Circulacion</a></li>
+                                {% else %}
+                                    <li><a href="{% url 'permisos:eliminar_circulacion' circulacion_id=circulacion.id %}">Eliminar Circulacion</a></li>
+                                {% endif %}
+                                <li><a href="{% url 'permisos:panel_circulacion' token=circulacion.token %}">Ver Panel de Circulacion</a></li>
+                                <li><a href="{% url 'permisos:lista_circulaciones' %}">Volver al Listado General</a></li>
+                            {% endif %}
+                        </ul>
                     </div>
                 </div>
             </div>

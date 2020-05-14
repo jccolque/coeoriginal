@@ -13,7 +13,7 @@ from coe.settings import GEOPOSITION_GOOGLE_MAPS_API_KEY
 from coe.constantes import DIAS_CUARENTENA
 from core.decoradores import superuser_required
 from core.functions import date2str
-from core.forms import SearchForm, JustificarForm, TextoForm, EmailForm
+from core.forms import SearchForm, JustificarForm, TextoForm, ChangeEmailForm
 from georef.models import Nacionalidad
 from georef.models import Ubicacion
 from seguimiento.models import Seguimiento
@@ -500,9 +500,9 @@ def mod_telefono(request, individuo_id=None):
 @permission_required('operadores.individuos')
 def mod_email(request, individuo_id=None):
     individuo = Individuo.objects.get(pk=individuo_id)
-    form = EmailForm(initial={'email':individuo.email})
+    form = ChangeEmailForm(initial={'email':individuo.email})
     if request.method == 'POST':
-        form = EmailForm(request.POST)
+        form = ChangeEmailForm(request.POST)
         if form.is_valid():
             individuo.email = form.cleaned_data['email']
             individuo.save()
@@ -743,11 +743,11 @@ def del_sintoma(request, sintoma_id):
 
 #Documento
 @permission_required('operadores.individuos')
-def cargar_documento(request, individuo_id, documento_id=None):
+def cargar_documento(request, individuo_id, documento_id=None, tipo=None):
     documento = None
     if documento_id:
         documento = Documento.objects.get(pk=documento_id)
-    form = DocumentoForm(instance=documento)
+    form = DocumentoForm(initial={'tipo': tipo},instance=documento)
     if request.method == "POST":
         form = DocumentoForm(request.POST, request.FILES, instance=documento)
         if form.is_valid():
