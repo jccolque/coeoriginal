@@ -110,6 +110,8 @@ class Individuo(models.Model):
             return self.fotografia.url
         else:
             return NOIMAGE
+    def get_permiso_nacional(self):
+        return self.documentos.filter(tipo='PN').last()
     def get_qr(self):
         if self.qrpath:
             return self.qrpath

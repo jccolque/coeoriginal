@@ -165,13 +165,13 @@
                                             {% endfor %}
                                         </td>
                                         <td>
-                                            {% with individuo.permiso_nacional as permiso %}
+                                            {% with individuo.get_permiso_nacional as permiso %}
                                                 {% if permiso %}
-                                                    <a href="{{permiso.url}}" target="_blank">
+                                                    <a href="{{permiso.archivo.url}}" target="_blank">
                                                         <img class="icons" src="{% static '/img/icons/history.png' %}">
                                                     </a>
                                                     <br>
-                                                    <a href="{% url 'informacion:mod_documento' documento_id=permiso.id %}" target="_blank">
+                                                    <a href="{% url 'informacion:mod_documento' individuo_id=individuo.id documento_id=permiso.id %}" target="_blank">
                                                         Remplazar
                                                     </a>
                                                 {% else %}
