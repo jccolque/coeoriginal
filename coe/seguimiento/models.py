@@ -33,7 +33,7 @@ class Vigia(models.Model):
         return str(self.operador.nombres) + ' ' + str(self.operador.apellidos)
     def alertas_activas(self):
         limite = timezone.now() - timedelta(hours=12)
-        return sum([1 for c in self.controlados.all() if c.seguimienot_actual and c.seguimiento_actual.fecha < limite])
+        return sum([1 for c in self.controlados.all() if c.seguimiento_actual and c.seguimiento_actual.fecha < limite])
 
 if not LOADDATA:
     #Auditoria
