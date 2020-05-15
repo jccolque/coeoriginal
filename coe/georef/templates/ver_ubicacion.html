@@ -1,6 +1,7 @@
 {% extends 'base_informacion.html' %}
 
 {% load static %}
+{% load auditar_tags %}
 {% load tz %}
 
 {% block content %}
@@ -79,7 +80,14 @@
                                                     <img class="icons" src="/static/img/icons/wrong.png">
                                                 {% endif %}
                                             </td>
-                                            <td><a href="{% url 'informacion:ver_individuo' individuo_id=aislado.id %}" target="_blank">(Ver Individuo)</a></td>
+                                            <td>
+                                                <a href="{% url 'informacion:ver_individuo' individuo_id=aislado.id %}" target="_blank">
+                                                    <img class="icons" src="{% static '/img/icons/access_card.png' %}">
+                                                </a>
+                                                <a class="nolink"  href="{% ct_auditar_obj_url aislado.domicilio_actual %}">
+                                                    <img class="icons" src="{% static '/img/icons/question.png' %}">
+                                                </a>
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>

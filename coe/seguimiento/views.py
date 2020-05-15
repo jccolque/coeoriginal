@@ -41,9 +41,12 @@ def buscar_alta_aislamiento(request):
                 num_doc=form.cleaned_data['num_doc'],
                 apellidos__icontains=form.cleaned_data['apellido']).first()
             if individuo:
-                alta = individuo.documentos.filter(tipo='AC').first()
+                alta = individuo.documentos.filter(tipo='AC').last()
                 if alta:
-                    return redirect(alta.archivo.url)
+                    try:
+                        return redirect(alta.archivo.url)
+                    except:
+                        form.add_error(None, "El individuo no cuenta con Alta de Cuarentena.")
                 else:
                     if individuo.situacion_actual.conducta in ('D', 'E'):
                         form.add_error(None, "El individuo no cuenta con Alta de Cuarentena.")
