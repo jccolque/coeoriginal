@@ -11,6 +11,12 @@ from . import autocomplete
 app_name = 'inventario'
 urlpatterns = [
     path('', views.menu, name='menu'),
+    #Rubro:
+    path('crear/rubro', views.crear_rubro, name='crear_rubro'),
+    path('mod/rubro/<int:rubro_id>', views.crear_rubro, name='mod_rubro'),
+    #Subgrupo:
+    path('crear/subgrupo', views.crear_subgrupo, name='crear_subgrupo'),
+    path('crear/subgrupo/<int:subgrupo_id>', views.crear_subgrupo, name='mod_subgrupo'),
     #Basico Items
     path('general', views.lista_general, name='lista_general'),
     path('detallada', views.lista_detallada, name='lista_detallada'),

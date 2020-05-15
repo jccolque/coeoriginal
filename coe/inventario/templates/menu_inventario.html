@@ -11,17 +11,21 @@
                     <div class="col-md-8">
                         <ul class="menu_botones">
                             {% if perms.operadores.menu_inventario %}
-                                <li><a href="{% url 'inventario:crear_item'  %}">Cargar Elemento</a></li>
                                 <li><a href="{% url 'inventario:lista_general'  %}">Ver Listado General</a></li>
                                 <li><a href="{% url 'inventario:lista_detallada'  %}">Ver Listado Detallado</a></li>
+                                <hr>
+                                <li><a href="{% url 'inventario:crear_rubro' %}">Crear Rubro</a></li>
+                                <li><a href="{% url 'inventario:crear_subgrupo' %}">Crear Subgrupo</a></li>
+                                <li><a href="{% url 'inventario:crear_item'  %}">Cargar Elemento</a></li>
                             {% endif %}
 
                             {% if perms.operadores.reportes %}
-                                <li><a href="{% url 'inventario:csv_inventario'  %}">Descargar Inventario</a></li>
                                 <hr>
+                                <li><a href="{% url 'inventario:csv_inventario'  %}">Descargar Inventario</a></li>
                             {% endif %}
 
                             {% if request.user.is_superuser %}
+                                <hr>    
                                 <li><a href="{% url 'inventario:menu' %}">Opcion del Administrador</a></li>
                             {% endif %}
                         </ul>

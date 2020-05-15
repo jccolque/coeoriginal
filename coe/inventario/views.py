@@ -11,9 +11,10 @@ from coe.settings import GEOPOSITION_GOOGLE_MAPS_API_KEY
 from core.forms import SearchForm
 from operadores.functions import obtener_operador
 #Imports app
-from .models import SubGrupo
+from .models import Rubro, SubGrupo
 from .models import Item, EventoItem
 from .models import GeoPosicion
+from .forms import RubroForm, SubGrupoForm
 from .forms import ItemForm, ModItemForm
 from .forms import EventoItemForm, TransferirForm
 
@@ -21,6 +22,33 @@ from .forms import EventoItemForm, TransferirForm
 @permission_required('operadores.menu_inventario')
 def menu(request):
     return render(request, 'menu_inventario.html', {})
+
+#ABM
+@permission_required('operadores.menu_inventario')
+def crear_rubro(request, rubro_id=None):
+    rubro = None
+    if rubro_id:
+        rubro = Rubro.objects.get(pk=rubro_id)
+    form = RubroForm(instance=rubro)
+    if request.method == 'POST':
+        form = RubroForm(request.POST, instance=rubro)
+        if form.is_valid():
+            form.save()
+            return render(request, "extras/close.html")
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Rubro", 'form': form, 'boton': "Cargar", })
+
+@permission_required('operadores.menu_inventario')
+def crear_subgrupo(request, subgrupo_id=None):
+    subgrupo = None
+    if subgrupo_id:
+        subgrupo = SubGrupo.objects.get(pk=subgrupo_id)
+    form = SubGrupoForm(instance=subgrupo)
+    if request.method == 'POST':
+        form = SubGrupoForm(request.POST, instance=subgrupo)
+        if form.is_valid():
+            form.save()
+            return render(request, "extras/close.html")
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Rubro", 'form': form, 'boton': "Cargar", })
 
 #ITEMS:
 @permission_required('operadores.menu_inventario')

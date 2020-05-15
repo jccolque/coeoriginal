@@ -4,12 +4,7 @@
     <div class="beneficiario container">
         <div class="row">
             <h2>Inventario General</h2>
-            {% if perms.operadores.menu_inventario %}
-                <a href="{% url 'inventario:crear_item' %}">
-                    Crear Item
-                    <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo Usuario">
-                </a>
-            {% endif %}
+            {% include 'abm_inventario.html' %}
         </div>
         <div class="row">
         <div class="col-md-12">
@@ -29,10 +24,16 @@
                                 <a href={% url 'inventario:lista_rubro' rubro_id=subgrupo.rubro.id %}>
                                     {{subgrupo.rubro}}
                                 </a>
+                                <a href="{% url 'inventario:mod_rubro' rubro_id=subgrupo.rubro.id %}">
+                                    <img class="icons" src="{% static '/img/icons/change.png' %}">
+                                </a>
                             </td>
                             <td>
                                 <a href={% url 'inventario:lista_subgrupo' subgrupo_id=subgrupo.id %}>
                                     {{subgrupo}}
+                                </a>
+                                <a href="{% url 'inventario:mod_subgrupo' subgrupo_id=subgrupo.id %}">
+                                    <img class="icons" src="{% static '/img/icons/change.png' %}">
                                 </a>
                             </td>
                             <td>{{subgrupo.cantidad_disponible}}</td>

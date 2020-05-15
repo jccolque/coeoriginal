@@ -214,7 +214,7 @@ a.boton_suelto {
 .listado {
   width: 100%;
   border-collapse: collapse;
-  text-align: center;
+  text-align: left;
 }
 
 .listado td, th {
@@ -336,7 +336,8 @@ img.foto_padding {
     padding-right: 15px;
     background-color: var(--color_oscuro);
     border-radius: 5px;
-    margin-top: 15px!important;
+    margin-top: 10px!important;
+    margin-right: 10px;
     font-weight: bold;
     color: white;
 }

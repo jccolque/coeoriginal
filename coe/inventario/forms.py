@@ -6,9 +6,23 @@ from dal import autocomplete
 from tinymce.widgets import TinyMCE
 #Imports del proyecto
 #Imports de la app
+from .models import Rubro, SubGrupo
 from .models import Item, EventoItem
 
 #Definimos nuestros forms
+class RubroForm(forms.ModelForm):
+    class Meta:
+        model = Rubro
+        fields= '__all__'
+
+class SubGrupoForm(forms.ModelForm):
+    class Meta:
+        model = SubGrupo
+        fields= '__all__'
+        widgets = {
+            'rubro': autocomplete.ModelSelect2(url='inventario:rubros-autocomplete'),
+        }
+
 class ItemForm(forms.ModelForm):
     actuante = forms.CharField(label='actuante', max_length=100, required=True)
     cantidad = forms.IntegerField(required=True)
