@@ -44,3 +44,14 @@ def crear_usuario(operador):
     usuario.is_staff = True
     usuario.save()
     return usuario
+
+def auditar_objeto(instancia):
+    from django.contrib.contenttypes.models import ContentType
+    from auditlog.models import LogEntry
+    #Obtenemos datos basicos
+    ct = ContentType.objects.get_for_model(instancia)
+    #Buscamos registros
+    registros = LogEntry.objects.filter(content_type=ct)
+    registros = registros.filter(object_pk=instancia.pk)
+    #Preparamos informe
+    return registros

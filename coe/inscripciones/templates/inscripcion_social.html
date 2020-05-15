@@ -24,14 +24,12 @@
                         <p>Si Ud. tiene intención de colaborar como Voluntario en el marco de la contingencia por el nuevo Coronavirus (COVID-19), lea y complete el siguiente formulario. Se pone en conocimiento de los Voluntarios Sociales que su incorporación al Plan de Acción Integral del Adulto Mayor Covid-19, se realizará en el marco de la Ley del Voluntariado Social N° 25.855.</p>
                     </div>
                     <div class="row">
-                        <div class="col-lg-5">
+                        <div class="col-lg-6">
                             <div class="bordeado">
                                 <img class="fotos" src="{% static 'img/adultos_mayores.jpeg' %}">
                                 <p>La información consignada precedentemente reviste carácter de Declaración Jurada. Su omisión o falsedad procederá al rechazo de la inscripción o la exclusión del registro, sin perjuicio de las sanciones que le pudiera corresponder.</p>
                                 <p><b>Este formulario sólo es para las personas entre 18 años y 40 años.</b></p>
                             </div>
-                        </div>
-                        <div class="col-lg-7">
                             <div class="bordeado">
                                 <p><b>Importante:</b></p>
                                 <p>Declaro NO estar comprendido/a por ninguno de los grupos de riesgo que se detallan a continuación:</p>
@@ -55,69 +53,47 @@
                                 <p style="text-align:right;">{{form.no_aislamiento}} <b>Confirmar</b></p>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-lg-5">
-                        <div class="bordeado">
-                            <h3><b>Datos Personales</b></h3>
-                            <p>{{form.tipo_doc}} {{form.num_doc}}</p>
-                            <p><b>Documento de Identidad:</b> {{form.frente_dni}}</p>
-                            <p><b>Apellido:</b> {{form.apellidos}}</p>
-                            <p><b>Nombre:</b> {{form.nombres}}</p>
-                            <p><b>Genero:</b> {{form.sexo}}</p>
-                            <p><b>Fecha de Nacimiento:</b> {{form.fecha_nacimiento}}</p>
-                            <p><b>Nacionalidad:</b> {{form.nacionalidad}}</p>
-                            <p><b>Profesion u Oficio:</b> {{form.oficio}}</p>
-                            <hr>
-                            <p><b>Domicilio</b></p>
-                            <p><b>Localidad:</b> {{form.dom_localidad}}</p>
-                            <p><b>Calle:</b> {{form.dom_calle}} <b>Numero:</b> {{form.dom_numero}}</p>
-                            <p><b>Barrio:</b> {{form.dom_aclaracion}}</p>
-                            <hr>
-                            <p><b>Contacto</b></p>
-                            <p><b>Correo Electronico:</b> {{form.email}}</p>
-                            <p><b>Telefono:</b> {{form.telefono}}</p>
-                            <hr>
-                            <p><b>Cuenta con alguno de estos dispositivos?</b></p>
-                            {% for disp in dispositivos %}
-                                <li><input type="checkbox" id="{{disp.0}}" value={{disp.0}} name="dispositivos"> {{disp.1}}</li>
-                            {% endfor %}
-                            <br>
-                            <p><b>Tiene conexion a Internet en su hogar?</b></p>
-                            <p><input type="radio" id="internet_si" name="internet" value="si"> Si</p>
-                            <p><input type="radio" id="internet_no" name="internet" value="no"> No</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-7">
-                        <div class="bordeado">
-                            <h3><b>Indique cuáles tareas son de su interés:</b></h3>
-                            <ul>
-                                {% for area in areas %}
-                                    <b>{{area.nombre|title}}</b>
-                                    <ul>
-                                    {% for tarea in area.tareas.all %}
-                                        <li> <input type="checkbox" id="{{tarea.id}}" value={{tarea.id}} name="tareas"> {{tarea.nombre}}</li>
-                                    {% endfor %}
-                                    </ul>
+
+                        <div class="col-lg-6">
+                            <div class="bordeado">
+                                <h3><b>Datos Personales</b></h3>
+                                <p>{{form.tipo_doc}} {{form.num_doc}}</p>
+                                <p><b>Documento de Identidad:</b> {{form.frente_dni}}</p>
+                                <p><b>Apellido:</b> {{form.apellidos}}</p>
+                                <p><b>Nombre:</b> {{form.nombres}}</p>
+                                <p><b>Genero:</b> {{form.sexo}}</p>
+                                <p><b>Fecha de Nacimiento:</b> {{form.fecha_nacimiento}}</p>
+                                <p><b>Nacionalidad:</b> {{form.nacionalidad}}</p>
+                                <p><b>Profesion u Oficio:</b> {{form.oficio}}</p>
+                                <hr>
+                                <p><b>Domicilio</b></p>
+                                <p><b>Localidad:</b> {{form.dom_localidad}}</p>
+                                <p><b>Calle:</b> {{form.dom_calle}} <b>Numero:</b> {{form.dom_numero}}</p>
+                                <p><b>Barrio:</b> {{form.dom_aclaracion}}</p>
+                                <hr>
+                                <p><b>Contacto</b></p>
+                                <p><b>Correo Electronico:</b> {{form.email}}</p>
+                                <p><b>Telefono:</b> {{form.telefono}}</p>
+                                <hr>
+                                <p><b>Cuenta con alguno de estos dispositivos?</b></p>
+                                {% for disp in dispositivos %}
+                                    <li><input type="checkbox" id="{{disp.0}}" value={{disp.0}} name="dispositivos"> {{disp.1}}</li>
                                 {% endfor %}
-                            </ul>
-                        </div>
-                        <br>
-                        <div class="bordeado">
-                            <p><b>¿Cuenta con alguna experiencia en voluntariado social?</b></p>
-                            <li>En caso afirmativo, indique la temática y el nombre de la organización donde desarrolló el voluntariado.</li>
-                            <br>
-                            {{form.info_extra}}
+                                <br>
+                                <p><b>Tiene conexion a Internet en su hogar?</b></p>
+                                <p><input type="radio" id="internet_si" name="internet" value="si"> Si</p>
+                                <p><input type="radio" id="internet_no" name="internet" value="no"> No</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-4 col-lg-offset-4">
-                    <br>
-                    <button type="submit" style="width:100%;margin-bottom:150px;">Postularse</button>
-                </div>
-            </form>
+                    <div class="row">
+                        <div class="col-lg-4 col-lg-offset-4">
+                            <br>
+                            <button type="submit" style="width:100%;margin-bottom:150px;">Postularse</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 {% endblock %}

@@ -9,13 +9,17 @@
                     <thead>
                         <tr>
                             <th>Actividad</th>
-                            <th>Origen</th>
                             <th>Vehiculo</th>
                             <th>Chofer</th>
                             <th>Telefono</th>
-                            <th>Destino Circulacion</th>
+                            <th>Origen Viaje</th>
+                            
                             <th>Control Inicial</th>
                             <th>Fecha de Inicio</th>
+
+                            <th>Destino Circulacion</th>
+                            
+                            
                             <th>Control Final</th>
                             <th>Fecha de Final</th>
                             <th>Tiempo Permitido</th>
@@ -28,14 +32,16 @@
                             <tr>
                                 {% with registro.circulacion as circulacion %}
                                     <td class="minitexto">{{circulacion.get_tipo_display}}</td>
-                                    <td>{{circulacion.origen.nombre}}</td>
                                     <td>{{circulacion.marca}} {{circulacion.modelo}} {{circulacion.patente}}</td>
                                     <td>{{circulacion.chofer}}</td>
                                     <td>{{circulacion.chofer.telefono}}</td>
-                                
-                                    <td>{{registro.destino.nombre}}</td>
+                                    <td>{{circulacion.origen.nombre}}</td>
+                                    
                                     <td>{{registro.get_control_inicio_display}}</td>
                                     <td>{{registro.fecha_inicio}}</td>
+                                    
+                                    <td>{{registro.destino.nombre}}</td>
+
                                     {% if registro.control_final %}
                                         <td>{{registro.get_control_final_display}}</td>
                                         <td>{{registro.fecha_final}}</td>

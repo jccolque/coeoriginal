@@ -9,6 +9,7 @@ from django.shortcuts import redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.decorators import permission_required
 #Imports extras
 from auditlog.models import LogEntry
@@ -16,7 +17,7 @@ from auditlog.models import LogEntry
 from core.forms import SearchForm, FechaForm
 from informacion.models import Individuo
 #Imports de la app
-from .functions import obtener_permisos, crear_usuario
+from .functions import obtener_permisos, crear_usuario, auditar_objeto
 from .models import SubComite, Operador, EventoOperador
 from .forms import SubComiteForm, BuscarOperadorForm, CrearOperadorForm
 from .forms import ModOperadorForm, ModPassword, AuditoriaForm
@@ -305,6 +306,20 @@ def auditoria(request, user_id=None):
                 'registros': registros,})
     #Lanzamos form basico
     return render(request, "extras/generic_form.html", {'titulo': "Auditoria Usuario", 'form': form, 'boton': "Auditar", })
+
+@permission_required('operadores.auditar_operadores')
+def auditar_cambios(request, content_id, object_id):
+    #Obtenemos modelo
+    modelo = ContentType.objects.get(pk=content_id).model_class()
+    #Obtenemos Objeto a auditar
+    objeto = modelo.objects.get(pk=object_id)
+    #Obtenemos registros de cambios
+    registros = auditar_objeto(objeto)
+    #Lanzamos muestra:
+    return render(request, 'users/auditar_objeto.html', {
+        'objeto': objeto,
+        'registros': registros,
+    })
 
 @permission_required('operadores.operadores')
 def csv_operadores(request):

@@ -1,6 +1,7 @@
 {% extends 'base_informacion.html' %}
 
 {% load static %}
+{% load auditar_tags %}
 
 {% block content %}
     <section class="resumen">
@@ -71,6 +72,7 @@
                                 <th>Tipo</th>
                                 <th>Fecha</th>
                                 <th>Aclaracion</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -79,6 +81,14 @@
                                     <td>{{seguimiento.get_tipo_display}}</td>
                                     <td>{{seguimiento.fecha}}</td>
                                     <td>{{seguimiento.aclaracion|safe}}</td>
+                                    <td>
+                                        <a class="nolink"  href="{% ct_auditar_obj_url seguimiento %}">
+                                            <img class="icons" src="{% static '/img/icons/question.png' %}">
+                                        </a>
+                                        <a class="nolink"  href="{% url 'seguimiento:mod_seguimiento' individuo_id=individuo.id seguimiento_id=seguimiento.id %}" target="_blank">
+                                            <img class="icons" src="{% static '/img/icons/change.png' %}">
+                                        </a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>

@@ -52,12 +52,3 @@ def json_error(error, vista, logger, data):
             safe=False,
             status=400,
         )
-
-def auditar_objeto(instancia):
-    from auditlog.models import LogEntry
-    modelo = instancia.__class__.__name__.lower()
-    #Buscamos registros
-    registros = LogEntry.objects.filter(content_type__name=modelo)
-    registros = registros.filter(object_pk=instancia.pk)
-    #Preparamos informe
-    return registros

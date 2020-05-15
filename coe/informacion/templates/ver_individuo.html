@@ -2,6 +2,7 @@
 
 {% load static %}
 {% load seguridad_tags%}
+{% load auditar_tags %}
 
 {% block content %}
     <section class="resumen">
@@ -23,7 +24,11 @@
                                 </a>
                             </div>
                             <div class="col-sm-6">
-                                <h2><b>{{individuo.apellidos}}, {{individuo.nombres}}</b></h2>
+                                <h2><b>{{individuo.apellidos}}, {{individuo.nombres}}</b>
+                                    <a class="nolink"  href="{% ct_auditar_obj_url individuo %}">
+                                        <img class="icons" src="{% static '/img/icons/question.png' %}">
+                                    </a>
+                                </h2>
                                 <!-- ESTADO -->
                                 {% if individuo.situacion_actual %}
                                     <h4>Estado: <b>{{individuo.situacion_actual}}</b> 
@@ -192,7 +197,7 @@
                                 <td>{{sintoma.aclaracion}}</td>
                                 <td>{{sintoma.fecha}}</td>
                                 <td>
-                                    <a class="nolink"  href="{% url 'informacion:mod_sintoma' individuo_id=individuo.id sintoma_id=sintoma.id %}">
+                                    <a class="nolink"  href="{% url 'informacion:mod_sintoma' individuo_id=individuo.id sintoma_id=sintoma.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/change.png' %}">
                                     </a>
                                     <a class="nolink"  href="{% url 'informacion:del_sintoma' sintoma_id=sintoma.id %}">
@@ -205,7 +210,7 @@
                             {% endif %}
                         {% endfor %}
 
-                        <!--Tabla de Sintomas Registrados-->
+                        <!--Tabla de Atributos Registrados-->
                         {% for atributo in individuo.atributos.all %}
                             {% if forloop.first %}
                                 <hr>
@@ -223,7 +228,7 @@
                                 <td>{{atributo.aclaracion}}</td>
                                 <td>{{atributo.fecha}}</td>
                                 <td>
-                                    <a class="nolink"  href="{% url 'informacion:mod_atributo' individuo_id=individuo.id atributo_id=atributo.id %}">
+                                    <a class="nolink"  href="{% url 'informacion:mod_atributo' individuo_id=individuo.id atributo_id=atributo.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/change.png' %}">
                                     </a>
                                     <a class="nolink"  href="{% url 'informacion:del_atributo' atributo_id=atributo.id %}">
@@ -258,7 +263,7 @@
                                     <a class="nolink"  href="{{documento.archivo.url}}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/lupa.png' %}">
                                     </a>
-                                    <a class="nolink"  href="{% url 'informacion:mod_documento' individuo_id=individuo.id documento_id=documento.id %}">
+                                    <a class="nolink"  href="{% url 'informacion:mod_documento' individuo_id=individuo.id documento_id=documento.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/change.png' %}">
                                     </a>
                                     {% if request.user.is_superuser %}
@@ -299,7 +304,7 @@
                                 <td>{{relacion.relacionado.situacion_actual}}</td>
                                 <td>{{relacion.fecha}}</td>
                                 <td>
-                                    <a class="nolink"  href="{% url 'informacion:mod_relacion' individuo_id=individuo.id relacion_id=relacion.id %}">
+                                    <a class="nolink"  href="{% url 'informacion:mod_relacion' individuo_id=individuo.id relacion_id=relacion.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/change.png' %}">
                                     </a>
                                     <a class="nolink"  href="{% url 'informacion:del_relacion' relacion_id=relacion.id %}">
@@ -330,7 +335,7 @@
                                 <td>{{seguimiento.aclaracion|safe}}</td>
                                 <td>{{seguimiento.fecha}}</td>
                                 <td>
-                                    <a class="nolink"  href="{% url 'seguimiento:mod_seguimiento' individuo_id=individuo.id seguimiento_id=seguimiento.id %}">
+                                    <a class="nolink"  href="{% url 'seguimiento:mod_seguimiento' individuo_id=individuo.id seguimiento_id=seguimiento.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/change.png' %}">
                                     </a>
                                     <a class="nolink"  href="{% url 'seguimiento:del_seguimiento' seguimiento_id=seguimiento.id %}">
