@@ -3,7 +3,7 @@ import logging
 #Imports Django
 from django.db.models import Count
 from django.dispatch import receiver
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 #imports Extras
 #Imports del proyecto
 from informacion.models import Individuo, Domicilio
@@ -21,6 +21,12 @@ def seguimiento_actual(created, instance, **kwargs):
         individuo = instance.individuo
         individuo.seguimiento_actual = instance
         individuo.save()
+
+@receiver(post_delete, sender=Seguimiento)
+def recuperar_seguimiento(instance, **kwargs):
+    individuo = instance.individuo
+    individuo.seguimiento_actual = individuo.seguimientos.last()
+    individuo.save()
 
 @receiver(post_save, sender=Individuo)
 def iniciar_seguimiento(created, instance, **kwargs):
