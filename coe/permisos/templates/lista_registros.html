@@ -20,6 +20,7 @@
                             <th>Fecha de Final</th>
                             <th>Tiempo Permitido</th>
                             <th>Horas Reales</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -31,20 +32,29 @@
                                     <td>{{circulacion.marca}} {{circulacion.modelo}} {{circulacion.patente}}</td>
                                     <td>{{circulacion.chofer}}</td>
                                     <td>{{circulacion.chofer.telefono}}</td>
-                                {% endwith %}
-                                <td>{{registro.destino.nombre}}</td>
-                                <td>{{registro.get_control_inicio_display}}</td>
-                                <td>{{registro.fecha_inicio}}</td>
-                                {% if registro.control_final %}
-                                    <td>{{registro.get_control_final_display}}</td>
-                                    <td>{{registro.fecha_final}}</td>
-                                {% else %}
-                                    <td colspan="2" style="text-align: center;">
-                                        AUN NO SALIO
+                                
+                                    <td>{{registro.destino.nombre}}</td>
+                                    <td>{{registro.get_control_inicio_display}}</td>
+                                    <td>{{registro.fecha_inicio}}</td>
+                                    {% if registro.control_final %}
+                                        <td>{{registro.get_control_final_display}}</td>
+                                        <td>{{registro.fecha_final}}</td>
+                                    {% else %}
+                                        <td colspan="2" style="text-align: center;">
+                                            <b>AUN NO SALIO</b>
+                                        </td>
+                                    {% endif %}
+                                    <td>{{registro.tiempo_permitido}}</td>
+                                    <td>{{registro.tiempo_real|floatformat:2}}hrs</td>
+                                    <td>
+                                        <a href="{% url 'permisos:ver_registro_circulacion' registro_id=registro.id %}" target="_blank">
+                                            <img class="icons" src="{% static '/img/icons/map.png' %}">
+                                        </a>
+                                        <a href="{% url 'permisos:ver_circulacion_temporal' token=circulacion.token %}" target="_blank">
+                                            <img class="icons" src="{% static '/img/icons/history.png' %}">
+                                        </a>
                                     </td>
-                                {% endif %}
-                                <td>{{registro.tiempo_permitido}}</td>
-                                <td>{{registro.tiempo_real|floatformat:2}}hrs</td>
+                                {% endwith %}
                             </tr>
                         {% endfor %}
                     </tbody>

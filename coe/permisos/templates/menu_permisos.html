@@ -24,11 +24,6 @@
                                 <br>
                                 <li><a href="{% url 'permisos:pedir_circulacion_temporal' %}">Pedir Circulacion Temporal</a></li>
                                 <hr>
-                                <h3>Permisos Digitales</h3>
-                                <li><a href="{% url 'permisos:situacion_restricciones' %}">Niveles de Restriccion</a></li>
-                                <li><a href="{% url 'permisos:lista_activos' %}">Listado de Permisos Activos</a></li>
-                                <li><a href="{% url 'permisos:lista_vencidos' %}">Listado de Permisos Vencidos</a></li>
-                                <li><a href="{% url 'permisos:buscar_permiso' %}">Pedido de Permiso Publico</a></li>
                             {% endif %}
                             {% if perms.operadores.frontera %}
                                 <h3>Control de Fronteras</h3>
@@ -36,6 +31,12 @@
                                 <li><a href="{% url 'permisos:lista_frontera' %}">Lista de Movimientos Fronterizos</a></li>
                             {% endif %}
                             {% if request.user.is_superuser %}
+                                <hr>
+                                <h3>Permisos Digitales</h3>
+                                <li><a href="{% url 'permisos:situacion_restricciones' %}">Niveles de Restriccion</a></li>
+                                <li><a href="{% url 'permisos:lista_activos' %}">Listado de Permisos Activos</a></li>
+                                <li><a href="{% url 'permisos:lista_vencidos' %}">Listado de Permisos Vencidos</a></li>
+                                <li><a href="{% url 'permisos:buscar_permiso' %}">Pedido de Permiso Publico</a></li>
                                 <hr>
                                 <h3>Uso Bajo Supervision:</h3>
                                 <li><a href="{% url 'admin:index' %}">Administrador</a></li>

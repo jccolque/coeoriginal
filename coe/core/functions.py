@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.http import JsonResponse
 from django.db.models.deletion import Collector
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+#Imports extras:
 #Imports de la app
 from .apps import CoreConfig
 
@@ -51,3 +52,12 @@ def json_error(error, vista, logger, data):
             safe=False,
             status=400,
         )
+
+def auditar_objeto(instancia):
+    from auditlog.models import LogEntry
+    modelo = instancia.__class__.__name__.lower()
+    #Buscamos registros
+    registros = LogEntry.objects.filter(content_type__name=modelo)
+    registros = registros.filter(object_pk=instancia.pk)
+    #Preparamos informe
+    return registros

@@ -75,4 +75,5 @@ urlpatterns = [
     path('circ/control/iniciar/<int:circulacion_id>', views.iniciar_control_circulacion, name='iniciar_control_circulacion'),
     path('circ/control/finalizar/<int:registro_id>', views.finalizar_control_circulacion, name='finalizar_control_circulacion'),
     path('circ/lista/frontera', views.lista_frontera, name='lista_frontera'),
+    path('ver/circulacion/<int:registro_id>', views.ver_registro_circulacion, name='ver_registro_circulacion'),
 ]

@@ -770,6 +770,11 @@ def finalizar_control_circulacion(request, registro_id):
             return redirect('permisos:panel_circulacion', token=registro.circulacion.token)
     return render(request, "extras/generic_form.html", {'titulo': "Final de Circulacion", 'form': form, 'boton': "Finalizar", })
 
+@permission_required('operadores.frontera')
+def ver_registro_circulacion(request, registro_id):
+    registro = RegistroCirculacion.objects.get(pk=registro_id)
+    pass
+
 @permission_required('operadores.fronteras')
 def lista_frontera(request):
     registros = RegistroCirculacion.objects.all()

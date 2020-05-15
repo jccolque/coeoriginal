@@ -156,7 +156,7 @@ def agregar_vigia(request, vigia_id=None):
         vigia = Vigia.objects.get(pk=vigia_id)
     form = NuevoVigia(instance=vigia)
     if request.method == "POST":
-        form = NuevoVigia(request.POST)
+        form = NuevoVigia(request.POST, instance=vigia)
         if form.is_valid():
             form.save()
             return redirect('seguimiento:lista_vigias')
