@@ -13,7 +13,7 @@ from coe.settings import GEOPOSITION_GOOGLE_MAPS_API_KEY
 from coe.constantes import DIAS_CUARENTENA
 from core.decoradores import superuser_required
 from core.functions import date2str
-from core.forms import SearchForm, JustificarForm, TextoForm, ChangeEmailForm
+from core.forms import SearchForm, FileForm, JustificarForm, TextoForm, ChangeEmailForm
 from georef.models import Nacionalidad
 from georef.models import Ubicacion
 from seguimiento.models import Seguimiento
@@ -742,20 +742,38 @@ def del_sintoma(request, sintoma_id):
     return redirect('informacion:ver_individuo', individuo_id=individuo.id)
 
 #Documento
-@permission_required('operadores.individuos')
 def cargar_documento(request, individuo_id, documento_id=None, tipo=None):
     documento = None
+    #Depende el caso
     if documento_id:
         documento = Documento.objects.get(pk=documento_id)
-    form = DocumentoForm(initial={'tipo': tipo},instance=documento)
+        form = FileForm(initial={'archivo': documento.archivo})
+    elif tipo:
+        form = FileForm()
+    else:
+        form = DocumentoForm(initial={'tipo': tipo},instance=documento)
+    #Procesamos carga
     if request.method == "POST":
-        form = DocumentoForm(request.POST, request.FILES, instance=documento)
-        if form.is_valid():
-            individuo = Individuo.objects.get(pk=individuo_id)
-            documento = form.save(commit=False)
-            documento.individuo = individuo
-            documento.save()
-            return render(request, "extras/close.html")
+        individuo = Individuo.objects.get(pk=individuo_id)
+        if documento_id or tipo:
+            form = FileForm(request.POST, request.FILES)
+            if form.is_valid():
+                if documento:#Solo si tenemos que modificar
+                    documento.archivo = form.cleaned_data['archivo']
+                else:#Si creamos uno nuevo de un tipo especifico
+                    documento = Documento(individuo=individuo)
+                    documento.tipo = tipo
+                    documento.archivo = form.cleaned_data['archivo']
+                    documento.aclaracion = "minimalista"
+                documento.save()
+                return render(request, "extras/close.html")
+        else:#Si es un docu nuevo:
+            form = DocumentoForm(request.POST, request.FILES)
+            if form.is_valid():
+                documento = form.save(commit=False)
+                documento.individuo = individuo
+                documento.save()
+                return render(request, "extras/close.html")
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Documento", 'form': form, 'boton': "Cargar", })
 
 @permission_required('operadores.individuos')

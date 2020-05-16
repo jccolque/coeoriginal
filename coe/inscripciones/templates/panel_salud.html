@@ -33,16 +33,20 @@
                             <hr>                        
                             <p><b>Documentacion:<b></p>
                             <div class="col-lg-6">
-                                <p>Foto Documento:</p>
-                                <a href="{{inscripto.frente_dni.url}}" target="_blank">
-                                    <img class="fotos" src="{{inscripto.frente_dni.url}}">
-                                </a>
+                                {% with inscripto.get_frente_dni as frente_dni %}
+                                    <p>Foto Documento:</p>
+                                    <a href="{{frente_dni.url}}" target="_blank">
+                                        <img class="fotos" src="{{frente_dni.url}}">
+                                    </a>
+                                {% endwith %}
                             </div>
                             <div class="col-lg-6">
-                                <p>Foto Titulo:</p>
-                                <a href="{{inscripto.archivo_titulo.url}}" target="_blank">
-                                    <img class="fotos" src="{{inscripto.archivo_titulo.url}}">
-                                </a>
+                                {% with inscripto.get_titulo as titulo %}
+                                    <p>Foto Titulo:</p>
+                                    <a href="{{titulo.url}}" target="_blank">
+                                        <img class="fotos" src="{{titulo.url}}">
+                                    </a>
+                                {% endwith %}
                             </div>
                         </div>
                         <div class="col-lg-4">

@@ -231,6 +231,14 @@ class DocumentoForm(forms.ModelForm):
         widgets = {
             'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
         }
+#    def __init__(self, *args, **kwargs):
+#        super(DocumentoForm, self).__init__(*args, **kwargs)
+#        instance = kwargs.get('instance', None)
+#        initial = kwargs.get('initial', None)
+#        if initial or instance:
+#            self.fields['tipo'].widget = forms.HiddenInput()
+#            self.fields['aclaracion'].widget = forms.HiddenInput()
+#            self.fields['fecha'].widget = forms.HiddenInput()
 
 class ReporteHotelesForm(forms.Form):
     begda = forms.DateField(label="Ingreso Minimo", required=True, 

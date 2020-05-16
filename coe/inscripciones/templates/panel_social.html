@@ -117,24 +117,28 @@
                             <div class="col-lg-6">
                                 <p><b>Fotos del Documento:</b></p>
                                 <div class="col-lg-6">
-                                    {% if inscripto.frente_dni %}
-                                        <a href="{% url 'inscripciones:cargar_frente_dni' inscripcion_id=inscripto.id %}" style="float:right;">Remplazar Imagen</a>
-                                        <a href="{{inscripto.frente_dni.url}}" target="_blank">
-                                            <img class="fotos" src="{{inscripto.frente_dni.url}}">
-                                        </a>
-                                    {% else %}
-                                        <a class="requerimiento" href="{% url 'inscripciones:cargar_frente_dni' inscripcion_id=inscripto.id %}">CARGAR FRENTE DEL DNI</a>
-                                    {% endif %}
+                                    {% with inscripto.get_frente_dni as frente_dni %}
+                                        {% if frente_dni %}
+                                            <a href="{{frente_dni.url}}" target="_blank">
+                                                <img class="fotos" src="{{frente_dni.url}}">
+                                            </a>
+                                            <a href="{% url 'inscripciones:cargar_frente_dni' inscripcion_id=inscripto.id %}" style="float:right;">Remplazar Imagen</a>
+                                        {% else %}
+                                            <a class="requerimiento" href="{% url 'inscripciones:cargar_frente_dni' inscripcion_id=inscripto.id %}">CARGAR FRENTE DEL DNI</a>
+                                        {% endif %}
+                                    {% endwith %}
                                 </div>
                                 <div class="col-lg-6">
-                                    {% if inscripto.reverso_dni %}
-                                        <a href="{% url 'inscripciones:cargar_reverso_dni' inscripcion_id=inscripto.id %}" style="float:right;">Remplazar Imagen</a>
-                                        <a href="{{inscripto.reverso_dni.url}}" target="_blank">
-                                            <img class="fotos" src="{{inscripto.reverso_dni.url}}">
-                                        </a>
-                                    {% else %}
-                                        <a class="requerimiento" href="{% url 'inscripciones:cargar_reverso_dni' inscripcion_id=inscripto.id %}">CARGAR REVERSO DEL DNI</a>
-                                    {% endif %}
+                                    {% with inscripto.get_reverso_dni as reverso_dni %}
+                                        {% if reverso_dni %}
+                                            <a href="{{reverso_dni.url}}" target="_blank">
+                                                <img class="fotos" src="{{reverso_dni.url}}">
+                                            </a>
+                                            <a href="{% url 'inscripciones:cargar_reverso_dni' inscripcion_id=inscripto.id %}" style="float:right;">Remplazar Imagen</a>
+                                        {% else %}
+                                            <a class="requerimiento" href="{% url 'inscripciones:cargar_reverso_dni' inscripcion_id=inscripto.id %}">CARGAR REVERSO DEL DNI</a>
+                                        {% endif %}
+                                    {% endwith %}
                                 </div>
                             </div>
                         </div>
@@ -175,7 +179,7 @@
                                 </li>
                                 <li class="lista">
                                     Cargar Foto del Frente del DNI
-                                    {% if inscripto.frente_dni %}
+                                    {% if inscripto.get_frente_dni %}
                                         <img class="icons" src="/static/img/icons/check.png">
                                     {% else %}
                                         <img class="icons" src="/static/img/icons/wrong.png">
@@ -183,7 +187,7 @@
                                 </li>
                                 <li class="lista">
                                     Cargar Foto del Reverso del DNI
-                                    {% if inscripto.reverso_dni %}
+                                    {% if inscripto.get_reverso_dni %}
                                         <img class="icons" src="/static/img/icons/check.png">
                                     {% else %}
                                         <img class="icons" src="/static/img/icons/wrong.png">

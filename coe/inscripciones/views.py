@@ -49,8 +49,18 @@ def inscripcion_salud(request):
             inscripto.matricula = form.cleaned_data['matricula']
             inscripto.info_extra = form.cleaned_data['info_extra']
             #Agregamos documentos
-            inscripto.frente_dni = form.cleaned_data['frente_dni']
-            inscripto.archivo_titulo = form.cleaned_data['archivo_titulo']
+            #Creamos doc:
+            documento = Documento(individuo=individuo)
+            documento.tipo = 'DI'
+            documento.archivo = form.cleaned_data['frente_dni']
+            documento.aclaracion = 'FRENTE'
+            documento.save()
+            #Cargamos titulo:
+            documento = Documento(individuo=individuo)
+            documento.tipo = 'TP'
+            documento.archivo = form.cleaned_data['archivo_titulo']
+            documento.aclaracion = 'Titulo Profesional'
+            documento.save()
             #guardamos
             inscripto.save()
             #enviar email de validacion
@@ -91,7 +101,7 @@ def inscripcion_social(request):
         form = VoluntarioSocialForm(request.POST, request.FILES, instance=individuo)
         if form.is_valid():
             #Obtenemos CheckBoxes
-            tareas = request.POST.getlist('tareas')
+            #tareas = request.POST.getlist('tareas')
             dispositivos = request.POST.getlist('dispositivos')
             #Actualizamos Individuo
             individuo = actualizar_individuo(form)
@@ -103,39 +113,32 @@ def inscripcion_social(request):
                     'error': "Usted ya cuenta con una inscripcion valida realizada.",
                 })
             #Creamos diccionario de tareas
-            dict_tareas = {t.id:t for t in Tarea.objects.all()}
+            #dict_tareas = {t.id:t for t in Tarea.objects.all()}
             #Armamos la inscripcion:
             inscripto = Inscripcion()
             inscripto.tipo_inscripto = 'VS'
             inscripto.individuo = individuo
             inscripto.oficio = form.cleaned_data['oficio']
             inscripto.info_extra = form.cleaned_data['info_extra']
-            #Agregamos las tareas
-            if tareas:
-                inscripto.save()
-                for tarea in tareas:
-                    teleg = TareaElegida(inscripto=inscripto)
-                    teleg.tarea = dict_tareas[int(tarea)]
-                    teleg.save()
-                #Dispositivos
-                for disp in dispositivos:
-                    dispositivo = Dispositivo(inscripto=inscripto)
-                    dispositivo.tipo = disp
-                    dispositivo.save()
-                #enviar email de validacion
-                if SEND_MAIL:
-                    to_email = individuo.email
-                    #Preparamos el correo electronico
-                    mail_subject = 'Inscripcion al COE2020'
-                    message = render_to_string('emails/acc_active_inscripcion_social.html', {
-                            'inscripto': inscripto,
-                        })
-                    #Instanciamos el objeto mail con destinatario
-                    email = EmailMessage(mail_subject, message, to=[to_email])
-                    email.send()
-                return render(request, 'inscripto_exito.html', {'inscripto': inscripto, })
-            else:
-                form.add_error("info_extra", "No ha Seleccionado ninguna tarea.")
+            #Guardamos
+            inscripto.save()
+            #Dispositivos
+            for disp in dispositivos:
+                dispositivo = Dispositivo(inscripto=inscripto)
+                dispositivo.tipo = disp
+                dispositivo.save()
+            #enviar email de validacion
+            if SEND_MAIL:
+                to_email = individuo.email
+                #Preparamos el correo electronico
+                mail_subject = 'Inscripcion al COE2020'
+                message = render_to_string('emails/acc_active_inscripcion_social.html', {
+                        'inscripto': inscripto,
+                    })
+                #Instanciamos el objeto mail con destinatario
+                email = EmailMessage(mail_subject, message, to=[to_email])
+                email.send()
+            return render(request, 'inscripto_exito.html', {'inscripto': inscripto, })
     return render(request, "inscripcion_social.html", {
         'titulo': "Inscribite", 
         'form': form, 
@@ -182,8 +185,14 @@ def cargar_frente_dni(request, inscripcion_id):
         form = UploadFoto(request.POST, request.FILES)
         if form.is_valid():
             inscripto = Inscripcion.objects.get(pk=inscripcion_id)
-            inscripto.frente_dni = form.cleaned_data['imagen']
-            inscripto.save()
+            individuo = inscripto.individuo
+            #Creamos doc:
+            documento = Documento(individuo=individuo)
+            documento.tipo = 'DI'
+            documento.archivo = form.cleaned_data['imagen']
+            documento.aclaracion = 'FRENTE'
+            documento.save()
+            #Volvemos al panel
             return redirect('inscripciones:ver_inscripto', inscripcion_id=inscripcion_id, num_doc=inscripto.individuo.num_doc)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Foto del Frente del Documento", 'form': form, 'boton': "Cargar", })
 
@@ -193,8 +202,14 @@ def cargar_reverso_dni(request, inscripcion_id):
         form = UploadFoto(request.POST, request.FILES)
         if form.is_valid():
             inscripto = Inscripcion.objects.get(pk=inscripcion_id)
-            inscripto.reverso_dni = form.cleaned_data['imagen']
-            inscripto.save()
+            individuo = inscripto.individuo
+            #Creamos doc:
+            documento = Documento(individuo=individuo)
+            documento.tipo = 'DI'
+            documento.archivo = form.cleaned_data['imagen']
+            documento.aclaracion = 'REVERSO'
+            documento.save()
+            #Volvemos al panel
             return redirect('inscripciones:ver_inscripto', inscripcion_id=inscripcion_id, num_doc=inscripto.individuo.num_doc)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Foto del Reverso del Documento", 'form': form, 'boton': "Cargar", })
 

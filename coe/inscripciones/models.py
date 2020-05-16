@@ -55,7 +55,7 @@ class Inscripcion(models.Model):
     disponible = models.BooleanField(default=True)
     def chequear_estado(self):
         if self.estado == 0:#Inscripcion Iniciada
-            if self.individuo.fotografia and self.frente_dni and self.reverso_dni:
+            if self.individuo.fotografia and self.get_frente_dni() and self.get_reverso_dni():
                 self.estado = 1
                 self.save()
         if self.estado == 1:#Inscripcion Terminada - Esperando Aprobacion
@@ -70,6 +70,18 @@ class Inscripcion(models.Model):
             if self.turnos.exists():
                 self.estado = 4
                 self.save()
+    def get_frente_dni(self):
+        doc = self.individuo.documentos.filter(tipo='DI', aclaracion__icontains='FRENTE').last()
+        if doc:
+            return doc.archivo
+    def get_reverso_dni(self):
+        doc = self.individuo.documentos.filter(tipo='DI', aclaracion__icontains='REVERSO').last()
+        if doc:
+            return doc.archivo
+    def get_titulo(self):
+        doc = self.individuo.documentos.filter(tipo='TP').last()
+        if doc:
+            return doc.archivo
     def __str__(self):
         try:
             return self.individuo.apellidos + ', ' + self.individuo.nombres

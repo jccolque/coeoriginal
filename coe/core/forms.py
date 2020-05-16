@@ -17,6 +17,9 @@ from .models import Aclaracion
 class SearchForm(forms.Form):
     search = forms.CharField(label="", required=True)
 
+class FileForm(forms.Form):
+    archivo = forms.FileField()
+
 class UploadCsv(forms.Form):
     csvfile = forms.FileField(widget=forms.FileInput(attrs={'accept': ".csv"}))
 

@@ -9,16 +9,18 @@ from .models import Vigia
 from .functions import obtener_bajo_seguimiento
 
 #Definimos nuestros autocompletes
-class IndividuosVigiladosAutocomplete(autocomplete.Select2QuerySetView):
-    def get_queryset(self):
-        qs = obtener_bajo_seguimiento()
-        if self.q:
-            qs = qs.filter(Q(apellidos__icontains=self.q) | Q(num_doc__icontains=self.q)).distinct()
-        return qs
-
 class VigiasAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = []
         if self.q:
             qs = Vigia.objects.filter(operador__apellidos__icontains=self.q)
         return qs
+
+class IndividuosVigiladosAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = obtener_bajo_seguimiento()
+        qs = qs.filter(vigiladores=None)
+        if self.q:
+            qs = qs.filter(Q(apellidos__icontains=self.q) | Q(num_doc__icontains=self.q)).distinct()
+        return qs
+

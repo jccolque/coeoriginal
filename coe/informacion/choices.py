@@ -110,9 +110,11 @@ TIPO_DOCUMENTO = (
     ('LB', 'Laboratorio'),
     ('AC', 'Certificado de Alta de Cuarentena'),
     ('CT', 'Certificado Temporal de Aislamiento en Domicilio'),
+    ('FP', 'Foto de Perfil'),
     ('DI', 'Documento de Identidad'),
     ('LC', 'Licencia de Conducir'),
     ('PN', 'Permiso de Circulacion Nacional'),
     ('AT', 'Autorizacion Voluntariado - Tutor'),
+    ('TP', 'Titulo Profesional'),
     ('OT', 'Otros'),
 )
