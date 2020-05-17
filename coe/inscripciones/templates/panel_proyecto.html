@@ -13,8 +13,23 @@
                             <h2><b>{{proyecto.nombre}}</b></h2>
                             <div class="row">
                                 <div class="col-lg-4">
-                                    <p><b>Documento/Propuesta:</b> <a href="{{proyecto.documento.url}}">Descargar Aqui.</a></p>
                                     <p><b>Email:</b> {{proyecto.email_contacto}}</p>
+                                    <h3><b>Documento/Propuesta:</b></h3>
+                                    {% if proyecto.documento %}
+                                        <p style="text-align:center;">
+                                            <a href="{{proyecto.documento.url}}">
+                                                <img class="iconsx2" src="{% static 'img/icons/pdf.png' %}" target="_blank">
+                                            </a>
+                                            <a href="{% url 'inscripciones:cargar_archivo_proyecto' token=proyecto.token %}" style="float:right;">Remplazar</a>
+                                        </p>
+                                    {% else %}
+                                        <div class="bordeado importante">
+                                            <p><b>Aun no se Cargo Proyecto</b></p>
+                                            <a href="{% url 'inscripciones:cargar_archivo_proyecto' token=proyecto.token %}">
+                                                <img class="iconsx2" src="{% static 'img/icons/upload_pdf.png' %}">
+                                            </a>
+                                        </div>
+                                    {% endif %}
                                 </div>
                                 <div class="col-lg-8" style="height: 10em;overflow: auto;">
                                     <p><b>Descripcion:</b></p>
@@ -47,7 +62,7 @@
                                 {% endwith %}
                             </div>
                             <div class="col-lg-4">
-                                <p><b>Reponsable Institucional (Profesor):</b></p><br>
+                                <p><b>Reponsable Institucional (Profesor):</b></p>
                                 {% with proyecto.responsable as responsable %}
                                     {% if responsable %}
                                         <p>

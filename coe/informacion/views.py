@@ -526,7 +526,7 @@ def cargar_domicilio(request, individuo_id=None, domicilio_id=None):
         if form.is_valid():
             domicilio = form.save(commit=False)
             domicilio.individuo = individuo
-            domicilio.save()
+            Domicilio.objects.bulk_create([domicilio,])
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Domicilio", 'form': form, 'boton': "Cargar", })
 

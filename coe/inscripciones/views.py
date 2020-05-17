@@ -11,7 +11,7 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
 from coe.settings import SEND_MAIL
-from core.forms import SearchForm, UploadFoto
+from core.forms import SearchForm, UploadFoto, FileForm
 from core.forms import EmailForm
 from core.functions import delete_tags
 from georef.models import Ubicacion
@@ -490,6 +490,18 @@ def lista_proyectos(request):
         'proyectos': proyectos,
         'has_table': True,
     })
+
+
+def cargar_archivo_proyecto(request, token=None):
+    form = FileForm()
+    if request.method == "POST":
+        form = FileForm(request.POST, request.FILES)
+        if form.is_valid():
+            proyecto = ProyectoEstudiantil.objects.get(token=token)
+            proyecto.documento = form.cleaned_data['archivo']
+            proyecto.save()
+            return redirect('inscripciones:panel_proyecto', token=proyecto.token)
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Aval Institucional", 'form': form, 'boton': "Cargar", })
 
 def cargar_aval_institucional(request, token=None):
     form = UploadFoto()
