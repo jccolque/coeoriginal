@@ -1,0 +1,54 @@
+{% extends 'base_inscripciones.html' %}
+{% load static %}
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2>Listado de Proyectos Estudiantiles 2020</h2>
+        </div>
+        <div class="row">
+        <div class="col-md-12">
+            <table class="listado" id="table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripcion</th>
+
+                        <th>Email</th>
+
+                        <th>Escuela</th>
+                        <th>Localidad</th>
+                        <th>Telefono</th>
+
+                        <th>Cant Voluntarios</th>
+                        
+                        <th>Fecha Inscripcion</th>
+                        <th>Estado</th>
+                        
+                        <th>Ver Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for proyecto in proyectos %}
+                        <tr>
+                            <td>{{proyecto.nombre}}</td>
+                            <td>{{proyecto.descripcion|safe}}</td>
+
+                            <td>{{proyecto.email_contacto}}</td>
+
+                            <td>{{proyecto.escuela_nombre}}</td>
+                            <td>{{proyecto.escuela_localidad}}</td>
+                            <td>{{proyecto.escuela_telefono}}</td>
+
+                            <td>{{proyecto.voluntarios.count}}</td>
+
+                            <td>{{proyecto.fecha}}</td>
+                            <td>{{proyecto.get_estado_display}}</td>
+
+                            <td><a href="{% url 'inscripciones:panel_proyecto' token=proyecto.token %}">Ver Panel</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
