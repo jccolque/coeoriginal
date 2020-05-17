@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
 from georef.models import Localidad, Barrio
 from informacion.choices import TIPO_ESTADO, TIPO_CONDUCTA
-from informacion.models import Individuo, Situacion
+from informacion.models import Individuo, Situacion, Domicilio
 from permisos.choices import TIPO_PERMISO
 from denuncias.choices import TIPO_DENUNCIA
 
@@ -144,3 +144,27 @@ def ws_aislados(request, localidad_id=None):
             }
         )
     return HttpResponse(json.dumps({'individuos': datos, "cant_registros": len(datos),}), content_type='application/json')
+
+
+@permission_required('operadores.individuos')
+def ws_ocupacion(request):
+    datos = []
+    doms = Domicilio.objects.exclude(ubicacion=None)
+    doms = doms.select_related('ubicacion', 'ubicacion__localidad')
+    doms = doms.select_related('individuo', 'individuo__nacionalidad')
+    for dom in doms:
+        datos.append(
+            {
+                #DAtos del pasajero
+                'num_doc': dom.individuo.num_doc,
+                'nombres': dom.individuo.nombres,
+                'apellidos': dom.individuo.apellidos,
+                'nacionalidad': dom.individuo.nacionalidad.nombre,
+                #Datos del hotel
+                'fecha_ingreso': str(dom.fecha.date()),
+                'hotel': dom.ubicacion.nombre,
+                'localidad': dom.ubicacion.localidad.nombre,
+                'aclaracion': dom.aclaracion,
+            }
+        )
+    return HttpResponse(json.dumps({'alojamientos': datos, "cant_registros": len(datos),}), content_type='application/json')
