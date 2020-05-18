@@ -433,7 +433,6 @@ def buscador_individuos(request):
         if form.is_valid():
             #Tramos todos los individuos:
             individuos = Individuo.objects.all()
-            individuos = individuos.prefetch_related('domicilios')
             #Aplicamos los filtros
             if form.cleaned_data['nombre']:
                 individuos = individuos.filter(nombres__icontains=form.cleaned_data['nombre'])
@@ -448,8 +447,7 @@ def buscador_individuos(request):
             individuos = individuos.select_related('situacion_actual', 'domicilio_actual', 'domicilio_actual__localidad')
             individuos = individuos.prefetch_related('atributos', 'sintomas', 'situaciones', 'relaciones')
             individuos = individuos.prefetch_related('atributos', 'sintomas')
-            #Eliminamos repetidos
-            individuos = individuos.distinct()
+            individuos = individuos.prefetch_related('domicilios')
             #Mandamos el listado
             return render(request, "lista_individuos.html", {
                 'individuos': individuos,
@@ -897,36 +895,23 @@ def reporte_basico(request):
         #endda = request.POST['endda']
         estados = request.POST.getlist('estado')
         conductas = request.POST.getlist('conducta')
+        #Individuos
+        full_individuos = Individuo.objects.all()
+        #Obtenemos todos los individuos que esten en situacion especificada
+        full_individuos = full_individuos.filter(situacion_actual__estado__in=estados)
+        full_individuos = full_individuos.filter(situacion_actual__conducta__in=conductas)        
+        #Descartamos por Atributos
         atributos = request.POST.getlist('atributo')
+        full_individuos = full_individuos.filter(atributos__tipo__in=atributos)
+        #Descartamos por Sintomas
         sintomas = request.POST.getlist('sintoma')
-        #Obtenemos todos los individuos que esten en ese estado
-        full_individuos = Individuo.objects.filter(
-            situaciones__estado__in=estados,
-            situaciones__conducta__in=conductas).distinct()
+        full_individuos = full_individuos.filter(sintomas__tipo__in=sintomas)
+        #Obtenemos cantidad de sintomas y de atributos:
+            #Aca deberiamos ordenar por sintomas y atributos
+        #Optimizamos
         full_individuos = full_individuos.prefetch_related('domicilios', 'situaciones', 'atributos', 'sintomas')
-        for atributo in atributos:
-            individuos = full_individuos.filter(atributos__tipo=atributo)
-            for individuo in individuos:
-                if individuo.id not in reportados:#Si no esta lo agregamos
-                    reportado = Creportado()
-                    reportado.individuo = individuo
-                    reportados[reportado.individuo.id] = reportado
-                #Le sumamos 1 a ese atributo
-                reportados[individuo.id].atributos += 1
-        for sintoma in sintomas:
-            individuos = full_individuos.filter(sintomas__tipo=sintoma)
-            for individuo in individuos:
-                if individuo.id not in reportados:#Si no esta lo agregamos
-                    reportado = Creportado()
-                    reportado.individuo = individuo
-                    reportados[reportado.individuo.id] = reportado
-                #Le sumamos 1 a ese atributo
-                reportados[individuo.id].sintomas += 1
-        #los volvemos una lista:
-        reportados = list(reportados.values())
-        reportados.sort(key=lambda x: x.sintomas, reverse=True)
         return render(request, "reportes/reporte_basico_mostrar.html", {
-            'reportados': reportados,
+            'reportados': full_individuos,
             'has_table': True,
         })
     return render(request, "reportes/reporte_basico_buscar.html", {
@@ -945,11 +930,12 @@ def lista_ingresos_hoteles(request):
             begda = form.cleaned_data['begda']
             endda = form.cleaned_data['endda']
             #Filtramos esos domicilios
-            domicilios = Domicilio.objects.filter(aislamiento=True)
+            domicilios = Domicilio.objects.exclude(ubicacion=None)
             domicilios = domicilios.filter(fecha__date__range=(begda, endda))
-            domicilios = domicilios.exclude(ubicacion=None)
             #Con esos domicilios buscamos los individuos
             individuos = Individuo.objects.filter(domicilios__in=domicilios)
+            #Eliminamos repetidos
+            individuos = individuos.distinct()
             #Optimizamos
             individuos = individuos.select_related('nacionalidad')
             individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad')
@@ -957,8 +943,6 @@ def lista_ingresos_hoteles(request):
             individuos = individuos.prefetch_related('domicilios', 'domicilios__localidad')
             #Ordenamos
             individuos = individuos.order_by('domicilio_actual__fecha')
-            #Eliminamos repetidos
-            individuos = individuos.distinct()
             return render(request, "ingresos_hoteles.html", {
                 'individuos': individuos,
                 'begda': begda, 'endda': endda,

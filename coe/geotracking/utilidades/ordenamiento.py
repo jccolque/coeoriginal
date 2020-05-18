@@ -6,7 +6,8 @@ from geotracking.models import GeoPosicion, GeOperador
 
 #Definimos funciones
 def crear_start_trackings():#Para todos los que estan mandando Registros pero no tienen por falla de sistema.
-    individuos = Individuo.objects.filter(geoposiciones__tipo='RG').exclude(geoposiciones__tipo="ST").distinct()
+    individuos = Individuo.objects.filter(geoposiciones__tipo='RG')
+    individuos = individuos.exclude(geoposiciones__tipo="ST")
     for individuo in individuos:
         print("Le Creamos ST por que no tenia a: "+str(individuo))
         first_geopos = individuo.geoposiciones.filter(tipo='RG').first()
@@ -17,7 +18,7 @@ def crear_start_trackings():#Para todos los que estan mandando Registros pero no
 
 def asignar_geoperadores():
     crear_start_trackings()
-    individuos = Individuo.objects.filter(geoposiciones__tipo='ST').distinct()
+    individuos = Individuo.objects.filter(geoposiciones__tipo='ST')
     for individuo in individuos:
         if not individuo.geoperador.exists():#Si no tiene GeOperador
             print("Le Asignamos Geoperador a: "+str(individuo))

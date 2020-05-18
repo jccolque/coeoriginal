@@ -11,31 +11,35 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <table class="listado">
-                            <tr>
-                                <th>Documento</th>
-                                <th>Operador</th>
-                                <th>Grupo</th>
-                                <th>Acceso</th>
-                                <th>Ingreso</th>
-                                <th>Egreso</th>
-                                <th>Acciones</th>
-                            </tr>
-                            {% for asistente in asistentes %}
+                        <table class="listado" id="table">
+                            <thead>
                                 <tr>
-                                    <td>{{asistente.num_doc}}</td>
-                                    <td>{{asistente.apellidos}}, {{asistente.nombres}}</td>
-                                    <td>{{asistente.subcomite}}</td>
-                                    <td>{{asistente.get_nivel_acceso_display}}</td>
-                                    <td>{% ct_get_fecha asistente ingresos %}</td>
-                                    <td>{% ct_get_fecha asistente egresos %}</td>
-                                    <td>
-                                        <a class="nolink" href="{% url 'operadores:ver_credencial' operador_id=asistente.id %}">
-                                            <img class="icons" src="/static/img/icons/access_card.png" alt="Ver Tarjeta">
-                                        </a>
-                                    </td>
+                                    <th>Documento</th>
+                                    <th>Operador</th>
+                                    <th>Grupo</th>
+                                    <th>Acceso</th>
+                                    <th>Ingreso</th>
+                                    <th>Egreso</th>
+                                    <th>Acciones</th>
                                 </tr>
-                            {% endfor %}
+                            </thead>
+                            <tbody>
+                                {% for asistente in asistentes %}
+                                    <tr>
+                                        <td>{{asistente.num_doc}}</td>
+                                        <td>{{asistente.apellidos}}, {{asistente.nombres}}</td>
+                                        <td>{{asistente.subcomite}}</td>
+                                        <td>{{asistente.get_nivel_acceso_display}}</td>
+                                        <td>{% ct_get_fecha asistente ingresos %}</td>
+                                        <td>{% ct_get_fecha asistente egresos %}</td>
+                                        <td>
+                                            <a class="nolink" href="{% url 'operadores:ver_credencial' operador_id=asistente.id %}">
+                                                <img class="icons" src="/static/img/icons/access_card.png" alt="Ver Tarjeta">
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
                         </table>
                     </div>
                 </div>

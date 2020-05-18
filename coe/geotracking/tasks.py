@@ -63,7 +63,7 @@ def finalizar_geotracking():
     #Obtenemos trackings ya cumplidos:
     geopos_viejas = GeoPosicion.objects.filter(tipo='ST', fecha__lt=inicio)
     #Obtenemos individuos que deben ser liberados
-    individuos = individuos.filter(geoposiciones__in=geopos_viejas).distinct()
+    individuos = individuos.filter(geoposiciones__in=geopos_viejas)
     #No procesamos los que ya fueron de baja del tracking
     individuos = individuos.exclude(seguimientos__tipo='FT')
     #Los damos de baja:

@@ -307,13 +307,6 @@ def menu(request):
 def lista_voluntarios(request, tipo_inscripto):
     inscriptos = Inscripcion.objects.filter(disponible=True, tipo_inscripto=tipo_inscripto)
     inscriptos = inscriptos.select_related('individuo', 'individuo__domicilio_actual', 'individuo__domicilio_actual__localidad')
-    inscriptos = inscriptos.distinct()
-    #Agregar buscador
-    if request.method == "POST":
-        form = SearchForm(request.POST)
-        if form.is_valid():
-            search = form.cleaned_data['search']
-            inscriptos = inscriptos.filter(apellidos__icontains=search)
     #Definimos template segun tipo
     if tipo_inscripto == 'PS':
         template = 'lista_inscripciones_salud.html'
@@ -331,7 +324,6 @@ def lista_voluntarios(request, tipo_inscripto):
 def lista_por_tarea(request, tarea_id):
     inscriptos = Inscripcion.objects.filter(disponible=True, tareas__tarea__id=tarea_id)
     inscriptos = inscriptos.select_related('individuo', 'individuo__domicilio_actual', 'individuo__domicilio_actual__localidad')
-    inscriptos = inscriptos.distinct()
     return render(request, 'lista_inscripciones_social.html', 
         {
             'inscriptos': inscriptos,

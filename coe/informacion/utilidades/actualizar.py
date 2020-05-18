@@ -7,8 +7,6 @@ def agregar_seguimiento():
     individuos = Individuo.objects.filter(domicilios__aislamiento=True)
     #Pero excluimos los que ya estan en seguimiento
     individuos = individuos.exclude(seguimientos__tipo='I')
-    #Nos aseguramos de no repetir ninguno
-    individuos = individuos.distinct()
     #Optimizamos
     individuos = individuos.prefetch_related('domicilios')
     #Generamos los seguimientos que nos faltan

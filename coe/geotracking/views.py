@@ -149,16 +149,11 @@ def del_geoperador(request, geoperador_id):
 @permission_required('operadores.geotracking_admin')
 def lista_sin_geoperador(request):
     #Obtenemos todos los que ya estan siendo controlados
-    controlados = set()
-    for geop in GeOperador.objects.all().prefetch_related('controlados'):
-        for controlado in geop.controlados.all():
-            controlados.add(controlado)
-    #Sacamos los que no estan siendo trackeados
-    geopos = GeoPosicion.objects.filter(tipo="ST").values_list("individuo__id", flat=True).distinct()
-    geopos = geopos.exclude(individuo__in=controlados)
-    #Obtenemos individuos de interes
-    individuos = Individuo.objects.filter(id__in=geopos).select_related('situacion_actual', 'domicilio_actual')
+    individuos = Individuo.objects.filter(seguimientos__tipo='ST')
+    individuos = individuos.exclude(seguimientos__tipo='FT')
+    individuos = individuos.exclude(geoperadores=None)
     #Optimizamos
+    individuos = individuos.select_related('situacion_actual', 'domicilio_actual')
     individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'situacion_actual')
     individuos = individuos.prefetch_related('geoposiciones')
     return render(request, "lista_trackeados.html", {

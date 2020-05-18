@@ -29,7 +29,7 @@ import debug_toolbar
 urlpatterns = [
     path('admin/', admin.site.urls),
     #Admin-User Paths
-    url(r'^login/$', auth_views.LoginView.as_view(template_name="users/login.html"), name="login"),
+    url(r'^login/$', auth_views.LoginView.as_view(template_name="login.html"), name="login"),
     url(r'^logout/$', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
     #Extras
     url(r'^tinymce/', include('tinymce.urls')),

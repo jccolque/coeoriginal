@@ -25,7 +25,7 @@
                             <tbody>
                                 {% for evento in presentes %}
                                     <tr>
-                                        <td>{{evento.fecha}}</td>
+                                        <td>{{evento.fecha|time}}</td>
                                         <td>{{evento.operador.num_doc}}</td>
                                         <td>{{evento.operador.apellidos}}, {{evento.operador.nombres}}</td>
                                         <td>{{evento.operador.subcomite}}</td>

@@ -10,7 +10,7 @@ register = template.Library()
 @register.simple_tag
 def ct_get_fecha(operador, dict_eventos):
     try:
-        return dict_eventos[operador.id].fecha.strftime("%d/%m/%Y, %H:%M:%S")
+        return dict_eventos[operador.id].fecha.time()
     except KeyError:
         return 'Sin registro'
 

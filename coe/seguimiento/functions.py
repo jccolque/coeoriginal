@@ -24,9 +24,8 @@ logger = logging.getLogger('errors')
 
 #Definimos funciones
 def obtener_bajo_seguimiento():
-    individuos = Individuo.objects.filter(Q(atributos__tipo='VE') | Q(situacion_actual__conducta__in=('D', 'E')))
+    individuos = Individuo.objects.filter(situacion_actual__conducta__in=('D', 'E'))
     individuos = individuos.exclude(seguimientos__tipo='FS')
-    individuos = individuos.distinct()
     return individuos
 
 def creamos_doc_alta(individuo):

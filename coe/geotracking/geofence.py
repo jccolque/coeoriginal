@@ -13,14 +13,13 @@ from .models import GeoPosicion
 
 #Definimos nuestras funciones:
 def obtener_trackeados():
-    geopos = GeoPosicion.objects.filter(tipo="ST").values_list("individuo__id", flat=True).distinct()
-    #Obtenemos individuos de interes
-    individuos = Individuo.objects.filter(id__in=geopos).select_related('situacion_actual', 'domicilio_actual')
-    #Optimizamos
-    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'situacion_actual')
-    individuos = individuos.prefetch_related('geoposiciones', 'geoperadores')
+    individuos = Individuo.objects.filter(geoposiciones__tipo='ST')
     #Eliminamos los que terminaron el tracking:
     individuos = individuos.exclude(seguimientos__tipo='FT')
+    #Optimizamos
+    individuos = individuos.select_related('situacion_actual', 'domicilio_actual')
+    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'situacion_actual')
+    individuos = individuos.prefetch_related('geoposiciones', 'geoperadores')
     #Nos quedamos solo con los que estan en Cuarentena o Aislamiento
     individuos = individuos.filter(situacion_actual__conducta__in=('D', 'E'))
     #Entregamos ese listado de Individuos

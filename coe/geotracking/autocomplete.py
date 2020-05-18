@@ -12,12 +12,13 @@ class IndividuosTrackeadosAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = []
         if self.q:
-            qs = Individuo.objects.filter(
-                geoposiciones__tipo='ST'
-            ).filter(
-                Q(apellidos__icontains=self.q) |
-                Q(num_doc__icontains=self.q)
-            ).distinct()
+            qs = Individuo.objects.filter(geoposiciones__tipo='ST')
+            qs = qs.exclude(geoposiciones__tipo='FT')
+            qs = qs.filter(
+                    Q(apellidos__icontains=self.q) |
+                    Q(num_doc__icontains=self.q)
+                )
+            qs = qs.distinct()
         return qs
 
 class GeOperadoresAutocomplete(autocomplete.Select2QuerySetView):

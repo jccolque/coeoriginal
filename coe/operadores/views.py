@@ -39,7 +39,7 @@ def listar_subcomites(request):
             search = form.cleaned_data['search']
             if search:
                 subcomites = subcomites.filter(nombre__icontains=search)
-    return render(request, 'users/lista_subcomites.html', {
+    return render(request, 'lista_subcomites.html', {
         'subcomites': subcomites,     
         'has_table': True,
     })
@@ -57,7 +57,7 @@ def ver_subcomite(request, subco_id):
             operador = form.cleaned_data['operador']
             operador.subcomite = subcomite
             operador.save()
-    return render(request, 'users/ver_subcomite.html', {'subcomite': subcomite, 'form': form, })
+    return render(request, 'ver_subcomite.html', {'subcomite': subcomite, 'form': form, })
 
 @permission_required('operadores.subcomites')
 def crear_subcomite(request, subco_id=None):
@@ -87,7 +87,7 @@ def listar_operadores(request):
                 Q(apellidos__icontains=search) |
                 Q(subcomite__nombre__icontains=search)
             )
-    return render(request, 'users/lista_operadores.html', {
+    return render(request, 'lista_operadores.html', {
         'operadores': operadores,    
         'has_table': True,
     })
@@ -213,11 +213,13 @@ def registro_asistencia(request):
         form = FechaForm(request.POST)
         if form.is_valid():
             dia = form.cleaned_data['fecha']
-            begda = timezone.datetime(dia.year, dia.month, dia.day, 0, 0, 0, tzinfo=timezone.get_current_timezone())
-            endda = timezone.datetime(dia.year, dia.month, dia.day, 23, 59, 59, tzinfo=timezone.get_current_timezone())
-            asistentes = EventoOperador.objects.filter(fecha__range=(begda, endda))
-            ingresos = {i.operador.id: i for i in asistentes.filter(tipo='I')}#Va a ir pisando hasta dejar solo el ultimo
-            egresos = {e.operador.id: e for e in asistentes.filter(tipo='E')}#Va a ir pisando hasta dejar solo el ultimo
+            #begda = timezone.datetime(dia.year, dia.month, dia.day, 0, 0, 0, tzinfo=timezone.get_current_timezone())
+            #endda = timezone.datetime(dia.year, dia.month, dia.day, 23, 59, 59, tzinfo=timezone.get_current_timezone())
+            asistentes = EventoOperador.objects.filter(fecha__date=dia)
+            asistentes = asistentes.select_related('operador', 'operador__subcomite')
+            #Procesamos data
+            ingresos = {i.operador.id: i for i in asistentes if i.tipo=='I'}#Va a ir pisando hasta dejar solo el ultimo
+            egresos = {e.operador.id: e for e in asistentes if e.tipo=='E'}#Va a ir pisando hasta dejar solo el ultimo
             asistentes = [a.operador for a in asistentes]
             asistentes = list(dict.fromkeys(asistentes))
             return render(request, 'registro_asistencia.html', {
@@ -274,7 +276,7 @@ def checkin(request):
 @permission_required('operadores.auditar_operadores')
 def ingreso(request, operador_id):
     operador = Operador.objects.get(id=operador_id)
-    return render(request, 'users/ingreso_operador.html', {'operador': operador,})
+    return render(request, 'ingreso_operador.html', {'operador': operador,})
 
 @permission_required('operadores.auditar_operadores')
 def checkout(request, operador_id):
@@ -300,7 +302,7 @@ def auditoria(request, user_id=None):
             registros = LogEntry.objects.filter(actor=usuario)#beneficiarios modificados
             registros = registros.filter(timestamp__range=(begda, endda))
             registros = registros.select_related('content_type')
-            return render(request, "users/auditoria.html", {
+            return render(request, "auditoria.html", {
                 'usuario': usuario,
                 'begda': begda, 'endda': endda,
                 'registros': registros,})
@@ -316,7 +318,7 @@ def auditar_cambios(request, content_id, object_id):
     #Obtenemos registros de cambios
     registros = auditar_objeto(objeto)
     #Lanzamos muestra:
-    return render(request, 'users/auditar_objeto.html', {
+    return render(request, 'auditar_objeto.html', {
         'objeto': objeto,
         'registros': registros,
     })
