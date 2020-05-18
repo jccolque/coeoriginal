@@ -91,7 +91,7 @@ def realizar_alta(individuo, operador):
     #Le cambiamos el domicilio
     if individuo.domicilio_actual:#Si tiene domicilio actual
         if individuo.domicilio_actual.ubicacion:#Solo Si es un alojamiento
-            dom = individuo.domicilios.filter(aislamiento=False).last()#Buscamos el ultimo conocido comun
+            dom = individuo.domicilios.filter(ubicacion=None).last()#Buscamos el ultimo conocido comun
             if not dom:#Si no existe
                 dom = individuo.domicilio_actual#usamos el de aislamiento
                 dom.ubicacion = None#Pero blanqueado
