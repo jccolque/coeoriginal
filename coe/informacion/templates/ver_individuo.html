@@ -258,11 +258,12 @@
                                 <td>{{documento.get_tipo_display}}</td>
                                 <td>{{documento.fecha}}</td>
                                 <td>{{documento.aclaracion}}</td>
-
                                 <td>
-                                    <a class="nolink"  href="{{documento.archivo.url}}" target="_blank">
-                                        <img class="icons" src="{% static '/img/icons/lupa.png' %}">
-                                    </a>
+                                    {% if documento.archivo %}
+                                        <a class="nolink"  href="{{documento.archivo.url}}" target="_blank">
+                                            <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                        </a>
+                                    {% endif %}
                                     <a class="nolink"  href="{% url 'informacion:mod_documento' individuo_id=individuo.id documento_id=documento.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/change.png' %}">
                                     </a>

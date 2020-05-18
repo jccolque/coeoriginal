@@ -8,6 +8,6 @@ app_name = 'ide_urls'
 urlpatterns = [
     #App
     path('config', ide_apis.IdeConfig, name='IdeConfig'),
-    path('mapeo_general', ide_apis.mapeo_general, name='mapeo_general'),
+    path('mapeo/general', ide_apis.mapeo_general, name='mapeo_general'),
     path('tracking/<int:individuo_id>', ide_apis.tracking_individuo, name='tracking_individuo'),
 ]

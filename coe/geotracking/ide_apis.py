@@ -34,37 +34,41 @@ def IdeConfig(request):
 
 @require_http_methods(["GET"])
 def mapeo_general(request):
-    #geopos = GeoPosicion.objects.all().values_list("individuo__id", flat=True).distinct()
-    #Obtenemos individuos de interes
-    #individuos = {
-    #    i.id: i 
-    #    for i in Individuo.objects.filter(id__in=geopos).select_related('situacion_actual', 'domicilio_actual')
-    #}
-    #Obtenemos ultimas posiciones gps
-    #last_geopos = {
-    #    g.individuo.id: g
-    #    for g in GeoPosicion.objects.filter(individuo__id__in=geopos).select_related('individuo')
-    #}
-    #Generamos diccionario
-    #resultado = {}
-    # for id in geopos:
-    #     individuo = individuos[id]#Traemos individuo del dict
-    #     #Creamos item
-    #     resultado[id] = {
-    #         "estado": individuo.get_situacion().estado,
-    #         "estado_desc": individuo.get_situacion().get_estado_display(),
-    #         "conducta": individuo.get_situacion().conducta,
-    #         "conducta_desc": individuo.get_situacion().get_conducta_display(),
-    #         "domicilio": str(individuo.domicilio_actual),
-    #         "ultima_pocion": 
-    #         {
-    #             "latitud": last_geopos[id].latitud,
-    #             "longitud": last_geopos[id].longitud,
-    #             "aclaracion": last_geopos[id].aclaracion,
-    #         },
-    #     }
-    # return JsonResponse(resultado, safe=False, )
-    return ''
+    #Obtenemos geoposiciones
+    geopos = GeoPosicion.objects.all()
+    geopos = geopos.select_related('individuo')
+    geopos = geopos.select_related('individuo__situacion_actual')
+    geopos = geopos.select_related('individuo__domicilio_actual', 'individuo__domicilio_actual__localidad')
+    geopos = geopos.order_by('fecha')
+    #Obtenemos la ultima posicion de cada uno
+    print("Iniciamos procesamiento")
+    last_geopos = {}
+    for g in geopos:
+        last_geopos[g.individuo.pk] = g
+    print("Primer Diccionario Procesado")
+    #Generamos respuesta:
+    resultado = {}
+    for pk in last_geopos:
+        geopos = last_geopos[pk]
+        individuo = geopos.individuo
+        sit_actual = individuo.get_situacion()
+        #Creamos item
+        resultado[individuo.num_doc] = {
+            "estado":sit_actual.estado,
+            "estado_desc": sit_actual.get_estado_display(),
+            "conducta": sit_actual.conducta,
+            "conducta_desc": sit_actual.get_conducta_display(),
+            "domicilio": str(individuo.domicilio_actual),
+            "ultima_pocion": 
+            {
+                "tipo": geopos.get_tipo_display(),
+                "latitud": geopos.latitud,
+                "longitud": geopos.longitud,
+                "aclaracion": geopos.aclaracion,
+            },
+        }
+    print("Segundo Diccionario Procesado")
+    return JsonResponse(resultado, safe=False, )
 
 @csrf_exempt
 @require_http_methods(["GET"])
