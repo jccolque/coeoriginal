@@ -96,24 +96,21 @@
                     </div>
                     <div class="col-md-4">
                         <ul class="menu_botones">
-                            {% if ingreso.estado == 'C' %}
                                 <li><a href="{% url 'permisos:mod_ingreso_provincial' ingreso_id=ingreso.id %}">Modificar Datos de Ingreso</a></li>
                                 {% if ingreso.tipo == 'P' or ingreso.tipo == 'T' %}
                                     <li><a href="{% url 'permisos:cargar_ingresantes' ingreso_id=ingreso.id %}">Agregar Pasajero</a></li>
                                 {% endif %}
-                            {% if ingreso.estado == 'C' %}
-                                <li><a href="{% url 'permisos:finalizar_ingreso' ingreso_id=ingreso.id %}">Finalizar Proceso</a></li>
-                            {% endif %}
-                            {% elif ingreso.estado == 'A' %}
+                                {% if ingreso.estado != 'C' or ingreso.estado == 'B' %}
+                                    <li><a href="{% url 'permisos:finalizar_ingreso' ingreso_id=ingreso.id %}">Finalizar Proceso</a></li>
+                                {% endif %}
+                            {% if ingreso.estado == 'A' %}
                                 <li><a href="{% url 'permisos:ver_ingreso_aprobado' token=ingreso.token %}">Imprimir Comprobante</a></li>
                             {% endif %}
                             {% if perms.operadores.permisos %}
                                 <hr>
                                 <p><b>Operadores</b></p>
                                 <li><a href="{% url 'permisos:ingreso_enviar_email' ingreso_id=ingreso.id %}">Enviar Correo Electronico</a></li>
-                                {% if ingreso.estado == 'C' or ingreso.estado == 'E' %}
-                                    <li><a href="{% url 'permisos:eliminar_ingreso' ingreso_id=ingreso.id %}">Eliminar Ingreso</a></li>
-                                {% endif %}
+                                <li><a href="{% url 'permisos:eliminar_ingreso' ingreso_id=ingreso.id %}">Eliminar Ingreso</a></li>
                                 {% if ingreso.estado == 'E' %}
                                     <li><a href="{% url 'permisos:ingreso_enviado' ingreso_id=ingreso.id %}">Enviado a Nacion</a></li>
                                 {% endif %}
