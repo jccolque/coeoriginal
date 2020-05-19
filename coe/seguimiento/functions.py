@@ -1,6 +1,7 @@
 #Imports de Python
 import io
 import logging
+import traceback
 #Imports de django
 from django.utils import timezone
 from django.core.files import File
@@ -56,6 +57,7 @@ def creamos_doc_alta(individuo):
         return '/informacion/altas/'+individuo.num_doc+".pdf"
     except:
         logger.info("No se creo PDF para: " + str(individuo))
+        logger.info("Motivo: " + str(traceback.format_exc()))
 
 def realizar_alta(individuo, operador):
     #Generar documento de alta de aislamiento:
@@ -72,8 +74,8 @@ def realizar_alta(individuo, operador):
     vigiladores = individuo.vigiladores.all()
     individuo.vigiladores.clear()
     #Asignamos nuevos vigilados al que quedo libre
-    for vigilador in vigiladores:
-        vigilador.controlados.add(obtener_bajo_seguimiento().order_by('situacion_actual__fecha').filter(vigiladores=None).first())
+    #for vigilador in vigiladores:
+    #    vigilador.controlados.add(obtener_bajo_seguimiento().order_by('situacion_actual__fecha').filter(vigiladores=None).first())
     #Lo damos de Alta de Aislamiento
     situacion = Situacion(individuo=individuo)
     seguimiento.aclaracion = "Baja confirmada por: " + str(operador)

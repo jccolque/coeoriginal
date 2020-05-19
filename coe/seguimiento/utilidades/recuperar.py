@@ -29,7 +29,7 @@ def asignar_vigilancia():
     activar_vigilancia()
     individuos = obtener_bajo_seguimiento()
     #No procesamos a los que ya estan bajo un vigia
-    individuos = individuos.filter(vigilador=None)
+    individuos = individuos.filter(vigiladores=None)
     print("Asignaremos: " + str(individuos.count()) + " individuos.")
     #Procesamos
     for individuo in individuos:

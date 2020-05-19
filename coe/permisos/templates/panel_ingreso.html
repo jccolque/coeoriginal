@@ -20,8 +20,13 @@
                                 <p><b>Fecha de Llegada Estimada:</b> {{ingreso.fecha_llegada|date:"d/m/Y H:i"}}</p>
                                 <p><b>Permiso de Circulacion Nacional:</b>
                                 {% if ingreso.permiso_nacional %}
-                                    <a href="{{ingreso.permiso_nacional.url}}">Ver Documento</a><br>
+                                    <a href="{{ingreso.permiso_nacional.url}}">Ver Documento</a>
+                                    <a href="{% url 'permisos:ingreso_eliminar_permiso_nac' token=ingreso.token %}">
+                                        <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                    </a>
+                                    <br>
                                     <a href="{% url 'permisos:ingreso_subir_permiso_nac' token=ingreso.token %}" style="font-weight:bold;color:red;">(Cambiar Archivo)</a>
+                                    
                                 {% else %}
                                     <a href="{% url 'permisos:ingreso_subir_permiso_nac' token=ingreso.token %}">CARGAR</a><br>
                                     <i>Si usted carga este documento podemos acelerar la Aprobacion de su Permiso de Ingreso a Jujuy.</i>
@@ -48,7 +53,7 @@
                                         <br>
                                         <p>Puede descargar la autorizacion, lo esperamos en la fecha y hora de llegada informada.</p>
                                     {% endif %}
-                                </div>    
+                                </div>
                             </div>
                         </div>
                         <hr>

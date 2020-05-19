@@ -176,6 +176,13 @@ def ingreso_subir_permiso_nac(request, token):
             return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Permiso Nacional de Circulacion", 'form': form, 'boton': "Cargar", })
 
+def ingreso_eliminar_permiso_nac(request, token):
+    ingreso = IngresoProvincia.objects.get(token=token)
+    ingreso.permiso_nacional = None
+    ingreso.save()
+    return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
+
+
 def cargar_dut(request, ingreso_id):
     form = DUTForm()
     if request.method == "POST":
@@ -544,7 +551,12 @@ def lista_ingresos(request, estado=None, tipo=None):
 
 @permission_required('operadores.permisos')
 def lista_nacion(request):
-    ingresos = IngresoProvincia.objects.filter(estado='E', tipo="P")
+    ingresos = IngresoProvincia.objects.all()
+    #Traemos solo particulares y taxis
+    ingresos = ingresos.filter(tipo__in=("P","T"))
+    #Que no esten aprobados, de baja o ya enviados a nacion
+    ingresos = ingresos.exclude(estado__in=('A','N','B'))
+    #Que no tengan permiso nacional
     ingresos = ingresos.filter(permiso_nacional='')
     #Optimizamos
     ingresos = ingresos.select_related('origen', 'destino', 'operador')

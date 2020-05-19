@@ -20,6 +20,7 @@ urlpatterns = [
     path('finalizar/ingreso/<int:ingreso_id>', views.finalizar_ingreso, name='finalizar_ingreso'),
     path('mod/ingresantes/<int:ingreso_id>/<int:individuo_id>', views.cargar_ingresante, name='mod_ingresantes'),
     path('ingreso/subir/permiso_nac/<str:token>', views.ingreso_subir_permiso_nac, name='ingreso_subir_permiso_nac'),
+    path('ingreso/del/nac/<str:token>', views.ingreso_eliminar_permiso_nac, name='ingreso_eliminar_permiso_nac'),
     path('cargar/dut/<int:ingreso_id>', views.cargar_dut, name='cargar_dut'),
     path('cargar/plan_vuelo/<int:ingreso_id>', views.cargar_plan_vuelo, name='cargar_plan_vuelo'),
     path('del/ingresante/<int:ingreso_id>/<int:individuo_id>', views.quitar_ingresante, name='quitar_ingresante'),
