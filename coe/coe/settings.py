@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'multiselectfield',
     'nested_inline',
     'background_task',
-    'debug_toolbar',
     "fcm_django",
     #Apps Propias
     'core.apps.CoreConfig',
@@ -146,28 +145,6 @@ LOGIN_REDIRECT_URL = '/'
 #Actualizar Statics, no solo nuevas
 AWS_PRELOAD_METADATA = True
 
-#Configuramos Tinymce
-#Configuramos Tinymce
-TINYMCE_DEFAULT_CONFIG = {
-    'plugins': "table,xhtmlxtras,paste,searchreplace",
-    'theme': "advanced",
-    "theme_advanced_buttons3_add" : "cite,abbr",
-    'cleanup_on_startup': True,
-    'custom_undo_redo_levels': 10,
-    'width': '90%',
-    'height': '500px',
-}
-
-#Email config
-SERVER_EMAIL = 'user@domain.com'
-EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
-EMAIL_HOST = 'hostname.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'user@domain.com'
-EMAIL_HOST_PASSWORD = ''
-DEFAULT_FROM_EMAIL = 'user@domain.com'
-
 #Loggin
 LOGGING = {
     'version': 1,
@@ -231,10 +208,12 @@ SESSION_SAVE_EVERY_REQUEST = True
 GEOPOSITION_GOOGLE_MAPS_API_KEY = ''
 
 #Se evita que se envien mails
+SEND_MAIL = True
 if DEBUG:
     SEND_MAIL = False
-    INTERNAL_IPS = ['127.0.0.1',]#Comentar esta linea para no usar!
     #DEBUG:
+    INTERNAL_IPS = ['127.0.0.1',]#Comentar esta linea para no usar!
+    INSTALLED_APPS.append('debug_toolbar')
     MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
     #Definimos todos los paneles del debug que queremos disponibles:
     DEBUG_TOOLBAR_PANELS = [
@@ -251,8 +230,27 @@ if DEBUG:
         'debug_toolbar.panels.logging.LoggingPanel',
         'debug_toolbar.panels.redirects.RedirectsPanel',
     ]
-else:
-    SEND_MAIL = True
+
+#Configuramos Tinymce
+TINYMCE_DEFAULT_CONFIG = {
+    'plugins': "table,xhtmlxtras,paste,searchreplace",
+    'theme': "advanced",
+    "theme_advanced_buttons3_add" : "cite,abbr",
+    'cleanup_on_startup': True,
+    'custom_undo_redo_levels': 10,
+    'width': '90%',
+    'height': '500px',
+}
+
+#Email config
+SERVER_EMAIL = 'user@domain.com'
+EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
+EMAIL_HOST = 'hostname.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'user@domain.com'
+EMAIL_HOST_PASSWORD = ''
+DEFAULT_FROM_EMAIL = 'user@domain.com'
 
 #Obtenemos todas nuestras credenciales secretas
 try:
