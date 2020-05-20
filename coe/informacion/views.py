@@ -30,13 +30,13 @@ from .models import Vehiculo, TrasladoVehiculo, Pasajero
 from .models import Individuo, SignosVitales, Relacion
 from .models import Situacion
 from .models import Domicilio
-from .models import Atributo, Sintoma
+from .models import Atributo, Sintoma, Patologia
 from .models import Documento
 from .forms import ArchivoForm, ArchivoFormWithPass
 from .forms import VehiculoForm, TrasladoVehiculoForm
 from .forms import IndividuoForm, FullIndividuoForm, InquilinoForm
 from .forms import BuscadorIndividuosForm, TrasladarIndividuoForm
-from .forms import DomicilioForm, AtributoForm, SintomaForm
+from .forms import DomicilioForm, AtributoForm, SintomaForm, PatologiaForm
 from .forms import SituacionForm, RelacionForm
 from .forms import SearchIndividuoForm, SearchVehiculoForm
 from .forms import DocumentoForm, SignosVitalesForm
@@ -530,7 +530,10 @@ def cargar_domicilio(request, individuo_id=None, domicilio_id=None):
         if form.is_valid():
             domicilio = form.save(commit=False)
             domicilio.individuo = individuo
-            Domicilio.objects.bulk_create([domicilio,])
+            if domicilio.pk:#Se chequea que no sea una modificacion
+                domicilio.save()
+            else:#Si es nuevo lo creamos via bulk para que no cambie el dom actual:
+                Domicilio.objects.bulk_create([domicilio,])
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Domicilio", 'form': form, 'boton': "Cargar", })
 
@@ -743,6 +746,30 @@ def del_sintoma(request, sintoma_id):
     sintoma = Sintoma.objects.get(pk=sintoma_id)
     individuo = sintoma.individuo
     sintoma.delete()
+    return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+
+#Patologia
+@permission_required('operadores.individuos')
+def cargar_patologia(request, individuo_id, patologia_id=None):
+    patologia = None
+    if patologia_id:
+        patologia = Patologia.objects.get(pk=patologia_id)
+    form = PatologiaForm(instance=patologia)
+    if request.method == "POST":
+        form = PatologiaForm(request.POST, instance=patologia)
+        if form.is_valid():
+            individuo = Individuo.objects.get(pk=individuo_id)
+            patologia = form.save(commit=False)
+            patologia.individuo = individuo
+            patologia.save()
+            return render(request, "extras/close.html")
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Patologia", 'form': form, 'boton': "Cargar", })
+
+@permission_required('operadores.individuos')
+def del_patologia(request, patologia_id):
+    patologia = Patologia.objects.get(pk=patologia_id)
+    individuo = patologia.individuo
+    patologia.delete()
     return redirect('informacion:ver_individuo', individuo_id=individuo.id)
 
 #Documento

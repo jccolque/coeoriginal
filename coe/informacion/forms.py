@@ -12,7 +12,7 @@ from georef.models import Localidad, Ubicacion
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
 from .models import Vehiculo, TrasladoVehiculo
 from .models import Individuo, Domicilio, SignosVitales, Atributo, Sintoma
-from .models import Situacion, Archivo, Relacion
+from .models import Situacion, Patologia, Archivo, Relacion
 from .models import Documento
 
 #Definimos nuestros forms
@@ -210,6 +210,15 @@ class AtributoForm(forms.ModelForm):
         model = Atributo
         fields= '__all__'
         exclude = ('individuo', 'activo', )
+        widgets = {
+            'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
+        }
+
+class PatologiaForm(forms.ModelForm):
+    class Meta:
+        model = Patologia
+        fields= '__all__'
+        exclude = ('individuo', )
         widgets = {
             'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
         }
