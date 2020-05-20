@@ -19,7 +19,9 @@ from core.forms import SearchForm, JustificarForm
 from georef.models import Nacionalidad
 from georef.models import Ubicacion
 from operadores.functions import obtener_operador
-from informacion.models import Individuo, SignosVitales, Relacion
+from informacion.choices import TIPO_ATRIBUTO, TIPO_PATOLOGIA
+from informacion.models import Individuo, Atributo, Patologia
+from informacion.models import SignosVitales, Relacion
 from informacion.models import Situacion, Documento
 from informacion.forms import BuscarIndividuoSeguro
 from app.models import AppData, AppNotificacion
@@ -55,6 +57,41 @@ def buscar_alta_aislamiento(request):
             else:
                 form.add_error(None, "No se ha encontrado a Nadie con esos Datos.")
     return render(request, "buscar_permiso.html", {'form': form, })
+
+def pedir_test(request):
+    error = None
+    if request.method == 'POST':
+        num_doc = request.POST['num_doc']
+        try:
+            individuo = Individuo.objects.get(num_doc=num_doc, situacion_actual__conducta__in=('D', 'E'))
+            individuo.email = request.POST['email']
+            individuo.telefono = request.POST['telefono']
+            individuo.save()
+            #Pedido de Test
+            seguimiento = Seguimiento(individuo=individuo)
+            seguimiento.tipo = 'PT'
+            seguimiento.aclaracion = "Pedido de Test Online"
+            seguimiento.save()
+            #Patologias:
+            for check in request.POST.getlist('patologias'):
+                patologia = Patologia(individuo=individuo)
+                patologia.tipo = check
+                patologia.aclaracion = "Pedido de Test Online"
+                patologia.save()
+            #Excepciones:
+            for check in request.POST.getlist('excepciones'):
+                atributo = Atributo(individuo=individuo)
+                atributo.tipo = check
+                atributo.aclaracion = "Pedido de Test Online"
+                atributo.save()
+            return render(request, "extras/resultado.html", {"texto": "Su pedido fue registrado con exito, pronto lo contactaremos."})
+        except:
+            error = "Usted no se encuentra en condiciones de Pedir el Test."
+    return render(request, "pedir_test.html", {
+        'error': error,
+        'tipos_patologias': TIPO_PATOLOGIA,
+        'tipos_excepciones': [t for t in TIPO_ATRIBUTO if len(t[0]) == 3],
+    })
 
 #Menu
 @permission_required('operadores.seguimiento')

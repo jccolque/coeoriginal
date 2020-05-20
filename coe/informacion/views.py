@@ -260,8 +260,8 @@ def cargar_individuo(request, traslado_id=None, num_doc=None):
     return render(request, "cargar_individuo.html", {'titulo': "Cargar Individuo", 'form': form, 'boton': "Cargar", })
 
 @permission_required('operadores.individuos')
-def mod_individuo(request, individuo_id):
-    individuo = Individuo.objects.get(pk=individuo_id)
+def mod_individuo(request, individuo_id, num_doc):
+    individuo = Individuo.objects.get(pk=individuo_id, num_doc=num_doc)
     form = IndividuoForm(instance=individuo)
     if request.method == 'POST':
         form = IndividuoForm(request.POST, instance=individuo)
@@ -402,6 +402,12 @@ def cargar_inquilino(request, ubicacion_id, num_doc):
 def ver_individuo(request, individuo_id):
     individuo = Individuo.objects.prefetch_related(
         'domicilios', 'domicilios__localidad', 'domicilios__localidad__departamento',
+        'signos_vitales',
+        'seguimientos',
+        'atributos',
+        'sintomas',
+        'patologias',
+        'documentos',
         'situaciones',
         'relaciones',
         'relaciones__relacionado',

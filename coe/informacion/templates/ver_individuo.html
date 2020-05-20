@@ -241,6 +241,37 @@
                             {% endif %}
                         {% endfor %}
 
+                        <!--Tabla de Patologias Registradas-->
+                        {% for patologia in individuo.patologias.all %}
+                            {% if forloop.first %}
+                                <hr>
+                                <h3>Patologias Registradas:</h3>
+                                <table class="listado">
+                                    <tr>
+                                        <th>Patologia</th>
+                                        <th>Aclaracion</th>
+                                        <th>Fecha</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                            {% endif %}
+                            <tr>
+                                <td>{{patologia.get_tipo_display}}</td>
+                                <td>{{patologia.aclaracion}}</td>
+                                <td>{{patologia.fecha}}</td>
+                                <td>
+                                    <a class="nolink"  href="" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/change.png' %}">
+                                    </a>
+                                    <a class="nolink"  href="">
+                                        <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                    </a>
+                                </td>
+                            </tr>
+                            {% if forloop.last %}
+                                </table>
+                            {% endif %}
+                        {% endfor %}
+
                         <!--Tabla de Documentos-->
                         {% for documento in individuo.documentos.all %}
                             {% if forloop.first %}
@@ -376,7 +407,7 @@
                     </div>
                     <div class="col-md-4">
                         <ul class="menu_botones">
-                            <li><a href="{% url 'informacion:mod_individuo' individuo_id=individuo.id %}">Modificar Planilla General</a></li>
+                            <li><a href="{% url 'informacion:mod_individuo' individuo_id=individuo.id num_doc=individuo.num_doc %}">Modificar Planilla General</a></li>
                             <hr>
                             <li><a href="{% url 'informacion:cargar_domicilio' individuo_id=individuo.id %}">Cargar Domicilio</a></li>
                             <li><a href="{% url 'informacion:cargar_geoposicion' individuo_id=individuo.id %}" >Asignar GeoPosicion</a></li>
@@ -388,6 +419,7 @@
                             <li><a href="{% url 'informacion:cargar_documento' individuo_id=individuo.id %}" target="_blank">Cargar Documento</a></li>
                             <li><a href="{% url 'informacion:cargar_sintoma' individuo_id=individuo.id  %}" target="_blank">Cargar Sintomas</a></li>
                             <li><a href="{% url 'informacion:cargar_atributo' individuo_id=individuo.id %}" target="_blank">Cargar Atributo de Control</a></li>
+                            <li><a href="" target="_blank">Cargar Patologia</a></li>
                             <li><a href="{% url 'informacion:cargar_relacion' individuo_id=individuo.id %}" target="_blank">Cargar Relacion</a></li>
                             <li><a href="{% url 'seguimiento:cargar_seguimiento' individuo_id=individuo.id %}" target="_blank">Cargar Seguimiento</a></li>
                             {% if perms.operadores.seguimiento_admin and individuo.aislado %}

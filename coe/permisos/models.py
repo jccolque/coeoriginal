@@ -1,10 +1,12 @@
 #Imports de python
 import io
 import qrcode
+from datetime import timedelta
 #Imports de django
 from django.db import models
 from django.utils import timezone
 from django.utils.html import strip_tags
+from django.core.validators import RegexValidator
 #Imports de paquetes extras
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
@@ -169,6 +171,8 @@ class CirculacionTemporal(models.Model):#Transportes de Carga
     fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
     estado = models.CharField('Estado', choices=ESTADO_INGRESO, max_length=1, default='C')
     qrpath = models.CharField('qrpath', max_length=100, null=True, blank=True)
+    def __str__(self):
+        return str(self.chofer) + ', Vehiculo:' + self.marca + ' ' + self.modelo + ' ' + self.patente
     def listo(self):
         #Chequeamos que haya cargado permiso y licencia
         lista = (self.permiso_nacional is not None) and (self.licencia_conducir is not None)
@@ -256,14 +260,24 @@ class RegistroCirculacion(models.Model):
     control_final = models.IntegerField('Lugar de Control Final', choices=FRONTERA_CONTROL, null=True, blank=True)
     cant_final = models.IntegerField('Cantidad Pasajeros', default=1)
     aclaraciones = models.TextField('Aclaraciones en Salida', null=True, blank=True)
-    fecha_final = models.DateTimeField('Fecha de Fin Circulacion', default=timezone.now, null=True, blank=True)
+    fecha_final = models.DateTimeField('Fecha de Fin Circulacion', null=True, blank=True)
     class Meta:
         ordering = ('fecha_inicio', )
+    def __str__(self):
+        return str(self.circulacion) + ': ' + str(self.get_control_inicio_display()) + '(' + str(self.fecha_inicio)[0:16] + ')'
     def tiempo_real(self):
-        if self.fecha_final:
-            return (self.fecha_final - self.fecha_inicio).total_seconds() * 3600
+        if self.control_final:
+            return (self.fecha_final - self.fecha_inicio).total_seconds() / 3600
         else:
-            return 0
+            return self.tiempo_permitido - ((timezone.now() - self.fecha_inicio).total_seconds() / 3600)
+
+class PasajeroCirculacion(models.Model):
+    registro = models.ForeignKey(RegistroCirculacion, on_delete=models.CASCADE, related_name="pasajeros")
+    num_doc = models.CharField('Numero de Documento/Pasaporte', 
+        max_length=50,
+        validators=[RegexValidator('^[A-Z_\d]*$', 'Solo Mayusculas.')],
+    )
+    salio = models.BooleanField('Salida Marcada', default=False)
 
 if not LOADDATA:
     #Auditoria

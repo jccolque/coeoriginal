@@ -8,18 +8,37 @@
         <div class="row">
             <br>
             <div class="col-lg-7">
-                {% include "carousel.html" %}
+                <div class="row">
+                    {% include "carousel.html" %}
+                </div>
+                <div class="row main_documentos">
+                    {% for version in versiones %}
+                        {% if forloop.first %}
+                            <h2><b>Ultimos Documentos Publicados</b></h2>
+                            <ul>
+                        {% endif %}
+                        <li>
+                            <a href="{{version.archivo.url}}">
+                                {{version.documento.nombre}} | Subido: {{version.fecha}}
+                            </a>
+                        </li>
+                        {% if forloop.last %}
+                                <li>
+                                    <a class="botoncito" href="{% url 'documentos:ver_publicos' %}">Ver Todos</a>
+                                </li>
+                            </ul>
+                        {% endif %}                        
+                    {% endfor %}
+                </div>
             </div>
             <div class="col-lg-5">
                 <div class="row">
                     <div class="col-sm-6">
-                        <a href="{% url 'inscripciones:inscripcion_salud' %}">
-                            <img class="fotos" src="{% static 'img/reclutamiento_salud.jpeg' %}">
-                        </a>
-
-                        <a href="{% url 'inscripciones:inscripcion_proyecto' %}">
-                            <img class="fotos" src="{% static 'img/proyecto_estudiantil.gif' %}">
-                        </a>
+                        <div class="elem">
+                            <a href="{% url 'seguimiento:pedir_test' %}" target="_blank">
+                                <img class="fotos" src="{% static 'img/pedir_test.png' %}">
+                            </a>
+                        </div>
                     </div>
                     <div class="col-sm-6">
                         <a href="{% url 'app:download_app' %}">
@@ -53,32 +72,18 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-3">
-                <a class="boton_suelto" href="https://drive.google.com/uc?export=download&id=1SvTh9prm3WuSB_g1Beto2dzdmLoB_RxT">
-                    Permiso de Circulacion Provincial
-                </a>
-            </div>
-            <div class="col-sm-6 main_documentos">
-                {% for version in versiones %}
-                    {% if forloop.first %}
-                        <h2><b>Ultimos Documentos Publicados</b></h2>
-                        <ul>
-                    {% endif %}
-                    <li>
-                        <a href="{{version.archivo.url}}">
-                            {{version.documento.nombre}} | Subido: {{version.fecha}}
+                <div class="row">
+                    <div class="col-sm-6">
+                        <a href="{% url 'inscripciones:inscripcion_salud' %}">
+                            <img class="fotos" src="{% static 'img/reclutamiento_salud.jpeg' %}">
                         </a>
-                    </li>
-                    {% if forloop.last %}
-                            <li>
-                                <a class="botoncito" href="{% url 'documentos:ver_publicos' %}">Ver Todos</a>
-                            </li>
-                        </ul>
-                    {% endif %}                        
-                {% endfor %}
+                    </div>
+                    <div class="col-sm-6">
+                        <a href="{% url 'inscripciones:inscripcion_proyecto' %}">
+                            <img class="fotos" src="{% static 'img/proyecto_estudiantil.gif' %}">
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

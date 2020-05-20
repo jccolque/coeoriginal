@@ -65,10 +65,11 @@
                                     <th>Destino Circulacion</th>
                                     <th>Control Inicial</th>
                                     <th>Fecha de Inicio</th>
+                                    <th>Pasajeros</th>
                                     <th>Control Final</th>
                                     <th>Fecha de Final</th>
                                     <th>Tiempo Permitido</th>
-                                    <th>Horas Reales</th>
+                                    <th>Horas Restantes</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -77,6 +78,11 @@
                                         <td>{{registro.destino.nombre}}</td>
                                         <td>{{registro.get_control_inicio_display}}</td>
                                         <td>{{registro.fecha_inicio}}</td>
+                                        <td>
+                                            {% for pasajero in registro.pasajeros.all %}
+                                                <p>{{pasajero.num_doc}}</p>
+                                            {% endfor %}
+                                        </td>
                                         {% if registro.control_final %}
                                             <td>{{registro.get_control_final_display}}</td>
                                             <td>{{registro.fecha_final}}</td>

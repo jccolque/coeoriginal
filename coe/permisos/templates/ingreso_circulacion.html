@@ -1,0 +1,126 @@
+{% extends 'base_informacion.html' %}
+
+{% load static %}
+
+{% block content %}    
+    <h2>{{titulo}}</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <fieldset class="module aligned ">
+            {% for field in registroform %}
+                <div class="form-row">
+                    <div class="field-box">
+                        {{ field.errors }}
+                        {{ field.label_tag }}: {{ field }}
+                    </div>
+                </div>
+            {% endfor %}
+            </fieldset>
+            <hr>
+            <fieldset class="module aligned ">
+            <h2>Pasajeros</h2>
+            {{ pasajerosform.management_form }}
+            <!-- aca deberiamos agregar el pasajeros inline formset managment -->
+            <table id="pasajeros">
+                <tr>
+                    <td>Numero de Documento/Pasaporte</td>
+                </tr>
+                <tr id="linea-0">
+                    <td>
+                        <input type="text" name="num_doc-0" id="num_doc-0">
+                    </td>
+                    <td>
+                        <a id="delete-0" href="javascript:borrar_linea('linea-0');">
+                            <img src="/static/admin/img/icon-deletelink.svg">
+                        </a>
+                    </td>
+                </tr>
+            </table>
+            <a href="javascript:agregar_linea();">
+                <p>
+                    <img src="/static/admin/img/icon-addlink.svg">
+                    Agregar Linea
+                </p>
+            </a>
+        </fieldset>
+        <button type="submit">{{boton}}</button>
+    </form>
+{% endblock %}
+
+{% block custom_script %}
+    {{registroform.media}}
+    <script>
+        var x = 0;
+
+        function borrar_linea(id) {
+            if (id != "linea-0") {
+                var elem = document.getElementById(id);
+                elem.parentNode.removeChild(elem);
+                x = x - 1;
+            }
+        }
+
+        function insertAfter(newNode, referenceNode) {
+            referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+        }
+
+        function getAllDescendants(node) {
+            var all = [];
+            getDescendants(node);
+
+            function getDescendants(node) {
+                for (var i = 0; i < node.childNodes.length; i++) {
+                    var child = node.childNodes[i];
+                    getDescendants(child);
+                    all.push(child);
+                }
+            }
+            return all;
+        }
+
+        function agregar_linea() {
+            //nos posicionamos
+            var tabla = document.getElementById('pasajeros');//obtenemos la tabla
+            var linea = document.getElementById('linea-0');//obtenemos la linea inicial
+            var clonada = linea.cloneNode(true);//la clonamos
+            //agregamos uno al incrementador
+            x = x + 1;
+
+            //Arreglamos todos los ids:
+            clonada.id = clonada.id.replace('-0', '-'+x);
+            //Obtenemos TODOS los items de la linea
+            var items = getAllDescendants(clonada);
+            //Vamos a recorrer todos los items de la nueva linea
+            for (var i = 0; i < items.length; i++) 
+            {
+                //recorrremos todos los elementos:
+                var item = items[i];
+                //cambiamos id
+                if (item.id) {
+                    if (item.id.includes('-0')) {
+                        item.id = item.id.replace('-0', '-'+x);
+                    }
+                }
+
+                if (item.name) {
+                    if (item.name.includes('-0')) {
+                        item.name = item.name.replace('-0', '-'+x);
+                    }
+                }
+                
+                if (item.href) {
+                    if (item.href.includes('-0')) {
+                        item.href = item.href.replace('-0', '-'+x);
+                    }
+                }
+                if (item.value) {
+                    item.value = '';
+                }
+            }
+            //La agregamos al final de la tabla
+            var ultima_linea = document.getElementById('linea-'+(x-1));
+            ultima_linea.parentNode.insertBefore(clonada, ultima_linea.nextSibling);
+        }
+    </script>
+
+{% endblock %}

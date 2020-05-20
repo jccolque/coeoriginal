@@ -40,7 +40,6 @@ urlpatterns = [
     path('proyecto/voluntario/<str:token>/', views.cargar_voluntario, name='cargar_voluntario'),
     path('mod/voluntario/<str:token>/<int:individuo_id>', views.cargar_voluntario, name='mod_voluntario_proyecto'),
     path('del/voluntario/<str:token>/<int:individuo_id>', views.quitar_voluntario_proyecto, name='quitar_voluntario_proyecto'),
-
     #Activacion:
     path('act/<int:inscripcion_id>/<int:num_doc>', views.activar_inscripcion, name='activar_inscripcion'),
 ]

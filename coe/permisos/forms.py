@@ -2,6 +2,7 @@
 #Imports Django
 from django import forms
 from django.utils import timezone
+from django.forms.models import inlineformset_factory
 #Imports extra
 from dal import autocomplete
 #Imports del proyecto
@@ -11,7 +12,7 @@ from informacion.models import Individuo
 #Imports de la app
 from .choices import TIPO_PERMISO, FRONTERA_CONTROL
 from .models import NivelRestriccion, Permiso, IngresoProvincia, CirculacionTemporal
-
+from .models import RegistroCirculacion, PasajeroCirculacion
 #Formularios
 class NivelRestriccionForm(forms.ModelForm):
     class Meta:
@@ -166,3 +167,11 @@ class FinalCirculacionForm(forms.Form):
     control = forms.ChoiceField(choices=FRONTERA_CONTROL, label="Punto Fronterizo")
     cant_final = forms.IntegerField(label="Cantidad Pasajeros")
     aclaraciones = forms.CharField(widget=forms.Textarea(attrs={"rows": 5, "cols": 20}))
+
+PasajeroFormset = inlineformset_factory(
+    RegistroCirculacion,
+    PasajeroCirculacion,
+    fields=('num_doc', 'salio'),
+    extra=2,
+    can_delete=True,
+)

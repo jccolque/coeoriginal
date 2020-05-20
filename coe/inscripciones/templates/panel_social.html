@@ -15,7 +15,12 @@
                                 </a>
                             </div>
                             <div class="col-lg-10">
-                                <h2><b>{{inscripto.individuo.apellidos}}, {{inscripto.individuo.nombres}}</b></h2>
+                                <h2>
+                                    <b>{{inscripto.individuo.apellidos}}, {{inscripto.individuo.nombres}}</b>
+                                    <a href="{% url 'informacion:mod_individuo' individuo_id=inscripto.individuo.pk num_doc=inscripto.individuo.num_doc %}">
+                                        <img class="icons" src="{% static '/img/icons/change.png' %}">
+                                    </a>
+                                </h2>
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <p>

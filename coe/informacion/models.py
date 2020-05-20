@@ -18,7 +18,7 @@ from georef.models import Nacionalidad, Localidad, Ubicacion
 from .choices import TIPO_IMPORTANCIA, TIPO_ARCHIVO
 from .choices import TIPO_VEHICULO, TIPO_ESTADO, TIPO_CONDUCTA
 from .choices import TIPO_RELACION
-from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
+from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA, TIPO_PATOLOGIA
 from .choices import TIPO_DOCUMENTO
 
 # Create your models here.
@@ -187,17 +187,6 @@ class Situacion(models.Model):
     def __str__(self):
         return self.get_estado_display() + '-'  + self.get_conducta_display()
 
-class Atributo(models.Model):
-    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="atributos")
-    tipo = models.CharField('Tipo', choices=TIPO_ATRIBUTO, max_length=2, null=True)
-    aclaracion =  models.CharField('Aclaracion', max_length=200, null=True, blank=True)
-    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
-    activo = models.BooleanField(default=True)
-    class Meta:
-        ordering = ['fecha', ]
-    def __str__(self):
-        return str(self.individuo) + ': ' + self.get_tipo_display() + ' ' + str(self.fecha)
-
 class SignosVitales(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="signos_vitales")
     tension_sistolica = models.IntegerField('Tension Sistolica')
@@ -212,9 +201,30 @@ class SignosVitales(models.Model):
     def __str__(self):
         return str(self.individuo) + ' de ' + str(self.fecha)
 
+class Atributo(models.Model):
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="atributos")
+    tipo = models.CharField('Tipo', choices=TIPO_ATRIBUTO, max_length=3, null=True)
+    aclaracion =  models.CharField('Aclaracion', max_length=200, null=True, blank=True)
+    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    activo = models.BooleanField(default=True)
+    class Meta:
+        ordering = ['fecha', ]
+    def __str__(self):
+        return str(self.individuo) + ': ' + self.get_tipo_display() + ' ' + str(self.fecha)
+
 class Sintoma(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="sintomas")
     tipo = models.CharField('Tipo', choices=TIPO_SINTOMA, max_length=3, null=True)
+    aclaracion =  models.CharField('Aclaracion', max_length=200, null=True, blank=True)
+    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    class Meta:
+        ordering = ['fecha', ]
+    def __str__(self):
+        return self.get_tipo_display() + ': ' + str(self.fecha)
+
+class Patologia(models.Model):
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="patologias")
+    tipo = models.CharField('Tipo', choices=TIPO_PATOLOGIA, max_length=3, null=True)
     aclaracion =  models.CharField('Aclaracion', max_length=200, null=True, blank=True)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     class Meta:

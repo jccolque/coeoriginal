@@ -9,7 +9,12 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-10 col-lg-offset-1">
-                        <h2><b>{{inscripto.individuo.apellidos}}, {{inscripto.individuo.nombres}}</b></h2>
+                        <h2>
+                            <b>{{inscripto.individuo.apellidos}}, {{inscripto.individuo.nombres}}</b>
+                            <a href="{% url 'informacion:mod_individuo' individuo_id=inscripto.individuo.pk num_doc=inscripto.individuo.num_doc %}">
+                                <img class="icons" src="{% static '/img/icons/change.png' %}">
+                            </a>
+                        </h2>
                         <div class="col-lg-8">
                             <p>
                                 {{inscripto.individuo.get_tipo_doc_display}} {{inscripto.individuo.num_doc}}

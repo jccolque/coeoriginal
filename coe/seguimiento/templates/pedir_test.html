@@ -1,0 +1,58 @@
+{% extends 'base_seguimiento.html' %}
+
+{% load static %}
+
+{% block content %}    
+    <h2><b>Pedido Test para Coronavirus</b></h2>
+    {% if errror %}
+        <p style="color:red; font-weight: bold;">{{error}}</p>
+    {% endif %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <fieldset class="module aligned">
+            <div class="form-row">
+                <div class="field-box">
+                    <p>Numero de Documento/Pasaporte:</p>
+                    <input type="text" name="num_doc" id="num_doc" required>
+                </div>
+                <div class="field-box">
+                    <p>Telefono:</p>
+                    <input type="text" name="telefono" id="telefono" required>
+                </div>
+                <div class="field-box">
+                    <p>Correo Electronico:</p>
+                    <input type="email" name="email" id="email" required>
+                </div>
+            </div>
+        </fieldset>
+        <hr>
+        <fieldset class="module aligned">
+            <h2>Sufre alguna de estas Patologias?</h2>
+            <!-- aca deberiamos agregar el pasajeros inline formset managment -->
+            <table class="checkbox_table"  id="Patologias">
+                {% for tipo in tipos_patologias %}
+                    <tr>
+                        <td><input type="checkbox" id="{{tipo.0}}" value="{{tipo.0}}" name="patologias"></td>
+                        <td>{{tipo.1}}</td>
+                        <td></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </fieldset>
+        <fieldset class="module aligned">
+            <h2>Se encuentra en alguno de estos Casos Excepcionales?</h2>
+            <!-- aca deberiamos agregar el pasajeros inline formset managment -->
+            <table class="checkbox_table" id="Patologias">
+                {% for tipo in tipos_excepciones %}
+                    <tr>
+                        <td><input type="checkbox" id="{{tipo.0}}" value="{{tipo.0}}" name="excepciones"></td>
+                        <td>{{tipo.1}}</td>
+                        <td></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </fieldset>
+        <br>
+        <button type="submit">Pedir Test</button>
+    </form>
+{% endblock %}

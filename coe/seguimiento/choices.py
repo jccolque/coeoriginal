@@ -4,6 +4,7 @@ TIPO_SEGUIMIENTO = (
     ('M', 'Reporte Medico'),
     ('C', 'Cronologia'),
     ('E', 'Epicrisis'),
+    ('PT', 'Pidio Test'),
     ('ET', 'Esperando Resultados'),
     ('CT', 'Confirmado por Test'),
     ('DT', 'Descartado por Test'),

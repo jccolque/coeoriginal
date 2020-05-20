@@ -10,6 +10,7 @@ app_name = 'seguimiento'
 urlpatterns = [
     #Publico:
     path('alta', views.buscar_alta_aislamiento, name='buscar_alta_aislamiento'),
+    path('test', views.pedir_test, name='pedir_test'),
     #Menu
     path('', views.menu_seguimiento, name='menu_seguimiento'),
     #Base

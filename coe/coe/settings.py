@@ -222,7 +222,7 @@ LOGGING = {
 #Logout
 MIDDLEWARE.append('django.contrib.sessions.middleware.SessionMiddleware')
 MIDDLEWARE.append('django_session_timeout.middleware.SessionTimeoutMiddleware')
-SESSION_EXPIRE_SECONDS = 60 * 30 # expira en 30minutos
+SESSION_EXPIRE_SECONDS = 60 * 60 # expira en 30minutos
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_SAVE_EVERY_REQUEST = True

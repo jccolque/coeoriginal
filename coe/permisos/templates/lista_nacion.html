@@ -11,6 +11,7 @@
                     <thead>
                         <tr>
                             <th>Estado</th>
+                            <th>Fecha Pedido</th>
                             <th>Fecha de llegada estimada</th>
                             <th>Número de tramite</th>
 
@@ -43,6 +44,7 @@
                             {% for pasajero in ingreso.individuos.all %}
                                 <tr>
                                     <td>{{ingreso.get_estado_display}}</td>
+                                    <td>{{ingreso.fecha}}</td>
                                     <td>{{ingreso.fecha_llegada}}</td>
                                     <td></td>
         

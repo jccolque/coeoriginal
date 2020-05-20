@@ -73,6 +73,12 @@ TIPO_ATRIBUTO = (
     ('CE', 'Visito Pais de Riesgo/Contacto con Extranjeros'),
     ('CP', 'Tiene Potestad de Controlar Permisos'),
     ('VA', 'Voluntario Aprobado'),
+    #excepciones (3 caracteres)
+    ('OP2', 'Operado en las ultimas 2 semanas'),
+    ('EMB', 'Embarazada a partir del segundo Trimestre'),
+    ('DIS', 'Posee Certificado de Discapacidad'),
+    ('APS', 'Posee Antescendentes Psiquiatricos'),
+    ('NM2', 'Grupo Familiar con menores de 2 años'),
 )
 
 TIPO_SINTOMA = (
@@ -99,6 +105,19 @@ TIPO_SINTOMA = (
     ('TOS', 'Tos'),
     ('VOM', 'Vomitos'),
     ('ESC', 'Escalofrios')
+)
+
+TIPO_PATOLOGIA = (
+    ('HIP', 'HiperTension'),
+    ('DBT', 'Diabetes'),
+    ('TBC', 'Tuberculosis'),
+    ('ASM', 'Asma'),
+    ('CRD', 'Problemas Cardiacos'),
+    ('CNR', 'Cancer'),
+    ('END', 'Problemas Endocrinologicos'),
+    ('EPC', 'EPOC'),
+    ('ACV', 'Accidentes Cerebro Vasculares'),
+    ('CLC', 'Celiacos'),
 )
 
 TIPO_DOCUMENTO = (
