@@ -779,6 +779,11 @@ def iniciar_control_circulacion(request, circulacion_id):
                     pasajero.num_doc = value
                     pasajero.inicio = True
                     pasajero.save()
+            #Activamos los trackings para el panel:
+            for pasajero in registro.pasajeros.all():
+                if pasajero.individuo:
+                    activar_tracking(pasajero.individuo)
+            #Mostramos registro
             return redirect('permisos:panel_circulacion', token=circulacion.token)
     #Mostramos forms:
     return render(request, "inicio_circulacion.html", {
@@ -818,6 +823,11 @@ def finalizar_control_circulacion(request, registro_id):
                     registro.tipo_alarma = 'DP'
             #Guardamos y volvemos al menu principal
             registro.save()
+            #Desactivamos los trackings para el panel:
+            for pasajero in registro.pasajeros.all():
+                if pasajero.individuo:
+                    desactivar_tracking(pasajero.individuo)
+            #Mostramos registro
             return redirect('permisos:panel_circulacion', token=registro.circulacion.token)
     return render(request, "final_circulacion.html", {
         'titulo': "Final de Circulacion",

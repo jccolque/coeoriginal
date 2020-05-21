@@ -280,8 +280,14 @@ class PasajeroCirculacion(models.Model):
         max_length=50,
         validators=[RegexValidator('^[A-Z_\d]*$', 'Solo Mayusculas.')],
     )
+    individuo = models.ForeignKey(Individuo, on_delete=models.SET_NULL, null=True, blank=True, related_name="registros")
     inicio = models.BooleanField('Ingreso Marcado', default=False)
     final = models.BooleanField('Salida Marcada', default=False)
+    def get_individuo(self):
+        try:
+            return Individuo.objects.get(num_doc=self.num_doc)
+        except Individuo.DoesNotExist:
+            return None
 
 if not LOADDATA:
     #Auditoria

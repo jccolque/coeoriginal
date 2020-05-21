@@ -4,10 +4,10 @@ import logging
 from django.utils import timezone
 from django.core.cache import cache
 from django.dispatch import receiver
-from django.db.models.signals import post_save
+from django.db.models.signals import pre_save, post_save
 #imports Extras
 #Imports de la app
-from .models import NivelRestriccion
+from .models import NivelRestriccion, PasajeroCirculacion
 
 #Logger
 logger = logging.getLogger('signals')
@@ -24,3 +24,7 @@ def activar_restriccion(created, instance, **kwargs):
             instance.fecha_activacion = timezone.now()
             instance.save()
             cache.set("nivel_restriccion", instance)#La dejamos cacheada
+
+@receiver(pre_save, sender=PasajeroCirculacion)
+def cargar_individuo(created, instance, **kwargs):
+    instance.individuo = instance.get_individuo()

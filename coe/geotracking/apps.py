@@ -15,7 +15,7 @@ class GeotrackingConfig(AppConfig):
         #BackgroundJobs
         from background.functions import inicializar_background_job
         from .tasks import geotrack_sin_actualizacion
-        inicializar_background_job(geotrack_sin_actualizacion, 4, 'geotrack_sin_actualizacion')
+        inicializar_background_job(geotrack_sin_actualizacion, 2, 'geotrack_sin_actualizacion')
         #Señales
         if not LOADDATA:
             from .signals import asignar_geoperador

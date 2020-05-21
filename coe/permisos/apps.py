@@ -14,6 +14,7 @@ class PermisosConfig(AppConfig):
         #Cargamos signals
         if not LOADDATA:
             from .signals import activar_restriccion
+            from .signals import cargar_individuo
         # Background Jobs
         try:
             if not DEBUG:
