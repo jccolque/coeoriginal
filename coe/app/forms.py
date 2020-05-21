@@ -8,7 +8,7 @@ from .choices import TIPO_ICONO
 from .models import AppNotificacion
 
 #Definimos nuestros forms aqui:
-class AppNotificationForm(forms.ModelForm):
+class AppNotificacionForm(forms.ModelForm):
     class Meta:
         model = AppNotificacion
         fields= '__all__'

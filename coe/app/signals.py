@@ -1,5 +1,6 @@
 #Imports Python
 import logging
+import traceback
 #Imports de Django
 from django.dispatch import receiver
 from django.db.models.signals import post_save
@@ -19,8 +20,9 @@ def enviar_push(instance, created, **kwargs):
         try:
             device = FCMDevice.objects.get(name=instance.appdata.individuo.num_doc)
             device.send_message(
-                title= instance.titulo,
-                body= instance.mensaje,
-            )
+                title=instance.titulo,
+                body=instance.mensaje,
+            )#La accion la lee al consultar el mensaje grabado.
         except:
             logger.info("No se envio mensaje a: " + str(instance.appdata.individuo))
+            logger.info("Falla: "+str(traceback.format_exc()))

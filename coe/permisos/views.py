@@ -20,6 +20,7 @@ from informacion.models import Individuo, Atributo
 from informacion.functions import actualizar_individuo
 from informacion.forms import BuscarIndividuoSeguro
 from graficos.functions import obtener_grafico
+from geotracking.models import GeoPosicion
 #imports de la app
 from .choices import TIPO_INGRESO, TIPO_ACTIVIDAD, ESTADO_INGRESO
 from .models import NivelRestriccion, Permiso
@@ -827,8 +828,28 @@ def finalizar_control_circulacion(request, registro_id):
 
 @permission_required('operadores.frontera')
 def ver_registro_circulacion(request, registro_id):
-    registro = RegistroCirculacion.objects.get(pk=registro_id)
-    pass
+    registro = RegistroCirculacion.objects.select_related('circulacion')
+    registro = registro.prefetch_related('pasajeros')
+    registro = registro.get(pk=registro_id)
+    circulacion = registro.circulacion
+    print("Datos basicos")
+    #Individuos a Seguir:
+    num_docs = [p.num_doc for p in registro.pasajeros.all()]
+    print("Dnis de Pasajeros", num_docs)
+    #Obtener todas las geopos posibles:
+    geoposiciones = GeoPosicion.objects.filter(individuo__num_doc__in=(num_docs))
+    #Filtramos solo los items para ese recorrido
+    geoposiciones = geoposiciones.filter(fecha__gte=registro.fecha_inicio)
+    if registro.fecha_final:
+        geoposiciones = geoposiciones.filter(fecha__lte=registro.fecha_final)
+    #Optimizamos
+    geoposiciones = geoposiciones.select_related('individuo')
+    #lanzamos informe
+    return render(request, 'registro_circulacion.html', {
+        'circulacion': circulacion,
+        'registro': registro,
+        'geoposiciones': geoposiciones,
+    })
 
 @permission_required('operadores.fronteras')
 def lista_frontera(request):

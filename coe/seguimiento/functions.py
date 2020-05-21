@@ -65,7 +65,7 @@ def realizar_alta(individuo, operador):
     doc.tipo = 'AC'
     doc.archivo.name = creamos_doc_alta(individuo)
     doc.save()
-    #Lo quitamos de Seguimiento
+    #Lo quitamos de Seguimiento Epidemiologico
     seguimiento = Seguimiento(individuo=individuo)
     seguimiento.tipo = 'FS'
     seguimiento.aclaracion = "Baja confirmada por: " + str(operador)
@@ -90,6 +90,11 @@ def realizar_alta(individuo, operador):
         notif.mensaje = 'Se han cumplido los '+str(DIAS_CUARENTENA)+' dias de seguimiento Obligatorios.'
         notif.accion = 'ST'
         notif.save()#Al grabar el local, se envia automaticamente por firebase
+        #Generamos final tracking > Seguimiento
+        seguimiento = Seguimiento(individuo=individuo)
+        seguimiento.tipo = 'FT'
+        seguimiento.aclaracion = "Baja confirmada por: " + str(operador)
+        seguimiento.save()
     #Le cambiamos el domicilio
     if individuo.domicilio_actual:#Si tiene domicilio actual
         if individuo.domicilio_actual.ubicacion:#Solo Si es un alojamiento

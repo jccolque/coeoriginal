@@ -20,3 +20,4 @@ class GeotrackingConfig(AppConfig):
         if not LOADDATA:
             from .signals import asignar_geoperador
             from .signals import inicio_seguimiento
+            from .signals import asignar_punto_control

@@ -1,0 +1,99 @@
+{% extends 'base_informacion.html' %}
+
+{% load static %}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">
+                    <h2><b>Panel de Circulacion Temporal</b></h2>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <h3><b>Vehiculo:</b></h3>
+                            <p><b>Marca:</b> {{circulacion.marca}}</p>
+                            <p><b>Modelo:</b> {{circulacion.modelo}}</p>
+                            <p><b>Patente:</b> {{circulacion.patente}}</p>
+                        </div>
+                        <div class="col-md-3">
+                            <p><b>Actividad:</b> {{circulacion.get_tipo_display}}</p>
+                            <hr>
+                            {{circulacion.actividad|safe}}
+                        </div>
+                        <div class="col-sm-3"><!--CHOFER-->
+                            <p><b><u>Chofer Habilitado</u></b></p>
+                            <p><b>Documento:</b> {{circulacion.chofer.num_doc}}</p>
+                            <p><b>Apellido y Nombre:</b> {{circulacion.chofer.apellidos}}, {{circulacion.chofer.nombres}}</p>
+                            <p><b>Fecha de Nacimiento:</b> {{circulacion.chofer.fecha_nacimiento}}</p>
+                            <p><b>Telefono:</b> {{circulacion.chofer.telefono}}</p>
+                            <p><b>Aplicacion Instalada:</b> 
+                                {% if circulacion.chofer.appdata %}
+                                    <img class="icons" src="/static/img/icons/check.png">
+                                {% else %}
+                                    <img class="icons" src="/static/img/icons/wrong.png">
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p><b><u>Pasajeros</u></b></p>
+                            {% for pasajero in registro.pasajeros.all %}
+                                <p>
+                                    {{pasajero.num_doc}}
+                                    {% if pasajero.inicio %}
+                                        <img class="icons" src="/static/img/icons/in.png" alt="Ingreso">
+                                    {% endif %}
+                                    {% if pasajero.final %}
+                                        <img class="icons" src="/static/img/icons/out.png" alt="Egreso">
+                                    {% endif %}
+                                </p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+                {% if geoposiciones %}
+                    <div class="row">
+                        <hr>
+                        <div class="row">
+                            <!--MAPA-->
+                            <div class="col-sm-8">
+                                {% include 'mapa_seguimiento.html' %}
+                            </div>
+                            <!--tabla-->
+                            <div class="col-sm-4 tabla_posiciones">
+                                {% for geopos in geoposiciones %}
+                                    {% if forloop.first %}
+                                        <h3>Registros:</h3>
+                                        <table class="listado">
+                                            <tr>
+                                                <th>Fecha</th>
+                                                <th>Tipo</th>
+                                                <th>Posicion</th>
+                                            </tr>
+                                    {% endif %}
+                                    <tr class="geo_aclaracion">
+                                        <td>{{geopos.fecha|date:"d/m H:i"}}</td>
+                                        <td>{{geopos.get_tipo_display}}</td>
+                                        <td>{{geopos.latitud|stringformat:".5f"}}/{{geopos.longitud|stringformat:".5f"}}</td>
+                                    </tr>
+                                    {% if forloop.last %}
+                                        </table>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <h2>
+                        No tenemos GEOPOSICIONES disponibles de ninguno de los pasajeros a partir de las {{registro.fecha_inicio}}
+                        {% if registro.fecha_final %}
+                            hasta las {{registro.fecha_final }}
+                        {% endif %}
+                        .
+                    </h2>
+                {% endif %}
+            </div>
+        </section>
+    </section>
+{% endblock %}
+    

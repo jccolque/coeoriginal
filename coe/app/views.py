@@ -5,7 +5,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from fcm_django.models import FCMDevice
 #Imports de la app
 from .models import AppNotificacion
-from .forms import SendNotificationForm, AppNotificationForm
+from .forms import SendNotificationForm, AppNotificacionForm
 
 #NUESTRAS VISTAS:
 def download_app(request):
@@ -39,12 +39,12 @@ def enviar_notificacion(request):
 
 @staff_member_required
 def guardar_notificacion(request):
-    form = AppNotificationForm()
+    form = AppNotificacionForm()
     if request.method == 'POST':
-        form = AppNotificationForm(request.POST)
+        form = AppNotificacionForm(request.POST)
         if form.is_valid():
             local_notif = form.save(commit=False)
-            AppNotification.objects.filter(appdata=local_notif.appdata).delete()
+            AppNotificacion.objects.filter(appdata=local_notif.appdata).delete()
             local_notif.save()
             return render(request, "extras/resultado.html", {"texto": "Se Guardo el mensaje deseado."})
     return render(request, "extras/generic_form.html", {'titulo': "Guardar Notificacion Local (Enviara Automaticamente Push)", 'form': form, 'boton': "Guardar", })
