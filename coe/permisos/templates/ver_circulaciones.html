@@ -109,7 +109,7 @@
                                     <td>{{registro.tiempo_real|floatformat:2}}hrs</td>
                                     <td>{{registro.get_tipo_alarma_display}}</td>
                                     <td>
-                                        <a href="{% url 'permisos:ver_registro_circulacion registro_id=registro.id %}" class="nolink">
+                                        <a href="{% url 'permisos:ver_registro_circulacion' registro_id=registro.id %}" class="nolink">
                                             <img class="icons" src="/static/img/icons/map.png" alt="Ver Circulacion">
                                         </a>
                                     </td>
