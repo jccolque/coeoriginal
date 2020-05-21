@@ -1,5 +1,9 @@
 #Imports de python
 import traceback
+import logging
+
+#Definimos logger
+logger = logging.getLogger("functions")
 
 #Funciones basicas:
 def obtener_dni(data):

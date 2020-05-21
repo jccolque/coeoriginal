@@ -170,6 +170,11 @@ LOGGING = {
             'class': 'logging.FileHandler',
             'filename': 'archivos/logs/errors.txt',
         },
+        'functions_file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': 'archivos/logs/functions.txt',
+        },
     },
     'loggers': {
         'apis': {
@@ -187,7 +192,11 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
-
+        'functions': {
+            'handlers': ['functions_file', ],
+            'level': 'INFO',
+            'propagate': True,
+        },
         'django.request': {
             'handlers': ['error_file'],
             'level': 'ERROR',
