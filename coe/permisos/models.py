@@ -20,6 +20,7 @@ from coe.settings import BASE_DIR, STATIC_ROOT, MEDIA_ROOT, LOADDATA
 from georef.models import Provincia, Localidad
 from informacion.models import Individuo
 from operadores.models import Operador
+from geotracking.models import GeoPosicion
 #Imports de app
 from .choices import COLOR_RESTRICCION, GRUPOS_PERMITIDOS
 from .choices import TIPO_PERMISO, TIPO_ACTIVIDAD
@@ -273,6 +274,17 @@ class RegistroCirculacion(models.Model):
             return (self.fecha_final - self.fecha_inicio).total_seconds() / 3600
         else:
             return self.tiempo_permitido - ((timezone.now() - self.fecha_inicio).total_seconds() / 3600)
+    def geoposiciones(self):
+        #Individuos a Seguir:
+        num_docs = [p.num_doc for p in self.pasajeros.all()]
+        #Obtener todas las geopos posibles:
+        geoposiciones = GeoPosicion.objects.filter(individuo__num_doc__in=(num_docs))
+        #Filtramos solo los items para ese recorrido
+        geoposiciones = geoposiciones.filter(fecha__gte=self.fecha_inicio)
+        if self.fecha_final:
+            geoposiciones = geoposiciones.filter(fecha__lte=self.fecha_final)
+        #Optimizamos
+        return geoposiciones.select_related('individuo')
 
 class PasajeroCirculacion(models.Model):
     registro = models.ForeignKey(RegistroCirculacion, on_delete=models.CASCADE, related_name="pasajeros")
