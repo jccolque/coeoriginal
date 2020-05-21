@@ -26,5 +26,5 @@ def activar_restriccion(created, instance, **kwargs):
             cache.set("nivel_restriccion", instance)#La dejamos cacheada
 
 @receiver(pre_save, sender=PasajeroCirculacion)
-def cargar_individuo(created, instance, **kwargs):
+def cargar_individuo(instance, **kwargs):
     instance.individuo = instance.get_individuo()

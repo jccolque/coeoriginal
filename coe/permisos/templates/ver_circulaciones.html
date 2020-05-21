@@ -56,67 +56,69 @@
                     </div>
                 </div>
                 <div class="row">
-                    <a class="botoncito" href="{% url 'permisos:iniciar_control_circulacion' circulacion_id=circulacion.id %}">
-                        Nuevo Registro
-                        <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
-                    </a>
-                    <table class="listado" id="table">
-                        <thead>
-                            <tr>
-                                <th>Destino Circulacion</th>
-                                <th>Control Inicial</th>
-                                <th>Fecha de Inicio</th>
-                                <th>Pasajeros</th>
-                                <th>Control Final</th>
-                                <th>Fecha de Final</th>
-                                <th>Tiempo Permitido</th>
-                                <th>Horas Restantes</th>
-                                <th>Alarma</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for registro in circulacion.registros.all reversed %}
+                    <div class="col-sm-11 col-sm-offset-1">
+                        <a class="botoncito" href="{% url 'permisos:iniciar_control_circulacion' circulacion_id=circulacion.id %}">
+                            Nuevo Registro
+                            <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
+                        </a>
+                        <table class="listado" id="table">
+                            <thead>
                                 <tr>
-                                    <td>{{registro.destino.nombre}}</td>
-                                    <td>{{registro.get_control_inicio_display}}</td>
-                                    <td>{{registro.fecha_inicio}}</td>
-                                    <td>
-                                        {% for pasajero in registro.pasajeros.all %}
-                                            <p>
-                                                {{pasajero.num_doc}}
-                                                {% if pasajero.inicio %}
-                                                    <img class="icons" src="/static/img/icons/in.png" alt="Ingreso">
-                                                {% endif %}
-                                                {% if pasajero.final %}
-                                                    <img class="icons" src="/static/img/icons/out.png" alt="Egreso">
-                                                {% endif %}
-                                            </p>
-                                        {% endfor %}
-                                    </td>
-                                    {% if registro.control_final %}
-                                        <td>{{registro.get_control_final_display}}</td>
-                                        <td>{{registro.fecha_final}}</td>
-                                    {% else %}
-                                        <td colspan="2" style="text-align: center;">
-                                            <a href="{% url 'permisos:finalizar_control_circulacion' registro_id=registro.id %}" class="nolink">
-                                                <b>Cargar Salida</b>
-                                                <img class="icons" src="/static/img/icons/logout.png" alt="Marcar Egreso">
+                                    <th>Destino Circulacion</th>
+                                    <th>Control Inicial</th>
+                                    <th>Fecha de Inicio</th>
+                                    <th>Pasajeros</th>
+                                    <th>Control Final</th>
+                                    <th>Fecha de Final</th>
+                                    <th>Tiempo Permitido</th>
+                                    <th>Horas Restantes</th>
+                                    <th>Alarma</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for registro in circulacion.registros.all reversed %}
+                                    <tr>
+                                        <td>{{registro.destino.nombre}}</td>
+                                        <td>{{registro.get_control_inicio_display}}</td>
+                                        <td>{{registro.fecha_inicio}}</td>
+                                        <td>
+                                            {% for pasajero in registro.pasajeros.all %}
+                                                <p>
+                                                    {{pasajero.num_doc}}
+                                                    {% if pasajero.inicio %}
+                                                        <img class="icons" src="/static/img/icons/in.png" alt="Ingreso">
+                                                    {% endif %}
+                                                    {% if pasajero.final %}
+                                                        <img class="icons" src="/static/img/icons/out.png" alt="Egreso">
+                                                    {% endif %}
+                                                </p>
+                                            {% endfor %}
+                                        </td>
+                                        {% if registro.control_final %}
+                                            <td>{{registro.get_control_final_display}}</td>
+                                            <td>{{registro.fecha_final}}</td>
+                                        {% else %}
+                                            <td colspan="2" style="text-align: center;">
+                                                <a href="{% url 'permisos:finalizar_control_circulacion' registro_id=registro.id %}" class="nolink">
+                                                    <b>Cargar Salida</b>
+                                                    <img class="icons" src="/static/img/icons/logout.png" alt="Marcar Egreso">
+                                                </a>
+                                            </td>
+                                        {% endif %}
+                                        <td>{{registro.tiempo_permitido}}</td>
+                                        <td>{{registro.tiempo_real|floatformat:2}}hrs</td>
+                                        <td>{{registro.get_tipo_alarma_display}}</td>
+                                        <td>
+                                            <a href="{% url 'permisos:ver_registro_circulacion' registro_id=registro.id %}" class="nolink">
+                                                <img class="icons" src="/static/img/icons/map.png" alt="Ver Circulacion">
                                             </a>
                                         </td>
-                                    {% endif %}
-                                    <td>{{registro.tiempo_permitido}}</td>
-                                    <td>{{registro.tiempo_real|floatformat:2}}hrs</td>
-                                    <td>{{registro.get_tipo_alarma_display}}</td>
-                                    <td>
-                                        <a href="{% url 'permisos:ver_registro_circulacion' registro_id=registro.id %}" class="nolink">
-                                            <img class="icons" src="/static/img/icons/map.png" alt="Ver Circulacion">
-                                        </a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </section>
