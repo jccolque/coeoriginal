@@ -775,15 +775,14 @@ def iniciar_control_circulacion(request, circulacion_id):
             registro.save()
             #Cargamos los pasajeros informados:
             for key, value in request.POST.items():
-                if 'num_doc-' in key:
+                if 'num_doc-' in key and value:
                     pasajero = PasajeroCirculacion(registro=registro)
                     pasajero.num_doc = value
                     pasajero.inicio = True
                     pasajero.save()
             #Activamos los trackings para el panel:
-            for pasajero in registro.pasajeros.all():
-                if pasajero.individuo:
-                    activar_tracking(pasajero.individuo)
+            for pasajero in registro.pasajeros.exclude(individuo=None):
+                activar_tracking(pasajero.individuo)
             #Mostramos registro
             return redirect('permisos:panel_circulacion', token=circulacion.token)
     #Mostramos forms:
@@ -802,7 +801,7 @@ def finalizar_control_circulacion(request, registro_id):
         registroform = FinalCirculacionForm(request.POST)
         if registroform.is_valid():
             for key, value in request.POST.items():
-                if 'num_doc-' in key:
+                if 'num_doc-' in key and value:
                     try:#Si entro lo obtenemos
                         pasajero = registro.pasajeros.get(num_doc=value)
                     except:#Si no entro, generamos uno sin inicio
