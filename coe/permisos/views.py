@@ -19,6 +19,7 @@ from operadores.functions import obtener_operador
 from informacion.models import Individuo, Atributo
 from informacion.functions import actualizar_individuo
 from informacion.forms import BuscarIndividuoSeguro
+from app.functions import activar_tracking, desactivar_tracking
 from graficos.functions import obtener_grafico
 from geotracking.models import GeoPosicion
 #imports de la app
