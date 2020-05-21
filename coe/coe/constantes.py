@@ -13,7 +13,7 @@ TIME_FIN = time(20, 0, 0)
 #Faltantes
 NOMAIL = 'sinemail@nomail.com'
 NODOM = 'SINDOMICILIO'
-NOTEL = 'SINTELEFONO'
+NOTEL = '+549388'
 NOIMAGE = '/static/img/subir_foto.png'
 
 #GeoPosiciones

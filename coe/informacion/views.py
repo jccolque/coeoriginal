@@ -497,6 +497,9 @@ def mod_telefono(request, individuo_id=None):
         if form.is_valid():
             individuo.telefono = form.cleaned_data['texto']
             individuo.save()
+            #Le eliminamos la flag de telefono errado
+            individuo.seguimientos.filter(tipo='TE').delete()
+            #Cerramos ventana
             return render(request, "extras/close.html")
     return render(request, "extras/generic_form.html", {'titulo': "Cambiar Telefono", 'form': form, 'boton': "Modificar", })
 

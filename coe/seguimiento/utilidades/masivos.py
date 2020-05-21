@@ -4,13 +4,14 @@ import csv
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Permission
 #Imports del proyecto
+from coe.constantes import NOTEL
 from informacion.models import Individuo
 from operadores.models import SubComite, Operador
 from operadores.functions import crear_usuario
 from inscripciones.models import Inscripcion
 #Imports de la app
-from seguimiento.models import Vigia
-from seguimiento.functions import realizar_alta
+from seguimiento.models import Seguimiento, Vigia
+from seguimiento.functions import realizar_alta, obtener_bajo_seguimiento
 
 def crear_vigias(filename):
     #obtenemos el comite de vigilancia Epidemiologica
@@ -71,4 +72,26 @@ def altas_masivas(filename):
             except Individuo.DoesNotExist:
                 print("No existe DNI: " + row[0])
 
-            
+def marcar_sin_telefono():
+    print("Iniciamos marcado de falta de telefonos")
+    individuos = obtener_bajo_seguimiento()
+    individuos = individuos.filter(telefono=NOTEL)
+    seguimientos = []
+    for individuo in individuos:
+        print(individuo)
+        seg = Seguimiento(individuo=individuo)
+        seg.tipo = 'TE'
+        seg.aclaracion = 'Analisis Inicial'
+        seguimientos.append(seg)
+    #Lanzamos guardado masivo
+    Seguimiento.objects.bulk_create(seguimientos)
+
+def obtener_last_seg():
+    print("Iniciamos carga de seguimientos actuales")
+    individuos = obtener_bajo_seguimiento()
+    individuos = individuos.filter(seguimiento_actual=None)
+    print("Debemos procesar: " + str(individuos.count()) + "registros.")
+    for individuo in individuos:
+        individuo.seguimiento_actual = individuo.seguimientos.last()
+        individuo.save()
+        print(individuo)

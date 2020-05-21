@@ -56,7 +56,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-11 col-sm-offset-1">
+                    <div class="col-sm-10 col-sm-offset-1">
                         <a class="botoncito" href="{% url 'permisos:iniciar_control_circulacion' circulacion_id=circulacion.id %}">
                             Nuevo Registro
                             <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
@@ -112,7 +112,7 @@
                                                 </a>
                                             </td>
                                         {% endif %}
-                                        <td>{{registro.tiempo_permitido}}</td>
+                                        <td>{{registro.tiempo_permitido}}hrs</td>
                                         <td>{{registro.tiempo_real|floatformat:2}}hrs</td>
                                         <td>{{registro.get_tipo_alarma_display}}</td>
                                         <td>

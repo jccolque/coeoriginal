@@ -14,7 +14,8 @@ TIPO_SEGUIMIENTO = (
     ('AT', 'Alerta Tracking'),
     ('FT', 'Finalizacion del Tracking'),
     ('TA', 'Traslado a Aislamiento'),
-    ('DF', 'Domicilio Fuera de la Provincia')
+    ('DF', 'Domicilio Fuera de la Provincia'),
+    ('TE', 'No Posee Telefono / Telefono Equivocado'),
 )
 
 TIPO_VIGIA = (

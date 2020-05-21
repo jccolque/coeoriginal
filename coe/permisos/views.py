@@ -184,7 +184,6 @@ def ingreso_eliminar_permiso_nac(request, token):
     ingreso.save()
     return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
 
-
 def cargar_dut(request, ingreso_id):
     form = DUTForm()
     if request.method == "POST":
@@ -818,7 +817,7 @@ def finalizar_control_circulacion(request, registro_id):
             #Calculamos alarmas
             if registro.tiempo_permitido < registro.tiempo_real():
                 registro.tipo_alarma = 'TE'
-            for pasajero in registro.pasajeros:#recorremos todos 
+            for pasajero in registro.pasajeros.all():#recorremos todos 
                 if not pasajero.inicio or not pasajero.final:#Buscando alguno que no haya ido y vuelto
                     registro.tipo_alarma = 'DP'
             #Guardamos y volvemos al menu principal

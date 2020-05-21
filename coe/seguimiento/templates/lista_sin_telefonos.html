@@ -19,8 +19,6 @@
                         <th>Domicilio</th>
                         <th>Ubicacion</th>
                         <th>Localidad</th>
-                        <th>Ultima Actualizacion</th>
-                        <th>Responsables</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -34,14 +32,6 @@
                             <td>{{individuo.domicilio_actual.calle}} {{individuo.domicilio_actual.numero}}</td>
                             <td>{{individuo.domicilio_actual.ubicacion.nombre}}</td>
                             <td>{{individuo.domicilio_actual.localidad.nombre}}</td>
-                            <td>
-                                {{individuo.seguimiento_actual}}
-                            </td>
-                            <td>
-                                {% for vigia in individuo.vigiladores.all %}
-                                    <p><a href="{% url 'seguimiento:ver_panel' vigia_id=vigia.id %}">{{vigia}}</a></p>
-                                {% endfor %}
-                            </td>
                             <td>
                                 <a class="nolink" href="{% url 'seguimiento:cargar_seguimiento' individuo_id=individuo.id %}" target="_blank">
                                     <img class="icons" src="{% static '/img/icons/add_call.png' %}">

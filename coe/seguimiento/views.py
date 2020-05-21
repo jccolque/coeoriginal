@@ -288,6 +288,19 @@ def ver_seguimiento(request, individuo_id):
 
 #Otros listados
 @permission_required('operadores.individuos')
+def lista_sin_telefono(request):
+    individuos = Individuo.objects.filter(seguimientos__tipo='TE')
+    #Optimizamos
+    individuos = individuos.select_related('nacionalidad')
+    individuos = individuos.select_related('situacion_actual', 'seguimiento_actual')
+    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'domicilio_actual__ubicacion')
+    #Lanzamos reporte    
+    return render(request, "lista_sin_telefonos.html", {
+        'individuos': individuos,
+        'has_table': True,
+    })
+
+@permission_required('operadores.individuos')
 def lista_autodiagnosticos(request):
     individuos = []
     appdatas = AppData.objects.all().order_by('-estado')
@@ -307,7 +320,7 @@ def lista_aislados(request):
     individuos = individuos.exclude(domicilio_actual__ubicacion=None)
     #Optimizamos
     individuos = individuos.select_related('nacionalidad')
-    individuos = individuos.select_related('situacion_actual')
+    individuos = individuos.select_related('situacion_actual', 'seguimiento_actual')
     individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'domicilio_actual__ubicacion')
     individuos = individuos.select_related('appdata')
     individuos = individuos.prefetch_related('vigiladores', 'vigiladores__operador')
