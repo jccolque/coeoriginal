@@ -73,6 +73,13 @@ FRONTERA_CONTROL = (
     (10, "Leon"),
 )
 
+TIPO_ALARMA = (
+    ('SA', "Sin Alarmas"),
+    ('TE', "Tiempo Excedido"),
+    ('DP', "Diferencia de Pasajeros"),
+    ('SS', "Sin Salida a tiempo"),
+)
+
 COMBINACION_DNIxDIA = (
     ('0-0', 'Lunes Habilitada Terminacion: 0'),
     ('0-1', 'Lunes Habilitada Terminacion: 1'),

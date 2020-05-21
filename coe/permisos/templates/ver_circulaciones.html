@@ -70,6 +70,7 @@
                                     <th>Fecha de Final</th>
                                     <th>Tiempo Permitido</th>
                                     <th>Horas Restantes</th>
+                                    <th>Alarma</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -80,7 +81,15 @@
                                         <td>{{registro.fecha_inicio}}</td>
                                         <td>
                                             {% for pasajero in registro.pasajeros.all %}
-                                                <p>{{pasajero.num_doc}}</p>
+                                                <p>
+                                                    {{pasajero.num_doc}}
+                                                    {% if pasajero.inicio %}
+                                                        <img class="icons" src="/static/img/icons/in.png" alt="Ingreso">
+                                                    {% endif %}
+                                                    {% if pasajero.final %}
+                                                        <img class="icons" src="/static/img/icons/out.png" alt="Egreso">
+                                                    {% endif %}
+                                                </p>
                                             {% endfor %}
                                         </td>
                                         {% if registro.control_final %}
@@ -96,6 +105,7 @@
                                         {% endif %}
                                         <td>{{registro.tiempo_permitido}}</td>
                                         <td>{{registro.tiempo_real|floatformat:2}}hrs</td>
+                                        <td>{{registro.get_tipo_alarma_display}}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

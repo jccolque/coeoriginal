@@ -23,7 +23,7 @@ from operadores.models import Operador
 #Imports de app
 from .choices import COLOR_RESTRICCION, GRUPOS_PERMITIDOS
 from .choices import TIPO_PERMISO, TIPO_ACTIVIDAD
-from .choices import FRONTERA_CONTROL
+from .choices import FRONTERA_CONTROL, TIPO_ALARMA
 from .choices import COMBINACION_DNIxDIA
 from .choices import TIPO_INGRESO, ESTADO_INGRESO
 from .tokens import token_ingreso
@@ -261,6 +261,9 @@ class RegistroCirculacion(models.Model):
     cant_final = models.IntegerField('Cantidad Pasajeros', default=1)
     aclaraciones = models.TextField('Aclaraciones en Salida', null=True, blank=True)
     fecha_final = models.DateTimeField('Fecha de Fin Circulacion', null=True, blank=True)
+    #Interno
+    tipo_alarma = models.CharField('Tipo Ingreso', choices=TIPO_ALARMA, max_length=2, default='SA')
+    procesado = models.BooleanField('Procesada', default=False)
     class Meta:
         ordering = ('fecha_inicio', )
     def __str__(self):
@@ -277,7 +280,8 @@ class PasajeroCirculacion(models.Model):
         max_length=50,
         validators=[RegexValidator('^[A-Z_\d]*$', 'Solo Mayusculas.')],
     )
-    salio = models.BooleanField('Salida Marcada', default=False)
+    inicio = models.BooleanField('Ingreso Marcado', default=False)
+    final = models.BooleanField('Salida Marcada', default=False)
 
 if not LOADDATA:
     #Auditoria

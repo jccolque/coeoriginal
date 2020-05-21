@@ -11,9 +11,11 @@ from operadores.functions import obtener_operador
 #Imports app
 from .models import Documento, Version
 from .forms import DocumentoForm, VersionForm
+
 #Publico
 def lista_publica(request):
     documentos = Documento.objects.filter(publico=True)
+    documentos = documentos.select_related('subcomite')
     documentos = documentos.prefetch_related('versiones')
     if request.method == "POST":
         form = SearchForm(request.POST)

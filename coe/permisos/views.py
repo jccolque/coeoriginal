@@ -32,7 +32,7 @@ from .forms import IngresoProvinciaForm, IngresanteForm, AprobarForm
 from .forms import CirculacionTemporalForm, TemporalesForm
 from .forms import DUTForm, PlanVueloForm
 from .forms import SearchCirculacion
-from .forms import InicioCirculacionForm, FinalCirculacionForm, PasajeroFormset
+from .forms import InicioCirculacionForm, FinalCirculacionForm
 from .functions import buscar_permiso, validar_permiso
 
 #Publico
@@ -760,7 +760,6 @@ def iniciar_control_circulacion(request, circulacion_id):
         'tiempo_permitido': 6,
         }
     )
-    pasajerosform = PasajeroFormset
     #Si estan enviando datos:
     if request.method == "POST":
         registroform = InicioCirculacionForm(request.POST)
@@ -777,31 +776,54 @@ def iniciar_control_circulacion(request, circulacion_id):
                 if 'num_doc-' in key:
                     pasajero = PasajeroCirculacion(registro=registro)
                     pasajero.num_doc = value
+                    pasajero.inicio = True
                     pasajero.save()
             return redirect('permisos:panel_circulacion', token=circulacion.token)
     #Mostramos forms:
-    return render(request, "ingreso_circulacion.html", {
+    return render(request, "inicio_circulacion.html", {
         'titulo': "Inicio de Circulacion",
         'circulacion': circulacion,
         'registroform': registroform,
-        'pasajerosform': pasajerosform,
         'boton': "Iniciar", 
     })
 
 @permission_required('operadores.frontera')
 def finalizar_control_circulacion(request, registro_id):
-    form = FinalCirculacionForm()
+    registro = RegistroCirculacion.objects.get(pk=registro_id)
+    registroform = FinalCirculacionForm()
     if request.method == "POST":
-        form = FinalCirculacionForm(request.POST)
-        if form.is_valid():
-            #Completamos el registro
-            registro = RegistroCirculacion.objects.get(pk=registro_id)
-            registro.control_final = form.cleaned_data['control']
-            registro.cant_final = form.cleaned_data['cant_final']
-            registro.aclaraciones = form.cleaned_data['aclaraciones']
+        registroform = FinalCirculacionForm(request.POST)
+        if registroform.is_valid():
+            for key, value in request.POST.items():
+                if 'num_doc-' in key:
+                    try:#Si entro lo obtenemos
+                        pasajero = registro.pasajeros.get(num_doc=value)
+                    except:#Si no entro, generamos uno sin inicio
+                        pasajero = PasajeroCirculacion(registro=registro)
+                        pasajero.num_doc = value
+                    pasajero.final = True
+                    pasajero.save()
+            #guardamos todo lo referente al final de registro
+            registro.control_final = registroform.cleaned_data['control']
+            registro.aclaraciones = registroform.cleaned_data['aclaraciones']
+            registro.fecha_final = timezone.now()
+            #Agregamos pasajeros
+            registro.cant_final = registro.pasajeros.filter(final=True).count()
+            #Calculamos alarmas
+            if registro.tiempo_permitido < registro.tiempo_real():
+                registro.tipo_alarma = 'TE'
+            for pasajero in registro.pasajeros:#recorremos todos 
+                if not pasajero.inicio or not pasajero.final:#Buscando alguno que no haya ido y vuelto
+                    registro.tipo_alarma = 'DP'
+            #Guardamos y volvemos al menu principal
             registro.save()
             return redirect('permisos:panel_circulacion', token=registro.circulacion.token)
-    return render(request, "extras/generic_form.html", {'titulo': "Final de Circulacion", 'form': form, 'boton': "Finalizar", })
+    return render(request, "final_circulacion.html", {
+        'titulo': "Final de Circulacion",
+        'registroform': registroform,
+        'registro': registro,
+        'boton': "Finalizar", 
+    })
 
 @permission_required('operadores.frontera')
 def ver_registro_circulacion(request, registro_id):

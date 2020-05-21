@@ -165,13 +165,4 @@ class InicioCirculacionForm(forms.Form):
 
 class FinalCirculacionForm(forms.Form):
     control = forms.ChoiceField(choices=FRONTERA_CONTROL, label="Punto Fronterizo")
-    cant_final = forms.IntegerField(label="Cantidad Pasajeros")
     aclaraciones = forms.CharField(widget=forms.Textarea(attrs={"rows": 5, "cols": 20}))
-
-PasajeroFormset = inlineformset_factory(
-    RegistroCirculacion,
-    PasajeroCirculacion,
-    fields=('num_doc', 'salio'),
-    extra=2,
-    can_delete=True,
-)
