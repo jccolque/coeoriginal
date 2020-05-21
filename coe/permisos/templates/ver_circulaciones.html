@@ -85,7 +85,13 @@
                                         <td>
                                             {% for pasajero in registro.pasajeros.all %}
                                                 <p>
-                                                    {{pasajero.num_doc}}
+                                                    {% if pasajero.individuo %}
+                                                        <a href="{% url 'informacion:ver_individuo' individuo_id=pasajero.individuo.id %}" target="_blank">
+                                                            {{pasajero.individuo}}
+                                                        </a>
+                                                    {% else %}
+                                                        {{pasajero.num_doc}}
+                                                    {% endif %}
                                                     {% if pasajero.inicio %}
                                                         <img class="icons" src="/static/img/icons/in.png" alt="Ingreso">
                                                     {% endif %}

@@ -718,6 +718,7 @@ def panel_circulacion(request, token):
     #Optimizamos
     circulacion = CirculacionTemporal.objects.select_related('chofer', 'acompañante')
     circulacion = circulacion.select_related('origen', 'destino')
+    circulacion = circulacion.prefetch_related('registros', 'registros__pasajeros', 'registros__pasajeros__individuo')
     #Filtramos
     circulacion = circulacion.get(token=token)
     #Mostramos el panel
