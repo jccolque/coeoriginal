@@ -1,12 +1,26 @@
 {% load static %}
+{% load static %}
 {% block content %}
     <menu>
-        <div class="menu-logo">
-            <img src="{% static 'img/logo_menu.png' %}" />
-        </div>
         <nav class="navbar navbar-static-top">
             <div class="container-fluid">
+                <button type="button" class="navbar-toggle collapsed" onclick="togle_menu()">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <div class="menu-logo">
+                    <img src="{% static 'img/logo_menu.png' %}" />
+                </div>
+                <!-- Desktop -->
                 <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        {% include "base/menu_opciones.html" %}
+                    </ul>
+                </div>
+                <!-- Celulares -->
+                <div id="nav-mobile" class="navbar-collapse collapsed mobile-only">
                     <ul class="nav navbar-nav">
                         {% include "base/menu_opciones.html" %}
                     </ul>

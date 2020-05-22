@@ -50,7 +50,7 @@ ul.nav li.desplegable a {
 ul.nav li a {
     color: white;
     font-size: 14px;
-    text-shadow: 0 0 8px rgba(0, 0, 0, 0.59);
+    text-shadow: 0 0 8px rgba(0, 0, 0, 0.856);
     padding-top: 11px;
     padding-bottom: 12px;
 }
@@ -99,7 +99,7 @@ ul.nav li ul.submenu li:active {
 }
 
 ul.nav li span.triangle {
-    color: rgba(255, 255, 255, 0.2);
+    color: rgba(0, 0, 0, 0.212);
     position: absolute;
     right: 4px;
     font-size: 10px;
@@ -130,7 +130,7 @@ ul.nav li:hover span.triangle {
 .nav>li:hover a,
 .nav>li:active a {
     background: none;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(65, 65, 65, 0.753);
 }
 
 .navbar-right {
@@ -139,4 +139,8 @@ ul.nav li:hover span.triangle {
 
 .navbar-toggle .icon-bar {
     background: white;
+}
+
+.mobile-only {
+    display: none;
 }
