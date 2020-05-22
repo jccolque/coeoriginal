@@ -100,7 +100,7 @@
                                 {% if ingreso.tipo == 'P' or ingreso.tipo == 'T' %}
                                     <li><a href="{% url 'permisos:cargar_ingresantes' ingreso_id=ingreso.id %}">Agregar Pasajero</a></li>
                                 {% endif %}
-                                {% if ingreso.estado != 'B' or ingreso.estado =! 'A' %}
+                                {% if ingreso.estado != 'B' or ingreso.estado != 'A' %}
                                     <li><a href="{% url 'permisos:finalizar_ingreso' ingreso_id=ingreso.id %}">Finalizar Proceso</a></li>
                                 {% endif %}
                             {% if ingreso.estado == 'A' %}
