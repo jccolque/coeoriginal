@@ -1,4 +1,5 @@
 /* DEFINICIONES PANTALLA */
+/* Desktop */
 @media (min-width: 1024px) {
     .main-items .item.height2 .image {
         height: 410px;
@@ -9,34 +10,13 @@
     .main-items .item.height2 {
         height: 550px;
     }
-    .portada {
-        height: auto;
-    }
-    .portada img {
-        display: none;
-    }
-    .portada>.mobile {
-        display: block;
-        text-align: center;
-    }
-    .portada>.mobile img {
-        display: inline-block;
-        width: 100%;
-        height: auto;
-    }
     .mobile-only {
         display:none!important;
     }
 }
 
+/* Mobile */
 @media (max-width: 1023px) {
-    #slider-container {
-        background-position-y: 0;
-        height: 350px;
-    }
-    #slider-overlay {
-        height: 350px;
-    }
     #logo-container img.logo {
         position: relative;
         top: -70px;
@@ -54,9 +34,6 @@
       width: 100%;
     }
 
-    #slider-container {
-        background-size: cover !important;
-    }
     .main-items .item.height2 {
         height: 650px;
     }
@@ -69,7 +46,6 @@
     .main-items .item.height2 .content p {
         opacity: 1;
     }
-
     .navbar-collapse.collapse.in.mobile-only,
     .navbar-collapse.collapse.collapsing.mobile-only {
         display: block !important;
