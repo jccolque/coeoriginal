@@ -348,14 +348,14 @@ def asistencia(request, operador_id):
                 asistencia[1] = 'Sin Registrar'
                 asistencia = [
                     asistencia[0].date(),
-                    asistencia[0].time(),
+                    asistencia[0].time()#Me cago en el UTC,
                 ]
             else:
                 asistencia.append(tiempo)
                 asistencia = [
                     asistencia[0].date(),
-                    asistencia[0].time(),
-                    asistencia[1].time(),
+                    asistencia[0].time() -3,#Me cago en el UTC
+                    asistencia[1].time() -3,#Me cago en el UTC
                     asistencia[2],
                 ]
         asistencias.append(asistencia)
@@ -363,6 +363,7 @@ def asistencia(request, operador_id):
         'operador': operador,
         'asistencias': asistencias,
         'cantidad': len(asistencias),
+        'has_table': True,
     })
 
 #Interno
