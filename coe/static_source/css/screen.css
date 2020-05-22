@@ -17,21 +17,25 @@
 
 /* Mobile */
 @media (max-width: 1023px) {
-    #logo-container img.logo {
-        position: relative;
-        top: -70px;
-        width: 150px;
-    }
-    ul.nav li a {
-        padding-right: 6px;
-        padding-left: 6px;
+    .page-wrapper {
+        width: 100%;
     }
     .mobile-only {
         display: block;
     }
 
-    .page-wrapper {
-      width: 100%;
+    .navbar {
+        padding-left: 0!important;
+        padding-right: 0!important;
+    }
+    .menu-logo .img {
+        float: left;
+        max-width: 35%;
+    }
+
+    ul.nav li a {
+        padding-right: 6px;
+        padding-left: 6px;
     }
 
     .main-items .item.height2 {
@@ -50,7 +54,6 @@
     .navbar-collapse.collapse.collapsing.mobile-only {
         display: block !important;
     }
-
     .main-items .item.height2 .image {
         background-position-y: -200px !important;
     }

@@ -51,7 +51,7 @@
                                                 <b style="color:red;">Inactivo</b>
                                             {% endif %}
                                         </td>
-                                        <td style="display: inline-block;"><!-- Acciones -->
+                                        <td><!-- Acciones -->
                                             <a class="nolink" href="{% url 'operadores:ver_credencial' operador_id=operador.id %}">
                                                 <img class="icons" src="/static/img/icons/access_card.png" alt="Ver Tarjeta">
                                             </a>
@@ -73,10 +73,13 @@
                                                 {% endif %}
                                                 {% if perms.operadores.auditar_operadores %}
                                                     <a href="{% url 'operadores:auditoria_propia' user_id=operador.usuario.id %}">
-                                                        <img class="icons" src="/static/img/icons/audit.png" alt="Crear Nuevo Usuario">
+                                                        <img class="icons" src="/static/img/icons/audit.png" alt="Auditoria">
                                                     </a>
                                                 {% endif %}
                                             {% endif %}
+                                            <a href="{% url 'operadores:asistencia' operador_id=operador.id %}">
+                                                <img class="icons" src="/static/img/icons/calendar.png" alt="Asistencia">
+                                            </a>
                                         </td>
                                     </tr>
                                 {% endfor %}

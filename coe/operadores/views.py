@@ -323,6 +323,49 @@ def auditar_cambios(request, content_id, object_id):
         'registros': registros,
     })
 
+@permission_required('operadores.auditar_operadores')
+def asistencia(request, operador_id):
+    operador = Operador.objects.get(pk=operador_id)
+    #Obtenemos los ingresos y egresos
+    registros = EventoOperador.objects.filter(operador=operador)
+    registros = registros.order_by('fecha')
+    #Generamos las asistencias:
+    ingresos = registros.filter(tipo='I')
+    egresos = registros.filter(tipo='E')
+    #Preparamos lista de resultados
+    asistencias = []
+    #Generamos listado de los que permanecen en el edificio
+    for ingreso in ingresos:
+        asistencia = [
+            ingreso.fecha,
+            egresos.filter(fecha__gt=ingreso.fecha).first(),
+        ]
+        #Calculamos salida
+        if len(asistencia) == 2:#Si cargo egreso
+            asistencia[1] = asistencia[1].fecha
+            tiempo = int((asistencia[1] - asistencia[0]).total_seconds() / 3600)
+            if tiempo > 24:
+                asistencia[1] = 'Sin Registrar'
+                asistencia = [
+                    asistencia[0].date(),
+                    asistencia[0].time(),
+                ]
+            else:
+                asistencia.append(tiempo)
+                asistencia = [
+                    asistencia[0].date(),
+                    asistencia[0].time(),
+                    asistencia[1].time(),
+                    asistencia[2],
+                ]
+        asistencias.append(asistencia)
+    return render(request, 'asistencias.html', {
+        'operador': operador,
+        'asistencias': asistencias,
+        'cantidad': len(asistencias),
+    })
+
+#Interno
 @permission_required('operadores.operadores')
 def csv_operadores(request):
     operadores = Operador.objects.all()

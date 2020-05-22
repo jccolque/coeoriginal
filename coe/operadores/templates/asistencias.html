@@ -1,0 +1,48 @@
+{% extends 'base_operadores.html' %}
+
+{% load operadores_tags %}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">
+                    <h1>Registro de Asistencia de Operador: {{operador}}</h1>
+                    <p><b>Documento:</b> {{operador.num_doc}}</p>
+                    <p><b>Apellido y Nombre:</b> {{operador.apellidos}}, {{operador.nombres}}</p>
+                    <p><b>Modulo:</b> {{operador.subcomite}}</p>
+                    <p><b>Nivel de Acceso:</b> {{operador.get_nivel_acceso_display}}</p>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 col-sm-offset-4">
+                        <h3>Asistencias: {{cantidad}}</h3>
+                        <table class="listado" id="table">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Ingreso</th>
+                                    <th>Egreso</th>
+                                    <th>Tiempo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for asistencia in asistencias %}
+                                    <tr>
+                                        <td>{{asistencia.0}}</td>
+                                        <td>{{asistencia.1}}</td>
+                                        <td>{{asistencia.2}}</td>
+                                        <td>
+                                            {% if asistencia.3 %}
+                                                {{asistencia.3}}hrs
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}   

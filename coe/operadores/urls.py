@@ -26,6 +26,7 @@ urlpatterns = [
     path('auditoria', views.auditoria, name='auditoria'),
     path('auditoria/<int:user_id>', views.auditoria, name='auditoria_propia'),
     path('auditar/obj/<int:content_id>/<int:object_id>', views.auditar_cambios, name='auditar_cambios'),
+    path('asistencia/<int:operador_id>', views.asistencia, name='asistencia'),
     #Asistencia
     path('presentes', views.listado_presentes, name='listado_presentes'),
     path('checkin', views.checkin, name='checkin'),

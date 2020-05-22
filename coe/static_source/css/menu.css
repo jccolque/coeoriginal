@@ -51,7 +51,8 @@ ul.nav li.desplegable a {
 ul.nav li a {
     color: white;
     font-size: 14px;
-    text-shadow: 0 0 8px rgba(0, 0, 0, 0.856);
+    background-color: 0 0 8px rgba(0, 0, 0, 0.95)!important;
+    text-shadow: 0 0 8px rgb(0, 0, 0);
     padding-top: 11px;
     padding-bottom: 12px;
 }
@@ -138,8 +139,10 @@ ul.nav li:hover span.triangle {
     margin-top: 5px;
 }
 
-.navbar-toggle .icon-bar {
-    background: white;
+.navbar-toggle img {
+    width: 25%;
+    float: right;
+    margin-top: -20px;
 }
 
 .mobile-only {
