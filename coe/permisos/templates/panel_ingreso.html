@@ -100,7 +100,7 @@
                                 {% if ingreso.tipo == 'P' or ingreso.tipo == 'T' %}
                                     <li><a href="{% url 'permisos:cargar_ingresantes' ingreso_id=ingreso.id %}">Agregar Pasajero</a></li>
                                 {% endif %}
-                                {% if ingreso.estado != 'C' or ingreso.estado == 'B' %}
+                                {% if ingreso.estado != 'B' or ingreso.estado =! 'A' %}
                                     <li><a href="{% url 'permisos:finalizar_ingreso' ingreso_id=ingreso.id %}">Finalizar Proceso</a></li>
                                 {% endif %}
                             {% if ingreso.estado == 'A' %}
@@ -114,7 +114,7 @@
                                 {% if ingreso.estado == 'E' %}
                                     <li><a href="{% url 'permisos:ingreso_enviado' ingreso_id=ingreso.id %}">Enviado a Nacion</a></li>
                                 {% endif %}
-                                {% if ingreso.estado == 'N' or ingreso.permiso_nacional %}
+                                {% if ingreso.estado == 'E' or ingreso.estado == 'N' %}
                                     <li><a href="{% url 'permisos:aprobar_ingreso' ingreso_id=ingreso.id %}">Aprobar Ingreso</a></li>
                                 {% endif %}
                                 <li><a href="{% url 'permisos:lista_ingresos' %}">Volver al Listado de Ingresos</a></li>

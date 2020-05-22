@@ -33,6 +33,8 @@ class Capacitacion(models.Model):
     link = models.URLField('Link')
     class Meta:
         ordering = ['orden', ]
+    def __str__(self):
+        return self.get_tipo_display() + ': ' + self.nombre
 
 #Modelos primarios
 class Inscripcion(models.Model):
