@@ -288,6 +288,32 @@ def ver_seguimiento(request, individuo_id):
 
 #Otros listados
 @permission_required('operadores.individuos')
+def ranking_test(request):
+    #Buscamos los que tenemos que analizar
+    individuos = obtener_bajo_seguimiento()
+    individuos = individuos.filter(seguimientos__tipo='PT')
+    individuos = individuos.exclude(seguimientos__tipo__in=('ET','DT'))
+    individuos = individuos.distinct()
+    #Optimizamos
+    individuos = individuos.select_related('situacion_actual')
+    individuos = individuos.prefetch_related('seguimientos', 'patologias', 'atributos')
+    #Rankeamos
+    excepciones = [t[0] for t in TIPO_ATRIBUTO if len(t[0]) == 3]
+    for individuo in individuos:
+        #1pt por cada dia despues del 4to
+        individuo.puntaje = int((timezone.now() - individuo.situacion_actual.fecha).total_seconds() / 3600 / 24) - 4
+        #2 pts por cada atributo de excepcion
+        individuo.puntaje += sum([1 for a in individuo.atributos.all() if a.tipo in excepciones]) * 2
+        #3 pts por cada patologia
+        individuo.puntaje += sum([1 for p in individuo.patologias.all()]) * 3
+    #Mostramos
+    return render(request, "ranking_test.html", {
+        'individuos': individuos,
+        'has_table': True,
+    })
+
+
+@permission_required('operadores.individuos')
 def lista_sin_telefono(request):
     individuos = Individuo.objects.filter(seguimientos__tipo='TE')
     #Optimizamos

@@ -64,10 +64,10 @@
                         <table class="listado" id="table">
                             <thead>
                                 <tr>
-                                    <th>Destino Circulacion</th>
                                     <th>Control Inicial</th>
                                     <th>Fecha de Inicio</th>
                                     <th>Pasajeros</th>
+                                    <th>Destino Circulacion</th>
                                     <th>Control Final</th>
                                     <th>Fecha de Final</th>
                                     <th>Tiempo Permitido</th>
@@ -79,12 +79,11 @@
                             <tbody>
                                 {% for registro in circulacion.registros.all reversed %}
                                     <tr>
-                                        <td>{{registro.destino.nombre}}</td>
                                         <td>{{registro.get_control_inicio_display}}</td>
                                         <td>{{registro.fecha_inicio}}</td>
                                         <td>
                                             {% for pasajero in registro.pasajeros.all %}
-                                                <p>
+                                                <p style="font-size: smaller;">
                                                     {% if pasajero.individuo %}
                                                         <a href="{% url 'informacion:ver_individuo' individuo_id=pasajero.individuo.id %}" target="_blank">
                                                             {{pasajero.individuo}}
@@ -93,14 +92,15 @@
                                                         {{pasajero.num_doc}}
                                                     {% endif %}
                                                     {% if pasajero.inicio %}
-                                                        <img class="icons" src="/static/img/icons/in.png" alt="Ingreso">
+                                                        <img class="iconsx0" src="/static/img/icons/in.png" alt="Ingreso">
                                                     {% endif %}
                                                     {% if pasajero.final %}
-                                                        <img class="icons" src="/static/img/icons/out.png" alt="Egreso">
+                                                        <img class="iconsx0" src="/static/img/icons/out.png" alt="Egreso">
                                                     {% endif %}
                                                 </p>
                                             {% endfor %}
                                         </td>
+                                        <td>{{registro.destino.nombre}}</td>
                                         {% if registro.control_final %}
                                             <td>{{registro.get_control_final_display}}</td>
                                             <td>{{registro.fecha_final}}</td>

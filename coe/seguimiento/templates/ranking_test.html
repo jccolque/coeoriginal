@@ -5,7 +5,7 @@
 {% block content %}
     <div class="beneficiario container">
         <div class="row">
-            <h2>Individuos sin Telefono</h2>
+            <h2>Ranking de Pedidos de Test</h2>
         </div>
         <div class="row">
         <div class="col-md-12">
@@ -15,10 +15,8 @@
                         <th>Documento</th>
                         <th>Individuo</th>
                         <th>Telefono</th>
-                        <th>Situacion</th>
-                        <th>Domicilio</th>
                         <th>Ubicacion</th>
-                        <th>Localidad</th>
+                        <th>Puntaje</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -28,10 +26,8 @@
                             <td>{{individuo.num_doc}}</td>
                             <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
                             <td>{{individuo.telefono}}</td>
-                            <td>{{individuo.situacion_actual}}</td>
-                            <td>{{individuo.domicilio_actual.calle}} {{individuo.domicilio_actual.numero}}</td>
                             <td>{{individuo.domicilio_actual.ubicacion.nombre}}</td>
-                            <td>{{individuo.domicilio_actual.localidad.nombre}}</td>
+                            <td>{{individuo.puntaje}}</td>
                             <td>
                                 <a class="nolink" href="{% url 'seguimiento:cargar_seguimiento' individuo_id=individuo.id %}" target="_blank">
                                     <img class="icons" src="{% static '/img/icons/add_call.png' %}">
