@@ -341,7 +341,7 @@ def asistencia(request, operador_id):
             egresos.filter(fecha__gt=ingreso.fecha).first(),
         ]
         #Calculamos salida
-        if len(asistencia) == 2:#Si cargo egreso
+        if asistencia[1]:#Si cargo egreso
             asistencia[1] = asistencia[1].fecha
             tiempo = int((asistencia[1] - asistencia[0]).total_seconds() / 3600)
             if tiempo > 24:
