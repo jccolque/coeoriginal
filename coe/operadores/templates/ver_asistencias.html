@@ -28,12 +28,12 @@
                             <tbody>
                                 {% for asistencia in asistencias %}
                                     <tr>
-                                        <td>{{asistencia.0}}</td>
-                                        <td>{{asistencia.1}}</td>
-                                        <td>{{asistencia.2}}</td>
+                                        <td>{{asistencia.0.date}}</td>
+                                        <td>{{asistencia.0|time}}</td>
+                                        <td>{{asistencia.1|time}}</td>
                                         <td>
-                                            {% if asistencia.3 %}
-                                                {{asistencia.3}}hrs
+                                            {% if asistencia.2 %}
+                                                {{asistencia.2}}hrs
                                             {% endif %}
                                         </td>
                                     </tr>

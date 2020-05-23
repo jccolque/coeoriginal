@@ -4,8 +4,10 @@
 
 {% block content %}    
     <h2><b>Pedido Test para Coronavirus</b></h2>
-    {% if errror %}
-        <p style="color:red; font-weight: bold;">{{error}}</p>
+    {% if error %}
+        <div class="bordeado importante">
+            <p>{{error}}</p>
+        </div>
     {% endif %}
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}

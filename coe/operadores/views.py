@@ -1,6 +1,6 @@
 #Imports de Python
 import csv
-from datetime import timedelta
+from datetime import datetime, time, timedelta
 #Imports Django
 from django.db.models import Q
 from django.utils import timezone
@@ -337,29 +337,19 @@ def asistencia(request, operador_id):
     #Generamos listado de los que permanecen en el edificio
     for ingreso in ingresos:
         asistencia = [
-            ingreso.fecha,
+            ingreso.fecha.replace(tzinfo=None),
             egresos.filter(fecha__gt=ingreso.fecha).first(),
         ]
-        #Calculamos salida
-        if asistencia[1]:#Si cargo egreso
+        #Chequeamos que los guardias no lo hayan sacado al otro dia o que no falte salida:
+        if not asistencia[1] or asistencia[1].fecha.date() > asistencia[0].date():
+            asistencia[1] = datetime.combine(asistencia[0].date(), time(23,59))
+        else:
             asistencia[1] = asistencia[1].fecha
-            tiempo = int((asistencia[1] - asistencia[0]).total_seconds() / 3600)
-            if tiempo > 24:
-                asistencia[1] = 'Sin Registrar'
-                asistencia = [
-                    asistencia[0].date(),
-                    asistencia[0].time()#Me cago en el UTC,
-                ]
-            else:
-                asistencia.append(tiempo)
-                asistencia = [
-                    asistencia[0].date(),
-                    asistencia[0].time() -3,#Me cago en el UTC
-                    asistencia[1].time() -3,#Me cago en el UTC
-                    asistencia[2],
-                ]
+        #Calculamos tiempo entre fechas
+        tiempo = int((asistencia[1] - asistencia[0]).total_seconds() / 3600)
+        asistencia.append(tiempo)
         asistencias.append(asistencia)
-    return render(request, 'asistencias.html', {
+    return render(request, 'ver_asistencias.html', {
         'operador': operador,
         'asistencias': asistencias,
         'cantidad': len(asistencias),

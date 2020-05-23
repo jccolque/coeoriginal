@@ -64,27 +64,30 @@ def pedir_test(request):
         num_doc = request.POST['num_doc']
         try:
             individuo = Individuo.objects.get(num_doc=num_doc, situacion_actual__conducta__in=('D', 'E'))
-            individuo.email = request.POST['email']
-            individuo.telefono = request.POST['telefono']
-            individuo.save()
-            #Pedido de Test
-            seguimiento = Seguimiento(individuo=individuo)
-            seguimiento.tipo = 'PT'
-            seguimiento.aclaracion = "Pedido de Test Online"
-            seguimiento.save()
-            #Patologias:
-            for check in request.POST.getlist('patologias'):
-                patologia = Patologia(individuo=individuo)
-                patologia.tipo = check
-                patologia.aclaracion = "Pedido de Test Online"
-                patologia.save()
-            #Excepciones:
-            for check in request.POST.getlist('excepciones'):
-                atributo = Atributo(individuo=individuo)
-                atributo.tipo = check
-                atributo.aclaracion = "Pedido de Test Online"
-                atributo.save()
-            return render(request, "extras/resultado.html", {"texto": "Su pedido fue registrado con exito, pronto lo contactaremos."})
+            if individuo.seguimientos.filter(tipo='PT').exists():
+                error = "Usted ya realizo el pedido de Test."
+            else:
+                individuo.email = request.POST['email']
+                individuo.telefono = request.POST['telefono']
+                individuo.save()
+                #Pedido de Test
+                seguimiento = Seguimiento(individuo=individuo)
+                seguimiento.tipo = 'PT'
+                seguimiento.aclaracion = "Pedido de Test Online"
+                seguimiento.save()
+                #Patologias:
+                for check in request.POST.getlist('patologias'):
+                    patologia = Patologia(individuo=individuo)
+                    patologia.tipo = check
+                    patologia.aclaracion = "Pedido de Test Online"
+                    patologia.save()
+                #Excepciones:
+                for check in request.POST.getlist('excepciones'):
+                    atributo = Atributo(individuo=individuo)
+                    atributo.tipo = check
+                    atributo.aclaracion = "Pedido de Test Online"
+                    atributo.save()
+                return render(request, "extras/resultado.html", {"texto": "Su pedido fue registrado con exito, pronto lo contactaremos."})
         except:
             error = "Usted no se encuentra en condiciones de Pedir el Test."
     return render(request, "pedir_test.html", {
