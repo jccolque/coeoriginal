@@ -53,6 +53,7 @@ urlpatterns = [
     path('documentos/', include('documentos.urls')),
     path('inscripciones/', include('inscripciones.urls')),
     path('background/', include('background.urls')),
+    path('provision/', include('provision.urls')),
     #APIS:
     path('api_refs/', include('wservices.urls')),
     path('ide/', include('geotracking.ide_urls')),

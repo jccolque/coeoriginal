@@ -1,11 +1,22 @@
 {% load static %}
 {% block content %}
     <menu>
-        <div class="menu-logo">
-            <img src="{% static 'img/logo_menu.png' %}" />
-        </div>
         <nav class="navbar navbar-static-top">
             <div class="container-fluid">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nav-mobile" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <div class="menu-logo" onclick="location.href='http://www.jujuy.gob.ar'" style="cursor: pointer">
+                    <img src="{% static 'img/logo_menu.png' %}" />
+                </div>
+                <div class="collapse navbar-collapse mobile-only" id="nav-mobile" style="display:none">
+                    <ul class="nav navbar-nav">
+                        {% include "base/menu_opciones.html" %}
+                    </ul>
+                </div>
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
                         {% include "base/menu_opciones.html" %}

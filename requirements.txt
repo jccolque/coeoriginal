@@ -5,7 +5,6 @@ requests==2.23.0
 python-dateutil==2.6.0
 geographiclib==1.50
 psycopg2-binary==2.8.4
-reportlab==3.4.0
 pypdf2==1.26
 django==2.2.5
 django-taggit==1.2.0

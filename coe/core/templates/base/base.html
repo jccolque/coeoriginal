@@ -8,14 +8,15 @@
     </head>
 
     <body id="body">
-        {% include "base/menu.html" %}
-        <main>
-            {% block content %}
+        <div class="page-wrapper">
+            {% include "base/menu.html" %}
+            <main>
+                {% block content %}
             
-            {% endblock %}
-        </main>
-        {% include "base/footer.html" %}
-        
+                {% endblock %}
+            </main>
+            {% include "base/footer.html" %}
+        </div>
         {% include "base/scripts.html" %}
         {% block custom_script %}
         

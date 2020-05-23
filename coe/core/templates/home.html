@@ -2,6 +2,23 @@
 
 {% load static %}
 
+{% block custom_head %}
+
+<head>
+    <!-- mobile responsive meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <style>
+        @media screen and (max-width: 720px){
+            .page-wrapper {
+              width: 100%;
+            }
+        }
+    </style>    
+</head>
+
+{% endblock %}
+
 {% block content %}
     {% include "base/header.html" %}
     <div class="container">
@@ -84,7 +101,17 @@
                         </a>
                     </div>
                 </div>
-            </div>
+                <div class = "row">
+                    <div class="col-md-12">                        
+                        <a href="{% url 'provision:pedir_coca' %}">
+                            <img class="fotos" src="{% static 'img/proyecto_estudiantil.gif' %}">
+                            <div class="alert alert-danger" role="alert">
+                                <h3> PARA SOLICITAR COCA, HAGA CLICK <strong>AQUÍ.</strong></h3>               
+                            </div>
+                        </a>                       
+                    </div>
+                </div>               
+            </div>            
         </div>
     </div>
 {% endblock %}

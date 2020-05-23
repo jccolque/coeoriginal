@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'graficos.apps.GraficosConfig',
     'wservices.apps.WservicesConfig',
     'background.apps.BackgroundConfig',
+    'provision.apps.ProvisionConfig',
 ]
 
 MIDDLEWARE = [
