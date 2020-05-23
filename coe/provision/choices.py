@@ -14,3 +14,8 @@ TIPO_ORGANIZACION = (
     ('ASC', 'ASOCIACION'),
     ('O', 'OTRO'),
 )
+
+TIPO_CONFIRMA = (
+    ('NO', 'NO'),
+    ('SI', 'SI'),
+)

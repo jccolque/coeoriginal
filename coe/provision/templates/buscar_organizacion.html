@@ -128,31 +128,56 @@
 {% endblock %}
 
 {% block content %}
+<section class="section wow animated slideInUp">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="contact-area">
+                    <div class="section-title text-center">
+                        <h3>{{title}}</h3>
+                    </div>
+                    <form name="contact_form" class="default-form contact-form" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% for field in form.hidden_fields %}
+                            {{ field }}
+                        {% endfor %}
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group text-center">                                    
+                                </div>
+                            </div>
 
-<div class="container">
-    <div class="row">
-        <div class="contact-area">
-            <div class="section-title text-center">
-                <h3>{{title}}</h3>
+                            <div class="col-md-12">
+                                                              
+                                <div class="form-group">
+                                    <label for="{{form.cuit.id_for_label}}">{{form.cuit.label}}</label>
+                                    <input type="text" name="cuit" maxlength="13" required id="id_cuit" placeholder="Ingrese CUIT">
+                                    <small class="form-text text-danger">{{form.cuit.errors.as_text}}</small>
+                                </div>
+                                
+                            </div>
+                            <br>
+                            <div class="col-md-12">
+                                <div class="col-md-6">
+                                    {{ message }}
+                                </div>
+                            </div>
+                        
+                           
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group text-center">
+                                    <button type="submit" class="btn-style-one">{{button}}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <form name="contact_form" class="default-form contact-form" enctype="multipart/form-data">
-                <div class="col-lg-6">
-                    <div class="card card-block">
-                        <h3 class="card-title">Petición de Coca - Organizaciones</h3>
-                        <p class="card-text" ALING="justify">¡HAGA CLICK EN EL LINK ROJO!</p>
-                        <a href="{% url 'provision:buscar_organizacion' %}" class="btn btn-danger">SOLICITUD DE ORGANIZACIÓN</a>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="card card-block">
-                        <h3 class="card-title">Petición de Coca - Personas</h3>
-                        <p class="card-text">¡HAGA CLICK EN EL LINK AZUL!</p>
-                        <a href="{% url 'provision:buscar_persona' %}" class="btn btn-primary">SOLICITUD DE PERSONA</a>
-                    </div>
-                </div>
-            </form>
-      </div>
+        </div>
     </div>
-</div>
+</section>
+
 
 {% endblock %}
+
+
