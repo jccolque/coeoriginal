@@ -72,6 +72,7 @@
                                 <th>Tipo</th>
                                 <th>Fecha</th>
                                 <th>Aclaracion</th>
+                                <th>Operador</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -81,6 +82,7 @@
                                     <td>{{seguimiento.get_tipo_display}}</td>
                                     <td>{{seguimiento.fecha}}</td>
                                     <td>{{seguimiento.aclaracion|safe}}</td>
+                                    <td>{{seguimiento.operador}}</td>
                                     <td>
                                         <a class="nolink"  href="{% ct_auditar_obj_url seguimiento %}">
                                             <img class="icons" src="{% static '/img/icons/question.png' %}">

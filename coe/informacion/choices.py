@@ -118,6 +118,7 @@ TIPO_PATOLOGIA = (
     ('EPC', 'EPOC'),
     ('ACV', 'Accidentes Cerebro Vasculares'),
     ('CLC', 'Celiacos'),
+    ('TSM', 'Trastornos de Salud Mental'),
 )
 
 TIPO_DOCUMENTO = (

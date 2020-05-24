@@ -15,8 +15,6 @@ urlpatterns = [
     path('lista/archivos/procesados/<int:procesado>', views.archivos_pendientes, name='archivos_procesados'),
     path('ver_archivo/<int:archivo_id>', views.ver_archivo, name='ver_archivo'),
     path('subir/archivos', views.upload_archivos, name='subir_archivos'),
-    path('subir/same', views.subir_same, name='subir_same'),
-    path('subir/epidemiologia', views.subir_epidemiologia, name='subir_epidemiologia'),
     path('procesar_archivos/<int:archivo_id>', views.procesar_archivos, name='procesar_archivos'),
     #Vehiculos
     path('buscar/vehiculo/', views.buscar_vehiculo, name='buscar_vehiculo'),
@@ -95,10 +93,6 @@ urlpatterns = [
     #Reportes
     path('tablero', views.tablero_control, name='tablero_control'),
     path('reporte/basico', views.reporte_basico, name='reporte_basico'),
-    #Carga Masiva
-    path('upload/epidemiologia', views.subir_epidemiologia, name='subir_epidemiologia'),
-    path('upload/padron/individuos/', views.upload_padron_individuos, name='upload_padron_individuos'),
-    path('upload/padron/domicilios/', views.upload_padron_domicilios, name='upload_padron_domicilios'),
     #Autocomplete
     #url(r'^sintomas-autocomplete/$', autocomplete.SintomaAutocomplete.as_view(), name='sintomas-autocomplete',),
     #url(r'^atributos-autocomplete/$', autocomplete.AtributoAutocomplete.as_view(), name='atributos-autocomplete',),

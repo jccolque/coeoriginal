@@ -24,6 +24,7 @@ from informacion.models import Individuo, Atributo, Patologia
 from informacion.models import SignosVitales, Relacion
 from informacion.models import Situacion, Documento
 from informacion.forms import BuscarIndividuoSeguro
+from operadores.functions import obtener_operador
 from app.models import AppData, AppNotificacion
 from background.functions import crear_progress_link
 #imports de la app
@@ -117,6 +118,7 @@ def cargar_seguimiento(request, individuo_id, seguimiento_id=None, tipo=None):
         if form.is_valid():
             seguimiento = form.save(commit=False)
             seguimiento.individuo = individuo
+            seguimiento.operador = obtener_operador(request)
             form.save()
             return render(request, "extras/close.html")
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Seguimiento", 'form': form, 'boton': "Cargar", })
@@ -269,7 +271,7 @@ def panel_vigia(request, vigia_id=None):
     individuos = individuos.select_related(
         'situacion_actual',
         'domicilio_actual', "domicilio_actual__localidad",
-        'seguimiento_actual',
+        'seguimiento_actual', 'seguimiento_actual__operador',
     )
     #Ordenamos por fecha
     individuos = individuos.order_by('seguimiento_actual__fecha')
@@ -283,7 +285,8 @@ def panel_vigia(request, vigia_id=None):
 
 @permission_required('operadores.seguimiento')
 def ver_seguimiento(request, individuo_id):
-    individuo = Individuo.objects.get(pk=individuo_id)
+    individuo = Individuo.objects.prefetch_related('seguimientos', 'seguimientos__operador')
+    individuo= individuo.get(pk=individuo_id)
     return render(request, "ver_seguimiento.html", {
         'individuo': individuo,
         }

@@ -225,6 +225,7 @@ class Sintoma(models.Model):
 class Patologia(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="patologias")
     tipo = models.CharField('Tipo', choices=TIPO_PATOLOGIA, max_length=3, null=True)
+    codigo = models.CharField('Codigo', max_length=4, null=True, blank=True)
     aclaracion =  models.CharField('Aclaracion', max_length=200, null=True, blank=True)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     class Meta:

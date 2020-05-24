@@ -34,17 +34,13 @@
                             {% if perms.operadores.archivos %}
                                 <h3>Cargas Masivas:</h3>
                                 <li><a href="{% url 'informacion:subir_archivos'  %}">Subir Archivos</a></li>
-                                <li><a href="{% url 'informacion:subir_same'  %}">Carga Masiva SAME</a></li>
                                 <li><a href="{% url 'informacion:archivos_pendientes' %}">Ver Listado de Archivos sin Procesar</a></li>
                                 <hr>
                             {% endif %}
 
                             {% if request.user.is_superuser %}
                                 <h3>Uso Bajo Supervision:</h3>
-                                <li><a href="{% url 'informacion:upload_padron_individuos' %}">Upload Padron Individuos</a></li>
-                                <li><a href="{% url 'informacion:upload_padron_domicilios' %}">Upload Padron Domicilios</a></li>
-                                <hr>
-                                <li><a href="{% url 'informacion:subir_epidemiologia'  %}">Carga Masiva Epidemiologia</a></li>
+                                <li><a href="{% url 'documentos:menu' %}">Opcion del Administrador</a></li>
                             {% endif %}
                         </ul>
                     </div>

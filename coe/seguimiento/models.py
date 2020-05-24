@@ -18,6 +18,7 @@ class Seguimiento(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="seguimientos")
     tipo = models.CharField('Tipo Seguimiento', choices=TIPO_SEGUIMIENTO, max_length=2, default='I')
     aclaracion = HTMLField()
+    operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True, related_name="seguimientos")
     fecha = models.DateTimeField('Fecha del Seguimiento', default=timezone.now)
     class Meta:
         ordering = ['fecha', ]

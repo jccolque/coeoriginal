@@ -20,6 +20,7 @@
                             <th>Telefono</th>
                             <th>Ultimo Seguimiento</th>
                             <th>Fecha</th>
+                            <th>Operador</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -39,10 +40,12 @@
                                 {% if individuo.seguimiento_actual %}
                                     <td>{{individuo.seguimiento_actual.get_tipo_display}}: {{individuo.seguimiento_actual.aclaracion|safe}}</td>
                                     <td>{{individuo.seguimiento_actual.fecha|date:"d/m H:i"}}</td>
+                                    <td>{{individuo.seguimiento_actual.operador}}</td>
                                 {% else %}
                                     {% with individuo.seguimientos.last as seguimiento %}
                                         <td>{{seguimiento.get_tipo_display}}: {{seguimiento.aclaracion|safe}}</td>
                                         <td>{{seguimiento.fecha|date:"d/m H:i"}}</td>
+                                        <td>{{seguimiento.operador}}</td>
                                     {% endwith %}
                                 {% endif %}
                                 <td>
