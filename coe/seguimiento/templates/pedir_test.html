@@ -2,59 +2,70 @@
 
 {% load static %}
 
-{% block content %}    
-    <h2><b>Pedido Test para Coronavirus</b></h2>
-    {% if error %}
-        <div class="bordeado importante">
-            <p>{{error}}</p>
-        </div>
-    {% endif %}
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <fieldset class="module aligned">
-            <div class="form-row">
-                <div class="field-box">
-                    <p>Numero de Documento/Pasaporte:</p>
-                    <input type="text" name="num_doc" id="num_doc" required>
-                </div>
-                <div class="field-box">
-                    <p>Telefono:</p>
-                    <input type="text" name="telefono" id="telefono" required>
-                </div>
-                <div class="field-box">
-                    <p>Correo Electronico:</p>
-                    <input type="email" name="email" id="email" required>
-                </div>
+{% block content %}
+    <div class="col-lg-6 col-lg-offset-3">
+        <h2><b>Pedido Test para Coronavirus</b></h2>
+        {% if error %}
+            <div class="bordeado importante">
+                <p>{{error}}</p>
             </div>
-        </fieldset>
-        <hr>
-        <fieldset class="module aligned">
-            <h2>Sufre alguna de estas Patologias?</h2>
-            <!-- aca deberiamos agregar el pasajeros inline formset managment -->
-            <table class="checkbox_table"  id="Patologias">
-                {% for tipo in tipos_patologias %}
-                    <tr>
-                        <td><input type="checkbox" id="{{tipo.0}}" value="{{tipo.0}}" name="patologias"></td>
-                        <td>{{tipo.1}}</td>
-                        <td></td>
-                    </tr>
-                {% endfor %}
-            </table>
-        </fieldset>
-        <fieldset class="module aligned">
-            <h2>Se encuentra en alguno de estos Casos Excepcionales?</h2>
-            <!-- aca deberiamos agregar el pasajeros inline formset managment -->
-            <table class="checkbox_table" id="Patologias">
-                {% for tipo in tipos_excepciones %}
-                    <tr>
-                        <td><input type="checkbox" id="{{tipo.0}}" value="{{tipo.0}}" name="excepciones"></td>
-                        <td>{{tipo.1}}</td>
-                        <td></td>
-                    </tr>
-                {% endfor %}
-            </table>
-        </fieldset>
-        <br>
-        <button type="submit">Pedir Test</button>
-    </form>
+        {% endif %}
+    </div>
+    <div class="row">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="col-lg-5 col-lg-offset-1">
+                <fieldset class="module aligned">
+                    <div class="form-row">
+                        <div class="field-box">
+                            <p>Numero de Documento/Pasaporte:</p>
+                            <input type="text" name="num_doc" id="num_doc" required>
+                        </div>
+                        <div class="field-box">
+                            <p>Telefono:</p>
+                            <input type="text" name="telefono" id="telefono" required>
+                        </div>
+                        <div class="field-box">
+                            <p>Correo Electronico:</p>
+                            <input type="email" name="email" id="email" required>
+                        </div>
+                        <br>
+                        <p>Los datos de contacto de Telefono y Mail seran utilizados para contactarlo a la hora de coordinar la realizacion del test y la entrega de los resultados.</p>
+                        <p><b>Por favor, controle cuidadosamente la informacion que nos brinda.</b></p>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="col-lg-5 col-lg-offset-1">
+                <fieldset class="module aligned">
+                    <h2>Sufre alguna de estas Patologias?</h2>
+                    <!-- aca deberiamos agregar el pasajeros inline formset managment -->
+                    <table class="checkbox_table"  id="Patologias">
+                        {% for tipo in tipos_patologias %}
+                            <tr>
+                                <td><input type="checkbox" id="{{tipo.0}}" value="{{tipo.0}}" name="patologias"></td>
+                                <td>{{tipo.1}}</td>
+                                <td></td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </fieldset>
+                <fieldset class="module aligned">
+                    <h2>Se encuentra en alguno de estos Casos de Excepcion?</h2>
+                    <!-- aca deberiamos agregar el pasajeros inline formset managment -->
+                    <table class="checkbox_table" id="Patologias">
+                        {% for tipo in tipos_excepciones %}
+                            <tr>
+                                <td><input type="checkbox" id="{{tipo.0}}" value="{{tipo.0}}" name="excepciones"></td>
+                                <td>{{tipo.1}}</td>
+                                <td></td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </fieldset>
+                <br>
+                <button type="submit">Pedir Test</button>
+            </div>
+
+        </form>
+    </div>
 {% endblock %}

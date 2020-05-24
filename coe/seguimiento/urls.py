@@ -33,6 +33,7 @@ urlpatterns = [
     path('lista/sin/vigias', views.lista_sin_vigias, name='lista_sin_vigias'),
     #Otros Listados
     path('ranking/test', views.ranking_test, name='ranking_test'),
+    path('esperando/test', views.esperando_test, name='esperando_test'),
     path('lista/sin_telefono', views.lista_sin_telefono, name='lista_sin_telefono'),
     path('lista/autodiagnosticos', views.lista_autodiagnosticos, name='lista_autodiagnosticos'),
     path('lista/aislados', views.lista_aislados, name='lista_aislados'),

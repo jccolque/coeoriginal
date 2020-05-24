@@ -5,7 +5,7 @@
 {% block content %}
     <div class="beneficiario container">
         <div class="row">
-            <h2>Ranking de Pedidos de Test</h2>
+            <h2>Esperando Test</h2>
         </div>
         <div class="row">
         <div class="col-md-12">
@@ -16,7 +16,8 @@
                         <th>Individuo</th>
                         <th>Telefono</th>
                         <th>Ubicacion</th>
-                        <th>Puntaje</th>
+                        <th>Fecha Programada</th>
+                        <th>Aclaracion</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -27,13 +28,23 @@
                             <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
                             <td>{{individuo.telefono}}</td>
                             <td>{{individuo.domicilio_actual.ubicacion.nombre}}</td>
-                            <td>{{individuo.puntaje}}</td>
                             <td>
-                                <a class="nolink" href="{% url 'seguimiento:cargar_seguimiento' individuo_id=individuo.id tipo='ET' %}" target="_blank">
+                                {{individuo.pedido_test.fecha}}
+                                <a class="nolink" href="{% url 'seguimiento:mod_seguimiento' individuo_id=individuo.id seguimiento_id=individuo.pedido_test.id %}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/change.png' %}">
+                                </a>
+                            </td>
+                            <td>{{individuo.pedido_test.aclaracion|safe}}</td>
+
+                            <td>
+                                <a class="nolink" href="{% url 'seguimiento:cargar_seguimiento' individuo_id=individuo.id tipo='DT' %}" target="_blank">
                                     <img class="icons" src="{% static '/img/icons/test.png' %}">
                                 </a>
                                 <a class="nolink" href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">
                                     <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                </a>
+                                <a class="nolink" href="{% url 'seguimiento:del_seguimiento' seguimiento_id=individuo.pedido_test.id %}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/delete.png' %}">
                                 </a>
                             </td>
                         </tr>

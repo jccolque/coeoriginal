@@ -108,11 +108,12 @@ def menu_seguimiento(request):
 #Seguimiento
 @permission_required('operadores.individuos')
 def cargar_seguimiento(request, individuo_id, seguimiento_id=None, tipo=None):
-    seguimiento = None
+    individuo = Individuo.objects.get(pk=individuo_id)
     if seguimiento_id:
         seguimiento = Seguimiento.objects.get(pk=seguimiento_id)
-    individuo = Individuo.objects.get(pk=individuo_id)
-    form = SeguimientoForm(instance=seguimiento, initial={'individuo': individuo, 'tipo': tipo})
+        form = SeguimientoForm(instance=seguimiento)
+    else:
+        form = SeguimientoForm(initial={'tipo': tipo})
     if request.method == "POST":
         form = SeguimientoForm(request.POST, instance=seguimiento)
         if form.is_valid():
@@ -128,7 +129,7 @@ def del_seguimiento(request, seguimiento_id=None):
     seguimiento = Seguimiento.objects.get(pk=seguimiento_id)
     individuo = seguimiento.individuo
     seguimiento.delete()
-    return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+    return render(request, "extras/close.html")
 
 #Listados
 @permission_required('operadores.seguimiento_admin')
@@ -314,6 +315,23 @@ def ranking_test(request):
         individuo.puntaje += sum([1 for p in individuo.patologias.all()]) * 3
     #Mostramos
     return render(request, "ranking_test.html", {
+        'individuos': individuos,
+        'has_table': True,
+    })
+
+@permission_required('operadores.individuos')
+def esperando_test(request):
+    #Buscamos los que tenemos que analizar
+    individuos = Individuo.objects.filter(seguimientos__tipo='ET')
+    individuos = individuos.exclude(seguimientos__tipo__in=('DT','CT'))
+    #optimizamos
+    individuos = individuos.select_related('domicilio_actual')
+    individuos = individuos.prefetch_related('seguimientos')
+    #Obtenemos el dato del test:
+    for individuo in individuos:
+        individuo.pedido_test = individuo.seguimientos.filter(tipo='ET').last()
+    #Mostramos
+    return render(request, "esperando_test.html", {
         'individuos': individuos,
         'has_table': True,
     })

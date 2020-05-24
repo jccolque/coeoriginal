@@ -46,6 +46,8 @@ def descartar_sospechoso(created, instance, **kwargs):
         situacion.conducta = instance.individuo.get_situacion().conducta
         situacion.aclaracion = 'Descartado' + instance.aclaracion
         situacion.save()
+        #Creamos archivo de Descartado por Test
+        
 
 @receiver(post_save, sender=Domicilio)
 def poner_en_seguimiento(created, instance, **kwargs):

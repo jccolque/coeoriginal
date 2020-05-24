@@ -17,6 +17,7 @@ def operador_seguimiento():
     registros = LogEntry.objects.filter(content_type=ct_segs, action=0)
     #Evitamos los que no tienen usuario
     registros = registros.exclude(actor=None)
+    print("Registros de Creacion para Actualizar: " + str(registros.count()))
     #Generamos la lista de elementos por cada usuario
     usuarios = {}
     for registro in registros:

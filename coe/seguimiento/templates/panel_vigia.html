@@ -8,7 +8,7 @@
         <div class="row">
             <h2><b>Panel de {{vigia}}</b></h2>
             <p><b>{{vigia.get_tipo_display}}</b></p>
-            <div class="col-md-8">
+            <div class="col-lg-8">
                 <h3>Alertas Activas ({{vigia.alertas_activas}})</h3>
                 <table class="listado" id="table">
                     <thead>
@@ -67,7 +67,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col-md-4">
+            <div class="col-lg-4">
                 <h3>Individuos Controlados ({{vigia.controlados.count}})</h3>
                 {% if perms.operadores.seguimiento_admin %}
                     <a class="botoncito" href="{% url 'seguimiento:agregar_vigilado' vigia_id=vigia.id %}">

@@ -129,6 +129,7 @@ TIPO_DOCUMENTO = (
     ('AO', 'Analisis de Orina'),
     ('LB', 'Laboratorio'),
     ('AC', 'Certificado de Alta de Cuarentena'),
+    ('TN', 'Certificado de Test Negativo'),
     ('CT', 'Certificado Temporal de Aislamiento en Domicilio'),
     ('FP', 'Foto de Perfil'),
     ('DI', 'Documento de Identidad'),
