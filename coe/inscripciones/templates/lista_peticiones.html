@@ -1,0 +1,49 @@
+{% extends 'base_informacion.html' %}
+{% load static %}
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2><b>{{titulo}}</b></h2>
+            <div class="col-md-12">
+                <table class="listado" id="table">
+                    <thead>
+                        <tr>                            
+                            <th>Estado</th>
+                            <th>Fecha Pedido</th>                            
+                            <!-- <th>Destino</th> -->                           
+                            <th>Nombre de la Persona</th>
+                            <th>Apellido de la Persona</th>
+                            <th>Email de Contacto</th>
+                            <th>Telefono</th>
+                            <th>Operador</th>
+                            <th>Ver Detalle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for petic in peticion %}
+                            <tr>                                
+                                <td>{{peticion.get_estado_display}}</td>
+                                <td>{{peticion.fecha|date:"d/m/Y"}}</td>                                
+                                <!-- <td>{{ingreso.destino.nombre}}</td> -->                          
+                                <td>{{peticion.individuo.nombres}}</td>
+                                <td>{{peticion.individuo.apellidos}}</td>
+                                <td>{{peticion.email_contacto}}</td>
+                                <td>
+                                    {% if peticion.individuo.exists %}
+                                        {{peticion.telefono}}
+                                    {% endif %}
+                                </td>
+                                <td>{{peticion.operador}}</td>
+                                <td>
+                                    <a href="{% url 'inscripciones:ver_peticion_persona' token=peticion.token %}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

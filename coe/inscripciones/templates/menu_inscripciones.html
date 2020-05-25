@@ -21,9 +21,14 @@
                             <li><a href="{% url 'inscripciones:inscripcion_salud'  %}">Inscripcion Voluntario de Salud</a></li>
                             <li><a href="{% url 'inscripciones:inscripcion_social'  %}">Inscripcion Voluntario Social</a></li>
                             <li><a href="{% url 'inscripciones:inscripcion_proyecto'  %}">Inscripcion Proyecto Estudiantil</a></li>
+                            <li><a href="{% url 'inscripciones:pedir_coca'  %}">Peticion de COCA</a></li>
                             <hr>
+                            <h3>Petición de COCA</h3>
+                            <li><a href="{% url 'inscripciones:lista_peticiones_completas' %}">Peticiones Esperando Aprobacion</a></li>
+                            <li><a href="{% url 'inscripciones:lista_peticiones' %}">Listado de todos los pedidos de COCA</a></li>                                                       
                             {% if request.user.is_superuser %}
-                                <li><a href="{% url 'documentos:menu' %}">Opcion del Administrador</a></li>
+                                <hr> 
+                                <li><a href="{% url 'admin:index' %}">Opcion del Administrador</a></li>
                             {% endif %}
                         </ul>
                     </div>

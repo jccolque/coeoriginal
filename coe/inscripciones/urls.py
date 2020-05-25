@@ -40,6 +40,18 @@ urlpatterns = [
     path('proyecto/voluntario/<str:token>/', views.cargar_voluntario, name='cargar_voluntario'),
     path('mod/voluntario/<str:token>/<int:individuo_id>', views.cargar_voluntario, name='mod_voluntario_proyecto'),
     path('del/voluntario/<str:token>/<int:individuo_id>', views.quitar_voluntario_proyecto, name='quitar_voluntario_proyecto'),
+    #COCA
+    path('pedir/coca/', views.pedir_coca, name='pedir_coca'),   
+    path('peticion_persona/', views.peticion_persona, name='peticion_persona'),
+    path('mod/peticion_persona/<int:peticion_id>', views.peticion_persona, name='mod_peticion_persona'),
+    path('cargar/cargar_people/<int:peticion_id>', views.cargar_people, name='cargar_people'),
+    path('finalizar/peticion/<int:peticion_id>', views.finalizar_peticion, name='finalizar_peticion'),
+    path('peticion/<str:token>', views.ver_peticion_persona, name='ver_peticion_persona'),
+    path('mod/people/<int:peticion_id>/<int:individuo_id>', views.cargar_people, name='mod_people'),
+    path('del/peticion/<int:peticion_id>/<int:individuo_id>', views.quitar_persona, name='quitar_persona'),
+    #Ingresos   
+    path('lista/peticiones/completas', views.lista_peticiones_completas, name='lista_peticiones_completas'),
+    path('lista/peticiones', views.lista_peticiones, name='lista_peticiones'),
     #Activacion:
     path('act/<int:inscripcion_id>/<int:num_doc>', views.activar_inscripcion, name='activar_inscripcion'),
 ]

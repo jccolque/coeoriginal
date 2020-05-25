@@ -1,4 +1,5 @@
 #Imports de Python
+import uuid
 import string
 import random
 #Imports de Django
@@ -21,3 +22,7 @@ def ct_timestamp():
 
 def token_inscripcion():
     return ct_timestamp()+''.join(random.sample(string.ascii_uppercase + string.digits, k=25))
+
+def token_provision():
+    token = str(uuid.uuid4())
+    return ct_timestamp() + token
