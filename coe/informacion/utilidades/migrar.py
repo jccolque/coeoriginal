@@ -40,11 +40,11 @@ def migrar_sintomas():
         sintom.newtipo = dict_sintom[sintom.tipo.nombre]
         sintom.save()
 
-def migrar_pasajeros():
-    from informacion.models import TrasladoVehiculo
-    for traslado in TrasladoVehiculo.objects.all():
-        print(traslado)
-        for pasajero in traslado.pasajeros_old.all():
-            print(pasajero.individuo)
-            traslado.pasajeros.add(pasajero.individuo)
+# def migrar_pasajeros():
+#     from informacion.models import TrasladoVehiculo
+#     for traslado in TrasladoVehiculo.objects.all():
+#         print(traslado)
+#         for pasajero in traslado.pasajeros_old.all():
+#             print(pasajero.individuo)
+#             traslado.pasajeros.add(pasajero.individuo)
     

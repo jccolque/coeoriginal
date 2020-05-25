@@ -250,13 +250,7 @@ class TrasladoVehiculo(models.Model):
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     pasajeros = models.ManyToManyField(Individuo, related_name='traslados')
     def __str__(self):
-        return self.aclaracion + ': ' + str(self.fecha)   
-
-class Pasajero(models.Model):#ELIMINAR POST MIGRACION
-    traslado = models.ForeignKey(TrasladoVehiculo, on_delete=models.CASCADE, related_name="pasajeros_old")
-    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="pasajes")
-    def __str__(self):
-        return str(self.traslado) + ': ' + str(self.individuo)
+        return self.aclaracion + ': ' + str(self.fecha)
 
 if not LOADDATA:
     #Auditoria

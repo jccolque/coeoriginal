@@ -47,7 +47,7 @@ class OperativoForm(forms.ModelForm):
     class Meta:
         model = OperativoVehicular
         fields= '__all__'
-        exclude = ('fecha', 'cazadores', 'estado')
+        exclude = ('fecha_inicio', 'fecha_final', 'cazadores', 'estado')
         widgets = {
             'vehiculo': autocomplete.ModelSelect2(url='informacion:vehiculos-operativo-autocomplete'),
         }
