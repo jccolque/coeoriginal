@@ -50,9 +50,9 @@ class IngresoProvinciaForm(forms.ModelForm):
         fields= '__all__'
         exclude = ('fecha', 'token', 'individuos', 'estado', 'plan_vuelo', 'dut', 'operador', 'qrpath')
         widgets = {
-            'fecha_llegada': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}, ),
-            'origen': autocomplete.ModelSelect2(url='georef:provincia-autocomplete'),
-            'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+            'fecha_llegada': XDSoftDateTimePickerInput(attrs={'autocomplete':'off', 'class': 'form-control'}, ),
+            'origen': autocomplete.ModelSelect2(url='georef:provincia-autocomplete', attrs={'class': 'form-control'}),
+            'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete', attrs={'class': 'form-control'}),
         }
 
 class IngresoProvinciaForm(forms.ModelForm):
@@ -61,9 +61,9 @@ class IngresoProvinciaForm(forms.ModelForm):
         fields= '__all__'
         exclude = ('fecha', 'token', 'individuos', 'estado', 'permiso_nacional', 'plan_vuelo', 'dut', 'operador', 'qrpath')
         widgets = {
-            'fecha_llegada': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}, ),
-            'origen': autocomplete.ModelSelect2(url='georef:provincia-autocomplete'),
-            'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+            'fecha_llegada': XDSoftDateTimePickerInput(attrs={'autocomplete':'off', 'class': 'form-control'}, ),
+            'origen': autocomplete.ModelSelect2(url='georef:provincia-autocomplete', attrs={'class': 'form-control'}),
+            'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete', attrs={'class': 'form-control'}),
         }
 
 class CirculacionTemporalForm(forms.ModelForm):

@@ -40,27 +40,56 @@
                                 <hr>
                                 <p>La información consignada precedentemente reviste carácter de Declaración Jurada.</p>
                                 <p>Su omisión o falsedad procederá al rechazo de la inscripción o la exclusión del registro, sin perjuicio de las sanciones que le pudiera corresponder.</p>
-                                <img class="fotos" src="{% static 'img/ingresoprovincial.png' %}">
+                                <img class="img-fluid" alt="Responsive image" src="{% static 'img/ingresoprovincial.png' %}">
                             </div>
                         </div>
                         <div class="col-lg-7">
                             <div class="bordeado" style="text-align:justify;">
                                 <h3><b>Datos del Vehiculo</b></h3>
-                                <p><b>Tipo Ingreso:</b> {{form.tipo}}</p>
-                                <p><b>Email de Contacto:</b> {{form.email_contacto}} <i>(A travez del mismo lo contactaremos)</i></p>
-                                <p><b>Fecha ideal de Llegada:</b> {{form.fecha_llegada}}</p>
-                                <p><b>Provincia de Origen:</b> {{form.origen}}</p>
-                                <p><b>Destino Final:</b> {{form.destino}}</p>
-                                <hr>
+                                <label for="id_tipo">Tipo Ingreso:</label>
+                                <select class="form-control" id="id_tipo" required>
+                                        {% for value, text in form.tipo.field.choices %}        
+                                        <option value={{ value }}> {{ text }}</option>
+                                        {% endfor %}
+                                </select>
+
+                                <label for="id_email_contacto">Email de Contacto</label>
+                                <input type="email" class="form-control" name="email_contacto" maxlength="254" required="" id="id_email_contacto" > <i>(A travez del mismo lo contactaremos)</i>
+                                <br>
+                                <br>
+
+                                <label for="id_fecha_llegada">Fecha ideal de Llegada</label>
+                                {{form.fecha_llegada}}
+                                <br>
+
+                               <label for="id_origen">Provincia de Origen:</label>
+                                {{form.origen}}
+                                <br>
+                                <br>
+
+                                 <label for="id_destino">Provincia de Destino:</label>
+                                {{form.destino}}
+                                <hr>    
+
                                 <p><b>Datos del Vehiculo</b></p>
-                                <p><b>Marca:</b> {{form.marca}}</p>
-                                <p><b>Modelo:</b> {{form.modelo}}</p>
-                                <p><b>Patente:</b> {{form.patente}}</p>
+                                <label for="id_marca">Marca </label> 
+                                <input type="text" class="form-control" name="marca" maxlength="200" required="" id="id_marca">
+                                <br>
+
+                                 <label for="id_modelo">Modelo </label>  
+                                <input type="text" class="form-control" name="modelo" maxlength="200" required="" id="id_modelo">
+                                <br>
+
+                               <label for="id_patente">Patente </label>
+                                <input type="text" class="form-control" name="patente" maxlength="200" required="" id="id_patente">
+                                <i>(Solo Letras y Numeros, sin espacios ni simbolos)</i>
+                                <br>
+
                                 <hr>
                                 <p><b>Aclaraciones Pertinentes:</b></p>
                                 {{form.aclaracion}}
                                 <br>
-                                <button type="submit">Iniciar Pedido de Ingreso</button>
+                                <button type="submit" class="btn btn-success">Iniciar Pedido de Ingreso</button>
                             </div>
                         </div>
                     </div>
