@@ -3,6 +3,8 @@ import logging
 #Imports Django
 from django.db.models import Count
 from django.dispatch import receiver
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 from django.db.models.signals import post_save, post_delete
 #imports Extras
 #Imports del proyecto
@@ -10,6 +12,7 @@ from informacion.models import Individuo, Domicilio
 from informacion.models import Situacion, Atributo, SignosVitales, Documento
 #Imports de la app
 from .models import Seguimiento, Vigia
+from .functions import crear_doc_descartado
 
 #Logger
 logger = logging.getLogger('signals')
@@ -47,7 +50,26 @@ def descartar_sospechoso(created, instance, **kwargs):
         situacion.aclaracion = 'Descartado' + instance.aclaracion
         situacion.save()
         #Creamos archivo de Descartado por Test
-        
+        doc = Documento(individuo=instance.individuo)
+        doc.tipo = 'TN'
+        doc.archivo = crear_doc_descartado(doc.individuo)
+        doc.aclaracion = "TEST NEGATIVO CONFIRMADO"
+        doc.save()
+        #Enviar mail
+        to_email = instance.individuo.email
+        #Preparamos el correo electronico
+        mail_subject = 'Constancia de Test - COE2020'
+        message = render_to_string('emails/constancia_test.html', {
+                'individuo': instance.individuo,
+                'doc': doc,
+            })
+        #Instanciamos el objeto mail con destinatario
+        email = EmailMessage(mail_subject, message, to=[to_email])
+        #Adjuntamos archivo
+        #email.attach(doc.archivo)
+        #email.add_attachment(doc.archivo.read(), maintype='application/pdf', subtype='pdf', filename='certificado.pdf')
+        #Enviamos el correo
+        email.send()
 
 @receiver(post_save, sender=Domicilio)
 def poner_en_seguimiento(created, instance, **kwargs):

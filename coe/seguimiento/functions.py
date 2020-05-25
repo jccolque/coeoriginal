@@ -64,8 +64,10 @@ def crear_doc_descartado(individuo):
         packet = io.BytesIO()
         #Se crea un pdf utilizando reportLab
         pdf = canvas.Canvas(packet, pagesize = A4)
-        pdf.setFont('Times-Roman', 12)
+        pdf.setFont('Times-Roman', 13)
         pdf.drawString(85, 635, individuo.apellidos + ', ' + individuo.nombres + ' - ' + individuo.get_tipo_doc_display() + ': ' + str(individuo.num_doc))
+        pdf.setFont('Times-Roman', 16)
+        pdf.drawString(250, 115, str(timezone.now().date()))
         pdf.save()
         # Nos movemos al comienzo del búfer StringIO
         packet.seek(0)

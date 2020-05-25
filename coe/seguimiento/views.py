@@ -108,6 +108,7 @@ def menu_seguimiento(request):
 #Seguimiento
 @permission_required('operadores.individuos')
 def cargar_seguimiento(request, individuo_id, seguimiento_id=None, tipo=None):
+    seguimiento = None
     individuo = Individuo.objects.get(pk=individuo_id)
     if seguimiento_id:
         seguimiento = Seguimiento.objects.get(pk=seguimiento_id)
