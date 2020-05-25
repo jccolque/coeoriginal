@@ -7,6 +7,8 @@ from . import views as views
 app_name = 'provision'
 
 urlpatterns = [
+    #Menu
+    path('', views.menu_provision, name='menu_provision'),
     #Basicas:    
     path('pcoca/', views.pedir_coca, name='pedir_coca'),   
     path('peticion_persona/', views.peticion_persona, name='peticion_persona'),

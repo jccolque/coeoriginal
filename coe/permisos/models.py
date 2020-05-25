@@ -100,6 +100,7 @@ class IngresoProvincia(models.Model):
             self.qrpath = relative_path
             self.save()
             return self.qrpath
+            
     def generar_pdf(self):
         packet = io.BytesIO()
         # Se crear un nuevo pdf utilizando ReportLab        

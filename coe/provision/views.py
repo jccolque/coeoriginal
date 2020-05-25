@@ -115,7 +115,7 @@ def finalizar_peticion(request, peticion_id):
 
 #Administrar
 @permission_required('operadores.menu_provisiones')
-def menu_permisos(request):
+def menu_provision(request):
     return render(request, 'menu_provisiones.html', {})
 
 @permission_required('operadores.menu_provisiones')
