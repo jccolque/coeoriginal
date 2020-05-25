@@ -27,23 +27,40 @@
                 <div class="col-lg-8 custom_form_fields">
                     <div class="bordeado" style="text-align:justify;">
                         <h3><b>Datos del Proyecto</b></h3>
-                        <p><b>Nombre del Proyecto:</b> {{form.nombre}}</p>
-                        <p><b>Documento:</b> {{form.documento}} <i>(Adjuntar archivo respetando el formato de <a href="{% static 'archivo/proyecto/anexo3.pdf' %}">Anexo 3</a>)</i></p>
-                        <p><b>Descripcion Breve:</b></p>
+                       
+                        <label for="id_nombre">Nombre del Proyecto</label>                        
+                        <input type="text"  class="form-control" name="nombre" id="id_nombre" maxlength="200" required="">
+                       <br>
+
+                        <label for="id_documento">Documento</label>
+                        <input type="file" class="form-control" name="documento" id="id_documento">
+                        <i>(Adjuntar archivo respetando el formato de <a href="{% static 'archivo/proyecto/anexo3.pdf' %}">Anexo 3</a>)</i>
+                        <br>
+                        <br>
+
+                        <label for="id_descripcion">Descripción Breve</label>
                         {{form.descripcion}}
                         <hr>
-                        <p><b>Datos de la Escuela:</b></p>
-                        <p><b>Nombre de la Institucion:</b> {{form.escuela_nombre}}</p>
-                        <p><b>Localidad:</b> {{form.escuela_localidad}}</p>
-                        <p><b>Telefono:</b> {{form.escuela_telefono}}</p>
+                        <p><b>Datos de la Escuela:</b></p>                      
+                        <label for="id_escuela_nombre">Nombre de la Institucion</label>
+                        <input type="text" class="form-control" name="escuela_nombre" maxlength="200" required="" id="id_escuela_nombre">
+                      
+                        <label for="id_escuela_localidad">Localidad</label>
+                        <input type="text" class="form-control" name="escuela_localidad" maxlength="200" required="" id="id_escuela_localidad">
+                        
+                        <label for="id_escuela_telefono">Telefono</label>
+                        <input type="text" class="form-control" name="escuela_telefono" maxlength="50" required="" id="id_escuela_telefono">
                         <hr>
-                        <p><b>Datos de Contacto:</b></p>
-                        <p><b>Email de Contacto:</b> {{form.email_contacto}} <i>(A través del mismo lo contactaremos)</i></p>
+                        <p><b>Datos de Contacto:</b></p>                      
+                        <label for="id_email_contacto">Email de Contacto</label>
+                        <input type="email" class="form-control" name="email_contacto" maxlength="254" required="" id="id_email_contacto">
+                        <i>(A través del mismo lo contactaremos)</i>
+
                     </div>
                 </div>
                 <div class="col-lg-4 col-lg-offset-4">
                     <br>
-                    <button type="submit" style="width:100%;margin-bottom:150px;">Iniciar Proceso</button>
+                    <button type="submit" class="btn btn-light" style="width:100%;margin-bottom:150px;">Iniciar Proceso</button>                    
                 </div>
             </form>
         </div>
