@@ -328,7 +328,7 @@ def ver_operativo(request, operativo_id):
     if operativo.estado not in ('C', 'E'):
         #Buscamos posiciones gps de los cazadores en este tiempo:
         ids = [c.id for c in operativo.cazadores.all()]
-        geoposiciones = GeoPosicion.objects.get(individuo__id__in=ids)
+        geoposiciones = GeoPosicion.objects.filter(individuo__id__in=ids)
         #Filtramos por el tiempo que duro el operativo
         geoposiciones = geoposiciones.filter(fecha__gt=operativo.fecha_inicio)
         if operativo.fecha_final:
