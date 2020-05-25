@@ -22,10 +22,11 @@
                     <ul class="menu_botones">
                         <h2>Menu Operativo</h2>
                         <ul class="menu_botones">
-                            {% if operativo.estado == 'C' %}
-                                <li><a href="{% url 'seguimiento:iniciar_operativo' operativo_id=operativo.id %}">Iniciar Operativo</a></li>
-                            {% elif operativo.estado == 'I' %}
+                            {% if operativo.estado == 'I' %}
                                 <li><a href="{% url 'seguimiento:finalizar_operativo' operativo_id=operativo.id %}">Finalizar Operativo</a></li>
+                            {% else %}
+                                <li><a href="{% url 'seguimiento:iniciar_operativo' operativo_id=operativo.id %}">Iniciar Operativo</a></li>
+                                <li><a href="{% url 'seguimiento:del_operativo' operativo_id=operativo.id %}">Eliminar Operativo</a></li>
                             {% endif %}
                         </ul>
                     </ul>
