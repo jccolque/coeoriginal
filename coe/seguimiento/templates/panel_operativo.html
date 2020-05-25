@@ -1,0 +1,118 @@
+{% extends 'base_seguimiento.html' %}
+
+{% load static %}
+{% load seguimiento_tags %}
+
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <!--MOSTRAR DATOS DEL VEHICULO-->
+            <div class="row">
+                <div class="col-lg-8">
+                    <h2><b>Panel de {{operativo.vehiculo}}</b></h2>
+                    <p><b>Estado del Operativo:</b> {{operativo.get_estado_display}}</p>
+                    <h3>Mapa de Seguimiento</h3>
+                    {% if geoposiciones %}
+                        {% include 'mapa_seguimiento.html' %}
+                    {% else %}
+                        <p><b>Aun no se ha registrado ninguna GeoPosicion para el operativo.</b></p>
+                    {% endif %}
+                </div>
+                <div class="col-lg-4">
+                    <ul class="menu_botones">
+                        <h2>Menu Operativo</h2>
+                        <ul class="menu_botones">
+                            {% if operativo.estado == 'C' %}
+                                <li><a href="{% url 'seguimiento:iniciar_operativo' operativo_id=operativo.id %}">Iniciar Operativo</a></li>
+                            {% elif operativo.estado == 'I' %}
+                                <li><a href="{% url 'seguimiento:finalizar_operativo' operativo_id=operativo.id %}">Finalizar Operativo</a></li>
+                            {% endif %}
+                        </ul>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-lg-4">
+                    <a class="botoncito" href="{% url 'seguimiento:agregar_cazador' operativo_id=operativo.id %}">
+                        Agregar Operador
+                        <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
+                    </a>
+                    <h3>Cazadores:</h3>
+                    <table class="listado">
+                        <tr>
+                            <th>Individuo</th>
+                            <th>Telefono</th>
+                            <th>App</th>
+                            <th>Acciones</th>
+                        </tr>
+                        {% for individuo in operativo.cazadores.all %}
+                            <tr>
+                                <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
+                                <td>{{individuo.telefono}}</td>
+                                <td>
+                                    {% if individuo.appdata %}
+                                        <img class="icons" src="/static/img/icons/check.png">
+                                    {% else %}
+                                        <img class="icons" src="/static/img/icons/wrong.png">
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'seguimiento:quitar_cazador' operativo_id=operativo.id individuo_id=individuo.id %}">
+                                        <img class="icons" src="/static/img/icons/delete.png">
+                                    </a>
+                                </td>
+                            </tr> 
+                        {% endfor %}
+                    </table>
+                </div>
+                <div class="col-lg-8">
+                    <a class="botoncito" href="{% url 'seguimiento:agregar_testeado' operativo_id=operativo.id %}">
+                        Agregar Individuo Testeado
+                        <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
+                    </a>
+                    <h3>Test Realizados:</h3>
+                    <table class="listado" id="table">
+                        <thead>
+                            <tr>
+                                <th>Num Doc</th>
+                                <th>Individuo</th>
+                                <th>Situacion</th>
+                                <th>Domicilio</th>
+                                <th>Telefono</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for test in operativo.tests.all %}
+                                <tr>
+                                    <td>{{test.num_doc}}</td>
+                                    {% if test.individuo %}
+                                        <td>{{test.individuo.apellidos}}, {{test.individuo.nombres}}</td>
+                                        <td>{{test.individuo.situacion_actual}}</td>
+                                        <td>{{test.individuo.domicilio_actual}}</td>
+                                        <td>{{test.individuo.telefono}}</td>
+                                        <td>
+                                            <a class="nolink" href="{% url 'seguimiento:cargar_seguimiento' individuo_id=test.individuo.id tipo='DT' %}" class="nolink" target="_blank">
+                                                <img class="icons" src="{% static '/img/icons/test.png' %}">
+                                            </a>
+                                            <a class="nolink" href="{% url 'informacion:ver_individuo' individuo_id=test.individuo.id %}" class="nolink" target="_blank">
+                                                <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                            </a>
+                                        </td>
+                                    {% else %}
+                                        <td colspan="5">
+                                            <a class="nolink" href="{% url 'informacion:cargar_individuo' num_doc=test.num_doc %}" class="nolink" target="_blank">
+                                                Cargar Datos Basicos<img class="icons" src="{% static '/img/icons/change.png' %}">
+                                            </a>
+                                        </td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -5,7 +5,7 @@ TIPO_SEGUIMIENTO = (
     ('C', 'Cronologia'),
     ('E', 'Epicrisis'),
     ('PT', 'Pidio Test'),
-    ('ET', 'Esperando Resultados'),
+    ('ET', 'Esperando Resultados PCR'),
     ('CT', 'Confirmado por Test'),
     ('DT', 'Descartado por Test'),
     ('A', 'Autodiagnostico'),

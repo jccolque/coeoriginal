@@ -41,9 +41,10 @@ class Vigia(models.Model):
 class OperativoVehicular(models.Model):
     vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, related_name="operativos")
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
-    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     cazadores = models.ManyToManyField(Individuo, related_name='cazadores360')
     estado = models.CharField(choices=ESTADO_OPERATIVO, max_length=1, default='C')#Al activarse > Prende Gps de todos los cazadores
+    fecha_inicio = models.DateTimeField('Fecha Inicio del Operativo', default=timezone.now)
+    fecha_final = models.DateTimeField('Fecha Inicio del Operativo', null=True, blank=True)
     def __str__(self):
         return str(self.vehiculo) + ': ' + self.aclaracion
 

@@ -16,14 +16,12 @@ def obtener_dni(data):
 def activar_tracking(individuo):
     try:
         if individuo.appdata:
-            print("Iniciar Tracking: " + str(individuo))
             AppNotificacion.objects.filter(appdata=individuo.appdata).delete()
             notif = AppNotificacion(appdata=individuo.appdata)
             notif.titulo = 'Iniciar Proceso de supervisión Digital'
             notif.mensaje = 'Por Favor presione esta notificacion para iniciarlo.'
             notif.accion = 'BT'
             notif.save()#Al grabar el local, se envia automaticamente por firebase (signals)
-            print("Guardado")
     except Exception as e:
         logger.info("\nFallo Activar Tracking: "+str(individuo))
         logger.info(e)

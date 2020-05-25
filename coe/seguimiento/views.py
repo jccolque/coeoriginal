@@ -24,13 +24,15 @@ from informacion.models import Individuo, Atributo, Patologia
 from informacion.models import SignosVitales, Relacion
 from informacion.models import Situacion, Documento
 from informacion.models import Vehiculo
-from informacion.forms import BuscarIndividuoSeguro
+from informacion.forms import SearchIndividuoForm, BuscarIndividuoSeguro
+from geotracking.models import GeoPosicion
 from operadores.functions import obtener_operador
 from app.models import AppData, AppNotificacion
+from app.functions import activar_tracking, desactivar_tracking
 from background.functions import crear_progress_link
 #imports de la app
 from .models import Seguimiento, Vigia
-from .models import OperativoVehicular
+from .models import OperativoVehicular, TestOperativo
 from .forms import SeguimientoForm, NuevoVigia, NuevoIndividuo
 from .forms import OperativoForm, TestOperativoForm
 from .functions import obtener_bajo_seguimiento
@@ -319,11 +321,32 @@ def ver_operativo(request, operativo_id):
     operativos = OperativoVehicular.objects.select_related('vehiculo')
     operativos = operativos.prefetch_related('cazadores')
     operativos = operativos.prefetch_related('tests', 'tests__individuo')
-    #Buscamos
+    #Buscamos el operativo
     operativo = operativos.get(pk=operativo_id)
+    #Buscamos el tracking del mismo
+    geoposiciones = None
+    if operativo.estado not in ('C', 'E'):
+        #Buscamos posiciones gps de los cazadores en este tiempo:
+        ids = [c.id for c in operativo.cazadores.all()]
+        geoposiciones = GeoPosicion.objects.get(individuo__id__in=ids)
+        #Filtramos por el tiempo que duro el operativo
+        geoposiciones = geoposiciones.filter(fecha__gt=operativo.fecha_inicio)
+        if operativo.fecha_final:
+            geoposiciones = geoposiciones.filter(fecha__lt=operativo.fecha_final)
+        #Buscamos controles realizados:
+            #FALTA DARLE LA LOGICA
+    #Chequeamos si cargaron datos de los que no tienen individuo
+    for test in operativo.tests.filter(individuo=None):
+        try:
+            test.individuo = Individuo.objects.get(num_doc=test.num_doc)
+            test.save()
+        except Individuo.DoesNotExist:
+            pass #Aun no tenemos los datos
     #Mostramos
-    return render(request, "ver_operativo.html", {
+    return render(request, "panel_operativo.html", {
         'operativo': operativo,
+        'geoposiciones': geoposiciones,
+        'refresh': True,      
         }
     )
 
@@ -346,6 +369,71 @@ def del_operativo(request, operativo_id):
     operativo.estado = 'E'
     operativo.save()
     return redirect('seguimiento:lista_operativos')
+
+@permission_required('operadores.operativos')
+def iniciar_operativo(request, operativo_id):
+    operativo = OperativoVehicular.objects.get(pk=operativo_id)
+    operativo.estado = 'I'
+    for individuo in operativo.cazadores.all():
+        activar_tracking(individuo)
+    operativo.fecha_inicio = timezone.now()
+    operativo.estado = 'I'
+    operativo.save()
+    return redirect('seguimiento:ver_operativo', operativo_id=operativo.id)
+
+@permission_required('operadores.operativos')
+def finalizar_operativo(request, operativo_id):
+    operativo = OperativoVehicular.objects.get(pk=operativo_id)
+    operativo.estado = 'I'
+    for individuo in operativo.cazadores.all():
+        desactivar_tracking(individuo)
+    operativo.fecha_final = timezone.now()
+    operativo.estado = 'F'
+    operativo.save()
+    return redirect('seguimiento:ver_operativo', operativo_id=operativo.id)
+
+@permission_required('operadores.operativos')
+def agregar_cazador(request, operativo_id):
+    operativo = OperativoVehicular.objects.get(pk=operativo_id)
+    form = SearchIndividuoForm()
+    if request.method == 'POST':
+        form = SearchIndividuoForm(request.POST)
+        if form.is_valid():
+            num_doc = form.cleaned_data['num_doc']
+            try:
+                individuo = Individuo.objects.get(num_doc=num_doc)
+                operativo.cazadores.add(individuo)
+                return redirect('seguimiento:ver_operativo', operativo_id=operativo.id)
+            except Individuo.DoesNotExist:
+                form.add_error(None, "No se ha encontrado a Nadie con esos Datos.")
+    return render(request, "extras/generic_form.html", {'titulo': "Agregar Cazador", 'form': form, 'boton': "Agregar", })
+
+@permission_required('operadores.operativos')
+def quitar_cazador(request, operativo_id, individuo_id):
+    operativo = OperativoVehicular.objects.get(pk=operativo_id)
+    individuo = Individuo.objects.get(pk=individuo_id)
+    operativo.cazadores.remove(individuo)
+    return redirect('seguimiento:ver_operativo', operativo_id=operativo.id)
+
+@permission_required('operadores.operativos')
+def agregar_testeado(request, operativo_id):
+    operativo = OperativoVehicular.objects.get(pk=operativo_id)
+    form = SearchIndividuoForm()
+    if request.method == 'POST':
+        form = SearchIndividuoForm(request.POST)
+        if form.is_valid():
+            test = TestOperativo(operativo=operativo)
+            test.num_doc = form.cleaned_data['num_doc']
+            try:
+                test.individuo = Individuo.objects.get(num_doc=test.num_doc)
+            except Individuo.DoesNotExist:
+                pass #Si no tenemos el dni no pasa naranja (Pedimos los otros datos despues)
+            test.save()
+            return redirect('seguimiento:ver_operativo', operativo_id=operativo.id)
+    return render(request, "extras/generic_form.html", {'titulo': "Agregar Testeado", 'form': form, 'boton': "Agregar", })
+
+#@permission_required('operadores.operativos')
+#def quitar_cazador(request, test_id):
 
 #Otros listados
 @permission_required('operadores.individuos')
