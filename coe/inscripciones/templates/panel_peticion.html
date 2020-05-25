@@ -14,7 +14,7 @@
                             <div class="col-md-6">
                                 <h3 style="color:{% if peticion.estado == 'C' %}red{% elif peticion.estado == 'E' %}orange{% elif peticion.estado == 'A' %}green{% else %}black{% endif %};"><b>Estado</b> {{peticion.get_estado_display}}</h3>
                                 <p><b>Email de Contacto:</b> {{peticion.email_contacto}}</p>
-                                <p><b>Cantidad</b> {{peticion.cantidad}}</p>           
+                                <p><b>Cantidad</b> {{peticion.cantidad}} gramos</p>           
                             </div>
                                 
                             <div class="col-md-6">
@@ -47,17 +47,12 @@
                                 {% if ingreso.estado != 'C' or ingreso.estado == 'B' %}
                                     <li><a href="{% url 'inscripciones:finalizar_peticion' peticion_id=peticion.id %}">Finalizar Proceso</a></li>
                                 {% endif %}
-                            <!-- {% if ingreso.estado == 'A' %}
-                                <li><a href="{% url 'permisos:ver_ingreso_aprobado' token=ingreso.token %}">Imprimir Comprobante</a></li>
-                            {% endif %} -->
                             {% if perms.operadores.permisos %}
                                 <hr>
                                 <p><b>OPERADORES</b></p>
                                 <li><a href="{% url 'inscripciones:peticion_enviar_email' peticion_id=peticion.id %}">Enviar Correo Electronico</a></li>
                                 <li><a href="{% url 'inscripciones:eliminar_peticion' peticion_id=peticion.id %}">Eliminar Petición</a></li>                                
-                                <!-- <li><a href="{% url 'inscripciones:aprobar_peticion' peticion_id=peticion.id %}">Aprobar Petición</a></li> -->
-                                {% endif %}
-                                <li><a href="{% url 'inscripciones:lista_ingresos' %}">Volver al Listado de Peticiones</a></li>
+                                <li><a href="{% url 'inscripciones:lista_peticiones' %}">Volver al Listado de Peticiones</a></li>
                             {% endif %}
                         </ul>
                     </div>
@@ -80,7 +75,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for individuo in ingreso.individuos.all %}
+                                {% for individuo in peticion.individuos.all %}
                                     <tr>
                                         <td>{{individuo.num_doc}}</td>
                                         <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
@@ -94,13 +89,10 @@
                                             {% endfor %}
                                         </td>                                                                                
                                         <td>
-                                            <!-- <a href="{% url 'permisos:mod_ingresantes' ingreso_id=ingreso.id individuo_id=individuo.id %}" target="_blank">
-                                                <img class="icons" src="{% static 'img/icons/change.png' %}">
-                                            </a> -->
                                             <a href="{% url 'inscripciones:mod_people' peticion_id=peticion.id individuo_id=individuo.id %}" target="_blank">
                                                 <img class="icons" src="{% static 'img/icons/change.png' %}">
                                             </a>
-                                            <a href="{% url 'inscripciones:quitar_people' peticion_id=peticion.id individuo_id=individuo.id %}" target="_blank">
+                                            <a href="{% url 'inscripciones:quitar_persona' peticion_id=peticion.id individuo_id=individuo.id %}" target="_blank">
                                                 <img class="icons" src="{% static '/img/icons/delete.png' %}">
                                             </a>
                                         </td>
@@ -108,7 +100,7 @@
                                 {% endfor %}
                             </tbody>
                         </table>                        
-                    {% endif %}
+
                     {% if peticion.emails_enviados.exists %}
                         <div class="row">
                             <h3>Emails Enviados al individuo</h3>

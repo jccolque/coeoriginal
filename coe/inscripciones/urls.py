@@ -46,9 +46,11 @@ urlpatterns = [
     path('mod/peticion_persona/<int:peticion_id>', views.peticion_persona, name='mod_peticion_persona'),
     path('cargar/cargar_people/<int:peticion_id>', views.cargar_people, name='cargar_people'),
     path('finalizar/peticion/<int:peticion_id>', views.finalizar_peticion, name='finalizar_peticion'),
+    path('peticion/del/<int:peticion_id>', views.eliminar_peticion, name='eliminar_peticion'),
     path('peticion/<str:token>', views.ver_peticion_persona, name='ver_peticion_persona'),
     path('mod/people/<int:peticion_id>/<int:individuo_id>', views.cargar_people, name='mod_people'),
-    path('del/peticion/<int:peticion_id>/<int:individuo_id>', views.quitar_persona, name='quitar_persona'),
+    path('peticion/del/persona/<int:peticion_id>/<int:individuo_id>', views.quitar_persona, name='quitar_persona'),
+    path('peticion/enviar/email/<int:peticion_id>', views.peticion_enviar_email, name='peticion_enviar_email'),
     #Ingresos   
     path('lista/peticiones/completas', views.lista_peticiones_completas, name='lista_peticiones_completas'),
     path('lista/peticiones', views.lista_peticiones, name='lista_peticiones'),

@@ -54,3 +54,6 @@ class TestOperativoForm(forms.ModelForm):
         model = OperativoVehicular
         fields= '__all__'
         exclude = ('operativo', 'individuo', 'geoposicion', 'fecha')
+        widgets = {
+            'vehiculo': autocomplete.ModelSelect2(url='informacion:vehiculos-operativo-autocomplete'),
+        }

@@ -97,4 +97,5 @@ urlpatterns = [
     #url(r'^sintomas-autocomplete/$', autocomplete.SintomaAutocomplete.as_view(), name='sintomas-autocomplete',),
     #url(r'^atributos-autocomplete/$', autocomplete.AtributoAutocomplete.as_view(), name='atributos-autocomplete',),
     url(r'^individuos-autocomplete/$', autocomplete.IndividuosAutocomplete.as_view(), name='individuos-autocomplete',),
+    url(r'^vehiculos-operativo-autocomplete/$', autocomplete.VehiculosOperativoAutocomplete.as_view(), name='vehiculos-operativo-autocomplete',),
 ]

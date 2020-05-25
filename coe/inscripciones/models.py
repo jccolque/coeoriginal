@@ -268,10 +268,10 @@ class Empleado(models.Model):
         return str(self.num_doc) + ': ' + self.apellidos + ', ' + self.nombres 
 
 class Peticionp(models.Model):
-    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="pedidos_personas")
     destino = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="pedidosd_personas")
     email_contacto = models.EmailField('Correo Electrónico de Contacto', max_length=200)
-    cantidad = models.CharField('Cantidad de Coca (en gramos)', max_length=50)    
+    cantidad = models.CharField('Cantidad de Coca (en gramos)', max_length=50)
+    individuos = models.ManyToManyField(Individuo, related_name="pedidos_coca")
     #Interno
     token = models.CharField('Token', max_length=50, default=token_provision, unique=True)
     fecha = models.DateTimeField('Fecha de registro', default=timezone.now)

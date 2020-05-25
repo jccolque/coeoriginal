@@ -176,7 +176,7 @@ class PeticionpForm(forms.ModelForm):
     class Meta:
         model = Peticionp
         fields= '__all__'
-        exclude = ('fecha', 'token', 'individuo', 'estado', 'operador')
+        exclude = ('fecha', 'token', 'individuos', 'estado', 'operador')
         widgets = {
             'cantidad': forms.TextInput(attrs={'placeholder': 'Introduzca Cantidad'}),
             'email_contacto': forms.TextInput(attrs={'placeholder': 'Introduzca EMAIL de Contacto'}),

@@ -656,8 +656,12 @@ def peticion_persona(request, peticionp_id=None):
             #Enviarlo a cargar ingresantes
             return redirect('inscripciones:ver_peticion_persona', token=peticion.token)
         else: 
-            return render(request, "peticion_persona.html", {'title': "PETICIÓN DE COCA - PERSONAS", 'form': form, 'button': "Iniciar Pedido", 'message': 'FORMULARIO INVÁLIDO, CORRIJA DATOS.' })
-
+            return render(request, "peticion_persona.html", {
+                'title': "PETICIÓN DE COCA - PERSONAS", 
+                'form': form, 
+                'button': "Iniciar Pedido",
+                'message': 'FORMULARIO INVÁLIDO, CORRIJA DATOS.' 
+            })
     return render(request, "peticion_persona.html", {'title': "PETICIÓN DE COCA - PERSONAS", 'form': form, 'button': "Iniciar Pedido", })
 
 def ver_peticion_persona(request, token):
@@ -678,7 +682,7 @@ def cargar_people(request, peticion_id, individuo_id=None):
     form = PersonapetForm(instance=individuo)
     if request.method == "POST":
         #obtenemos peticion
-        peticion = PersonapetFormobjects.get(pk=ingreso_id)
+        peticion = Peticionp.objects.get(pk=peticion_id)
         try:#Tratamos de obtener el dni
             num_doc = request.POST['num_doc']
             individuo = Individuo.objects.get(num_doc=num_doc)
