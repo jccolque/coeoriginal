@@ -23,7 +23,6 @@ def activar_tracking(individuo):
         notif.mensaje = 'Por Favor presione esta notificacion para Iniciarlo.'
         notif.accion = 'BT'
         notif.save()#Al grabar el local, se envia automaticamente por firebase (signals)
-        print("Guardo Iniciar")
     except Exception as e:
         logger.info("\nFallo Activar Tracking: "+str(individuo))
         logger.info(e)
@@ -37,7 +36,6 @@ def desactivar_tracking(individuo):
         notif.mensaje = 'Por Favor presione esta notificacion para Finalizarlo.'
         notif.accion = 'ST'
         notif.save()#Al grabar el local, se envia automaticamente por firebase (signals)
-        print("Guardo Finalizar")
     except Exception as e:
         logger.info("\nFallo Desactivar Tracking: "+str(individuo))
         logger.info(e)

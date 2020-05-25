@@ -16,7 +16,6 @@ logger = logging.getLogger('signals')
 #Definimos nuestras señales
 @receiver(post_save, sender=AppNotificacion)
 def enviar_push(instance, created, **kwargs):
-    print("Mando")
     if created:#Si creamos la local, mandamos la push.
         try:
             device = FCMDevice.objects.get(name=instance.appdata.individuo.num_doc)
