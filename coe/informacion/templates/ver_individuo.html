@@ -383,7 +383,7 @@
                         {% endfor %}
 
                         <!--Tabla de Traslados -->
-                        {% for pasaje in individuo.pasajes.all %}
+                        {% for traslado in individuo.traslados.all %}
                             {% if forloop.first %}
                                 <hr>
                                 <h3>Controles Vehiculares Registrados:</h3>
@@ -396,10 +396,10 @@
                                     </tr>
                             {% endif %}
                             <tr>
-                                <td>{{pasaje.traslado.fecha}}</td>
-                                <td>{{pasaje.traslado.vehiculo}}</td>
-                                <td>{{pasaje.traslado.aclaracion}}</td>
-                                <td><a class="nolink" href="{% url 'informacion:ver_vehiculo' vehiculo_id=pasaje.traslado.vehiculo.id %}">Ver Vehiculo</a></li>
+                                <td>{{traslado.fecha}}</td>
+                                <td>{{traslado.vehiculo}}</td>
+                                <td>{{traslado.aclaracion}}</td>
+                                <td><a class="nolink" href="{% url 'informacion:ver_vehiculo' vehiculo_id=traslado.vehiculo.id %}">Ver Vehiculo</a></li>
                             </tr>
                             {% if forloop.last %}
                                 </table>
