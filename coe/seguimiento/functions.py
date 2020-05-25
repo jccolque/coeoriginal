@@ -15,7 +15,7 @@ from reportlab.lib.units import mm
 from coe.settings import STATIC_ROOT, MEDIA_ROOT
 from coe.constantes import DIAS_CUARENTENA
 from informacion.models import Individuo, Situacion, Documento
-from app.models import AppNotificacion
+from app.functions import desactivar_tracking
 from seguimiento.models import Seguimiento
 #Imports de la app
 from .models import Vigia
@@ -104,29 +104,19 @@ def realizar_alta(individuo, operador):
     #Lo sacamos de los panel:
     vigiladores = individuo.vigiladores.all()
     individuo.vigiladores.clear()
-    #Asignamos nuevos vigilados al que quedo libre
-    #for vigilador in vigiladores:
-    #    vigilador.controlados.add(obtener_bajo_seguimiento().order_by('situacion_actual__fecha').filter(vigiladores=None).first())
     #Lo damos de Alta de Aislamiento
     situacion = Situacion(individuo=individuo)
     seguimiento.aclaracion = "Baja confirmada por: " + str(operador)
     situacion.save()
     #Le damos de baja el seguimiento de tracking si tenia:
     individuo.geoperadores.clear()
-    if hasattr(individuo,'appdata'):
-        AppNotificacion.objects.filter(appdata=individuo.appdata).delete()
-        notif = AppNotificacion()
-        notif.appdata = individuo.appdata
-        notif.titulo = 'Finalizo su periodo bajo Supervicion Digital'
-        notif.mensaje = 'Se han cumplido los '+str(DIAS_CUARENTENA)+' dias de seguimiento Obligatorios.'
-        notif.accion = 'ST'
-        notif.save()#Al grabar el local, se envia automaticamente por firebase
-        #Generamos final tracking > Seguimiento
-        seguimiento = Seguimiento(individuo=individuo)
-        seguimiento.tipo = 'FT'
-        seguimiento.aclaracion = "Baja confirmada por: " + str(operador)
-        seguimiento.save()
-    #Le cambiamos el domicilio
+    desactivar_tracking(individuo)
+    #Generamos final tracking > Seguimiento
+    seguimiento = Seguimiento(individuo=individuo)
+    seguimiento.tipo = 'FT'
+    seguimiento.aclaracion = "Baja confirmada por: " + str(operador)
+    seguimiento.save()
+    #Le cambiamos el domicilio a uno que no sea de aislamiento
     if individuo.domicilio_actual:#Si tiene domicilio actual
         if individuo.domicilio_actual.ubicacion:#Solo Si es un alojamiento
             dom = individuo.domicilios.filter(ubicacion=None).last()#Buscamos el ultimo conocido comun

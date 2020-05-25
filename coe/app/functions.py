@@ -15,13 +15,12 @@ def obtener_dni(data):
 #Funcionalidades
 def activar_tracking(individuo):
     try:
-        if individuo.appdata:
-            AppNotificacion.objects.filter(appdata=individuo.appdata).delete()
-            notif = AppNotificacion(appdata=individuo.appdata)
-            notif.titulo = 'Iniciar Proceso de supervisión Digital'
-            notif.mensaje = 'Por Favor presione esta notificacion para iniciarlo.'
-            notif.accion = 'BT'
-            notif.save()#Al grabar el local, se envia automaticamente por firebase (signals)
+        AppNotificacion.objects.filter(appdata=individuo.appdata).delete()
+        notif = AppNotificacion(appdata=individuo.appdata)
+        notif.titulo = 'Iniciar Proceso de supervisión Digital'
+        notif.mensaje = 'Por Favor presione esta notificacion para iniciarlo.'
+        notif.accion = 'BT'
+        notif.save()#Al grabar el local, se envia automaticamente por firebase (signals)
     except Exception as e:
         logger.info("\nFallo Activar Tracking: "+str(individuo))
         logger.info(e)
@@ -29,13 +28,12 @@ def activar_tracking(individuo):
 
 def desactivar_tracking(individuo):
     try:
-        if individuo.appdata:
-            AppNotificacion.objects.filter(appdata=individuo.appdata).delete()
-            notif = AppNotificacion(appdata=individuo.appdata)
-            notif.titulo = 'Finalizar Proceso de supervisión Digital'
-            notif.mensaje = 'Por Favor presione esta notificacion para terminarlo.'
-            notif.accion = 'ST'
-            notif.save()#Al grabar el local, se envia automaticamente por firebase (signals)
+        AppNotificacion.objects.filter(appdata=individuo.appdata).delete()
+        notif = AppNotificacion(appdata=individuo.appdata)
+        notif.titulo = 'Finalizar Proceso de supervisión Digital'
+        notif.mensaje = 'Por Favor presione esta notificacion para terminarlo.'
+        notif.accion = 'ST'
+        notif.save()#Al grabar el local, se envia automaticamente por firebase (signals)
     except Exception as e:
         logger.info("\nFallo Desactivar Tracking: "+str(individuo))
         logger.info(e)
