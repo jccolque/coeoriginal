@@ -346,7 +346,8 @@ def ver_operativo(request, operativo_id):
     return render(request, "panel_operativo.html", {
         'operativo': operativo,
         'geoposiciones': geoposiciones,
-        'refresh': True,      
+        'refresh': (operativo.estado == 'I'),
+        'gmkey': GEOPOSITION_GOOGLE_MAPS_API_KEY,
         }
     )
 
@@ -374,10 +375,10 @@ def del_operativo(request, operativo_id):
 def iniciar_operativo(request, operativo_id):
     operativo = OperativoVehicular.objects.get(pk=operativo_id)
     operativo.estado = 'I'
+    operativo.fecha_inicio = timezone.now()
     for individuo in operativo.cazadores.all():
         activar_tracking(individuo)
-    operativo.fecha_inicio = timezone.now()
-    operativo.estado = 'I'
+    operativo.fecha_final = None
     operativo.save()
     return redirect('seguimiento:ver_operativo', operativo_id=operativo.id)
 
