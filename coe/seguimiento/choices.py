@@ -22,3 +22,16 @@ TIPO_VIGIA = (
     ('E', 'Vigilancia Epidemiologica'),
     ('M', 'Salud Mental'),
 )
+
+ESTADO_OPERATIVO = (
+    ('C', 'Creado'),
+    ('I', 'Inicializado'),
+    ('F', 'Finalizado'),
+    ('E', 'Eliminado'),
+)
+
+ESTADO_RESULTADO = (
+    ('E', 'Esperando Resultado'),
+    ('P', 'Positivo'),
+    ('N', 'Negativo'),
+)

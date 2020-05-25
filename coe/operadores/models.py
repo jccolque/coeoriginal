@@ -89,6 +89,7 @@ class Operador(models.Model):
             #Seguimiento:
             ("seguimiento", "Monitor Seguimiento de Individuos."),
             ("seguimiento_admin", "Administrar Sistema de Seguimiento."),
+            ("operativos", "Operativos de Test Masivos."),
             #GeoTracking
             ("geotracking", "Monitore Tracking de Individuos."),
             ("geotracking_admin", "Administrador Sistema de GeTracking."),

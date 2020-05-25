@@ -31,6 +31,12 @@ urlpatterns = [
     path('mod/vigia/<vigia_id>', views.agregar_vigia, name='mod_vigia'),
     path('del/vigia/<vigia_id>', views.del_vigia, name='del_vigia'),
     path('lista/sin/vigias', views.lista_sin_vigias, name='lista_sin_vigias'),
+    #Cazador 360
+    path('lista/operativos', views.lista_operativos, name='lista_operativos'),
+    path('crear/operativo', views.crear_operativo, name='crear_operativo'),
+    path('mod/operativo/<operativo_id>', views.crear_operativo, name='mod_operativo'),
+    path('del/operativo/<operativo_id>', views.del_operativo, name='del_operativo'),
+    path('ver/operativo/<operativo_id>', views.ver_operativo, name='ver_operativo'),
     #Otros Listados
     path('ranking/test', views.ranking_test, name='ranking_test'),
     path('esperando/test', views.esperando_test, name='esperando_test'),

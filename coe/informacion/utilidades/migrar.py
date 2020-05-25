@@ -1,23 +1,23 @@
 from informacion.choices import TIPO_ATRIBUTO, TIPO_SINTOMA
-from informacion.models import Atributo, TipoAtributo
-from informacion.models import Sintoma, TipoSintoma
+from informacion.models import Atributo#, TipoAtributo
+from informacion.models import Sintoma#, TipoSintoma
 from seguimiento.models import Seguimiento
 
-def unificar_atributos():
-    old = TipoAtributo.objects.get(nombre='Mantener Seguimiento')
-    new = TipoAtributo.objects.get(nombre='Vigilancia Epidemiologica')
-    #Cambiamos los que no van:
-    for atrib in Atributo.objects.filter(tipo=old):
-        atrib.tipo = new
-        atrib.save()    
-    #Borramos los ingreso a la provincia, ahora son seguimientos > Cronologia
-    for a in Atributo.objects.filter(tipo__nombre="Ingreso a la Provincia"):
-        seg = Seguimiento()
-        seg.individuo = a.individuo
-        seg.tipo = "C"
-        seg.aclaracion = 'Migrado:' + str(a.aclaracion)
-        seg.save()
-        a.delete()
+# #def unificar_atributos():
+# #    old = TipoAtributo.objects.get(nombre='Mantener Seguimiento')
+# #    new = TipoAtributo.objects.get(nombre='Vigilancia Epidemiologica')
+#     #Cambiamos los que no van:
+#     for atrib in Atributo.objects.filter(tipo=old):
+#         atrib.tipo = new
+#         atrib.save()    
+#     #Borramos los ingreso a la provincia, ahora son seguimientos > Cronologia
+#     for a in Atributo.objects.filter(tipo__nombre="Ingreso a la Provincia"):
+#         seg = Seguimiento()
+#         seg.individuo = a.individuo
+#         seg.tipo = "C"
+#         seg.aclaracion = 'Migrado:' + str(a.aclaracion)
+#         seg.save()
+#         a.delete()
 
 def migrar_atributos():
     unificar_atributos()
@@ -26,12 +26,12 @@ def migrar_atributos():
         atrib.newtipo = dict_atrib[atrib.tipo.nombre]
         atrib.save()
 
-def unificar_sintomas():
-    old = TipoSintoma.objects.get(nombre='Fiebre Alta')
-    new = TipoSintoma.objects.get(nombre='Fiebre')
-    for sintom in Sintoma.objects.filter(tipo=old):
-        sintom.tipo = new
-        sintom.save()
+# def unificar_sintomas():
+#     old = TipoSintoma.objects.get(nombre='Fiebre Alta')
+#     new = TipoSintoma.objects.get(nombre='Fiebre')
+#     for sintom in Sintoma.objects.filter(tipo=old):
+#         sintom.tipo = new
+#         sintom.save()
 
 def migrar_sintomas():
     unificar_sintomas()
@@ -39,3 +39,12 @@ def migrar_sintomas():
     for sintom in Sintoma.objects.all():
         sintom.newtipo = dict_sintom[sintom.tipo.nombre]
         sintom.save()
+
+def migrar_pasajeros():
+    from informacion.models import TrasladoVehiculo
+    for traslado in TrasladoVehiculo.objects.all():
+        print(traslado)
+        for pasajero in traslado.pasajeros_old.all():
+            print(pasajero.individuo)
+            traslado.pasajeros.add(pasajero.individuo)
+    

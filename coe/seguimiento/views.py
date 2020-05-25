@@ -23,13 +23,16 @@ from informacion.choices import TIPO_ATRIBUTO, TIPO_PATOLOGIA
 from informacion.models import Individuo, Atributo, Patologia
 from informacion.models import SignosVitales, Relacion
 from informacion.models import Situacion, Documento
+from informacion.models import Vehiculo
 from informacion.forms import BuscarIndividuoSeguro
 from operadores.functions import obtener_operador
 from app.models import AppData, AppNotificacion
 from background.functions import crear_progress_link
 #imports de la app
 from .models import Seguimiento, Vigia
+from .models import OperativoVehicular
 from .forms import SeguimientoForm, NuevoVigia, NuevoIndividuo
+from .forms import OperativoForm, TestOperativoForm
 from .functions import obtener_bajo_seguimiento
 from .functions import realizar_alta, creamos_doc_alta
 from .tasks import altas_masivas
@@ -293,6 +296,56 @@ def ver_seguimiento(request, individuo_id):
         'individuo': individuo,
         }
     )
+
+#CAZADOR 360
+@permission_required('operadores.operativos')
+def lista_operativos(request):
+    #Operativos Autorizados
+    operativos = OperativoVehicular.objects.exclude(estado='E')
+    #Optimizamos
+    operativos = operativos.select_related('vehiculo')
+    operativos = operativos.prefetch_related('cazadores')
+    #Lanzamos listado
+    return render(request, "lista_operativos.html", {
+        'operativos': operativos,
+        'refresh': True,
+        'has_table': True,
+        }
+    )
+
+@permission_required('operadores.operativos')
+def ver_operativo(request, operativo_id):
+    #Optimizamos
+    operativos = OperativoVehicular.objects.select_related('vehiculo')
+    operativos = operativos.prefetch_related('cazadores')
+    operativos = operativos.prefetch_related('tests', 'tests__individuo')
+    #Buscamos
+    operativo = operativos.get(pk=operativo_id)
+    #Mostramos
+    return render(request, "ver_operativo.html", {
+        'operativo': operativo,
+        }
+    )
+
+@permission_required('operadores.operativos')
+def crear_operativo(request, operativo_id=None):
+    operativo = None
+    if operativo_id:
+        operativo = OperativoVehicular.objects.get(pk=operativo_id)
+    form = OperativoForm(instance=operativo)
+    if request.method == 'POST':
+        form = OperativoForm(request.POST, instance=operativo)
+        if form.is_valid():
+            operativo = form.save()
+            return redirect('seguimiento:ver_operativo', operativo_id=operativo.id)
+    return render(request, "extras/generic_form.html", {'titulo': "Crear Operativo", 'form': form, 'boton': "Crear", })
+
+@permission_required('operadores.operativos')
+def del_operativo(request, operativo_id):
+    operativo = OperativoVehicular.objects.get(pk=operativo_id)
+    operativo.estado = 'E'
+    operativo.save()
+    return redirect('seguimiento:lista_operativos')
 
 #Otros listados
 @permission_required('operadores.individuos')

@@ -26,7 +26,7 @@ from permisos.forms import FotoForm
 from .choices import TIPO_ESTADO, TIPO_CONDUCTA
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
 from .models import Archivo
-from .models import Vehiculo, TrasladoVehiculo, Pasajero
+from .models import Vehiculo, TrasladoVehiculo#, Pasajero
 from .models import Individuo, SignosVitales, Relacion
 from .models import Situacion
 from .models import Domicilio
@@ -170,8 +170,7 @@ def buscar_individuo(request, traslado_id=None):
                 individuo = Individuo.objects.get(num_doc=num_doc)
                 if traslado_id:#lo cargamos en el vehiculo y volvemos al vehiculo:
                     traslado = TrasladoVehiculo.objects.get(pk=traslado_id)
-                    pasajero = Pasajero(traslado=traslado, individuo=individuo)
-                    pasajero.save()
+                    traslado.pasajeros.add(individuo)
                     return redirect('informacion:ver_vehiculo', vehiculo_id=traslado.vehiculo.id)
                 else:#Se va a la planilla simplemente
                     return redirect('informacion:ver_individuo', individuo_id=individuo.id)
@@ -230,8 +229,7 @@ def cargar_individuo(request, traslado_id=None, num_doc=None):
             #Si vino en un vehiculo
             if traslado_id:
                 traslado = TrasladoVehiculo.objects.get(pk=traslado_id)
-                pasajero = Pasajero(traslado=traslado, individuo=individuo)
-                pasajero.save()
+                traslado.pasajeros.add(individuo)
                 return redirect('informacion:ver_vehiculo', vehiculo_id=traslado.vehiculo.id)
             return redirect('informacion:ver_individuo', individuo_id=individuo.id)
     return render(request, "cargar_individuo.html", {'titulo': "Cargar Individuo", 'form': form, 'boton': "Cargar", })
@@ -591,9 +589,7 @@ def trasladar(request, individuo_id, ubicacion_id, vehiculo_id):
     traslado = TrasladoVehiculo(vehiculo=vehiculo)
     traslado.aclaracion = ubicacion.nombre + " (Traslado Via Sistema)"
     traslado.save()
-    pasajero = Pasajero(traslado=traslado)
-    pasajero.individuo = individuo
-    pasajero.save()
+    traslado.pasajeros.add(individuo)
     return redirect('informacion:ver_individuo', individuo_id=individuo.id)
 
 #Situacion

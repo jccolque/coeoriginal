@@ -21,7 +21,7 @@ class InformacionConfig(AppConfig):
             from .signals import relacion_domicilio
             from .signals import crear_relacion_inversa
             from .signals import eliminar_relacion_inversa
-            from .signals import relacion_vehiculo
+            #from .signals import relacion_vehiculo
             from .signals import relacionar_situacion
             from .signals import afectar_relacionados
             from .signals import aislar_individuo

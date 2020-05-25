@@ -16,6 +16,7 @@
                             <th>Fecha Llegada</th>
                             <th>Vehiculo</th>
                             <th>Cant. Pasajeros</th>
+                            <th>Pasajeros</th>
                             <th>Email de Contacto</th>
                             <th>Telefono</th>
                             <th>Operador</th>
@@ -33,6 +34,11 @@
                                 <td>{{ingreso.fecha_llegada|date:"d/m/Y H:i"}}</td>
                                 <td>{{ingreso.marca}} {{ingreso.modelo}} {{ingreso.patente}}</td>
                                 <td>{{ingreso.individuos.count}}</td>
+                                <td>
+                                    {% for pasajero in ingreso.individuos.all %}
+                                        {{pasajero.num_doc}}<br>
+                                    {% endfor %}
+                                </td>
                                 <td>{{ingreso.email_contacto}}</td>
                                 <td>
                                     {% if ingreso.individuos.exists %}

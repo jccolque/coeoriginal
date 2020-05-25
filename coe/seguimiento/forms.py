@@ -7,6 +7,7 @@ from informacion.models import Individuo
 from core.widgets import XDSoftDatePickerInput, XDSoftDateTimePickerInput
 #Imports de la app
 from .models import Seguimiento, Vigia
+from .models import OperativoVehicular, TestOperativo
 from .functions import obtener_bajo_seguimiento
 
 #Definimos nuestros forms aqui:
@@ -41,3 +42,15 @@ class AsignarVigia(forms.Form):
         required=True,
         widget= autocomplete.ModelSelect2(url='seguimiento:vigias-autocomplete'),
     )
+
+class OperativoForm(forms.ModelForm):
+    class Meta:
+        model = OperativoVehicular
+        fields= '__all__'
+        exclude = ('fecha', 'cazadores', 'estado')
+
+class TestOperativoForm(forms.ModelForm):
+    class Meta:
+        model = OperativoVehicular
+        fields= '__all__'
+        exclude = ('operativo', 'individuo', 'geoposicion', 'fecha')

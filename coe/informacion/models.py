@@ -248,11 +248,12 @@ class TrasladoVehiculo(models.Model):
     vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, related_name="traslados")
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    pasajeros = models.ManyToManyField(Individuo, related_name='traslados')
     def __str__(self):
         return self.aclaracion + ': ' + str(self.fecha)   
 
-class Pasajero(models.Model):
-    traslado = models.ForeignKey(TrasladoVehiculo, on_delete=models.CASCADE, related_name="pasajeros")
+class Pasajero(models.Model):#ELIMINAR POST MIGRACION
+    traslado = models.ForeignKey(TrasladoVehiculo, on_delete=models.CASCADE, related_name="pasajeros_old")
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="pasajes")
     def __str__(self):
         return str(self.traslado) + ': ' + str(self.individuo)

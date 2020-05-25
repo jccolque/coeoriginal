@@ -10,9 +10,10 @@ from django.db.models.signals import post_save, post_delete
 from dateutil.relativedelta import relativedelta
 #Imports del proyecto
 #Imports de la app
-from .models import Pasajero
+#from .models import Pasajero
 from .models import Individuo, Domicilio, Situacion, Relacion
 from .models import Atributo, SignosVitales, Documento
+from .models import TrasladoVehiculo
 
 #Logger
 logger = logging.getLogger('signals')
@@ -35,16 +36,16 @@ def estado_inicial(created, instance, **kwargs):
                 atributo.tipo = 'PR'
                 atributo.save()
 
-@receiver(post_save, sender=Pasajero)
-def relacion_vehiculo(created, instance, **kwargs):
-    if created and (not instance.traslado.vehiculo.tipo == 1):
-        for pasajero in instance.traslado.pasajeros.all().exclude(individuo__pk=instance.individuo.pk):
-            relacion = Relacion()
-            relacion.tipo = 'CE'
-            relacion.individuo = instance.individuo
-            relacion.relacionado = pasajero.individuo
-            relacion.aclaracion = "Mismo Vehiculo-Mismo Traslado"
-            relacion.save()
+#@receiver(post_save, sender=TrasladoVehiculo)
+#def relacion_vehiculo(instance, **kwargs):
+#    if not instance.traslado.vehiculo.tipo == 1:
+#        for pasajero in instance.pasajeros.exclude(pk=instance.individuo.pk):
+#            relacion = Relacion()
+#            relacion.tipo = 'CE'
+#            relacion.individuo = instance.individuo
+#            relacion.relacionado = pasajero.individuo
+#            relacion.aclaracion = "Mismo Vehiculo-Mismo Traslado"
+#            relacion.save()
 
 @receiver(post_save, sender=Domicilio)
 def domicilio_actual(created, instance, **kwargs):

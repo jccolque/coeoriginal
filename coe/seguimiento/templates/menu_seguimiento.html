@@ -16,11 +16,12 @@
                                 {% endif %}
                                 {% if perms.operadores.seguimiento_admin %}
                                     <hr>
+                                    <h3>Seguimiento Epidemiologico</h3>
                                     <li><a href="{% url 'seguimiento:lista_vigias' %}">Lista de Vigilantes Habilitados</a></li>
-                                    <hr>
                                     <li><a href="{% url 'seguimiento:lista_sin_vigias' %}">Listado de Individuos Sin Seguimiento</a></li>
                                     <li><a href="{% url 'seguimiento:lista_seguimientos' %}">Listado de Individuos Bajo Seguimiento</a></li>
                                     <hr>
+                                    <h3>Altas Realizadas</h3>
                                     <li><a href="{% url 'seguimiento:esperando_alta_seguimiento' %}">Individuos para Alta de Seguimiento</a></li>
                                     <li><a href="{% url 'seguimiento:altas_realizadas' %}">Altas Realizadas</a></li>
                                     <hr>
@@ -29,7 +30,11 @@
                                     <li><a href="{% url 'seguimiento:esperando_test' %}">Esperando Realizacion y Resultado de Test</a></li>
                                     <li><a href="{% url 'seguimiento:lista_sin_telefono' %}">Listado de Individuos sin Telefono</a></li>
                                     <li><a href="{% url 'seguimiento:lista_autodiagnosticos' %}">Listado de Autodiagnosticos</a></li>
-                                    <li><a href="{% url 'seguimiento:lista_aislados' %}">Listado de Aislados</a></li>
+                                    <li><a href="{% url 'seguimiento:lista_aislados' %}">Listado de Aislados</a></li>                                    <hr>
+                                {% endif %}
+                                {% if perms.operadores.operativos %}
+                                    <h3>Cazador 360</h3>
+                                    <li><a href="{% url 'seguimiento:lista_operativos' %}">Lista de Vehiculos Habilitados</a></li>
                                 {% endif %}
                             {% endif %}
 

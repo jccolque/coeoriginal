@@ -1,0 +1,49 @@
+{% extends 'base_seguimiento.html' %}
+
+{% load static %}
+{% load auditar_tags %}
+
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2><b>Lista de Cazadores Operativos</b></h2>
+            <a class="botoncito" href="{% url 'seguimiento:crear_operativo' %}">
+                Crear Nuevo Operativo
+                <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
+            </a>
+            <div class="col-md-12">
+                <table class="listado" id="table">
+                    <thead>
+                        <tr>
+                            <th>Estado</th>
+                            <th>Vehiculo</th>
+                            <th>Cazadores</th>
+                            <th>Test Realizados</th>
+                            <th>Inicio Actividad</th>
+                            <th>Ver Detalle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for operativo in operativos %}
+                            <tr>
+                                <td>{{operativo.get_estado_display}}</td>
+                                <td>{{operativo.vehiculo}}</td>
+                                <td>{{operativo.cazadores.count}}</td>
+                                <td>{{operativo.tests.count}}</td>
+                                <td>{{operativo.fecha}}</td>
+                                <td>
+                                    <a href="{% url 'seguimiento:ver_operativo' operativo_id=operativo.id %}" target="_blank">
+                                        <img class="icons" src="/static/img/icons/control_panel.png" alt="Panel de Control">
+                                    </a>
+                                    <a class="nolink"  href="{% ct_auditar_obj_url operativo %}">
+                                        <img class="icons" src="{% static '/img/icons/question.png' %}">
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

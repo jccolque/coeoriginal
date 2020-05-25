@@ -24,6 +24,7 @@ TIPO_VEHICULO = (
     (4, 'Traffic'),
     (5, 'Comercial Pequeño'),
     (6, 'Avion'),
+    (9, 'Cazador 360'),
 )
 
 TIPO_ESTADO = (
