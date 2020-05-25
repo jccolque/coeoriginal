@@ -16,6 +16,7 @@ logger = logging.getLogger('signals')
 #Definimos nuestras señales
 @receiver(post_save, sender=AppNotificacion)
 def enviar_push(instance, created, **kwargs):
+    print("Mando")
     if created:#Si creamos la local, mandamos la push.
         try:
             device = FCMDevice.objects.get(name=instance.appdata.individuo.num_doc)
@@ -23,6 +24,7 @@ def enviar_push(instance, created, **kwargs):
                 title=instance.titulo,
                 body=instance.mensaje,
             )#La accion la lee al consultar el mensaje grabado.
-        except:
+        except Exception as e:
             logger.info("No se envio mensaje a: " + str(instance.appdata.individuo))
-            logger.info("Falla: "+str(traceback.format_exc()))
+            logger.info(e)
+            logger.info(traceback.format_exc())

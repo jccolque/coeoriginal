@@ -1,6 +1,8 @@
 #Imports de python
 import traceback
 import logging
+#Imports de la app
+from .models import AppNotificacion
 
 #Definimos logger
 logger = logging.getLogger("functions")
@@ -17,10 +19,11 @@ def activar_tracking(individuo):
     try:
         AppNotificacion.objects.filter(appdata=individuo.appdata).delete()
         notif = AppNotificacion(appdata=individuo.appdata)
-        notif.titulo = 'Iniciar Proceso de supervisión Digital'
-        notif.mensaje = 'Por Favor presione esta notificacion para iniciarlo.'
+        notif.titulo = 'Iniciar Proceso de Supervisión Digital'
+        notif.mensaje = 'Por Favor presione esta notificacion para Iniciarlo.'
         notif.accion = 'BT'
         notif.save()#Al grabar el local, se envia automaticamente por firebase (signals)
+        print("Guardo Iniciar")
     except Exception as e:
         logger.info("\nFallo Activar Tracking: "+str(individuo))
         logger.info(e)
@@ -30,10 +33,11 @@ def desactivar_tracking(individuo):
     try:
         AppNotificacion.objects.filter(appdata=individuo.appdata).delete()
         notif = AppNotificacion(appdata=individuo.appdata)
-        notif.titulo = 'Finalizar Proceso de supervisión Digital'
-        notif.mensaje = 'Por Favor presione esta notificacion para terminarlo.'
+        notif.titulo = 'Finalizar Proceso de Supervisión Digital'
+        notif.mensaje = 'Por Favor presione esta notificacion para Finalizarlo.'
         notif.accion = 'ST'
         notif.save()#Al grabar el local, se envia automaticamente por firebase (signals)
+        print("Guardo Finalizar")
     except Exception as e:
         logger.info("\nFallo Desactivar Tracking: "+str(individuo))
         logger.info(e)
