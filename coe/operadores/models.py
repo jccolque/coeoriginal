@@ -90,7 +90,7 @@ class Operador(models.Model):
             ("seguimiento", "Monitor Seguimiento de Individuos."),
             ("seguimiento_admin", "Administrar Sistema de Seguimiento."),
             #GeoTracking
-            ("geotracking", "Monitore Tracking de Individuos."),
+            ("geotracking", "Monitorear Tracking de Individuos."),
             ("geotracking_admin", "Administrador Sistema de GeTracking."),
             #Permisos:
             ("permisos", "Permisos de Circulacion."),
@@ -104,6 +104,8 @@ class Operador(models.Model):
             ("documentos", "Puede Administrar Documentos"),
             #Inscripciones:
             ("menu_inscripciones", "Menu de Inscripciones"),
+            #Provision
+            ("menu_provisiones", "Menu de Provisiones"),
             #Reportes
             ("reportes", "Reportes del sistema"),
             #Wservices

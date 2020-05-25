@@ -138,31 +138,70 @@
                     </div>
                     <form name="contact_form" class="default-form contact-form" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
-                        {% for field in form.hidden_fields %}
-                            {{ field }}
-                        {% endfor %}
                         <div class="row">
+                            <div class="col-md-12">
+                                <div class="bordeado">
+                                    <p>Este formulario es para aquellas personas que desean realizar una petición de COCA.</p>
+                                    <p><b>ESTE FORMULARIO SE LLENA EN CARACTER DE DECLARIACIÓN JURADA.</b></p>
+                                    <hr>
+                                    <p><b>PARA REALIZAR ESTE PEDIDO, DEBE SEGUIR LOS SIGUIENTES PASOS:</b></p>
+                                    <ul>
+                                        <li>[1]. Completar el FORMULARIO INICIAL.</li>
+                                        <li>[2]. Completar los PASOS POSTERIORES (Recibirá un EMAIL en su casilla de contacto)</li>
+                                        <li>[3]. Cargar sus DATOS PERSONALES, en la pestaña "AGREGAR DATOS PERSONALES".</li>                                       
+                                    </ul>                                    
+                                    <ul>       
+                                    
+                                </div>
+                            </div>
                             <div class="col-md-12 col-sm-12 col-xs-12">
-                                <div class="form-group text-center">                                    
+                                <div class="form-group text-center">
+                                    <caption><strong>INGRESE PEDIDO</strong></caption>
                                 </div>
                             </div>
 
                             <div class="col-md-12">
-                                                              
-                                <div class="form-group">
-                                    <label for="id_num_doc">Número de Documento / PASAPORTE</label>
-                                    <input type="text" name="num_doc" maxlength="50" required id="id_num_doc" placeholder="Ingrese NÚMERO DE DOCUMENTO">
-                                    <small class="form-text text-danger">{{form.num_doc.errors.as_text}}</small>
+                                <div class="col-lg-6">                                
+                                    <div class="form-group">
+                                        <label for="{{form.email_contacto.id_for_label}}">{{form.email_contacto.label}}</label>
+                                        {{form.email_contacto}}
+                                        <small class="form-text text-danger">{{form.email_contacto.errors.as_text}}</small>
+                                    </div>
                                 </div>
-                                
+                                <div class="col-lg-6"> 
+                                    <div class="form-group">
+                                        <label for="{{form.cantidad.id_for_label}}">{{form.cantidad.label}}</label>
+                                        {{form.cantidad}}
+                                        <small class="form-text text-danger">{{form.cantidad.errors.as_text}}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-lg-6">                                
+                                    <div class="form-group">
+                                        <label for="{{form.destino.id_for_label}}">{{form.destino.label}}</label>
+                                        {{form.destino}}
+                                        <small class="form-text text-danger">{{form.destino.errors.as_text}}</small>
+                                    </div>
+                                </div>                                
+                            </div>                 
+                            <div class="col-md-12">
+                                <p><strong>DESCRIBA BREVEMENTE EL PORQUE DE SU PEDIDO EN EL CAMPO "ACLARACIONES".</strong></p>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="{{form.aclaracion.id_for_label}}">{{form.aclaracion.label}}</label>
+                                    {{ form.aclaracion}}
+                                    <small class="form-text text-danger">{{form.aclaracion.errors.as_text}}</small>
+                                </div>
                             </div>
                             <br>
                             <div class="col-md-12">
                                 <div class="col-md-6">
                                     {{ message }}
                                 </div>
-                            </div>                        
-                           
+                            </div>                           
+                            
                             <div class="col-md-12 col-sm-12 col-xs-12">
                                 <div class="form-group text-center">
                                     <button type="submit" class="btn-style-one">{{button}}</button>
@@ -174,7 +213,9 @@
             </div>
         </div>
     </div>
-</section>
-
-
+</section>                                
+                  
 {% endblock %}
+
+                           
+

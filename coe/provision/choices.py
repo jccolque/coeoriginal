@@ -19,3 +19,10 @@ TIPO_CONFIRMA = (
     ('NO', 'NO'),
     ('SI', 'SI'),
 )
+
+ESTADO_PEDIDO = (
+    ('C', 'Cargando Pedido'),
+    ('E', 'Pedido Cargado'),    
+    ('A', 'Aprobado'),
+    ('B', 'Dado de Baja'),
+)

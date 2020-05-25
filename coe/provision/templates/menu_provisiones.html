@@ -1,0 +1,35 @@
+{% extends 'base_informacion.html' %}
+
+{% load seguridad_tags%}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">        
+                    <h1>Menu Provision de Coca:</h1>
+                    <div class="col-md-8">
+                        <ul class="menu_botones">
+                            {% if perms.operadores.permisos %}
+                                <h3>Petición de COCA</h3>
+                                <!-- <li><a href="{% url 'permisos:situacion_ingresos' %}">Tablero de Situacion</a></li> -->
+                                <li><a href="{% url 'provision:lista_peticiones_completas' %}">Peticiones Esperando Aprobacion</a></li>
+                                <li><a href="{% url 'provision:lista_peticiones' %}">Listado de todos los pedidos de COCA</a></li>                                
+                                <br>
+                                <li><a href="{% url 'provision:peticion_persona' %}">Petición de COCA - PERSONAS</a></li>
+                                <hr>                                
+                            {% endif %}                            
+                            {% if request.user.is_superuser %}                                
+                                <h3>Uso Bajo Supervision:</h3>
+                                <li><a href="{% url 'admin:index' %}">Administrador</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        {% include 'info_user.html' %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}

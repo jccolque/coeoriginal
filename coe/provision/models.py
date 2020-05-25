@@ -17,7 +17,8 @@ from georef.models import Nacionalidad, Localidad
 #Imports de la app
 from informacion.choices import TIPO_DOCUMENTO
 from informacion.models import Individuo
-from .choices import TIPO_REFERENCIA, TIPO_ORGANIZACION, TIPO_CONFIRMA
+from .choices import TIPO_REFERENCIA, TIPO_ORGANIZACION, TIPO_CONFIRMA, ESTADO_PEDIDO
+from .tokens import token_provision
 
 
 # Create your models here.
@@ -130,7 +131,23 @@ class Empleado(models.Model):
 
 class Peticionp(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="pedidos_personas")
-    pedido_p = models.CharField('¿Confirma Solicitud de Coca?', max_length=2, choices=TIPO_CONFIRMA, default='NO')
-    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    destino = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="pedidosd_personas")
+    email_contacto = models.EmailField('Correo Electrónico de Contacto', max_length=200)
+    cantidad = models.CharField('Cantidad de Coca (en gramos)', max_length=50)    
+    #Interno
+    token = models.CharField('Token', max_length=50, default=token_provision, unique=True)
+    fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
+    estado = models.CharField('Estado', choices=ESTADO_PEDIDO, max_length=1, default='C')
+    operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True, related_name="provisiones")
+    #Aclaraciones
+    aclaracion = HTMLField('Aclaraciones', null=True)    
     def __str__(self):
-        return self.pedido_p
+        return self.email_contacto + self.cantidad
+
+class Emails_Peticionp(models.Model):
+    peticion = models.ForeignKey(Peticionp, on_delete=models.CASCADE, related_name="emails")
+    fecha = models.DateTimeField('Fecha de Envio', default=timezone.now)
+    asunto = models.CharField('Asunto', max_length=100)
+    cuerpo = models.CharField('Cuerpo', max_length=1000)
+    operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="peticion_emailsenviados")
+

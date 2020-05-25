@@ -13,179 +13,178 @@ from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
 from coe.settings import SEND_MAIL
 from core.decoradores import superuser_required
+from core.forms import EmailForm, UploadFoto
+from core.functions import date2str
+from operadores.functions import obtener_operador
+from informacion.models import Individuo, Atributo
+from informacion.functions import actualizar_individuo
+from informacion.forms import BuscarIndividuoSeguro
+from graficos.functions import obtener_grafico
 #imports de la app
 from informacion.models import Individuo, Domicilio
-from .models import Organization, Domic_o
+from .models import Organization, Domic_o, Peticionp, Emails_Peticionp
 from .forms import OrganizationForm, EmpleadoForm, EmpleadoFormset
-from .forms import OrgaForm, DniForm, PersonaForm
-
-
+from .forms import PeticionpForm
+from .forms import PersonapetForm, AprobarForm
 
 #Publico
 def pedir_coca(request):
 
     return render(request, "pedir_coca.html", {'title': "Sistema de Provisión de Coca", })
 
-
-def buscar_organizacion(request):
-    form = OrgaForm()
-    if request.method == 'POST':
-        form = OrgaForm(request.POST)
-        if form.is_valid():
-            cuit = form.cleaned_data['cuit']                      
-            try:
-                organizacion = Organization.objects.get(cuit=cuit)
-                return redirect('provision:editar_disclaimer_org', organization_id=organizacion.id, cuit=cuit)
-            except Organization.DoesNotExist:
-                return redirect('provision:cargar_disclaimer_org', cuit=cuit)
-        else:
-            return render(request, "buscar_organizacion.html", {'title': "INGRESE DATOS", 'form': form, 'button': 'BUSCAR', 'message': 'FORMULARIO NO VÁLIDO',})
-        
-    return render(request, "buscar_organizacion.html", {'title': "INGRESE DATOS",'form': form, 'button': 'BUSCAR'})
-
-def buscar_persona(request):
-    form = DniForm()
-    if request.method == 'POST':
-        form = DniForm(request.POST)
-        if form.is_valid():
-            num_doc = form.cleaned_data['num_doc']
-            num_doc = num_doc.upper()                      
-            try:
-                individuo = Individuo.objects.get(num_doc=num_doc)
-                return redirect('provision:edit_persona', individuo_id=individuo.id, num_doc=num_doc)
-            except Individuo.DoesNotExist:
-                return redirect('provision:cargar_persona', num_doc=num_doc)
-        else:
-            return render(request, "buscar_persona.html", {'title': "INGRESE DATOS", 'form': form, 'button': 'BUSCAR', 'message': 'FORMULARIO NO VÁLIDO',})
-        
-    return render(request, "buscar_persona.html", {'title': "INGRESE DATOS",'form': form, 'button': 'BUSCAR PERSONA'})
-
-def cargar_persona(request, num_doc=None):
-    form = PersonaForm(initial={"num_doc": num_doc})
-    #Analizamos si mando informacion
+def peticion_persona(request, peticionp_id=None):
+    peticion = None
+    if peticionp_id:
+        peticion = Peticionp.objects.get(pk=peticionp_id)
+    form = PeticionpForm(instance=peticion)
     if request.method == "POST":
-        form = PersonaForm(request.POST)
+        form = PeticionpForm(request.POST, request.FILES, instance=peticion)
         if form.is_valid():
-            persona = form.save(commit=False)
-            persona.save()
-            #Creamos domicilio
-            domicilio = Domicilio()
-            domicilio.individuo = persona
-            if form.cleaned_data['localidad']:
-                domicilio.localidad = form.cleaned_data['localidad']                
-                domicilio.calle = form.cleaned_data['calle']
-                domicilio.numero = form.cleaned_data['numero']
-                domicilio.aclaracion = form.cleaned_data['aclaracion']    
-                domicilio.save()
-            
-            return render(request, 'carga_persona.html', {'title': 'Petición de Coca - PERSONAS', 'form': form, 'message': 'Sus datos fueron procesados con éxito.', 'button': 'CREAR PERSONA' })
-        else:
-            return render(request, "carga_persona.html", {'title': 'Petición de Coca - PERSONAS', 'form': form, 'message': 'Formulario no válido.', 'button': 'CREAR PERSONA' })
-
-    return render(request, "carga_persona.html", {'title': 'Petición de Coca - PERSONAS', 'form': form, 'button': 'CREAR PERSONA'})
-
-def edit_persona(request, individuo_id=None, num_doc=None):
-    persona = Individuo.objects.get(pk=individuo_id)
-    form = PersonaForm(instance=persona)
-    domicilio = Domicilio.objects.filter(individuo_id=individuo_id, aislamiento = False).last() 
-    if domicilio:
-        form = PersonaForm(
-                    instance = persona,
-                    initial = {
-                        'localidad': domicilio.localidad,                        
-                        'calle': domicilio.calle,
-                        'numero': domicilio.numero,
-                        'aclaracion': domicilio.aclaracion,                                       
-                }
-
-        )   
-    if request.method == 'POST':
-        #Obtenemos peticion
-        form = PersonaForm(request.POST, instance=persona)
-        if form.is_valid():
-            people = form.save(commit=False) 
-            people.save()           
-            #Grabamos modelos relacionados
-            if form.cleaned_data['localidad']:                
-                domicilio.individuo = persona
-                domicilio.localidad = form.cleaned_data['localidad']                
-                domicilio.calle = form.cleaned_data['calle']
-                domicilio.numero = form.cleaned_data['numero']
-                domicilio.aclaracion = form.cleaned_data['aclaracion']
-                domicilio.save()                   
+            peticion = form.save()
+            #Enviar email
+            if SEND_MAIL:
+                to_email = peticion.email_contacto
+                #Preparamos el correo electronico
+                mail_subject = 'COE2020 Requerimiento de Ingreso Provincial Jujuy!'
+                message = render_to_string('emails/email_persona_pet.html', {
+                    'peticion': peticion,
+                })
+                #Instanciamos el objeto mail con destinatario
+                email = EmailMessage(mail_subject, message, to=[to_email])
+                email.send()
+            #Enviarlo a cargar ingresantes
+            return redirect('provision:ver_peticion_persona', token=peticion.token)
         else: 
-            return render(request, "carga_persona.html", {'title': 'Petición de Coca - PERSONAS', 'form': form, 'message': 'Formulario no válido.', 'button': 'EDITAR PERSONA' })
-        
-        return render(request, "carga_persona.html", {'title': 'Petición de Coca - PERSONAS', 'form': form, 'message': 'Sus datos fueron modificados con éxito.', 'button': 'EDITAR PERSONA' })
+            return render(request, "peticion_persona.html", {'title': "PETICIÓN DE COCA - PERSONAS", 'form': form, 'button': "Iniciar Pedido", 'message': 'FORMULARIO INVÁLIDO, CORRIJA DATOS.' })
 
-    return render(request, "carga_persona.html", {'title': 'Petición de Coca - PERSONAS', 'form': form, 'button': 'EDITAR PERSONA'})
+    return render(request, "peticion_persona.html", {'title': "PETICIÓN DE COCA - PERSONAS", 'form': form, 'button': "Iniciar Pedido", })
 
-def disclaimer_orgedit(request, organization_id, cuit):
-    organizacion = Organization.objects.get(pk=organization_id)
-    form = OrganizationForm(instance=organizacion)
-    domicilio = Domic_o.objects.get(organizacion_id=organizacion.id) 
-    if domicilio:
-        form = OrganizationForm(
-                    instance = organizacion,
-                    initial = {
-                        'localidad': domicilio.localidad,
-                        'barrio': domicilio.barrio,
-                        'calle': domicilio.calle,
-                        'numero': domicilio.numero,
-                        'manzana': domicilio.manzana,
-                        'lote': domicilio.lote,
-                        'piso': domicilio.piso,                
-                }
+def ver_peticion_persona(request, token):
+    peticion = Peticionp.objects.prefetch_related('individuos')
+    peticion = peticion.get(token=token)
+    #Calcular Limite para eliminacion
+    limite = int(72 - (timezone.now() - peticion.fecha).total_seconds() / 3600)
+    return render(request, 'panel_peticion.html', {
+        'peticion': peticion,
+        'limite': limite,        
+        'has_table': True,
+    })
 
-        )   
-    if request.method == 'POST':
-        #Obtenemos peticion
-        form = OrganizationForm(request.POST, request.FILES, instance=organizacion)
-        if form.is_valid():
-            org = form.save(commit=False) 
-            org.save()           
-            #Grabamos modelos relacionados
-            if form.cleaned_data['localidad']:                
-                domicilio.organizacion = organizacion
-                domicilio.localidad = form.cleaned_data['localidad']
-                domicilio.barrio = form.cleaned_data['barrio'] 
-                domicilio.calle = form.cleaned_data['calle']
-                domicilio.numero = form.cleaned_data['numero']
-                domicilio.manzana = form.cleaned_data['manzana']
-                domicilio.lote = form.cleaned_data['lote']
-                domicilio.piso = form.cleaned_data['piso']
-                domicilio.save()                   
-        else: 
-            return render(request, "organizacion_peticion.html", {'title': 'Petición de Coca - ORGANIZACIONES', 'form': form, 'message': 'Formulario no valido.', 'button': 'EDITAR ORGANIZACION' })
-        
-        return render(request, "organizacion_peticion.html", {'title': 'Petición de Coca - ORGANIZACIONES', 'form': form, 'message': 'La organizacion fue modificada con éxito.', 'button': 'EDITAR ORGANIZACION' })
-
-    return render(request, "organizacion_peticion.html", {'title': 'Petición de Coca - ORGANIZACIONES', 'form': form, 'button': 'EDITAR ORGANIZACION'})
-
-
-def disclaimer_org(request, cuit=None):
-    form = OrganizationForm(initial={"cuit": cuit})
-    #Analizamos si mando informacion
+def cargar_people(request, peticion_id, individuo_id=None):
+    individuo = None
+    if individuo_id:
+        individuo = Individuo.objects.get(pk=individuo_id)
+    form = PersonapetForm(instance=individuo)
     if request.method == "POST":
-        form = OrganizationForm(request.POST, request.FILES)
+        #obtenemos peticion
+        peticion = PersonapetFormobjects.get(pk=ingreso_id)
+        try:#Tratamos de obtener el dni
+            num_doc = request.POST['num_doc']
+            individuo = Individuo.objects.get(num_doc=num_doc)
+        except Individuo.DoesNotExist:
+            individuo = None
+        form = PersonapetForm(request.POST, request.FILES, instance=individuo)
         if form.is_valid():
-            organizacion = form.save(commit=False)
-            organizacion.save()
-            #Creamos domicilio
-            domicilio = Domic_o()
-            domicilio.organizacion = organizacion
-            if form.cleaned_data['localidad']:
-                domicilio.localidad = form.cleaned_data['localidad']
-                domicilio.barrio = form.cleaned_data['barrio']
-                domicilio.calle = form.cleaned_data['calle']
-                domicilio.numero = form.cleaned_data['numero']
-                domicilio.manzana = form.cleaned_data['manzana']
-                domicilio.lote = form.cleaned_data['lote']
-                domicilio.piso = form.cleaned_data['piso']
-                domicilio.save()
-            
-            return render(request, 'organizacion_peticion.html', {'title': 'Petición de Coca - ORGANIZACIONES', 'form': form, 'message': 'La organizacion fue CREADA con éxito.', 'button': 'CREAR ORGANIZACION' })
-        else:
-            return render(request, "organizacion_peticion.html", {'title': 'Petición de Coca - ORGANIZACIONES', 'form': form, 'message': 'Formulario no valido.', 'button': 'CREAR ORGANIZACION' })
+            #actualizamos individuo con los datos nuevos
+            individuo = actualizar_individuo(form)            
+            individuo.destino = peticion.destino
+            individuo.save()
+            #Lo agregamos al registro
+            peticion.individuos.add(individuo)
+            return redirect('provision:ver_peticion_persona', token=peticion.token)
+    return render(request, "cargar_people.html", {'title': "Cargar Datos Personales", 'form': form, 'button': "Cargar", }) 
 
-    return render(request, "organizacion_peticion.html", {'title': 'Petición de Coca - ORGANIZACIONES', 'form': form, 'button': 'CREAR ORGANIZACION'})
+def quitar_persona(request, peticion_id, individuo_id):
+    peticion = Pedidosp.objects.get(pk=peticion_id)
+    individuo = Individuo.objects.get(pk=individuo_id)
+    peticion.individuos.remove(individuo)
+    return redirect('provision:ver_peticion_persona', token=peticion.token)
+
+def finalizar_peticion(request, peticion_id):
+    peticion = Peticionp.objects.get(pk=peticion_id)    
+    #Chequear que el ingreso este finalizado
+    if not peticion.individuos.exists():
+        return render(request, 'extras/error.html', {
+            'titulo': 'FINALIZACIÓN DEGENEGADA',
+            'error': "USTED DEBE CARGAR SUS DATOS PERSONALES",
+        })    
+    #Pasar a estado finalizado    
+    peticion.estado = 'E'
+    peticion.save()
+    return redirect('provision:ver_peticion_persona', token=peticion.token)
+
+#Administrar
+@permission_required('operadores.menu_provisiones')
+def menu_permisos(request):
+    return render(request, 'menu_provisiones.html', {})
+
+@permission_required('operadores.menu_provisiones')
+def lista_peticiones(request, estado=None):
+    peticion = Peticionp.objects.all()
+    #Filtramos de ser necesario
+    if not estado:
+        peticion = peticion.exclude(estado='B')
+    if estado:
+        peticion = peticion.filter(estado=estado)
+    #Optimizamos
+    peticion = peticion.select_related('destino', 'operador')
+    peticion = peticion.prefetch_related('individuos')
+    #Lanzamos listado
+    return render(request, 'lista_peticiones.html', {
+        'title': "Ingresos Pedidos",
+        'peticion': peticion,
+        'has_table': True,
+    })
+
+@permission_required('operadores.menu_provisiones')
+def lista_peticiones_completas(request):
+    peticion = Peticionp.objects.filter(estado='E')    
+    #Optimizamos
+    peticion = peticion.select_related('destino', 'operador')
+    peticion = peticion.prefetch_related('individuos', 'individuos__domicilio_actual', 'individuos__domicilio_actual__localidad')
+    peticion = peticion.prefetch_related('individuos__documentos')
+    #Lanzamos listado
+    return render(request, 'lista_peticiones.html', {
+        'title': "Peticiones Completass Esperando Aprobacion",
+        'peticion': peticion,
+        'has_table': True,
+    })
+
+@permission_required('operadores.menu_provisiones')
+def peticion_enviar_email(request, peticion_id):
+    peticion = Peticionp.objects.get(pk=peticion_id)
+    form = EmailForm(initial={'destinatario': peticion.email_contacto})
+    if request.method == "POST":
+        form = EmailForm(request.POST)
+        if form.is_valid():
+            if SEND_MAIL:
+                to_email = form.cleaned_data['destinatario']
+                #Preparamos el correo electronico
+                mail_subject = form.cleaned_data['asunto']
+                message = render_to_string('emails/ingreso_contacto.html', {
+                        'peticion': peticion,
+                        'cuerpo': form.cleaned_data['cuerpo'],
+                    })
+                #Guardamos el mail
+                Emails_Peticionp(peticion=peticion, asunto=mail_subject, cuerpo=form.cleaned_data['cuerpo'], operador=obtener_operador(request)).save()
+                #Instanciamos el objeto mail con destinatario
+                email = EmailMessage(mail_subject, message, to=[to_email])
+                email.send()
+        return redirect('provision:ver_peticion_persona', token=peticion.token)
+    return render(request, "extras/generic_form.html", {'titulo': "Enviar Correo Electronico", 'form': form, 'boton': "Enviar", })
+
+@permission_required('operadores.menu_provisiones')
+def peticion_enviado(request, peticion_id):
+    peticion = Peticionp.objects.get(pk=peticion_id)
+    peticion.estado = 'N'
+    peticion.save()
+    return redirect('provision:ver_peticion_persona', token=peticion.token)
+
+         
+@permission_required('operadores.menu_provisiones')
+def eliminar_peticion(request, peticion_id):
+    peticion = Peticionp.objects.get(pk=peticion_id)
+    peticion.estado = 'B'
+    peticion.operador = obtener_operador(request)
+    peticion.save()
+    return redirect('provision:lista_peticiones')

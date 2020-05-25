@@ -10,33 +10,60 @@ from django.forms import ModelForm, modelformset_factory
 from dal import autocomplete
 #Imports del proyecto
 from core.widgets import XDSoftDatePickerInput, XDSoftDateTimePickerInput
-from georef.models import Localidad
+from georef.models import Localidad, Nacionalidad
 from informacion.models import Individuo
 #Imports de la app
-from .models import Organization, Empleado, Domic_o
+from .models import Organization, Empleado, Domic_o, Peticionp
 from informacion.models import Individuo
 
-class OrgaForm(forms.Form):
-    cuit = forms.CharField(max_length = 13)  
+#Peticion
 
-class DniForm(forms.Form):
-    num_doc = forms.CharField(max_length = 50)
-
-class PersonaForm(forms.ModelForm):
-    localidad = forms.ModelChoiceField(
-        queryset = Localidad.objects.all(),
-        widget=autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
-        required=True,        
+class AprobarForm(forms.Form):
+    fecha = forms.DateTimeField(label="Fecha Aprobada", 
+        required=True, 
+        widget=XDSoftDateTimePickerInput()
     )
-    calle = forms.CharField(required=False, )
-    numero = forms.CharField(required=False, )
-    aclaracion = forms.CharField(required=False, )    
+    
+class PersonapetForm(forms.ModelForm):    
+    #Domicilio en jujuy
+    localidad = forms.ModelChoiceField(
+        queryset=Localidad.objects.all(),
+        widget=autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+        required=True,
+    )
+    calle = forms.CharField(required=True, )
+    numero = forms.CharField(required=True, )
+    aclaracion = forms.CharField(required=False, )
+    #Documentos
+    frente_dni = forms.FileField(required=True)
+    reverso_dni = forms.FileField(required=True)
+    #Base Individuo
     class Meta:
-        model = Individuo        
-        fields = '__all__'
-        exclude = ('nacionalidad', 'origen', 'destino', 'observaciones', 'domicilio_actual', 'seguimiento_actual', 'situacion_actual', 'fotografia', 'qrpath', )
+        model = Individuo
+        fields= (
+            'tipo_doc', 'num_doc', 'apellidos', 'nombres', 'sexo', 'fecha_nacimiento', 'nacionalidad', 'telefono', 'email',
+            'localidad', 'calle', 'numero', 'aclaracion',
+            'frente_dni', 'reverso_dni',
+        )
         widgets = {
-            'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),            
+            'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
+            'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
+        }
+    def clean(self):
+        if self.cleaned_data['telefono'] is None or self.cleaned_data['telefono'] == '+549388':
+            raise forms.ValidationError("Debe cargar un telefono.")
+        else:
+            return self.cleaned_data
+
+class PeticionpForm(forms.ModelForm):
+    class Meta:
+        model = Peticionp
+        fields= '__all__'
+        exclude = ('fecha', 'token', 'individuo', 'estado', 'operador')
+        widgets = {
+            'cantidad': forms.TextInput(attrs={'placeholder': 'Introduzca Cantidad'}),
+            'email_contacto': forms.TextInput(attrs={'placeholder': 'Introduzca EMAIL de Contacto'}),
+            'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),            
         }
 
 #Formularios
@@ -69,14 +96,14 @@ class OrganizationForm(forms.ModelForm):
             'descripcion ': forms.Textarea(attrs={'placeholder': 'Describa el Objeto de su Organizacion'}),                    
         }
     
-class DomincForm(forms.ModelForm):
-    class Meta:
-        model = Domic_o
-        fields = '__all__'
-        exclude = ('organizacion',)
-        widgets = {
-            'localidad': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
-        }
+# class DomincForm(forms.ModelForm):
+#     class Meta:
+#         model = Domic_o
+#         fields = '__all__'
+#         exclude = ('organizacion',)
+#         widgets = {
+#             'localidad': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+#         }
 
 class EmpleadoForm(forms.ModelForm):
     class Meta:
