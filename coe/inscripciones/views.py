@@ -36,6 +36,7 @@ from .forms import PeticionpForm
 from .forms import PersonapForm, AprobarForm, ResponsableForm
 from .models import Emails_Peticiones_Organization, Responsable
 from .models import Empleado
+from .forms import DocumentacionForm
 
 # Create your views here.
 def inscripcion_salud(request):

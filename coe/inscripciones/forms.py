@@ -204,7 +204,7 @@ class OrganizationForm(forms.ModelForm):
     class Meta:
         model = Organization
         fields= '__all__'   
-        exclude = ('responsables','empleados', 'token', 'fecha', 'estado', 'operador',)     
+        exclude = ('responsables','empleados', 'token', 'fecha', 'estado', 'operador', 'archivo_adjunto')     
         widgets = {
             'cuit': forms.TextInput(attrs={'placeholder': 'Introduzca CUIT'}),
             'denominacion': forms.TextInput(attrs={'placeholder': 'Introduzca Denominacion'}),
@@ -214,7 +214,6 @@ class OrganizationForm(forms.ModelForm):
             'mail_institucional': forms.TextInput(attrs={'placeholder': 'Introduzca MAIL INSTITUCIONAL'}),
             'telefono': forms.TextInput(attrs={'placeholder': 'Introduzca Telefono Institucional'}),            
             'celular': forms.TextInput(attrs={'placeholder': 'Introduzca Celular Institucional'}),                       
-            'archivo_adjunto': forms.FileInput(attrs={'placeholder': 'Suba Informacion Respaldatoria'}),
             'descripcion ': forms.Textarea(attrs={'placeholder': 'Describa el Objeto de su Organizacion'}),                    
         }
 
@@ -236,3 +235,5 @@ class EmpleadoForm(forms.ModelForm):
             'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
         }
 
+class DocumentacionForm(forms.Form):
+    documentacion = forms.FileField()
