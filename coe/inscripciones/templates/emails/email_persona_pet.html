@@ -1,0 +1,20 @@
+{% autoescape off %}
+    La solicitud de Petición de Coca ha sido ingresada y está siendo tramitada.
+    En el caso que usted cumpla con las condiciones, se aprobará su solicitud.   
+    
+
+    Cantidad: {{peticion.cantidad}}    
+    Destino: {{peticion.destino}}
+    
+    Dirigido a:
+    Nombre: {{peticion.individuo.nombres}}
+    Apellido:{{peticion.individuo.apellidos}}
+
+    A través de este link puede acceder al mismo:
+    http://coe.jujuy.gob.ar/{% url 'provision:ver_peticion_persona' token=peticion.token %}
+    
+
+    Pronto le avisaremos si su pedido fue aprobado.
+    
+    
+{% endautoescape %}

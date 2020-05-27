@@ -40,18 +40,18 @@
                     </div>
                     <div class="col-md-4">
                         <ul class="menu_botones">
-                                <li><a href="{% url 'inscripciones:mod_peticion_persona' peticion_id=peticion.id %}">Modificar Datos de Ingreso</a></li>
+                                <li><a href="{% url 'inscripciones:mod_peticion_persona' peticion_id=peticionp.id %}">Modificar Datos de Ingreso</a></li>
                                 
-                                <li><a href="{% url 'inscripciones:cargar_people' peticion_id=peticion.id %}">Agregar Pasajero</a></li>
+                                <li><a href="{% url 'inscripciones:cargar_people' peticion_id=peticionp.id %}">Agregar Persona</a></li>
                                 
                                 {% if ingreso.estado != 'C' or ingreso.estado == 'B' %}
-                                    <li><a href="{% url 'inscripciones:finalizar_peticion' peticion_id=peticion.id %}">Finalizar Proceso</a></li>
+                                    <li><a href="{% url 'inscripciones:finalizar_peticion' peticion_id=peticionp.id %}">Finalizar Proceso</a></li>
                                 {% endif %}
                             {% if perms.operadores.permisos %}
                                 <hr>
                                 <p><b>OPERADORES</b></p>
-                                <li><a href="{% url 'inscripciones:peticion_enviar_email' peticion_id=peticion.id %}">Enviar Correo Electronico</a></li>
-                                <li><a href="{% url 'inscripciones:eliminar_peticion' peticion_id=peticion.id %}">Eliminar Petición</a></li>                                
+                                <li><a href="{% url 'inscripciones:peticion_enviar_email' peticion_id=peticionp.id %}">Enviar Correo Electronico</a></li>
+                                <li><a href="{% url 'inscripciones:eliminar_peticion' peticion_id=peticionp.id %}">Eliminar Petición</a></li>                                
                                 <li><a href="{% url 'inscripciones:lista_peticiones' %}">Volver al Listado de Peticiones</a></li>
                             {% endif %}
                         </ul>
@@ -61,6 +61,7 @@
                         <hr>
                         <h3><b> USTED DEBE CARGAR SUS DATOS PERSONALES.</b></h3>
                         <p><b> IMPORTANTE: Recuerde que este pedido se llena en caracter de DECLARACIÓN JURADA, cualquier falsedad u omisión, se considerará una CONTRAVENCIÓN GRAVE.</b></p>
+                        
                         <table class="listado" id="table">
                             <thead>
                                 <tr>
@@ -89,17 +90,19 @@
                                             {% endfor %}
                                         </td>                                                                                
                                         <td>
-                                            <a href="{% url 'inscripciones:mod_people' peticion_id=peticion.id individuo_id=individuo.id %}" target="_blank">
+                                            <a href="{% url 'inscripciones:mod_people' peticion_id=peticionp.id individuo_id=individuo.id %}" target="_blank">
                                                 <img class="icons" src="{% static 'img/icons/change.png' %}">
                                             </a>
-                                            <a href="{% url 'inscripciones:quitar_persona' peticion_id=peticion.id individuo_id=individuo.id %}" target="_blank">
+                                            <a href="{% url 'inscripciones:quitar_persona' peticion_id=peticionp.id individuo_id=individuo.id %}" target="_blank">
                                                 <img class="icons" src="{% static '/img/icons/delete.png' %}">
                                             </a>
                                         </td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
-                        </table>                        
+                        </table>
+                        <br>
+                          
 
                     {% if peticion.emails_enviados.exists %}
                         <div class="row">

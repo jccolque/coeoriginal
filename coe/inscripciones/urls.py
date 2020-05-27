@@ -51,6 +51,21 @@ urlpatterns = [
     path('mod/people/<int:peticion_id>/<int:individuo_id>', views.cargar_people, name='mod_people'),
     path('peticion/del/persona/<int:peticion_id>/<int:individuo_id>', views.quitar_persona, name='quitar_persona'),
     path('peticion/enviar/email/<int:peticion_id>', views.peticion_enviar_email, name='peticion_enviar_email'),
+    #COCA ORGANIZACIÓN
+    path('peticion_organizacion/', views.peticion_organizacion, name='peticion_organizacion'),    
+    path('mod/peticion_organizacion/<int:organizacion_id>', views.peticion_organizacion, name='mod_peticion_organizacion'),
+    path('peticion_org/<str:token>', views.ver_peticion_organizacion, name='ver_peticion_organizacion'),  
+    path('cargar/responsable_org/<int:organizacion_id>', views.cargar_responsable_org, name='cargar_responsable_org'),
+    path('mod/responsable_org/<int:organizacion_id>/<int:responsable_id>', views.cargar_responsable_org, name='mod_responsable_org'),
+    path('cargar/empleado_org/<int:organizacion_id>/', views.cargar_empleado_org, name='cargar_empleado_org'),
+    path('mod/empleado_org/<int:organizacion_id>/<int:empleado_id>', views.cargar_empleado_org, name='mod_empleado_org'),
+    path('peticion/del/responsable_org/<int:organizacion_id>/<int:responsable_id>', views.quitar_responsable_org, name='quitar_responsable_org'),
+    path('peticion/del/empleado_org/<int:organizacion_id>/<int:empleado_id>', views.quitar_empleado_org, name='quitar_empleado_org'),
+    path('finalizar/peticion_org/<int:organizacion_id>', views.finalizar_peticion_org, name='finalizar_peticion_org'),
+    #Administración ORGANIZACIÓN -COCA
+    path('peticion_org/mail/<int:organizacion_id>', views.peticion_org_enviar_email, name='peticion_org_enviar_email'),
+    path('del/peticion_org/<int:organizacion_id>', views.eliminar_peticion_org, name='eliminar_peticion_org'),
+    path('lista/peticiones_org', views.lista_peticiones_org, name='lista_peticiones_org'),
     #Ingresos   
     path('lista/peticiones/completas', views.lista_peticiones_completas, name='lista_peticiones_completas'),
     path('lista/peticiones', views.lista_peticiones, name='lista_peticiones'),

@@ -31,9 +31,11 @@ from .models import EmailsInscripto
 from .models import Organization, Domic_o, Peticionp, Emails_Peticionp
 from .forms import ProfesionalSaludForm, VoluntarioSocialForm
 from .forms import ProyectoEstudiantilForm, IndividuoForm
-from .forms import OrganizationForm, EmpleadoForm, EmpleadoFormset
+from .forms import OrganizationForm, EmpleadoForm
 from .forms import PeticionpForm
-from .forms import PersonapetForm, AprobarForm
+from .forms import PersonapetForm, AprobarForm, ResponsableForm
+from .models import Emails_Peticiones_Organization, Responsable
+from .models import Empleado
 
 # Create your views here.
 def inscripcion_salud(request):
@@ -646,7 +648,7 @@ def peticion_persona(request, peticionp_id=None):
             if SEND_MAIL:
                 to_email = peticion.email_contacto
                 #Preparamos el correo electronico
-                mail_subject = 'COE2020 Requerimiento de Ingreso Provincial Jujuy!'
+                mail_subject = 'COE2020 Petición de COCA Jujuy!'
                 message = render_to_string('emails/email_persona_pet.html', {
                     'peticion': peticion,
                 })
@@ -774,17 +776,299 @@ def peticion_enviar_email(request, peticion_id):
         return redirect('inscripciones:ver_peticion_persona', token=peticion.token)
     return render(request, "extras/generic_form.html", {'titulo': "Enviar Correo Electronico", 'form': form, 'boton': "Enviar", })
 
-@permission_required('operadores.menu_provisiones')
+@permission_required('operadores.menu_inscripciones')
 def peticion_enviado(request, peticion_id):
     peticion = Peticionp.objects.get(pk=peticion_id)
     peticion.estado = 'N'
     peticion.save()
     return redirect('inscripciones:ver_peticion_persona', token=peticion.token)
 
-@permission_required('operadores.menu_provisiones')
+@permission_required('operadores.menu_inscripciones')
 def eliminar_peticion(request, peticion_id):
     peticion = Peticionp.objects.get(pk=peticion_id)
     peticion.estado = 'B'
     peticion.operador = obtener_operador(request)
     peticion.save()
     return redirect('inscripciones:lista_peticiones')
+
+#Peticiones Organización           
+
+def peticion_organizacion(request, organizacion_id=None):  
+    organizacion = None
+    if organizacion_id:
+        organizacion = Organization.objects.get(pk=organizacion_id)
+        form = OrganizationForm(instance=organizacion)
+        domicilio = Domic_o.objects.get(organizacion_id=organizacion_id)
+        if domicilio:
+            form = OrganizationForm(
+                instance = organizacion,
+                initial={
+                    'localidad': domicilio.localidad,
+                    'barrio': domicilio.barrio,
+                    'calle': domicilio.calle,
+                    'numero': domicilio.numero,
+                    'manzana': domicilio.manzana,
+                    'lote': domicilio.lote,
+                    'piso': domicilio.piso,
+                }
+            )
+        if request.method == "POST":
+            form = OrganizationForm(request.POST, request.FILES, instance=organizacion)
+            if form.is_valid():
+                organizacion = form.save(commit=False)
+                organizacion.save()
+                #Generamos modelos externos:
+                if form.cleaned_data['localidad']:                    
+                    domicilio.organizacion = organizacion
+                    domicilio.localidad = form.cleaned_data['localidad']
+                    domicilio.barrio = form.cleaned_data['barrio']
+                    domicilio.calle = form.cleaned_data['calle']
+                    domicilio.numero = form.cleaned_data['numero']
+                    domicilio.manzana = form.cleaned_data['manzana']
+                    domicilio.lote = form.cleaned_data['lote']
+                    domicilio.piso = form.cleaned_data['piso']
+                    domicilio.save()                    
+                return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
+            else: 
+                return render(request, "peticion_organizacion.html", {
+                    'title': "PETICIÓN DE COCA - ORGANIZACION", 
+                    'form': form, 
+                    'button': "Iniciar Pedido",
+                    'message': 'FORMULARIO INVÁLIDO, CORRIJA DATOS.' 
+                })
+    else:
+        form = OrganizationForm()
+        if request.method == "POST":
+            form = OrganizationForm(request.POST, request.FILES)
+            if form.is_valid():
+                organizacion = form.save(commit=False)
+                organizacion.save()
+                #Creamos Domicilio
+                domicilio = Domic_o()
+                domicilio.organizacion = organizacion
+                if form.cleaned_data['localidad']:
+                    domicilio.localidad = form.cleaned_data['localidad']
+                    domicilio.barrio = form.cleaned_data['barrio']
+                    domicilio.calle = form.cleaned_data['calle']
+                    domicilio.numero = form.cleaned_data['numero']
+                    domicilio.manzana = form.cleaned_data['manzana']
+                    domicilio.lote = form.cleaned_data['lote']
+                    domicilio.piso = form.cleaned_data['piso']
+                    domicilio.save()            
+                #Enviar email
+                if SEND_MAIL:
+                    to_email = peticion_org.mail_institucional
+                    #Preparamos el correo electronico
+                    mail_subject = 'COE2020 Petición de COCA Jujuy!'
+                    message = render_to_string('emails/email_org_pet.html', {
+                    'organizacion': organizacion,
+                    })
+                    #Instanciamos el objeto mail con destinatario
+                    email = EmailMessage(mail_subject, message, to=[to_email])
+                    email.send()
+                #Enviarlo a cargar ingresantes
+                return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
+            else: 
+                return render(request, "peticion_organizacion.html", {
+                    'title': "PETICIÓN DE COCA - ORGANIZACION", 
+                    'form': form, 
+                    'button': "Iniciar Pedido",
+                    'message': 'FORMULARIO INVÁLIDO, CORRIJA DATOS.' 
+                })
+    return render(request, "peticion_organizacion.html", {'title': "PETICIÓN DE COCA - ORGANIZACIONES", 'form': form, 'button': "Iniciar Pedido", })
+
+def ver_peticion_organizacion(request, token):
+    organizacion = Organization.objects.prefetch_related('responsables', 'empleados')    
+    organizacion = organizacion.get(token=token)
+    domicilio = Domic_o.objects.get(organizacion = organizacion)
+    #Calcular Limite para eliminacion
+    limite = int(72 - (timezone.now() - organizacion.fecha).total_seconds() / 3600)
+    return render(request, 'panel_peticion_org.html', {
+        'organizacion': organizacion,
+        'domicilio': domicilio,
+        'limite': limite,        
+        'has_table': True,
+    })
+    
+
+def cargar_responsable_org(request, organizacion_id, responsable_id=None):
+    responsable = None
+    if responsable_id:
+        responsable = Responsable.objects.get(pk=responsable_id) 
+        form = ResponsableForm(instance=responsable)
+        if request.method == "POST":
+            #obtenemos peticion
+            organizacion = Organization.objects.get(pk=organizacion_id)        
+            form = ResponsableForm(request.POST, instance=responsable)
+            if form.is_valid():
+                responsable = form.save(commit=False)
+                #Guardamos los datos del responsable y lo vinculamos a la organizacion                      
+                responsable.save()
+                #Lo agregamos al registro
+                organizacion.responsables.add(responsable)            
+                return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
+            else:
+                return render(request, "cargar_responsable_org.html", {
+                    'title': "Cargar Datos del Responsable", 
+                    'form': form, 
+                    'button': "Cargar", 
+                    'message': 'Formulario inválido', 
+                })
+    else:
+        form = ResponsableForm()
+        if request.method == "POST":
+            #obtenemos peticion
+            organizacion = Organization.objects.get(pk=organizacion_id)        
+            form = ResponsableForm(request.POST)
+            if form.is_valid():
+                responsable = form.save(commit=False)
+                #Guardamos los datos del responsable y lo vinculamos a la organizacion                      
+                responsable.save()
+                #Lo agregamos al registro
+                organizacion.responsables.add(responsable)            
+                return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
+            else:
+                return render(request, "cargar_responsable_org.html", {
+                    'title': "Cargar Datos del Responsable", 
+                    'form': form, 
+                    'button': "Cargar", 
+                    'message': 'Formulario inválido', 
+                })                
+    return render(request, "cargar_responsable_org.html", {'title': "Cargar Datos del Responsable", 'form': form, 'button': "Cargar", })
+
+def cargar_empleado_org(request, organizacion_id, empleado_id=None):
+    empleado = None
+    if empleado_id:
+        empleado = Empleado.objects.get(pk=empleado_id) 
+        form = EmpleadoForm(instance=empleado)
+        if request.method == "POST":
+            #obtenemos peticion
+            organizacion = Organization.objects.get(pk=organizacion_id)        
+            form = EmpleadoForm(request.POST, instance=empleado)
+            if form.is_valid():
+                empleado = form.save(commit=False)
+                #Guardamos los datos del responsable y lo vinculamos a la organizacion                      
+                empleado.save()
+                #Lo agregamos al registro
+                organizacion.empleados.add(empleado)            
+                return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
+            else:
+                return render(request, "cargar_empleado_org.html", {
+                    'title': "Cargar Datos del Empleado", 
+                    'form': form, 
+                    'button': "Cargar", 
+                    'message': 'Formulario inválido', 
+                })
+    else:
+        form = EmpleadoForm()
+        if request.method == "POST":
+            #obtenemos peticion
+            organizacion = Organization.objects.get(pk=organizacion_id)        
+            form = EmpleadoForm(request.POST)
+            if form.is_valid():
+                empleado = form.save(commit=False)
+                #Guardamos los datos del responsable y lo vinculamos a la organizacion                      
+                empleado.save()
+                #Lo agregamos al registro
+                organizacion.empleados.add(empleado)            
+                return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
+            else:
+                return render(request, "cargar_empleado_org.html", {
+                    'title': "Cargar Datos del Empleado", 
+                    'form': form, 
+                    'button': "Cargar", 
+                    'message': 'Formulario inválido', 
+                })                
+    return render(request, "cargar_empleado_org.html", {'title': "Cargar Datos del Empleado", 'form': form, 'button': "Cargar", })
+
+
+def quitar_responsable_org(request, organizacion_id, responsable_id):
+    organizacion = Organization.objects.get(pk=organizacion_id)
+    responsable = Responsable.objects.get(pk=responsable_id)
+    organizacion.responsables.remove(responsable)
+    return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
+
+def quitar_empleado_org(request, organizacion_id, empleado_id):
+    organizacion = Organization.objects.get(pk=organizacion_id)
+    empleado = Empleado.objects.get(pk=empleado_id)
+    organizacion.empleados.remove(empleado)
+    return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
+
+
+def finalizar_peticion_org(request, organizacion_id):
+    organizacion = Organization.objects.get(pk=organizacion_id)    
+    #Chequear que el ingreso este finalizado
+    if not organizacion.responsables.exists() or not organizacion.empleados.exists():
+        return render(request, 'extras/error.html', {
+            'titulo': 'FINALIZACIÓN DEGENEGADA',
+            'error': "USTED DEBE CARGAR AL MENOS UN EMPLEADO Y EL RESPONSABLE DE LA INSTITUCIÓN",
+        })    
+    #Pasar a estado finalizado    
+    organizacion.estado = 'E'
+    organizacion.save()
+    return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
+
+#Administrar COCA - ORGANIZACIONES
+@permission_required('operadores.menu_inscripciones')
+def lista_peticiones_org(request, estado=None):
+    organizacion = Organization.objects.all()
+    #Filtramos de ser necesario
+    if not estado:
+        organizacion = organizacion.exclude(estado='B')
+    else:
+        organizacion = organizacion.filter(estado=estado)
+    #Optimizamos
+    organizacion = organizacion.select_related('operador')
+    organizacion = organizacion.prefetch_related('responsables')
+    #Lanzamos listado
+    return render(request, 'lista_peticiones_org.html', {
+        'titulo': "Listado de Peticiones de Coca",
+        'organizacion': organizacion,
+        'has_table': True,
+    })
+
+@permission_required('operadores.menu_inscripciones')
+def lista_peticiones_org_completas(request):
+    organizacion = Organization.objects.filter(estado='E')    
+    #Optimizamos
+    #ingresos = ingresos.select_related('origen', 'destino', 'operador')
+    #ingresos = ingresos.prefetch_related('individuos', 'individuos__domicilio_actual', 'individuos__domicilio_actual__localidad')
+    #ingresos = ingresos.prefetch_related('individuos__documentos')
+    #Lanzamos listado
+    return render(request, 'lista_peticiones_org.htm', {
+        'titulo': "Peticiones Completas Esperando Aprobacion",
+        'organizacion': organizacion,
+        'has_table': True,
+    })
+
+
+@permission_required('operadores.menu_inscripciones')
+def peticion_org_enviar_email(request, organizacion_id):
+    organizacion = Organization.objects.get(pk=organizacion_id)
+    form = EmailForm(initial={'destinatario': organizacion.mail_institucional})
+    if request.method == "POST":
+        form = EmailForm(request.POST)
+        if form.is_valid():
+            if SEND_MAIL:
+                to_email = form.cleaned_data['destinatario']
+                #Preparamos el correo electronico
+                mail_subject = form.cleaned_data['asunto']
+                message = render_to_string('emails/ingreso_contacto.html', {
+                        'organizacion': organizacion,
+                        'cuerpo': form.cleaned_data['cuerpo'],
+                    })
+                #Guardamos el mail
+                Emails_Ingreso(organizacion=organizacion, asunto=mail_subject, cuerpo=form.cleaned_data['cuerpo'], operador=obtener_operador(request)).save()
+                #Instanciamos el objeto mail con destinatario
+                email = EmailMessage(mail_subject, message, to=[to_email])
+                email.send()
+        return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
+    return render(request, "extras/generic_form.html", {'titulo': "Enviar Correo Electronico", 'form': form, 'boton': "Enviar", })
+
+@permission_required('operadores.permisos')
+def eliminar_peticion_org(request, organizacion_id):
+    organizacion = Organization.objects.get(pk=organizacion_id)
+    organizacion.estado = 'B'
+    organizacion.operador = obtener_operador(request)
+    organizacion.save()
+    return redirect('inscripciones:lista_peticiones_org')

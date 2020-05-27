@@ -17,6 +17,7 @@ from informacion.models import Individuo
 from .choices import TIPO_PROFESIONAL, GRUPO_SANGUINEO
 from .models import ProyectoEstudiantil, Turno
 from .models import Organization, Empleado, Domic_o, Peticionp
+from .models import Responsable
 
 #Definimos nuestros forms
 class ProfesionalSaludForm(forms.ModelForm):
@@ -140,6 +141,17 @@ class AprobarForm(forms.Form):
         required=True, 
         widget=XDSoftDateTimePickerInput()
     )
+
+class PeticionpForm(forms.ModelForm):
+    class Meta:
+        model = Peticionp
+        fields= '__all__'
+        exclude = ('fecha', 'token', 'individuos', 'estado', 'operador')
+        widgets = {
+            'cantidad': forms.TextInput(attrs={'placeholder': 'Introduzca Cantidad'}),
+            'email_contacto': forms.TextInput(attrs={'placeholder': 'Introduzca EMAIL de Contacto'}),
+            'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),            
+        }
     
 class PersonapetForm(forms.ModelForm):    
     #Domicilio en jujuy
@@ -172,16 +184,6 @@ class PersonapetForm(forms.ModelForm):
         else:
             return self.cleaned_data
 
-class PeticionpForm(forms.ModelForm):
-    class Meta:
-        model = Peticionp
-        fields= '__all__'
-        exclude = ('fecha', 'token', 'individuos', 'estado', 'operador')
-        widgets = {
-            'cantidad': forms.TextInput(attrs={'placeholder': 'Introduzca Cantidad'}),
-            'email_contacto': forms.TextInput(attrs={'placeholder': 'Introduzca EMAIL de Contacto'}),
-            'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),            
-        }
 
 #Formularios
 class OrganizationForm(forms.ModelForm):
@@ -198,34 +200,36 @@ class OrganizationForm(forms.ModelForm):
     piso = forms.CharField(required=False, )      
     class Meta:
         model = Organization
-        fields= '__all__'        
+        fields= '__all__'   
+        exclude = ('responsables','empleados', 'token', 'fecha', 'estado', 'operador',)     
         widgets = {
             'cuit': forms.TextInput(attrs={'placeholder': 'Introduzca CUIT'}),
             'denominacion': forms.TextInput(attrs={'placeholder': 'Introduzca Denominacion'}),
             'tipo_organizacion': forms.Select(attrs={'placeholder': 'Seleccione Tipo de Organizacion'}),
-            'fecha_constitucion': forms.DateInput(attrs={'value': datetime.datetime.now().strftime('%d/%m/%Y')}),
+            'fecha_constitucion': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
+            'cantidad': forms.TextInput(attrs={'placeholder': 'Introduzca Cantidad de Empleados'}),
             'mail_institucional': forms.TextInput(attrs={'placeholder': 'Introduzca MAIL INSTITUCIONAL'}),
-            'telefono_inst1': forms.TextInput(attrs={'placeholder': 'Introduzca Telefono Institucional'}),
-            'telefono_inst2': forms.TextInput(attrs={'placeholder': 'Introduzca Telefono Institucional Opcional'}),
-            'celular_inst1': forms.TextInput(attrs={'placeholder': 'Introduzca Celular Institucional'}),
-            'celular_inst2': forms.TextInput(attrs={'placeholder': 'Introduzca Celular Institucional Opcional'}),            
+            'telefono': forms.TextInput(attrs={'placeholder': 'Introduzca Telefono Institucional'}),            
+            'celular': forms.TextInput(attrs={'placeholder': 'Introduzca Celular Institucional'}),                       
             'archivo_adjunto': forms.FileInput(attrs={'placeholder': 'Suba Informacion Respaldatoria'}),
             'descripcion ': forms.Textarea(attrs={'placeholder': 'Describa el Objeto de su Organizacion'}),                    
         }
-    
-# class DomincForm(forms.ModelForm):
-#     class Meta:
-#         model = Domic_o
-#         fields = '__all__'
-#         exclude = ('organizacion',)
-#         widgets = {
-#             'localidad': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
-#         }
+
+class ResponsableForm(forms.ModelForm):
+    class Meta:
+        model = Responsable
+        fields = '__all__'
+        exclude = ('organizacion',)
+        widgets = {
+            'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
+        }
 
 class EmpleadoForm(forms.ModelForm):
     class Meta:
         model = Empleado
         fields = '__all__'
         exclude = ('organizacion',)
+        widgets = {
+            'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
+        }
 
-EmpleadoFormset = inlineformset_factory(Organization, Empleado, EmpleadoForm, extra=10, can_delete = True)

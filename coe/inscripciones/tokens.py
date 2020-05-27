@@ -26,3 +26,7 @@ def token_inscripcion():
 def token_provision():
     token = str(uuid.uuid4())
     return ct_timestamp() + token
+
+def token_organizacion():
+    token = str(uuid.uuid4())
+    return ct_timestamp() + token

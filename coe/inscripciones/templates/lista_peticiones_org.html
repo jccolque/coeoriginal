@@ -9,33 +9,33 @@
                     <thead>
                         <tr>                            
                             <th>Estado</th>
-                            <th>Fecha Pedido</th>                            
-                            <!-- <th>Destino</th> -->                           
-                            <th>Nombre de la Persona</th>
-                            <th>Apellido de la Persona</th>
+                            <th>Fecha Peticion Organizacion</th>                         
+                            <th>Denominación</th>
+                            <th>CUIT</th>
                             <th>Email de Contacto</th>
                             <th>Telefono</th>
                             <th>Operador</th>
                             <th>Ver Detalle</th>
+                                                       
                         </tr>
                     </thead>
                     <tbody>
-                        {% for petic in peticion %}
+                        {% for petic_org in peticion_org %}
                             <tr>                                
-                                <td>{{peticion.get_estado_display}}</td>
-                                <td>{{peticion.fecha|date:"d/m/Y"}}</td>                                
-                                <!-- <td>{{ingreso.destino.nombre}}</td> -->                          
-                                <td>{{peticion.individuo.nombres}}</td>
-                                <td>{{peticion.individuo.apellidos}}</td>
-                                <td>{{peticion.email_contacto}}</td>
+                                <td>{{peticion_org.get_estado_display}}</td>
+                                <td>{{peticion_org.fecha|date:"d/m/Y"}}</td>                               
+                                <td>{{peticion_org.denominacion}}</td>
+                                <td>{{peticion_org.cuit}}</td>
+                                <td>{{peticion_org.mail_institucional}}</td>
+                                                         
                                 <td>
-                                    {% if peticion.individuo.exists %}
-                                        {{peticion.telefono}}
+                                    {% if peticion_org.responsables.exists %}
+                                        {{peticion_org.responsables.telefono}}
                                     {% endif %}
                                 </td>
-                                <td>{{peticion.operador}}</td>
+                                <td>{{peticion_org.operador}}</td>
                                 <td>
-                                    <a href="{% url 'inscripciones:ver_peticion_persona' token=peticion.token %}" target="_blank">
+                                    <a href="{% url 'inscripciones:ver_peticion_persona' token=peticion_org.token %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/lupa.png' %}">
                                     </a>
                                 </td>

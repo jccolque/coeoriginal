@@ -142,59 +142,74 @@
                                 <div class="bordeado">
                                     <p>Este formulario es para aquellas personas que desean realizar una petición de COCA.</p>
                                     <p><b>ESTE FORMULARIO SE LLENA EN CARACTER DE DECLARIACIÓN JURADA.</b></p>
-                                    <hr>
-                                    <p><b>PARA REALIZAR ESTE PEDIDO, DEBE SEGUIR LOS SIGUIENTES PASOS:</b></p>
-                                    <ul>
-                                        <li>[1]. Completar el FORMULARIO INICIAL.</li>
-                                        <li>[2]. Completar los PASOS POSTERIORES (Recibirá un EMAIL en su casilla de contacto)</li>
-                                        <li>[3]. Cargar sus DATOS PERSONALES, en la pestaña "AGREGAR DATOS PERSONALES".</li>                                       
-                                    </ul>                                    
-                                    <ul>       
+                                    <hr>               
                                     
                                 </div>
                             </div>
                             <div class="col-md-12 col-sm-12 col-xs-12">
                                 <div class="form-group text-center">
-                                    <caption><strong>INGRESE PEDIDO</strong></caption>
+                                    <caption><strong>INGRESE DEL EMPLEADO</strong></caption>
                                 </div>
                             </div>
 
                             <div class="col-md-12">
                                 <div class="col-lg-6">                                
                                     <div class="form-group">
-                                        <label for="{{form.email_contacto.id_for_label}}">{{form.email_contacto.label}}</label>
-                                        {{form.email_contacto}}
-                                        <small class="form-text text-danger">{{form.email_contacto.errors.as_text}}</small>
+                                        <label for="{{form.apellidos.id_for_label}}">{{form.apellidos.label}}</label>
+                                        {{form.apellidos}}
+                                        <small class="form-text text-danger">{{form.apellidos.errors.as_text}}</small>
                                     </div>
                                 </div>
                                 <div class="col-lg-6"> 
                                     <div class="form-group">
-                                        <label for="{{form.cantidad.id_for_label}}">{{form.cantidad.label}}</label>
-                                        {{form.cantidad}}
-                                        <small class="form-text text-danger">{{form.cantidad.errors.as_text}}</small>
+                                        <label for="{{form.nombres.id_for_label}}">{{form.nombres.label}}</label>
+                                        {{form.nombres}}
+                                        <small class="form-text text-danger">{{form.nombres.errors.as_text}}</small>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="col-lg-6">                                
                                     <div class="form-group">
-                                        <label for="{{form.destino.id_for_label}}">{{form.destino.label}}</label>
-                                        {{form.destino}}
-                                        <small class="form-text text-danger">{{form.destino.errors.as_text}}</small>
+                                        <label for="{{form.tipo_doc.id_for_label}}">{{form.tipo_doc.label}}</label>
+                                        {{form.tipo_doc}}
+                                        <small class="form-text text-danger">{{form.tipo_doc.errors.as_text}}</small>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6"> 
+                                    <div class="form-group">
+                                        <label for="{{form.num_doc.id_for_label}}">{{form.num_doc.label}}</label>
+                                        {{form.num_doc}}
+                                        <small class="form-text text-danger">{{form.num_doc.errors.as_text}}</small>
+                                    </div>
+                                </div>                               
+                            </div>
+                            <div class="col-md-12">                                
+                                <div class="col-lg-6">                                
+                                    <div class="form-group">
+                                        <label for="{{form.fecha_nacimiento.id_for_label}}">{{form.fecha_nacimiento.label}}</label>
+                                        {{form.fecha_nacimiento}}
+                                        <small class="form-text text-danger">{{form.fecha_nacimiento.errors.as_text}}</small>
+                                    </div>
+                                </div> 
+                                <div class="col-lg-6">                                
+                                    <div class="form-group">
+                                        <label for="{{form.mail_empleado.id_for_label}}">{{form.mail_empleado.label}}</label>
+                                        {{form.mail_empleado}}
+                                        <small class="form-text text-danger">{{form.mail_empleado.errors.as_text}}</small>
                                     </div>
                                 </div>                                
-                            </div>                 
-                            <div class="col-md-12">
-                                <p><strong>DESCRIBA BREVEMENTE EL PORQUE DE SU PEDIDO EN EL CAMPO "ACLARACIONES".</strong></p>
                             </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="{{form.aclaracion.id_for_label}}">{{form.aclaracion.label}}</label>
-                                    {{ form.aclaracion}}
-                                    <small class="form-text text-danger">{{form.aclaracion.errors.as_text}}</small>
-                                </div>
+                            <div class="col-md-12">                                
+                                <div class="col-lg-6">                                
+                                    <div class="form-group">
+                                        <label for="{{form.cuil.id_for_label}}">{{form.cuil.label}}</label>
+                                        {{form.cuil}}
+                                        <small class="form-text text-danger">{{form.cuil.errors.as_text}}</small>
+                                    </div>
+                                </div>                                                                
                             </div>
-                            <br>
+                            
                             <div class="col-md-12">
                                 <div class="col-md-6">
                                     {{ message }}
@@ -215,3 +230,6 @@
 </section>                                
                   
 {% endblock %}
+                            
+                            
+                         

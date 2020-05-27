@@ -1,0 +1,163 @@
+{% extends 'base_informacion.html' %}
+
+{% load static %}
+{% load files_tags %}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">
+                    <h2><b>Panel de Provisión de COCA - Organizaciones</b></h2>
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h3 style="color:{% if organizacion.estado == 'C' %}red{% elif organizacion.estado == 'E' %}orange{% elif organizacion.estado == 'A' %}green{% else %}black{% endif %};"><b>Estado</b> {{organizacion.get_estado_display}}</h3>
+                                <p><b>Denominación:</b> {{organizacion.denominacion}}</p>
+                                <p><b>CUIT:</b> {{organizacion.cuit}}</p>
+                                <p><b>Tipo de Organización:</b> {{organizacion.get_tipo_organizacion_display}}</p>
+                                <p><b>Cantidad de Empleados:</b> {{organizacion.cantidad}}</p>
+                                <p><b>E-mail de Contacto:</b> {{organizacion.mail_institucional}}</p>
+                                <p><b>Localidad:</b> {{domicilio.localidad.nombre}}</p>
+                                                            
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bordeado importante">
+                                    {% if organizacion.estado == 'C' %}
+                                        <h3>Una vez que termine el ingreso de <b>TODA</b> la infomacion requerida, presione el botón de <b> FINALIZAR PROCESO</b>.</h3>
+                                        <p>Su PEDIDO será ELIMINADO en {{limite}} horas, si es que no lo finaliza.</p>
+                                        <br>
+                                        <p>Hasta que el estado del pedido de COCA no se encuentre en <b>Pedido Cargado</b> nuestros operadores no lo analizarán.</p>                                   
+                                    {% elif organizacion.estado == 'E' %}
+                                        <h3>Nuestros Operadores estan analizando su requerimiento</h3>
+                                        <br>
+                                        <p>En caso de aprobarlo, le enviaremos un correo electronico a la cuenta informada para que descargue su autorizacion.</p>
+                                    {% elif organizacion.estado == 'A' %}
+                                        <h3>Su pedido fue aprobado</h3>
+                                        <br>
+                                        <p>Puede descargar la autorizacion, lo esperamos en la fecha y hora de llegada informada.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <hr>                        
+                    </div>
+                    <div class="col-md-4">
+                        <ul class="menu_botones">
+                            {% if organizacion.estado == 'C' %}
+                                <li><a href="{% url 'inscripciones:mod_peticion_organizacion' organizacion_id=organizacion.id %}">Modificar Datos de Ingreso</a></li>                                                   
+                                <li><a href="{% url 'inscripciones:cargar_responsable_org' organizacion_id=organizacion.id %}">Agregar Responsable de la Institución</a></li>
+                                <li><a href="{% url 'inscripciones:cargar_empleado_org' organizacion_id=organizacion.id %}">Agregar Empleados</a></li>
+                                <li><a href="{% url 'inscripciones:finalizar_peticion_org' organizacion_id=organizacion.id %}">Finalizar Proceso</a></li>
+                            {% endif %}                            
+                            {% if perms.operadores.permisos %}
+                                <hr>
+                                <p><b>Operadores</b></p>
+                                <li><a href="{% url 'inscripciones:peticion_org_enviar_email' organizacion_id=organizacion.id %}">Enviar Correo Electronico</a></li>
+                                <li><a href="{% url 'inscripciones:eliminar_peticion_org' organizacion_id=organizacion.id %}">Eliminar PETICION</a></li>
+                                <li><a href="{% url 'inscripciones:lista_peticiones_org' %}">Volver al Listado de Ingresos</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>                
+                    
+                <div class="row"></div>
+                <hr>
+                <h3><b>USTED DEBE CARGAR A LOS EMPLEADOS DE LA ORGANIZACIÓN</b></h3>
+                
+                <table class="listado" id="table">
+                    <thead>
+                        <tr>
+                            <th>Numero Documento</th>
+                            <th>Nombre y Apellido</th>
+                            <th>Fecha de Nacimiento</th>
+                            <th>Correo Electronico</th>                                
+                            <th>CUIL</th>                    
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>                          
+                                
+                    <tbody>
+                    {% for empleado in organizacion.empleados.all %}
+                        <tr>
+                            <td>{{empleado.num_doc}}</td>
+                            <td>{{empleado.apellidos}}, {{empleado.nombres}}</td>
+                            <td>{{empleado.fecha_nacimiento}}</td>
+                            <td>{{empleado.mail_empleado}}</td>
+                            <td>{{empleado.cuil}}</td>                           
+                            <td>
+                                <a href="{% url 'inscripciones:mod_empleado_org' organizacion_id=organizacion.id empleado_id=empleado.id %}" target="_blank">
+                                    <img class="icons" src="{% static 'img/icons/change.png' %}">
+                                </a>
+                                <a href="{% url 'inscripciones:quitar_empleado_org' organizacion_id=organizacion.id empleado_id=empleado.id %}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                </a>
+                            </td>                                    
+                        </tr>      
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <div class="row"></div>
+                <hr>
+                <h3><b>USTED DEBE CARGAR AL RESPONSABLE DE LAS INSTITUCIÓN</b></h3>
+                <table class="listado" id="table-r">
+                    <thead>
+                        <tr>
+                            <th>Numero Documento</th>
+                            <th>Nombre y Apellido</th>
+                            <th>Rol</th>
+                            <th>Correo Electronico</th>
+                            <th>Telefono</th>                              
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for responsable in organizacion.responsables.all %}
+                            <tr>
+                                <td>{{responsable.num_doc}}</td>
+                                <td>{{responsable.apellidos}}, {{responsable.nombres}}</td>
+                                <td>{{responsable.rol}}</td>
+                                <td>{{responsable.mail_responsable}}</td>
+                                <td>{{responsable.telefono}}</td>                              
+                                <td>
+                                    <a href="{% url 'inscripciones:mod_responsable_org' organizacion_id=organizacion.id responsable_id=responsable.id %}" target="_blank">
+                                        <img class="icons" src="{% static 'img/icons/change.png' %}">
+                                    </a>
+                                    <a href="{% url 'inscripciones:quitar_responsable_org' organizacion_id=organizacion.id responsable_id=responsable.id %}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>                                             
+                {% if peticion_org.emails_enviados.exists %}
+                    <div class="row">
+                        <h3>Emails Enviados al Responsable</h3>
+                            <table class="listado">
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Asunto</th>
+                                    <th>Cuerpo</th>
+                                    <th>Operador</th>
+                                </tr>
+                                {% for email in ingreso.emails_enviados.all %}
+                                    <tr>
+                                        <td>{{email.fecha}}</th>
+                                        <td>{{email.asunto}}</th>
+                                        <td>{{email.cuerpo}}</td>
+                                        <td>{{email.operador}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    {% endif %}
+            </div>
+        </div>
+    </section>
+</section>
+{% endblock %}
+                                        
+                                        
+                                        
+                    

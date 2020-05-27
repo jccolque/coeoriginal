@@ -19,7 +19,7 @@ from operadores.models import Operador
 from .choices import TIPO_INSCRIPTO, ESTADO_INSCRIPTO
 from .choices import GRUPO_SANGUINEO, TIPO_PROFESIONAL, TIPO_DISPOSITIVO
 from .choices import TIPO_REFERENCIA, TIPO_ORGANIZACION, TIPO_CONFIRMA, ESTADO_PEDIDO
-from .tokens import token_inscripcion, token_provision
+from .tokens import token_inscripcion, token_provision, token_organizacion
 
 # Create your models here.
 class Area(models.Model):
@@ -161,18 +161,82 @@ class ProyectoEstudiantil(models.Model):
     fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
 
 # PETICION COCA
+class Peticionp(models.Model):
+    destino = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="pedidosd_personas")
+    email_contacto = models.EmailField('Correo Electrónico de Contacto', max_length=200)
+    cantidad = models.CharField('Cantidad de Coca (en gramos)', max_length=50)
+    individuos = models.ManyToManyField(Individuo, related_name="pedidos_coca")
+    #Interno
+    token = models.CharField('Token', max_length=50, default=token_provision, unique=True)
+    fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
+    estado = models.CharField('Estado', choices=ESTADO_PEDIDO, max_length=1, default='C')
+    operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True, related_name="provisiones")
+    #Aclaraciones
+    aclaracion = HTMLField('Aclaraciones', null=True)    
+    def __str__(self):
+        return self.email_contacto + self.cantidad
+
+class Emails_Peticionp(models.Model):
+    peticion = models.ForeignKey(Peticionp, on_delete=models.CASCADE, related_name="emails")
+    fecha = models.DateTimeField('Fecha de Envio', default=timezone.now)
+    asunto = models.CharField('Asunto', max_length=100)
+    cuerpo = models.CharField('Cuerpo', max_length=1000)
+    operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="peticion_emailsenviados")
+
+#PETICION DE COCA - ORGANIZACIONES
+class Responsable(models.Model):       
+    apellidos = models.CharField('Apellidos', max_length=100)
+    nombres = models.CharField('Nombres', max_length=100)
+    tipo_doc = models.IntegerField(choices=TIPO_DOCUMENTOS, default=2)
+    num_doc = models.CharField('Número de Documento/Pasaporte', 
+        max_length=50,
+        validators=[RegexValidator('^[A-Z_\d]*$', 'Solo Mayusculas.')],
+        unique=True,
+    )
+    cuil = models.CharField('CUIL', max_length=13)
+    fecha_nacimiento = models.DateField(verbose_name="Fecha de Nacimiento", null=True, blank=True)
+    tipo_cond = models.CharField('Condicion Poblacional', choices=TIPO_REFERENCIA, max_length=4, default='N')
+    rol = models.CharField('Rol Institucional', max_length=100)
+    mail_responsable = models.EmailField('Email', max_length=100)#Enviar mails
+    telefono = models.CharField('Telefono Fijo', max_length=50, default='+549388')
+    #Funciones
+    def __str__(self):
+        return str(self.num_doc) + ': ' + self.apellidos + ', ' + self.nombres 
+
+
+class Empleado(models.Model):       
+    apellidos = models.CharField('Apellidos', max_length=100)
+    nombres = models.CharField('Nombres', max_length=100)
+    tipo_doc = models.IntegerField(choices=TIPO_DOCUMENTOS, default=2)
+    num_doc = models.CharField('Número de Documento/Pasaporte', 
+        max_length=50,
+        validators=[RegexValidator('^[A-Z_\d]*$', 'Solo Mayusculas.')],
+        unique=True,
+    )
+    fecha_nacimiento = models.DateField(verbose_name="Fecha de Nacimiento", null=True, blank=True)
+    mail_empleado = models.EmailField('Email', null=True, blank=True)#Enviar mails
+    cuil = models.CharField('CUIL', max_length=13)
+    def __str__(self):
+        return str(self.num_doc) + ': ' + self.apellidos + ', ' + self.nombres
+        
 class Organization(models.Model):
     cuit = models.CharField('CUIT', max_length=13, unique=True)
     denominacion = models.CharField('Razon Social', max_length=100)
     tipo_organizacion = models.CharField('Tipo de Organizacion', choices=TIPO_ORGANIZACION, max_length=5, default='ONG')
     fecha_constitucion = models.DateField(verbose_name="Fecha de Constitucion", null=True, blank=True)
+    cantidad = models.CharField('Cantidad de Empleados', max_length=100)
     mail_institucional = models.EmailField(verbose_name="MAIL INSTITUCIONAL", null=True, blank=True)#Enviar mails
-    telefono_inst1 = models.CharField('Telefono Fijo Institucional 1', max_length=50, default='+549388', null=True, blank=True)
-    telefono_inst2 = models.CharField('Telefono Fijo Institucional 2', max_length=50, default='+549388', null=True, blank=True)
-    celular_inst1 = models.CharField('Celular Institucional 1', max_length=50, default='+549388', null=True, blank=True)
-    celular_inst2 = models.CharField('Celular Institucional 2', max_length=50, default='+549388', null=True, blank=True)
+    telefono = models.CharField('Telefono Fijo Institucional', max_length=50, default='+549388', null=True, blank=True)    
+    celular = models.CharField('Celular Institucional', max_length=50, default='+549388', null=True, blank=True)    
     archivo_adjunto = models.FileField('Documentación Respaldatoria de la Organización', upload_to='permisos/organizacion', null=True, blank=True)
     descripcion = models.CharField('Descripcion del Objeto Social', max_length=1000, default='', blank=False)    
+    #Interno
+    responsables = models.ManyToManyField(Responsable, related_name="responsables_coca_org")
+    empleados = models.ManyToManyField(Empleado, related_name="empleados_coca_org")
+    token = models.CharField('Token', max_length=50, default=token_organizacion, unique=True)
+    fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
+    estado = models.CharField('Estado', choices=ESTADO_PEDIDO, max_length=1, default='C')
+    operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True, related_name="provisiones_org")
     def __str__(self):
         return str(self.cuit) + ': ' + self.denominacion
     def get_foto(self):
@@ -187,42 +251,13 @@ class Organization(models.Model):
             'tipo_organizacion': self.get_tipo_organizacion_display(),
             'fecha_constitucion': str(self.fecha_constitucion),
             'mail_institucional': self.mail_institucional,
-            'telefono_inst1': self.telefono_inst1,
-            'telefono_inst2': self.telefono_inst2,
-            'celular_inst1': self.celular_inst1,
-            'celular_inst2': self.celular_inst2,
+            'telefono': self.telefono,            
+            'celular': self.celular,            
             'descripcion': self.descripcion,
         }
-    def localidad(self):
-        if self.domicilio:
-            return self.domicilio.localidad
-        else:
-            return None
+    
 
-class Responsable(models.Model):
-    organizacion = models.OneToOneField(Organization, on_delete=models.CASCADE)    
-    apellidos = models.CharField('Apellidos', max_length=100)
-    nombres = models.CharField('Nombres', max_length=100)
-    tipo_doc = models.IntegerField(choices=TIPO_DOCUMENTOS, default=2)
-    num_doc = models.CharField('Número de Documento/Pasaporte', 
-        max_length=50,
-        validators=[RegexValidator('^[A-Z_\d]*$', 'Solo Mayusculas.')],
-        unique=True,
-    )
-    cuil = models.CharField('CUIL', max_length=13)
-    fecha_nacimiento = models.DateField(verbose_name="Fecha de Nacimiento", null=True, blank=True)
-    tipo_cond = models.CharField('Condicion Poblacional', choices=TIPO_REFERENCIA, max_length=4, default='N')
-    rol = models.CharField('Rol Institucional', max_length=100)
-    mail = models.EmailField('Email', null=True, blank=True)#Enviar mails
-    telefono1 = models.CharField('Telefono Fijo 1', max_length=50, default='+549388', null=True, blank=True)
-    telefono2 = models.CharField('Telefono Fijo 2', max_length=50, default='+549388', null=True, blank=True)
-    celular1 = models.CharField('Celular 1', max_length=50, default='+549388', null=True, blank=True)
-    celular2 = models.CharField('Celular 2', max_length=50, default='+549388', null=True, blank=True)
-    #Funciones
-    def __str__(self):
-        return str(self.num_doc) + ': ' + self.apellidos + ', ' + self.nombres 
-
-#Datos de la organizacion que pide coca
+#Domiclio de la organizacion que pide coca
 class Domic_o(models.Model):
     organizacion = models.ForeignKey(Organization, on_delete=models.CASCADE, related_name="pedidos_org", null=True, blank=True)
     localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="domic_org")
@@ -252,39 +287,9 @@ class Domic_o(models.Model):
             "piso": self.piso
         }
 
-class Empleado(models.Model):
-    organizacion = models.ForeignKey(Organization, on_delete=models.CASCADE, related_name="org_empleados")   
-    apellidos = models.CharField('Apellidos', max_length=100)
-    nombres = models.CharField('Nombres', max_length=100)
-    tipo_doc = models.IntegerField(choices=TIPO_DOCUMENTOS, default=2)
-    num_doc = models.CharField('Número de Documento/Pasaporte', 
-        max_length=50,
-        validators=[RegexValidator('^[A-Z_\d]*$', 'Solo Mayusculas.')],
-        unique=True,
-    )
-    fecha_nacimiento = models.DateField(verbose_name="Fecha de Nacimiento", null=True, blank=True)
-    mail = models.EmailField('Email', null=True, blank=True)#Enviar mails
-    def __str__(self):
-        return str(self.num_doc) + ': ' + self.apellidos + ', ' + self.nombres 
-
-class Peticionp(models.Model):
-    destino = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="pedidosd_personas")
-    email_contacto = models.EmailField('Correo Electrónico de Contacto', max_length=200)
-    cantidad = models.CharField('Cantidad de Coca (en gramos)', max_length=50)
-    individuos = models.ManyToManyField(Individuo, related_name="pedidos_coca")
-    #Interno
-    token = models.CharField('Token', max_length=50, default=token_provision, unique=True)
-    fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
-    estado = models.CharField('Estado', choices=ESTADO_PEDIDO, max_length=1, default='C')
-    operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True, related_name="provisiones")
-    #Aclaraciones
-    aclaracion = HTMLField('Aclaraciones', null=True)    
-    def __str__(self):
-        return self.email_contacto + self.cantidad
-
-class Emails_Peticionp(models.Model):
-    peticion = models.ForeignKey(Peticionp, on_delete=models.CASCADE, related_name="emails")
+class Emails_Peticiones_Organization(models.Model):
+    organizacion = models.ForeignKey(Organization, on_delete=models.CASCADE, related_name="emails_organizaciones_vd")
     fecha = models.DateTimeField('Fecha de Envio', default=timezone.now)
     asunto = models.CharField('Asunto', max_length=100)
     cuerpo = models.CharField('Cuerpo', max_length=1000)
-    operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="peticion_emailsenviados")
+    operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="peticiones_org_emailsenviados")
