@@ -720,14 +720,13 @@ def finalizar_peticion(request, peticionp_id):
     peticionp.save()
     return redirect('inscripciones:ver_peticion_persona', token=peticionp.token)
 
-#Administrar
-@permission_required('operadores.menu_provisiones')
+@permission_required('operadores.menu_inscripciones')
 def lista_peticiones(request, estado=None):
     peticionp = Peticionp.objects.all()
     #Filtramos de ser necesario
     if not estado:
         peticionp = peticionp.exclude(estado='B')
-    if estado:
+    else:
         peticionp = peticionp.filter(estado=estado)
     #Optimizamos
     peticionp = peticionp.select_related('destino', 'operador')
