@@ -148,101 +148,125 @@
                             </div>
                             <div class="col-md-12 col-sm-12 col-xs-12">
                                 <div class="form-group text-center">
-                                    <caption><strong>INGRESE DEL RESPONSABLE DE LA INSTITUCION</strong></caption>
+                                    <caption><strong>INGRESE LOS DATOS PERSONALES</strong></caption>
                                 </div>
                             </div>
 
-                            <div class="col-md-12">
-                                <div class="col-lg-6">                                
-                                    <div class="form-group">
-                                        <label for="{{form.apellidos.id_for_label}}">{{form.apellidos.label}}</label>
-                                        {{form.apellidos}}
-                                        <small class="form-text text-danger">{{form.apellidos.errors.as_text}}</small>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6"> 
-                                    <div class="form-group">
-                                        <label for="{{form.nombres.id_for_label}}">{{form.nombres.label}}</label>
-                                        {{form.nombres}}
-                                        <small class="form-text text-danger">{{form.nombres.errors.as_text}}</small>
-                                    </div>
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group text-center">
+                                    <caption><strong>INGRESE PEDIDO</strong></caption>
                                 </div>
                             </div>
-                            <div class="col-md-12">
-                                <div class="col-lg-6">                                
-                                    <div class="form-group">
-                                        <label for="{{form.tipo_doc.id_for_label}}">{{form.tipo_doc.label}}</label>
-                                        {{form.tipo_doc}}
-                                        <small class="form-text text-danger">{{form.tipo_doc.errors.as_text}}</small>
-                                    </div>
+                            {% if form.errors %}
+                                <div class="col-sm-6 col-sm-offset-3">
+                                    {{form.errors|safe}}
                                 </div>
-                                <div class="col-lg-6"> 
+                            {% endif %}  
+                            <div class="col-md-12"> 
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="{{form.num_doc.id_for_label}}">{{form.num_doc.label}}</label>
                                         {{form.num_doc}}
                                         <small class="form-text text-danger">{{form.num_doc.errors.as_text}}</small>
                                     </div>
-                                </div>                               
-                            </div>
-                            <div class="col-md-12">
-                                <div class="col-lg-6">                                
                                     <div class="form-group">
-                                        <label for="{{form.cuil.id_for_label}}">{{form.cuil.label}}</label>
-                                        {{form.cuil}}
-                                        <small class="form-text text-danger">{{form.cuil.errors.as_text}}</small>
+                                        <label for="{{form.nombres.id_for_label}}">{{form.nombres.label}}</label>
+                                        {{form.nombres}}
+                                        <small class="form-text text-danger">{{form.nombres.errors.as_text}}</small>
                                     </div>
-                                </div>
-                                <div class="col-lg-6">                                
+                                    <div class="form-group">
+                                        <label for="{{form.apellidos.id_for_label}}">{{form.apellidos.label}}</label>
+                                        {{form.apellidos}}
+                                        <small class="form-text text-danger">{{form.apellidos.errors.as_text}}</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="{{form.sexo.id_for_label}}">{{form.sexo.label}}</label>
+                                        {{form.sexo}}
+                                        <small class="form-text text-danger">{{form.sexo.errors.as_text}}</small>
+                                    </div>
                                     <div class="form-group">
                                         <label for="{{form.fecha_nacimiento.id_for_label}}">{{form.fecha_nacimiento.label}}</label>
                                         {{form.fecha_nacimiento}}
                                         <small class="form-text text-danger">{{form.fecha_nacimiento.errors.as_text}}</small>
                                     </div>
-                                </div>                                 
-                            </div>
-                            <div class="col-md-12">
-                                <div class="col-lg-6">                                
                                     <div class="form-group">
-                                        <label for="{{form.tipo_cond.id_for_label}}">{{form.tipo_cond.label}}</label>
-                                        {{form.tipo_cond}}
-                                        <small class="form-text text-danger">{{form.tipo_cond.errors.as_text}}</small>
+                                        <label for="{{form.nacionalidad.id_for_label}}">{{form.nacionalidad.label}}</label>
+                                        {{form.nacionalidad}}
+                                        <small class="form-text text-danger">{{form.nacionalidad.errors.as_text}}</small>
                                     </div>
-                                </div>
-                                <div class="col-lg-6">                                
+                                </div>                        
+                                <div class="col-lg-6">
+                                    <p>Domicilio:</p>
                                     <div class="form-group">
-                                        <label for="{{form.rol.id_for_label}}">{{form.rol.label}}</label>
-                                        {{form.rol}}
-                                        <small class="form-text text-danger">{{form.rol.errors.as_text}}</small>
+                                        <label for="{{form.dom_localidad.id_for_label}}">{{form.dom_localidad.label}}</label>
+                                        {{form.dom_localidad}}
+                                        <small class="form-text text-danger">{{form.dom_localidad.errors.as_text}}</small>
                                     </div>
-                                </div>                                 
-                            </div>
-                            <div class="col-md-12">
-                                <div class="col-lg-6">                                
-                                    <p><strong>CONTACTO</strong></p>
-                                </div>                                 
-                            </div>
-                            <div class="col-md-12">
-                                <div class="col-lg-6">                                
                                     <div class="form-group">
-                                        <label for="{{form.mail_responsable.id_for_label}}">{{form.mail_responsable.label}}</label>
-                                        {{form.mail_responsable}}
-                                        <small class="form-text text-danger">{{form.mail_responsable.errors.as_text}}</small>
+                                        
+                                        <div class="row">
+                                            <div class="col-sm-8">
+                                                <label">Calle:</label>
+                                                {{form.dom_calle}}
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label">Numero:</label>
+                                                {{form.dom_numero}}
+                                            </div>
+                                        </div>
+                                        <small class="form-text text-danger">{{form.dom_calle.errors.as_text}}</small>
+                                        <small class="form-text text-danger">{{form.dom_numero.errors.as_text}}</small>
                                     </div>
-                                </div>
-                                <div class="col-lg-6">                                
+                                    <div class="form-group">
+                                        <label>Barrio:</label>
+                                        {{form.dom_aclaracion}}
+                                        <small class="form-text text-danger">{{form.dom_aclaracion.errors.as_text}}</small>
+                                    </div>
+                                    <p>Datos de Contacto:</p>
+                                    <div class="form-group">
+                                        <label for="{{form.email_contacto.id_for_label}}">{{form.email.label}}</label>
+                                        {{form.email}}
+                                        <small class="form-text text-danger">{{form.email.errors.as_text}}</small>
+                                    </div>
                                     <div class="form-group">
                                         <label for="{{form.telefono.id_for_label}}">{{form.telefono.label}}</label>
                                         {{form.telefono}}
                                         <small class="form-text text-danger">{{form.telefono.errors.as_text}}</small>
                                     </div>
-                                </div>                                   
-                            </div>    
-                            
-                            <div class="col-md-12">
-                                <div class="col-md-6">
-                                    {{ message }}
                                 </div>
-                            </div>                           
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="{{form.tipo_cond.id_for_label}}">{{form.tipo_cond.label}}</label>
+                                    {{form.tipo_cond}}
+                                    <small class="form-text text-danger">{{form.tipo_cond.errors.as_text}}</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="{{form.rol.id_for_label}}">{{form.rol.label}}</label>
+                                    {{form.rol}}
+                                    <small class="form-text text-danger">{{form.rol.errors.as_text}}</small>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="col-lg-6"> 
+                                    <div class="form-group">
+                                        <label for="{{form.frente_dni.id_for_label}}">{{form.frente_dni.label}}</label>
+                                        {{form.frente_dni}}
+                                        <small class="form-text text-danger">{{form.frente_dni.errors.as_text}}</small>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6"> 
+                                    <div class="form-group">
+                                        <label for="{{form.reverso_dni.id_for_label}}">{{form.reverso_dni.label}}</label>
+                                        {{form.reverso_dni}}
+                                        <small class="form-text text-danger">{{form.reverso_dni.errors.as_text}}</small>
+                                    </div>
+                                </div>                                         
+                            </div>
+                            
+                            <br>
                             
                             <div class="col-md-12 col-sm-12 col-xs-12">
                                 <div class="form-group text-center">
@@ -259,4 +283,5 @@
                   
 {% endblock %}
                             
-                           
+                            
+                         

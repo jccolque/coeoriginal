@@ -441,8 +441,9 @@ def agregar_testeado(request, operativo_id):
 @permission_required('operadores.individuos')
 def ranking_test(request):
     #Buscamos los que tenemos que analizar
-    individuos = obtener_bajo_seguimiento()
-    individuos = individuos.filter(seguimientos__tipo='PT')
+    #individuos = obtener_bajo_seguimiento()
+    individuos = Individuo.objects.filter(seguimientos__tipo='PT')
+    #individuos = individuos.filter(seguimientos__tipo='PT')
     individuos = individuos.exclude(seguimientos__tipo__in=('ET','DT'))
     individuos = individuos.distinct()
     #Optimizamos

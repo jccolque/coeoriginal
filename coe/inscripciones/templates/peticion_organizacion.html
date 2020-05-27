@@ -147,7 +147,7 @@
                                     <ul>
                                         <p><center>[1]. Completar el FORMULARIO INICIAL.</center></p>
                                         <p><center>[2]. Completar los PASOS POSTERIORES (Recibirá un EMAIL en su casilla de contacto.</center></p>
-                                        <p><center>[3]. Cargar los datos de Responsable y Empleados de la Organización".</center></p>
+                                        <p><center>[3]. Cargar los datos de Responsable y Afiliados de la Organización".</center></p>
                                         <div class="row">                                        
                                             <div class="alert alert-info" role="alert">
                                                 <h3 ALIGN="justify"><center>IMPORTANTE: ESTE FORMULARIO SÓLO ES PARA ORGANIZACIONES.</center></h3>
@@ -163,7 +163,11 @@
                                     <caption><strong>INGRESE PEDIDO</strong></caption>
                                 </div>
                             </div>
-
+                            {% if form.errors %}
+                                <div class="col-sm-6 col-sm-offset-3">
+                                    {{form.errors|safe}}
+                                </div>
+                            {% endif %}
                             <div class="col-md-12">
                                 <div class="col-lg-6">                                
                                     <div class="form-group">
@@ -312,12 +316,6 @@
                                     </div>
                                 </div>                                                              
                             </div>
-                            <div class="col-md-12">
-                                <div class="col-md-6">
-                                    {{ message }}
-                                </div>
-                            </div>                           
-                            
                             <div class="col-md-12 col-sm-12 col-xs-12">
                                 <div class="form-group text-center">
                                     <button type="submit" class="btn-style-one">{{button}}</button>

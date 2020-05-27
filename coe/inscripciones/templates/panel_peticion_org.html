@@ -16,7 +16,7 @@
                                 <p><b>Denominación:</b> {{organizacion.denominacion}}</p>
                                 <p><b>CUIT:</b> {{organizacion.cuit}}</p>
                                 <p><b>Tipo de Organización:</b> {{organizacion.get_tipo_organizacion_display}}</p>
-                                <p><b>Cantidad de Empleados:</b> {{organizacion.cantidad}}</p>
+                                <p><b>Cantidad de Afiliados:</b> {{organizacion.cantidad}} (Cargados: {{organizacion.responsables.count}}r + {{organizacion.afiliados.count}}a)</p>
                                 <p><b>E-mail de Contacto:</b> {{organizacion.mail_institucional}}</p>
                                 <p><b>Localidad:</b> {{domicilio.localidad.nombre}}</p>
                                 <p><b>Documentación Respaldatoria de la Organización:</b>
@@ -64,9 +64,9 @@
                     <div class="col-md-4">
                         <ul class="menu_botones">
                             {% if organizacion.estado == 'C' %}
-                                <li><a href="{% url 'inscripciones:mod_peticion_organizacion' organizacion_id=organizacion.id %}">Modificar Datos de Ingreso</a></li>                                                   
-                                <li><a href="{% url 'inscripciones:cargar_responsable_org' organizacion_id=organizacion.id %}">Agregar Responsable de la Institución</a></li>
-                                <li><a href="{% url 'inscripciones:cargar_empleado_org' organizacion_id=organizacion.id %}">Agregar Empleados</a></li>
+                                <li><a href="{% url 'inscripciones:mod_peticion_organizacion' organizacion_id=organizacion.id %}">Modificar Datos Basicos</a></li>                                                   
+                                <li><a href="{% url 'inscripciones:cargar_responsable_org' organizacion_id=organizacion.id %}">Agregar Responsable Instituciónal</a></li>
+                                <li><a href="{% url 'inscripciones:cargar_afiliado_org' organizacion_id=organizacion.id %}">Agregar Afiliados</a></li>
                                 <li><a href="{% url 'inscripciones:finalizar_peticion_org' organizacion_id=organizacion.id %}">Finalizar Proceso</a></li>
                             {% endif %}                            
                             {% if perms.operadores.permisos %}
@@ -82,8 +82,7 @@
                     
                 <div class="row"></div>
                 <hr>
-                <h3><b>USTED DEBE CARGAR A LOS EMPLEADOS DE LA ORGANIZACIÓN</b></h3>
-                
+                <h3><b>USTED DEBE CARGAR A LOS AFILIADOS DE LA ORGANIZACIÓN</b></h3>
                 <table class="listado" id="table">
                     <thead>
                         <tr>
@@ -97,18 +96,18 @@
                     </thead>                          
                                 
                     <tbody>
-                    {% for empleado in organizacion.empleados.all %}
+                    {% for afiliado in organizacion.afiliados.all %}
                         <tr>
-                            <td>{{empleado.num_doc}}</td>
-                            <td>{{empleado.apellidos}}, {{empleado.nombres}}</td>
-                            <td>{{empleado.fecha_nacimiento}}</td>
-                            <td>{{empleado.mail_empleado}}</td>
-                            <td>{{empleado.cuil}}</td>                           
+                            <td>{{afiliado.individuo.num_doc}}</td>
+                            <td>{{afiliado.individuo.apellidos}}, {{afiliado.individuo.nombres}}</td>
+                            <td>{{afiliado.individuo.fecha_nacimiento}}</td>
+                            <td>{{afiliado.individuo.email}}</td>
+                            <td>{{afiliado.individuo.cuil}}</td>                           
                             <td>
-                                <a href="{% url 'inscripciones:mod_empleado_org' organizacion_id=organizacion.id empleado_id=empleado.id %}" target="_blank">
+                                <a href="{% url 'inscripciones:mod_afiliado_org' organizacion_id=organizacion.id afiliado_id=afiliado.id %}" target="_blank">
                                     <img class="icons" src="{% static 'img/icons/change.png' %}">
                                 </a>
-                                <a href="{% url 'inscripciones:quitar_empleado_org' organizacion_id=organizacion.id empleado_id=empleado.id %}" target="_blank">
+                                <a href="{% url 'inscripciones:quitar_afiliado_org' organizacion_id=organizacion.id afiliado_id=afiliado.id %}" target="_blank">
                                     <img class="icons" src="{% static '/img/icons/delete.png' %}">
                                 </a>
                             </td>                                    
@@ -133,11 +132,11 @@
                     <tbody>
                         {% for responsable in organizacion.responsables.all %}
                             <tr>
-                                <td>{{responsable.num_doc}}</td>
-                                <td>{{responsable.apellidos}}, {{responsable.nombres}}</td>
+                                <td>{{responsable.individuo.num_doc}}</td>
+                                <td>{{responsable.individuo.apellidos}}, {{responsable.individuo.nombres}}</td>
                                 <td>{{responsable.rol}}</td>
-                                <td>{{responsable.mail_responsable}}</td>
-                                <td>{{responsable.telefono}}</td>                              
+                                <td>{{responsable.individuo.email}}</td>
+                                <td>{{responsable.individuo.telefono}}</td>                              
                                 <td>
                                     <a href="{% url 'inscripciones:mod_responsable_org' organizacion_id=organizacion.id responsable_id=responsable.id %}" target="_blank">
                                         <img class="icons" src="{% static 'img/icons/change.png' %}">

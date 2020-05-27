@@ -14,10 +14,10 @@ from core.widgets import XDSoftDatePickerInput, XDSoftDateTimePickerInput
 from georef.models import Nacionalidad, Localidad, Ubicacion
 from informacion.models import Individuo
 #Imports de la app
-from .choices import TIPO_PROFESIONAL, GRUPO_SANGUINEO
+from .choices import TIPO_COMUNIDAD, TIPO_PROFESIONAL, GRUPO_SANGUINEO, TIPO_CONDICION
 from .models import ProyectoEstudiantil, Turno
-from .models import Organization, Empleado, DomicilioOrganizacion, PeticionCoca
-from .models import Responsable
+from .models import PeticionCoca
+from .models import Organization, DomicilioOrganizacion
 
 #Definimos nuestros forms
 class ProfesionalSaludForm(forms.ModelForm):
@@ -142,30 +142,24 @@ class AprobarForm(forms.Form):
         widget=XDSoftDateTimePickerInput()
     )
 
-class PeticionpForm(forms.ModelForm):
-    class Meta:
-        model = PeticionCoca
-        fields= '__all__'
-        exclude = ('fecha', 'token', 'individuos', 'estado', 'operador')
-        widgets = {
-            'apellidos': forms.TextInput(attrs={'placeholder': 'Introduzca Apellidos'}),
-            'nombres': forms.TextInput(attrs={'placeholder': 'Introduzca Nombres'}),
-            'num_doc': forms.TextInput(attrs={'placeholder': 'Introduzca DNI'}),            
-            'email_contacto': forms.TextInput(attrs={'placeholder': 'Introduzca EMAIL de Contacto'}),
-            'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
-            'telefono': forms.TextInput(attrs={'placeholder': 'Introduzca Teléfono'}),            
-        }
-    
-class PersonapForm(forms.ModelForm):    
-    #Domicilio en jujuy
-    localidad = forms.ModelChoiceField(
+class PeticionForm(forms.ModelForm):
+    #Datos del Pedido
+    destino = forms.ModelChoiceField(
         queryset=Localidad.objects.all(),
         widget=autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
         required=True,
     )
-    calle = forms.CharField(required=True, )
-    numero = forms.CharField(required=True, )
-    aclaracion = forms.CharField(required=False, )
+    comunidad = forms.ChoiceField(choices=TIPO_COMUNIDAD, initial='NO')
+    #Domicilio en jujuy
+    #Domicilio en jujuy
+    dom_localidad = forms.ModelChoiceField(
+        queryset=Localidad.objects.all(),
+        widget=autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+        required=True,
+    )
+    dom_calle = forms.CharField(required=True, )
+    dom_numero = forms.CharField(required=True, )
+    dom_aclaracion = forms.CharField(required=False, )
     #Documentos
     frente_dni = forms.FileField(required=True)
     reverso_dni = forms.FileField(required=True)
@@ -174,7 +168,8 @@ class PersonapForm(forms.ModelForm):
         model = Individuo
         fields= (
             'tipo_doc', 'num_doc', 'apellidos', 'nombres', 'sexo', 'fecha_nacimiento', 'nacionalidad', 'telefono', 'email',
-            'localidad', 'calle', 'numero', 'aclaracion',
+            'dom_localidad', 'dom_calle', 'dom_numero', 'dom_aclaracion',
+            'destino', 'comunidad',
             'frente_dni', 'reverso_dni',
         )
         widgets = {
@@ -186,7 +181,6 @@ class PersonapForm(forms.ModelForm):
             raise forms.ValidationError("Debe cargar un telefono.")
         else:
             return self.cleaned_data
-
 
 #Formularios
 class OrganizationForm(forms.ModelForm):
@@ -204,36 +198,52 @@ class OrganizationForm(forms.ModelForm):
     class Meta:
         model = Organization
         fields= '__all__'   
-        exclude = ('responsables','empleados', 'token', 'fecha', 'estado', 'operador', 'archivo_adjunto')     
+        exclude = ('responsables','afiliados', 'token', 'fecha', 'estado', 'operador', 'archivo_adjunto')     
         widgets = {
             'cuit': forms.TextInput(attrs={'placeholder': 'Introduzca CUIT'}),
             'denominacion': forms.TextInput(attrs={'placeholder': 'Introduzca Denominacion'}),
             'tipo_organizacion': forms.Select(attrs={'placeholder': 'Seleccione Tipo de Organizacion'}),
             'fecha_constitucion': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
-            'cantidad': forms.TextInput(attrs={'placeholder': 'Introduzca Cantidad de Empleados'}),
+            'cantidad': forms.TextInput(attrs={'placeholder': 'Introduzca Cantidad de Afiliados'}),
             'mail_institucional': forms.TextInput(attrs={'placeholder': 'Introduzca MAIL INSTITUCIONAL'}),
             'telefono': forms.TextInput(attrs={'placeholder': 'Introduzca Telefono Institucional'}),            
             'celular': forms.TextInput(attrs={'placeholder': 'Introduzca Celular Institucional'}),                       
             'descripcion ': forms.Textarea(attrs={'placeholder': 'Describa el Objeto de su Organizacion'}),                    
         }
 
-class ResponsableForm(forms.ModelForm):
+class AfiliadoForm(forms.ModelForm):
+    #Domicilio en jujuy
+    dom_localidad = forms.ModelChoiceField(
+        queryset=Localidad.objects.all(),
+        widget=autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+        required=True,
+    )
+    dom_calle = forms.CharField(required=True, )
+    dom_numero = forms.CharField(required=True, )
+    dom_aclaracion = forms.CharField(required=False, )
+    #Datos Organizacionales
+    tipo_cond = forms.ChoiceField(choices=TIPO_CONDICION, required=True, label="Condicion Poblacional")
+    rol = forms.CharField(required=False, label="Rol Institucional")
+    #Documentos
+    frente_dni = forms.FileField(required=True)
+    reverso_dni = forms.FileField(required=True)
+    #Base Individuo
     class Meta:
-        model = Responsable
-        fields = '__all__'
-        exclude = ('organizacion',)
+        model = Individuo
+        fields = (
+            'num_doc', 'apellidos', 'nombres', 'sexo', 'fecha_nacimiento', 'nacionalidad', 'telefono', 'email',
+            'dom_localidad', 'dom_calle', 'dom_numero', 'dom_aclaracion',
+            'frente_dni', 'reverso_dni',
+        )
         widgets = {
             'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
+            'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
         }
-
-class EmpleadoForm(forms.ModelForm):
-    class Meta:
-        model = Empleado
-        fields = '__all__'
-        exclude = ('organizacion',)
-        widgets = {
-            'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
-        }
+    def clean(self):
+        if self.cleaned_data['telefono'] is None or self.cleaned_data['telefono'] == '+549388':
+            raise forms.ValidationError("Debe cargar un telefono.")
+        else:
+            return self.cleaned_data
 
 class DocumentacionForm(forms.Form):
     documentacion = forms.FileField()

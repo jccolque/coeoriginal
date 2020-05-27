@@ -11,15 +11,24 @@
                     <h2><b>PANEL DE PETICIÓN DE COCA - PERSONAS</b></h2>
                     <div class="col-md-8">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <h3 style="color:{% if peticion.estado == 'C' %}red{% elif peticion.estado == 'E' %}orange{% elif peticion.estado == 'A' %}green{% else %}black{% endif %};"><b>Estado</b> {{peticion.get_estado_display}}</h3>
-                                <p><b>Nombres:</b> {{peticion.nombres}}</p>
-                                <p><b>Apellidos:</b> {{peticion.apellidos}}</p>
-                                <p><b>DNI:</b> {{peticion.num_doc}}</p>
-                                <p><b>Email de Contacto:</b> {{peticion.email_contacto}}</p>          
+                                <p><b>Nombre Completo:</b> {{peticion.individuo.apellidos}}, {{peticion.individuo.nombres}}</p>
+                                <p><b>DNI:</b> {{peticion.individuo.num_doc}}</p>
+                                <p><b>Email de Contacto:</b> {{peticion.individuo.email_contacto}}</p>
+                                <p><b>Destino del Pedido:</b>{{peticion.destino}}</p>
+                                <p>Comunidad Originaria: {{peticion.get_comunidad_display}}</p>
                             </div>
-                                
-                            <div class="col-md-6">
+                            <div class="col-md-4"></div>
+                                <p><b>Domicilio:</b></p>
+                                {% with {{peticion.individuo.domicilio_actual as domicilio %}
+                                    <p>{{domicilio}}</p>
+                                {% endwith %}
+                                <p><b>Contacto:</b></p>
+                                <p><b>Telefono:</b> {{peticion.individuo.telefono}}</p>
+                                <p><b>Email:</b> {{peticion.individuo.email}}</p>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="bordeado importante">
                                     {% if peticion.estado == 'C' %}
                                         <h3>Una vez que termine el ingreso de <b>TODA</b> la infomacion requerida, presione el botón de <b> FINALIZAR PROCESO</b>.</h3>
@@ -43,70 +52,21 @@
                     <div class="col-md-4">
                         <ul class="menu_botones">
                             {% if peticion.estado == 'C' %}
-                                <li><a href="{% url 'inscripciones:mod_peticion_persona' peticionp_id=peticion.id %}">Modificar Datos de Ingreso</a></li>
-                                
-                                <li><a href="{% url 'inscripciones:cargar_people' peticionp_id=peticion.id %}">Agregar DATOS PERSONALES</a></li>
-                            
-                                <li><a href="{% url 'inscripciones:finalizar_peticion' peticionp_id=peticion.id %}">Finalizar Proceso</a></li>
+                                <li><a href="{% url 'inscripciones:mod_peticion_persona' peticion_id=peticion.id %}">Modificar Datos</a></li>
+                                <li><a href="{% url 'inscripciones:finalizar_peticion' peticion_id=peticion.id %}">Finalizar Proceso</a></li>
                             {% endif %}
                             {% if perms.operadores.permisos %}
                                 <hr>
                                 <p><b>OPERADORES</b></p>
-                                <li><a href="{% url 'inscripciones:peticion_enviar_email' peticionp_id=peticion.id %}">Enviar Correo Electronico</a></li>
-                                <li><a href="{% url 'inscripciones:eliminar_peticion' peticionp_id=peticion.id %}">Eliminar Petición</a></li>                                
+                                <li><a href="{% url 'inscripciones:peticion_enviar_email' peticion_id=peticion.id %}">Enviar Correo Electronico</a></li>
+                                <li><a href="{% url 'inscripciones:eliminar_peticion' peticion_id=peticion.id %}">Eliminar Petición</a></li>                                
                                 <li><a href="{% url 'inscripciones:lista_peticiones' %}">Volver al Listado de Peticiones</a></li>
                             {% endif %}
                         </ul>
                     </div>
                 </div>
                 <div class="row"></div>                    
-                        <hr>
-                        <h3><b> USTED DEBE CARGAR SUS DATOS PERSONALES.</b></h3>
-                        <p><b> IMPORTANTE: Recuerde que este pedido se llena en caracter de DECLARACIÓN JURADA, cualquier falsedad u omisión, se considerará una CONTRAVENCIÓN GRAVE.</b></p>
-                        
-                        <table class="listado" id="table">
-                            <thead>
-                                <tr>
-                                    <th>Numero Documento</th>
-                                    <th>Nombre y Apellido</th>
-                                    <th>Fecha de Nacimiento</th>
-                                    <th>Correo Electronico</th>
-                                    <th>Telefono</th>                                    
-                                    <th>Domicilio</th>
-                                    <th>Documentos</th>                                                                       
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for individuo in peticion.individuos.all %}
-                                    <tr>
-                                        <td>{{individuo.num_doc}}</td>
-                                        <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
-                                        <td>{{individuo.fecha_nacimiento}}</td>
-                                        <td>{{individuo.email}}</td>
-                                        <td>{{individuo.telefono}}</td>                                        
-                                        <td>{{individuo.domicilio_actual}}</td>
-                                        <td>
-                                            {% for doc in individuo.get_dnis %}
-                                                <a href="{{doc.archivo.url}}" target="_blank">{{doc.aclaracion}}</a><br>
-                                            {% endfor %}
-                                        </td>                                                                                
-                                        <td>
-                                            <a href="{% url 'inscripciones:mod_people' peticionp_id=peticion.id individuo_id=individuo.id %}" target="_blank">
-                                                <img class="icons" src="{% static 'img/icons/change.png' %}">
-                                            </a>
-                                            <a href="{% url 'inscripciones:quitar_persona' peticionp_id=peticion.id individuo_id=individuo.id %}" target="_blank">
-                                                <img class="icons" src="{% static '/img/icons/delete.png' %}">
-                                            </a>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                        <br>
-                          
-
-                    {% if peticionp_id.emails_enviados.exists %}
+                    {% if peticion_id.emails_enviados.exists %}
                         <div class="row">
                             <h3>Emails Enviados al individuo</h3>
                             <table class="listado">

@@ -50,7 +50,12 @@ TIPO_DISPOSITIVO = (
     ('TB', 'Tablet'),
 )
 
-TIPO_REFERENCIA = (
+TIPO_AFILIADO = (
+    ('R', 'Responsable'),
+    ('A', 'Afiliado'),    
+)
+
+TIPO_CONDICION = (
     ('N', 'Ninguna'),
     ('CFR', 'Con Factores de Riesgo'),
     ('H', 'Hacinamiento'),
