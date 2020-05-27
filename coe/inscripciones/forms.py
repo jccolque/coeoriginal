@@ -16,7 +16,7 @@ from informacion.models import Individuo
 #Imports de la app
 from .choices import TIPO_PROFESIONAL, GRUPO_SANGUINEO
 from .models import ProyectoEstudiantil, Turno
-from .models import Organization, Empleado, DomicilioOrganizacion, Peticionp
+from .models import Organization, Empleado, DomicilioOrganizacion, PeticionCoca
 from .models import Responsable
 
 #Definimos nuestros forms
@@ -144,7 +144,7 @@ class AprobarForm(forms.Form):
 
 class PeticionpForm(forms.ModelForm):
     class Meta:
-        model = Peticionp
+        model = PeticionCoca
         fields= '__all__'
         exclude = ('fecha', 'token', 'individuos', 'estado', 'operador')
         widgets = {

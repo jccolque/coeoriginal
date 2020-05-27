@@ -28,7 +28,7 @@ from .models import Turno
 from .models import Capacitacion
 from .models import ProyectoEstudiantil
 from .models import EmailsInscripto
-from .models import Organization, DomicilioOrganizacion, Peticionp, Emails_Peticionp
+from .models import Organization, DomicilioOrganizacion, PeticionCoca, Emails_Peticionp
 from .forms import ProfesionalSaludForm, VoluntarioSocialForm
 from .forms import ProyectoEstudiantilForm, IndividuoForm
 from .forms import OrganizationForm, EmpleadoForm
@@ -636,27 +636,27 @@ def pedir_coca(request):
     return render(request, "pedir_coca.html", {'title': "Sistema de Provisión de Coca", })
 
 def peticion_persona(request, peticionp_id=None):
-    peticionp = None
+    peticion = None
     if peticionp_id:
-        peticionp = Peticionp.objects.get(pk=peticionp_id)
-    form = PeticionpForm(instance=peticionp)
+        peticion = PeticionCoca.objects.get(pk=peticionp_id)
+    form = PeticionpForm(instance=peticion)
     if request.method == "POST":
-        form = PeticionpForm(request.POST, instance=peticionp)
+        form = PeticionpForm(request.POST, instance=peticion)
         if form.is_valid():
-            peticionp = form.save()
+            peticion = form.save()
             #Enviar email
             if SEND_MAIL:
-                to_email = peticionp.email_contacto
+                to_email = peticion.email_contacto
                 #Preparamos el correo electronico
                 mail_subject = 'COE2020 Petición de COCA Jujuy!'
                 message = render_to_string('emails/email_persona_pet.html', {
-                    'peticion': peticionp,
+                    'peticion': peticion,
                 })
                 #Instanciamos el objeto mail con destinatario
                 email = EmailMessage(mail_subject, message, to=[to_email])
                 email.send()
             #Enviarlo a cargar ingresantes
-            return redirect('inscripciones:ver_peticion_persona', token=peticionp.token)
+            return redirect('inscripciones:ver_peticion_persona', token=peticion.token)
         else: 
             return render(request, "peticion_persona.html", {
                 'title': "PETICIÓN DE COCA - PERSONAS", 
@@ -667,12 +667,12 @@ def peticion_persona(request, peticionp_id=None):
     return render(request, "peticion_persona.html", {'title': "PETICIÓN DE COCA - PERSONAS", 'form': form, 'button': "Iniciar Pedido", })
 
 def ver_peticion_persona(request, token):
-    peticionp = Peticionp.objects.prefetch_related('individuos')
-    peticionp = peticionp.get(token=token)
+    peticion = PeticionCoca.objects.prefetch_related('individuos')
+    peticion = peticion.get(token=token)
     #Calcular Limite para eliminacion
-    limite = int(72 - (timezone.now() - peticionp.fecha).total_seconds() / 3600)
+    limite = int(72 - (timezone.now() - peticion.fecha).total_seconds() / 3600)
     return render(request, 'panel_peticion.html', {
-        'peticionp': peticionp,
+        'peticion': peticion,
         'limite': limite,        
         'has_table': True,
     })
@@ -684,7 +684,7 @@ def cargar_people(request, peticionp_id, individuo_id=None):
     form = PersonapForm(instance=individuo)
     if request.method == "POST":
         #obtenemos peticion
-        peticionp = Peticionp.objects.get(pk=peticionp_id)
+        peticion = PeticionCoca.objects.get(pk=peticionp_id)
         try:#Tratamos de obtener el dni
             num_doc = request.POST['num_doc']
             individuo = Individuo.objects.get(num_doc=num_doc)
@@ -694,68 +694,68 @@ def cargar_people(request, peticionp_id, individuo_id=None):
         if form.is_valid():
             #actualizamos individuo con los datos nuevos
             individuo = actualizar_individuo(form)            
-            individuo.destino = peticionp.destino
+            individuo.destino = peticion.destino
             individuo.save()
             #Lo agregamos al registro
-            peticionp.individuos.add(individuo)
-            return redirect('inscripciones:ver_peticion_persona', token=peticionp.token)
+            peticion.individuos.add(individuo)
+            return redirect('inscripciones:ver_peticion_persona', token=peticion.token)
     return render(request, "cargar_people.html", {'title': "Cargar Datos Personales", 'form': form, 'button': "Cargar", }) 
 
 def quitar_persona(request, peticionp_id, individuo_id):
-    peticionp = Peticionp.objects.get(pk=peticionp_id)
+    peticion = PeticionCoca.objects.get(pk=peticionp_id)
     individuo = Individuo.objects.get(pk=individuo_id)
-    peticionp.individuos.remove(individuo)
-    return redirect('inscripciones:ver_peticion_persona', token=peticionp.token)
+    peticion.individuos.remove(individuo)
+    return redirect('inscripciones:ver_peticion_persona', token=peticion.token)
 
 def finalizar_peticion(request, peticionp_id):
-    peticionp = Peticionp.objects.get(pk=peticionp_id)    
+    peticion = PeticionCoca.objects.get(pk=peticionp_id)    
     #Chequear que el ingreso este finalizado
-    if not peticionp.individuos.exists():
+    if not peticion.individuos.exists():
         return render(request, 'extras/error.html', {
             'titulo': 'FINALIZACIÓN DEGENEGADA',
             'error': "USTED DEBE CARGAR SUS DATOS PERSONALES",
         })    
     #Pasar a estado finalizado    
-    peticionp.estado = 'E'
-    peticionp.save()
-    return redirect('inscripciones:ver_peticion_persona', token=peticionp.token)
+    peticion.estado = 'E'
+    peticion.save()
+    return redirect('inscripciones:ver_peticion_persona', token=peticion.token)
 
 @permission_required('operadores.menu_inscripciones')
 def lista_peticiones(request, estado=None):
-    peticionp = Peticionp.objects.all()
+    peticiones = PeticionCoca.objects.all()
     #Filtramos de ser necesario
     if not estado:
-        peticionp = peticionp.exclude(estado='B')
+        peticiones = peticiones.exclude(estado='B')
     else:
-        peticionp = peticionp.filter(estado=estado)
+        peticiones = peticiones.filter(estado=estado)
     #Optimizamos
-    peticionp = peticionp.select_related('destino', 'operador')
-    peticionp = peticionp.prefetch_related('individuos')
+    peticiones = peticiones.select_related('destino', 'operador')
+    peticiones = peticiones.prefetch_related('individuos')
     #Lanzamos listado
     return render(request, 'lista_peticiones.html', {
         'title': "Ingresos Pedidos",
-        'peticionp': peticionp,
+        'peticiones': peticiones,
         'has_table': True,
     })
 
 @permission_required('operadores.menu_provisiones')
 def lista_peticiones_completas(request):
-    peticionp = Peticionp.objects.filter(estado='E')    
+    peticiones = PeticionCoca.objects.filter(estado='E')    
     #Optimizamos
-    peticionp = peticionp.select_related('destino', 'operador')
-    peticionp = peticionp.prefetch_related('individuos', 'individuos__domicilio_actual', 'individuos__domicilio_actual__localidad')
-    peticionp = peticionp.prefetch_related('individuos__documentos')
+    peticiones = peticiones.select_related('destino', 'operador')
+    peticiones = peticiones.prefetch_related('individuos', 'individuos__domicilio_actual', 'individuos__domicilio_actual__localidad')
+    peticiones = peticiones.prefetch_related('individuos__documentos')
     #Lanzamos listado
     return render(request, 'lista_peticiones.html', {
         'title': "Peticiones Completas Esperando Aprobacion",
-        'peticionp': peticionp,
+        'peticiones': peticiones,
         'has_table': True,
     })
 
 @permission_required('operadores.menu_provisiones')
 def peticion_enviar_email(request, peticionp_id):
-    peticionp = Peticionp.objects.get(pk=peticionp_id)
-    form = EmailForm(initial={'destinatario': peticionp.email_contacto})
+    peticion = PeticionCoca.objects.get(pk=peticionp_id)
+    form = EmailForm(initial={'destinatario': peticion.email_contacto})
     if request.method == "POST":
         form = EmailForm(request.POST)
         if form.is_valid():
@@ -764,30 +764,30 @@ def peticion_enviar_email(request, peticionp_id):
                 #Preparamos el correo electronico
                 mail_subject = form.cleaned_data['asunto']
                 message = render_to_string('emails/ingreso_contacto.html', {
-                        'peticionp': peticionp,
+                        'peticion': peticion,
                         'cuerpo': form.cleaned_data['cuerpo'],
                     })
                 #Guardamos el mail
-                Emails_Peticionp(peticionp=peticionp, asunto=mail_subject, cuerpo=form.cleaned_data['cuerpo'], operador=obtener_operador(request)).save()
+                Emails_Peticionp(peticion=peticion, asunto=mail_subject, cuerpo=form.cleaned_data['cuerpo'], operador=obtener_operador(request)).save()
                 #Instanciamos el objeto mail con destinatario
                 email = EmailMessage(mail_subject, message, to=[to_email])
                 email.send()
-        return redirect('inscripciones:ver_peticion_persona', token=peticionp.token)
+        return redirect('inscripciones:ver_peticion_persona', token=peticion.token)
     return render(request, "extras/generic_form.html", {'titulo': "Enviar Correo Electronico", 'form': form, 'boton': "Enviar", })
 
 @permission_required('operadores.menu_inscripciones')
 def peticion_enviado(request, peticionp_id):
-    peticionp = Peticionp.objects.get(pk=peticionp_id)
-    peticionp.estado = 'N'
-    peticionp.save()
-    return redirect('inscripciones:ver_peticion_persona', token=peticionp.token)
+    peticion = PeticionCoca.objects.get(pk=peticionp_id)
+    peticion.estado = 'N'
+    peticion.save()
+    return redirect('inscripciones:ver_peticion_persona', token=peticion.token)
 
 @permission_required('operadores.menu_inscripciones')
 def eliminar_peticion(request, peticionp_id):
-    peticionp = Peticionp.objects.get(pk=peticionp_id)
-    peticionp.estado = 'B'
-    peticionp.operador = obtener_operador(request)
-    peticionp.save()
+    peticion = PeticionCoca.objects.get(pk=peticionp_id)
+    peticion.estado = 'B'
+    peticion.operador = obtener_operador(request)
+    peticion.save()
     return redirect('inscripciones:lista_peticiones')
 
 #Peticiones Organización           

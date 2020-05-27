@@ -2,7 +2,7 @@
 from django.contrib import admin
 #Imports de la app
 from .models import Area, Tarea, Capacitacion, Inscripcion
-from .models import Peticionp
+from .models import PeticionCoca
 
 #Inline
 class TareaInline(admin.TabularInline):
@@ -25,7 +25,7 @@ class InscripcionAdmin(admin.ModelAdmin):
     list_filter = ['profesion', 'valido', 'disponible']
 
 class PeticionPAdmin(admin.ModelAdmin):
-    model = Peticionp
+    model = PeticionCoca
     list_filter = ['estado', 'fecha', 'destino']
     search_fields = ['individuos__apellidos', 'individuos__num_doc']
 
@@ -33,4 +33,4 @@ class PeticionPAdmin(admin.ModelAdmin):
 admin.site.register(Area, AreaAdmin)
 admin.site.register(Capacitacion, CapacitacionAdmin)
 admin.site.register(Inscripcion, InscripcionAdmin)
-admin.site.register(Peticionp, PeticionPAdmin)
+admin.site.register(PeticionCoca, PeticionPAdmin)

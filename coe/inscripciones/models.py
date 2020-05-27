@@ -162,7 +162,7 @@ class ProyectoEstudiantil(models.Model):
     fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
 
 #PETICION COCA (Pablo Ramos)
-class Peticionp(models.Model):
+class PeticionCoca(models.Model):
     individuos = models.ManyToManyField(Individuo, related_name="individuos_pedidos")
     destino = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="destino_pedidos_personas")
     email_contacto = models.EmailField('Correo Electrónico de Contacto', max_length=200)
@@ -185,7 +185,7 @@ class Peticionp(models.Model):
         return self.email_contacto + self.cantidad
 
 class Emails_Peticionp(models.Model):
-    peticion = models.ForeignKey(Peticionp, on_delete=models.CASCADE, related_name="emails")
+    peticion = models.ForeignKey(PeticionCoca, on_delete=models.CASCADE, related_name="emails")
     fecha = models.DateTimeField('Fecha de Envio', default=timezone.now)
     asunto = models.CharField('Asunto', max_length=100)
     cuerpo = models.CharField('Cuerpo', max_length=1000)
