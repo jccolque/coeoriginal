@@ -48,18 +48,7 @@ class IngresoProvinciaForm(forms.ModelForm):
     class Meta:
         model = IngresoProvincia
         fields= '__all__'
-        exclude = ('fecha', 'token', 'individuos', 'estado', 'plan_vuelo', 'dut', 'operador', 'qrpath')
-        widgets = {
-            'fecha_llegada': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}, ),
-            'origen': autocomplete.ModelSelect2(url='georef:provincia-autocomplete'),
-            'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
-        }
-
-class IngresoProvinciaForm(forms.ModelForm):
-    class Meta:
-        model = IngresoProvincia
-        fields= '__all__'
-        exclude = ('fecha', 'token', 'individuos', 'estado', 'permiso_nacional', 'plan_vuelo', 'dut', 'operador', 'qrpath')
+        exclude = ('tipo', 'token', 'individuos', 'estado', 'permiso_nacional', 'plan_vuelo', 'dut', 'fecha', 'operador', 'qrpath')
         widgets = {
             'fecha_llegada': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}, ),
             'origen': autocomplete.ModelSelect2(url='georef:provincia-autocomplete'),
