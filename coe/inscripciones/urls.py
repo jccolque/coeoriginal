@@ -66,9 +66,12 @@ urlpatterns = [
     path('peticion_org/mail/<int:organizacion_id>', views.peticion_org_enviar_email, name='peticion_org_enviar_email'),
     path('del/peticion_org/<int:organizacion_id>', views.eliminar_peticion_org, name='eliminar_peticion_org'),
     path('lista/peticiones_org', views.lista_peticiones_org, name='lista_peticiones_org'),
+    path('subir/doc_org/<str:token>', views.documentacion_subir_info, name='documentacion_subir_info'),
+    path('del/doc_org/<str:token>', views.documentacion_eliminar_info, name='documentacion_eliminar_info'),
     #Ingresos   
     path('lista/peticiones/completas', views.lista_peticiones_completas, name='lista_peticiones_completas'),
     path('lista/peticiones', views.lista_peticiones, name='lista_peticiones'),
     #Activacion:
     path('act/<int:inscripcion_id>/<int:num_doc>', views.activar_inscripcion, name='activar_inscripcion'),
 ]
+

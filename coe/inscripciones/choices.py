@@ -73,7 +73,8 @@ TIPO_CONFIRMA = (
 
 ESTADO_PEDIDO = (
     ('C', 'Cargando Pedido'),
-    ('E', 'Pedido Cargado'),    
+    ('E', 'Pedido Cargado'),
+    ('D', 'Documentación Respaldatoria'),    
     ('A', 'Aprobado'),
     ('B', 'Dado de Baja'),
 )

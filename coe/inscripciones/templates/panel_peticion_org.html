@@ -19,6 +19,19 @@
                                 <p><b>Cantidad de Empleados:</b> {{organizacion.cantidad}}</p>
                                 <p><b>E-mail de Contacto:</b> {{organizacion.mail_institucional}}</p>
                                 <p><b>Localidad:</b> {{domicilio.localidad.nombre}}</p>
+                                <p><b>Documentación Respaldatoria de la Organización:</b>
+                                {% if organizacion.archivo_adjunto %}
+                                    <a href="{{organizacion.archivo_adjunto.url}}">Ver Documento</a>
+                                    <a href="{% url 'inscripciones:documentacion_eliminar_info' token=organizacion.token %}">
+                                        <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                    </a>
+                                    <br>
+                                    <a href="{% url 'inscripciones:documentacion_subir_info' token=organizacion.token %}" style="font-weight:bold;color:red;">(Cambiar Archivo)</a>
+                                    
+                                {% else %}
+                                    <a href="{% url 'inscripciones:documentacion_subir_info' token=organizacion.token %}">CARGAR DOCUMENTACIÓN RESPALDATORIA</a><br>
+                                    <i> NO SE OLVIDE DE SUBIR DOCUMENTACIÓN. </i>
+                                {% endif %}
                                                             
                             </div>
                             <div class="col-md-6">
@@ -35,8 +48,14 @@
                                     {% elif organizacion.estado == 'A' %}
                                         <h3>Su pedido fue aprobado</h3>
                                         <br>
-                                        <p>Puede descargar la autorizacion, lo esperamos en la fecha y hora de llegada informada.</p>
+                                        <p>Aquí tiene el comprobante de su aprobación. Puede descargarlo aquí.</p>
                                     {% endif %}
+                                    {% if organizacion.estado != 'B' or organizacion.estado != 'A' %}
+                                        <h3> IMPORTANTE: </h3>
+                                        <br>
+                                        <p> PARA PODER APROBAR SU PEDIDO, NECESITAMOS QUE USTED SUBA LA DOCUMENTACIÓN RESPALDATORIA.</p>
+                                    {% endif %}
+
                                 </div>
                             </div>
                         </div>
@@ -152,12 +171,8 @@
                             </table>
                         </div>
                     {% endif %}
+                </div>
             </div>
-        </div>
+        </section>
     </section>
-</section>
 {% endblock %}
-                                        
-                                        
-                                        
-                    

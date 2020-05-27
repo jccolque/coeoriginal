@@ -1071,3 +1071,25 @@ def eliminar_peticion_org(request, organizacion_id):
     organizacion.operador = obtener_operador(request)
     organizacion.save()
     return redirect('inscripciones:lista_peticiones_org')
+
+def documentacion_subir_info(request, token):
+    form = DocumentacionForm()
+    if request.method == "POST":
+        #obtenemos ingreso
+        form = DocumentacionForm(request.POST, request.FILES)
+        if form.is_valid():
+            organizacion = Organization.objects.get(token=token)
+            organizacion.archivo_adjunto = form.cleaned_data['documentacion']
+            organizacion.save()
+            return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
+    return render(request, "extras/generic_form.html", {
+        'titulo': "Cargar Documentación Respaldatoria", 
+        'form': form, 
+        'boton': "Cargar Documentación", 
+        })
+
+def documentacion_eliminar_info(request, token):
+    organizacion = Organization.objects.get(token=token)
+    organizacion.archivo_adjunto = None
+    organizacion.save()
+    return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
