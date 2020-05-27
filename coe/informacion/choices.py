@@ -74,6 +74,7 @@ TIPO_ATRIBUTO = (
     ('CE', 'Visito Pais de Riesgo/Contacto con Extranjeros'),
     ('CP', 'Tiene Potestad de Controlar Permisos'),
     ('VA', 'Voluntario Aprobado'),
+    ('TP', 'Test Prioritario'),
     #excepciones (3 caracteres)
     ('OP2', 'Puede acreditar que requiere imprescindiblemente de cuidados domiciliarios'),
     ('EMB', 'Embarazada a partir del segundo Trimestre'),

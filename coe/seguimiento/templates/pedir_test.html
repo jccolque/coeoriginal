@@ -5,8 +5,8 @@
 {% block content %}
     <div class="col-lg-6 col-lg-offset-3">
         <h2><b>Pedido Test para Coronavirus</b></h2>
-        <p>El test debe ser realizado en un plazo no menor a 4 días (plazo a consultar con los jefes...no se si estipularon 4 o 5 días) de su ingreso a la provincia.</p>
-        <p>Las respuestas que usted proporcione en este cuestionario nos permitirán asistir a la comunidad atendiendo a urgencias de orden sanitario, social y económico.</p>
+        <p>El test puede ser realizado luego de 4 dias OBLIGATORIOS de aislamiento.</p>
+        <p><i>Las respuestas que usted proporcione en este cuestionario nos permitirán asistir a la comunidad atendiendo a urgencias de orden sanitario, social y económico.</i></p>
         {% if error %}
             <div class="bordeado importante">
                 <p>{{error}}</p>
@@ -19,51 +19,56 @@
             <div class="col-lg-5 col-lg-offset-1">
                 <fieldset class="module aligned">
                     <div class="form-row">
-                        <div class="field-box">
-                            <p>Numero de Documento/Pasaporte:</p>
-                            <input type="text" name="num_doc" id="num_doc" required>
+                        <p>La realizacion del TEST no es gratuita, nuestros operadores lo contactaran para informarle como debe realizar el pago.</p>
+                        <p><b>IMPORTANTE: El Pago solo puede ser realizado via Transferencia Bancaria.</b></p>
+                        <div class="bordeado" style="text-align: left;">
+                            <div class="field-box">
+                                <p>Numero de Documento/Pasaporte:</p>
+                                <input type="text" name="num_doc" id="num_doc" required>
+                            </div>
+                            <div class="field-box">
+                                <p>Telefono:</p>
+                                <input type="text" name="telefono" id="telefono" required>
+                            </div>
+                            <div class="field-box">
+                                <p>Correo Electronico:</p>
+                                <input type="email" name="email" id="email" required>
+                            </div>
                         </div>
-                        <div class="field-box">
-                            <p>Telefono:</p>
-                            <input type="text" name="telefono" id="telefono" required>
-                        </div>
-                        <div class="field-box">
-                            <p>Correo Electronico:</p>
-                            <input type="email" name="email" id="email" required>
-                        </div>
-                        <br>
                         <p>Los datos de contacto de Telefono y Mail seran utilizados para contactarlo a la hora de coordinar la realizacion del test y la entrega de los resultados.</p>
                         <p><b>Por favor, controle cuidadosamente la informacion que nos brinda.</b></p>
                     </div>
                 </fieldset>
             </div>
-            <div class="col-lg-5 col-lg-offset-1">
-                <fieldset class="module aligned">
-                    <h2>Presenta diagnóstico de alguna de estas patologías?</h2>
-                    <!-- aca deberiamos agregar el pasajeros inline formset managment -->
-                    <table class="checkbox_table"  id="Patologias">
-                        {% for tipo in tipos_patologias %}
-                            <tr>
-                                <td><input type="checkbox" id="{{tipo.0}}" value="{{tipo.0}}" name="patologias"></td>
-                                <td>{{tipo.1}}</td>
-                            </tr>
-                        {% endfor %}
-                    </table>
-                </fieldset>
-                <fieldset class="module aligned">
-                    <h2>Presenta alguna de las siguientes condiciones?</h2>
-                    <!-- aca deberiamos agregar el pasajeros inline formset managment -->
-                    <table class="checkbox_table" id="Patologias">
-                        {% for tipo in tipos_excepciones %}
-                            <tr>
-                                <td><input type="checkbox" id="{{tipo.0}}" value="{{tipo.0}}" name="excepciones"></td>
-                                <td>{{tipo.1}}</td>
-                            </tr>
-                        {% endfor %}
-                    </table>
-                </fieldset>
-                <br>
-                <button type="submit">Pedir Test</button>
+            <div class="col-lg-4 col-lg-offset-1">
+                <div class="bordeado" style="text-align: left;">
+                    <fieldset class="module aligned">
+                        <h2>Presenta diagnóstico de alguna de estas patologías?</h2>
+                        <!-- aca deberiamos agregar el pasajeros inline formset managment -->
+                        <table class="checkbox_table"  id="Patologias">
+                            {% for tipo in tipos_patologias %}
+                                <tr>
+                                    <td><input type="checkbox" id="{{tipo.0}}" value="{{tipo.0}}" name="patologias"></td>
+                                    <td>{{tipo.1}}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </fieldset>
+                    <fieldset class="module aligned">
+                        <h2>Presenta alguna de las siguientes condiciones?</h2>
+                        <!-- aca deberiamos agregar el pasajeros inline formset managment -->
+                        <table class="checkbox_table" id="Patologias">
+                            {% for tipo in tipos_excepciones %}
+                                <tr>
+                                    <td><input type="checkbox" id="{{tipo.0}}" value="{{tipo.0}}" name="excepciones"></td>
+                                    <td>{{tipo.1}}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </fieldset>
+                    <br>
+                    <button type="submit">Pedir Test</button>
+                </div>
             </div>
 
         </form>

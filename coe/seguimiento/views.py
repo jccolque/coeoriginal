@@ -447,16 +447,31 @@ def ranking_test(request):
     individuos = individuos.distinct()
     #Optimizamos
     individuos = individuos.select_related('situacion_actual')
+    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__ubicacion')
     individuos = individuos.prefetch_related('seguimientos', 'patologias', 'atributos')
     #Rankeamos
     excepciones = [t[0] for t in TIPO_ATRIBUTO if len(t[0]) == 3]
     for individuo in individuos:
+        individuo.pedido = [s for s in individuo.seguimientos.all() if s.tipo == 'PT'][-1]
         #1pt por cada dia despues del 4to
+        dias = int((timezone.now() - individuo.situacion_actual.fecha).total_seconds() / 3600 / 24)
         individuo.puntaje = int((timezone.now() - individuo.situacion_actual.fecha).total_seconds() / 3600 / 24) - 4
+        individuo.motivos = ["Dias: " + str(dias), ]
         #2 pts por cada atributo de excepcion
-        individuo.puntaje += sum([1 for a in individuo.atributos.all() if a.tipo in excepciones]) * 2
+        atribs = [a.get_tipo_display() for a in individuo.atributos.all() if a.tipo in excepciones]
+        if atribs:
+            individuo.puntaje += len(atribs) * 2
+            individuo.motivos += ["Excepciones:", ] + atribs
         #3 pts por cada patologia
-        individuo.puntaje += sum([1 for p in individuo.patologias.all()]) * 3
+        pats = [p.get_tipo_display() for p in individuo.patologias.all()]
+        if pats:
+            individuo.puntaje += len(pats) * 3
+            individuo.motivos += ["Patologias:", ] + pats
+        #+50 por Test Prioritario
+        if individuo.atributos.filter(tipo='TP').exists():
+            individuo.puntaje += 50
+            individuo.motivos += ["Ranking Prioritario", ]
+        #Ranking de puntajes:
     #Mostramos
     return render(request, "ranking_test.html", {
         'individuos': individuos,

@@ -17,6 +17,8 @@
                         <th>Telefono</th>
                         <th>Ubicacion</th>
                         <th>Puntaje</th>
+                        <th>Explicacion</th>
+                        <th>Aclaracion</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -29,11 +31,30 @@
                             <td>{{individuo.domicilio_actual.ubicacion.nombre}}</td>
                             <td>{{individuo.puntaje}}</td>
                             <td>
+                                {% for motiv in individuo.motivos %}
+                                    <p>{{motiv}}</p>
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {{individuo.pedido.fecha}}
+                                <a class="nolink"  href="{% url 'seguimiento:mod_seguimiento' individuo_id=individuo.id seguimiento_id=individuo.pedido.id %}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/change.png' %}">
+                                </a>
+                                <br>
+                                {{individuo.pedido.aclaracion|safe}}
+                            </td>
+                            <td>
                                 <a class="nolink" href="{% url 'seguimiento:cargar_seguimiento' individuo_id=individuo.id tipo='ET' %}" target="_blank">
                                     <img class="icons" src="{% static '/img/icons/test.png' %}">
                                 </a>
                                 <a class="nolink" href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">
                                     <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                </a>
+                                <a class="nolink"  href="{% url 'seguimiento:del_seguimiento' seguimiento_id=individuo.pedido.id %}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                </a>
+                                <a class="nolink" href="{% url 'informacion:cargar_atributo' individuo_id=individuo.id tipo='TP' %}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/priority.png' %}">
                                 </a>
                             </td>
                         </tr>
