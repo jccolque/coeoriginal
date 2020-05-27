@@ -56,7 +56,8 @@ def buscar_alta_aislamiento(request):
                     except:
                         form.add_error(None, "El individuo no cuenta con Alta de Cuarentena.")
                 else:
-                    if individuo.situacion_actual.conducta in ('D', 'E'):
+                    sit = individuo.get_situacion()
+                    if sit.conducta in ('D', 'E'):
                         form.add_error(None, "El individuo no cuenta con Alta de Cuarentena.")
                     else:
                         form.add_error(None, "El individuo no se encuentra en situacion de Aislamiento.")

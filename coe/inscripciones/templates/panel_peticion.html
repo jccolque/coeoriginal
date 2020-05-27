@@ -12,23 +12,25 @@
                     <div class="col-md-8">
                         <div class="row">
                             <div class="col-md-6">
-                                <h3 style="color:{% if peticion.estado == 'C' %}red{% elif peticion.estado == 'E' %}orange{% elif peticion.estado == 'A' %}green{% else %}black{% endif %};"><b>Estado</b> {{peticion.get_estado_display}}</h3>
-                                <p><b>Email de Contacto:</b> {{peticion.email_contacto}}</p>
-                                <p><b>Cantidad</b> {{peticion.cantidad}} gramos</p>           
+                                <h3 style="color:{% if peticionp.estado == 'C' %}red{% elif peticionp.estado == 'E' %}orange{% elif peticionp.estado == 'A' %}green{% else %}black{% endif %};"><b>Estado</b> {{peticionp.get_estado_display}}</h3>
+                                <p><b>Nombres:</b>{{peticionp.nombres}}</p>
+                                <p><b>Apellidos:</b>{{peticionp.apellidos}}</p>
+                                <p><b>DNI:</b>{{peticionp.num_doc}}</p>
+                                <p><b>Email de Contacto:</b>{{peticionp.email_contacto}}</p>          
                             </div>
                                 
                             <div class="col-md-6">
                                 <div class="bordeado importante">
-                                    {% if peticion.estado == 'C' %}
+                                    {% if peticionp.estado == 'C' %}
                                         <h3>Una vez que termine el ingreso de <b>TODA</b> la infomacion requerida, presione el botón de <b> FINALIZAR PROCESO</b>.</h3>
                                         <p>Su PEDIDO será ELIMINADO en {{limite}} horas, si es que no lo finaliza.</p>
                                         <br>
                                         <p>Hasta que el estado del pedido de COCA no se encuentre en <b>Pedido Cargado</b> nuestros operadores no lo analizarán.</p>                                   
-                                    {% elif peticion.estado == 'E' %}
+                                    {% elif peticionp.estado == 'E' %}
                                         <h3>Nuestros Operadores estan analizando su requerimiento</h3>
                                         <br>
                                         <p>En caso de aprobarlo, le enviaremos un correo electronico a la cuenta informada para que descargue su autorizacion.</p>
-                                    {% elif peticion.estado == 'A' %}
+                                    {% elif peticionp.estado == 'A' %}
                                         <h3>Su pedido fue aprobado</h3>
                                         <br>
                                         <p>Puede descargar la autorizacion, lo esperamos en la fecha y hora de llegada informada.</p>
@@ -40,18 +42,18 @@
                     </div>
                     <div class="col-md-4">
                         <ul class="menu_botones">
-                                <li><a href="{% url 'inscripciones:mod_peticion_persona' peticion_id=peticionp.id %}">Modificar Datos de Ingreso</a></li>
+                            {% if peticionp.estado == 'C' %}
+                                <li><a href="{% url 'inscripciones:mod_peticion_persona' peticionp_id=peticionp.id %}">Modificar Datos de Ingreso</a></li>
                                 
-                                <li><a href="{% url 'inscripciones:cargar_people' peticion_id=peticionp.id %}">Agregar Persona</a></li>
-                                
-                                {% if ingreso.estado != 'C' or ingreso.estado == 'B' %}
-                                    <li><a href="{% url 'inscripciones:finalizar_peticion' peticion_id=peticionp.id %}">Finalizar Proceso</a></li>
-                                {% endif %}
+                                <li><a href="{% url 'inscripciones:cargar_people' peticionp_id=peticionp.id %}">Agregar DATOS PERSONALES</a></li>
+                            
+                                <li><a href="{% url 'inscripciones:finalizar_peticion' peticionp_id=peticionp.id %}">Finalizar Proceso</a></li>
+                            {% endif %}
                             {% if perms.operadores.permisos %}
                                 <hr>
                                 <p><b>OPERADORES</b></p>
-                                <li><a href="{% url 'inscripciones:peticion_enviar_email' peticion_id=peticionp.id %}">Enviar Correo Electronico</a></li>
-                                <li><a href="{% url 'inscripciones:eliminar_peticion' peticion_id=peticionp.id %}">Eliminar Petición</a></li>                                
+                                <li><a href="{% url 'inscripciones:peticion_enviar_email' peticionp_id=peticionp.id %}">Enviar Correo Electronico</a></li>
+                                <li><a href="{% url 'inscripciones:eliminar_peticion' peticionp_id=peticionp.id %}">Eliminar Petición</a></li>                                
                                 <li><a href="{% url 'inscripciones:lista_peticiones' %}">Volver al Listado de Peticiones</a></li>
                             {% endif %}
                         </ul>
@@ -76,7 +78,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for individuo in peticion.individuos.all %}
+                                {% for individuo in peticionp.individuos.all %}
                                     <tr>
                                         <td>{{individuo.num_doc}}</td>
                                         <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
@@ -90,10 +92,10 @@
                                             {% endfor %}
                                         </td>                                                                                
                                         <td>
-                                            <a href="{% url 'inscripciones:mod_people' peticion_id=peticionp.id individuo_id=individuo.id %}" target="_blank">
+                                            <a href="{% url 'inscripciones:mod_people' peticionp_id=peticionp.id individuo_id=individuo.id %}" target="_blank">
                                                 <img class="icons" src="{% static 'img/icons/change.png' %}">
                                             </a>
-                                            <a href="{% url 'inscripciones:quitar_persona' peticion_id=peticionp.id individuo_id=individuo.id %}" target="_blank">
+                                            <a href="{% url 'inscripciones:quitar_persona' peticionp_id=peticionp.id individuo_id=individuo.id %}" target="_blank">
                                                 <img class="icons" src="{% static '/img/icons/delete.png' %}">
                                             </a>
                                         </td>
@@ -104,7 +106,7 @@
                         <br>
                           
 
-                    {% if peticion.emails_enviados.exists %}
+                    {% if peticionp_id.emails_enviados.exists %}
                         <div class="row">
                             <h3>Emails Enviados al individuo</h3>
                             <table class="listado">

@@ -77,3 +77,9 @@ ESTADO_PEDIDO = (
     ('A', 'Aprobado'),
     ('B', 'Dado de Baja'),
 )
+
+TIPO_COMUNIDAD = (
+    ('SI', 'SI'),
+    ('NO', 'NO'),
+)
+

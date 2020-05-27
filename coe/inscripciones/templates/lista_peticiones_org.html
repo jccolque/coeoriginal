@@ -22,20 +22,20 @@
                     <tbody>
                         {% for petic_org in peticion_org %}
                             <tr>                                
-                                <td>{{peticion_org.get_estado_display}}</td>
-                                <td>{{peticion_org.fecha|date:"d/m/Y"}}</td>                               
-                                <td>{{peticion_org.denominacion}}</td>
-                                <td>{{peticion_org.cuit}}</td>
-                                <td>{{peticion_org.mail_institucional}}</td>
+                                <td>{{petic_org.get_estado_display}}</td>
+                                <td>{{petic_org.fecha|date:"d/m/Y"}}</td>                               
+                                <td>{{petic_org.denominacion}}</td>
+                                <td>{{petic_org.cuit}}</td>
+                                <td>{{petic_org.mail_institucional}}</td>
                                                          
                                 <td>
-                                    {% if peticion_org.responsables.exists %}
-                                        {{peticion_org.responsables.telefono}}
+                                    {% if petic_org.responsables.exists %}
+                                        {{petic_org.responsables.telefono}}
                                     {% endif %}
                                 </td>
-                                <td>{{peticion_org.operador}}</td>
+                                <td>{{petic_org.operador}}</td>
                                 <td>
-                                    <a href="{% url 'inscripciones:ver_peticion_persona' token=peticion_org.token %}" target="_blank">
+                                    <a href="{% url 'inscripciones:ver_peticion_persona' token=petic_org.token %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/lupa.png' %}">
                                     </a>
                                 </td>

@@ -20,6 +20,7 @@ from .choices import TIPO_INSCRIPTO, ESTADO_INSCRIPTO
 from .choices import GRUPO_SANGUINEO, TIPO_PROFESIONAL, TIPO_DISPOSITIVO
 from .choices import TIPO_REFERENCIA, TIPO_ORGANIZACION, TIPO_CONFIRMA, ESTADO_PEDIDO
 from .tokens import token_inscripcion, token_provision, token_organizacion
+from .choices import TIPO_COMUNIDAD
 
 # Create your models here.
 class Area(models.Model):
@@ -160,19 +161,26 @@ class ProyectoEstudiantil(models.Model):
     estado = models.IntegerField(choices=ESTADO_INSCRIPTO, default=0)
     fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
 
-# PETICION COCA
+#PETICION COCA (Pablo Ramos)
 class Peticionp(models.Model):
-    destino = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="pedidosd_personas")
+    individuos = models.ManyToManyField(Individuo, related_name="individuos_pedidos")
+    destino = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="destino_pedidos_personas")
     email_contacto = models.EmailField('Correo Electrónico de Contacto', max_length=200)
-    cantidad = models.CharField('Cantidad de Coca (en gramos)', max_length=50)
-    individuos = models.ManyToManyField(Individuo, related_name="pedidos_coca")
+    apellidos = models.CharField('Apellidos', max_length=200)
+    nombres = models.CharField('Nombres', max_length=200)
+    num_doc = models.CharField('Numero de Documento/Pasaporte', 
+        max_length=50,
+        validators=[RegexValidator('^[A-Z_\d]*$', 'Solo Mayusculas.')]
+    )
+    comunidad = models.CharField('Comunidad Aborigen', max_length=2, choices=TIPO_COMUNIDAD, default='NO')
+    telefono = models.CharField('Teléfono', max_length=50)
     #Interno
     token = models.CharField('Token', max_length=50, default=token_provision, unique=True)
     fecha = models.DateTimeField('Fecha de registro', default=timezone.now)
     estado = models.CharField('Estado', choices=ESTADO_PEDIDO, max_length=1, default='C')
     operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True, related_name="provisiones")
     #Aclaraciones
-    aclaracion = HTMLField('Aclaraciones', null=True)    
+    aclaracion = models.CharField('Aclaracion', max_length=1000, default='', blank=False)    
     def __str__(self):
         return self.email_contacto + self.cantidad
 
@@ -258,7 +266,7 @@ class Organization(models.Model):
     
 
 #Domiclio de la organizacion que pide coca
-class Domic_o(models.Model):
+class DomicilioOrganizacion(models.Model):
     organizacion = models.ForeignKey(Organization, on_delete=models.CASCADE, related_name="pedidos_org", null=True, blank=True)
     localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="domic_org")
     calle = models.CharField('Calle', max_length=200, null=True, blank=True)

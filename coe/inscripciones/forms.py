@@ -16,7 +16,7 @@ from informacion.models import Individuo
 #Imports de la app
 from .choices import TIPO_PROFESIONAL, GRUPO_SANGUINEO
 from .models import ProyectoEstudiantil, Turno
-from .models import Organization, Empleado, Domic_o, Peticionp
+from .models import Organization, Empleado, DomicilioOrganizacion, Peticionp
 from .models import Responsable
 
 #Definimos nuestros forms
@@ -148,12 +148,15 @@ class PeticionpForm(forms.ModelForm):
         fields= '__all__'
         exclude = ('fecha', 'token', 'individuos', 'estado', 'operador')
         widgets = {
-            'cantidad': forms.TextInput(attrs={'placeholder': 'Introduzca Cantidad'}),
+            'apellidos': forms.TextInput(attrs={'placeholder': 'Introduzca Apellidos'}),
+            'nombres': forms.TextInput(attrs={'placeholder': 'Introduzca Nombres'}),
+            'num_doc': forms.TextInput(attrs={'placeholder': 'Introduzca DNI'}),            
             'email_contacto': forms.TextInput(attrs={'placeholder': 'Introduzca EMAIL de Contacto'}),
-            'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),            
+            'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+            'telefono': forms.TextInput(attrs={'placeholder': 'Introduzca Teléfono'}),            
         }
     
-class PersonapetForm(forms.ModelForm):    
+class PersonapForm(forms.ModelForm):    
     #Domicilio en jujuy
     localidad = forms.ModelChoiceField(
         queryset=Localidad.objects.all(),

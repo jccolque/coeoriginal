@@ -75,11 +75,11 @@ TIPO_ATRIBUTO = (
     ('CP', 'Tiene Potestad de Controlar Permisos'),
     ('VA', 'Voluntario Aprobado'),
     #excepciones (3 caracteres)
-    ('OP2', 'Operado en las ultimas 2 semanas'),
+    ('OP2', 'Puede acreditar que requiere imprescindiblemente de cuidados domiciliarios'),
     ('EMB', 'Embarazada a partir del segundo Trimestre'),
     ('DIS', 'Posee Certificado de Discapacidad'),
-    ('APS', 'Posee Antescendentes Psiquiatricos'),
-    ('NM2', 'Grupo Familiar con menores de 2 años'),
+    ('APS', 'Posee antecedentes Psiquiatricos'),
+    ('NM2', 'Grupo Familiar con menores de 2 años, adultos mayores y/o personas con discapacidad'),
 )
 
 TIPO_SINTOMA = (

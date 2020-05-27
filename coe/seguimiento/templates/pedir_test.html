@@ -5,6 +5,8 @@
 {% block content %}
     <div class="col-lg-6 col-lg-offset-3">
         <h2><b>Pedido Test para Coronavirus</b></h2>
+        <p>El test debe ser realizado en un plazo no menor a 4 días (plazo a consultar con los jefes...no se si estipularon 4 o 5 días) de su ingreso a la provincia.</p>
+        <p>Las respuestas que usted proporcione en este cuestionario nos permitirán asistir a la comunidad atendiendo a urgencias de orden sanitario, social y económico.</p>
         {% if error %}
             <div class="bordeado importante">
                 <p>{{error}}</p>
@@ -37,7 +39,7 @@
             </div>
             <div class="col-lg-5 col-lg-offset-1">
                 <fieldset class="module aligned">
-                    <h2>Sufre alguna de estas Patologias?</h2>
+                    <h2>Presenta diagnóstico de alguna de estas patologías?</h2>
                     <!-- aca deberiamos agregar el pasajeros inline formset managment -->
                     <table class="checkbox_table"  id="Patologias">
                         {% for tipo in tipos_patologias %}
@@ -49,7 +51,7 @@
                     </table>
                 </fieldset>
                 <fieldset class="module aligned">
-                    <h2>Se encuentra en alguno de estos Casos de Excepcion?</h2>
+                    <h2>Presenta alguna de las siguientes condiciones?</h2>
                     <!-- aca deberiamos agregar el pasajeros inline formset managment -->
                     <table class="checkbox_table" id="Patologias">
                         {% for tipo in tipos_excepciones %}

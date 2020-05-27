@@ -145,12 +145,16 @@
                                     <hr>
                                     <p><b>PARA REALIZAR ESTE PEDIDO, DEBE SEGUIR LOS SIGUIENTES PASOS:</b></p>
                                     <ul>
-                                        <li>[1]. Completar el FORMULARIO INICIAL.</li>
-                                        <li>[2]. Completar los PASOS POSTERIORES (Recibirá un EMAIL en su casilla de contacto)</li>
-                                        <li>[3]. Cargar sus DATOS PERSONALES, en la pestaña "AGREGAR DATOS PERSONALES".</li>                                       
+                                    <p><center>[1]. Completar el FORMULARIO INICIAL.</center></p>
+                                    <p><center>[2]. Completar los PASOS POSTERIORES (Recibirá un EMAIL en su casilla de contacto)</li></center></p>
+                                    <p><center>[3]. Cargar sus DATOS PERSONALES, en la pestaña "AGREGAR DATOS PERSONALES".</li></center></p>
+                                    <div class="row">                                        
+                                        <div class="alert alert-danger" role="alert">
+                                            <h3 ALIGN="justify">IMPORTANTE: LA CANTIDAD DE COCA QUE PUEDE SOLICITAR ES DE 50 GRAMOS.</h3>
+                                        </div>                                       
+                                    </div>                                      
                                     </ul>                                    
-                                    <ul>       
-                                    
+                                    <ul>                                  
                                 </div>
                             </div>
                             <div class="col-md-12 col-sm-12 col-xs-12">
@@ -158,8 +162,30 @@
                                     <caption><strong>INGRESE PEDIDO</strong></caption>
                                 </div>
                             </div>
-
-                            <div class="col-md-12">
+                            <div class="col-md-12">                                
+                                <div class="col-lg-6"> 
+                                    <div class="form-group">
+                                        <label for="{{form.nombres.id_for_label}}">{{form.nombres.label}}</label>
+                                        {{form.nombres}}
+                                        <small class="form-text text-danger">{{form.nombres.errors.as_text}}</small>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">                                
+                                    <div class="form-group">
+                                        <label for="{{form.apellidos.id_for_label}}">{{form.apellidos.label}}</label>
+                                        {{form.apellidos}}
+                                        <small class="form-text text-danger">{{form.apellidos.errors.as_text}}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">                                
+                                <div class="col-lg-6"> 
+                                    <div class="form-group">
+                                        <label for="{{form.num_doc.id_for_label}}">{{form.num_doc.label}}</label>
+                                        {{form.num_doc}}
+                                        <small class="form-text text-danger">{{form.num_doc.errors.as_text}}</small>
+                                    </div>
+                                </div>
                                 <div class="col-lg-6">                                
                                     <div class="form-group">
                                         <label for="{{form.email_contacto.id_for_label}}">{{form.email_contacto.label}}</label>
@@ -167,25 +193,37 @@
                                         <small class="form-text text-danger">{{form.email_contacto.errors.as_text}}</small>
                                     </div>
                                 </div>
-                                <div class="col-lg-6"> 
-                                    <div class="form-group">
-                                        <label for="{{form.cantidad.id_for_label}}">{{form.cantidad.label}}</label>
-                                        {{form.cantidad}}
-                                        <small class="form-text text-danger">{{form.cantidad.errors.as_text}}</small>
-                                    </div>
-                                </div>
                             </div>
                             <div class="col-md-12">
-                                <div class="col-lg-6">                                
+                                <div class="col-lg-6"> 
                                     <div class="form-group">
-                                        <label for="{{form.destino.id_for_label}}">{{form.destino.label}}</label>
+                                        <label for="{{form.telefono.id_for_label}}">{{form.telefono.label}}</label>
+                                        {{form.telefono}}
+                                        <small class="form-text text-danger">{{form.telefono.errors.as_text}}</small>
+                                    </div>
+                                </div>                               
+                                
+                                <div class="col-lg-6"> 
+                                    <div class="form-group">
+                                        <label for="{{form.comunidad.id_for_label}}">{{form.comunidad.label}}</label>
+                                        {{form.comunidad}}
+                                        <small class="form-text text-danger">{{form.comunidad.errors.as_text}}</small>
+                                    </div>
+                                </div>                                
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-lg-6"> 
+                                    <div class="form-group">
+                                        <label for="{{form.destino.id_for_label}}">Localidad de Destino del Envio:</label>
                                         {{form.destino}}
                                         <small class="form-text text-danger">{{form.destino.errors.as_text}}</small>
                                     </div>
-                                </div>                                
-                            </div>                 
+                                </div>                        
+                                                                
+                            </div>            
+                                
                             <div class="col-md-12">
-                                <p><strong>DESCRIBA BREVEMENTE EL PORQUE DE SU PEDIDO EN EL CAMPO "ACLARACIONES".</strong></p>
+                                <p><strong>DESCRIBA BREVEMENTE LO QUE MOTIVA SU PEDIDO.</strong></p>
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">

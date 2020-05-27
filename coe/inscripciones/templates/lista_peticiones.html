@@ -8,11 +8,12 @@
                 <table class="listado" id="table">
                     <thead>
                         <tr>                            
-                            <th>Estado</th>
-                            <th>Fecha Pedido</th>                            
-                            <!-- <th>Destino</th> -->                           
+                            <th>ESTADO</th>
+                            <th>DNI</th>
                             <th>Nombre de la Persona</th>
                             <th>Apellido de la Persona</th>
+                            <th>Fecha Pedido</th>                         
+                            <th>Destino</th>                     
                             <th>Email de Contacto</th>
                             <th>Telefono</th>
                             <th>Operador</th>
@@ -20,19 +21,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for petic in peticion %}
-                            <tr>                                
+                        {% for peticion in peticionp %}
+                            <tr>  
                                 <td>{{peticion.get_estado_display}}</td>
+                                <td>{{peticion.num_doc}}</td>
+                                <td>{{peticion.nombres}}</td> 
+                                <td>{{peticion.apellidos}}</td>
                                 <td>{{peticion.fecha|date:"d/m/Y"}}</td>                                
-                                <!-- <td>{{ingreso.destino.nombre}}</td> -->                          
-                                <td>{{peticion.individuo.nombres}}</td>
-                                <td>{{peticion.individuo.apellidos}}</td>
+                                <td>{{peticion.destino.nombre}}</td>              
                                 <td>{{peticion.email_contacto}}</td>
-                                <td>
-                                    {% if peticion.individuo.exists %}
-                                        {{peticion.telefono}}
-                                    {% endif %}
-                                </td>
+                                <td>{{peticion.telefono}}</td>                               
                                 <td>{{peticion.operador}}</td>
                                 <td>
                                     <a href="{% url 'inscripciones:ver_peticion_persona' token=peticion.token %}" target="_blank">
@@ -40,8 +38,12 @@
                                     </a>
                                 </td>
                             </tr>
+                                
+                                
                         {% endfor %}
                     </tbody>
+                            
+                            
                 </table>
             </div>
         </div>

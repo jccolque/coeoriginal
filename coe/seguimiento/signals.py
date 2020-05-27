@@ -87,21 +87,23 @@ def buscar_controlador(created, instance, **kwargs):
         #Si es vigilancia Epidemiologica
         if instance.tipo == 'VE':
             try:
-                vigias = Vigia.objects.filter(tipo='E').annotate(cantidad=Count('controlados'))
-                for vigia in vigias.order_by('cantidad'):
-                    if vigia.max_controlados > vigia.cantidad:
-                        vigia.controlados.add(instance.individuo)
-                        break#Lo cargamos, terminamos
+                if not instance.individuo.vigiladores.filter(tipo='E').exists():
+                    vigias = Vigia.objects.filter(tipo='E').annotate(cantidad=Count('controlados'))
+                    for vigia in vigias.order_by('cantidad'):
+                        if vigia.max_controlados > vigia.cantidad:
+                            vigia.controlados.add(instance.individuo)
+                            break#Lo cargamos, terminamos
             except:
                 logger.info("No existen Vigias, " + str(instance.individuo) + " quedo sin vigilante.")
         #Si es Vigilancia de Salud Mental
         if instance.tipo == 'VM':
             try:
-                vigias = Vigia.objects.filter(tipo='M').annotate(cantidad=Count('controlados'))
-                for vigia in vigias.order_by('cantidad'):
-                    if vigia.max_controlados > vigia.cantidad:
-                        vigia.controlados.add(instance.individuo)
-                        break#Lo cargamos, terminamos
+                if not instance.individuo.vigiladores.filter(tipo='M').exists():
+                    vigias = Vigia.objects.filter(tipo='M').annotate(cantidad=Count('controlados'))
+                    for vigia in vigias.order_by('cantidad'):
+                        if vigia.max_controlados > vigia.cantidad:
+                            vigia.controlados.add(instance.individuo)
+                            break#Lo cargamos, terminamos
             except:
                 logger.info("No existen Vigias, " + str(instance.individuo) + " quedo sin vigilante.")
 
