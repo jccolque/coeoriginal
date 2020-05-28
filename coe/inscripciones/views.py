@@ -814,8 +814,7 @@ def ver_peticion_organizacion(request, token):
     return render(request, 'panel_peticion_org.html', {
         'organizacion': organizacion,
         'domicilio': domicilio,
-        'limite': limite,        
-        'has_table': True,
+        'limite': limite,
     })
 
 def cargar_responsable_org(request, organizacion_id, responsable_id=None):
