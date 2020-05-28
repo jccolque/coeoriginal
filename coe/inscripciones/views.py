@@ -645,24 +645,29 @@ def peticion_persona(request, peticion_id=None):
         form = PeticionForm(request.POST, instance=peticion)
         if form.is_valid():
             individuo = actualizar_individuo(form)
-            peticion = PeticionCoca(individuo=individuo)
-            peticion.destino = form.cleaned_data['destino']
-            peticion.comunidad = form.cleaned_data['comunidad']
-            if not peticion.id:
-                #Enviar email
-                if SEND_MAIL:
-                    to_email = peticion.email_contacto
-                    #Preparamos el correo electronico
-                    mail_subject = 'COE2020 Petición de COCA Jujuy!'
-                    message = render_to_string('emails/email_peticion_persona.html', {
-                        'peticion': peticion,
-                    })
-                    #Instanciamos el objeto mail con destinatario
-                    email = EmailMessage(mail_subject, message, to=[to_email])
-                    email.send()
-            peticion.save()
-            #Enviarlo a cargar ingresantes
-            return redirect('inscripciones:ver_peticion_persona', token=peticion.token)
+            if individuo.organizaciones.exists():
+                message = 'El individuo ya se encuentra asignado a otra Organizacion.'
+            elif individuo.peticiones_coca.exists():
+                message = 'El individuo ya realizo un pedido individual.'
+            else:
+                peticion = PeticionCoca(individuo=individuo)
+                peticion.destino = form.cleaned_data['destino']
+                peticion.comunidad = form.cleaned_data['comunidad']
+                if not peticion.id:
+                    #Enviar email
+                    if SEND_MAIL:
+                        to_email = peticion.email_contacto
+                        #Preparamos el correo electronico
+                        mail_subject = 'COE2020 Petición de COCA Jujuy!'
+                        message = render_to_string('emails/email_peticion_persona.html', {
+                            'peticion': peticion,
+                        })
+                        #Instanciamos el objeto mail con destinatario
+                        email = EmailMessage(mail_subject, message, to=[to_email])
+                        email.send()
+                peticion.save()
+                #Enviarlo a cargar ingresantes
+                return redirect('inscripciones:ver_peticion_persona', token=peticion.token)
     return render(request, "peticion_persona.html", {'title': "PETICIÓN DE COCA - PERSONAS", 'form': form, 'button': "Iniciar Pedido", })
 
 def ver_peticion_persona(request, token):
@@ -814,7 +819,6 @@ def ver_peticion_organizacion(request, token):
         'limite': limite,        
         'has_table': True,
     })
-    
 
 def cargar_responsable_org(request, organizacion_id, responsable_id=None):
     message = None
@@ -866,6 +870,8 @@ def cargar_afiliado_org(request, organizacion_id, afiliado_id=None):
             #Nos aseguramos de no duplicar:
             if individuo.organizaciones.exists():
                 message = 'El individuo ya se encuentra asignado a otra Organizacion.'
+            elif individuo.peticiones_coca.exists():
+                message = 'El individuo ya realizo un pedido individual.'
             else:
                 afiliado = Afiliado(individuo=individuo)
                 afiliado.tipo = 'A'

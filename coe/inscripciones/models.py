@@ -163,7 +163,7 @@ class ProyectoEstudiantil(models.Model):
 
 #PETICION COCA (Pablo Ramos)
 class PeticionCoca(models.Model):
-    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="peticion_coca")
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="peticiones_coca")
     destino = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="pedidos_personas")
     comunidad = models.CharField('Comunidad Aborigen', max_length=2, choices=TIPO_COMUNIDAD, default='NO')
     aclaracion = models.CharField('Aclaracion', max_length=1000, default='', blank=False)   
