@@ -149,7 +149,7 @@
                         {% endfor %}
                     </tbody>
                 </table>                                             
-                {% if organizacion.emails_enviados.exists %}
+                {% if organizacion.emails_organizaciones.exists %}
                     <div class="row">
                         <h3>Emails Enviados al Responsable</h3>
                             <table class="listado">
@@ -159,7 +159,7 @@
                                     <th>Cuerpo</th>
                                     <th>Operador</th>
                                 </tr>
-                                {% for email in ingreso.emails_enviados.all %}
+                                {% for email in organizacion.emails_organizaciones.all %}
                                     <tr>
                                         <td>{{email.fecha}}</th>
                                         <td>{{email.asunto}}</th>

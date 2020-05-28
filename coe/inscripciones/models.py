@@ -258,7 +258,7 @@ class DomicilioOrganizacion(models.Model):
         }
 
 class Emails_Peticiones_Organization(models.Model):
-    organizacion = models.ForeignKey(Organization, on_delete=models.CASCADE, related_name="emails_organizaciones_vd")
+    organizacion = models.ForeignKey(Organization, on_delete=models.CASCADE, related_name="emails_organizaciones")
     fecha = models.DateTimeField('Fecha de Envio', default=timezone.now)
     asunto = models.CharField('Asunto', max_length=100)
     cuerpo = models.CharField('Cuerpo', max_length=1000)
