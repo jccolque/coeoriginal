@@ -640,7 +640,22 @@ def peticion_persona(request, peticion_id=None):
     individuo = None
     if peticion_id:
         individuo = PeticionCoca.objects.get(pk=peticion_id).individuo
-    form = PeticionForm(instance=individuo)
+        domicilio = individuo.domicilios.last()
+        form = PeticionForm(
+            instance=individuo,
+            initial={
+                #Domicilio
+                'dom_localidad': domicilio.localidad,
+                'dom_calle': domicilio.calle,
+                'dom_numero': domicilio.numero,
+                'dom_aclaracion': domicilio.aclaracion,
+                #Docs
+                'frente_dni': individuo.documentos.filter(tipo='DI').first(),
+                'reverso_dni': individuo.documentos.filter(tipo='DI').last(),
+            }
+        )
+    else:
+        form = PeticionForm(instance=individuo)
     if request.method == "POST":
         form = PeticionForm(request.POST, request.FILES, instance=individuo)
         if form.is_valid():
@@ -856,7 +871,27 @@ def cargar_afiliado_org(request, organizacion_id, afiliado_id=None):
     afiliado = None
     if afiliado_id:
         afiliado = Afiliado.objects.get(pk=afiliado_id)
-    form = AfiliadoForm(instance=afiliado)
+        individuo = afiliado.individuo
+        domicilio = individuo.domicilios.last()
+        form = AfiliadoForm(
+            instance=individuo,
+            initial={
+                #Domicilio
+                'dom_localidad': domicilio.localidad,
+                'dom_calle': domicilio.calle,
+                'dom_numero': domicilio.numero,
+                'dom_aclaracion': domicilio.aclaracion,
+                #Basicos
+                'tipo_cond': peticion.tipo_cond,
+                'rol': peticion.rol,
+                #Docs
+                'frente_dni': individuo.documentos.filter(tipo='DI').first(),
+                'reverso_dni': individuo.documentos.filter(tipo='DI').last(),
+            }
+        )
+
+    else:
+        form = AfiliadoForm(instance=afiliado)
     if request.method == "POST":
         #obtenemos peticion
         organizacion = Organization.objects.get(pk=organizacion_id)        
