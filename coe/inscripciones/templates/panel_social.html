@@ -54,14 +54,13 @@
                                     <h3><b>Capacitacion:</b></h3>
                                     {% for capacitacion in capacitaciones %}
                                         <li class="lista">
-                                            {% if capacitacion in inscripto.capacitaciones.all %}
-                                                {{capacitacion.nombre}}
-                                                <img class="icons" src="/static/img/icons/check.png">
-                                            {% else %}
-                                                <a href="{% url 'inscripciones:ver_capacitacion' inscripto_id=inscripto.id capacitacion_id=capacitacion.id %}" target="_blank">
-                                                    Ver {{capacitacion.nombre}} <img class="icons" src="/static/img/icons/video.png">
-                                                </a>
-                                            {% endif %}
+                                            <a href="{% url 'inscripciones:ver_capacitacion' inscripto_id=inscripto.id capacitacion_id=capacitacion.id %}" target="_blank">
+                                                Ver {{capacitacion.nombre}} 
+                                                <img class="icons" src="/static/img/icons/video.png">
+                                                {% if capacitacion in inscripto.capacitaciones.all %}
+                                                    <img class="icons" src="/static/img/icons/check.png">
+                                                {% endif %}
+                                            </a>
                                         </li>
                                     {% endfor %}
                                 </div>
