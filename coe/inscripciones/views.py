@@ -719,7 +719,7 @@ def lista_peticiones(request, estado=None):
     #Optimizamos
     peticiones = peticiones.select_related('destino', 'operador')
     peticiones = peticiones.select_related('individuo', 'individuo__domicilio_actual', 'individuo__domicilio_actual__localidad')
-    peticiones = peticiones.select_related('individuo__documentos')
+    #peticiones = peticiones.select_related('individuo__documentos')
     #Lanzamos listado
     return render(request, 'lista_peticiones.html', {
         'title': "Ingresos Pedidos",
@@ -733,7 +733,7 @@ def lista_peticiones_completas(request):
     #Optimizamos
     peticiones = peticiones.select_related('destino', 'operador')
     peticiones = peticiones.select_related('individuo', 'individuo__domicilio_actual', 'individuo__domicilio_actual__localidad')
-    peticiones = peticiones.select_related('individuo__documentos')
+    #peticiones = peticiones.select_related('individuo__documentos')
     #Lanzamos listado
     return render(request, 'lista_peticiones.html', {
         'title': "Peticiones Completas Esperando Aprobacion",
