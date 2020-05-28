@@ -350,7 +350,7 @@ def lista_tareas(request):
         'areas': areas,
     })
 
-@permission_required('operadores.permisos')
+@permission_required('operadores.menu_inscripciones')
 def enviar_email(request, inscripcion_id):
     inscripto = Inscripcion.objects.select_related('individuo').get(pk=inscripcion_id)
     form = EmailForm(initial={'destinatario': inscripto.individuo.email})
@@ -637,7 +637,7 @@ def cargar_autorizacion(request, token, voluntario_id):
 
 #Sistema COCA
 def pedir_coca(request):
-    return render(request, "pedir_coca.html", {'title': "Sistema de Provisión de Coca", })
+    return render(request, "pedir_coca.html")
 
 def peticion_persona(request, peticion_id=None):
     individuo = None
@@ -710,7 +710,7 @@ def finalizar_peticion(request, peticion_id):
     return redirect('inscripciones:ver_peticion_persona', token=peticion.token)
 
 @permission_required('operadores.menu_inscripciones')
-def lista_peticiones(request, estado=None):
+def lista_peticiones_personales(request, estado=None):
     peticiones = PeticionCoca.objects.all()
     #Filtramos de ser necesario
     if not estado:
@@ -720,7 +720,6 @@ def lista_peticiones(request, estado=None):
     #Optimizamos
     peticiones = peticiones.select_related('destino', 'operador')
     peticiones = peticiones.select_related('individuo', 'individuo__domicilio_actual', 'individuo__domicilio_actual__localidad')
-    #peticiones = peticiones.select_related('individuo__documentos')
     #Lanzamos listado
     return render(request, 'lista_peticiones.html', {
         'title': "Ingresos Pedidos",
@@ -728,21 +727,7 @@ def lista_peticiones(request, estado=None):
         'has_table': True,
     })
 
-@permission_required('operadores.menu_provisiones')
-def lista_peticiones_completas(request):
-    peticiones = PeticionCoca.objects.filter(estado='E')    
-    #Optimizamos
-    peticiones = peticiones.select_related('destino', 'operador')
-    peticiones = peticiones.select_related('individuo', 'individuo__domicilio_actual', 'individuo__domicilio_actual__localidad')
-    #peticiones = peticiones.select_related('individuo__documentos')
-    #Lanzamos listado
-    return render(request, 'lista_peticiones.html', {
-        'title': "Peticiones Completas Esperando Aprobacion",
-        'peticiones': peticiones,
-        'has_table': True,
-    })
-
-@permission_required('operadores.menu_provisiones')
+@permission_required('operadores.menu_inscripciones')
 def peticion_enviar_email(request, peticion_id):
     peticion = PeticionCoca.objects.get(pk=peticion_id)
     form = EmailForm(initial={'destinatario': peticion.email_contacto})
@@ -949,7 +934,6 @@ def finalizar_peticion_org(request, organizacion_id):
     return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
 
 #Administrar COCA - ORGANIZACIONES
-@permission_required('operadores.menu_inscripciones')
 def lista_peticiones_org(request, estado=None):
     organizacion = Organization.objects.all()
     #Filtramos de ser necesario
@@ -959,23 +943,11 @@ def lista_peticiones_org(request, estado=None):
         organizacion = organizacion.filter(estado=estado)
     #Optimizamos
     organizacion = organizacion.select_related('operador')
-    organizacion = organizacion.prefetch_related('responsables')
-    #Lanzamos listado
-    return render(request, 'lista_peticiones_org.html', {
-        'titulo': "Listado de Peticiones de Coca",
-        'organizacion': organizacion,
-        'has_table': True,
-    })
-
-@permission_required('operadores.menu_inscripciones')
-def lista_peticiones_org_completas(request):
-    organizacion = Organization.objects.filter(estado='E')    
-    #Optimizamos
     organizacion = organizacion.prefetch_related('responsables', 'responsables__individuo')
     organizacion = organizacion.prefetch_related('afiliados', 'afiliados__individuo')
     #Lanzamos listado
-    return render(request, 'lista_peticiones_org.htm', {
-        'titulo': "Peticiones Completas Esperando Aprobacion",
+    return render(request, 'lista_peticiones_org.html', {
+        'titulo': "Listado de Peticiones de Coca",
         'organizacion': organizacion,
         'has_table': True,
     })
@@ -1009,7 +981,7 @@ def peticion_org_enviar_email(request, organizacion_id):
         return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
     return render(request, "extras/generic_form.html", {'titulo': "Enviar Correo Electronico", 'form': form, 'boton': "Enviar", })
 
-@permission_required('operadores.permisos')
+@permission_required('operadores.menu_inscripciones')
 def eliminar_peticion_org(request, organizacion_id):
     organizacion = Organization.objects.get(pk=organizacion_id)
     organizacion.estado = 'B'

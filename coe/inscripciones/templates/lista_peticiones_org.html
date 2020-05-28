@@ -9,33 +9,27 @@
                     <thead>
                         <tr>                            
                             <th>Estado</th>
-                            <th>Fecha Peticion Organizacion</th>                         
+                            <th>Fecha Peticion Organización</th>                         
                             <th>Denominación</th>
                             <th>CUIT</th>
                             <th>Email de Contacto</th>
                             <th>Telefono</th>
                             <th>Operador</th>
-                            <th>Ver Detalle</th>
-                                                       
+                            <th>Ver Detalle</th>                                                       
                         </tr>
                     </thead>
                     <tbody>
-                        {% for petic_org in peticion_org %}
+                        {% for org in organizacion %}
                             <tr>                                
-                                <td>{{petic_org.get_estado_display}}</td>
-                                <td>{{petic_org.fecha|date:"d/m/Y"}}</td>                               
-                                <td>{{petic_org.denominacion}}</td>
-                                <td>{{petic_org.cuit}}</td>
-                                <td>{{petic_org.mail_institucional}}</td>
-                                                         
+                                <td>{{org.get_estado_display}}</td>
+                                <td>{{org.fecha|date:"d/m/Y"}}</td>                               
+                                <td>{{org.denominacion}}</td>
+                                <td>{{org.cuit}}</td>
+                                <td>{{org.mail_institucional}}</td>
+                                <td>{{org.telefono}}</td>                                                
+                                <td>{{org.operador}}</td>
                                 <td>
-                                    {% if petic_org.responsables.exists %}
-                                        {{petic_org.responsables.telefono}}
-                                    {% endif %}
-                                </td>
-                                <td>{{petic_org.operador}}</td>
-                                <td>
-                                    <a href="{% url 'inscripciones:ver_peticion_persona' token=petic_org.token %}" target="_blank">
+                                    <a href="{% url 'inscripciones:ver_peticion_organizacion' token=org.token %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/lupa.png' %}">
                                     </a>
                                 </td>
@@ -47,3 +41,4 @@
         </div>
     </div>
 {% endblock %}
+                                
