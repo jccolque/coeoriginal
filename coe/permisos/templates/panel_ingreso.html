@@ -36,6 +36,9 @@
                                 <div class="bordeado importante">
                                     {% if ingreso.estado == 'C' %}
                                         <h3>Una vez terminado el ingreso de <b>TODA</b> la infomacion requerida, presione el boton de <b>Finalizar Proceso</b>.</h3>
+                                        {% if ingreso.tipo == 'P' or ingreso.tipo == 'T' %}
+                                            <p>Debe registrar TODOS los ocupantes del vehiculo.</p>
+                                        {% endif %}
                                         <p>Su Requerimiento sera eliminado en {{limite}}hrs si no lo finaliza.</p>
                                         <br>
                                         <p>Hasta que el estado del pedido de ingreso no se encuentre en <b>Pedido Cargado</b> nuestros operadores no lo analizaran.</p>
@@ -96,13 +99,15 @@
                     </div>
                     <div class="col-md-4">
                         <ul class="menu_botones">
-                                <li><a href="{% url 'permisos:mod_ingreso_provincial' ingreso_id=ingreso.id %}">Modificar Datos de Ingreso</a></li>
+                            <li><a href="{% url 'permisos:mod_ingreso_provincial' ingreso_id=ingreso.id %}">Modificar Datos de Ingreso</a></li>
+                            {% if ingreso.estado == 'C' %}
                                 {% if ingreso.tipo == 'P' or ingreso.tipo == 'T' %}
-                                    <li><a href="{% url 'permisos:cargar_ingresantes' ingreso_id=ingreso.id %}">Agregar Pasajero</a></li>
+                                    <li><a href="{% url 'permisos:cargar_ingresantes' ingreso_id=ingreso.id %}">Agregar Ocupante</a></li>
                                 {% endif %}
-                                {% if ingreso.estado != 'B' or ingreso.estado != 'A' %}
-                                    <li><a href="{% url 'permisos:finalizar_ingreso' ingreso_id=ingreso.id %}">Finalizar Proceso</a></li>
-                                {% endif %}
+                                <li{%if ingreso.tipo == 'P' or ingreso.tipo == 'T'%}{%if not ingreso.individuos.exists %} style="background-color: grey;"{%endif%}{%endif%}>
+                                    <a href="{% url 'permisos:finalizar_ingreso' ingreso_id=ingreso.id %}">Finalizar Proceso</a>
+                                </li>
+                            {% endif %}
                             {% if ingreso.estado == 'A' %}
                                 <li><a href="{% url 'permisos:ver_ingreso_aprobado' token=ingreso.token %}">Imprimir Comprobante</a></li>
                             {% endif %}
