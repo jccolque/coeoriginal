@@ -56,9 +56,10 @@
                                         <li class="lista">
                                             <a href="{% url 'inscripciones:ver_capacitacion' inscripto_id=inscripto.id capacitacion_id=capacitacion.id %}" target="_blank">
                                                 Ver {{capacitacion.nombre}} 
-                                                <img class="icons" src="/static/img/icons/video.png">
                                                 {% if capacitacion in inscripto.capacitaciones.all %}
                                                     <img class="icons" src="/static/img/icons/check.png">
+                                                {% else %}
+                                                    <img class="icons" src="/static/img/icons/video.png">
                                                 {% endif %}
                                             </a>
                                         </li>
