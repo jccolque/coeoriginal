@@ -793,17 +793,16 @@ def peticion_organizacion(request, organizacion_id=None):
         form = OrganizationForm(request.POST, request.FILES, instance=organizacion)
         if form.is_valid():
             organizacion = form.save()
-            if not organizacion.id:
-                if SEND_MAIL:#Enviamos mail solo si se esta creando por 1era vez
-                    to_email = organizacion.mail_institucional
-                    #Preparamos el correo electronico
-                    mail_subject = 'COE2020 Petición de COCA Jujuy!'
-                    message = render_to_string('emails/email_peticion_organizacion.html', {
-                    'organizacion': organizacion,
-                    })
-                    #Instanciamos el objeto mail con destinatario
-                    email = EmailMessage(mail_subject, message, to=[to_email])
-                    email.send()
+            if SEND_MAIL:#Enviamos mail solo si se esta creando por 1era vez
+                to_email = organizacion.mail_institucional
+                #Preparamos el correo electronico
+                mail_subject = 'COE2020 Petición de COCA Jujuy!'
+                message = render_to_string('emails/email_peticion_organizacion.html', {
+                'organizacion': organizacion,
+                })
+                #Instanciamos el objeto mail con destinatario
+                email = EmailMessage(mail_subject, message, to=[to_email])
+                email.send()
             #Generamos modelos externos:
             if form.cleaned_data['localidad']:
                 domicilio = DomicilioOrganizacion(organizacion=organizacion)
