@@ -696,13 +696,7 @@ def ver_peticion_persona(request, token):
     })
 
 def finalizar_peticion(request, peticion_id):
-    peticion = PeticionCoca.objects.get(pk=peticion_id)    
-    #Chequear que el ingreso este finalizado
-    if not peticion.individuos.exists():
-        return render(request, 'extras/error.html', {
-            'titulo': 'FINALIZACIÓN DEGENEGADA',
-            'error': "USTED DEBE CARGAR SUS DATOS PERSONALES",
-        })    
+    peticion = PeticionCoca.objects.get(pk=peticion_id)
     #Pasar a estado finalizado    
     peticion.estado = 'E'
     peticion.save()
