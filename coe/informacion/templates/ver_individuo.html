@@ -75,10 +75,18 @@
                         <!-- DATOS PERSONALES -->
                         <div class="row">
                             <div class="col-sm-5">
-                                <p><b>Documento:</b> {{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</p>
+                                <p>
+                                    <b>Documento:</b> {{individuo.get_tipo_doc_display}} {{individuo.num_doc}}
+                                    {% if request.user.is_superuser %}
+                                        <a href="{% url 'informacion:mod_num_doc' individuo_id=individuo.id %}" target="_blank">
+                                            <img class="icons" src="{% static '/img/icons/change.png' %}" alt="Modificar">
+                                        </a>
+                                    {% endif %}
+                                </p>
                                 <p>Fecha de Nacimiento: {{individuo.fecha_nacimiento}}</p>
-                                <p>Origen: {{individuo.origen}}</p>
-                                <p>Destino:{{individuo.destino}}</p>
+                                <p>Origen Internacional: {{individuo.origen_internacional}}</p>
+                                <p>Origen Nacional: {{individuo.origen_nacional}}</p>
+                                <p>Destino: {{individuo.destino}}</p>
                                 <p>Nacionalidad: {{individuo.nacionalidad}}</p>
                             </div>
                             <div class="col-sm-5">

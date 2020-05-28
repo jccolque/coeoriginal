@@ -13,7 +13,7 @@
                     <p><b>Estado del Operativo:</b> {{operativo.get_estado_display}}</p>
                     <h3>Mapa de Seguimiento</h3>
                     {% if geoposiciones %}
-                        {% include 'mapa_seguimiento.html' %}
+                        {% include 'mapa_seguimiento.html' with geoposiciones=operativo.get_geoposiciones %}
                     {% else %}
                         <p><b>Aun no se ha registrado ninguna GeoPosicion para el operativo.</b></p>
                     {% endif %}

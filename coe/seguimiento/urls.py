@@ -32,6 +32,7 @@ urlpatterns = [
     path('del/vigia/<int:vigia_id>', views.del_vigia, name='del_vigia'),
     path('lista/sin/vigias', views.lista_sin_vigias, name='lista_sin_vigias'),
     #Cazador 360
+    path('operativos/situacion', views.situacion_operativos, name='situacion_operativos'),
     path('operativos/lista', views.lista_operativos, name='lista_operativos'),
     path('operativo/crear', views.crear_operativo, name='crear_operativo'),
     path('operativo/mod/<int:operativo_id>', views.crear_operativo, name='mod_operativo'),
@@ -50,6 +51,8 @@ urlpatterns = [
     path('lista/sin_telefono', views.lista_sin_telefono, name='lista_sin_telefono'),
     path('lista/autodiagnosticos', views.lista_autodiagnosticos, name='lista_autodiagnosticos'),
     path('lista/aislados', views.lista_aislados, name='lista_aislados'),
+    #Situacion
+    path('situacion/vigilancia', views.situacion_vigilancia, name='situacion_vigilancia'),
     #Panel
     path('panel/vigia', views.panel_vigia, name='mi_panel'),
     path('panel/vigia/<int:vigia_id>', views.panel_vigia, name='ver_panel'),

@@ -34,7 +34,7 @@ from .models import Atributo, Sintoma, Patologia
 from .models import Documento
 from .forms import ArchivoForm, ArchivoFormWithPass
 from .forms import VehiculoForm, TrasladoVehiculoForm
-from .forms import IndividuoForm, FullIndividuoForm, InquilinoForm
+from .forms import IndividuoForm, FullIndividuoForm, InquilinoForm, NumDocForm
 from .forms import BuscadorIndividuosForm, TrasladarIndividuoForm
 from .forms import DomicilioForm, AtributoForm, SintomaForm, PatologiaForm
 from .forms import SituacionForm, RelacionForm
@@ -393,7 +393,8 @@ def ver_individuo(request, individuo_id):
         'situacion_actual', 
         'domicilio_actual', 
         'appdata',
-        'origen', 'destino')
+        'origen_internacional', 'origen_nacional',
+        'destino')
     individuo = individuo.get(pk=individuo_id)
     return render(request, "ver_individuo.html", {'individuo': individuo, })
 
@@ -428,7 +429,7 @@ def buscador_individuos(request):
             if form.cleaned_data['localidad']:
                 individuos = individuos.filter(domicilios__localidad=form.cleaned_data['localidad'])
             #Optimizamos las busquedas a la db
-            individuos = individuos.select_related('nacionalidad', 'origen', 'destino', )
+            individuos = individuos.select_related('nacionalidad', 'origen_internacional', 'origen_nacional', 'destino', )
             individuos = individuos.select_related('situacion_actual', 'domicilio_actual', 'domicilio_actual__localidad')
             individuos = individuos.prefetch_related('atributos', 'sintomas', 'situaciones', 'relaciones')
             individuos = individuos.prefetch_related('atributos', 'sintomas')
@@ -456,7 +457,7 @@ def lista_individuos(
     elif conducta:
         individuos = Individuo.objects.filter(situacion_actual__conducta=conducta)
     #Optimizamos
-    individuos = individuos.select_related('nacionalidad', 'origen', 'destino', )
+    individuos = individuos.select_related('nacionalidad', 'origen_internacional', 'origen_nacional', 'destino', )
     individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'domicilio_actual__localidad__departamento')
     individuos = individuos.select_related('situacion_actual')
     individuos = individuos.prefetch_related('atributos', 'sintomas', 'situaciones', 'relaciones')
@@ -466,6 +467,18 @@ def lista_individuos(
     })
 
 #CARGA DE ELEMENTOS
+@permission_required('operadores.individuos')
+def mod_num_doc(request, individuo_id):
+    individuo = Individuo.objects.get(pk=individuo_id)
+    form = NumDocForm(instance=Individuo)
+    if request.method == 'POST':
+        form = NumDocForm(request.POST, instance=Individuo)
+        if form.is_valid():
+            form.save()
+            #Cerramos ventana
+            return render(request, "extras/close.html")
+    return render(request, "extras/generic_form.html", {'titulo': "Cambiar Documento", 'form': form, 'boton': "Modificar", })    
+
 #Modificar Telefono
 @permission_required('operadores.individuos')
 def mod_telefono(request, individuo_id=None):

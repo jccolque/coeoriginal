@@ -16,6 +16,6 @@ class SeguimientoConfig(AppConfig):
             from .signals import iniciar_seguimiento
             from .signals import descartar_sospechoso
             from .signals import poner_en_seguimiento
-            from .signals import buscar_controlador
+            from .signals import asignar_vigilante
             from .signals import cargo_signosvitales
-            from .signals import cargo_documento
+            from .signals import test_get_individuo

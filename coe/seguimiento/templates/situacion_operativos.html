@@ -1,0 +1,46 @@
+{% extends 'base_seguimiento.html' %}
+
+{% load static %}
+{% load auditar_tags %}
+
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2><b>Situacion de Operativos Activos</b></h2>
+            <div class="col-lg-5">
+                <table class="listado" id="table">
+                    <thead>
+                        <tr>
+                            <th>Vehiculo</th>
+                            <th>Inicio</th>
+                            <th>Cazadores</th>
+                            <th>Test Realizados</th>
+                            <th>Ver Detalle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for operativo in operativos %}
+                            <tr>
+                                <td>{{operativo.vehiculo}}</td>
+                                <td>{{operativo.fecha_inicio}}</td>
+                                <td>{{operativo.cazadores.count}}</td>
+                                <td>{{operativo.tests.count}}</td>
+                                <td>
+                                    <a href="{% url 'seguimiento:ver_operativo' operativo_id=operativo.id %}" target="_blank">
+                                        <img class="icons" src="/static/img/icons/control_panel.png" alt="Panel de Control">
+                                    </a>
+                                    <a class="nolink"  href="{% ct_auditar_obj_url operativo %}">
+                                        <img class="icons" src="{% static '/img/icons/question.png' %}">
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-lg-7">
+                {% include 'mapa_seguimiento.html' with geoposiciones=operativo.get_geoposiciones %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

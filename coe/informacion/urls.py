@@ -40,6 +40,7 @@ urlpatterns = [
     path('cargar/pasajero/<int:traslado_id>/nuevo/<str:num_doc>/', views.cargar_individuo, name='cargar_pasajero_nuevo'),
     path('mod/individuo/<int:individuo_id>/<str:num_doc>/', views.mod_individuo, name='mod_individuo'),
     #cambios:
+    path('mod/num_doc/<int:individuo_id>', views.mod_num_doc, name='mod_num_doc'),
     path('mod/telefono/<int:individuo_id>', views.mod_telefono, name='mod_telefono'),
     path('mod/email/<int:individuo_id>', views.mod_email, name='mod_email'),
     #Domicilio

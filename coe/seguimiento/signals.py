@@ -11,7 +11,7 @@ from django.db.models.signals import post_save, post_delete
 from informacion.models import Individuo, Domicilio
 from informacion.models import Situacion, Atributo, SignosVitales, Documento
 #Imports de la app
-from .models import Seguimiento, Vigia
+from .models import Seguimiento, Vigia, TestOperativo
 from .functions import crear_doc_descartado
 
 #Logger
@@ -82,7 +82,7 @@ def poner_en_seguimiento(created, instance, **kwargs):
         atributo.save()
 
 @receiver(post_save, sender=Atributo)
-def buscar_controlador(created, instance, **kwargs):
+def asignar_vigilante(created, instance, **kwargs):
     if created:
         #Si es vigilancia Epidemiologica
         if instance.tipo == 'VE':
@@ -115,10 +115,11 @@ def cargo_signosvitales(created, instance, **kwargs):
         seguimiento.aclaracion = "Se Informaron Signos vitales"
         seguimiento.save()
 
-@receiver(post_save, sender=Documento)
-def cargo_documento(created, instance, **kwargs):
+@receiver(post_save, sender=TestOperativo)
+def test_get_individuo(created, instance, **kwargs):
     if created:
-        seguimiento = Seguimiento(individuo=instance.individuo)
-        seguimiento.tipo = 'M'
-        seguimiento.aclaracion = "Se Cargo Documento " + instance.get_tipo_display()
-        seguimiento.save()
+        try:
+            instance.individuo = Individuo.objects.get(num_doc=instance.num_doc)
+            instance.save()
+        except:
+            pass#No existe el individuo en el sistema

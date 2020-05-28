@@ -51,11 +51,12 @@ class IndividuoForm(forms.ModelForm):
     class Meta:
         model = Individuo
         fields= '__all__'
-        exclude = ('origen', 'destino', 'observaciones', 'domicilio_actual', 'seguimiento_actual', 'situacion_actual', 'fotografia', 'qrpath', )
+        exclude = ('num_doc', 'observaciones', 'domicilio_actual', 'seguimiento_actual', 'situacion_actual', 'fotografia', 'qrpath', )
         widgets = {
             'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
             'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
-            'origen': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
+            'origen_internacional': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
+            'origen_nacional': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
             'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
         }
 
@@ -87,7 +88,8 @@ class FullIndividuoForm(forms.ModelForm):
         widgets = {
             'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
             'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
-            'origen': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
+            'origen_internacional': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
+            'origen_nacional': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
             'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
             #Oculto
             'dom_fecha': forms.HiddenInput(),
@@ -125,6 +127,11 @@ class InquilinoForm(forms.ModelForm):
             'origen': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
             'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
         }
+
+class NumDocForm(forms.ModelForm):
+    class Meta:
+        model = Individuo
+        fields= ('tipo_doc', 'num_doc',)
 
 class BuscadorIndividuosForm(forms.Form):
     nombre = forms.CharField(label="Nombre", required=False)
