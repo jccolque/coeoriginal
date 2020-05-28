@@ -785,7 +785,7 @@ def peticion_organizacion(request, organizacion_id=None):
                     to_email = organizacion.mail_institucional
                     #Preparamos el correo electronico
                     mail_subject = 'COE2020 Petición de COCA Jujuy!'
-                    message = render_to_string('emails/email_org_pet.html', {
+                    message = render_to_string('emails/email_peticion_organizacion.html', {
                     'organizacion': organizacion,
                     })
                     #Instanciamos el objeto mail con destinatario
@@ -889,7 +889,6 @@ def cargar_afiliado_org(request, organizacion_id, afiliado_id=None):
         'button': "Cargar",
         'message': message,
     })
-
 
 def quitar_responsable_org(request, organizacion_id, responsable_id):
     organizacion = Organization.objects.get(pk=organizacion_id)

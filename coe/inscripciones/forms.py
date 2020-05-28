@@ -166,8 +166,8 @@ class PeticionForm(forms.ModelForm):
     #Base Individuo
     class Meta:
         model = Individuo
-        fields= (
-            'tipo_doc', 'num_doc', 'apellidos', 'nombres', 'sexo', 'fecha_nacimiento', 'nacionalidad', 'telefono', 'email',
+        fields = (
+            'num_doc', 'apellidos', 'nombres', 'sexo', 'fecha_nacimiento', 'nacionalidad', 'telefono', 'email',
             'dom_localidad', 'dom_calle', 'dom_numero', 'dom_aclaracion',
             'destino', 'comunidad',
             'frente_dni', 'reverso_dni',
