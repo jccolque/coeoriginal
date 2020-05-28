@@ -686,7 +686,11 @@ def peticion_persona(request, peticion_id=None):
                 peticion.save()
                 #Enviarlo a cargar ingresantes
                 return redirect('inscripciones:ver_peticion_persona', token=peticion.token)
-    return render(request, "peticion_persona.html", {'title': "Solicitud de Provicion de Hojas de Coca para Personas", 'form': form, 'button': "Iniciar Pedido", })
+    return render(request, "peticion_persona.html", {
+        'title': "Solicitud de Provicion de Hojas de Coca para Personas",
+        'form': form,
+        'button': "Iniciar Pedido",
+    })
 
 def ver_peticion_persona(request, token):
     peticion = PeticionCoca.objects.select_related('individuo')
@@ -797,8 +801,9 @@ def peticion_organizacion(request, organizacion_id=None):
                 to_email = organizacion.mail_institucional
                 #Preparamos el correo electronico
                 mail_subject = 'COE2020 Petición de COCA Jujuy!'
-                message = render_to_string('emails/email_peticion_organizacion.html', {
-                'organizacion': organizacion,
+                message = render_to_string(
+                    'emails/email_peticion_organizacion.html', {
+                    'organizacion': organizacion,
                 })
                 #Instanciamos el objeto mail con destinatario
                 email = EmailMessage(mail_subject, message, to=[to_email])
@@ -815,7 +820,11 @@ def peticion_organizacion(request, organizacion_id=None):
                 domicilio.piso = form.cleaned_data['piso']
                 domicilio.save()
             return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
-    return render(request, "peticion_organizacion.html", {'title': "Solicitud de Provicion de Hojas de Coca para Organizaciones", 'form': form, 'button': "Iniciar Pedido", })
+    return render(request, "peticion_organizacion.html", {
+        'title': "Solicitud de Provicion de Hojas de Coca para Organizaciones",
+        'form': form,
+        'button': "Iniciar Pedido", 
+    })
 
 def ver_peticion_organizacion(request, token):
     organizacion = Organization.objects.prefetch_related('responsables', 'afiliados')    
@@ -830,7 +839,6 @@ def ver_peticion_organizacion(request, token):
     })
 
 def cargar_responsable_org(request, organizacion_id, responsable_id=None):
-    message = None
     responsable = None
     if responsable_id:
         responsable = Afiliado.objects.get(pk=responsable_id)
@@ -844,7 +852,9 @@ def cargar_responsable_org(request, organizacion_id, responsable_id=None):
             individuo = actualizar_individuo(form)
             #Nos aseguramos de no duplicar:
             if individuo.organizaciones.exists():
-                message = 'El individuo ya se encuentra asignado a otra Organizacion.'
+                form.add_error(None, 'El individuo ya se encuentra asignado a otra Organizacion.')
+            elif individuo.peticiones_coca.exists():
+                form.add_error(None, 'El individuo ya realizo un pedido individual.')
             else:
                 responsable = Afiliado(individuo=individuo)
                 responsable.tipo = 'R'
@@ -854,17 +864,13 @@ def cargar_responsable_org(request, organizacion_id, responsable_id=None):
                 #Agregar a la organizacion
                 organizacion.responsables.add(responsable)
                 return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
-        else:
-            message = form.errors
     return render(request, "cargar_afiliado_org.html", {
         'title': "Cargar Datos del Responsable",
         'form': form,
         'button': "Cargar",
-        'message': message,
     })
 
 def cargar_afiliado_org(request, organizacion_id, afiliado_id=None):
-    message = None
     afiliado = None
     if afiliado_id:
         afiliado = Afiliado.objects.get(pk=afiliado_id)
@@ -888,7 +894,7 @@ def cargar_afiliado_org(request, organizacion_id, afiliado_id=None):
         )
 
     else:
-        form = AfiliadoForm(instance=afiliado)
+        form = AfiliadoForm()
     if request.method == "POST":
         #obtenemos peticion
         organizacion = Organization.objects.get(pk=organizacion_id)        
@@ -910,13 +916,10 @@ def cargar_afiliado_org(request, organizacion_id, afiliado_id=None):
                 #Agregar a la organizacion
                 organizacion.afiliados.add(afiliado)
                 return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
-        else:
-            message = form.errors
     return render(request, "cargar_afiliado_org.html", {
         'title': "Cargar Datos del Afiliado",
         'form': form,
         'button': "Cargar",
-        'message': message,
     })
 
 def quitar_responsable_org(request, organizacion_id, responsable_id):
