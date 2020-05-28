@@ -650,8 +650,8 @@ def peticion_persona(request, peticion_id=None):
                 'dom_numero': domicilio.numero,
                 'dom_aclaracion': domicilio.aclaracion,
                 #Docs
-                'frente_dni': individuo.documentos.filter(tipo='DI').first(),
-                'reverso_dni': individuo.documentos.filter(tipo='DI').last(),
+                'frente_dni': individuo.documentos.filter(tipo='DI').first().archivo,
+                'reverso_dni': individuo.documentos.filter(tipo='DI').last().archivo,
             }
         )
     else:
@@ -718,7 +718,8 @@ def lista_peticiones(request, estado=None):
         peticiones = peticiones.filter(estado=estado)
     #Optimizamos
     peticiones = peticiones.select_related('destino', 'operador')
-    peticiones = peticiones.prefetch_related('individuos')
+    peticiones = peticiones.select_related('individuo', 'individuo__domicilio_actual', 'individuo__domicilio_actual__localidad')
+    peticiones = peticiones.select_related('individuo__documentos')
     #Lanzamos listado
     return render(request, 'lista_peticiones.html', {
         'title': "Ingresos Pedidos",
@@ -731,8 +732,8 @@ def lista_peticiones_completas(request):
     peticiones = PeticionCoca.objects.filter(estado='E')    
     #Optimizamos
     peticiones = peticiones.select_related('destino', 'operador')
-    peticiones = peticiones.prefetch_related('individuos', 'individuos__domicilio_actual', 'individuos__domicilio_actual__localidad')
-    peticiones = peticiones.prefetch_related('individuos__documentos')
+    peticiones = peticiones.select_related('individuo', 'individuo__domicilio_actual', 'individuo__domicilio_actual__localidad')
+    peticiones = peticiones.select_related('individuo__documentos')
     #Lanzamos listado
     return render(request, 'lista_peticiones.html', {
         'title': "Peticiones Completas Esperando Aprobacion",
@@ -885,8 +886,8 @@ def cargar_afiliado_org(request, organizacion_id, afiliado_id=None):
                 'tipo_cond': peticion.tipo_cond,
                 'rol': peticion.rol,
                 #Docs
-                'frente_dni': individuo.documentos.filter(tipo='DI').first(),
-                'reverso_dni': individuo.documentos.filter(tipo='DI').last(),
+                'frente_dni': individuo.documentos.filter(tipo='DI').first().archivo,
+                'reverso_dni': individuo.documentos.filter(tipo='DI').last().archivo,
             }
         )
 
