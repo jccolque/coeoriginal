@@ -472,7 +472,7 @@ def mod_num_doc(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
     form = NumDocForm(instance=Individuo)
     if request.method == 'POST':
-        form = NumDocForm(request.POST, instance=Individuo)
+        form = NumDocForm(request.POST, instance=individuo)
         if form.is_valid():
             form.save()
             #Cerramos ventana
