@@ -49,6 +49,10 @@ urlpatterns = [
     path('coca/peticion/del/<int:peticion_id>', views.eliminar_peticion, name='eliminar_peticion'),
     path('coca/peticion/<str:token>', views.ver_peticion_persona, name='ver_peticion_persona'),
     path('coca/peticion/enviar_email/<int:peticion_id>', views.peticion_enviar_email, name='peticion_enviar_email'),
+
+    path('coca/lista/peticiones', views.lista_peticiones_personales, name='lista_peticiones_personales'),
+    path('coca/lista/peticiones/<estado>', views.lista_peticiones_personales, name='lista_peticiones_personales'),
+
     #COCA ORGANIZACIÓN
     path('coca/peticion/org', views.peticion_organizacion, name='peticion_organizacion'),    
     path('coca/mod/peticion/org/<int:organizacion_id>', views.peticion_organizacion, name='mod_peticion_organizacion'),
@@ -64,11 +68,9 @@ urlpatterns = [
     path('coca/peticion/org/mail/<int:organizacion_id>', views.peticion_org_enviar_email, name='peticion_org_enviar_email'),
     path('coca/del/peticion/org/<int:organizacion_id>', views.eliminar_peticion_org, name='eliminar_peticion_org'),
     path('coca/lista/peticiones/org', views.lista_peticiones_org, name='lista_peticiones_org'),
+    path('coca/lista/peticiones/org/<estado>', views.lista_peticiones_org, name='lista_peticiones_org'),
     path('coca/subir/doc/org/<str:token>', views.documentacion_subir_info, name='documentacion_subir_info'),
     path('coca/del/doc/org/<str:token>', views.documentacion_eliminar_info, name='documentacion_eliminar_info'),
-    #Ingresos   
-    path('coca/lista/peticiones/completas', views.lista_peticiones_completas, name='lista_peticiones_completas'),
-    path('coca/lista/peticiones', views.lista_peticiones, name='lista_peticiones'),
     #Activacion:
     path('act/<int:inscripcion_id>/<int:num_doc>', views.activar_inscripcion, name='activar_inscripcion'),
 ]

@@ -84,7 +84,7 @@ class FullIndividuoForm(forms.ModelForm):
     class Meta:
         model = Individuo
         fields= '__all__'
-        exclude = ('domicilio_actual', 'seguimiento_actual', 'situacion_actual', 'fotografia', 'qrpath', )
+        exclude = ('seguimiento_actual', 'domicilio_actual', 'situacion_actual', 'cuil', 'fotografia', 'qrpath')
         widgets = {
             'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
             'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
@@ -95,10 +95,7 @@ class FullIndividuoForm(forms.ModelForm):
             'dom_fecha': forms.HiddenInput(),
             'dom_aislamiento': forms.HiddenInput(),
             'dom_ubicacion': forms.HiddenInput(),
-        }
-    #def __init__(self, *args, **kwargs):
-    #    super(IndividuoForm, self).__init__(*args, **kwargs)
-    #Si tiene domicili actual poner estos campos en NO EDITABLES    
+        }   
 
 class InquilinoForm(forms.ModelForm):
     atributos = forms.MultipleChoiceField(
@@ -120,7 +117,7 @@ class InquilinoForm(forms.ModelForm):
     class Meta:
         model = Individuo
         fields= '__all__'
-        exclude = ('seguimiento_actual', 'fotografia', 'qrpath', )
+        exclude = ('seguimiento_actual', 'domicilio_actual', 'situacion_actual', 'cuil', 'fotografia', 'qrpath')
         widgets = {
             'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
             'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),

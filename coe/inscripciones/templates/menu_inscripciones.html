@@ -13,9 +13,7 @@
                             <li><a href="{% url 'inscripciones:lista_voluntarios' tipo_inscripto='PS'  %}">Ver Listado de Voluntarios de Salud</a></li>
                             <li><a href="{% url 'inscripciones:lista_voluntarios' tipo_inscripto='VS'  %}">Ver Listado de Voluntarios Sociales</a></li>
                             <li><a href="{% url 'inscripciones:lista_proyectos' %}">Ver Listado de Proyectos Estudiantiles</a></li>
-                            <!--
-                                <li><a href="{% url 'inscripciones:lista_tareas' %}">Filtrar Por Tarea</a></li>
-                            -->
+                            
                             <hr>
                             <h3>Inscripciones Publicas</h3>
                             <li><a href="{% url 'inscripciones:inscripcion_salud'  %}">Inscripcion Voluntario de Salud</a></li>
@@ -23,9 +21,14 @@
                             <li><a href="{% url 'inscripciones:inscripcion_proyecto'  %}">Inscripcion Proyecto Estudiantil</a></li>
                             <li><a href="{% url 'inscripciones:pedir_coca'  %}">Peticion de COCA</a></li>
                             <hr>
+
                             <h3>Petición de COCA</h3>
-                            <li><a href="{% url 'inscripciones:lista_peticiones_completas' %}">Peticiones Esperando Aprobacion</a></li>
-                            <li><a href="{% url 'inscripciones:lista_peticiones' %}">Listado de todos los pedidos de COCA</a></li>                                                       
+                            <li><a href="{% url 'inscripciones:lista_peticiones_personales' estado='E'  %}">Peticiones Personales Esperando Aprobacion</a></li>
+                            <li><a href="{% url 'inscripciones:lista_peticiones_personales' %}">Listado de Peticiones Personales</a></li>
+                            <br>
+                            <li><a href="{% url 'inscripciones:lista_peticiones_org' estado='E' %}">Peticiones de Organizaciones Esperando Aprobacion</a></li>
+                            <li><a href="{% url 'inscripciones:lista_peticiones_org' %}">Listado de Peticiones de Organizaciones</a></li>
+
                             {% if request.user.is_superuser %}
                                 <hr> 
                                 <li><a href="{% url 'admin:index' %}">Opcion del Administrador</a></li>
