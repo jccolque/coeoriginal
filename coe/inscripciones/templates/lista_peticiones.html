@@ -24,13 +24,13 @@
                         {% for peticion in peticiones %}
                             <tr>  
                                 <td>{{peticion.get_estado_display}}</td>
-                                <td>{{peticion.num_doc}}</td>
-                                <td>{{peticion.nombres}}</td> 
-                                <td>{{peticion.apellidos}}</td>
+                                <td>{{peticion.individuo.num_doc}}</td>
+                                <td>{{peticion.individuo.nombres}}</td> 
+                                <td>{{peticion.individuo.apellidos}}</td>
                                 <td>{{peticion.fecha|date:"d/m/Y"}}</td>                                
                                 <td>{{peticion.destino.nombre}}</td>              
-                                <td>{{peticion.email_contacto}}</td>
-                                <td>{{peticion.telefono}}</td>                               
+                                <td>{{peticion.individuo.emal}}</td>
+                                <td>{{peticion.individuo.telefono}}</td>                               
                                 <td>{{peticion.operador}}</td>
                                 <td>
                                     <a href="{% url 'inscripciones:ver_peticion_persona' token=peticion.token %}" target="_blank">
