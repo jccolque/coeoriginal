@@ -664,9 +664,9 @@ def peticion_persona(request, peticion_id=None):
         if form.is_valid():
             individuo = actualizar_individuo(form)
             if individuo.organizaciones.exists():
-                message = 'El individuo ya se encuentra asignado a otra Organizacion.'
+                form.add_error(None, 'El individuo ya se encuentra asignado a otra Organizacion.')
             elif individuo.peticiones_coca.exists():
-                message = 'El individuo ya realizo un pedido individual.'
+                form.add_error(None, 'El individuo ya realizo un pedido individual.')
             else:
                 peticion = PeticionCoca(individuo=individuo)
                 peticion.destino = form.cleaned_data['destino']
@@ -898,9 +898,9 @@ def cargar_afiliado_org(request, organizacion_id, afiliado_id=None):
             individuo = actualizar_individuo(form)
             #Nos aseguramos de no duplicar:
             if individuo.organizaciones.exists():
-                message = 'El individuo ya se encuentra asignado a otra Organizacion.'
+                form.add_error(None, 'El individuo ya se encuentra asignado a otra Organizacion.')
             elif individuo.peticiones_coca.exists():
-                message = 'El individuo ya realizo un pedido individual.'
+                form.add_error(None, 'El individuo ya realizo un pedido individual.')
             else:
                 afiliado = Afiliado(individuo=individuo)
                 afiliado.tipo = 'A'
