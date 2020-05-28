@@ -656,7 +656,7 @@ def peticion_persona(request, peticion_id=None):
                 if not peticion.id:
                     #Enviar email
                     if SEND_MAIL:
-                        to_email = peticion.email_contacto
+                        to_email = peticion.individuo.email
                         #Preparamos el correo electronico
                         mail_subject = 'COE2020 Petición de COCA Jujuy!'
                         message = render_to_string('emails/email_peticion_persona.html', {
@@ -779,7 +779,7 @@ def peticion_organizacion(request, organizacion_id=None):
     if request.method == "POST":
         form = OrganizationForm(request.POST, request.FILES, instance=organizacion)
         if form.is_valid():
-            organizacion = form.save(commit=False)
+            organizacion = form.save()
             if not organizacion.id:
                 if SEND_MAIL:#Enviamos mail solo si se esta creando por 1era vez
                     to_email = organizacion.mail_institucional
@@ -791,7 +791,6 @@ def peticion_organizacion(request, organizacion_id=None):
                     #Instanciamos el objeto mail con destinatario
                     email = EmailMessage(mail_subject, message, to=[to_email])
                     email.send()
-            organizacion.save()
             #Generamos modelos externos:
             if form.cleaned_data['localidad']:
                 domicilio = DomicilioOrganizacion(organizacion=organizacion)
@@ -804,7 +803,6 @@ def peticion_organizacion(request, organizacion_id=None):
                 domicilio.piso = form.cleaned_data['piso']
                 domicilio.save()
             return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
-        print(form.errors)
     return render(request, "peticion_organizacion.html", {'title': "PETICIÓN DE COCA - ORGANIZACIONES", 'form': form, 'button': "Iniciar Pedido", })
 
 def ver_peticion_organizacion(request, token):
