@@ -47,6 +47,14 @@ class OperativoVehicular(models.Model):
     fecha_final = models.DateTimeField('Fecha Final del Operativo', null=True, blank=True)
     def __str__(self):
         return str(self.vehiculo) + ': ' + self.aclaracion
+    def get_geoposiciones(self):
+        ids = [c.id for c in self.cazadores.all()]
+        geoposiciones = GeoPosicion.objects.filter(individuo__id__in=ids)
+        #Filtramos por el tiempo que duro el operativo
+        geoposiciones = geoposiciones.filter(fecha__gt=self.fecha_inicio)
+        if self.fecha_final:
+            geoposiciones = geoposiciones.filter(fecha__lt=self.fecha_final)
+        return geoposiciones
 
 class TestOperativo(models.Model):#cada test realizado
     operativo = models.ForeignKey(OperativoVehicular, on_delete=models.CASCADE, related_name="tests")

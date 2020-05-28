@@ -8,8 +8,11 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.core.files.base import File
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.decorators import permission_required
 from django.contrib.admin.views.decorators import staff_member_required
+#Imports extras
+from auditlog.models import LogEntry
 #Imports del proyecto
 from coe.settings import GEOPOSITION_GOOGLE_MAPS_API_KEY
 from coe.constantes import DIAS_CUARENTENA
@@ -140,6 +143,42 @@ def del_seguimiento(request, seguimiento_id=None):
     return render(request, "extras/close.html")
 
 #Listados
+from django.db.models import OuterRef, Subquery, Sum
+
+@permission_required('operadores.seguimiento_admin')
+def situacion_vigilancia(request):
+    #obtenemos vigilantes
+    vigias = Vigia.objects.all()
+    #Optimizamos
+    vigias = vigias.select_related('operador', 'operador__usuario')
+    vigias = vigias.prefetch_related('controlados')
+    #Obtenemos solo los registros de seguimiento CREADOS
+    ct_seg = ContentType.objects.get_for_model(Seguimiento)
+    logentrys = LogEntry.objects.filter(content_type=ct_seg)#De tabla seguimientos
+    logentrys = logentrys.filter(action=0)#Creados
+    logentrys = logentrys.exclude(actor=None)#Que hayan sido manuales
+        
+    #Creamos SubQuery:
+    sq_seguimientos = logentrys.filter(actor=OuterRef('operador__usuario'))#Esto va a ser por cada Vigia
+    #Creamos Aggregate
+
+    #Preparamos filtros
+    limite_dia = timezone.now() - timedelta(hours=24)
+    limite_semana = timezone.now() - timedelta(hours=24 * 7)
+    #Agregamos datos interesantes:
+    
+    #Cant Controlados Actuales
+    vigias = vigias.annotate(cant_controlados=Count('controlados'))
+    vigias = vigias.annotate(alertas=Count('controlados', controlados__seguimiento_actual__fecha__lt=limite_dia))
+    vigias = vigias.annotate(cant_seguimientos=Count(Subquery(sq_seguimientos)))
+
+    #Lanzamos reporte
+    return render(request, "situacion_vigilancia.html", {
+        'vigias': vigias,
+        'has_table': True,
+    })
+
+
 @permission_required('operadores.seguimiento_admin')
 def lista_seguimientos(request):
     #Obtenemos los registros
@@ -318,6 +357,27 @@ def lista_operativos(request):
     )
 
 @permission_required('operadores.operativos')
+def situacion_operativos(request):
+    #Obtenemos operativos Activos:
+    operativos = OperativoVehicular.objects.filter(estado='I')
+    #Optimizamos
+    operativos = operativos.select_related('vehiculo')
+    operativos = operativos.prefetch_related('cazadores')
+    #Obtenemos ultimas geoposiciones:
+    geoposiciones = []
+    for operativo in operativos:
+        geoposiciones.append(operativo.get_geoposiciones.last())
+    #Mostramos
+    return render(request, "situacion_operativos.html", {
+        'operativo': operativo,
+        'geoposiciones': geoposiciones,
+        'refresh': (operativo.estado == 'I'),
+        'gmkey': GEOPOSITION_GOOGLE_MAPS_API_KEY,
+        }
+    )
+
+
+@permission_required('operadores.operativos')
 def ver_operativo(request, operativo_id):
     #Optimizamos
     operativos = OperativoVehicular.objects.select_related('vehiculo')
@@ -325,29 +385,9 @@ def ver_operativo(request, operativo_id):
     operativos = operativos.prefetch_related('tests', 'tests__individuo')
     #Buscamos el operativo
     operativo = operativos.get(pk=operativo_id)
-    #Buscamos el tracking del mismo
-    geoposiciones = None
-    if operativo.estado not in ('C', 'E'):
-        #Buscamos posiciones gps de los cazadores en este tiempo:
-        ids = [c.id for c in operativo.cazadores.all()]
-        geoposiciones = GeoPosicion.objects.filter(individuo__id__in=ids)
-        #Filtramos por el tiempo que duro el operativo
-        geoposiciones = geoposiciones.filter(fecha__gt=operativo.fecha_inicio)
-        if operativo.fecha_final:
-            geoposiciones = geoposiciones.filter(fecha__lt=operativo.fecha_final)
-        #Buscamos controles realizados:
-            #FALTA DARLE LA LOGICA
-    #Chequeamos si cargaron datos de los que no tienen individuo
-    for test in operativo.tests.filter(individuo=None):
-        try:
-            test.individuo = Individuo.objects.get(num_doc=test.num_doc)
-            test.save()
-        except Individuo.DoesNotExist:
-            pass #Aun no tenemos los datos
     #Mostramos
     return render(request, "panel_operativo.html", {
         'operativo': operativo,
-        'geoposiciones': geoposiciones,
         'refresh': (operativo.estado == 'I'),
         'gmkey': GEOPOSITION_GOOGLE_MAPS_API_KEY,
         }

@@ -997,7 +997,12 @@ def peticion_org_enviar_email(request, organizacion_id):
                         'cuerpo': form.cleaned_data['cuerpo'],
                     })
                 #Guardamos el mail
-                Emails_Ingreso(organizacion=organizacion, asunto=mail_subject, cuerpo=form.cleaned_data['cuerpo'], operador=obtener_operador(request)).save()
+                Emails_Peticiones_Organization(
+                    organizacion=organizacion,
+                    asunto=mail_subject,
+                    cuerpo=form.cleaned_data['cuerpo'],
+                    operador=obtener_operador(request)
+                ).save()
                 #Instanciamos el objeto mail con destinatario
                 email = EmailMessage(mail_subject, message, to=[to_email])
                 email.send()

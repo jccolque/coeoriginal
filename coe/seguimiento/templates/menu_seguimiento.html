@@ -18,6 +18,7 @@
                                     <hr>
                                     <h3>Seguimiento Epidemiologico</h3>
                                     <li><a href="{% url 'seguimiento:lista_vigias' %}">Lista de Vigilantes Habilitados</a></li>
+                                    <li><a href="{% url 'seguimiento:situacion_vigilancia' %}">Situacion General</a></li>
                                     <li><a href="{% url 'seguimiento:lista_sin_vigias' %}">Listado de Individuos Sin Seguimiento</a></li>
                                     <li><a href="{% url 'seguimiento:lista_seguimientos' %}">Listado de Individuos Bajo Seguimiento</a></li>
                                     <hr>
@@ -37,6 +38,7 @@
                                 {% endif %}
                                 {% if perms.operadores.operativos %}
                                     <h3>Cazador 360</h3>
+                                    <li><a href="{% url 'seguimiento:situacion_operativos' %}">Situacion Operativos</a></li>
                                     <li><a href="{% url 'seguimiento:lista_operativos' %}">Lista de Vehiculos Habilitados</a></li>
                                 {% endif %}
                             {% endif %}

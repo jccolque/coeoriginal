@@ -68,7 +68,8 @@ class Individuo(models.Model):
     email = models.EmailField('Correo Electronico', null=True, blank=True)#Enviar mails
     nacionalidad = models.ForeignKey(Nacionalidad, on_delete=models.CASCADE, related_name="individuos")
     cuil = models.CharField('CUIL', max_length=13, null=True, blank=True)
-    origen = models.ForeignKey(Nacionalidad, on_delete=models.SET_NULL, null=True, blank=True, related_name="individuos_origen")
+    origen_internacional = models.ForeignKey(Nacionalidad, on_delete=models.SET_NULL, null=True, blank=True, related_name="individuos_origen")
+    origen_nacional = models.ForeignKey(Localidad, on_delete=models.SET_NULL, null=True, blank=True, related_name="individuos_origen")
     destino = models.ForeignKey(Localidad, on_delete=models.SET_NULL, null=True, blank=True, related_name="individuos_destino")
     observaciones = HTMLField(null=True, blank=True)
     fotografia = models.FileField('Fotografia', upload_to='informacion/individuos/', null=True, blank=True)

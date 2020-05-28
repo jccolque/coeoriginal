@@ -34,7 +34,66 @@
                             <p class="campo"><label>Telefono:</label> {{form.telefono}}</p>
                             <p class="campo"><label>Email:</label> {{form.email}}</p>
                             <p class="campo"><label>Nacionalidad:</label> {{form.nacionalidad}}</p>
-                            <p class="campo"><label>Pais de Origen:</label> {{form.origen}}</p>
+                            <p class="campo"><label>Pais de Origen:</label> {{form.{% extends 'base_informacion.html' %}
+
+{% block content %}
+    <section class="formulario_custom">
+        <div class="container">
+            <div class="row">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <!-- Mostramos errores -->
+                    {% for field in form %}
+					    {% if field.errors %}
+                            <li>
+                                {{ field.label }}: {{ field.errors|striptags }}
+                            </li>
+                        {% endif %}
+				    {% endfor %}
+                    <!-- Formulario -->
+                    <div class="col-sm-5 col-sm-offset-1">
+
+                        <h2>Cargar Inquilino</h2>
+                        <p><b>Destino:</b> {{form.ubicacion}}</p>
+                        <p><b>Direccion:</b> {{ubicacion.calle}} {{ubicacion.numero}}, {{ubicacion.localidad.nombre}}</p>
+                        <p><b>Habitacion:</b> {{form.habitacion}}</p>
+                        <p><b>Fecha de Ingreso:</b> {{form.fecha}}</p>
+
+                    
+                        <div class="grupo">
+                            <h3>Datos Personales</h3>
+                            <p class="campo">{{form.tipo_doc}} {{form.num_doc}}</p>
+                            <p class="campo"><label>Apellido:</label> {{form.apellidos}}</p>
+                            <p class="campo"><label>Nombres:</label> {{form.nombres}}</p>
+                            <p class="campo"><label>Sexo:</label> {{form.sexo}}</p>
+                            <p class="campo"><label>Fecha Nacimiento:</label> {{form.fecha_nacimiento}}</p>
+                            <p class="campo"><label>Telefono:</label> {{form.telefono}}</p>
+                            <p class="campo"><label>Email:</label> {{form.email}}</p>
+                            <p class="campo"><label>Nacionalidad:</label> {{form.nacionalidad}}</p>
+                            <p class="campo"><label>Pais de Origen:</label> {{form.origen_internacional}}</p>
+                            <p class="campo"><label>Localidad de Origen:</label> {{form.origen_nacional}}</p>
+                            <p class="campo"><label>Destino en la Provincia:</label> {{form.destino}}</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="col-sm-6">
+                            <h3>Signos y Sintomas:</h3>
+                            {{form.sintomas}}
+                        </div>
+                        <div class="col-sm-6">
+                            <h3>Atributos Importantes:</h3>
+                            {{form.atributos}}
+                        </div>
+                        <div class="col-sm-3 col-sm-offset-6">
+                            <button type="submit">Cargar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </section>
+{% endblock %}}}</p>
+
                             <p class="campo"><label>Destino en la Provincia:</label> {{form.destino}}</p>
                         </div>
                     </div>
