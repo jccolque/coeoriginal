@@ -113,7 +113,9 @@ def pedir_ingreso_provincial(request, ingreso_id=None):
     if request.method == "POST":
         form = IngresoProvinciaForm(request.POST, request.FILES, instance=ingreso)
         if form.is_valid():
-            ingreso = form.save()
+            ingreso = form.save(commit=False)
+            ingreso.estado = 'C'
+            ingreso.save()
             #Enviar email
             if SEND_MAIL:
                 to_email = ingreso.email_contacto
@@ -127,7 +129,7 @@ def pedir_ingreso_provincial(request, ingreso_id=None):
                 email.send()
             #Enviarlo a cargar ingresantes
             return redirect('permisos:ver_ingreso_provincial', token=ingreso.token)
-    return render(request, "pedir_ingreso.html", {'titulo': "Permiso de Ingreso a Jujuy", 'form': form, 'boton': "Cargar", })
+    return render(request, "pedir_ingreso.html", {'titulo': "Permiso de Ingreso a Jujuy", 'form': form, 'boton': "Continuar", })
 
 def ver_ingreso_provincial(request, token):
     ingreso = IngresoProvincia.objects.prefetch_related('individuos')
