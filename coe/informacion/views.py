@@ -470,7 +470,7 @@ def lista_individuos(
 @permission_required('operadores.individuos')
 def mod_num_doc(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
-    form = NumDocForm(instance=Individuo)
+    form = NumDocForm(instance=individuo)
     if request.method == 'POST':
         form = NumDocForm(request.POST, instance=individuo)
         if form.is_valid():
