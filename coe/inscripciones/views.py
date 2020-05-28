@@ -637,12 +637,12 @@ def pedir_coca(request):
     return render(request, "pedir_coca.html", {'title': "Sistema de Provisión de Coca", })
 
 def peticion_persona(request, peticion_id=None):
-    peticion = None
+    individuo = None
     if peticion_id:
-        peticion = PeticionCoca.objects.get(pk=peticion_id)
-    form = PeticionForm(instance=peticion)
+        individuo = PeticionCoca.objects.get(pk=peticion_id).individuo
+    form = PeticionForm(instance=individuo)
     if request.method == "POST":
-        form = PeticionForm(request.POST, request.FILES, instance=peticion)
+        form = PeticionForm(request.POST, request.FILES, instance=individuo)
         if form.is_valid():
             individuo = actualizar_individuo(form)
             if individuo.organizaciones.exists():
