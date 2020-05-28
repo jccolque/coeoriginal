@@ -121,6 +121,14 @@
             right: 20px;
             font-size: 15px;
         }
+        label {
+            font-weight: initial!important;
+        }
+
+        .obligatorio {
+            font-weight: bold!important;
+        }
+
     </style>    
 </head>
 
@@ -132,194 +140,188 @@
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="contact-area">
-                    <div class="section-title text-center">
-                        <h3>{{title}}</h3>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="bordeado">
+                            <h1>{{title}}</h1>
+                            <p>Este formulario es para aquellas personas que desean realizar una petición de COCA.</p>
+                            <p><b>ESTE FORMULARIO SE LLENA EN CARACTER DE DECLARIACIÓN JURADA.</b></p>
+                            <hr>
+                            <p><b>PARA REALIZAR ESTE PEDIDO, DEBE SEGUIR LOS SIGUIENTES PASOS:</b></p>
+                            <ul>
+                                <p><center>[1]. Completar el FORMULARIO INICIAL.</center></p>
+                                <p><center>[2]. Completar los PASOS POSTERIORES (Recibirá un EMAIL en su casilla de contacto.</center></p>
+                                <p><center>[3]. Cargar los datos de Responsable y Afiliados de la Organización".</center></p>
+                                <div class="row">                                        
+                                    <div class="alert alert-info" role="alert">
+                                        <h3 ALIGN="justify"><center>IMPORTANTE: ESTE FORMULARIO SÓLO ES PARA ORGANIZACIONES.</center></h3>
+                                    </div>                                       
+                                </div>                                     
+                            </ul>                                    
+                            <ul>       
+                            
+                        </div>
                     </div>
+                </div>
+                <div class="row">
                     <form name="contact_form" class="default-form contact-form" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="bordeado">
-                                    <p>Este formulario es para aquellas personas que desean realizar una petición de COCA.</p>
-                                    <p><b>ESTE FORMULARIO SE LLENA EN CARACTER DE DECLARIACIÓN JURADA.</b></p>
-                                    <hr>
-                                    <p><b>PARA REALIZAR ESTE PEDIDO, DEBE SEGUIR LOS SIGUIENTES PASOS:</b></p>
-                                    <ul>
-                                        <p><center>[1]. Completar el FORMULARIO INICIAL.</center></p>
-                                        <p><center>[2]. Completar los PASOS POSTERIORES (Recibirá un EMAIL en su casilla de contacto.</center></p>
-                                        <p><center>[3]. Cargar los datos de Responsable y Afiliados de la Organización".</center></p>
-                                        <div class="row">                                        
-                                            <div class="alert alert-info" role="alert">
-                                                <h3 ALIGN="justify"><center>IMPORTANTE: ESTE FORMULARIO SÓLO ES PARA ORGANIZACIONES.</center></h3>
-                                            </div>                                       
-                                        </div>                                     
-                                    </ul>                                    
-                                    <ul>       
-                                    
-                                </div>
+                        {% if form.errors %}
+                            <div class="col-sm-6 col-sm-offset-3">
+                                {{form.errors|safe}}
                             </div>
-                            <div class="col-md-12 col-sm-12 col-xs-12">
-                                <div class="form-group text-center">
-                                    <caption><strong>INGRESE PEDIDO</strong></caption>
-                                </div>
-                            </div>
-                            {% if form.errors %}
-                                <div class="col-sm-6 col-sm-offset-3">
-                                    {{form.errors|safe}}
-                                </div>
-                            {% endif %}
-                            <div class="col-md-12">
-                                <div class="col-lg-6">                                
-                                    <div class="form-group">
-                                        <label for="{{form.cuit.id_for_label}}">{{form.cuit.label}}</label>
-                                        {{form.cuit}}
-                                        <small class="form-text text-danger">{{form.cuit.errors.as_text}}</small>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6"> 
-                                    <div class="form-group">
-                                        <label for="{{form.denominacion.id_for_label}}">{{form.denominacion.label}}</label>
-                                        {{form.denominacion}}
-                                        <small class="form-text text-danger">{{form.denominacion.errors.as_text}}</small>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="col-lg-6">                                
-                                    <div class="form-group">
-                                        <label for="{{form.tipo_organizacion.id_for_label}}">{{form.tipo_organizacion.label}}</label>
-                                        {{form.tipo_organizacion}}
-                                        <small class="form-text text-danger">{{form.tipo_organizacion.errors.as_text}}</small>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6"> 
-                                    <div class="form-group">
-                                        <label for="{{form.fecha_constitucion.id_for_label}}">{{form.fecha_constitucion.label}}</label>
-                                        {{form.fecha_constitucion}}
-                                        <small class="form-text text-danger">{{form.fecha_constitucion.errors.as_text}}</small>
-                                    </div>
-                                </div>                               
-                            </div>
-                            <div class="col-md-12">
-                                <div class="col-lg-6">                                
-                                    <div class="form-group">
-                                        <label for="{{form.cantidad.id_for_label}}">{{form.cantidad.label}}</label>
-                                        {{form.cantidad}}
-                                        <small class="form-text text-danger">{{form.cantidad.errors.as_text}}</small>
-                                    </div>
-                                </div>                                 
-                            </div>
-                            <div class="col-md-12">
-                                <div class="col-lg-6">                                
-                                    <p><strong>CONTACTO</strong></p>
-                                </div>                                 
-                            </div>
-                            <div class="col-md-12">
-                                <div class="col-lg-6">                                
-                                    <div class="form-group">
-                                        <label for="{{form.mail_institucional.id_for_label}}">{{form.mail_institucional.label}}</label>
-                                        {{form.mail_institucional}}
-                                        <small class="form-text text-danger">{{form.mail_institucional.errors.as_text}}</small>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">                                
-                                    <div class="form-group">
-                                        <label for="{{form.telefono.id_for_label}}">{{form.telefono.label}}</label>
-                                        {{form.telefono}}
-                                        <small class="form-text text-danger">{{form.telefono.errors.as_text}}</small>
-                                    </div>
-                                </div>                                   
-                            </div>
-                            <div class="col-md-12">
-                                <div class="col-lg-6">                                
-                                    <div class="form-group">
-                                        <label for="{{form.celular.id_for_label}}">{{form.celular.label}}</label>
-                                        {{form.celular}}
-                                        <small class="form-text text-danger">{{form.celular.errors.as_text}}</small>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">                                
-                                    <div class="form-group">
-                                        <label for="{{form.archivo_adjunto.id_for_label}}">{{form.archivo_adjunto.label}}</label>
-                                        {{form.archivo_adjunto}}
-                                        <small class="form-text text-danger">{{form.archivo_adjunto.errors.as_text}}</small>
-                                    </div>
-                                </div>                                   
-                            </div>
-                            <div class="col-md-12">
+                        {% endif %}
+                        <div class="col-md-12">
+                            <div class="col-lg-6">                                
                                 <div class="form-group">
-                                    <label for="{{form.descripcion.id_for_label}}">{{form.descripcion.label}}</label>
-                                    {{ form.descripcion}}
-                                    <small class="form-text text-danger">{{form.descripcion.errors.as_text}}</small>
+                                    <label class="obligatorio" for="{{form.cuit.id_for_label}}">{{form.cuit.label}}</label>
+                                    {{form.cuit}}
+                                    <small class="form-text text-danger">{{form.cuit.errors.as_text}}</small>
                                 </div>
                             </div>
-                            <br>
-                            <div class="col-md-12">
-                                <div class="col-lg-6">                                
-                                    <p><strong>INGRESE EL DOMICILIO DE LA ORGANIZACION:</strong></p>
-                                </div>                                 
-                            </div>
-                            <div class="col-md-12">
-                                <div class="col-lg-6">                                
-                                    <div class="form-group">
-                                        <label for="{{form.localidad.id_for_label}}">{{form.localidad.label}}</label>
-                                        {{form.localidad}}
-                                        <small class="form-text text-danger">{{form.localidad.errors.as_text}}</small>
-                                    </div>
+                            <div class="col-lg-6"> 
+                                <div class="form-group">
+                                    <label class="obligatorio" for="{{form.denominacion.id_for_label}}">Nombre/{{form.denominacion.label}}</label>
+                                    {{form.denominacion}}
+                                    <small class="form-text text-danger">{{form.denominacion.errors.as_text}}</small>
                                 </div>
-                                <div class="col-lg-6"> 
-                                    <div class="form-group">
-                                        <label for="{{form.barrio.id_for_label}}">{{form.barrio.label}}</label>
-                                        {{form.barrio}}
-                                        <small class="form-text text-danger">{{form.barrio.errors.as_text}}</small>
-                                    </div>
-                                </div>                               
                             </div>
-                            <div class="col-md-12">
-                                <div class="col-lg-6">                                
-                                    <div class="form-group">
-                                        <label for="{{form.calle.id_for_label}}">{{form.calle.label}}</label>
-                                        {{form.calle}}
-                                        <small class="form-text text-danger">{{form.calle.errors.as_text}}</small>
-                                    </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-lg-6">                                
+                                <div class="form-group">
+                                    <label class="obligatorio" for="{{form.tipo_organizacion.id_for_label}}">{{form.tipo_organizacion.label}}</label>
+                                    {{form.tipo_organizacion}}
+                                    <small class="form-text text-danger">{{form.tipo_organizacion.errors.as_text}}</small>
                                 </div>
-                                <div class="col-lg-6"> 
-                                    <div class="form-group">
-                                        <label for="{{form.numero.id_for_label}}">{{form.numero.label}}</label>
-                                        {{form.numero}}
-                                        <small class="form-text text-danger">{{form.numero.errors.as_text}}</small>
-                                    </div>
-                                </div>                               
                             </div>
-                            <div class="col-md-12">
-                                <div class="col-lg-6">                                
-                                    <div class="form-group">
-                                        <label for="{{form.manzana.id_for_label}}">{{form.manzana.label}}</label>
-                                        {{form.manzana}}
-                                        <small class="form-text text-danger">{{form.manzana.errors.as_text}}</small>
-                                    </div>
+                            <div class="col-lg-6"> 
+                                <div class="form-group">
+                                    <label class="obligatorio" for="{{form.fecha_constitucion.id_for_label}}">{{form.fecha_constitucion.label}}</label>
+                                    {{form.fecha_constitucion}}
+                                    <small class="form-text text-danger">{{form.fecha_constitucion.errors.as_text}}</small>
                                 </div>
-                                <div class="col-lg-6"> 
-                                    <div class="form-group">
-                                        <label for="{{form.lote.id_for_label}}">{{form.lote.label}}</label>
-                                        {{form.lote}}
-                                        <small class="form-text text-danger">{{form.lote.errors.as_text}}</small>
-                                    </div>
-                                </div>                               
-                            </div>
-                            <div class="col-md-12">
-                                <div class="col-lg-6">                                
-                                    <div class="form-group">
-                                        <label for="{{form.piso.id_for_label}}">{{form.piso.label}}</label>
-                                        {{form.piso}}
-                                        <small class="form-text text-danger">{{form.piso.errors.as_text}}</small>
-                                    </div>
-                                </div>                                                              
-                            </div>
-                            <div class="col-md-12 col-sm-12 col-xs-12">
-                                <div class="form-group text-center">
-                                    <button type="submit" class="btn-style-one">{{button}}</button>
+                            </div>                               
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-lg-6">                                
+                                <div class="form-group">
+                                    <label class="obligatorio" for="{{form.cantidad.id_for_label}}">{{form.cantidad.label}}</label>
+                                    {{form.cantidad}}
+                                    <small class="form-text text-danger">{{form.cantidad.errors.as_text}}</small>
                                 </div>
+                            </div>                                 
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-lg-6">                                
+                                <p><strong>CONTACTO</strong></p>
+                            </div>                                 
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-lg-6">                                
+                                <div class="form-group">
+                                    <label class="obligatorio" for="{{form.mail_institucional.id_for_label}}">{{form.mail_institucional.label}}</label>
+                                    {{form.mail_institucional}}
+                                    <small class="form-text text-danger">{{form.mail_institucional.errors.as_text}}</small>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">                                
+                                <div class="form-group">
+                                    <label class="obligatorio" for="{{form.telefono.id_for_label}}">{{form.telefono.label}}</label>
+                                    {{form.telefono}}
+                                    <small class="form-text text-danger">{{form.telefono.errors.as_text}}</small>
+                                </div>
+                            </div>                                   
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-lg-6">                                
+                                <div class="form-group">
+                                    <label for="{{form.celular.id_for_label}}">{{form.celular.label}}</label>
+                                    {{form.celular}}
+                                    <small class="form-text text-danger">{{form.celular.errors.as_text}}</small>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">                                
+                                <div class="form-group">
+                                    <label class="obligatorio" for="{{form.archivo_adjunto.id_for_label}}">{{form.archivo_adjunto.label}}</label>
+                                    {{form.archivo_adjunto}}
+                                    <small class="form-text text-danger">{{form.archivo_adjunto.errors.as_text}}</small>
+                                </div>
+                            </div>                                   
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="{{form.descripcion.id_for_label}}">{{form.descripcion.label}}</label>
+                                {{ form.descripcion}}
+                                <small class="form-text text-danger">{{form.descripcion.errors.as_text}}</small>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="col-md-12">
+                            <div class="col-lg-6">                                
+                                <p><strong>INGRESE EL DOMICILIO DE LA ORGANIZACION:</strong></p>
+                            </div>                                 
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-lg-6">                                
+                                <div class="form-group">
+                                    <label class="obligatorio" for="{{form.localidad.id_for_label}}">{{form.localidad.label}}</label>
+                                    {{form.localidad}}
+                                    <small class="form-text text-danger">{{form.localidad.errors.as_text}}</small>
+                                </div>
+                            </div>
+                            <div class="col-lg-6"> 
+                                <div class="form-group">
+                                    <label class="obligatorio" for="{{form.barrio.id_for_label}}">{{form.barrio.label}}</label>
+                                    {{form.barrio}}
+                                    <small class="form-text text-danger">{{form.barrio.errors.as_text}}</small>
+                                </div>
+                            </div>                               
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-lg-6">                                
+                                <div class="form-group">
+                                    <label class="obligatorio" for="{{form.calle.id_for_label}}">{{form.calle.label}}</label>
+                                    {{form.calle}}
+                                    <small class="form-text text-danger">{{form.calle.errors.as_text}}</small>
+                                </div>
+                            </div>
+                            <div class="col-lg-6"> 
+                                <div class="form-group">
+                                    <label class="obligatorio" for="{{form.numero.id_for_label}}">{{form.numero.label}}</label>
+                                    {{form.numero}}
+                                    <small class="form-text text-danger">{{form.numero.errors.as_text}}</small>
+                                </div>
+                            </div>                               
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-lg-6">                                
+                                <div class="form-group">
+                                    <label for="{{form.manzana.id_for_label}}">{{form.manzana.label}}</label>
+                                    {{form.manzana}}
+                                    <small class="form-text text-danger">{{form.manzana.errors.as_text}}</small>
+                                </div>
+                            </div>
+                            <div class="col-lg-6"> 
+                                <div class="form-group">
+                                    <label for="{{form.lote.id_for_label}}">{{form.lote.label}}</label>
+                                    {{form.lote}}
+                                    <small class="form-text text-danger">{{form.lote.errors.as_text}}</small>
+                                </div>
+                            </div>                               
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-lg-6">                                
+                                <div class="form-group">
+                                    <label for="{{form.piso.id_for_label}}">{{form.piso.label}}</label>
+                                    {{form.piso}}
+                                    <small class="form-text text-danger">{{form.piso.errors.as_text}}</small>
+                                </div>
+                            </div>                                                              
+                        </div>
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="form-group text-center">
+                                <button type="submit" class="btn-style-one">{{button}}</button>
                             </div>
                         </div>
                     </form>

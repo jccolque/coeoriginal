@@ -187,11 +187,11 @@ class OrganizationForm(forms.ModelForm):
     localidad = forms.ModelChoiceField(
         queryset=Localidad.objects.all(),
         widget=autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
-        required=False,
+        required=True,
     )
-    calle = forms.CharField(required=False, )
-    numero = forms.CharField(required=False, )
-    barrio = forms.CharField(required=False, )
+    barrio = forms.CharField(required=True, )
+    calle = forms.CharField(required=True, )
+    numero = forms.CharField(required=True, )
     manzana = forms.CharField(required=False, )
     lote = forms.CharField(required=False, )
     piso = forms.CharField(required=False, )      

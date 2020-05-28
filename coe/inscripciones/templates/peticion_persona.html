@@ -121,6 +121,15 @@
             right: 20px;
             font-size: 15px;
         }
+
+        label {
+            font-weight: initial!important;
+        }
+
+        .obligatorio {
+            font-weight: bold!important;
+        }
+
     </style>    
 </head>
 
@@ -132,79 +141,75 @@
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="contact-area">
-                    <div class="section-title text-center">
-                        <h3>{{title}}</h3>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="bordeado">
+                                <h2>{{title}}</h2>
+                                <p>Este formulario es para aquellas personas que desean realizar una petición de COCA.</p>
+                                <p><b>ESTE FORMULARIO SE LLENA EN CARACTER DE DECLARIACIÓN JURADA.</b></p>
+                                <hr>
+                                <p><b>PARA REALIZAR ESTE PEDIDO, DEBE SEGUIR LOS SIGUIENTES PASOS:</b></p>
+                                <ul>
+                                <p><center>[1]. Completar el FORMULARIO INICIAL.</center></p>
+                                <p><center>[2]. Completar los PASOS POSTERIORES (Recibirá un EMAIL en su casilla de contacto)</li></center></p>
+                                <p><center>[3]. Cargar sus DATOS PERSONALES, en la pestaña "AGREGAR DATOS PERSONALES".</li></center></p>
+                                <div class="row">                                        
+                                    <div class="alert alert-danger" role="alert">
+                                        <h3 ALIGN="justify">IMPORTANTE: LA CANTIDAD DE COCA QUE PUEDE SOLICITAR ES DE 50 GRAMOS.</h3>
+                                    </div>                                       
+                                </div>                                      
+                                </ul>                                    
+                                <ul>                                  
+                            </div>
+                        </div>
                     </div>
-                    <form name="contact_form" class="default-form contact-form" method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="bordeado">
-                                    <p>Este formulario es para aquellas personas que desean realizar una petición de COCA.</p>
-                                    <p><b>ESTE FORMULARIO SE LLENA EN CARACTER DE DECLARIACIÓN JURADA.</b></p>
-                                    <hr>
-                                    <p><b>PARA REALIZAR ESTE PEDIDO, DEBE SEGUIR LOS SIGUIENTES PASOS:</b></p>
-                                    <ul>
-                                    <p><center>[1]. Completar el FORMULARIO INICIAL.</center></p>
-                                    <p><center>[2]. Completar los PASOS POSTERIORES (Recibirá un EMAIL en su casilla de contacto)</li></center></p>
-                                    <p><center>[3]. Cargar sus DATOS PERSONALES, en la pestaña "AGREGAR DATOS PERSONALES".</li></center></p>
-                                    <div class="row">                                        
-                                        <div class="alert alert-danger" role="alert">
-                                            <h3 ALIGN="justify">IMPORTANTE: LA CANTIDAD DE COCA QUE PUEDE SOLICITAR ES DE 50 GRAMOS.</h3>
-                                        </div>                                       
-                                    </div>                                      
-                                    </ul>                                    
-                                    <ul>                                  
-                                </div>
-                            </div>
-                            <div class="col-md-12 col-sm-12 col-xs-12">
-                                <div class="form-group text-center">
-                                    <caption><strong>INGRESE PEDIDO</strong></caption>
-                                </div>
-                            </div>
+                    <div class="row">
+                        <form name="contact_form" class="default-form contact-form" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+        
                             {% if form.errors %}
                                 <div class="col-sm-6 col-sm-offset-3">
                                     {{form.errors|safe}}
                                 </div>
-                            {% endif %}  
+                            {% endif %}
                             <div class="col-md-12"> 
                                 <div class="col-md-6">
+                                    <p><b>Datos Personales:</b></p>
                                     <div class="form-group">
-                                        <label for="{{form.num_doc.id_for_label}}">{{form.num_doc.label}}</label>
+                                        <label class="obligatorio" for="{{form.num_doc.id_for_label}}">{{form.num_doc.label}}</label>
                                         {{form.num_doc}}
                                         <small class="form-text text-danger">{{form.num_doc.errors.as_text}}</small>
                                     </div>
                                     <div class="form-group">
-                                        <label for="{{form.nombres.id_for_label}}">{{form.nombres.label}}</label>
+                                        <label class="obligatorio" for="{{form.nombres.id_for_label}}">{{form.nombres.label}}</label>
                                         {{form.nombres}}
                                         <small class="form-text text-danger">{{form.nombres.errors.as_text}}</small>
                                     </div>
                                     <div class="form-group">
-                                        <label for="{{form.apellidos.id_for_label}}">{{form.apellidos.label}}</label>
+                                        <label class="obligatorio" for="{{form.apellidos.id_for_label}}">{{form.apellidos.label}}</label>
                                         {{form.apellidos}}
                                         <small class="form-text text-danger">{{form.apellidos.errors.as_text}}</small>
                                     </div>
                                     <div class="form-group">
-                                        <label for="{{form.sexo.id_for_label}}">{{form.sexo.label}}</label>
+                                        <label class="obligatorio" for="{{form.sexo.id_for_label}}">{{form.sexo.label}}</label>
                                         {{form.sexo}}
                                         <small class="form-text text-danger">{{form.sexo.errors.as_text}}</small>
                                     </div>
                                     <div class="form-group">
-                                        <label for="{{form.fecha_nacimiento.id_for_label}}">{{form.fecha_nacimiento.label}}</label>
+                                        <label class="obligatorio" for="{{form.fecha_nacimiento.id_for_label}}">{{form.fecha_nacimiento.label}}</label>
                                         {{form.fecha_nacimiento}}
                                         <small class="form-text text-danger">{{form.fecha_nacimiento.errors.as_text}}</small>
                                     </div>
                                     <div class="form-group">
-                                        <label for="{{form.nacionalidad.id_for_label}}">{{form.nacionalidad.label}}</label>
+                                        <label class="obligatorio" for="{{form.nacionalidad.id_for_label}}">{{form.nacionalidad.label}}</label>
                                         {{form.nacionalidad}}
                                         <small class="form-text text-danger">{{form.nacionalidad.errors.as_text}}</small>
                                     </div>
                                 </div>                        
                                 <div class="col-lg-6">
-
-                                    <p>Domicilio:</p>
+                                    <p><b>Domicilio:</b></p>
                                     <div class="form-group">
-                                        <label for="{{form.dom_localidad.id_for_label}}">{{form.dom_localidad.label}}</label>
+                                        <label class="obligatorio" for="{{form.dom_localidad.id_for_label}}">Localidad:</label>
                                         {{form.dom_localidad}}
                                         <small class="form-text text-danger">{{form.dom_localidad.errors.as_text}}</small>
                                     </div>
@@ -212,11 +217,11 @@
                                         
                                         <div class="row">
                                             <div class="col-sm-8">
-                                                <label">Calle:</label>
+                                                <label" class="obligatorio">Calle:</label>
                                                 {{form.dom_calle}}
                                             </div>
                                             <div class="col-sm-4">
-                                                <label">Numero:</label>
+                                                <label" class="obligatorio">Numero:</label>
                                                 {{form.dom_numero}}
                                             </div>
                                         </div>
@@ -224,13 +229,13 @@
                                         <small class="form-text text-danger">{{form.dom_numero.errors.as_text}}</small>
                                     </div>
                                     <div class="form-group">
-                                        <label>Barrio:</label>
+                                        <label class="obligatorio">Barrio:</label>
                                         {{form.dom_aclaracion}}
                                         <small class="form-text text-danger">{{form.dom_aclaracion.errors.as_text}}</small>
                                     </div>
-                                    <p>Datos de Contacto:</p>
+                                    <p><b>Datos de Contacto:</b></p>
                                     <div class="form-group">
-                                        <label for="{{form.email_contacto.id_for_label}}">{{form.email.label}}</label>
+                                        <label class="obligatorio" for="{{form.email_contacto.id_for_label}}">{{form.email.label}}</label>
                                         {{form.email}}
                                         <small class="form-text text-danger">{{form.email.errors.as_text}}</small>
                                     </div>
@@ -251,7 +256,7 @@
                                     </div>
                                     <div class="col-lg-6"> 
                                         <div class="form-group">
-                                            <label for="{{form.destino.id_for_label}}">Localidad de Destino del Envio:</label>
+                                            <label class="obligatorio" for="{{form.destino.id_for_label}}">Localidad de Destino del Envio:</label>
                                             {{form.destino}}
                                             <small class="form-text text-danger">{{form.destino.errors.as_text}}</small>
                                         </div>

@@ -64,11 +64,10 @@ TIPO_CONDICION = (
 )
 
 TIPO_ORGANIZACION = (
-    ('ONG', 'ONG'),
-    ('SDO', 'SINDICATO'),
+    ('ORP', 'ORGANIZACIONES PRODUCTIVAS'),
     ('CI', 'COMUNIDAD INDIGENA'),
-    ('ASC', 'ASOCIACION'),
-    ('O', 'OTRO'),
+    ('ASL', 'ASOCIACION SIN FINES DE LUCRO'),
+    ('O', 'OTRAS'),
 )
 
 TIPO_CONFIRMA = (

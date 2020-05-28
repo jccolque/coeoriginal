@@ -686,7 +686,7 @@ def peticion_persona(request, peticion_id=None):
                 peticion.save()
                 #Enviarlo a cargar ingresantes
                 return redirect('inscripciones:ver_peticion_persona', token=peticion.token)
-    return render(request, "peticion_persona.html", {'title': "PETICIÓN DE COCA - PERSONAS", 'form': form, 'button': "Iniciar Pedido", })
+    return render(request, "peticion_persona.html", {'title': "Solicitud de Provicion de Hojas de Coca para Personas", 'form': form, 'button': "Iniciar Pedido", })
 
 def ver_peticion_persona(request, token):
     peticion = PeticionCoca.objects.select_related('individuo')
@@ -816,7 +816,7 @@ def peticion_organizacion(request, organizacion_id=None):
                 domicilio.piso = form.cleaned_data['piso']
                 domicilio.save()
             return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
-    return render(request, "peticion_organizacion.html", {'title': "PETICIÓN DE COCA - ORGANIZACIONES", 'form': form, 'button': "Iniciar Pedido", })
+    return render(request, "peticion_organizacion.html", {'title': "Solicitud de Provicion de Hojas de Coca para Organizaciones", 'form': form, 'button': "Iniciar Pedido", })
 
 def ver_peticion_organizacion(request, token):
     organizacion = Organization.objects.prefetch_related('responsables', 'afiliados')    
