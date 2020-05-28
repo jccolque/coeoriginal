@@ -642,7 +642,7 @@ def peticion_persona(request, peticion_id=None):
         peticion = PeticionCoca.objects.get(pk=peticion_id)
     form = PeticionForm(instance=peticion)
     if request.method == "POST":
-        form = PeticionForm(request.POST, instance=peticion)
+        form = PeticionForm(request.POST, request.FILES, instance=peticion)
         if form.is_valid():
             individuo = actualizar_individuo(form)
             if individuo.organizaciones.exists():
