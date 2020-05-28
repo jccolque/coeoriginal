@@ -10,6 +10,7 @@ urlpatterns = [
     #Publico
     path('profesional/salud', views.inscripcion_salud, name='inscripcion_salud'),
     path('voluntario/social', views.inscripcion_social, name='inscripcion_social'),
+    path('voluntario/social/explicacion', views.explicacion_voluntario_social, name='explicacion_voluntario_social'),
     path('proyecto/estudiantil', views.inscripcion_proyecto, name='inscripcion_proyecto'),
     path('foto/<int:inscripcion_id>', views.subir_foto, name='subir_foto'),
     path('frente_dni/<int:inscripcion_id>', views.cargar_frente_dni, name='cargar_frente_dni'),

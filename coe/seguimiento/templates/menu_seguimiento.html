@@ -25,12 +25,15 @@
                                     <li><a href="{% url 'seguimiento:esperando_alta_seguimiento' %}">Individuos para Alta de Seguimiento</a></li>
                                     <li><a href="{% url 'seguimiento:altas_realizadas' %}">Altas Realizadas</a></li>
                                     <hr>
-                                    <h3>Otras Listas:</h3>
+                                    <h3>Administracion de Tests:</h3>
                                     <li><a href="{% url 'seguimiento:ranking_test' %}">Ranking para Test</a></li>
                                     <li><a href="{% url 'seguimiento:esperando_test' %}">Esperando Realizacion y Resultado de Test</a></li>
+                                    <li><a href="{% url 'seguimiento:test_realizados' %}">Test Realizados</a></li>
+                                    <hr>
+                                    <h3>Otras Listas:</h3>
                                     <li><a href="{% url 'seguimiento:lista_sin_telefono' %}">Listado de Individuos sin Telefono</a></li>
                                     <li><a href="{% url 'seguimiento:lista_autodiagnosticos' %}">Listado de Autodiagnosticos</a></li>
-                                    <li><a href="{% url 'seguimiento:lista_aislados' %}">Listado de Aislados</a></li>                                    <hr>
+                                    <li><a href="{% url 'seguimiento:lista_aislados' %}">Listado de Todos los Aislados</a></li>                                    <hr>
                                 {% endif %}
                                 {% if perms.operadores.operativos %}
                                     <h3>Cazador 360</h3>

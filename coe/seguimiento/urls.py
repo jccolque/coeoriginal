@@ -44,8 +44,9 @@ urlpatterns = [
     path('operativo/finalizar/<int:operativo_id>', views.finalizar_operativo, name='finalizar_operativo'),
     #path('operativo/quitar/testeado/<int:operativo_id>/<int:individuo_id>', views.quitar_testeado, name='quitar_testeado'),
     #Otros Listados
-    path('ranking/test', views.ranking_test, name='ranking_test'),
-    path('esperando/test', views.esperando_test, name='esperando_test'),
+    path('test/pedidos', views.ranking_test, name='ranking_test'),
+    path('test/esperando', views.esperando_test, name='esperando_test'),
+    path('test/realizados', views.test_realizados, name='test_realizados'),
     path('lista/sin_telefono', views.lista_sin_telefono, name='lista_sin_telefono'),
     path('lista/autodiagnosticos', views.lista_autodiagnosticos, name='lista_autodiagnosticos'),
     path('lista/aislados', views.lista_aislados, name='lista_aislados'),

@@ -9,19 +9,26 @@
                 <div class="row">
                     <br>
                     {% csrf_token %}
-                    <!-- Mostramos errores -->
-                    {% for field in form %}
-                        {% if field.errors %}
-                            <li>
-                                <b>{{ field.label }}: {{ field.errors|striptags }}</b>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
                     <br>
                     <h1><b>PLAN DE ACCIÓN INTEGRAL DE ADULTOS MAYORES COVID-19</b></h1>
-                    <div class="col-lg-8 col-lg-offset-2">                    
+                    <div class="col-lg-7 col-lg-offset-1">
                         <h3><b>Postulación de Voluntarios de Acompañamiento Social</b></h3>
                         <p>Si Ud. tiene intención de colaborar como Voluntario en el marco de la contingencia por el nuevo Coronavirus (COVID-19), lea y complete el siguiente formulario. Se pone en conocimiento de los Voluntarios Sociales que su incorporación al Plan de Acción Integral del Adulto Mayor Covid-19, se realizará en el marco de la Ley del Voluntariado Social N° 25.855.</p>
+                    </div>
+                    <div class="col-lg-3 bordeado">
+                        <a href="{% url 'inscripciones:explicacion_voluntario_social' %}" class="nolink">
+                            <h3><b>Qué es un voluntario y cuál es su función en este Plan?</b></h3>
+                        </a>
+                    </div>
+                    <div class="col-lg-4 col-lg-offset-4">
+                        <!-- Mostramos errores -->
+                        {% for field in form %}
+                            {% if field.errors %}
+                                <li>
+                                    <b>{{ field.label }}: {{ field.errors|striptags }}</b>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
                     </div>
                     <div class="row">
                         <div class="col-lg-6">

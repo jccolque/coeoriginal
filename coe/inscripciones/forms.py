@@ -161,8 +161,8 @@ class PeticionForm(forms.ModelForm):
     dom_numero = forms.CharField(required=True, )
     dom_aclaracion = forms.CharField(required=False, )
     #Documentos
-    frente_dni = forms.FileField(required=True)
-    reverso_dni = forms.FileField(required=True)
+    frente_dni = forms.FileField(required=False)
+    reverso_dni = forms.FileField(required=False)
     #Base Individuo
     class Meta:
         model = Individuo
@@ -225,8 +225,8 @@ class AfiliadoForm(forms.ModelForm):
     tipo_cond = forms.ChoiceField(choices=TIPO_CONDICION, required=True, label="Condicion Poblacional")
     rol = forms.CharField(required=False, label="Rol Institucional")
     #Documentos
-    frente_dni = forms.FileField(required=True)
-    reverso_dni = forms.FileField(required=True)
+    frente_dni = forms.FileField(required=False)
+    reverso_dni = forms.FileField(required=False)
     #Base Individuo
     class Meta:
         model = Individuo

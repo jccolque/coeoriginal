@@ -76,6 +76,7 @@ def pedir_test(request):
             else:
                 individuo.email = request.POST['email']
                 individuo.telefono = request.POST['telefono']
+                individuo.fecha_nacimiento = request.POST['fecha_nacimiento']
                 individuo.save()
                 #Pedido de Test
                 seguimiento = Seguimiento(individuo=individuo)
@@ -485,17 +486,32 @@ def esperando_test(request):
     individuos = Individuo.objects.filter(seguimientos__tipo='ET')
     individuos = individuos.exclude(seguimientos__tipo__in=('DT','CT'))
     #optimizamos
-    individuos = individuos.select_related('domicilio_actual')
+    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__ubicacion')
     individuos = individuos.prefetch_related('seguimientos')
     #Obtenemos el dato del test:
     for individuo in individuos:
-        individuo.pedido_test = individuo.seguimientos.filter(tipo='ET').last()
+        individuo.pedido_test = [et for et in individuo.seguimientos.all() if et.tipo=='ET'][-1]
     #Mostramos
     return render(request, "esperando_test.html", {
         'individuos': individuos,
         'has_table': True,
     })
 
+@permission_required('operadores.individuos')
+def test_realizados(request):
+    #Buscamos los que tenemos que analizar
+    individuos = Individuo.objects.filter(seguimientos__tipo__in=('DT','CT'))
+    #optimizamos
+    individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__ubicacion')
+    individuos = individuos.prefetch_related('seguimientos')
+    #Obtenemos el dato del test:
+    for individuo in individuos:
+        individuo.test = [rt for rt in individuo.seguimientos.all() if rt.tipo in ('DT','CT')][-1]
+    #Mostramos
+    return render(request, "lista_testeados.html", {
+        'individuos': individuos,
+        'has_table': True,
+    })
 
 @permission_required('operadores.individuos')
 def lista_sin_telefono(request):

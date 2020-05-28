@@ -156,6 +156,9 @@ def inscripcion_social(request):
         'dispositivos': dispositivos,
     })
 
+def explicacion_voluntario_social(request):
+    return render(request, 'explicacion_voluntario_social.html', {})
+
 def ver_inscripto(request, inscripcion_id, num_doc):
     try:
         inscripto = Inscripcion.objects.select_related('individuo', 'individuo__domicilio_actual', 'individuo__domicilio_actual__localidad')

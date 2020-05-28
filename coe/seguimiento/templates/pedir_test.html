@@ -27,6 +27,10 @@
                                 <input type="text" name="num_doc" id="num_doc" required>
                             </div>
                             <div class="field-box">
+                                <p>Fecha de Nacimiento:</p>
+                                <input type="text" name="fecha_nacimiento" value="" autocomplete="off" id="fecha_nacimiento">
+                            </div>
+                            <div class="field-box">
                                 <p>Telefono:</p>
                                 <input type="text" name="telefono" id="telefono" required>
                             </div>
@@ -35,6 +39,7 @@
                                 <input type="email" name="email" id="email" required>
                             </div>
                         </div>
+                        <br>
                         <p>Los datos de contacto de Telefono y Mail seran utilizados para contactarlo a la hora de coordinar la realizacion del test y la entrega de los resultados.</p>
                         <p><b>Por favor, controle cuidadosamente la informacion que nos brinda.</b></p>
                     </div>
@@ -73,4 +78,25 @@
 
         </form>
     </div>
+{% endblock %}
+
+{% block custom_head %}
+    <!-- Date Picker -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery.datetimepicker.min.css' %}" />
+    <script type="text/javascript" src="{% static 'js/jquery-ui-1.12.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.datetimepicker.full.min.js' %}"></script>
+{% endblock %}
+
+{% block custom_script %}
+    <script>
+        $(function () 
+            {
+                $("input[name='fecha_nacimiento']").datetimepicker(
+                    {
+                        format: 'd/m/Y',
+                    }
+                );
+            }
+        );
+    </script>
 {% endblock %}
