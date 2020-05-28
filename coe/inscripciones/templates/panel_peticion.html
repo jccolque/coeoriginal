@@ -19,7 +19,7 @@
                                 <p><b>Destino del Pedido:</b>{{peticion.destino}}</p>
                                 <p>Comunidad Originaria: {{peticion.get_comunidad_display}}</p>
                             </div>
-                            <div class="col-md-4"></div>
+                            <div class="col-md-4">
                                 <p><b>Domicilio:</b></p>
                                 {% with peticion.individuo.domicilio_actual as domicilio %}
                                     <p>{{domicilio}}</p>
