@@ -697,7 +697,7 @@ def ver_peticion_persona(request, token):
     peticion = peticion.get(token=token)
     #Calcular Limite para eliminacion
     limite = int(72 - (timezone.now() - peticion.fecha).total_seconds() / 3600)
-    return render(request, 'panel_peticion.html', {
+    return render(request, 'panel_peticion_personal.html', {
         'peticion': peticion,
         'limite': limite,
     })
@@ -721,7 +721,7 @@ def lista_peticiones_personales(request, estado=None):
     peticiones = peticiones.select_related('destino', 'operador')
     peticiones = peticiones.select_related('individuo', 'individuo__domicilio_actual', 'individuo__domicilio_actual__localidad')
     #Lanzamos listado
-    return render(request, 'lista_peticiones.html', {
+    return render(request, 'lista_peticiones_personales.html', {
         'title': "Ingresos Pedidos",
         'peticiones': peticiones,
         'has_table': True,
@@ -933,7 +933,30 @@ def finalizar_peticion_org(request, organizacion_id):
     organizacion.save()
     return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
 
+def coca_subir_doc(request, token):
+    form = DocumentacionForm()
+    if request.method == "POST":
+        #obtenemos ingreso
+        form = DocumentacionForm(request.POST, request.FILES)
+        if form.is_valid():
+            organizacion = Organization.objects.get(token=token)
+            organizacion.archivo_adjunto = form.cleaned_data['documentacion']
+            organizacion.save()
+            return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
+    return render(request, "extras/generic_form.html", {
+        'titulo': "Cargar Documentación Respaldatoria", 
+        'form': form, 
+        'boton': "Cargar Documentación", 
+        })
+
+def coca_del_doc(request, token):
+    organizacion = Organization.objects.get(token=token)
+    organizacion.archivo_adjunto = None
+    organizacion.save()
+    return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
+
 #Administrar COCA - ORGANIZACIONES
+@permission_required('operadores.menu_inscripciones')
 def lista_peticiones_org(request, estado=None):
     organizacion = Organization.objects.all()
     #Filtramos de ser necesario
@@ -988,25 +1011,3 @@ def eliminar_peticion_org(request, organizacion_id):
     organizacion.operador = obtener_operador(request)
     organizacion.save()
     return redirect('inscripciones:lista_peticiones_org')
-
-def documentacion_subir_info(request, token):
-    form = DocumentacionForm()
-    if request.method == "POST":
-        #obtenemos ingreso
-        form = DocumentacionForm(request.POST, request.FILES)
-        if form.is_valid():
-            organizacion = Organization.objects.get(token=token)
-            organizacion.archivo_adjunto = form.cleaned_data['documentacion']
-            organizacion.save()
-            return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
-    return render(request, "extras/generic_form.html", {
-        'titulo': "Cargar Documentación Respaldatoria", 
-        'form': form, 
-        'boton': "Cargar Documentación", 
-        })
-
-def documentacion_eliminar_info(request, token):
-    organizacion = Organization.objects.get(token=token)
-    organizacion.archivo_adjunto = None
-    organizacion.save()
-    return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
