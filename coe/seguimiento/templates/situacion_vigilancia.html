@@ -15,6 +15,7 @@
                             <th>Vigilante</th>
                             <th>Tipo</th>
                             <th>Controlados</th>
+                            <th>Alertas</th>
                             <th>Semanales</th>
                             <th>Totales</th>
                             <th>Ver Detalle</th>
@@ -27,8 +28,9 @@
                                 <td>{{vigia}}</th>
                                 <td>{{vigia.get_tipo_display}}</td>
                                 <td>{{vigia.cant_controlados}}</th>
-                                <td>{{vigia.segs_7dias.count}}</th>
-                                <td>{{vigia.seguimientos.count}}</th>
+                                <td>{{vigia.alertas}}</th>
+                                <td>{{vigia.semana_seguimientos}}</th>
+                                <td>{{vigia.total_seguimientos}}</th>
                                 <td>
                                     <a href="{% url 'seguimiento:ver_panel' vigia_id=vigia.id %}" target="_blank">
                                         <img class="icons" src="/static/img/icons/control_panel.png" alt="Panel de Control">

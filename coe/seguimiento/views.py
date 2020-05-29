@@ -1,5 +1,5 @@
 #Imports de python
-from datetime import timedelta
+from datetime import datetime, timedelta
 #Imports Django
 from django.db.models import Count
 from django.db.models import Q
@@ -79,7 +79,11 @@ def pedir_test(request):
             else:
                 individuo.email = request.POST['email']
                 individuo.telefono = request.POST['telefono']
-                individuo.fecha_nacimiento = request.POST['fecha_nacimiento']
+                fecha = request.POST['fecha_nacimiento']
+                try:
+                    individuo.fecha_nacimiento = datetime(int(fecha[6:]),int(fecha[3:5]), int(fecha[0:2]))
+                except:
+                    pass#No pudimos obtener fecha
                 individuo.save()
                 #Pedido de Test
                 seguimiento = Seguimiento(individuo=individuo)
@@ -152,26 +156,14 @@ def situacion_vigilancia(request):
     #Optimizamos
     vigias = vigias.select_related('operador', 'operador__usuario')
     vigias = vigias.prefetch_related('controlados')
-    #Obtenemos solo los registros de seguimiento CREADOS
-    ct_seg = ContentType.objects.get_for_model(Seguimiento)
-    logentrys = LogEntry.objects.filter(content_type=ct_seg)#De tabla seguimientos
-    logentrys = logentrys.filter(action=0)#Creados
-    logentrys = logentrys.exclude(actor=None)#Que hayan sido manuales
-        
-    #Creamos SubQuery:
-    sq_seguimientos = logentrys.filter(actor=OuterRef('operador__usuario'))#Esto va a ser por cada Vigia
-    #Creamos Aggregate
-
     #Preparamos filtros
     limite_dia = timezone.now() - timedelta(hours=24)
     limite_semana = timezone.now() - timedelta(hours=24 * 7)
-    #Agregamos datos interesantes:
-    
-    #Cant Controlados Actuales
+    #Agregamos datos de interes:
     vigias = vigias.annotate(cant_controlados=Count('controlados'))
-    vigias = vigias.annotate(alertas=Count('controlados', controlados__seguimiento_actual__fecha__lt=limite_dia))
-    vigias = vigias.annotate(cant_seguimientos=Count(Subquery(sq_seguimientos)))
-
+    vigias = vigias.annotate(alertas=Count('controlados', filter=Q(controlados__seguimiento_actual__fecha__lt=limite_dia)))
+    vigias = vigias.annotate(total_seguimientos=Count('operador__seguimientos_cargados'))
+    vigias = vigias.annotate(semana_seguimientos=Count('operador__seguimientos_cargados', filter=Q(operador__seguimientos_cargados__fecha__gt=limite_semana)))
     #Lanzamos reporte
     return render(request, "situacion_vigilancia.html", {
         'vigias': vigias,
@@ -235,7 +227,7 @@ def lista_vigias(request):
     vigias = vigias.prefetch_related('controlados')
     #Obtenemos valor:
     limite = timezone.now() - timedelta(hours=12)
-    vigias = vigias.annotate(alertas=Count('controlados', controlados__seguimiento_actual__fecha__lt=limite))
+    vigias = vigias.annotate(alertas=Count('controlados', filter=Q(controlados__seguimiento_actual__fecha__lt=limite)))
     #Lanzamos listado
     return render(request, "lista_vigias.html", {
         'vigias': vigias,
@@ -591,7 +583,7 @@ def lista_aislados(request):
     individuos = individuos.select_related('appdata')
     individuos = individuos.prefetch_related('vigiladores', 'vigiladores__operador')
     #Lanzamos reporte
-    return render(request, "lista_seguimientos.html", {
+    return render(request, "lista_seguidos.html", {
         'individuos': individuos,
         'has_table': True,
     })

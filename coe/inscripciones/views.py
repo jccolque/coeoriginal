@@ -806,7 +806,7 @@ def peticion_organizacion(request, organizacion_id=None):
                 domicilio.save()
             return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
     return render(request, "peticion_organizacion.html", {
-        'title': "Solicitud de Provicion de Hojas de Coca para Organizaciones",
+        'title': "Solicitud de Provisión de Hojas de Coca para Organizaciones",
         'form': form,
         'button': "Iniciar Pedido", 
     })
