@@ -53,7 +53,7 @@ urlpatterns = [
     path('coca/personas/lista', views.lista_peticiones_personales, name='lista_peticiones_personales'),
     path('coca/personas/lista/estado/<estado>', views.lista_peticiones_personales, name='lista_peticiones_personales'),
     #COCA ORGANIZACIÓN
-    path('coca/org/org', views.peticion_organizacion, name='peticion_organizacion'),    
+    path('coca/org', views.peticion_organizacion, name='peticion_organizacion'),    
     path('coca/org/mod/org/<int:organizacion_id>', views.peticion_organizacion, name='mod_peticion_organizacion'),
     path('coca/org/ver/<str:token>', views.ver_peticion_organizacion, name='ver_peticion_organizacion'),  
     path('coca/org/cargar/responsable/<int:organizacion_id>', views.cargar_responsable_org, name='cargar_responsable_org'),
