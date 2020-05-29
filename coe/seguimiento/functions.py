@@ -26,7 +26,6 @@ logger = logging.getLogger('errors')
 #Definimos funciones
 def obtener_bajo_seguimiento():
     individuos = Individuo.objects.filter(situacion_actual__conducta__in=('D', 'E'))
-    individuos = individuos.exclude(seguimientos__tipo='FS')
     return individuos
 
 def creamos_doc_alta(individuo):
@@ -101,9 +100,6 @@ def realizar_alta(individuo, operador):
     seguimiento.tipo = 'FS'
     seguimiento.aclaracion = "Baja confirmada por: " + str(operador)
     seguimiento.save()
-    #Lo sacamos de los panel:
-    vigiladores = individuo.vigiladores.all()
-    individuo.vigiladores.clear()
     #Lo damos de Alta de Aislamiento
     situacion = Situacion(individuo=individuo)
     seguimiento.aclaracion = "Baja confirmada por: " + str(operador)
