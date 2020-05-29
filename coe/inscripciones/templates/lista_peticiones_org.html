@@ -14,6 +14,7 @@
                             <th>CUIT</th>
                             <th>Email de Contacto</th>
                             <th>Telefono</th>
+                            <th>Afiliados</th>
                             <th>Operador</th>
                             <th>Ver Detalle</th>                                                       
                         </tr>
@@ -26,7 +27,8 @@
                                 <td>{{org.denominacion}}</td>
                                 <td>{{org.cuit}}</td>
                                 <td>{{org.mail_institucional}}</td>
-                                <td>{{org.telefono}}</td>                                                
+                                <td>{{org.telefono}}</td>
+                                <td>{{org.cantidad}}</td>
                                 <td>{{org.operador}}</td>
                                 <td>
                                     <a href="{% url 'inscripciones:ver_peticion_organizacion' token=org.token %}" target="_blank">

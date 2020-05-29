@@ -39,9 +39,6 @@ def baja_seguimiento():
             seguimiento.tipo = 'FS'
             seguimiento.aclaracion = "Baja automatica por cumplir tiempo de cuarentena"
             seguimiento.save()
-            #Aqui deberiamos generar el doc de baja de cuarentena
-            #Generar documento al individuo tipo = ('AC', 'Certificado de Alta de Cuarentena'),
-            #Mandar mail y dejar listo
         except Exception as error:
             logger.info("Fallo baja_aislamiento: " + str(individuo))
     logger.info("Finalizamos Baja de Seguimiento\n")

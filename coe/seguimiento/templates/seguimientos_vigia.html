@@ -1,0 +1,63 @@
+{% extends 'base_seguimiento.html' %}
+
+{% load static %}
+{% load auditar_tags %}
+
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2><b>Listado de Seguimientos Cargados</b></h2>
+        </div>
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="row">
+                    <div class="col-sm-6 col-sm-offset-3">
+                        <img class="fotos" src="{{vigia.operador.get_foto}}">
+                    </div>
+                </div>
+                <hr>
+                <h3>Vigilante</h3>
+                <p><b>Nombre Completo:</b> {{vigia.operador.apellidos}}, {{vigia.operador.nombres}}</p>
+                <p><b>Numero de Documento:</b> {{vigia.operador.num_doc}}</p>
+                <p><b>Telefono:</b> {{vigia.operador.telefono}}</p>
+                <p><b>Email:</b> {{vigia.operador.email}}</p>
+                <p><b>Tipo:</b> {{vigia.get_tipo_display}}</p>
+            </div>
+            <div class="col-lg-8">
+                <table class="listado" id="table">
+                    <thead>
+                        <tr>
+                            <th>Documento</th>
+                            <th>Individuo</th>
+                            <th>Telefono</th>
+                            <th>Tipo</th>
+                            <th>Fecha Seguimiento</th>
+                            <th>Aclaracion</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for seguimiento in vigia.operador.seguimientos_cargados.all %}
+                            <tr>
+                                <td>{{seguimiento.individuo.num_doc}}</td>
+                                <td>{{seguimiento.individuo.apellidos}}, {{seguimiento.individuo.nombres}}</td>
+                                <td>{{seguimiento.individuo.telefono}}</td>
+                                <td>{{seguimiento.get_tipo_display}}</td>
+                                <td>{{seguimiento.fecha}}</td>
+                                <td>{{seguimiento.aclaracion|safe}}</td>
+                                <td>
+                                    <a class="nolink"  href="{% ct_auditar_obj_url seguimiento %}">
+                                        <img class="icons" src="{% static '/img/icons/question.png' %}">
+                                    </a>
+                                    <a class="nolink" href="{% url 'informacion:ver_individuo' individuo_id=seguimiento.individuo.id %}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -53,6 +53,7 @@ urlpatterns = [
     path('lista/aislados', views.lista_aislados, name='lista_aislados'),
     #Situacion
     path('situacion/vigilancia', views.situacion_vigilancia, name='situacion_vigilancia'),
+    path('seguimientos/vigia/<int:vigia_id>', views.seguimientos_vigia, name='seguimientos_vigia'),
     #Panel
     path('panel/vigia', views.panel_vigia, name='mi_panel'),
     path('panel/vigia/<int:vigia_id>', views.panel_vigia, name='ver_panel'),

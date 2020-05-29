@@ -60,7 +60,7 @@
                                 <p><b>OPERADORES</b></p>
                                 <li><a href="{% url 'inscripciones:peticion_enviar_email' peticion_id=peticion.id %}">Enviar Correo Electronico</a></li>
                                 <li><a href="{% url 'inscripciones:eliminar_peticion' peticion_id=peticion.id %}">Eliminar Petición</a></li>                                
-                                <li><a href="{% url 'inscripciones:lista_peticiones' %}">Volver al Listado de Peticiones</a></li>
+                                <li><a href="{% url 'inscripciones:lista_peticiones_personales' %}">Volver al Listado de Peticiones</a></li>
                             {% endif %}
                         </ul>
                     </div>

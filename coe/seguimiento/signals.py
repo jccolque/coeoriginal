@@ -81,6 +81,11 @@ def poner_en_seguimiento(created, instance, **kwargs):
         atributo.aclaracion = "Por Ingreso a Aislamiento."
         atributo.save()
 
+@receiver(post_save, sender=Seguimiento)
+def quitar_seguimiento(created, instance, **kwargs):
+    if created and instance.tipo == 'FS':
+        instance.individuo.vigiladores.clear()
+
 @receiver(post_save, sender=Atributo)
 def asignar_vigilante(created, instance, **kwargs):
     if created:

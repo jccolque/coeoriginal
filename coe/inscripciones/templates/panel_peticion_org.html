@@ -22,17 +22,15 @@
                                 <p><b>Documentación Respaldatoria de la Organización:</b>
                                 {% if organizacion.archivo_adjunto %}
                                     <a href="{{organizacion.archivo_adjunto.url}}">Ver Documento</a>
-                                    <a href="{% url 'inscripciones:documentacion_eliminar_info' token=organizacion.token %}">
+                                    <a href="{% url 'inscripciones:coca_del_doc' token=organizacion.token %}">
                                         <img class="icons" src="{% static '/img/icons/delete.png' %}">
                                     </a>
                                     <br>
-                                    <a href="{% url 'inscripciones:documentacion_subir_info' token=organizacion.token %}" style="font-weight:bold;color:red;">(Cambiar Archivo)</a>
-                                    
+                                    <a href="{% url 'inscripciones:coca_subir_doc' token=organizacion.token %}" style="font-weight:bold;color:red;">(Cambiar Archivo)</a>
                                 {% else %}
-                                    <a href="{% url 'inscripciones:documentacion_subir_info' token=organizacion.token %}">CARGAR DOCUMENTACIÓN RESPALDATORIA</a><br>
+                                    <a href="{% url 'inscripciones:coca_subir_doc' token=organizacion.token %}">CARGAR DOCUMENTACIÓN RESPALDATORIA</a><br>
                                     <i> NO SE OLVIDE DE SUBIR DOCUMENTACIÓN. </i>
                                 {% endif %}
-                                                            
                             </div>
                             <div class="col-md-6">
                                 <div class="bordeado importante">
