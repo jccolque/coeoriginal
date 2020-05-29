@@ -32,6 +32,9 @@
                                 <td>{{vigia.semana_seguimientos}}</th>
                                 <td>{{vigia.total_seguimientos}}</th>
                                 <td>
+                                    <a href="{% url 'seguimiento:seguimientos_vigia' vigia_id=vigia.id %}" target="_blank">
+                                        <img class="icons" src="/static/img/icons/history.png" alt="Listado">
+                                    </a>
                                     <a href="{% url 'seguimiento:ver_panel' vigia_id=vigia.id %}" target="_blank">
                                         <img class="icons" src="/static/img/icons/control_panel.png" alt="Panel de Control">
                                     </a>
@@ -42,7 +45,7 @@
 
                 </table>
             </div>
-            <!-- Situacion -->
+            <!-- Grafico -->
             <div class="col-sm-8">
 
             </div>

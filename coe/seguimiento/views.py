@@ -164,12 +164,28 @@ def situacion_vigilancia(request):
     vigias = vigias.annotate(alertas=Count('controlados', filter=Q(controlados__seguimiento_actual__fecha__lt=limite_dia)))
     vigias = vigias.annotate(total_seguimientos=Count('operador__seguimientos_cargados'))
     vigias = vigias.annotate(semana_seguimientos=Count('operador__seguimientos_cargados', filter=Q(operador__seguimientos_cargados__fecha__gt=limite_semana)))
+    #Generamos estadisticas para grafico:
+    
     #Lanzamos reporte
     return render(request, "situacion_vigilancia.html", {
         'vigias': vigias,
         'has_table': True,
     })
 
+@permission_required('operadores.seguimiento_admin')
+def seguimientos_vigia(request, vigia_id):
+    vigia = Vigia.objects.all()
+    #Optimizamos
+    vigia = vigia.select_related('operador', 'operador__usuario')
+    vigia = vigia.prefetch_related('controlados')
+    vigia = vigia.prefetch_related('operador', 'operador__seguimientos_cargados', 'operador__seguimientos_cargados__individuo')
+    #OBtenemos
+    vigia = vigia.get(id=vigia_id)
+    #Lanzamos reporte
+    return render(request, "seguimientos_vigia.html", {
+        'vigia': vigia,
+        'has_table': True,
+    })
 
 @permission_required('operadores.seguimiento_admin')
 def lista_seguimientos(request):
