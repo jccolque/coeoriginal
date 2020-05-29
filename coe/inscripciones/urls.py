@@ -54,8 +54,8 @@ urlpatterns = [
     path('coca/lista/peticiones/<estado>', views.lista_peticiones_personales, name='lista_peticiones_personales'),
 
     #COCA ORGANIZACIÓN
-    path('coca/peticion/org', views.peticion_organizacion, name='peticion_organizacion'),    
-    path('coca/mod/peticion/org/<int:organizacion_id>', views.peticion_organizacion, name='mod_peticion_organizacion'),
+    path('coca/peticion_org/org', views.peticion_organizacion, name='peticion_organizacion'),    
+    path('coca/mod/peticion_org/org/<int:organizacion_id>', views.peticion_organizacion, name='mod_peticion_organizacion'),
     path('coca/peticion/org/<str:token>', views.ver_peticion_organizacion, name='ver_peticion_organizacion'),  
     path('coca/cargar/responsable/org/<int:organizacion_id>', views.cargar_responsable_org, name='cargar_responsable_org'),
     path('coca/mod/responsable/org/<int:organizacion_id>/<int:responsable_id>', views.cargar_responsable_org, name='mod_responsable_org'),
@@ -67,8 +67,8 @@ urlpatterns = [
     #Administración ORGANIZACIÓN -COCA
     path('coca/peticion/org/mail/<int:organizacion_id>', views.peticion_org_enviar_email, name='peticion_org_enviar_email'),
     path('coca/del/peticion/org/<int:organizacion_id>', views.eliminar_peticion_org, name='eliminar_peticion_org'),
-    path('coca/lista/peticiones/org', views.lista_peticiones_org, name='lista_peticiones_org'),
-    path('coca/lista/peticiones/org/<estado>', views.lista_peticiones_org, name='lista_peticiones_org'),
+    path('coca/lista_org/peticiones/org', views.lista_peticiones_org, name='lista_peticiones_org'),
+    path('coca/lista_org/peticiones/org/<estado>', views.lista_peticiones_org, name='lista_peticiones_org'),
     path('coca/subir/doc/org/<str:token>', views.documentacion_subir_info, name='documentacion_subir_info'),
     path('coca/del/doc/org/<str:token>', views.documentacion_eliminar_info, name='documentacion_eliminar_info'),
     #Activacion:
