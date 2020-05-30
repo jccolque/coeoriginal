@@ -21,7 +21,6 @@
                             <th>Sexo</th>
                             <th>Celular</th>
                             <th>Email</th>
-                            <th>Documentos</th>
 
                             <th>Patente</th>
                             
@@ -54,11 +53,7 @@
                                     <td>{{pasajero.get_sexo_display}}</td>
                                     <td>{{pasajero.telefono}}</td>
                                     <td>{{pasajero.email}}</td>
-                                    <td>
-                                        {% for doc in pasajero.get_dnis %}
-                                            {{doc.get_tipo_display}}<br>
-                                        {% endfor %}
-                                    </td>
+
                                     <td>{{ingreso.patente}}</td>
 
                                     <td>{{ingreso.origen.nombre}}</td>
