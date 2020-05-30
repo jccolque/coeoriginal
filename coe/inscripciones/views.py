@@ -687,7 +687,7 @@ def peticion_persona(request, peticion_id=None):
                 #Enviarlo a cargar ingresantes
                 return redirect('inscripciones:ver_peticion_persona', token=peticion.token)
     return render(request, "peticion_persona.html", {
-        'title': "Solicitud de Provicion de Hojas de Coca para Personas",
+        'title': "SOLICITUD DE PROVISIÓN DE HOJAS DE COCA PERSONALES",
         'form': form,
         'button': "Iniciar Pedido",
     })
