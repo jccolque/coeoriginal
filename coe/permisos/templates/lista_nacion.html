@@ -56,7 +56,7 @@
                                     <td>{{pasajero.email}}</td>
                                     <td>
                                         {% for doc in pasajero.get_dnis %}
-                                            <a href="{{doc.archivo.url}}" target="_blank">{{doc.aclaracion}}</a><br>
+                                            {{doc.get_tipo_display}}<br>
                                         {% endfor %}
                                     </td>
                                     <td>{{ingreso.patente}}</td>
@@ -72,7 +72,7 @@
                                     <td>{{ingreso.aclaracion|safe}}</td>
                                     <td>1</td>
                                     <td>{{ingreso.individuos.count}}</td>
-                                    <td>http://coe.jujuy.gob.ar{% url 'permisos:ingreso_enviado' ingreso_id=ingreso.id %}</td>
+                                    <td>http://coe.jujuy.gob.ar/{% url 'permisos:ingreso_enviado' ingreso_id=ingreso.id %}</td>
                                 </tr>
                             {% endfor %}
                         {% endfor %}
