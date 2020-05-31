@@ -58,6 +58,9 @@
                             {% if perms.operadores.permisos %}
                                 <hr>
                                 <p><b>OPERADORES</b></p>
+                                {% if peticion.estado == 'E'%}
+                                    <li><a href="{% url 'inscripciones:aprobar_peticion_persona' peticion_id=peticion.id %}">Aprobar Petición</a></li>
+                                {% endif %}
                                 <li><a href="{% url 'inscripciones:peticion_enviar_email' peticion_id=peticion.id %}">Enviar Correo Electronico</a></li>
                                 <li><a href="{% url 'inscripciones:eliminar_peticion' peticion_id=peticion.id %}">Eliminar Petición</a></li>                                
                                 <li><a href="{% url 'inscripciones:lista_peticiones_personales' %}">Volver al Listado de Peticiones</a></li>
