@@ -36,7 +36,7 @@ from .forms import ProfesionalSaludForm, VoluntarioSocialForm
 from .forms import ProyectoEstudiantilForm, IndividuoForm
 from .forms import OrganizationForm, AfiliadoForm
 from .forms import PeticionForm
-from .forms import AprobarForm
+from .forms import AprobarPersonaForm
 
 # Create your views here.
 def inscripcion_salud(request):
@@ -757,6 +757,46 @@ def eliminar_peticion(request, peticion_id):
     peticion.operador = obtener_operador(request)
     peticion.save()
     return redirect('inscripciones:lista_peticiones')
+
+@permission_required('operadores.menu_inscripciones')
+def aprobar_peticion_persona(request, peticion_id):
+    peticion = PeticionCoca.objects.get(pk=peticion_id)
+    individuo = peticion.individuo   
+    form = AprobarPersonaForm(
+        instance=individuo,           
+        initial={
+            'destino': peticion.destino,
+            'num_doc': peticion.individuo.num_doc,
+            'nombres': peticion.individuo.nombres,
+            'apellidos': peticion.individuo.apellidos,
+        }
+    )
+    if request.method == 'POST':
+        form = AprobarPersonaForm(request.POST, instance=individuo)
+        if form.is_valid():
+            if SEND_MAIL:
+                to_email = peticion.individuo.email
+                #Preparamos el correo electronico
+                mail_subject = '¡COE_2020 SU SOLICITUD DE HOJAS DE COCA FUE APROBADA!'
+                message = render_to_string('emails/peticion_persona_aprobada.html', {
+                        'peticion': peticion,
+                    })
+                #Instanciamos el objeto mail con destinatario
+                email = EmailMessage(mail_subject, message, to=[to_email])
+                email.send()
+            #Aprobamos la petición
+            peticion.estado = 'A'
+            peticion.destino = form.cleaned_data['destino']
+            peticion.individuo.num_doc = form.cleaned_data['num_doc']
+            peticion.individuo.nombres = form.cleaned_data['nombres']
+            peticion.individuo.apellidos = form.cleaned_data['apellidos']              
+            peticion.operador = obtener_operador(request)            
+            peticion.save()            
+            return redirect('inscripciones:ver_peticion_persona', token=peticion.token)
+    return render(request, "extras/generic_form.html", {
+        'titulo': "Aprobar Petición de Hojas de Coca Personal", 
+        'form': form, 'boton': "Aprobar", 
+    })
 
 #Peticiones Organización           
 def peticion_organizacion(request, organizacion_id=None):  

@@ -1,0 +1,17 @@
+{% autoescape off %}
+    Su petición personal de HOJAS DE COCA, ha sido APROBADA.
+    DATOS PERSONALES:
+    NOMBRES: {{peticion.individuo.nombres}}
+    APELLIDOS: {{peticion.individuo.apellidos}}
+    DNI: {{peticion.individuo.num_doc}}
+    LOCALIDAD DE DESTINO: {{peticion.destino}}
+
+
+    ESTE MAIL SIRVE COMO COMPROBANTE DE SU SOLICITUD.
+
+    En el siguiente link, puede ver su estado de APROBACIÓN.
+
+    http://coe.jujuy.gob.ar/{% url 'permisos:ver_peticion_persona' token=peticion.token %}    
+
+    ¡HASTA LUEGO!
+{% endautoescape %}

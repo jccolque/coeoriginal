@@ -136,11 +136,25 @@ class TurnoForm(forms.ModelForm):
         return self.cleaned_data
 
 #COCA
-class AprobarForm(forms.Form):
-    fecha = forms.DateTimeField(label="Fecha Aprobada", 
-        required=True, 
-        widget=XDSoftDateTimePickerInput()
+class AprobarPersonaForm(forms.ModelForm):
+    destino = forms.ModelChoiceField(
+        queryset=Localidad.objects.all(),
+        widget=autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+        required=True,
     )
+    #Base Individuo
+    class Meta:
+        model = Individuo
+        fields = (
+            'num_doc', 'apellidos', 'nombres', 
+        )
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args,**kwargs)
+        if self.instance.pk:
+            self.fields['num_doc'].widget.attrs.update({'readonly': True})
+            self.fields['nombres'].widget.attrs.update({'readonly': True})
+            self.fields['apellidos'].widget.attrs.update({'readonly': True})
+
 
 class PeticionForm(forms.ModelForm):
     #Datos del Pedido
