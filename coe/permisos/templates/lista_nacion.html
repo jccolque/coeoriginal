@@ -21,7 +21,6 @@
                             <th>Sexo</th>
                             <th>Celular</th>
                             <th>Email</th>
-                            <th>Documentos</th>
 
                             <th>Patente</th>
                             
@@ -54,11 +53,7 @@
                                     <td>{{pasajero.get_sexo_display}}</td>
                                     <td>{{pasajero.telefono}}</td>
                                     <td>{{pasajero.email}}</td>
-                                    <td>
-                                        {% for doc in pasajero.get_dnis %}
-                                            <a href="{{doc.archivo.url}}" target="_blank">{{doc.aclaracion}}</a><br>
-                                        {% endfor %}
-                                    </td>
+
                                     <td>{{ingreso.patente}}</td>
 
                                     <td>{{ingreso.origen.nombre}}</td>
@@ -72,7 +67,7 @@
                                     <td>{{ingreso.aclaracion|safe}}</td>
                                     <td>1</td>
                                     <td>{{ingreso.individuos.count}}</td>
-                                    <td>http://coe.jujuy.gob.ar{% url 'permisos:ingreso_enviado' ingreso_id=ingreso.id %}</td>
+                                    <td>http://coe.jujuy.gob.ar/{% url 'permisos:ingreso_enviado' ingreso_id=ingreso.id %}</td>
                                 </tr>
                             {% endfor %}
                         {% endfor %}
