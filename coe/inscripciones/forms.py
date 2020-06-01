@@ -279,3 +279,7 @@ class AprobarOrgForm(forms.ModelForm):
             self.fields['cuit'].widget.attrs.update({'readonly': True})            
             self.fields['denominacion'].widget.attrs.update({'readonly': True})
             self.fields['calle'].widget.attrs.update({'readonly': True})
+
+
+class UploadCsv(forms.Form):
+    csvfile = forms.FileField(widget=forms.FileInput(attrs={'accept': ".csv"}))

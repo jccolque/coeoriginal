@@ -58,3 +58,4 @@ class UbicacionForm(forms.ModelForm):
             'localidad': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
             'barrio': autocomplete.ModelSelect2(url='georef:barrio-autocomplete'),
         }
+
