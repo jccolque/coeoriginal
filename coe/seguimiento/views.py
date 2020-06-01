@@ -564,7 +564,7 @@ def test_realizados(request):
 @permission_required('operadores.individuos')
 def lista_sin_telefono(request):
     individuos = Individuo.objects.filter(seguimientos__tipo='TE')
-    individuos = individuos.filter(situacion_actual__in=('D', 'E'))
+    individuos = individuos.filter(situacion_actual__conducta__in=('D', 'E'))
     #Optimizamos
     individuos = individuos.select_related('nacionalidad')
     individuos = individuos.select_related('situacion_actual', 'seguimiento_actual')
