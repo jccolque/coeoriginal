@@ -56,7 +56,7 @@
                                 <li><a href="{% url 'inscripciones:finalizar_peticion' peticion_id=peticion.id %}">Finalizar Proceso</a></li>                                
                             {% endif %}
                                 
-                            {% if perms.operadores.permisos %}
+                            {% if perms.operadores.menu_inscripciones %}
                                 <hr>
                                 <p><b>OPERADORES</b></p>
                                 <li><a href="{% url 'inscripciones:peticion_enviar_email' peticion_id=peticion.id %}">Enviar Correo Electronico</a></li>

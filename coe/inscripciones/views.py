@@ -36,7 +36,7 @@ from .forms import ProfesionalSaludForm, VoluntarioSocialForm
 from .forms import ProyectoEstudiantilForm, IndividuoForm
 from .forms import OrganizationForm, AfiliadoForm
 from .forms import PeticionForm
-from .forms import AprobarPersonaForm
+from .forms import AprobarPersonaForm, AprobarOrgForm
 
 # Create your views here.
 def inscripcion_salud(request):
@@ -1051,3 +1051,43 @@ def eliminar_peticion_org(request, organizacion_id):
     organizacion.operador = obtener_operador(request)
     organizacion.save()
     return redirect('inscripciones:lista_peticiones_org')
+
+@permission_required('operadores.menu_inscripciones')
+def aprobar_peticion_organizacion(request, organizacion_id):
+    organizacion = Organization.objects.get(pk=organizacion_id)
+    domicilio = organizacion.domicilios.last()  
+    form = AprobarOrgForm(
+        instance=organizacion,           
+        initial={
+            'localidad': domicilio.localidad,
+            'calle': domicilio.calle,                       
+        }
+    )
+    if request.method == 'POST':
+        form = AprobarOrgForm(request.POST, instance=organizacion)
+        if form.is_valid():
+            organizacion = form.save(commit=False)
+            if SEND_MAIL:
+                to_email = organizacion.mail_institucional
+                #Preparamos el correo electronico
+                mail_subject = '¡COE_2020 SU SOLICITUD ORGANIZACIONAL DE HOJAS DE COCA FUE APROBADA!'
+                message = render_to_string('emails/peticion_organizacion_aprobada.html', {
+                        'organizacion': organizacion,
+                        'domicilio': domicilio,
+                    })
+                #Instanciamos el objeto mail con destinatario
+                email = EmailMessage(mail_subject, message, to=[to_email])
+                email.send()
+            #Aprobamos la petición
+            organizacion.estado = 'A'
+            domicilio.localidad = form.cleaned_data['localidad']
+            domicilio.calle = form.cleaned_data['calle']
+            domicilio.organizacion = organizacion
+            domicilio.save()                      
+            organizacion.operador = obtener_operador(request)
+            organizacion.save()            
+            return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
+    return render(request, "extras/generic_form.html", {
+        'titulo': "Aprobar Petición de Hojas de Coca Organizacional", 
+        'form': form, 'boton': "Aprobar", 
+    })

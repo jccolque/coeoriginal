@@ -182,8 +182,6 @@ class PeticionForm(forms.ModelForm):
         model = Individuo
         fields = (
             'num_doc', 'apellidos', 'nombres', 'sexo', 'fecha_nacimiento', 'nacionalidad', 'telefono', 'email',
-            'dom_localidad', 'dom_calle', 'dom_numero', 'dom_aclaracion',
-            'destino', 'comunidad',
             'frente_dni', 'reverso_dni',
         )
         widgets = {
@@ -261,3 +259,23 @@ class AfiliadoForm(forms.ModelForm):
 
 class DocumentacionForm(forms.Form):
     documentacion = forms.FileField()
+
+class AprobarOrgForm(forms.ModelForm):
+    localidad = forms.ModelChoiceField(
+        queryset=Localidad.objects.all(),
+        widget=autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+        required=True,
+    )
+    calle = forms.CharField(required=True, )
+    #Base Individuo
+    class Meta:
+        model = Organization
+        fields = (
+            'cuit', 'denominacion', 'tipo_organizacion', 
+        )
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args,**kwargs)
+        if self.instance.pk:
+            self.fields['cuit'].widget.attrs.update({'readonly': True})            
+            self.fields['denominacion'].widget.attrs.update({'readonly': True})
+            self.fields['calle'].widget.attrs.update({'readonly': True})
