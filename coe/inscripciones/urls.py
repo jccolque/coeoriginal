@@ -70,6 +70,8 @@ urlpatterns = [
     path('coca/org/lista/estado/<estado>', views.lista_peticiones_org, name='lista_peticiones_org'),
     path('coca/org/subir/doc/<str:token>', views.coca_subir_doc, name='coca_subir_doc'),
     path('coca/org/del/doc/<str:token>', views.coca_del_doc, name='coca_del_doc'),
+    path('coca/org/aprobar_org/<int:organizacion_id>', views.aprobar_peticion_organizacion, name='aprobar_peticion_organizacion'),
+    path('coca/personas/descargas/peticiones', views.download_peticiones_coca_personal, name='download_peticiones_coca_personal'),
     #Activacion:
     path('act/<int:inscripcion_id>/<int:num_doc>', views.activar_inscripcion, name='activar_inscripcion'),
 ]

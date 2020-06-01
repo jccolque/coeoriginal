@@ -34,9 +34,8 @@ from .models import Afiliado
 from .forms import DocumentacionForm
 from .forms import ProfesionalSaludForm, VoluntarioSocialForm
 from .forms import ProyectoEstudiantilForm, IndividuoForm
-from .forms import OrganizationForm, AfiliadoForm
-from .forms import PeticionForm
-from .forms import AprobarPersonaForm
+from .forms import OrganizationForm, AfiliadoForm, AprobarOrgForm
+from .forms import PeticionForm, AprobarPersonaForm
 
 # Create your views here.
 def inscripcion_salud(request):
@@ -861,6 +860,7 @@ def ver_peticion_organizacion(request, token):
         'organizacion': organizacion,
         'domicilio': domicilio,
         'limite': limite,
+        'has_table': True,
     })
 
 def cargar_responsable_org(request, organizacion_id, responsable_id=None):
@@ -1051,3 +1051,79 @@ def eliminar_peticion_org(request, organizacion_id):
     organizacion.operador = obtener_operador(request)
     organizacion.save()
     return redirect('inscripciones:lista_peticiones_org')
+
+@permission_required('operadores.menu_inscripciones')
+def aprobar_peticion_organizacion(request, organizacion_id):
+    organizacion = Organization.objects.get(pk=organizacion_id)
+    domicilio = organizacion.domicilios.last()  
+    form = AprobarOrgForm(
+        instance=organizacion,           
+        initial={
+            'localidad': domicilio.localidad,
+            'calle': domicilio.calle,                       
+        }
+    )
+    if request.method == 'POST':
+        form = AprobarOrgForm(request.POST, instance=organizacion)
+        if form.is_valid():
+            organizacion = form.save(commit=False)
+            if SEND_MAIL:
+                to_email = organizacion.mail_institucional
+                #Preparamos el correo electronico
+                mail_subject = '¡COE_2020 SU SOLICITUD ORGANIZACIONAL DE HOJAS DE COCA FUE APROBADA!'
+                message = render_to_string('emails/peticion_organizacion_aprobada.html', {
+                        'organizacion': organizacion,
+                        'domicilio': domicilio,
+                    })
+                #Instanciamos el objeto mail con destinatario
+                email = EmailMessage(mail_subject, message, to=[to_email])
+                email.send()
+            #Aprobamos la petición
+            organizacion.estado = 'A'
+            domicilio.localidad = form.cleaned_data['localidad']
+            domicilio.calle = form.cleaned_data['calle']
+            domicilio.organizacion = organizacion
+            domicilio.save()                      
+            organizacion.operador = obtener_operador(request)
+            organizacion.save()            
+            return redirect('inscripciones:ver_peticion_organizacion', token=organizacion.token)
+    return render(request, "extras/generic_form.html", {
+        'titulo': "Aprobar Petición de Hojas de Coca Organizacional", 
+        'form': form, 'boton': "Aprobar", 
+    })
+
+#Permitimos la descarga de peticiones
+@permission_required('operadores.menu_inscripciones')
+def download_peticiones_coca_personal(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="peticiones_personales.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['LISTADO DE INSCRIPTOS A PETICIONES DE COCA PERSONALES'])
+    writer.writerow(['DNI', 'Nombres', 'Apellidos', 'Sexo', 'Fecha de Nacimiento' ,'Nacionalidad', 'Comunidad Indigena', 'Localidad', 'Localidad', 'Calle', 'Numero', 'Barrio', 'Localidad de Envio'])
+    peticiones = PeticionCoca.objects.all()
+    for peticion in peticiones:        
+        individuo = PeticionCoca.objects.get(pk=peticion.id).individuo
+        domicilio = individuo.domicilios.last()
+        #Definimos el sexo
+        if individuo.sexo == 'M':
+            tmp = 'MASCULINO'
+        else:
+            tmp = 'FEMENINO'
+        individuo.sexo = tmp         
+        #Armamos la linea
+        writer.writerow([
+            individuo.num_doc,            
+            individuo.nombres,
+            individuo.apellidos,
+            individuo.sexo,
+            individuo.fecha_nacimiento,
+            individuo.nacionalidad,
+            peticion.comunidad,
+            individuo.email,
+            individuo.telefono,
+            domicilio.localidad.nombre,
+            domicilio.calle,
+            domicilio.numero,
+            domicilio.aclaracion,
+            peticion.destino.nombre])
+    return response

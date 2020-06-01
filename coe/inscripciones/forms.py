@@ -142,25 +142,6 @@ class AprobarForm(forms.Form):
         widget=XDSoftDateTimePickerInput()
     )
 
-class AprobarPersonaForm(forms.ModelForm):
-    destino = forms.ModelChoiceField(
-        queryset=Localidad.objects.all(),
-        widget=autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
-        required=True,
-    )
-    #Base Individuo
-    class Meta:
-        model = Individuo
-        fields = (
-            'num_doc', 'apellidos', 'nombres', 
-        )
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args,**kwargs)
-        if self.instance.pk:
-            self.fields['num_doc'].widget.attrs.update({'readonly': True})
-            self.fields['nombres'].widget.attrs.update({'readonly': True})
-            self.fields['apellidos'].widget.attrs.update({'readonly': True})
-
 class PeticionForm(forms.ModelForm):
     #Datos del Pedido
     destino = forms.ModelChoiceField(
@@ -200,6 +181,25 @@ class PeticionForm(forms.ModelForm):
             raise forms.ValidationError("Debe cargar un telefono.")
         else:
             return self.cleaned_data
+
+class AprobarPersonaForm(forms.ModelForm):
+    destino = forms.ModelChoiceField(
+        queryset=Localidad.objects.all(),
+        widget=autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+        required=True,
+    )
+    #Base Individuo
+    class Meta:
+        model = Individuo
+        fields = (
+            'num_doc', 'apellidos', 'nombres', 
+        )
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args,**kwargs)
+        if self.instance.pk:
+            self.fields['num_doc'].widget.attrs.update({'readonly': True})
+            self.fields['nombres'].widget.attrs.update({'readonly': True})
+            self.fields['apellidos'].widget.attrs.update({'readonly': True})
 
 #Formularios
 class OrganizationForm(forms.ModelForm):
@@ -266,3 +266,23 @@ class AfiliadoForm(forms.ModelForm):
 
 class DocumentacionForm(forms.Form):
     documentacion = forms.FileField()
+
+class AprobarOrgForm(forms.ModelForm):
+    localidad = forms.ModelChoiceField(
+        queryset=Localidad.objects.all(),
+        widget=autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+        required=True,
+    )
+    calle = forms.CharField(required=True, )
+    #Base Individuo
+    class Meta:
+        model = Organization
+        fields = (
+            'cuit', 'denominacion', 'tipo_organizacion', 
+        )
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args,**kwargs)
+        if self.instance.pk:
+            self.fields['cuit'].widget.attrs.update({'readonly': True})            
+            self.fields['denominacion'].widget.attrs.update({'readonly': True})
+            self.fields['calle'].widget.attrs.update({'readonly': True})

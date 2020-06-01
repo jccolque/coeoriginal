@@ -1,0 +1,20 @@
+{% autoescape off %}
+    Su petición ORGANIZACIONAL de HOJAS DE COCA, ha sido APROBADA.
+    DATOS DE LA ORGANIZACIÓN:
+    DENOMINACIÓN: {{organizacion.denominacion}}
+    CUIT: {{organizacion.cuit}}
+    TIPO DE ORGANIZACION: {{organizacion.tipo_organizacion}}
+    LOCALIDAD DE DESTINO: {{domicilio.localidad.nombre}}
+    BARRIO: {{domicilio.barrio}}
+    CALLE: {{domicilio.calle}}
+    NUMERO: {{domicilio.numero}}
+
+
+    ESTE MAIL SIRVE COMO COMPROBANTE DE SU SOLICITUD.
+
+    En el siguiente link, puede ver su estado de APROBACIÓN.
+
+    http://coe.jujuy.gob.ar/{% url 'inscripciones:ver_peticion_organizacion' token=organizacion.token %}    
+
+    ¡HASTA LUEGO!
+{% endautoescape %}

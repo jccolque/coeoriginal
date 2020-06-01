@@ -25,10 +25,10 @@
                             <h3>Petición de COCA</h3>
                             <li><a href="{% url 'inscripciones:lista_peticiones_personales' estado='E'  %}">Peticiones Personales Esperando Aprobacion</a></li>
                             <li><a href="{% url 'inscripciones:lista_peticiones_personales' %}">Listado de Peticiones Personales</a></li>
+                            <li><a href="{% url 'inscripciones:download_peticiones_coca_personal' %}">Descargar Listado de Peticiones Personales</a></li>
                             <br>
                             <li><a href="{% url 'inscripciones:lista_peticiones_org' estado='E' %}">Peticiones de Organizaciones Esperando Aprobacion</a></li>
                             <li><a href="{% url 'inscripciones:lista_peticiones_org' %}">Listado de Peticiones de Organizaciones</a></li>
-
                             {% if request.user.is_superuser %}
                                 <hr> 
                                 <li><a href="{% url 'admin:index' %}">Opcion del Administrador</a></li>

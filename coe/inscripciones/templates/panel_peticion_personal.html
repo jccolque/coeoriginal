@@ -53,16 +53,17 @@
                         <ul class="menu_botones">
                             {% if peticion.estado == 'C' %}
                                 <li><a href="{% url 'inscripciones:mod_peticion_persona' peticion_id=peticion.id %}">Modificar Datos</a></li>
-                                <li><a href="{% url 'inscripciones:finalizar_peticion' peticion_id=peticion.id %}">Finalizar Proceso</a></li>
+                                <li><a href="{% url 'inscripciones:finalizar_peticion' peticion_id=peticion.id %}">Finalizar Proceso</a></li>                                
                             {% endif %}
-                            {% if perms.operadores.permisos %}
+                                
+                            {% if perms.operadores.menu_inscripciones %}
                                 <hr>
                                 <p><b>OPERADORES</b></p>
+                                <li><a href="{% url 'inscripciones:peticion_enviar_email' peticion_id=peticion.id %}">Enviar Correo Electronico</a></li>
+                                <li><a href="{% url 'inscripciones:eliminar_peticion' peticion_id=peticion.id %}">Eliminar Petición</a></li>
                                 {% if peticion.estado == 'E'%}
                                     <li><a href="{% url 'inscripciones:aprobar_peticion_persona' peticion_id=peticion.id %}">Aprobar Petición</a></li>
-                                {% endif %}
-                                <li><a href="{% url 'inscripciones:peticion_enviar_email' peticion_id=peticion.id %}">Enviar Correo Electronico</a></li>
-                                <li><a href="{% url 'inscripciones:eliminar_peticion' peticion_id=peticion.id %}">Eliminar Petición</a></li>                                
+                                {% endif %}                               
                                 <li><a href="{% url 'inscripciones:lista_peticiones_personales' %}">Volver al Listado de Peticiones</a></li>
                             {% endif %}
                         </ul>
