@@ -11,6 +11,7 @@
                 <div class="row">
                     {% include "carousel.html" %}
                 </div>
+                <li><a href="{% url 'inscripciones:download_peticiones_coca_personal' %}">Descargar Listado de Peticiones Personales</a></li>
                 <div class="row main_documentos">
                     {% for version in versiones %}
                         {% if forloop.first %}

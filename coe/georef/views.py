@@ -307,3 +307,4 @@ def upload_localidades(request):
             return render(request, 'extras/upload_csv.html', {'count': len(lines), })
     #Inicial o por error
     return render(request, "extras/upload_csv.html", {'titulo': titulo, 'form': form, })
+

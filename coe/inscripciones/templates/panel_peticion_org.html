@@ -66,10 +66,7 @@
                                 <li><a href="{% url 'inscripciones:cargar_responsable_org' organizacion_id=organizacion.id %}">Agregar Responsable Instituciónal</a></li>
                                 <li><a href="{% url 'inscripciones:cargar_afiliado_org' organizacion_id=organizacion.id %}">Agregar Afiliados</a></li>
                                 <li><a href="{% url 'inscripciones:finalizar_peticion_org' organizacion_id=organizacion.id %}">Finalizar Proceso</a></li>
-                            {% endif %}
-                            {% if organizacion.estado == 'E'%}                                 
-                                <li><a href="{% url 'inscripciones:aprobar_peticion_organizacion' organizacion_id=organizacion.id %}">Aprobar Petición</a></li>
-                            {% endif %}                           
+                            {% endif %}                                                      
                             {% if perms.operadores.menu_inscripciones %}
                                 <hr>
                                 <p><b>Operadores</b></p>
