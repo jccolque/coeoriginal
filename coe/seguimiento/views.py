@@ -202,7 +202,7 @@ def lista_seguimientos(request):
     #last12hrs = timezone.now() - timedelta(hours=12)
     #individuos = individuos.exclude(seguimientos__fecha__gt=last12hrs)
     #Lanzamos reporte
-    return render(request, "lista_seguimientos.html", {
+    return render(request, "lista_seguidos.html", {
         'individuos': individuos,
         'has_table': True,
     })
@@ -218,7 +218,7 @@ def lista_sin_vigias(request):
     individuos = individuos.select_related('situacion_actual', 'seguimiento_actual')
     individuos = individuos.prefetch_related('vigiladores', 'vigiladores__operador')
     #Lanzamos Reporte
-    return render(request, "lista_seguimientos.html", {
+    return render(request, "lista_seguidos.html", {
         'individuos': individuos,
         'has_table': True,
     })
