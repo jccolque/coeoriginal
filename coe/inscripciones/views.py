@@ -1131,11 +1131,10 @@ def aprobar_masivo_personas(request):
                     except PeticionCoca.DoesNotExist:
                         rechazados.append(num_doc)
             return render(request, "aprobacion_masiva.html", {
-                'titulo': 'APROBACIÓN MASIVA',
                 'count': len(dnis), 
                 'rechazados': rechazados,
-                'button': 'CARGAR CSV', })
-    return render(request, 'extras/generic_form.html', {'titulo': 'APROBACIÓN MASIVA DE PEDIDOS DE COCA', 'form': form, 'button': 'CARGAR CSV', })
+            })
+    return render(request, 'extras/generic_form.html', {'titulo': 'APROBACIÓN MASIVA DE PEDIDOS DE COCA', 'form': form, 'boton': 'CARGAR CSV', })
 
 @permission_required('operadores.menu_inscripciones')
 def download_peticiones_coca_personal(request):
