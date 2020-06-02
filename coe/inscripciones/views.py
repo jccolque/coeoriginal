@@ -13,7 +13,8 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
 from coe.settings import SEND_MAIL
-from core.forms import SearchForm, UploadFoto, FileForm
+from core.decoradores import superuser_required
+from core.forms import SearchForm, UploadFoto, FileForm, UploadCsv
 from core.forms import EmailForm
 from core.functions import delete_tags
 from georef.models import Ubicacion
@@ -1093,6 +1094,49 @@ def aprobar_peticion_organizacion(request, organizacion_id):
     })
 
 #Permitimos la descarga de peticiones
+@superuser_required
+def aprobar_masivo_personas(request):    
+    form = UploadCsv()
+    if request.method == "POST":
+        form = UploadCsv(request.POST, request.FILES)
+        if form.is_valid():
+            count = 0
+            csv_file = form.cleaned_data['csvfile']
+            file_data = csv_file.read().decode("utf-8")
+            lines = file_data.split("\n")
+            #Procesamos el archivo
+            dnis = []
+            rechazados = []
+            for line in lines:
+                line = line.split(',')
+                if line[0]:
+                    num_doc = line[0].upper()
+                    #Buscamos que este la peticion
+                    try:
+                        peticion = PeticionCoca.objects.get(individuo__num_doc=num_doc)
+                        if SEND_MAIL:
+                            to_email = peticion.individuo.email
+                            #Preparamos el correo electronico
+                            mail_subject = '¡COE 2020 SU SOLICITUD DE HOJAS DE COCA FUE APROBADA!'
+                            message = render_to_string('emails/peticion_persona_aprobada.html', {
+                                    'peticion': peticion,
+                                })
+                            #Instanciamos el objeto mail con destinatario
+                            email = EmailMessage(mail_subject, message, to=[to_email])
+                            email.send()
+                        #Aprobamos la petición
+                        peticion.estado = 'A'
+                        peticion.save()
+                        dnis.append(num_doc)
+                    except PeticionCoca.DoesNotExist:
+                        rechazados.append(num_doc)
+            return render(request, "aprobacion_masiva.html", {
+                'titulo': 'APROBACIÓN MASIVA',
+                'count': len(dnis), 
+                'rechazados': rechazados,
+                'button': 'CARGAR CSV', })
+    return render(request, 'extras/generic_form.html', {'titulo': 'APROBACIÓN MASIVA DE PEDIDOS DE COCA', 'form': form, 'button': 'CARGAR CSV', })
+
 @permission_required('operadores.menu_inscripciones')
 def download_peticiones_coca_personal(request):
     response = HttpResponse(content_type='text/csv')
