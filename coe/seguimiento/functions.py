@@ -2,6 +2,7 @@
 import io
 import logging
 import traceback
+from datetime import timedelta
 #Imports de django
 from django.utils import timezone
 from django.core.files import File
@@ -34,14 +35,18 @@ def creamos_doc_alta(individuo):
         #Se crea un pdf utilizando reportLab
         pdf = canvas.Canvas(packet, pagesize = A4)
         pdf.setFont('Times-Roman', 12)
-        pdf.drawString(85, 635, individuo.apellidos + ', ' + individuo.nombres + ' - ' + individuo.get_tipo_doc_display() + ': ' + str(individuo.num_doc))
-        pdf.drawString(85, 620, "Inicio Su Aislamiento el dia: " + str(individuo.situaciones.filter(conducta__in=('D','E')).last().fecha.date()) + '.')
+        pdf.drawString(85, 620, individuo.apellidos + ', ' + individuo.nombres + ' - ' + individuo.get_tipo_doc_display() + ': ' + str(individuo.num_doc))
+        pdf.setFont('Times-Roman', 10)
+        inicio = individuo.situaciones.filter(conducta__in=('D','E')).last().fecha
+        fin = inicio + timedelta(days=DIAS_CUARENTENA)
+        pdf.drawString(85, 605, "Inicio Su Aislamiento el dia: " + str(inicio.date()) + '.')
+        pdf.drawString(85, 590, "Cumplira los 14 dias y finalizara su aislamiento obligatorio el " + str(fin.date()) + ' a las 6am.')
         pdf.save()
         # Nos movemos al comienzo del búfer StringIO
         packet.seek(0)
         nuevo_pdf = PdfFileReader(packet)
         # Leemos el pdf base
-        existe_pdf = PdfFileReader(STATIC_ROOT+'/archivo/plantilla_aislamiento.pdf', "rb")
+        existe_pdf = PdfFileReader(STATIC_ROOT+'/archivo/plantilla_alta.pdf', "rb")
         salida = PdfFileWriter()
         # Se agregan los datos de la persona que será dada de alta, al pdf ya existente
         pagina = existe_pdf.getPage(0)

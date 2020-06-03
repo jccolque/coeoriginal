@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.core.files.base import File
+from django.db.models import OuterRef, Subquery, Sum
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.decorators import permission_required
 from django.contrib.admin.views.decorators import staff_member_required
@@ -39,7 +40,7 @@ from .models import OperativoVehicular, TestOperativo
 from .forms import SeguimientoForm, NuevoVigia, NuevoIndividuo
 from .forms import OperativoForm, TestOperativoForm
 from .functions import obtener_bajo_seguimiento
-from .functions import realizar_alta, creamos_doc_alta
+from .functions import realizar_alta
 from .tasks import altas_masivas
 
 #Publico
@@ -147,8 +148,6 @@ def del_seguimiento(request, seguimiento_id=None):
     return render(request, "extras/close.html")
 
 #Listados
-from django.db.models import OuterRef, Subquery, Sum
-
 @permission_required('operadores.seguimiento_admin')
 def situacion_vigilancia(request):
     #obtenemos vigilantes

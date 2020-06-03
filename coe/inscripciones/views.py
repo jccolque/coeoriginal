@@ -11,10 +11,10 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import permission_required
-from django.core.exceptions import PermissionDenied
 #Imports del proyecto
 from coe.settings import SEND_MAIL
-from core.forms import SearchForm, UploadFoto, FileForm
+from core.decoradores import superuser_required
+from core.forms import SearchForm, UploadFoto, FileForm, UploadCsv
 from core.forms import EmailForm
 from core.functions import delete_tags
 from georef.models import Ubicacion
@@ -35,10 +35,8 @@ from .models import Afiliado
 from .forms import DocumentacionForm
 from .forms import ProfesionalSaludForm, VoluntarioSocialForm
 from .forms import ProyectoEstudiantilForm, IndividuoForm
-from .forms import OrganizationForm, AfiliadoForm
-from .forms import PeticionForm
-from .forms import AprobarPersonaForm, AprobarOrgForm
-from .forms import UploadCsv
+from .forms import OrganizationForm, AfiliadoForm, AprobarOrgForm
+from .forms import PeticionForm, AprobarPersonaForm
 
 # Create your views here.
 def inscripcion_salud(request):
@@ -1095,24 +1093,67 @@ def aprobar_peticion_organizacion(request, organizacion_id):
         'form': form, 'boton': "Aprobar", 
     })
 
+#Permitimos la descarga de peticiones
+@superuser_required
+def aprobar_masivo_personas(request):    
+    form = UploadCsv()
+    if request.method == "POST":
+        form = UploadCsv(request.POST, request.FILES)
+        if form.is_valid():
+            count = 0
+            csv_file = form.cleaned_data['csvfile']
+            file_data = csv_file.read().decode("utf-8")
+            lines = file_data.split("\n")
+            #Procesamos el archivo
+            dnis = []
+            rechazados = []
+            for line in lines:
+                line = line.split(',')
+                if line[0]:
+                    num_doc = line[0].upper()
+                    #Buscamos que este la peticion
+                    try:
+                        peticion = PeticionCoca.objects.get(individuo__num_doc=num_doc)
+                        if SEND_MAIL:
+                            to_email = peticion.individuo.email
+                            #Preparamos el correo electronico
+                            mail_subject = '¡COE 2020 SU SOLICITUD DE HOJAS DE COCA FUE APROBADA!'
+                            message = render_to_string('emails/peticion_persona_aprobada.html', {
+                                    'peticion': peticion,
+                                })
+                            #Instanciamos el objeto mail con destinatario
+                            email = EmailMessage(mail_subject, message, to=[to_email])
+                            email.send()
+                        #Aprobamos la petición
+                        peticion.estado = 'A'
+                        peticion.save()
+                        dnis.append(num_doc)
+                    except PeticionCoca.DoesNotExist:
+                        rechazados.append(num_doc)
+            return render(request, "aprobacion_masiva.html", {
+                'count': len(dnis), 
+                'rechazados': rechazados,
+            })
+    return render(request, 'extras/generic_form.html', {'titulo': 'APROBACIÓN MASIVA DE PEDIDOS DE COCA', 'form': form, 'boton': 'CARGAR CSV', })
+
 @permission_required('operadores.menu_inscripciones')
 def download_peticiones_coca_personal(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="peticiones_personales.csv"'
     writer = csv.writer(response)
     writer.writerow(['LISTADO DE INSCRIPTOS A PETICIONES DE COCA PERSONALES'])
-    writer.writerow(['DNI', 'Nombres', 'Apellidos', 'Sexo', 'Fecha de Nacimiento' ,'Nacionalidad', 'Comunidad Indigena', 'Email', 'Telefono', 'Localidad', 'Calle', 'Numero', 'Barrio', 'Localidad de Envio'])
+    writer.writerow(['DNI', 'Nombres', 'Apellidos', 'Sexo', 'Fecha de Nacimiento' ,'Nacionalidad', 'Comunidad Indigena', 'Localidad', 'Localidad', 'Calle', 'Numero', 'Barrio', 'Localidad de Envio'])
     peticiones = PeticionCoca.objects.all()
     for peticion in peticiones:        
         individuo = PeticionCoca.objects.get(pk=peticion.id).individuo
         domicilio = individuo.domicilios.last()
+        #Definimos el sexo
         if individuo.sexo == 'M':
             tmp = 'MASCULINO'
         else:
             tmp = 'FEMENINO'
-
         individuo.sexo = tmp         
-        
+        #Armamos la linea
         writer.writerow([
             individuo.num_doc,            
             individuo.nombres,
@@ -1129,66 +1170,3 @@ def download_peticiones_coca_personal(request):
             domicilio.aclaracion,
             peticion.destino.nombre])
     return response
-    
-
-def superuser_required(function):
-    def _inner(request, *args, **kwargs):
-        if not request.user.is_superuser:
-            raise PermissionDenied           
-        return function(request, *args, **kwargs)
-    return _inner 
-
-
-@superuser_required
-def aprobar_masivo_personas(request):    
-    form = UploadCsv()
-    if request.method == "POST":
-        form = UploadCsv(request.POST, request.FILES)
-        if form.is_valid():
-            count = 0
-            csv_file = form.cleaned_data['csvfile']
-            file_data = csv_file.read().decode("utf-8")
-            lines = file_data.split("\n")
-            #Procesamos el archivo
-            dnis = []
-            for line in lines:
-                line = line.split(',')
-                if line[0]:
-                    dni = line[0]
-                    dni = dni.upper()
-
-                    try:
-                        individuo = Individuo.objects.get(num_doc=dni)
-                    except Individuo.DoesNotExist:
-                        continue
-
-                    try:
-                        peticion = PeticionCoca.objects.get(individuo=individuo)
-                    except PeticionCoca.DoesNotExist:
-                        continue
-
-                    if SEND_MAIL:
-                        to_email = peticion.individuo.email
-                        #Preparamos el correo electronico
-                        mail_subject = '¡COE 2020 SU SOLICITUD DE HOJAS DE COCA FUE APROBADA!'
-                        message = render_to_string('emails/peticion_persona_aprobada.html', {
-                                'peticion': peticion,
-                            })
-                        #Instanciamos el objeto mail con destinatario
-                        email = EmailMessage(mail_subject, message, to=[to_email])
-                        email.send()
-                    #Aprobamos la petición
-                    peticion.estado = 'A'
-                    peticion.save()
-                    dnis.append(dni)
-            count = len(dnis)
-            return render(request, "upload_csv.html", {'titulo': 'APROBACIÓN MASIVA', 'count': count, 'button': 'CARGAR CSV', })
-    return render(request, 'upload_csv.html', {'titulo': 'APROBACIÓN MASIVA', 'form': form, 'button': 'CARGAR CSV', })
-
-
-                  
-                                                        
-
-                  
-
-            
