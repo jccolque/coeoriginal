@@ -11,6 +11,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import permission_required
+from django.core.exceptions import PermissionDenied
 #Imports del proyecto
 from coe.settings import SEND_MAIL
 from core.forms import SearchForm, UploadFoto, FileForm
@@ -1128,3 +1129,66 @@ def download_peticiones_coca_personal(request):
             domicilio.aclaracion,
             peticion.destino.nombre])
     return response
+    
+
+def superuser_required(function):
+    def _inner(request, *args, **kwargs):
+        if not request.user.is_superuser:
+            raise PermissionDenied           
+        return function(request, *args, **kwargs)
+    return _inner 
+
+
+@superuser_required
+def aprobar_masivo_personas(request):    
+    form = UploadCsv()
+    if request.method == "POST":
+        form = UploadCsv(request.POST, request.FILES)
+        if form.is_valid():
+            count = 0
+            csv_file = form.cleaned_data['csvfile']
+            file_data = csv_file.read().decode("utf-8")
+            lines = file_data.split("\n")
+            #Procesamos el archivo
+            dnis = []
+            for line in lines:
+                line = line.split(',')
+                if line[0]:
+                    dni = line[0]
+                    dni = dni.upper()
+
+                    try:
+                        individuo = Individuo.objects.get(num_doc=dni)
+                    except Individuo.DoesNotExist:
+                        continue
+
+                    try:
+                        peticion = PeticionCoca.objects.get(individuo=individuo)
+                    except PeticionCoca.DoesNotExist:
+                        continue
+
+                    if SEND_MAIL:
+                        to_email = peticion.individuo.email
+                        #Preparamos el correo electronico
+                        mail_subject = '¡COE 2020 SU SOLICITUD DE HOJAS DE COCA FUE APROBADA!'
+                        message = render_to_string('emails/peticion_persona_aprobada.html', {
+                                'peticion': peticion,
+                            })
+                        #Instanciamos el objeto mail con destinatario
+                        email = EmailMessage(mail_subject, message, to=[to_email])
+                        email.send()
+                    #Aprobamos la petición
+                    peticion.estado = 'A'
+                    peticion.save()
+                    dnis.append(dni)
+            count = len(dnis)
+            return render(request, "upload_csv.html", {'titulo': 'APROBACIÓN MASIVA', 'count': count, 'button': 'CARGAR CSV', })
+    return render(request, 'upload_csv.html', {'titulo': 'APROBACIÓN MASIVA', 'form': form, 'button': 'CARGAR CSV', })
+
+
+                  
+                                                        
+
+                  
+
+            

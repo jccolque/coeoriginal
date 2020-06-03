@@ -72,6 +72,7 @@ urlpatterns = [
     path('coca/org/subir/doc/<str:token>', views.coca_subir_doc, name='coca_subir_doc'),
     path('coca/org/del/doc/<str:token>', views.coca_del_doc, name='coca_del_doc'),
     path('coca/org/aprobar_org/<int:organizacion_id>', views.aprobar_peticion_organizacion, name='aprobar_peticion_organizacion'),
+    path('aprobar_personas/masivo/', views.aprobar_masivo_personas, name='aprobar_masivo_personas'),
     #Activacion:
     path('act/<int:inscripcion_id>/<int:num_doc>', views.activar_inscripcion, name='activar_inscripcion'),
 ]
