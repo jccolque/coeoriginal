@@ -35,4 +35,13 @@
             chart.draw(data, options);
         }
     </script>
+
+
+    <style>
+        {% if graf_datos.alto %}
+            .grafico {
+                height: {{graf_datos.alto}}px;
+            }
+        {% endif %}
+    </style>
 {% endblock %}
