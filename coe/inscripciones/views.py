@@ -682,9 +682,11 @@ def peticion_persona(request, peticion_id=None):
                     peticion = PeticionCoca()
                     peticion.destino = form.cleaned_data['destino']
                     peticion.comunidad = form.cleaned_data['comunidad']
+                    peticion.individuo = individuo
+                    peticion.save()
                     #Enviar email
                     if SEND_MAIL:
-                        to_email = peticion.individuo.email
+                        to_email = individuo.email
                         #Preparamos el correo electronico
                         mail_subject = 'COE2020 Petición de COCA Jujuy!'
                         message = render_to_string('emails/email_peticion_persona.html', {
@@ -693,8 +695,6 @@ def peticion_persona(request, peticion_id=None):
                         #Instanciamos el objeto mail con destinatario
                         email = EmailMessage(mail_subject, message, to=[to_email])
                         email.send()
-                    peticion.individuo = individuo
-                    peticion.save()
                 #Enviarlo a cargar ingresantes
                 return redirect('inscripciones:ver_peticion_persona', token=peticion.token)
     return render(request, "peticion_persona.html", {
