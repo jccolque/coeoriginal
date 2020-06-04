@@ -25,23 +25,23 @@ def actualizar_infra_gob(filename):
         #Recorremos las localidades
         for loc_gob in localidades_json:
             #Si la tenemos la preparamos para actualizar
-            if not int(loc_gob['id']) in localidades_cargadas:#Nos aseguramos de no crear de nuevo
+            if not loc_gob['id'] in localidades_cargadas:#Nos aseguramos de no crear de nuevo
                 try:
                     #Cargamos datos de localidades:
                     l = Localidad()#Creamos una nueva
                     l.nombre = loc_gob['nombre']
-                    l.id_infragob = int(loc_gob['id'])
+                    l.id_infragob = loc_gob['id']
                     l.latitud = loc_gob['centroide']['lat']
                     l.longitud = loc_gob['centroide']['lon']
 
                     #Departamento:
-                    if int(loc_gob['departamento']['id']) in departamentos_cargados:
-                        d = departamentos_cargados[int(loc_gob['departamento']['id'])]
+                    if loc_gob['departamento']['id'] in departamentos_cargados:
+                        d = departamentos_cargados[loc_gob['departamento']['id']]
                     else:
                         d = Departamento()
                         d.nombre = loc_gob['departamento']['nombre']
                         d.id_infragob = loc_gob['departamento']['id']
-                        d.provincia = provincias_cargados[int(loc_gob['provincia']['id'])]
+                        d.provincia = provincias_cargados[loc_gob['provincia']['id']]
                         d.save()
                     
                     l.departamento = d
