@@ -8,6 +8,7 @@ from georef.models import Localidad, Departamento, Provincia
 #Definimos webservices origen:
 def actualizar_infra_gob(filename):
     #Generamos datos existentes:
+    argentina = obtener_argentina()
     provincias_cargados = {p.id_infragob: p for p in Provincia.objects.exclude(id_infragob=None)}
     departamentos_cargados = {d.id_infragob: d for d in Departamento.objects.exclude(id_infragob=None)}
     localidades_cargadas = {l.id_infragob: l for l in Localidad.objects.exclude(id_infragob=None)}
@@ -27,12 +28,18 @@ def actualizar_infra_gob(filename):
             #Si la tenemos la preparamos para actualizar
             if not loc_gob['id'] in localidades_cargadas:#Nos aseguramos de no crear de nuevo
                 try:
-                    #Cargamos datos de localidades:
-                    l = Localidad()#Creamos una nueva
-                    l.nombre = loc_gob['nombre']
-                    l.id_infragob = loc_gob['id']
-                    l.latitud = loc_gob['centroide']['lat']
-                    l.longitud = loc_gob['centroide']['lon']
+
+                    #Obtenemos la provincia
+                    if loc_gob['provincia']['id'] in provincias_cargados:
+                        p = provincias_cargados[loc_gob['provincia']['id']]
+                    else:
+                        p = Provincia()
+                        p.nombre = loc_gob['provincia']['nombre']
+                        p.id_infragob = loc_gob['provincia']['id']
+                        p.nacion = argentina
+                        p.save()
+                        provincias_cargados[p.id_infragob] = p
+                        print("\nCreamos Provincia: " + p.nombre + "\n")
 
                     #Departamento:
                     if loc_gob['departamento']['id'] in departamentos_cargados:
@@ -41,20 +48,32 @@ def actualizar_infra_gob(filename):
                         d = Departamento()
                         d.nombre = loc_gob['departamento']['nombre']
                         d.id_infragob = loc_gob['departamento']['id']
-                        d.provincia = provincias_cargados[loc_gob['provincia']['id']]
+                        d.provincia = p
                         d.save()
-                    
-                    l.departamento = d
+                        print("\nCreamos Departamento: " + p.nombre + ', ' + d.nombre + "\n")
 
-                    #Mantenemos atento al usuario:
+                    #Cargamos datos de localidades:
                     try:
+                        l = Localidad()#Creamos una nueva
+                        l.nombre = loc_gob['nombre']
+                        l.id_infragob = loc_gob['id']
+                        l.latitud = loc_gob['centroide']['lat']
+                        l.longitud = loc_gob['centroide']['lon']
+                        l.departamento = d
                         l.save()
-                        print("Guardamos: "+str(l) + ', ' + str(d))
+                        print("Guardamos: "+ l.nombre + ', ' + d.nombre)
                     except:
-                        print("No se pudo guardar Localidad: "+str(l))
+                        print("No se pudo guardar Localidad: " + loc_gob['nombre'])
 
                 except Exception as e:
                     #Si no se guardo decimos por que:
                     print("No se pudo procesar: " + loc_gob['nombre'])
                     print("Linea: " + str(loc_gob))
                     print('Error: '+ str(traceback.format_exc()))
+
+            else:
+                l = localidades_cargadas[loc_gob['id']]
+                l.latitud = loc_gob['centroide']['lat']
+                l.longitud = loc_gob['centroide']['lon']
+                l.save()
+                print("Actualizamos: " + l.nombre + ', ' + l.departamento.nombre)

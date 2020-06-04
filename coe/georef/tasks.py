@@ -33,34 +33,34 @@ def obtener_localidades_infra_gob():
     #Recorremos Json creando localidades
     for loc_gob in localidades_json['localidades-censales']:
         #Creamos Provincia:
-        if int(loc_gob['provincia']['id']) in provincias:
+        if loc_gob['provincia']['id'] in provincias:
             p = provincias[loc_gob['provincia']['id']]
         else:
             p = Provincia()
             p.nombre = loc_gob['provincia']['nombre']
-            p.id_infragob = int(loc_gob['provincia']['id'])
+            p.id_infragob = loc_gob['provincia']['id']
             p.nacion = argentina
             p.save()
             provincias[p.id_infragob] = p
             logger.info("Creamos Provincia: " + str(p))
 
         #Creamos Departamento:
-        if int(loc_gob['departamento']['id']) in departamentos:
-            d = departamentos[int(loc_gob['provincia']['id'])]
+        if loc_gob['departamento']['id'] in departamentos:
+            d = departamentos[loc_gob['provincia']['id']]
         else:
             d = Departamento()
             d.nombre = loc_gob['departamento']['nombre']
-            d.id_infragob = int(loc_gob['departamento']['id'])
+            d.id_infragob = loc_gob['departamento']['id']
             d.provincia = p
             d.save()
             departamentos[d.id_infragob] = d
             logger.info("Creamos Departamento: " + str(d))
 
         #Creamos localidad
-        if not int(loc_gob['id']) in localidades:
+        if not loc_gob['id'] in localidades:
             l = Localidad()
             l.nombre = loc_gob['nombre']
-            l.id_infragob = int(loc_gob['id'])
+            l.id_infragob = loc_gob['id']
             l.latitud = loc_gob['centroide']['lat']
             l.longitud = loc_gob['centroide']['lon']
             l.save()
