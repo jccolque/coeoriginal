@@ -4,6 +4,7 @@ import traceback
 #Imports del proyecto
 from core.api import requests_retry_session
 from georef.models import Localidad, Departamento, Provincia
+from georef.models import obtener_argentina
 
 #Definimos webservices origen:
 def actualizar_infra_gob(filename):
