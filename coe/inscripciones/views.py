@@ -639,10 +639,10 @@ def cargar_autorizacion(request, token, voluntario_id):
 def pedir_coca(request):
     return render(request, "pedir_coca.html")
 
-def peticion_persona(request, peticion_id=None):
-    individuo = None
+def peticion_persona(request, peticion_id=None):       
     if peticion_id:
-        individuo = PeticionCoca.objects.get(pk=peticion_id).individuo
+        peticion = PeticionCoca.objects.get(pk=peticion_id)
+        individuo = peticion.individuo
         domicilio = individuo.domicilios.last()
         form = PeticionForm(
             instance=individuo,
@@ -655,23 +655,33 @@ def peticion_persona(request, peticion_id=None):
                 #Docs
                 'frente_dni': individuo.documentos.filter(tipo='DI').first().archivo,
                 'reverso_dni': individuo.documentos.filter(tipo='DI').last().archivo,
+                #Peticion
+                'destino': peticion.destino,
+                'comunidad': peticion.comunidad,
             }
         )
-    else:
-        form = PeticionForm(instance=individuo)
-    if request.method == "POST":
-        form = PeticionForm(request.POST, request.FILES, instance=individuo)
-        if form.is_valid():
-            individuo = actualizar_individuo(form)
-            if individuo.organizaciones.exists():
-                form.add_error(None, 'El individuo ya se encuentra asignado a otra Organizacion.')
-            elif individuo.peticiones_coca.exists():
-                form.add_error(None, 'El individuo ya realizo un pedido individual.')
-            else:
-                peticion = PeticionCoca(individuo=individuo)
+        if request.method == "POST":
+            form = PeticionForm(request.POST, request.FILES, instance=individuo)
+            if form.is_valid():
+                individuo = actualizar_individuo(form)
                 peticion.destino = form.cleaned_data['destino']
                 peticion.comunidad = form.cleaned_data['comunidad']
-                if not peticion.id:
+                peticion.save()
+                return redirect('inscripciones:ver_peticion_persona', token=peticion.token)
+    else:
+        form = PeticionForm()
+        if request.method == "POST":
+            form = PeticionForm(request.POST, request.FILES)
+            if form.is_valid():
+                individuo = actualizar_individuo(form)
+                if individuo.organizaciones.exists():
+                    form.add_error(None, 'El individuo ya se encuentra asignado a otra Organizacion.')
+                elif individuo.peticiones_coca.exists():
+                    form.add_error(None, 'El individuo ya realizo un pedido individual.')
+                else:
+                    peticion = PeticionCoca()
+                    peticion.destino = form.cleaned_data['destino']
+                    peticion.comunidad = form.cleaned_data['comunidad']
                     #Enviar email
                     if SEND_MAIL:
                         to_email = peticion.individuo.email
@@ -683,7 +693,8 @@ def peticion_persona(request, peticion_id=None):
                         #Instanciamos el objeto mail con destinatario
                         email = EmailMessage(mail_subject, message, to=[to_email])
                         email.send()
-                peticion.save()
+                    peticion.individuo = individuo
+                    peticion.save()
                 #Enviarlo a cargar ingresantes
                 return redirect('inscripciones:ver_peticion_persona', token=peticion.token)
     return render(request, "peticion_persona.html", {
