@@ -11,7 +11,7 @@ from .choices import TIPO_UBICACION
 # Create your models here.
 class Nacionalidad(models.Model):
     nombre = models.CharField('Nombre', max_length=100)
-    riesgo = models.BooleanField(default=True)
+    riesgo = models.BooleanField(default=False)
     contacto = HTMLField(null=True, blank=True)
     class Meta:
         ordering = ['nombre', ]
@@ -29,6 +29,7 @@ class Nacionalidad(models.Model):
 class Provincia(models.Model):
     nacion = models.ForeignKey(Nacionalidad, on_delete=models.CASCADE, related_name="provincias")
     nombre = models.CharField('Nombre', max_length=100, unique=True)
+    id_infragob = models.IntegerField('id from infra.datos.gob.ar', unique=True, null=True, blank=True)
     class Meta:
         ordering = ['nombre', ]
         verbose_name_plural = 'Provincias'
@@ -44,6 +45,7 @@ class Provincia(models.Model):
 class Departamento(models.Model):#Departamento
     provincia = models.ForeignKey(Provincia, on_delete=models.CASCADE, related_name="departamentos")
     nombre = models.CharField('Nombre', max_length=100)
+    id_infragob = models.IntegerField('id from infra.datos.gob.ar', unique=True, null=True, blank=True)
     class Meta:
         ordering = ['nombre', ]
         verbose_name_plural = 'Departamentos'
@@ -62,6 +64,9 @@ class Localidad(models.Model):
     departamento = models.ForeignKey(Departamento, on_delete=models.CASCADE, related_name="localidades")
     nombre = models.CharField('Nombre', max_length=100)
     codigo_postal = models.CharField('Codigo Postal', max_length=100, blank=True, null=True)
+    id_infragob = models.IntegerField('id from infra.datos.gob.ar', null=True, blank=True)
+    latitud = models.DecimalField('latitud', max_digits=12, decimal_places=10, null=True)
+    longitud = models.DecimalField('longitud', max_digits=12, decimal_places=10, null=True)
     class Meta:
         ordering = ['nombre', ]
         verbose_name_plural = 'Localidades'
@@ -80,6 +85,7 @@ class Localidad(models.Model):
 class Barrio(models.Model):
     localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="barrios")
     nombre = models.CharField('Nombre', max_length=100)
+    id_infragob = models.IntegerField('id from infra.datos.gob.ar', null=True, blank=True)
     class Meta:
         ordering = ['nombre', ]
         unique_together = ('localidad', 'nombre')

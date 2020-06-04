@@ -35,7 +35,7 @@ class LocalidadForm(forms.ModelForm):
     class Meta:
         model = Localidad
         fields = '__all__'
-        exclude = ('publico', )
+        exclude = ('publico', 'latitud', 'longitud', )
         widgets = {
             'departamento': autocomplete.ModelSelect2(url='georef:departamento-autocomplete'),
         }

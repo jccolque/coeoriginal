@@ -36,11 +36,10 @@ def creamos_doc_alta(individuo):
         pdf = canvas.Canvas(packet, pagesize = A4)
         pdf.setFont('Times-Roman', 12)
         pdf.drawString(85, 620, individuo.apellidos + ', ' + individuo.nombres + ' - ' + individuo.get_tipo_doc_display() + ': ' + str(individuo.num_doc))
-        pdf.setFont('Times-Roman', 10)
         inicio = individuo.situaciones.filter(conducta__in=('D','E')).last().fecha
         fin = inicio + timedelta(days=DIAS_CUARENTENA)
-        pdf.drawString(85, 605, "Inicio Su Aislamiento el dia: " + str(inicio.date()) + '.')
-        pdf.drawString(85, 590, "Cumplira los 14 dias y finalizara su aislamiento obligatorio el " + str(fin.date()) + ' a las 6am.')
+        pdf.drawString(85, 600, "Inicio Su Aislamiento el dia: " + str(inicio.date()) + '.')
+        pdf.drawString(85, 580, "Cumplira los 14 dias y finalizara su aislamiento obligatorio el " + str(fin.date()) + ' a las 6am.')
         pdf.save()
         # Nos movemos al comienzo del búfer StringIO
         packet.seek(0)
