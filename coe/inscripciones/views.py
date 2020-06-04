@@ -695,8 +695,8 @@ def peticion_persona(request, peticion_id=None):
                         #Instanciamos el objeto mail con destinatario
                         email = EmailMessage(mail_subject, message, to=[to_email])
                         email.send()
-                #Enviarlo a cargar ingresantes
-                return redirect('inscripciones:ver_peticion_persona', token=peticion.token)
+                    #Enviarlo a cargar ingresantes
+                    return redirect('inscripciones:ver_peticion_persona', token=peticion.token)
     return render(request, "peticion_persona.html", {
         'title': "SOLICITUD DE PROVISIÓN DE HOJAS DE COCA PERSONALES",
         'form': form,
