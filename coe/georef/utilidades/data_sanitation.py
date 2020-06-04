@@ -22,4 +22,7 @@ def cargar_ids_infra_localidades(filename):
             print("\nProcesamos " + row[0] + ': ' + row[1] + ', ' + row[2])
             l = Localidad.objects.get(id=row[1])
             l.id_infragob = row[2]
-            l.save()
+            try:
+                l.save()
+            except:
+                print("No se pudo guardar")
