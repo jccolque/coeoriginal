@@ -51,7 +51,7 @@
                     </div>
                     <div class="col-md-4">
                         <ul class="menu_botones">
-                            {% if peticion.estado == 'C' %}
+                            {% if peticion.estado == 'C' or peticion.estado == 'E' %}
                                 <li><a href="{% url 'inscripciones:mod_peticion_persona' peticion_id=peticion.id %}">Modificar Datos</a></li>
                                 <li><a href="{% url 'inscripciones:finalizar_peticion' peticion_id=peticion.id %}">Finalizar Proceso</a></li>                                
                             {% endif %}
