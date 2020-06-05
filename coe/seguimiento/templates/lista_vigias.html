@@ -19,7 +19,7 @@
                             <th>Operador</th>
                             <th>Telefono</th>
                             <th>Ultimo Ingreso</th>
-                            <th>Cantidad Controlados</th>
+                            <th>Controlados</th>
                             <th>Alertas Activas</th>
                             <th>Ver Detalle</th>
                         </tr>
@@ -31,8 +31,8 @@
                                 <td>{{vigia}}</td>
                                 <td>{{vigia.operador.telefono}}</td>
                                 <td>{{vigia.operador.usuario.last_login}}</td>
-                                <td>{{vigia.controlados.count}}</td>
-                                <td>{{vigia.alertas_activas}}</td>
+                                <td>{{vigia.controlados.count}}/{{vigia.max_controlados}}</td>
+                                <td>{{vigia.alertas}}</td>
                                 <td>
                                     <a href="{% url 'seguimiento:ver_panel' vigia_id=vigia.id %}" target="_blank">
                                         <img class="icons" src="/static/img/icons/control_panel.png" alt="Panel de Control">

@@ -6,7 +6,7 @@
             <h2><b>Tablero de Situacion</b></h2>
         </div>
         <div class="row">
-            <div class="col-lg-5">
+            <div class="col-lg-6">
                 <h3>Vigilantes:</h3>
                 <table class="listado" id="table">
 
@@ -16,8 +16,8 @@
                             <th>Tipo</th>
                             <th>Controlados</th>
                             <th>Alertas</th>
-                            <th>Semanales</th>
                             <th>Totales</th>
+                            <th>Semanales</th>
                             <th>Ver Detalle</th>
                         </tr>
                     </thead>
@@ -29,8 +29,8 @@
                                 <td>{{vigia.get_tipo_display}}</td>
                                 <td>{{vigia.cant_controlados}}</th>
                                 <td>{{vigia.alertas}}</th>
-                                <td>{{vigia.semana_seguimientos}}</th>
                                 <td>{{vigia.total_seguimientos}}</th>
+                                <td>{{vigia.semana_seguimientos}}</th>
                                 <td>
                                     <a href="{% url 'seguimiento:seguimientos_vigia' vigia_id=vigia.id %}" target="_blank">
                                         <img class="icons" src="/static/img/icons/history.png" alt="Listado">
@@ -46,8 +46,8 @@
                 </table>
             </div>
             <!-- Grafico -->
-            <div class="col-sm-8">
-
+            <div class="col-sm-6">
+                {% include 'lineas.html' with graf_datos=graf_vigilancia %}
             </div>
         </div>
     </div>

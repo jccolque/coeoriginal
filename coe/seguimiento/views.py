@@ -1,8 +1,7 @@
 #Imports de python
 from datetime import datetime, timedelta
 #Imports Django
-from django.db.models import Count
-from django.db.models import Q
+from django.db.models import Q, Count, OuterRef
 from django.utils import timezone
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -22,6 +21,8 @@ from core.functions import date2str
 from core.forms import SearchForm, JustificarForm
 from georef.models import Nacionalidad
 from georef.models import Ubicacion
+from graficos.functions import obtener_grafico
+from operadores.models import Operador
 from operadores.functions import obtener_operador
 from informacion.choices import TIPO_ATRIBUTO, TIPO_PATOLOGIA
 from informacion.models import Individuo, Atributo, Patologia
@@ -157,18 +158,57 @@ def situacion_vigilancia(request):
     vigias = vigias.prefetch_related('controlados')
     #Preparamos filtros
     limite_dia = timezone.now() - timedelta(hours=24)
-    limite_semana = timezone.now() - timedelta(hours=24 * 7)
+    limite_semana = timezone.now() - timedelta(days=7)
     #Agregamos datos de interes:
-    vigias = vigias.annotate(cant_controlados=Count('controlados'))
-    vigias = vigias.annotate(alertas=Count('controlados', filter=Q(controlados__seguimiento_actual__fecha__lt=limite_dia)))
-    vigias = vigias.annotate(total_seguimientos=Count('operador__seguimientos_cargados'))
-    vigias = vigias.annotate(semana_seguimientos=Count('operador__seguimientos_cargados', filter=Q(operador__seguimientos_cargados__fecha__gt=limite_semana)))
-    #Generamos estadisticas para grafico:
-    
+    vigias = vigias.annotate(
+            cant_controlados=Count('controlados')
+        ).annotate(
+            alertas=Count(
+                'controlados',
+                filter=Q(controlados__seguimiento_actual__fecha__lt=limite_dia),
+            )
+        ).annotate(
+            total_seguimientos=Subquery(
+                Operador.objects.filter(pk=OuterRef('operador')).annotate(total_seguimientos=Count('seguimientos_cargados')).values('total_seguimientos')[:1]
+            ),
+        ).annotate(
+            semana_seguimientos=Subquery(
+                Operador.objects.filter(pk=OuterRef('operador')).annotate(total_seguimientos=Count('seguimientos_cargados', filter=Q(seguimientos_cargados__fecha__gt=limite_semana))).values('total_seguimientos')[:1]
+            ),
+    )
+    #Generamos estadisticas para grafico de la ultimas dos semanas:
+    limite_2semanas = timezone.now() - timedelta(days=14)
+    #Generamos grafico
+    graf_vigilancia = obtener_grafico('graf_vigilancia', 'Grafico de Vigilancia', 'L')
+    graf_vigilancia.reiniciar_datos()
+    #Linea de Seguimientos
+    seguimientos = Seguimiento.objects.filter(fecha__gte=limite_2semanas, fecha__lte=timezone.now()).exclude(operador=None)
+    segs_dias = {}
+    for seguimiento in seguimientos:
+        if seguimiento.fecha.date() in segs_dias:
+            segs_dias[seguimiento.fecha.date()] += 1
+        else:
+            segs_dias[seguimiento.fecha.date()] = 1
+    for (fecha), cantidad in segs_dias.items():
+        graf_vigilancia.bulk_dato(fecha, 'seguimientos', date2str(fecha), cantidad)
+    #Linea de Controlados
+    situaciones = Situacion.objects.filter(fecha__gte=limite_2semanas, fecha__lte=timezone.now(), conducta__in=('E','D'))
+    sits_dias = {}
+    for situacion in situaciones:
+        if situacion.fecha.date() in sits_dias:
+            sits_dias[situacion.fecha.date()] += 1
+        else:
+            sits_dias[situacion.fecha.date()] = 1
+    for fecha, cantidad in sits_dias.items():
+        graf_vigilancia.bulk_dato(fecha, 'controlados', date2str(fecha), cantidad)
+    graf_vigilancia.bulk_save()
+    #Definimos algunos detalles del grafico:
+    graf_vigilancia.alto = 500
     #Lanzamos reporte
     return render(request, "situacion_vigilancia.html", {
         'vigias': vigias,
         'has_table': True,
+        'graf_vigilancia': graf_vigilancia,
     })
 
 @permission_required('operadores.seguimiento_admin')
