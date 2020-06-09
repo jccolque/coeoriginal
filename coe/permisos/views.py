@@ -64,7 +64,7 @@ def pedir_permiso_web(request, individuo_id, num_doc):
                     permiso = form.save(commit=False)#Vamos a procesar el requerimiento
                     permiso.individuo = individuo
                     permiso = validar_permiso(individuo, permiso)
-                    if permiso.aprobar:
+                    if permiso:
                         permiso.save()
                         #Enviar email
                         if SEND_MAIL:
@@ -78,6 +78,8 @@ def pedir_permiso_web(request, individuo_id, num_doc):
                             #Instanciamos el objeto mail con destinatario
                             email = EmailMessage(mail_subject, message, to=[to_email])
                             email.send()
+                    else:
+                        form.errors(None, 'No se le ha podido entregar un Salvoconducto Digital.')
                 return render(request, "ver_permiso.html", {'permiso': permiso, })  
         return render(request, "pedir_permiso.html", {'form': form, 'individuo': individuo, })
     except Individuo.DoesNotExist:

@@ -46,6 +46,21 @@ def obtener_base(num_doc):
     #Ahora buscamos el de este:
     return geopos_bases[num_doc]
 
+def obtener_geoposiciones(individuo):
+    geoposiciones = GeoPosicion.objects.filter(individuo=individuo)
+    #Eliminamos los errores:
+    geoposiciones = geoposiciones.exclude(latitud=0)
+    geoposiciones = geoposiciones.exclude(longitud=0)
+    #Eliminamos las lejanas:
+    for geopos in geoposiciones:
+        if not es_local(geopos):
+            geoposiciones.exclude(pk=geopos.pk)
+    #Optimizamos:
+    geoposiciones = geoposiciones.select_related('individuo')
+    geoposiciones = geoposiciones.order_by('-fecha')#Ordenadas de mas nueva a mas vieja
+    #Devolvemos
+    return geoposiciones
+
 def obtener_repeticiones(geopos):
     geopos_movs = cache.get("geopos_movs")
     #Si no existe cache la iniciamos

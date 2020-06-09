@@ -25,3 +25,4 @@ class InformacionConfig(AppConfig):
             from .signals import relacionar_situacion
             from .signals import afectar_relacionados
             from .signals import aislar_individuo
+            from .signals import aislamiento_domiciliario

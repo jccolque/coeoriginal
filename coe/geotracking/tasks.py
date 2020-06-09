@@ -12,7 +12,7 @@ from seguimiento.models import Seguimiento
 from app.models import AppNotificacion
 #Import de la app
 from .models import GeoPosicion
-from .geofence import obtener_trackeados
+from .functions import obtener_trackeados
 
 #Definimos logger
 logger = logging.getLogger("tasks")

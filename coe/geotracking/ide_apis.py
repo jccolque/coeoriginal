@@ -9,7 +9,7 @@ from django.views.decorators.http import require_http_methods
 from informacion.models import Individuo
 #Imports de la app
 from .models import GeoPosicion
-from .geofence import obtener_trackeados
+from .functions import obtener_trackeados, obtener_geoposiciones
 
 #Definimos logger
 logger = logging.getLogger("apis")
@@ -76,7 +76,7 @@ def tracking_individuo(request, individuo_id):
     individuo = Individuo.objects.select_related('situacion_actual', 'domicilio_actual')
     individuo = individuo.prefetch_related('geoposiciones')
     individuo = individuo.get(pk=individuo_id)
-    geoposiciones = GeoPosicion.objects.filter(individuo=individuo)
+    geoposiciones = obtener_geoposiciones(individuo)
     geoposiciones = {
         str(g.fecha)[0:16] : {
             "latitud": g.latitud, 

@@ -22,11 +22,14 @@ from informacion.models import Individuo, Domicilio
 from informacion.models import Atributo, Sintoma, Situacion
 from seguimiento.models import Seguimiento
 from geotracking.models import GeoPosicion
-from geotracking.geofence import controlar_distancia, control_movimiento, es_local
+from geotracking.functions import controlar_distancia, control_movimiento, es_local
+from permisos.models import Permiso
 from permisos.functions import horario_activo
 from permisos.functions import buscar_permiso, validar_permiso, json_permiso
 from permisos.choices import TIPO_PERMISO
 from denuncias.models import DenunciaAnonima
+from seguimiento.models import TestOperativo
+from seguimiento.functions import es_operador_activo, obtener_operativo
 #Imports de la app
 from .models import AppData
 from .tokens import TokenGenerator
@@ -619,6 +622,10 @@ def ver_salvoconducto(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def pedir_salvoconducto(request):
+    #Hardcodeo por desabilitado
+    return json_permiso(None, "salvoconducto")
+    #NUNCA PASA DE ACA
+    #En caso de que funcione(Quitar linea de arriba):
     try:
         data = None
         #Recibimos el json
@@ -627,40 +634,23 @@ def pedir_salvoconducto(request):
         num_doc = obtener_dni(data)
         #Buscamos al individuo en la db
         individuo = Individuo.objects.select_related('appdata', 'domicilio_actual', 'situacion_actual')
-        individuo = Individuo.objects.prefetch_related('permisos')
+        individuo = individuo.prefetch_related('permisos')
         individuo = individuo.get(num_doc=num_doc)
         #ACA CHEQUEAMOS TOKEN
 
         #Validamos si es factible:
-        permiso = buscar_permiso(individuo)
-        #Con lo obtenido
-        if not permiso.pk:#Si es permiso RECIEN Creado:
-            permiso.tipo = data["tipo_permiso"]
-            permiso.begda = timezone.datetime(
-                int(data["fecha_ideal"][0:4]),
-                int(data["fecha_ideal"][4:6]),
-                int(data["fecha_ideal"][6:8]),
-                int(data["hora_ideal"][0:2]),
-                int(data["hora_ideal"][2:4]),
-            )
-            permiso = validar_permiso(individuo, permiso)
-        #Si fue aprobado, Creamos Permiso
-        if permiso.aprobar:#Variable temporal
-            permiso.save()
-            #Si todo salio bien
-            return json_permiso(permiso, "salvoconducto")
-        else:
-            #Si se le niega por algun motivo
-            logger.info("Denegado: " + permiso.aclaracion)
-            return JsonResponse(
-                {
-                    "accion": "salvoconducto",
-                    "realizado": permiso.aprobar,
-                    "error": permiso.aclaracion,
-                },
-                safe=False,
-                status=400,
-            )
+        permiso = Permiso(individuo=individuo)
+        permiso.tipo = 'T'
+        permiso.tipo = data["tipo_permiso"]
+        permiso.begda = timezone.datetime(
+            int(data["fecha_ideal"][0:4]),
+            int(data["fecha_ideal"][4:6]),
+            int(data["fecha_ideal"][6:8]),
+            int(data["hora_ideal"][0:2]),
+            int(data["hora_ideal"][2:4]),
+        )
+        permiso = validar_permiso(individuo, permiso)
+        return json_permiso(permiso, "salvoconducto")
     except Exception as e:
         return json_error(e, "salvoconducto", logger, data)
 
@@ -671,11 +661,8 @@ def control_salvoconducto(request):
         data = None
         #Recibimos el json
         data = json.loads(request.body.decode("utf-8"))
-        #Agarramos el dni
-        num_doc = str(data["dni_operador"]).upper()
-        #Obtenemos el operador
-        operador = Operador.objects.get(num_doc=num_doc)
-        #Leemos QR y parceamos
+        
+        #Leemos QR del escaneado y parceamos
         if "qr_code" in data:
             qr_code = data["qr_code"]
             if "@" in qr_code:#Es un DNI
@@ -686,30 +673,57 @@ def control_salvoconducto(request):
                 dni_qr = qr_code.split('-')[1]
         elif "dni_controlado" in data:
             dni_qr = data["dni_controlado"]
-        #Buscamos al individuo en la db
-        individuo = Individuo.objects.select_related('appdata').get(num_doc=dni_qr)
-        #ACA CHEQUEAMOS TOKEN
-        
-        #Guardamos registro de control
-        geopos = GeoPosicion()
-        geopos.individuo = individuo
-        geopos.tipo = "CG"
-        geopos.latitud = float(data["latitud"])
-        geopos.longitud = float(data["longitud"])
-        geopos.aclaracion = "Control de Salvoconducto"
-        geopos.operador = operador
-        geopos.save()
-        #Buscamos permiso
-        permiso = buscar_permiso(individuo, activo=True)
-        #Damos respuesta
-        return json_permiso(permiso, "control_salvoconducto")
-    except Exception as e:
-        try:#Si logramos generar GeoPos del Control > Marcamos al infractor
-            geopos.alerta = 'FP'#La marcamos como alerta
+        #Buscamos al individuo chequeado en la db:
+        try:
+            #Buscamos al individuo en la DB
+            individuo = Individuo.objects.select_related('appdata').get(num_doc=dni_qr)
+            
+            #Obtenemos el operador
+            try:
+                num_doc = str(data["dni_operador"]).upper()
+                operador = Operador.objects.get(num_doc=num_doc)
+            except:#No es operador
+                operador = None
+
+            #Guardamos registro de control
+            geopos = GeoPosicion()
+            geopos.individuo = individuo
+            geopos.tipo = "CG"
+            geopos.latitud = float(data["latitud"])
+            geopos.longitud = float(data["longitud"])
+            geopos.aclaracion = "Control de Salvoconducto"
+            geopos.operador = operador
             geopos.save()
         except:
-            pass
-        e = 'El individuo no cuenta con un permiso activo.'
+            pass#No lo tenemos al individuo en la db (No creamos datos):
+
+        #Si es operativo de TESTS:
+        if es_operador_activo(num_doc):
+            #Realiza test:
+            test = TestOperativo(operativo=obtener_operativo(num_doc))
+            test.num_doc = dni_qr
+            test.geoposicion = geopos
+            test.save()
+            return JsonResponse(
+                {
+                    "accion": 'Test Realizado',
+                    "realizado": False,
+                    "error": 'Se realizo Test a: ' + str(test.individuo),
+                },
+                safe=False,
+                status=400,
+            )
+        else:#Si estan haciendo un control de permisos:
+            #Buscamos permiso
+            permiso = buscar_permiso(individuo, activo=True)
+            if permiso:
+                return json_permiso(permiso, "control_salvoconducto")
+            else:
+                geopos.alerta = 'FP'#La marcamos como alerta
+                geopos.save()
+                e = 'El individuo no cuenta con un permiso activo.'
+                return json_error(e, "control_salvoconducto", logger, data)
+    except Exception as e:
         return json_error(e, "control_salvoconducto", logger, data)
 
 @csrf_exempt

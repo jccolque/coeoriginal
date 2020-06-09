@@ -64,6 +64,7 @@ TIPO_ATRIBUTO = (
     ('IP', 'Informado Por'),
     ('VE', 'Vigilancia Epidemiologica'),
     ('VM', 'Vigilancia Salud Mental'),
+    ('AD', 'Aislamiento Domiciliario'),
     ('AS', 'Es Agente de Salud'),
     ('PS', 'Es Personal de Seguridad'),
     ('FP', 'Es Funcionario Publico'),
@@ -82,6 +83,12 @@ TIPO_ATRIBUTO = (
     ('APS', 'Posee antecedentes Psiquiatricos'),
     ('NM2', 'Grupo Familiar con menores de 2 años, adultos mayores y/o personas con discapacidad'),
 )
+
+def atributos_iniciales():
+    return [a for a in TIPO_ATRIBUTO if len(a[0]) == 2]
+
+def atributos_excepcionales():
+    return [a for a in TIPO_ATRIBUTO if len(a[0]) == 3]
 
 TIPO_SINTOMA = (
     ('DPR', 'Dificultad para Respirar'),

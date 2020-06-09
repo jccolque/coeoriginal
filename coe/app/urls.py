@@ -27,7 +27,7 @@ urlpatterns = [
     path('save/notificacion', views.guardar_notificacion, name='enviar_notificacion'),
     #Descarga
     path('coe_app', views.download_app, name='download_app'),
-    path('simmov_app', views.download_control, name='download_control'),
+    #path('simmov_app', views.download_control, name='download_control'),
     #Autocomplete:
     url(r'^appdata-autocomplete/$', autocomplete.AppDataAutocomplete.as_view(), name='appdata-autocomplete'),
     url(r'^dispositivo-autocomplete/$', autocomplete.DispositivoAutocomplete.as_view(), name='dispositivo-autocomplete'),

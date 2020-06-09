@@ -31,7 +31,8 @@
                                 </h2>
                                 <!-- ESTADO -->
                                 {% if individuo.situacion_actual %}
-                                    <h4>Estado: <b>{{individuo.situacion_actual}}</b> 
+                                    <h4>Estado: <b>{{individuo.situacion_actual}}</b><br>
+                                        ({{individuo.situacion_actual.fecha}})
                                         <a class="nolink" href="{% url 'informacion:cargar_situacion' individuo_id=individuo.id %}" target="_blank">
                                             <img class="icons" src="{% static '/img/icons/change.png' %}">
                                         </a>

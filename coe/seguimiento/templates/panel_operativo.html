@@ -42,6 +42,7 @@
                     <h3>Cazadores:</h3>
                     <table class="listado">
                         <tr>
+                            <th>Documento</th>
                             <th>Individuo</th>
                             <th>Telefono</th>
                             <th>App</th>
@@ -49,6 +50,7 @@
                         </tr>
                         {% for individuo in operativo.cazadores.all %}
                             <tr>
+                                <td>{{individuo.num_doc}}</td>
                                 <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
                                 <td>{{individuo.telefono}}</td>
                                 <td>

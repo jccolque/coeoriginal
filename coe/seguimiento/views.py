@@ -24,7 +24,7 @@ from georef.models import Ubicacion
 from graficos.functions import obtener_grafico
 from operadores.models import Operador
 from operadores.functions import obtener_operador
-from informacion.choices import TIPO_ATRIBUTO, TIPO_PATOLOGIA
+from informacion.choices import atributos_excepcionales, TIPO_PATOLOGIA
 from informacion.models import Individuo, Atributo, Patologia
 from informacion.models import SignosVitales, Relacion
 from informacion.models import Situacion, Documento
@@ -110,7 +110,7 @@ def pedir_test(request):
     return render(request, "pedir_test.html", {
         'error': error,
         'tipos_patologias': TIPO_PATOLOGIA,
-        'tipos_excepciones': [t for t in TIPO_ATRIBUTO if len(t[0]) == 3],
+        'tipos_excepciones': atributos_excepcionales(),
     })
 
 #Menu
@@ -413,16 +413,15 @@ def situacion_operativos(request):
     #Obtenemos ultimas geoposiciones:
     geoposiciones = []
     for operativo in operativos:
-        geoposiciones.append(operativo.get_geoposiciones.last())
+        geoposiciones.append(operativo.get_geoposiciones().last())
     #Mostramos
     return render(request, "situacion_operativos.html", {
-        'operativo': operativo,
+        'operativos': operativos,
         'geoposiciones': geoposiciones,
-        'refresh': (operativo.estado == 'I'),
+        'refresh': operativos.exists(),
         'gmkey': GEOPOSITION_GOOGLE_MAPS_API_KEY,
         }
     )
-
 
 @permission_required('operadores.operativos')
 def ver_operativo(request, operativo_id):
@@ -539,7 +538,7 @@ def ranking_test(request):
     individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__ubicacion')
     individuos = individuos.prefetch_related('seguimientos', 'patologias', 'atributos')
     #Rankeamos
-    excepciones = [t[0] for t in TIPO_ATRIBUTO if len(t[0]) == 3]
+    excepciones = atributos_excepcionales()
     for individuo in individuos:
         individuo.pedido = [s for s in individuo.seguimientos.all() if s.tipo == 'PT'][-1]
         #1pt por cada dia despues del 4to

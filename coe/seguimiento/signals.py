@@ -81,11 +81,6 @@ def poner_en_seguimiento(created, instance, **kwargs):
         atributo.aclaracion = "Por Ingreso a Aislamiento."
         atributo.save()
 
-@receiver(post_save, sender=Seguimiento)
-def quitar_seguimiento(created, instance, **kwargs):
-    if created and instance.tipo == 'FS':
-        instance.individuo.vigiladores.clear()
-
 @receiver(post_save, sender=Atributo)
 def asignar_vigilante(created, instance, **kwargs):
     if created:
@@ -111,6 +106,11 @@ def asignar_vigilante(created, instance, **kwargs):
                             break#Lo cargamos, terminamos
             except:
                 logger.info("No existen Vigias, " + str(instance.individuo) + " quedo sin vigilante.")
+
+@receiver(post_save, sender=Seguimiento)
+def quitar_seguimiento(created, instance, **kwargs):
+    if created and instance.tipo == 'FS':
+        instance.individuo.vigiladores.clear()
 
 @receiver(post_save, sender=SignosVitales)
 def cargo_signosvitales(created, instance, **kwargs):

@@ -4,9 +4,10 @@ import logging
 import traceback
 from datetime import timedelta
 #Imports de django
+from django.db.models import Q
 from django.utils import timezone
 from django.core.files import File
-from django.db.models import Q
+from django.core.cache import cache
 #Imports Extras:
 from PyPDF2 import PdfFileWriter, PdfFileReader
 from reportlab.pdfgen import canvas
@@ -17,9 +18,9 @@ from coe.settings import STATIC_ROOT, MEDIA_ROOT
 from coe.constantes import DIAS_CUARENTENA
 from informacion.models import Individuo, Situacion, Documento
 from app.functions import desactivar_tracking
-from seguimiento.models import Seguimiento
 #Imports de la app
-from .models import Vigia
+from .models import Seguimiento
+from .models import Vigia, OperativoVehicular
 
 #Logger
 logger = logging.getLogger('errors')
@@ -130,3 +131,24 @@ def realizar_alta(individuo, operador):
             dom.aclaracion = "Baja confirmada por: " + str(operador)
             dom.fecha = timezone.now()
             dom.save()
+
+def es_operador_activo(num_doc):
+    #Buscamos la cache
+    operadores_activos = cache.get("operadores_activos")
+    #Si no hay cache disponible
+    if not operadores_activos:
+        operadores_activos = []#Creamos nuevo grupo de registros
+        operativos = OperativoVehicular.objects.all()#filter()
+        operativos = operativos.prefetch_related('cazadores')
+        for operativo in operativos:
+            for cazador in operativo.cazadores.all():
+                operadores_activos.append(cazador.num_doc)
+        #Guardamos la cache
+        cache.set("operadores_activos", operadores_activos, timeout=60)
+    #Vemos si es cazador:
+    if str(num_doc) in operadores_activos:
+        return True
+
+def obtener_operativo(num_doc):
+    operativos = OperativoVehicular.objects.filter(cazadores__num_doc=num_doc)
+    return operativos.last()

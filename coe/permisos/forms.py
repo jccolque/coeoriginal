@@ -53,6 +53,10 @@ class IngresoProvinciaForm(forms.ModelForm):
             'fecha_llegada': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}, ),
             'origen': autocomplete.ModelSelect2(url='georef:provincia-autocomplete'),
             'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+            'email_contacto': forms.TextInput(attrs={'placeholder': 'Introduzca correo electrónico'}),
+            'marca': forms.TextInput(attrs={'placeholder': 'Introduzca la MARCA del Automóvil'}),
+            'modelo': forms.TextInput(attrs={'placeholder': 'Introduzca el MODELO del Automóvil'}),
+            'patente': forms.TextInput(attrs={'placeholder': 'Introduzca PATENTE del Automóvil'}),
         }
 
 class CirculacionTemporalForm(forms.ModelForm):
