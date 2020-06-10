@@ -62,11 +62,9 @@
                         <a href="{% url 'app:download_app' %}">
                             <img class="fotos" src="{% static 'img/download_app.jpg' %}" style="border-radius: 35px;">
                         </a>
-                        <a href="{% url 'seguimiento:buscar_alta_aislamiento' %}">
-                            <img class="fotos" src="{% static 'img/obtener_alta.png' %}">
-                        </a>
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="col-sm-4">
                         <div class="elem">
@@ -83,6 +81,15 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="col-sm-8 col-sm-offset-2">
+                        <a href="{% url 'seguimiento:buscar_alta_aislamiento' %}">
+                            <img class="fotos" src="{% static 'img/obtener_alta.png' %}">
+                        </a>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
