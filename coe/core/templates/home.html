@@ -52,11 +52,19 @@
                                 <img class="fotos" src="{% static 'img/reclutamiento_social.jpeg' %}">
                             </a>
                         </div>
-                        <div class="col-sm-12">
-                            <a href="{% url 'inscripciones:pedir_coca' %}" target="_blank">
-                                <img class="fotos" src="{% static 'img/pedido_coca.png' %}">
-                            </a>
-                        </div>
+                        <!--
+                            <div class="col-sm-12">
+                                <a href="{% url 'inscripciones:pedir_coca' %}" target="_blank">
+                                    <img class="fotos" src="{% static 'img/pedido_coca.png' %}">
+                                </a>
+                            </div>
+                        -->
+                        <a href="{% url 'app:download_app' %}">
+                            <img class="fotos" src="{% static 'img/download_app.jpg' %}" style="border-radius: 35px;">
+                        </a>
+                        <a href="{% url 'seguimiento:buscar_alta_aislamiento' %}">
+                            <img class="fotos" src="{% static 'img/obtener_alta.png' %}">
+                        </a>
                     </div>
                 </div>
                 <div class="row">
@@ -73,14 +81,6 @@
                                 <img class="fotos"  src="{% static 'img/circulaciontemporal.png' %}">
                             </a>
                         </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <a href="{% url 'app:download_app' %}">
-                            <img class="fotos" src="{% static 'img/download_app.jpg' %}" style="border-radius: 35px;">
-                        </a>
-                        <a href="{% url 'seguimiento:buscar_alta_aislamiento' %}">
-                            <img class="fotos" src="{% static 'img/obtener_alta.png' %}">
-                        </a>
                     </div>
                 </div>
             </div>

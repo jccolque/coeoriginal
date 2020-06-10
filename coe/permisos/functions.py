@@ -56,9 +56,6 @@ def buscar_permiso(individuo, activo=False):
         permiso.save()
         return permiso#Lo entregamos
 
-
-
-
 def dia_permitido(permiso):#Definir con DNIS
     #Obtenemos nivel de restriccion
     nivel = nivel_restriccion_actual()
