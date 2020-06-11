@@ -1,0 +1,60 @@
+{% extends 'base_informacion.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2><b>Hoja de Circulaciones</b></h2>
+            <p><b>Nombre Completo:</b> {{individuo.apellidos}}, {{individuo.nombres}}</p>
+            <p><b>Dni:</b> {{individuo.num_doc}}</p>
+            <p><b>Telefono:</b> {{individuo.telefono}}</p>
+            <div class="col-md-12">
+                <table class="listado" id="table">
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+
+                            <th>Titular</th>
+                            <th>Vehiculo</th>
+
+                            <th>Origen Circulacion</th>
+                            <th>Fecha de Inicio</th>
+
+                            <th>Cant. Pasajeros</th>
+                            
+                            <th>Destino Circulacion</th>
+
+                            <th>Control Final</th>
+                            <th>Fecha de Final</th>
+
+                            <th>Alarma</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for registro in registros %}
+                            <tr>
+                                <td>{{registro.circulacion.get_tipo_display}}</td>
+                                
+                                <td>{{registro.circulacion.titular}}</td>
+                                <td>{{registro.circulacion.marca}} {{registro.circulacion.modelo}} {{registro.circulacion.patente}}</td>
+
+                                <td>{{registro.get_control_inicio_display}}</td>
+                                <td>{{registro.fecha_inicio}}</td>
+
+                                <td>{{registro.cant_inicio}}/{{registro.cant_final}}</td>
+
+                                <td>{{registro.destino}}</td>
+
+                                <td>{{registro.get_control_final_display}}</td>
+                                <td>{{registro.fecha_final}}</td>
+
+                                <td>{{registro.get_tipo_alarma_display}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

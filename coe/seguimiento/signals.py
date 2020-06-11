@@ -83,29 +83,9 @@ def poner_en_seguimiento(created, instance, **kwargs):
 
 @receiver(post_save, sender=Atributo)
 def asignar_vigilante(created, instance, **kwargs):
-    if created:
-        #Si es vigilancia Epidemiologica
-        if instance.tipo == 'VE':
-            try:
-                if not instance.individuo.vigiladores.filter(tipo='E').exists():
-                    vigias = Vigia.objects.filter(tipo='E').annotate(cantidad=Count('controlados'))
-                    for vigia in vigias.order_by('cantidad'):
-                        if vigia.max_controlados > vigia.cantidad:
-                            vigia.controlados.add(instance.individuo)
-                            break#Lo cargamos, terminamos
-            except:
-                logger.info("No existen Vigias, " + str(instance.individuo) + " quedo sin vigilante.")
-        #Si es Vigilancia de Salud Mental
-        if instance.tipo == 'VM':
-            try:
-                if not instance.individuo.vigiladores.filter(tipo='M').exists():
-                    vigias = Vigia.objects.filter(tipo='M').annotate(cantidad=Count('controlados'))
-                    for vigia in vigias.order_by('cantidad'):
-                        if vigia.max_controlados > vigia.cantidad:
-                            vigia.controlados.add(instance.individuo)
-                            break#Lo cargamos, terminamos
-            except:
-                logger.info("No existen Vigias, " + str(instance.individuo) + " quedo sin vigilante.")
+    print(instance)
+    if created and instance.tipo in ('VE', 'VM', 'VT'):#Si se inicia el proceso
+        asignar_vigilante(instance.individuo, instance.tipo)
 
 @receiver(post_save, sender=Seguimiento)
 def quitar_seguimiento(created, instance, **kwargs):

@@ -16,14 +16,15 @@ from .tokens import account_activation_token
 #Definimos nuestras señales
 @receiver(post_save, sender=User)
 def enviar_mail_new_user(instance, created, **kwargs):
-    if created and instance.email != NOMAIL:
-        raw_password = ''.join(random.sample(string.ascii_uppercase + string.digits, k=8))
-        usuario = instance
-        usuario.set_password(raw_password)
-        usuario.is_active = False
-        usuario.save()
-        #enviar email de validacion
-        if SEND_MAIL:
+    if SEND_MAIL:#Si esta habilitado el envio de mails
+        if created and instance.email != NOMAIL:
+            usuario = instance
+            #Le generamos password y lo desactivamos para que active por mail
+            raw_password = ''.join(random.sample(string.ascii_uppercase + string.digits, k=8))
+            usuario.set_password(raw_password)
+            usuario.is_active = False
+            usuario.save()
+            #enviar email de validacion
             to_email = usuario.email
             #Preparamos el correo electronico
             mail_subject = 'Bienvenido al Sistema Centralizado COE!'

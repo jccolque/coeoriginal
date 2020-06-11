@@ -634,16 +634,16 @@ def cargar_situacion(request, individuo_id=None, situacion_id=None):
 
 @permission_required('operadores.individuos')
 def del_situacion(request, situacion_id=None):
+    #Obtenemos los datos
     situacion = Situacion.objects.get(pk=situacion_id)
     individuo = situacion.individuo
+    #Si es actual, cambiamos
     if situacion == individuo.situacion_actual:
-        return render(request, 'extras/error.html', {
-            'titulo': 'Eliminar Situacion',
-            'error': "No se puede Borrar la Situacion Actual.",
-        })
-    else:
-        situacion.delete()
-        return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+        individuo.situacion_actual = individuo.situaciones.exclude(pk=situacion.pk).last()
+        individuo.save()
+    #Eliminamos
+    situacion.delete()
+    return redirect('informacion:ver_individuo', individuo_id=individuo.id)
 
 #Signos Vitales
 @permission_required('operadores.individuos')
@@ -704,9 +704,9 @@ def cargar_atributo(request, individuo_id, atributo_id=None, tipo=None):
         form = AtributoForm(request.POST, instance=atributo)
         if form.is_valid():
             individuo = Individuo.objects.get(pk=individuo_id)
-            sintoma = form.save(commit=False)
-            sintoma.individuo = individuo
-            sintoma.save()
+            atributo = form.save(commit=False)
+            atributo.individuo = individuo
+            atributo.save()
             return render(request, "extras/close.html")
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Atributo", 'form': form, 'boton': "Cargar", })
 

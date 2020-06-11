@@ -191,17 +191,19 @@ def relacionar_situacion(created, instance, **kwargs):
 def aislamiento_domiciliario(created, instance, **kwargs):
     if created and instance.tipo == "AD":
         #Creamos la situacion de aislamiento
-        sit = Situacion()
-        sit.individuo = instance.individuo
-        sit.conducta = 'E'
-        sit.aclaracion = "Debe Realizar Cuarentena Obligatoria en su Hogar"
-        sit.save()
-        #Lo asignamos a vigilancia epidemiologica
-        atributo = Atributo()
-        atributo.individuo = instance.individuo
-        atributo.tipo = 'VE'
-        atributo.aclaracion = "Por Ingreso a Aislamiento."
-        atributo.save()
+        sit_actual = instance.individuo.get_situacion()
+        if sit_actual.conducta not in ('D', 'E'):
+            sit = Situacion()
+            sit.individuo = instance.individuo
+            sit.conducta = 'E'
+            sit.aclaracion = "Debe Realizar Cuarentena Obligatoria en su Hogar"
+            sit.save()
+            #Lo asignamos a vigilancia epidemiologica
+            atributo = Atributo()
+            atributo.individuo = instance.individuo
+            atributo.tipo = 'VE'
+            atributo.aclaracion = "Por Ingreso a Aislamiento."
+            atributo.save()
 
 #@receiver(post_save, sender=Atributo)
 #def iniciar_tracking_transportistas(created, instance, **kwargs):

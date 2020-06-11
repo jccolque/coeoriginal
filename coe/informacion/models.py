@@ -143,6 +143,8 @@ class Individuo(models.Model):
         return self.relaciones.filter(tipo="F").last()
     def voluntario_autorizado(self):
         return self.documentos.filter(tipo='AT').last()
+    def es_camionero(self):
+        return self.atributos.filter(tipo='VT').exists()
 
 class Relacion(models.Model):#Origen del Dato
     tipo = models.CharField('Tipo Relacion', choices=TIPO_RELACION, max_length=2, default='F')

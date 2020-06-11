@@ -15,12 +15,14 @@ TIPO_SEGUIMIENTO = (
     ('FT', 'Finalizacion del Tracking'),
     ('TA', 'Traslado a Aislamiento'),
     ('DF', 'Domicilio Fuera de la Provincia'),
+    ('RC', 'Registro de Circulacion Temporal'),
     ('TE', 'No Posee Telefono / Telefono Equivocado'),
 )
 
 TIPO_VIGIA = (
     ('E', 'Vigilancia Epidemiologica'),
     ('M', 'Salud Mental'),
+    ('T', 'Vigilancia de Transportistas'),
 )
 
 ESTADO_OPERATIVO = (

@@ -23,11 +23,16 @@
                                     <img class="fotografia" src="{{individuo.get_foto}}">
                                 </a>
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-sm-5">
                                 <h2><b>{{individuo.apellidos}}, {{individuo.nombres}}</b>
                                     <a class="nolink"  href="{% ct_auditar_obj_url individuo %}">
                                         <img class="icons" src="{% static '/img/icons/question.png' %}">
                                     </a>
+                                    {% if individuo.es_camionero %}
+                                        <a href="{% url 'permisos:ver_registros_individuo' individuo_id=individuo.pk %}" target="_blank">
+                                            <img class="icons" src="{% static '/img/icons/camion.png' %}" alt="Circulacion Temporal">
+                                        </a>
+                                    {% endif %}
                                 </h2>
                                 <!-- ESTADO -->
                                 {% if individuo.situacion_actual %}
@@ -51,7 +56,7 @@
                                     <h4><b>Autodiagnostico:</b> {{individuo.appdata.get_estado_display}} ({{individuo.appdata.fecha}})</h4>
                                 {% endif %}
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-5">
                                 {% if individuo.voluntariados.exists %}
                                     <div class="bordeado">
                                         <h4><b>Voluntario:</b></h4>
@@ -70,6 +75,21 @@
                                         </ul>
                                     </div>
                                 {% endif %}
+
+                                {% if individuo.vigiladores.exists %}
+                                    <div class="bordeado">
+                                        <br>
+                                        <h4><b>Controlador Por:</b></h4>
+                                        {% for vigia in individuo.vigiladores.all %}
+                                            <p>
+                                                <a href="{% url 'seguimiento:ver_panel' vigia_id=vigia.id %}" target="_blank">
+                                                    {{vigia}} ({{vigia.get_tipo_display}})
+                                                </a>
+                                            </p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+
                             </div>
                         </div>
                         <hr>

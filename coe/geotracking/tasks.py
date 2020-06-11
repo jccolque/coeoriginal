@@ -18,7 +18,7 @@ from .functions import obtener_trackeados
 logger = logging.getLogger("tasks")
 
 #Definimos tareas
-@background(schedule=1)
+@background(schedule=30)
 def geotrack_sin_actualizacion():
     logger.info("\nGeoTrackings Sin actualizar")
     individuos = obtener_trackeados()
@@ -54,7 +54,7 @@ def geotrack_sin_actualizacion():
         except Exception as error:
             logger.info("Fallo: "+str(error)+':\n'+str(traceback.format_exc()))
 
-@background(schedule=30)
+@background(schedule=15)
 def finalizar_geotracking():
     logger.info("\nRealizamos la finalizacion de los Geotrackings")
     individuos = obtener_trackeados()

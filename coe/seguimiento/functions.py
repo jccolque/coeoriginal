@@ -36,11 +36,11 @@ def creamos_doc_alta(individuo):
         #Se crea un pdf utilizando reportLab
         pdf = canvas.Canvas(packet, pagesize = A4)
         pdf.setFont('Times-Roman', 12)
-        pdf.drawString(85, 620, individuo.apellidos + ', ' + individuo.nombres + ' - ' + individuo.get_tipo_doc_display() + ': ' + str(individuo.num_doc))
+        pdf.drawString(110, 560, individuo.apellidos + ', ' + individuo.nombres + ' - ' + individuo.get_tipo_doc_display() + ': ' + str(individuo.num_doc))
         inicio = individuo.situaciones.filter(conducta__in=('D','E')).last().fecha
         fin = inicio + timedelta(days=DIAS_CUARENTENA)
-        pdf.drawString(85, 600, "Inicio Su Aislamiento el dia: " + str(inicio.date()) + '.')
-        pdf.drawString(85, 580, "Cumplira los 14 dias y finalizara su aislamiento obligatorio el " + str(fin.date()) + ' a las 6am.')
+        pdf.drawString(110, 545, "Inicio Su Aislamiento el dia: " + str(inicio.date()) + '.')
+        pdf.drawString(110, 530, "Cumplira los 14 dias y finalizara su aislamiento obligatorio el " + str(fin.date()) + ' a las 6am.')
         pdf.save()
         # Nos movemos al comienzo del búfer StringIO
         packet.seek(0)
@@ -152,3 +152,29 @@ def es_operador_activo(num_doc):
 def obtener_operativo(num_doc):
     operativos = OperativoVehicular.objects.filter(cazadores__num_doc=num_doc)
     return operativos.last()
+
+def asignar_vigilante(individuo, tipo):
+    #Definimos tipos
+    tipos = {
+        'VE': 'E',#Vigilancia Epidemiologica
+        'VM': 'M',#Vigilancia de Salud Mental
+        'VT': 'T',#Vigilancia de Circulacion Temporal
+    }
+    #Iniciamos proceso de asignacion:
+    try:
+        if not individuo.vigiladores.filter(tipo=tipos[tipo]).exists():#Si no tiene Vigilante
+            #Intentamos buscarle el vigilante que menos asignados tenga
+            
+            vigias = Vigia.objects.filter(tipo=tipos[tipo]).annotate(cantidad=Count('controlados'))
+            
+            print("Obtuvimos vigilantes: " + str(vigias.count()))
+
+            for vigia in vigias.order_by('cantidad'):
+                if vigia.max_controlados > vigia.cantidad:
+
+                    print("Asignamos a: " + str(vigia))
+                    
+                    vigia.controlados.add(individuo)
+                    break#Lo cargamos, terminamos
+    except:
+        logger.info("No existen Vigias, " + str(individuo) + " quedo sin vigilante.")

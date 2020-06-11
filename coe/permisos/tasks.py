@@ -14,7 +14,7 @@ from .models import IngresoProvincia
 logger = logging.getLogger("tasks")
 
 #Definimos tareas
-@background(schedule=3)
+@background(schedule=5)
 def eliminar_ingresos_provinciales():
     logger.info("\neliminar_ingresos_provinciales")
     #Buscamos los recien cargados
