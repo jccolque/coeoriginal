@@ -167,7 +167,9 @@
                                         <td>{{individuo.domicilio_actual}}</td>
                                         <td>
                                             {% for doc in individuo.get_dnis %}
-                                                <a href="{{doc.archivo.url}}" target="_blank">{{doc.aclaracion}}</a><br>
+                                                {% if doc.archivo %}
+                                                    <a href="{{doc.archivo.url}}" target="_blank">{{doc.aclaracion}}</a><br>
+                                                {% endif %}        
                                             {% endfor %}
                                         </td>
                                         <td>
