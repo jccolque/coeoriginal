@@ -12,7 +12,7 @@ from informacion.models import Individuo, Domicilio
 from informacion.models import Situacion, Atributo, SignosVitales, Documento
 #Imports de la app
 from .models import Seguimiento, Vigia, TestOperativo
-from .functions import crear_doc_descartado
+from .functions import crear_doc_descartado, asignar_vigilante 
 
 #Logger
 logger = logging.getLogger('signals')
@@ -82,10 +82,11 @@ def poner_en_seguimiento(created, instance, **kwargs):
         atributo.save()
 
 @receiver(post_save, sender=Atributo)
-def asignar_vigilante(created, instance, **kwargs):
-    print(instance)
-    if created and instance.tipo in ('VE', 'VM', 'VT'):#Si se inicia el proceso
-        asignar_vigilante(instance.individuo, instance.tipo)
+def atributo_vigilancia(created, instance, **kwargs):
+    if created:
+        #Si se indica alguna vigilancia
+        if instance.tipo in ('VE', 'VM', 'VT'):
+            asignar_vigilante(instance.individuo, instance.tipo)
 
 @receiver(post_save, sender=Seguimiento)
 def quitar_seguimiento(created, instance, **kwargs):

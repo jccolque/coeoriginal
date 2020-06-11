@@ -41,11 +41,9 @@ def mapeo_general(request):
     geopos = geopos.select_related('individuo__domicilio_actual', 'individuo__domicilio_actual__localidad')
     geopos = geopos.order_by('fecha')
     #Obtenemos la ultima posicion de cada uno
-    print("Iniciamos procesamiento")
     last_geopos = {}
     for g in geopos:
         last_geopos[g.individuo.pk] = g
-    print("Primer Diccionario Procesado")
     #Generamos respuesta:
     resultado = {}
     for pk in last_geopos:
@@ -67,7 +65,6 @@ def mapeo_general(request):
                 "aclaracion": geopos.aclaracion,
             },
         }
-    print("Segundo Diccionario Procesado")
     return JsonResponse(resultado, safe=False, )
 
 @csrf_exempt

@@ -17,9 +17,7 @@ def actualizar_infra_gob(filename):
 
     #Obtenemos web service
     #r = requests_retry_session().get('https://infra.datos.gob.ar/catalog/modernizacion/dataset/7/distribution/7.27/download/localidades-censales.json')
-    #print("Json Descargado")
     #localidades = json.loads(r.text)['localidades-censales']
-    #print("Json Procesado")
 
     #Recorremos el json
     with open(filename) as json_file:

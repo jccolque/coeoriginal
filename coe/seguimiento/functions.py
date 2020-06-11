@@ -160,21 +160,16 @@ def asignar_vigilante(individuo, tipo):
         'VM': 'M',#Vigilancia de Salud Mental
         'VT': 'T',#Vigilancia de Circulacion Temporal
     }
-    #Iniciamos proceso de asignacion:
-    try:
-        if not individuo.vigiladores.filter(tipo=tipos[tipo]).exists():#Si no tiene Vigilante
-            #Intentamos buscarle el vigilante que menos asignados tenga
-            
-            vigias = Vigia.objects.filter(tipo=tipos[tipo]).annotate(cantidad=Count('controlados'))
-            
-            print("Obtuvimos vigilantes: " + str(vigias.count()))
-
-            for vigia in vigias.order_by('cantidad'):
-                if vigia.max_controlados > vigia.cantidad:
-
-                    print("Asignamos a: " + str(vigia))
-                    
-                    vigia.controlados.add(individuo)
-                    break#Lo cargamos, terminamos
-    except:
-        logger.info("No existen Vigias, " + str(individuo) + " quedo sin vigilante.")
+    #Si es uno de los deseados:
+    if tipo in tipos:
+        #Iniciamos proceso de asignacion:
+        try:
+            if not individuo.vigiladores.filter(tipo=tipos[tipo]).exists():#Si no tiene Vigilante
+                #Intentamos buscarle el vigilante que menos asignados tenga
+                vigias = Vigia.objects.filter(tipo=tipos[tipo]).annotate(cantidad=Count('controlados'))
+                for vigia in vigias.order_by('cantidad'):
+                    if vigia.max_controlados > vigia.cantidad:
+                        vigia.controlados.add(individuo)
+                        break#Lo cargamos, terminamos
+        except:
+            logger.info("No existen Vigias, " + str(individuo) + " quedo sin vigilante.")

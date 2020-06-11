@@ -9,7 +9,6 @@ def crear_start_trackings():#Para todos los que estan mandando Registros pero no
     individuos = Individuo.objects.filter(geoposiciones__tipo='RG')
     individuos = individuos.exclude(geoposiciones__tipo="ST")
     for individuo in individuos:
-        print("Le Creamos ST por que no tenia a: "+str(individuo))
         first_geopos = individuo.geoposiciones.filter(tipo='RG').first()
         geopos = first_geopos
         geopos.pk = None
@@ -21,7 +20,6 @@ def asignar_geoperadores():
     individuos = Individuo.objects.filter(geoposiciones__tipo='ST')
     for individuo in individuos:
         if not individuo.geoperador.exists():#Si no tiene GeOperador
-            print("Le Asignamos Geoperador a: "+str(individuo))
             geoperador = GeOperador.objects.annotate(cantidad=Count('controlados')).order_by('cantidad').first()
             geoperador.controlados.add(individuo)
 
