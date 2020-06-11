@@ -26,7 +26,6 @@
                                     </a>
                                     <br>
                                     <a href="{% url 'permisos:ingreso_subir_permiso_nac' token=ingreso.token %}" style="font-weight:bold;color:red;">(Cambiar Archivo)</a>
-                                    
                                 {% else %}
                                     <a href="{% url 'permisos:ingreso_subir_permiso_nac' token=ingreso.token %}">CARGAR</a><br>
                                     <i>Si usted carga este documento podemos acelerar la Aprobacion de su Permiso de Ingreso a Jujuy.</i>
@@ -173,7 +172,7 @@
                                         </td>
                                         <td>
                                             {% with individuo.get_permiso_nacional as permiso %}
-                                                {% if permiso %}
+                                                {% if permiso and permiso.archivo %}
                                                     <a href="{{permiso.archivo.url}}" target="_blank">
                                                         <img class="icons" src="{% static '/img/icons/history.png' %}">
                                                     </a>
