@@ -543,7 +543,7 @@ def ranking_test(request):
         individuo.pedido = [s for s in individuo.seguimientos.all() if s.tipo == 'PT'][-1]
         #1pt por cada dia despues del 4to
         dias = int((timezone.now() - individuo.situacion_actual.fecha).total_seconds() / 3600 / 24)
-        individuo.puntaje = int((timezone.now() - individuo.situacion_actual.fecha).total_seconds() / 3600 / 24) - 4
+        individuo.puntaje = int((timezone.now() - individuo.situacion_actual.fecha).total_seconds() / 3600 / 24) - 7
         individuo.motivos = ["Dias: " + str(dias), ]
         #2 pts por cada atributo de excepcion
         atribs = [a.get_tipo_display() for a in individuo.atributos.all() if a.tipo in excepciones]

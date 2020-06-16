@@ -4,7 +4,7 @@ import logging
 import traceback
 from datetime import timedelta
 #Imports de django
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.utils import timezone
 from django.core.files import File
 from django.core.cache import cache
@@ -164,12 +164,16 @@ def asignar_vigilante(individuo, tipo):
     if tipo in tipos:
         #Iniciamos proceso de asignacion:
         try:
+            print("Iniciamos busqueda de Vigilante")
             if not individuo.vigiladores.filter(tipo=tipos[tipo]).exists():#Si no tiene Vigilante
+                print("No tiene vigilante")
                 #Intentamos buscarle el vigilante que menos asignados tenga
                 vigias = Vigia.objects.filter(tipo=tipos[tipo]).annotate(cantidad=Count('controlados'))
+                print(vigias)
                 for vigia in vigias.order_by('cantidad'):
                     if vigia.max_controlados > vigia.cantidad:
                         vigia.controlados.add(individuo)
+                        print("Lo agregamos a:" + str(vigia))
                         break#Lo cargamos, terminamos
         except:
             logger.info("No existen Vigias, " + str(individuo) + " quedo sin vigilante.")

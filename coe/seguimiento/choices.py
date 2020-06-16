@@ -6,8 +6,6 @@ TIPO_SEGUIMIENTO = (
     ('E', 'Epicrisis'),
     ('PT', 'Pidio Test'),
     ('ET', 'Esperando Resultados PCR'),
-    ('CT', 'Confirmado por Test'),
-    ('DT', 'Descartado por Test'),
     ('A', 'Autodiagnostico'),
     ('FS', 'Fin del Seguimiento/Alta'),
     ('IT', 'Inicio Tracking'),
@@ -17,6 +15,9 @@ TIPO_SEGUIMIENTO = (
     ('DF', 'Domicilio Fuera de la Provincia'),
     ('RC', 'Registro de Circulacion Temporal'),
     ('TE', 'No Posee Telefono / Telefono Equivocado'),
+
+    ('CT', 'Confirmado por Test'),
+    ('DT', 'Descartado por Test'),
 )
 
 TIPO_VIGIA = (

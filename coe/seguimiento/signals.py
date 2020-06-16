@@ -8,6 +8,7 @@ from django.template.loader import render_to_string
 from django.db.models.signals import post_save, post_delete
 #imports Extras
 #Imports del proyecto
+from coe.settings import SEND_MAIL
 from informacion.models import Individuo, Domicilio
 from informacion.models import Situacion, Atributo, SignosVitales, Documento
 #Imports de la app
@@ -44,9 +45,9 @@ def iniciar_seguimiento(created, instance, **kwargs):
 def descartar_sospechoso(created, instance, **kwargs):
     #Eliminamos relacion inversa
     if created and instance.tipo == "DT":
-        situacion = Situacion(individuo=instance.individuo)
         #El estado pasa a asintomatico
-        situacion.conducta = instance.individuo.get_situacion().conducta
+        situacion = instance.individuo.get_situacion()
+        situacion.estado = None
         situacion.aclaracion = 'Descartado' + instance.aclaracion
         situacion.save()
         #Creamos archivo de Descartado por Test
@@ -56,20 +57,18 @@ def descartar_sospechoso(created, instance, **kwargs):
         doc.aclaracion = "TEST NEGATIVO CONFIRMADO"
         doc.save()
         #Enviar mail
-        to_email = instance.individuo.email
-        #Preparamos el correo electronico
-        mail_subject = 'Constancia de Test - COE2020'
-        message = render_to_string('emails/constancia_test.html', {
-                'individuo': instance.individuo,
-                'doc': doc,
-            })
-        #Instanciamos el objeto mail con destinatario
-        email = EmailMessage(mail_subject, message, to=[to_email])
-        #Adjuntamos archivo
-        #email.attach(doc.archivo)
-        #email.add_attachment(doc.archivo.read(), maintype='application/pdf', subtype='pdf', filename='certificado.pdf')
-        #Enviamos el correo
-        email.send()
+        if SEND_MAIL and instance.individuo.email:
+            to_email = instance.individuo.email
+            #Preparamos el correo electronico
+            mail_subject = 'Constancia de Test - COE2020'
+            message = render_to_string('emails/constancia_test.html', {
+                    'individuo': instance.individuo,
+                    'doc': doc,
+                })
+            #Instanciamos el objeto mail con destinatario
+            email = EmailMessage(mail_subject, message, to=[to_email])
+            #Enviamos el correo
+            email.send()
 
 @receiver(post_save, sender=Domicilio)
 def poner_en_seguimiento(created, instance, **kwargs):
