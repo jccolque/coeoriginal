@@ -47,7 +47,7 @@ def descartar_sospechoso(created, instance, **kwargs):
     if created and instance.tipo == "DT":
         #El estado pasa a asintomatico
         situacion = instance.individuo.get_situacion()
-        situacion.estado = None
+        situacion.estado = 10
         situacion.aclaracion = 'Descartado' + instance.aclaracion
         situacion.save()
         #Creamos archivo de Descartado por Test
