@@ -14,7 +14,7 @@
                     <h3>Mapa de Seguimiento</h3>
                     {% with operativo.get_geoposiciones as geoposiciones %}
                         {% if geoposiciones %}
-                            {% include 'mapa_seguimiento.html' with geoposiciones= %}
+                            {% include 'mapa_seguimiento.html' %}
                         {% else %}
                             <p><b>Aun no se ha registrado ninguna GeoPosicion para el operativo.</b></p>
                         {% endif %}
