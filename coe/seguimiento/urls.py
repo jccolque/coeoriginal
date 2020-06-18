@@ -41,8 +41,10 @@ urlpatterns = [
     path('operativo/agregar/cazador/<int:operativo_id>', views.agregar_cazador, name='agregar_cazador'),
     path('operativo/quitar/cazador/<int:operativo_id>/<int:individuo_id>', views.quitar_cazador, name='quitar_cazador'),
     path('operativo/agregar/testeado/<int:operativo_id>', views.agregar_testeado, name='agregar_testeado'),
+    path('operativo/quitar/testeado/<int:operativo_id>/<int:individuo_id>', views.quitar_testeado, name='quitar_testeado'),
     path('operativo/iniciar/<int:operativo_id>', views.iniciar_operativo, name='iniciar_operativo'),
     path('operativo/finalizar/<int:operativo_id>', views.finalizar_operativo, name='finalizar_operativo'),
+    
     #path('operativo/quitar/testeado/<int:operativo_id>/<int:individuo_id>', views.quitar_testeado, name='quitar_testeado'),
     #Otros Listados
     path('test/pedidos', views.ranking_test, name='ranking_test'),

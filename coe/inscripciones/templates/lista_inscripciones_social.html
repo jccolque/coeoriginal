@@ -37,7 +37,13 @@
                             <td>{{inscripto.individuo.telefono}}</td>
                             <td>{{inscripto.individuo.email}}</td>
                             <td>{{inscripto.fecha}}</td>
-                            <td>{{inscripto.get_estado_display}}</td>
+                            <td>
+                                <b>{{inscripto.get_estado_display}}</b>
+                                {% if inscripto.tarea_asignada %}
+                                    <br>
+                                    {{inscripto.tarea_asignada}}
+                                {% endif %}
+                            </td>
                             <td><a href="{% url 'inscripciones:ver_inscripto' inscripcion_id=inscripto.id num_doc=inscripto.individuo.num_doc %}">Ver Resumen</a></td>
                         </tr>
                     {% endfor %}

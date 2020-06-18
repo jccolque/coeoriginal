@@ -521,6 +521,15 @@ def agregar_testeado(request, operativo_id):
             return redirect('seguimiento:ver_operativo', operativo_id=operativo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Agregar Testeado", 'form': form, 'boton': "Agregar", })
 
+@permission_required('operadores.operativos')
+def quitar_testeado(request, operativo_id, individuo_id):
+    operativo = OperativoVehicular.objects.get(pk=operativo_id)
+    individuo = Individuo.objects.get(pk=individuo_id)
+    test = operativo.tests.filter(individuo=individuo).first()
+    if test:
+        test.delete()
+    return redirect('seguimiento:ver_operativo', operativo_id=operativo.id)
+
 #@permission_required('operadores.operativos')
 #def quitar_cazador(request, test_id):
 

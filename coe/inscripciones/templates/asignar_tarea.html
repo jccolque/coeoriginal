@@ -1,0 +1,73 @@
+{% extends 'base_inscripciones.html' %}
+
+{% load static %}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <a href="{% url 'inscripciones:subir_foto' inscripcion_id=inscripto.id %}">
+                                    <img class="fotos" src="{{inscripto.individuo.get_foto}}">
+                                </a>
+                            </div>
+                            <div class="col-lg-10">
+                                <h2>
+                                    <b>{{inscripto.individuo.apellidos}}, {{inscripto.individuo.nombres}}</b>
+                                    <a href="{% url 'informacion:mod_individuo' individuo_id=inscripto.individuo.pk num_doc=inscripto.individuo.num_doc %}">
+                                        <img class="icons" src="{% static '/img/icons/change.png' %}">
+                                    </a>
+                                </h2>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <p>
+                                            {{inscripto.individuo.get_tipo_doc_display}} {{inscripto.individuo.num_doc}}
+                                            {% if inscripto.disponible %}
+                                                <b>- Disponible</b>
+                                            {% endif %}
+                                        </p>
+                                        <p><b>Fecha de Nacimiento:</b> {{inscripto.individuo.fecha_nacimiento}}</p>
+                                        <p><b>Oficio:</b> {{inscripto.oficio}}</p>
+                                        <p><b>Domicilio:</b> {{inscripto.individuo.domicilio_actual}}</p>
+                                        <p><b>Telefono:</b> {{inscripto.individuo.telefono}}</p>
+                                        <p>
+                                            <b>Email:</b> {{inscripto.individuo.email}}
+                                            {% if inscripto.valido %}
+                                                <img class="icons" src="/static/img/icons/check.png" alt="valido">
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    <div class="col-lg-6" style="height: 10em;overflow: auto;">
+                                        <p><b>Aclaraciones</b></p>
+                                        {{inscripto.info_extra|safe}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 col-lg-offset-3">
+                            <h2>Indique que tarea se le asignara al Voluntario:</h2>
+                            <form name="contact_form" class="default-form contact-form" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                
+                                <div class="form-group text-center">
+                                    <textarea id="tarea" name="tarea" rows="4" cols="50" required>
+                                        
+                                    </textarea>
+                                </div>
+
+                                <div class="form-group text-center">
+                                    <button type="submit" class="btn-style-one">Asignar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}
+

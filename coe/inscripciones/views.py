@@ -411,6 +411,21 @@ def avanzar_estado(request, inscripcion_id):
     return redirect('inscripciones:ver_inscripto', inscripcion_id=inscripcion_id, num_doc=inscripto.individuo.num_doc)
 
 @permission_required('operadores.menu_inscripciones')
+def asignar_tarea(request, inscripcion_id):
+    inscripto = Inscripcion.objects.get(pk=inscripcion_id)
+    #Si asigno tarea
+    if request.method == "POST":
+        if 'tarea' in request.POST:#Se la asignamos y avanzamos su Inscripcion.
+            inscripto.estado = 5
+            inscripto.tarea_asignada = request.POST['tarea']
+            inscripto.save()
+            return redirect('inscripciones:ver_inscripto', inscripcion_id=inscripcion_id, num_doc=inscripto.individuo.num_doc)
+    #Lanzamos form
+    return render(request, 'asignar_tarea.html', {
+        'inscripto': inscripto, }
+    )
+
+@permission_required('operadores.menu_inscripciones')
 def download_inscriptos(request):
     inscriptos = Inscripcion.objects.all()
     #Iniciamos la creacion del csv

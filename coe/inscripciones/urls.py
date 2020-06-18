@@ -29,6 +29,7 @@ urlpatterns = [
     path('lista/tarea/<str:tarea_id>/', views.lista_por_tarea, name='lista_por_tarea'),
     path('lista/proyectos', views.lista_proyectos, name='lista_proyectos'),
     path('avanzar/estado/<int:inscripcion_id>', views.avanzar_estado, name='avanzar_estado'),
+    path('asignar/tarea/<int:inscripcion_id>', views.asignar_tarea, name='asignar_tarea'),
     path('inscripto/email/<int:inscripcion_id>', views.enviar_email, name='enviar_email'),
     #Proyecto
     path('proyecto/panel/<str:token>/', views.panel_proyecto, name='panel_proyecto'),

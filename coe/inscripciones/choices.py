@@ -9,7 +9,9 @@ ESTADO_INSCRIPTO = (
     (1, 'Inscripcion Terminada - Esperando Aprobacion'),
     (2, 'Capacitaciones'),
     (3, 'Turno Para firmar Acuerdo Basico Pedido'),
-    (4, 'Inscripcion Finalizada'),
+    (4, 'Acuerdo Basico Firmado'),
+    (5, 'Tarea Asignada'),
+    (99, 'Eliminada/Baja'),
 )
 
 GRUPO_SANGUINEO = (
