@@ -42,7 +42,7 @@
                         <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
                     </a>
                     <h3>Cazadores:</h3>
-                    <table class="listado">
+                    <table class="listado" id="table2">
                         <tr>
                             <th>Documento</th>
                             <th>Individuo</th>
@@ -98,13 +98,13 @@
                                         <td>{{test.individuo.domicilio_actual}}</td>
                                         <td>{{test.individuo.telefono}}</td>
                                         <td>
-                                            <a class="nolink" href="{% url 'seguimiento:cargar_seguimiento' individuo_id=test.individuo.id tipo='DT' %}" class="nolink" target="_blank">
+                                            <a class="nolink" href="{% url 'seguimiento:cargar_seguimiento' individuo_id=test.individuo.id tipo='DT' %}" target="_blank">
                                                 <img class="icons" src="{% static '/img/icons/test.png' %}">
                                             </a>
-                                            <a class="nolink" href="{% url 'informacion:ver_individuo' individuo_id=test.individuo.id %}" class="nolink" target="_blank">
+                                            <a class="nolink" href="{% url 'informacion:ver_individuo' individuo_id=test.individuo.id %}" target="_blank">
                                                 <img class="icons" src="{% static '/img/icons/lupa.png' %}">
                                             </a>
-                                            <a class="nolink" href="{% url 'seguimiento:quitar_testeado' operativo_id=operativo.id individuo_id=test.individuo.id %}" class="nolink" target="_blank">
+                                            <a class="nolink" href="{% url 'seguimiento:quitar_testeado' operativo_id=operativo.id individuo_id=test.individuo.id %}">
                                                 <img class="icons" src="/static/img/icons/delete.png">
                                             </a>
                                         </td>

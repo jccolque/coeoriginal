@@ -704,6 +704,14 @@ def control_salvoconducto(request):
             test.num_doc = dni_qr
             test.geoposicion = geopos
             test.save()
+            #Intentamos obtener individuo:
+            if test.individuo:
+                individuo = test.individuo
+            else:
+                individuo = test.num_doc
+            #Es un testing
+            geopos.tipo = 'TS'
+            geopos.save()
             return JsonResponse(
                 {
                     "accion": 'Test Realizado',

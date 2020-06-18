@@ -151,6 +151,7 @@ def es_operador_activo(num_doc):
 
 def obtener_operativo(num_doc):
     operativos = OperativoVehicular.objects.filter(cazadores__num_doc=num_doc)
+    operativos = operativos.filter(estado='I')
     return operativos.last()
 
 def asignar_vigilante(individuo, tipo):

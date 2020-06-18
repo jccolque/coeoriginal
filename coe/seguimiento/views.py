@@ -436,6 +436,7 @@ def ver_operativo(request, operativo_id):
         'operativo': operativo,
         'refresh': (operativo.estado == 'I'),
         'gmkey': GEOPOSITION_GOOGLE_MAPS_API_KEY,
+        'has_table': True,
         }
     )
 

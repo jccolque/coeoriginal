@@ -1,21 +1,24 @@
 TIPO_SEGUIMIENTO = (
     ('I', 'Inclusion al Sistema'),
+    ('A', 'Autodiagnostico'),
+
+    ('IT', 'Inicio Tracking'),
+    ('AT', 'Alerta Tracking'),
+    ('FT', 'Finalizacion del Tracking'),
+    
+    ('DF', 'Domicilio Fuera de la Provincia'),
     ('L', 'Llamada Telefonica'),
     ('M', 'Reporte Medico'),
     ('C', 'Cronologia'),
     ('E', 'Epicrisis'),
-    ('PT', 'Pidio Test'),
-    ('ET', 'Esperando Resultados PCR'),
-    ('A', 'Autodiagnostico'),
-    ('FS', 'Fin del Seguimiento/Alta'),
-    ('IT', 'Inicio Tracking'),
-    ('AT', 'Alerta Tracking'),
-    ('FT', 'Finalizacion del Tracking'),
+    
     ('TA', 'Traslado a Aislamiento'),
-    ('DF', 'Domicilio Fuera de la Provincia'),
     ('RC', 'Registro de Circulacion Temporal'),
     ('TE', 'No Posee Telefono / Telefono Equivocado'),
+    ('FS', 'Fin del Seguimiento/Alta'),
 
+    ('PT', 'Pidio Test'),
+    ('ET', 'Esperando Resultados PCR'),
     ('CT', 'Confirmado por Test'),
     ('DT', 'Descartado por Test'),
 )
