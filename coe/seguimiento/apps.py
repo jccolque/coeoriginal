@@ -15,6 +15,7 @@ class SeguimientoConfig(AppConfig):
             from .signals import recuperar_seguimiento
             from .signals import iniciar_seguimiento
             from .signals import descartar_sospechoso
+            from .signals import confirmar_sospechoso
             from .signals import poner_en_seguimiento
             from .signals import atributo_vigilancia
             from .signals import cargo_signosvitales

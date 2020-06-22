@@ -144,7 +144,11 @@ class Ubicacion(models.Model):
         return self.capacidad_maxima - self.capacidad_ocupada()
     def aislados_actuales(self):
         from informacion.models import Individuo
-        return Individuo.objects.filter(domicilio_actual__ubicacion=self)
+        #Buscamos todos los que estan aca
+        individuos = Individuo.objects.filter(domicilio_actual__ubicacion=self)
+        #Optimizamos
+        individuos = individuos.select_related('domicilio_actual', 'situacion_actual', 'appdata')
+        return individuos
     def capacidad_ocupada(self):
         return self.aislados_actuales().count()
 

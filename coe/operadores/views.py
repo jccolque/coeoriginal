@@ -92,6 +92,7 @@ def listar_operadores(request):
         'has_table': True,
     })
 
+@permission_required('operadores.operadores')
 def crear_operador(request):
     form = CrearOperadorForm()
     if request.method == "POST":

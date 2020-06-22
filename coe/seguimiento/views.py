@@ -128,11 +128,11 @@ def cargar_seguimiento(request, individuo_id, seguimiento_id=None, tipo=None):
     individuo = Individuo.objects.get(pk=individuo_id)
     if seguimiento_id:
         seguimiento = Seguimiento.objects.get(pk=seguimiento_id)
-        form = SeguimientoForm(instance=seguimiento)
+        form = SeguimientoForm(instance=seguimiento, user=request.user)
     else:
-        form = SeguimientoForm(initial={'tipo': tipo})
+        form = SeguimientoForm(initial={'tipo': tipo}, user=request.user)
     if request.method == "POST":
-        form = SeguimientoForm(request.POST, instance=seguimiento)
+        form = SeguimientoForm(request.POST, instance=seguimiento, user=request.user)
         if form.is_valid():
             seguimiento = form.save(commit=False)
             seguimiento.individuo = individuo

@@ -240,10 +240,16 @@ def crear_ubicacion(request, ubicacion_id=None):
 def ver_ubicacion(request, ubicacion_id=None):
     #Optimizamos
     ubicacion = Ubicacion.objects.select_related('localidad', 'barrio')
-    ubicacion = ubicacion.prefetch_related('aislados')
     ubicacion = ubicacion.prefetch_related('turnos_inscripciones', 'turnos_inscripciones__inscripto', 'turnos_inscripciones__inscripto__individuo')
     #Traemos la correspondiente
     ubicacion = ubicacion.get(pk=ubicacion_id)
+    #Chequeamos que tenga permiso para ver internaciones:
+    if ubicacion.tipo == 'IN' and not request.user.has_perm('operadores.epidemiologia'):
+        return render(request, 'extras/error.html', {
+            'titulo': 'Informacion Confidencial',
+            'error': "Usted no tiene acceso a este tipo de Ubicaciones.",
+        })
+    #Mostramos ubicacion:
     return render(request, 'ver_ubicacion.html', {
         'ubicacion': ubicacion,
         'has_table': True,

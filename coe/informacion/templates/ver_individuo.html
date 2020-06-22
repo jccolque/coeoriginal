@@ -362,7 +362,10 @@
                                     </a>
                                 </td>
                                 <td>{{relacion.aclaracion}}</td>
-                                <td>{{relacion.relacionado.situacion_actual}}</td>
+                                <td>
+                                    <b>{{relacion.relacionado.situacion_actual}}</b><br>
+                                    {{relacion.relacionado.situacion_actual.aclaracion}}
+                                </td>
                                 <td>{{relacion.fecha}}</td>
                                 <td>
                                     <a class="nolink"  href="{% url 'informacion:mod_relacion' individuo_id=individuo.id relacion_id=relacion.id %}" target="_blank">

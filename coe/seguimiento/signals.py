@@ -43,7 +43,6 @@ def iniciar_seguimiento(created, instance, **kwargs):
 
 @receiver(post_save, sender=Seguimiento)
 def descartar_sospechoso(created, instance, **kwargs):
-    #Eliminamos relacion inversa
     if created and instance.tipo == "DT":
         #El estado pasa a asintomatico
         situacion = instance.individuo.get_situacion()
@@ -69,6 +68,15 @@ def descartar_sospechoso(created, instance, **kwargs):
             email = EmailMessage(mail_subject, message, to=[to_email])
             #Enviamos el correo
             email.send()
+
+@receiver(post_save, sender=Seguimiento)
+def confirmar_sospechoso(created, instance, **kwargs):
+    if created and instance.tipo == "CT":
+        situacion = Situacion(individuo=instance.individuo)
+        situacion.estado = 50
+        situacion.conducta = 'E'
+        situacion.aclaracion = "Confirmado por TEST PCR"
+        situacion.save()
 
 @receiver(post_save, sender=Domicilio)
 def poner_en_seguimiento(created, instance, **kwargs):
