@@ -26,3 +26,4 @@ class InformacionConfig(AppConfig):
             from .signals import afectar_relacionados
             from .signals import aislar_individuo
             from .signals import aislamiento_domiciliario
+            from .signals import quitar_vigilancia_confirmado

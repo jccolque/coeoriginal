@@ -173,4 +173,4 @@ def asignar_vigilante(individuo, tipo):
                         vigia.controlados.add(individuo)
                         break#Lo cargamos, terminamos
         except:
-            logger.info("No existen Vigias, " + str(individuo) + " quedo sin vigilante.")
+            logger.info("No existen Vigias: " + tipo + ", " + str(individuo) + " quedo sin vigilancia.")

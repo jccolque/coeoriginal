@@ -10,6 +10,7 @@ from django.db.models.signals import post_save, post_delete
 from dateutil.relativedelta import relativedelta
 #Imports del proyecto
 #Imports de la app
+from seguimiento.models import Seguimiento
 #from .models import Pasajero
 from .models import Individuo, Domicilio, Situacion, Relacion
 from .models import Atributo, SignosVitales, Documento
@@ -183,6 +184,15 @@ def aislamiento_domiciliario(created, instance, **kwargs):
             atributo.tipo = 'VE'
             atributo.aclaracion = "Por Ingreso a Aislamiento."
             atributo.save()
+
+@receiver(post_save, sender=Situacion)
+def quitar_vigilancia_confirmado(created, instance, **kwargs):
+    if instance.estado == 50:
+        if created or ('estado' in kwargs.get('update_fields')):#Si creamos o pasamos a confirmado
+            seguimiento = Seguimiento(individuo=instance.individuo)
+            seguimiento.tipo = 'FS'
+            seguimiento.aclaracion = 'Fin de Seguimiento Normal por TEST Confirmado'
+            seguimiento.save()
 
 #@receiver(post_save, sender=Atributo)
 #def iniciar_tracking_transportistas(created, instance, **kwargs):
