@@ -2,13 +2,19 @@
 
 {% load static %}
 {% load files_tags %}
+{% load auditar_tags %}
 
 {% block content %}
     <section class="resumen">
         <section class="informacion_basica">
             <div class="container">
                 <div class="row">
-                    <h2><b>Panel de Ingreso Provincial</b></h2>
+                    <h2>
+                        <b>Panel de Ingreso Provincial</b>
+                        <a class="nolink"  href="{% ct_auditar_obj_url ingreso %}">
+                            <img class="icons" src="{% static '/img/icons/question.png' %}">
+                        </a>
+                    </h2>
                     <div class="col-md-8">
                         <div class="row">
                             <div class="col-md-6">
