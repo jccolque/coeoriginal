@@ -22,8 +22,13 @@ class SeguimientoForm(forms.ModelForm):
         }
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
+        instance = kwargs.pop('instance')
         super(SeguimientoForm, self).__init__(*args, **kwargs)
-        self.fields['tipo'].choices = obtener_seguimientos(user)
+        if instance:
+            self.fields['tipo'].choices = [instance.tipo, ]
+        else:
+            self.fields['tipo'].choices = obtener_seguimientos(user)
+
 
 
 class NuevoVigia(forms.ModelForm):

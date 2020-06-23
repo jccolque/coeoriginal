@@ -80,16 +80,19 @@
                                         {% endwith %}
                                     {% elif inscripto.estado == 2 or inscripto.estado == 3 %}
                                         <h3><b>Seleccione el Lugar donde desea realizar el tramite presencial:</b></h3>
-                                        <ul>
-                                            {% for ubicacion in ubicaciones %}
-                                                <li>
-                                                    <a href="{% url 'inscripciones:turnero' ubicacion_id=ubicacion.id inscripto_id=inscripto.id %}" target="_blank">
-                                                        {{ubicacion.nombre}} ({{ubicacion.localidad.nombre}})
-                                                    </a>
-                                                </li>
-                                            {% endfor %}
-                                        </ul>
-                                        <p><i>Turnos de Lunes a Viernes de 8 a 19 horas.</i></p>
+                                        {% if ubicaciones %}
+                                            <ul>
+                                                {% for ubicacion in ubicaciones %}
+                                                    <li>
+                                                        <a href="{% url 'inscripciones:turnero' ubicacion_id=ubicacion.id inscripto_id=inscripto.id %}" target="_blank">
+                                                            {{ubicacion.nombre}} ({{ubicacion.localidad.nombre}})
+                                                        </a>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <p><b>No hay Lugares Disponibles.</b></p>
+                                        {% endif %}
                                     {% endif %}
                                 </div>
                             </div>

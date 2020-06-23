@@ -172,7 +172,7 @@ def ver_inscripto(request, inscripcion_id, num_doc):
             return render(request, 'panel_social.html', {
                 'inscripto': inscripto, 
                 'capacitaciones': Capacitacion.objects.filter(tipo=inscripto.tipo_inscripto),
-                'ubicaciones': Ubicacion.objects.filter(tipo='AP'),
+                'ubicaciones': Ubicacion.objects.filter(tipo='AP', capacidad_maxima__gt=0),
             })
     except Inscripcion.DoesNotExist:
         return render(request, 'extras/error.html', {
