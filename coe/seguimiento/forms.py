@@ -22,10 +22,10 @@ class SeguimientoForm(forms.ModelForm):
         }
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
-        instance = kwargs.pop('instance')
+        instance = kwargs.get('instance')
         super(SeguimientoForm, self).__init__(*args, **kwargs)
         if instance:
-            self.fields['tipo'].choices = [instance.tipo, ]
+            self.fields['tipo'].choices = [(instance.tipo, instance.get_tipo_display()), ]
         else:
             self.fields['tipo'].choices = obtener_seguimientos(user)
 
