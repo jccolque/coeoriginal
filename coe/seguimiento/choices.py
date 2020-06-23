@@ -5,7 +5,6 @@ TIPO_SEGUIMIENTO = (
     ('AT', 'Alerta Tracking'),
     ('FT', 'Finalizacion del Tracking'),
     ('DF', 'Domicilio Fuera de la Provincia'),
-    ('PT', 'Pidio Test'),
     ('TA', 'Traslado a Aislamiento'),
     ('RC', 'Registro de Circulacion Temporal'),
     #Todos los usuarios
@@ -14,18 +13,19 @@ TIPO_SEGUIMIENTO = (
     ('C', 'Cronologia'),
     ('E', 'Epicrisis'),    
     ('TE', 'No Posee Telefono / Telefono Equivocado'),
+    ('PT', 'Pidio Test'),
+    ('ET', 'Esperando Resultados PCR'),
     ('FS', 'Fin del Seguimiento/Alta'),
     #Solo usuarios con permiso: 
-    ('ET', 'Esperando Resultados PCR'),
     ('CT', 'Confirmado por Test'),
     ('DT', 'Descartado por Test'),
 )
 
 def obtener_seguimientos(user):
     #Tipo de Seguimientos:
-    sistema = ['I', 'A', 'IT', 'AT', 'FT', 'DF', 'PT', 'TA', 'RC']
-    publicos = ['L', 'M', 'C', 'E', 'TE', 'FS']
-    epidemiologia = ['ET', 'CT', 'DT']
+    sistema = ['I', 'A', 'IT', 'AT', 'FT', 'DF', 'TA', 'RC']
+    publicos = ['L', 'M', 'C', 'E', 'TE', 'PT', 'ET', 'FS']
+    epidemiologia = ['CT', 'DT']
     #Generamos seguimientos accesibles
     tipos = [t for t in TIPO_SEGUIMIENTO if t[0] in publicos]
     #Agregamos segun permisos:
