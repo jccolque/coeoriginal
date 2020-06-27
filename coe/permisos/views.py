@@ -164,7 +164,7 @@ def cargar_ingresante(request, ingreso_id, individuo_id=None):
         if form.is_valid():
             #actualizamos individuo con los datos nuevos
             individuo = actualizar_individuo(form)
-            individuo.origen = ingreso.localidad_origen
+            individuo.origen = form.cleaned_data['localidad_origen']
             individuo.destino = ingreso.destino
             individuo.save()
             #Lo agregamos al registro
