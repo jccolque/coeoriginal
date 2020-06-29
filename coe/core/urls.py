@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^$', views.home, name='home'),
     path('faqs', views.faqs, name='faqs'),
     path('consejos', views.consejos, name='consejos'),
+    path('entregas', views.entregas, name='entregas'),
     #Administracion
     path('core', views.menu, name='menu'),
 

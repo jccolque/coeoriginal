@@ -37,21 +37,24 @@
                         <a href="{% url 'inscripciones:inscripcion_proyecto' %}">
                             <img class="fotos" src="{% static 'img/proyecto_estudiantil.gif' %}">
                         </a>
-                        <a href="{% url 'inscripciones:inscripcion_salud' %}">
-                            <img class="fotos" src="{% static 'img/reclutamiento_salud.jpeg' %}">
+                        <a href="{% url 'app:download_app' %}">
+                            <img class="fotos" src="{% static 'img/download_app.jpg' %}" style="border-radius: 35px;">
                         </a>
                     </div>
                     <div class="col-sm-6">
+                        <!--
                         <div class="col-sm-6">
                             <a href="{% url 'seguimiento:pedir_test' %}" target="_blank">
                                 <img class="fotos" src="{% static 'img/pedir_test.png' %}">
                             </a>
                         </div>
-                        <div class="col-sm-6">
-                            <a href="{% url 'inscripciones:inscripcion_social' %}" target="_blank">
-                                <img class="fotos" src="{% static 'img/reclutamiento_social.jpeg' %}">
+                        -->
+                        <div class="elem">
+                            <a href="{% url 'core:entregas' %}" target="_blank">
+                                <img class="fotos"  src="{% static 'img/entregas.jpg' %}">
                             </a>
                         </div>
+
                         <!--
                             <div class="col-sm-12">
                                 <a href="{% url 'inscripciones:pedir_coca' %}" target="_blank">
@@ -59,9 +62,10 @@
                                 </a>
                             </div>
                         -->
-                        <a href="{% url 'app:download_app' %}">
-                            <img class="fotos" src="{% static 'img/download_app.jpg' %}" style="border-radius: 35px;">
+                        <a href="{% url 'inscripciones:inscripcion_salud' %}">
+                            <img class="fotos" src="{% static 'img/reclutamiento_salud.jpeg' %}">
                         </a>
+
                     </div>
                 </div>
 
@@ -80,6 +84,12 @@
                             </a>
                         </div>
                     </div>
+                    <div class="col-sm-4">
+                            <a href="{% url 'inscripciones:inscripcion_social' %}" target="_blank">
+                                <img class="fotos" src="{% static 'img/reclutamiento_social.jpeg' %}">
+                            </a>
+                    </div>
+                    
                 </div>
 
                 <div class="row">
