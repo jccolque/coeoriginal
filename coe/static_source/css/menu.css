@@ -19,7 +19,7 @@ menu {
 
 .menu-logo img {
     height: 70px;
-    position: relative;
+    position:absolute;
     padding: 5px;
 }
 
