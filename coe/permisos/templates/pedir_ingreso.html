@@ -2,10 +2,147 @@
 
 {% load static %}
 
+{% block custom_head %}
+
+<head>
+    <!-- mobile responsive meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <style>
+        @media screen and (max-width: 720px){
+            .page-wrapper {
+              width: 100%;
+            }
+        }
+        .contact-area {
+            padding-left: 0px;
+        }
+
+        .contact-area ul {
+            list-style:none;
+        }
+
+
+        .contact-area form {
+            margin-top: 60px;
+        }
+
+        .contact-area .form-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .contact-area input, .contact-area textarea {
+            position: relative;
+            width: 100%;
+            min-height: 50px;
+            color: #777777;
+            padding: 10px 25px;
+            background: #f4f4f4;
+            display: block;
+            border: 1px solid #ececec;
+        }
+
+        .contact-area .form-group select {
+            -webkit-appearance: none;
+            -ms-appearance: none;
+            -moz-appearance: none;
+            -o-appearance: none;
+            height: 50px;
+            width: 100%;
+            padding: 10px 20px;
+            border: 1px solid #ececec;
+            background: #f4f4f4 url(../images/icons/icon-select.png) right center no-repeat;
+            cursor: pointer;
+        }
+
+        .contact-area .form-group option {
+            font-weight: normal;
+            display: block;
+            white-space: pre;
+            height: 50px;
+            padding: 20px;
+        }
+
+        .contact-area .form-group option:hover {
+            background: #7b64cb;
+        }
+
+        .contact-area textarea {
+            height: 190px;
+            resize: none;
+        }
+
+        .contact-area button {
+            width: 100%;
+            height: 50px;
+        }
+
+        .contact-area .form-group i {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            font-size: 15px;
+        }
+
+        .contact-area .form-group select {
+            -webkit-appearance: none;
+            -ms-appearance: none;
+            -moz-appearance: none;
+            -o-appearance: none;
+            height: 50px;
+            width: 100%;
+            padding: 10px 20px;
+            border: 1px solid #ececec;
+            background: #f4f4f4 url(../images/icons/icon-select.png) right center no-repeat;
+            cursor: pointer;
+        }
+
+        .contact-area .form-group option {
+            font-weight: normal;
+            display: block;
+            white-space: pre;
+            height: 50px;
+            padding: 20px;
+        }
+
+        .contact-area .form-group option:hover {
+            background: #7b64cb;
+        }
+
+        .contact-area textarea {
+            height: 190px;
+            resize: none;
+        }
+
+        .contact-area button {
+            width: 100%;
+            height: 50px;
+        }
+
+        .contact-area .form-group i {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            font-size: 15px;
+        }
+        label {
+            font-weight: initial!important;
+        }
+
+        .obligatorio {
+            font-weight: bold!important;
+        }
+
+    </style>    
+</head>
+
+{% endblock %}
+
 {% block content %}
     <div class="container">
-        <div class="row">
-            <form method="post" enctype="multipart/form-data" autocomplete="off">
+        <div class="row">            
+            <form name="contact_form" class="default-form contact-form" method="post" enctype="multipart/form-data" autocomplete="off">
                 <div class="row">
                     <br>
                     {% csrf_token %}
@@ -21,46 +158,123 @@
                     <h1><b>{{titulo}}</b></h1>
                     <div class="row">
                         <div class="col-lg-5">
-                            <div class="bordeado">
-                                <p>Este formulario es para aquellos que desean volver a la provincia en un <b>Vehiculo Particular</b>.</p>
-                                <p><b>Si usted Posee un Boleto de Colectivo u Avion la empresa responsable del mismo realizara este tramite.</b></p>
-                                <hr>
-                                <p><b>Para poder realizar el mismo se debe cumplir los siguientes criterios:</b></p>
-                                <ul>
-                                    <li>1- Completar el formulario inicial</li>
-                                    <li>2- Completar los pasos posteriores (Recibira un Email a su casilla de contacto)</li>
-                                    <li>3- Cargar a <b>TODOS</b> los pasajeros del vehiculo incluyendo al Conductor</li>
-                                    <li>4- Registrarse en la aplicacion COVID-19 (<a href="https://play.google.com/store/apps/details?id=com.ga.covidjujuy_app" target="_blank">instalar</a>)</li>
-                                </ul>
-                                <p><b>Importante</b></p>
-                                <ul>
-                                    <li>Si usted cuenta con <b>Permiso de Circulacion Nacional</b>, y lo carga podemos Aprobar directamente su requerimiento.</li>
-                                    <li>Si No cuenta con Permiso de Circulacion Nacional, nosotros tramitaremos el mismo y aprobaremos su pedido cuando nacional lo autorice.</li>
-                                </ul>
-                                <hr>
-                                <p>La información consignada precedentemente reviste carácter de Declaración Jurada.</p>
-                                <p>Su omisión o falsedad procederá al rechazo de la inscripción o la exclusión del registro, sin perjuicio de las sanciones que le pudiera corresponder.</p>
-                                <img class="fotos" src="{% static 'img/ingresoprovincial.png' %}">
+                            <div class="contact-area">
+                                <div class="bordeado">
+                                    <p>Este formulario es para aquellas PERSONAS que desean volver a la provincia en un <b>VEHÍCULO PARTICULAR</b>.</p>
+                                    <p><b>Si usted POSEE un Boleto de Colectivo o de Avión, la empresa responsable del mismo realizará este trámite.</b></p>
+                                    <hr>
+                                    <p><b>Para realizar el mismo, se debe cumplir los siguientes criterios:</b></p>
+                                    <ul>
+                                        <li>[1]. Completar el formulario inicial</li>
+                                        <li>[2]. Completar los pasos posteriores (Recibira un Email a su casilla de contacto)</li>
+                                        <li>[3]. Cargar a <b>TODOS</b> los pasajeros del vehiculo incluyendo al Conductor</li>
+                                        <li>[4]. Registrarse en la aplicacion COVID-19 (<a href="https://play.google.com/store/apps/details?id=com.ga.covidjujuy_app" target="_blank">instalar</a>)</li>
+                                    </ul>
+                                    <p><b>Importante</b></p>
+                                    <ul>
+                                        <li>Si usted cuenta con el <b>PERMISO DE CIRCULACIÓN NACIONAL</b>, y lo carga podemos APROBAR directamente su INGRESO.</li>
+                                        <li>Si NO CUENTA el con Permiso de Circulación Nacional, nosotros tramitaremos el mismo y aprobaremos su pedido cuando NACIÓN lo autorice.</li>
+                                    </ul>
+                                    <hr>
+                                    <p>El siguiente formulario se completa en carácter de DECLARACIÓN JURADA.</p>
+                                    <p>Su omisión o falsedad procederá al rechazo de la inscripción o la exclusión del registro, sin perjuicio de las sanciones que le pudiera corresponder.</p>
+                                    <img class="fotos" src="{% static 'img/ingresoprovincial.png' %}">
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-7">
-                            <div class="bordeado" style="text-align:justify;">
-                                <h3><b>Datos del Vehiculo</b></h3>
-                                <p><b>Email de Contacto:</b> {{form.email_contacto}} <i>(A travez del mismo lo contactaremos)</i></p>
-                                <p><b>Fecha ideal de Llegada:</b> {{form.fecha_llegada}}</p>
-                                <p><b>Provincia de Origen:</b> {{form.origen}}</p>
-                                <p><b>Destino Final:</b> {{form.destino}}</p>
-                                <hr>
-                                <p><b>Datos del Vehiculo</b></p>
-                                <p><b>Marca:</b> {{form.marca}}</p>
-                                <p><b>Modelo:</b> {{form.modelo}}</p>
-                                <p><b>Patente:</b> {{form.patente}}</p>
-                                <hr>
-                                <p><b>Aclaraciones Pertinentes:</b></p>
-                                {{form.aclaracion}}
-                                <br>
-                                <button type="submit">Continuar con Pedido de Ingreso</button>
-                            </div>
+                            <section class="section wow animated slideInUp">
+                                <div class="bordeado" style="text-align:justify;">
+                                    <div class="contact-area">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <h3><strong>DATOS RELEVANTES/VEHÍCULO</strong></h3>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="col-lg-6">                                
+                                                <div class="form-group">
+                                                    <label class="obligatorio" for="{{form.email_contacto.id_for_label}}">{{form.email_contacto.label}}</label>
+                                                    {{form.email_contacto}}
+                                                    <small class="form-text text-danger">{{form.email_contacto.errors.as_text}}</small>
+                                                    <p><strong>Asegúrese de introducir un email válido, a través del mismo lo contactaremos.</strong></p>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6"> 
+                                                <div class="form-group">
+                                                    <label class="obligatorio" for="{{form.fecha_llegada.id_for_label}}">Fecha y Hora ideal de LLEGADA:</label>
+                                                    {{form.fecha_llegada}}
+                                                    <small class="form-text text-danger">{{form.fecha_llegada.errors.as_text}}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-12">
+                                            <div class="col-lg-6">                                
+                                                <div class="form-group">
+                                                    <label class="obligatorio" for="{{form.origen.id_for_label}}">Provincia de Origen:</label>
+                                                    {{form.origen}}
+                                                    <small class="form-text text-danger">{{form.origen.errors.as_text}}</small>
+                                                    <p><strong>Es la Provincia en la que se encuentra en estos momentos.</strong></p>                                                    
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6"> 
+                                                <div class="form-group">
+                                                    <label class="obligatorio" for="{{form.destino.id_for_label}}">Localidad de Destino:</label>
+                                                    {{form.destino}}
+                                                    <small class="form-text text-danger">{{form.destino.errors.as_text}}</small>
+                                                    <p><strong>Localidad de la Provincia de Jujuy a la que se quiere dirigir.</strong></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <h3><strong>DATOS DEL VEHÍCULO</strong></h3>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-12">
+                                            <div class="col-lg-6">                                
+                                                <div class="form-group">
+                                                    <label for="{{form.marca.id_for_label}}">MARCA:</label>
+                                                    {{form.marca}}
+                                                    <small class="form-text text-danger">{{form.marca.errors.as_text}}</small>                                                    
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6"> 
+                                                <div class="form-group">
+                                                    <label for="{{form.modelo.id_for_label}}">MODELO:</label>
+                                                    {{form.modelo}}
+                                                    <small class="form-text text-danger">{{form.modelo.errors.as_text}}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="col-lg-6">                                
+                                                <div class="form-group">
+                                                    <label for="{{form.patente.id_for_label}}">PATENTE:</label>
+                                                    {{form.patente}}
+                                                    <small class="form-text text-danger">{{form.patente.errors.as_text}}</small>                                                    
+                                                </div>
+                                            </div>                                            
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="col-lg-6">                                
+                                                <div class="form-group">
+                                                    <label for="{{form.aclaracion.id_for_label}}">Aclaraciones Pertinentes:</label>
+                                                    {{form.aclaracion}}
+                                                    <small class="form-text text-danger">{{form.aclaracion.errors.as_text}}</small>                                                    
+                                                </div>
+                                            </div>                                            
+                                        </div>           
+                                        <br>                                     
+                                        
+                                        <button type="submit" class="btn-style-one">Continuar con Pedido de Ingreso</button>
+                                    </div>
+                                </div>
+                            </section>
                         </div>
                     </div>
                 </div>
@@ -68,3 +282,11 @@
         </div>
     </div>
 {% endblock %}
+
+
+                                        
+                                                                               
+                                        
+                                        
+                                       
+                                        
