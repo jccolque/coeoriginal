@@ -10,6 +10,7 @@ from django.db.models.signals import post_save, post_delete
 from dateutil.relativedelta import relativedelta
 #Imports del proyecto
 #Imports de la app
+from seguimiento.models import Seguimiento
 #from .models import Pasajero
 from .models import Individuo, Domicilio, Situacion, Relacion
 from .models import Atributo, SignosVitales, Documento
@@ -91,6 +92,7 @@ def aislar_individuo(created, instance, **kwargs):
         if situacion_actual.conducta not in ('D', 'E'):
             situacion = Situacion(individuo=individuo)
             situacion.conducta = 'E'
+            situacion.fecha = instance.fecha
             situacion.aclaracion = "Aislado por traslado a ubicacion de Aislamiento/Internacion"
             situacion.save()
 
@@ -122,69 +124,75 @@ def situacion_actual(created, instance, **kwargs):
 #Evolucionamos Estado segun relaciones
 @receiver(post_save, sender=Situacion)
 def afectar_relacionados(created, instance, **kwargs):
-    if created:
-        individuo = instance.individuo
-        for relacion in individuo.relaciones.all():
-            sit_rel = relacion.relacionado.situacion_actual
-            if not sit_rel:#Si no tenia estado le creamos inicial
-                sit_rel = Situacion()
-                sit_rel.individuo = relacion.relacionado
-                sit_rel.aclaracion = "Inicializado por el sistema"
-                sit_rel.estado = 11
-            #Procesamos lo que nos importa
-            if instance.estado > sit_rel.estado and sit_rel.estado > 2:#Que sea peor y que no este fuera de provincia o muerto...
-                anterior_estado = copy.copy(sit_rel.estado)
-                #Tramos situacion actual del relacionado
-                sit_rel.id = None
-                #Generamos situ nueva segun caso
-                if instance.estado == 32:#Contacto Alto Riesgo            
-                    sit_rel.estado = 31
-                if instance.estado == 40:#Sospechoso
-                    sit_rel.estado = 32
-                if instance.estado == 50:#Confirmado
-                    sit_rel.estado = 40
-                #Agregamos descripcion y guardamos
-                sit_rel.conducta = 'B'
-                sit_rel.aclaracion = "Detectado por sistema, Relacionado con: " + individuo.num_doc
-                if sit_rel.estado > anterior_estado:
-                    sit_rel.save()
+    individuo = instance.individuo
+    for relacion in individuo.relaciones.all():
+        #Obtenemos la situacion
+        sit_rel = relacion.relacionado.get_situacion()
+        #Procesamos lo que nos importa
+        if instance.estado > sit_rel.estado and sit_rel.estado > 2:#Que sea peor y que no este fuera de provincia o muerto...
+            anterior_estado = copy.copy(sit_rel.estado)
+            #Tramos situacion actual del relacionado
+            sit_rel.id = None
+            #Generamos situ nueva segun caso
+            if instance.estado == 32:#Contacto Alto Riesgo            
+                sit_rel.estado = 31
+            if instance.estado == 40:#Sospechoso
+                sit_rel.estado = 32
+            if instance.estado == 50:#Confirmado
+                sit_rel.estado = 40
+            #Agregamos descripcion y guardamos
+            sit_rel.conducta = 'B'
+            sit_rel.aclaracion = "Detectado por sistema, Relacionado con: " + str(individuo)
+            if sit_rel.estado > anterior_estado:
+                sit_rel.save()
 
 @receiver(post_save, sender=Relacion)
 def relacionar_situacion(created, instance, **kwargs):
     #Creamos la relacion inversa
     if created:
         individuo = instance.individuo
-        if individuo.situacion_actual:
-            situ_actual = individuo.situacion_actual
-        else:
-            sit = Situacion()
-            sit.individuo = individuo
-            sit.aclaracion = "Inicializada por Sistema"
-            sit.save()
-            situ_actual = sit
+        sit_individuo = individuo.get_situacion()
         #Obtenemos relacionado
         relacionado = instance.relacionado
         #Si no tenia le creamos
-        if not relacionado.situacion_actual:
+        sit_relacionado = relacionado.get_situacion()
+        #Chequeamos situaciones:
+        if sit_individuo.estado > sit_relacionado.estado:
+            if sit_individuo.estado == 32:#Contacto Alto Riesgo            
+                sit_relacionado.estado = 31
+            if sit_individuo.estado == 40:#Sospechoso
+                sit_relacionado.estado = 32
+            if sit_individuo.estado == 50:#Confirmado
+                sit_relacionado.estado = 40
+            sit_relacionado.aclaracion = "Situacion Escalada por Relacion Detectada por sistema"
+            sit_relacionado.save()
+
+@receiver(post_save, sender=Atributo)
+def aislamiento_domiciliario(created, instance, **kwargs):
+    if created and instance.tipo == "AD":
+        #Creamos la situacion de aislamiento
+        sit_actual = instance.individuo.get_situacion()
+        if sit_actual.conducta not in ('D', 'E'):
             sit = Situacion()
-            sit.individuo = relacionado
-            sit.aclaracion = "Inicializada por Sistema"
+            sit.individuo = instance.individuo
+            sit.conducta = 'E'
+            sit.aclaracion = "Debe Realizar Cuarentena Obligatoria en su Hogar"
             sit.save()
-            relacionado = Individuo.objects.get(pk=relacionado.id)
-        if situ_actual.estado > relacionado.situacion_actual.estado:
-            sit = Situacion()
-            sit.individuo = relacionado
-            sit.conducta = 'C'
-            if situ_actual.estado == 32:#Contacto Alto Riesgo            
-                sit.estado = 31
-            if situ_actual.estado == 40:#Sospechoso
-                sit.estado = 32
-                sit.conducta = 'C'
-            if situ_actual.estado == 50:#Confirmado
-                sit.estado = 40
-                sit.conducta = 'D'
-            sit.aclaracion = "Relacion Detectada por el sistema"
-            sit.save()
+            #Lo asignamos a vigilancia epidemiologica
+            atributo = Atributo()
+            atributo.individuo = instance.individuo
+            atributo.tipo = 'VE'
+            atributo.aclaracion = "Por Ingreso a Aislamiento."
+            atributo.save()
+
+@receiver(post_save, sender=Situacion)
+def quitar_vigilancia_confirmado(created, instance, **kwargs):
+    if instance.estado == 50:
+        if created or ('estado' in kwargs.get('update_fields')):#Si creamos o pasamos a confirmado
+            seguimiento = Seguimiento(individuo=instance.individuo)
+            seguimiento.tipo = 'FS'
+            seguimiento.aclaracion = 'Fin de Seguimiento Normal por TEST Confirmado'
+            seguimiento.save()
 
 #@receiver(post_save, sender=Atributo)
 #def iniciar_tracking_transportistas(created, instance, **kwargs):

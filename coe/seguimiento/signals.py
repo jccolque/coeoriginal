@@ -8,11 +8,12 @@ from django.template.loader import render_to_string
 from django.db.models.signals import post_save, post_delete
 #imports Extras
 #Imports del proyecto
+from coe.settings import SEND_MAIL
 from informacion.models import Individuo, Domicilio
 from informacion.models import Situacion, Atributo, SignosVitales, Documento
 #Imports de la app
 from .models import Seguimiento, Vigia, TestOperativo
-from .functions import crear_doc_descartado
+from .functions import crear_doc_descartado, asignar_vigilante 
 
 #Logger
 logger = logging.getLogger('signals')
@@ -42,11 +43,10 @@ def iniciar_seguimiento(created, instance, **kwargs):
 
 @receiver(post_save, sender=Seguimiento)
 def descartar_sospechoso(created, instance, **kwargs):
-    #Eliminamos relacion inversa
     if created and instance.tipo == "DT":
-        situacion = Situacion(individuo=instance.individuo)
         #El estado pasa a asintomatico
-        situacion.conducta = instance.individuo.get_situacion().conducta
+        situacion = instance.individuo.get_situacion()
+        situacion.estado = 10
         situacion.aclaracion = 'Descartado' + instance.aclaracion
         situacion.save()
         #Creamos archivo de Descartado por Test
@@ -56,20 +56,27 @@ def descartar_sospechoso(created, instance, **kwargs):
         doc.aclaracion = "TEST NEGATIVO CONFIRMADO"
         doc.save()
         #Enviar mail
-        to_email = instance.individuo.email
-        #Preparamos el correo electronico
-        mail_subject = 'Constancia de Test - COE2020'
-        message = render_to_string('emails/constancia_test.html', {
-                'individuo': instance.individuo,
-                'doc': doc,
-            })
-        #Instanciamos el objeto mail con destinatario
-        email = EmailMessage(mail_subject, message, to=[to_email])
-        #Adjuntamos archivo
-        #email.attach(doc.archivo)
-        #email.add_attachment(doc.archivo.read(), maintype='application/pdf', subtype='pdf', filename='certificado.pdf')
-        #Enviamos el correo
-        email.send()
+        if SEND_MAIL and instance.individuo.email:
+            to_email = instance.individuo.email
+            #Preparamos el correo electronico
+            mail_subject = 'Constancia de Test - COE2020'
+            message = render_to_string('emails/constancia_test.html', {
+                    'individuo': instance.individuo,
+                    'doc': doc,
+                })
+            #Instanciamos el objeto mail con destinatario
+            email = EmailMessage(mail_subject, message, to=[to_email])
+            #Enviamos el correo
+            email.send()
+
+@receiver(post_save, sender=Seguimiento)
+def confirmar_sospechoso(created, instance, **kwargs):
+    if created and instance.tipo == "CT":
+        situacion = Situacion(individuo=instance.individuo)
+        situacion.estado = 50
+        situacion.conducta = 'E'
+        situacion.aclaracion = "Confirmado por TEST PCR"
+        situacion.save()
 
 @receiver(post_save, sender=Domicilio)
 def poner_en_seguimiento(created, instance, **kwargs):
@@ -81,36 +88,17 @@ def poner_en_seguimiento(created, instance, **kwargs):
         atributo.aclaracion = "Por Ingreso a Aislamiento."
         atributo.save()
 
+@receiver(post_save, sender=Atributo)
+def atributo_vigilancia(created, instance, **kwargs):
+    if created:
+        #Si se indica alguna vigilancia
+        if instance.tipo in ('VE', 'VM', 'VT'):
+            asignar_vigilante(instance.individuo, instance.tipo)
+
 @receiver(post_save, sender=Seguimiento)
 def quitar_seguimiento(created, instance, **kwargs):
     if created and instance.tipo == 'FS':
         instance.individuo.vigiladores.clear()
-
-@receiver(post_save, sender=Atributo)
-def asignar_vigilante(created, instance, **kwargs):
-    if created:
-        #Si es vigilancia Epidemiologica
-        if instance.tipo == 'VE':
-            try:
-                if not instance.individuo.vigiladores.filter(tipo='E').exists():
-                    vigias = Vigia.objects.filter(tipo='E').annotate(cantidad=Count('controlados'))
-                    for vigia in vigias.order_by('cantidad'):
-                        if vigia.max_controlados > vigia.cantidad:
-                            vigia.controlados.add(instance.individuo)
-                            break#Lo cargamos, terminamos
-            except:
-                logger.info("No existen Vigias, " + str(instance.individuo) + " quedo sin vigilante.")
-        #Si es Vigilancia de Salud Mental
-        if instance.tipo == 'VM':
-            try:
-                if not instance.individuo.vigiladores.filter(tipo='M').exists():
-                    vigias = Vigia.objects.filter(tipo='M').annotate(cantidad=Count('controlados'))
-                    for vigia in vigias.order_by('cantidad'):
-                        if vigia.max_controlados > vigia.cantidad:
-                            vigia.controlados.add(instance.individuo)
-                            break#Lo cargamos, terminamos
-            except:
-                logger.info("No existen Vigias, " + str(instance.individuo) + " quedo sin vigilante.")
 
 @receiver(post_save, sender=SignosVitales)
 def cargo_signosvitales(created, instance, **kwargs):

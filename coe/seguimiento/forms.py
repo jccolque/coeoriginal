@@ -9,6 +9,7 @@ from core.widgets import XDSoftDatePickerInput, XDSoftDateTimePickerInput
 from .models import Seguimiento, Vigia
 from .models import OperativoVehicular, TestOperativo
 from .functions import obtener_bajo_seguimiento
+from .choices import obtener_seguimientos
 
 #Definimos nuestros forms aqui:
 class SeguimientoForm(forms.ModelForm):
@@ -19,6 +20,16 @@ class SeguimientoForm(forms.ModelForm):
         widgets = {
             'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
         }
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        instance = kwargs.get('instance')
+        super(SeguimientoForm, self).__init__(*args, **kwargs)
+        if instance:
+            self.fields['tipo'].choices = [(instance.tipo, instance.get_tipo_display()), ]
+        else:
+            self.fields['tipo'].choices = obtener_seguimientos(user)
+
+
 
 class NuevoVigia(forms.ModelForm):
     class Meta:

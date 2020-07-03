@@ -14,7 +14,7 @@ from .functions import obtener_argentina
 logger = logging.getLogger("tasks")
 
 #Definimos webservices origen:
-@background(schedule=1)
+@background(schedule=0)
 def obtener_localidades_infra_gob():
     logger.info("Iniciamos proceso de carga de datos geograficos:")
     #Obtenemos web service

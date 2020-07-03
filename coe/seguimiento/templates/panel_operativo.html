@@ -12,11 +12,13 @@
                     <h2><b>Panel de {{operativo.vehiculo}}</b></h2>
                     <p><b>Estado del Operativo:</b> {{operativo.get_estado_display}}</p>
                     <h3>Mapa de Seguimiento</h3>
-                    {% if geoposiciones %}
-                        {% include 'mapa_seguimiento.html' with geoposiciones=operativo.get_geoposiciones %}
-                    {% else %}
-                        <p><b>Aun no se ha registrado ninguna GeoPosicion para el operativo.</b></p>
-                    {% endif %}
+                    {% with operativo.get_geoposiciones as geoposiciones %}
+                        {% if geoposiciones %}
+                            {% include 'mapa_seguimiento.html' %}
+                        {% else %}
+                            <p><b>Aun no se ha registrado ninguna GeoPosicion para el operativo.</b></p>
+                        {% endif %}
+                    {% endwith %}
                 </div>
                 <div class="col-lg-4">
                     <ul class="menu_botones">
@@ -40,8 +42,9 @@
                         <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
                     </a>
                     <h3>Cazadores:</h3>
-                    <table class="listado">
+                    <table class="listado" id="table2">
                         <tr>
+                            <th>Documento</th>
                             <th>Individuo</th>
                             <th>Telefono</th>
                             <th>App</th>
@@ -49,6 +52,7 @@
                         </tr>
                         {% for individuo in operativo.cazadores.all %}
                             <tr>
+                                <td>{{individuo.num_doc}}</td>
                                 <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
                                 <td>{{individuo.telefono}}</td>
                                 <td>
@@ -94,11 +98,14 @@
                                         <td>{{test.individuo.domicilio_actual}}</td>
                                         <td>{{test.individuo.telefono}}</td>
                                         <td>
-                                            <a class="nolink" href="{% url 'seguimiento:cargar_seguimiento' individuo_id=test.individuo.id tipo='DT' %}" class="nolink" target="_blank">
+                                            <a class="nolink" href="{% url 'seguimiento:cargar_seguimiento' individuo_id=test.individuo.id tipo='DT' %}" target="_blank">
                                                 <img class="icons" src="{% static '/img/icons/test.png' %}">
                                             </a>
-                                            <a class="nolink" href="{% url 'informacion:ver_individuo' individuo_id=test.individuo.id %}" class="nolink" target="_blank">
+                                            <a class="nolink" href="{% url 'informacion:ver_individuo' individuo_id=test.individuo.id %}" target="_blank">
                                                 <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                            </a>
+                                            <a class="nolink" href="{% url 'seguimiento:quitar_testeado' operativo_id=operativo.id individuo_id=test.individuo.id %}">
+                                                <img class="icons" src="/static/img/icons/delete.png">
                                             </a>
                                         </td>
                                     {% else %}

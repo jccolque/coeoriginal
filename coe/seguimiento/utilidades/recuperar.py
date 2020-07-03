@@ -8,7 +8,7 @@ from informacion.models import Individuo, Atributo
 from operadores.models import Operador
 #Imports de la app
 from seguimiento.models import Seguimiento, Vigia
-from seguimiento.functions import obtener_bajo_seguimiento
+from seguimiento.functions import obtener_bajo_seguimiento, asignar_vigilante
 
 #Definiciones
 def operador_seguimiento():
@@ -41,6 +41,7 @@ def activar_vigilancia():
     #Generamos el atributo:
     atribs = []
     for individuo in individuos:
+        print("Agregamos Atributo VE a: " + str(individuo))
         atributo = Atributo(individuo=individuo)
         atributo.tipo = 'VE'
         atributo.fecha = individuo.situacion_actual.fecha
@@ -57,9 +58,5 @@ def asignar_vigilancia():
     print("Asignaremos: " + str(individuos.count()) + " individuos.")
     #Procesamos
     for individuo in individuos:
-        print("Asignamos a " + str(individuo))
-        try:
-            nuevo_vigia = Vigia.objects.all().annotate(cantidad=Count('controlados')).order_by('cantidad').first()
-            nuevo_vigia.controlados.add(individuo)
-        except:
-            print("No hay vigias")
+        asignar_vigilante(individuo, 'VE')
+        print("Asignamos vigilante a: " + str(individuo) + "|Vigilante: " + str(individuo.vigiladores.first()))

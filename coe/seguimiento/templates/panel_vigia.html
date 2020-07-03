@@ -28,7 +28,9 @@
                         {% for individuo in individuos %}
                             <tr id="{{individuo.id}}" class="{% ct_color_alerta individuo.seguimiento_actual %}">
                                 <td><b>{% ct_horas_desde individuo.seguimiento_actual.fecha %}hrs</b></td>
-                                <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
+                                <td>
+                                    {{individuo.apellidos}}, {{individuo.nombres}}
+                                </td>
                                 <td>{{individuo.situacion_actual}}</td>
                                 <td>{{individuo.domicilio_actual}}</td>
                                 <td>
@@ -64,6 +66,11 @@
                                     <a class="nolink" href="{% url 'seguimiento:ver_seguimiento' individuo_id=individuo.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/lupa.png' %}">
                                     </a>
+                                    {% if individuo.es_camionero %}
+                                        <a href="{% url 'permisos:ver_registros_individuo' individuo_id=individuo.id %}" target="_blank">
+                                            <img class="icons" src="{% static '/img/icons/camion.png' %}" alt="Circulacion Temporal">
+                                        </a>
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}

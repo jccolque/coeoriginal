@@ -10,7 +10,7 @@ from core.forms import JustificarForm
 from informacion.models import Individuo
 #imports de la app
 from .models import GeoPosicion, GeOperador
-from .geofence import obtener_trackeados, renovar_base
+from .functions import obtener_trackeados, renovar_base, obtener_geoposiciones
 from .forms import ConfigGeoForm, NuevoGeoOperador, NuevoIndividuo, AsignarGeOperador
 
 #Administrar
@@ -38,12 +38,16 @@ def control_tracking(request):
         'has_table': True,
     })
 
+from django.db.models import Q
+
 @permission_required('operadores.geotracking_admin')
 def lista_geooperadores(request):
     #Obtenemos el operador en cuestion
     geoperadores = GeOperador.objects.all()
     geoperadores = geoperadores.select_related('operador', 'operador__usuario')
     geoperadores = geoperadores.prefetch_related('controlados')
+    #Optimizamos:
+    geoperadores = geoperadores.annotate(cant_controlados=Count('controlados'))
     return render(request, "lista_geoperadores.html", {
         'geoperadores': geoperadores,
         'has_table': True,
@@ -209,10 +213,11 @@ def alertas_procesadas(request):
 @permission_required('operadores.geotracking')
 def ver_tracking(request, individuo_id):
     individuo = Individuo.objects.select_related('situacion_actual', 'domicilio_actual', 'appdata')
+    individuo = Individuo.objects.prefetch_related('domicilios', 'domicilios__localidad')
     individuo = individuo.get(pk=individuo_id)
-    geoposiciones = GeoPosicion.objects.filter(individuo=individuo)
-    geoposiciones = geoposiciones.select_related('individuo')
-    geoposiciones = geoposiciones.order_by('-fecha')
+    geoposiciones = obtener_geoposiciones(individuo)
+    #return render(request, 'tracking.html')
+
     return render(request, "seguimiento.html", {
         'gmkey': GEOPOSITION_GOOGLE_MAPS_API_KEY,
         'individuo': individuo,

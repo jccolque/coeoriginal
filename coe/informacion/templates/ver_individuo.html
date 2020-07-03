@@ -23,15 +23,21 @@
                                     <img class="fotografia" src="{{individuo.get_foto}}">
                                 </a>
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-sm-5">
                                 <h2><b>{{individuo.apellidos}}, {{individuo.nombres}}</b>
                                     <a class="nolink"  href="{% ct_auditar_obj_url individuo %}">
                                         <img class="icons" src="{% static '/img/icons/question.png' %}">
                                     </a>
+                                    {% if individuo.es_camionero %}
+                                        <a href="{% url 'permisos:ver_registros_individuo' individuo_id=individuo.pk %}" target="_blank">
+                                            <img class="icons" src="{% static '/img/icons/camion.png' %}" alt="Circulacion Temporal">
+                                        </a>
+                                    {% endif %}
                                 </h2>
                                 <!-- ESTADO -->
                                 {% if individuo.situacion_actual %}
-                                    <h4>Estado: <b>{{individuo.situacion_actual}}</b> 
+                                    <h4>Estado: <b>{{individuo.situacion_actual}}</b><br>
+                                        ({{individuo.situacion_actual.fecha}})
                                         <a class="nolink" href="{% url 'informacion:cargar_situacion' individuo_id=individuo.id %}" target="_blank">
                                             <img class="icons" src="{% static '/img/icons/change.png' %}">
                                         </a>
@@ -50,7 +56,7 @@
                                     <h4><b>Autodiagnostico:</b> {{individuo.appdata.get_estado_display}} ({{individuo.appdata.fecha}})</h4>
                                 {% endif %}
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-5">
                                 {% if individuo.voluntariados.exists %}
                                     <div class="bordeado">
                                         <h4><b>Voluntario:</b></h4>
@@ -69,6 +75,21 @@
                                         </ul>
                                     </div>
                                 {% endif %}
+
+                                {% if individuo.vigiladores.exists %}
+                                    <div class="bordeado">
+                                        <br>
+                                        <h4><b>Controlador Por:</b></h4>
+                                        {% for vigia in individuo.vigiladores.all %}
+                                            <p>
+                                                <a href="{% url 'seguimiento:ver_panel' vigia_id=vigia.id %}" target="_blank">
+                                                    {{vigia}} ({{vigia.get_tipo_display}})
+                                                </a>
+                                            </p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+
                             </div>
                         </div>
                         <hr>
@@ -341,7 +362,10 @@
                                     </a>
                                 </td>
                                 <td>{{relacion.aclaracion}}</td>
-                                <td>{{relacion.relacionado.situacion_actual}}</td>
+                                <td>
+                                    <b>{{relacion.relacionado.situacion_actual}}</b><br>
+                                    {{relacion.relacionado.situacion_actual.aclaracion}}
+                                </td>
                                 <td>{{relacion.fecha}}</td>
                                 <td>
                                     <a class="nolink"  href="{% url 'informacion:mod_relacion' individuo_id=individuo.id relacion_id=relacion.id %}" target="_blank">
@@ -428,7 +452,7 @@
                             <li><a href="{% url 'informacion:cargar_signosvitales' individuo_id=individuo.id %}" target="_blank">Cargar Signos Vitales</a></li>
                             <li><a href="{% url 'informacion:cargar_documento' individuo_id=individuo.id %}" target="_blank">Cargar Documento</a></li>
                             <li><a href="{% url 'informacion:cargar_sintoma' individuo_id=individuo.id  %}" target="_blank">Cargar Sintomas</a></li>
-                            <li><a href="{% url 'informacion:cargar_atributo' individuo_id=individuo.id %}" target="_blank">Cargar Atributo de Control</a></li>
+                            <li><a href="{% url 'informacion:cargar_atributo' individuo_id=individuo.id %}" target="_blank">Cargar Atributo</a></li>
                             <li><a href="{% url 'informacion:cargar_patologia' individuo_id=individuo.id %}" target="_blank">Cargar Patologia</a></li>
                             <li><a href="{% url 'informacion:cargar_relacion' individuo_id=individuo.id %}" target="_blank">Cargar Relacion</a></li>
                             <li><a href="{% url 'seguimiento:cargar_seguimiento' individuo_id=individuo.id %}" target="_blank">Cargar Seguimiento</a></li>

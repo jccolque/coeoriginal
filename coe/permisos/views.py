@@ -16,11 +16,13 @@ from core.decoradores import superuser_required
 from core.forms import EmailForm, UploadFoto
 from core.functions import date2str
 from operadores.functions import obtener_operador
-from informacion.models import Individuo, Atributo
+from informacion.models import Individuo, Atributo, Situacion
 from informacion.functions import actualizar_individuo
 from informacion.forms import BuscarIndividuoSeguro
 from app.functions import activar_tracking, desactivar_tracking
 from graficos.functions import obtener_grafico
+from seguimiento.models import Seguimiento
+from seguimiento.functions import asignar_vigilante
 #imports de la app
 from .choices import TIPO_INGRESO, TIPO_ACTIVIDAD, ESTADO_INGRESO
 from .models import NivelRestriccion, Permiso
@@ -64,7 +66,7 @@ def pedir_permiso_web(request, individuo_id, num_doc):
                     permiso = form.save(commit=False)#Vamos a procesar el requerimiento
                     permiso.individuo = individuo
                     permiso = validar_permiso(individuo, permiso)
-                    if permiso.aprobar:
+                    if permiso:
                         permiso.save()
                         #Enviar email
                         if SEND_MAIL:
@@ -78,6 +80,8 @@ def pedir_permiso_web(request, individuo_id, num_doc):
                             #Instanciamos el objeto mail con destinatario
                             email = EmailMessage(mail_subject, message, to=[to_email])
                             email.send()
+                    else:
+                        form.errors(None, 'No se le ha podido entregar un Salvoconducto Digital.')
                 return render(request, "ver_permiso.html", {'permiso': permiso, })  
         return render(request, "pedir_permiso.html", {'form': form, 'individuo': individuo, })
     except Individuo.DoesNotExist:
@@ -160,7 +164,7 @@ def cargar_ingresante(request, ingreso_id, individuo_id=None):
         if form.is_valid():
             #actualizamos individuo con los datos nuevos
             individuo = actualizar_individuo(form)
-            #individuo.origen = ingreso.origen
+            individuo.origen = form.cleaned_data['localidad_origen']
             individuo.destino = ingreso.destino
             individuo.save()
             #Lo agregamos al registro
@@ -784,6 +788,28 @@ def iniciar_control_circulacion(request, circulacion_id):
             #Activamos los trackings para el panel:
             for pasajero in registro.pasajeros.exclude(individuo=None):
                 activar_tracking(pasajero.individuo)
+                #Agregamos seguimiento:
+                seguimiento = Seguimiento(individuo=pasajero.individuo)
+                seguimiento.tipo = 'RC'
+                seguimiento.aclaracion = "Inicio de Recorrido"
+                seguimiento.save()
+                #Si esta mas de 24 horas:
+                if registro.tiempo_permitido > 24:                
+                    #Aseguramos que tenga el atributo de Vigilancia por Circulacion Temporal
+                    if not pasajero.individuo.atributos.filter(tipo='VT'):
+                        atributo = Atributo(individuo=pasajero.individuo)
+                        atributo.tipo = 'VT'
+                        atributo.aclaracion = str(circulacion.get_tipo_display()) + ': ' + circulacion.patente#STR for migration
+                        atributo.save()
+                    else:#Si no lo sigue nadie, Agregamos a un panel
+                        asignar_vigilante(pasajero.individuo, 'VT')
+                    #Si va a durar mas de 48 horas lo aislamos:
+                    sit_actual = pasajero.individuo.get_situacion()
+                    if  registro.tiempo_permitido > 48 and sit_actual.conducta not in ('D', 'E'):
+                        sit = Situacion(individuo=pasajero.individuo)
+                        sit.conducta = 'E'
+                        sit.aclaracion = "Aislamiento por Circulacion Temporal"
+                        sit.save()
             #Mostramos registro
             return redirect('permisos:panel_circulacion', token=circulacion.token)
     #Mostramos forms:
@@ -828,6 +854,20 @@ def finalizar_control_circulacion(request, registro_id):
             for pasajero in registro.pasajeros.all():
                 if pasajero.individuo:
                     desactivar_tracking(pasajero.individuo)
+                    #Agregamos seguimiento:
+                    seguimiento = Seguimiento(individuo=pasajero.individuo)
+                    seguimiento.tipo = 'RC'
+                    seguimiento.aclaracion = "Final de Recorrido"
+                    seguimiento.save()
+                    #Si no lo sigue nadie, Agregamos a un panel:
+                    if pasajero.individuo.vigiladores.exists():
+                        pasajero.individuo.vigiladores.clear()
+                    #Lo sacamos de aislamiento:
+                    sit_actual = pasajero.individuo.get_situacion()
+                    if sit_actual.conducta in ('D', 'E'):
+                        sit = Situacion(individuo=pasajero.individuo)
+                        sit.aclaracion = "Finaliza Circulacion Temporal"
+                        sit.save()
             #Mostramos registro
             return redirect('permisos:panel_circulacion', token=registro.circulacion.token)
     return render(request, "final_circulacion.html", {
@@ -835,6 +875,23 @@ def finalizar_control_circulacion(request, registro_id):
         'registroform': registroform,
         'registro': registro,
         'boton': "Finalizar", 
+    })
+
+@permission_required('operadores.frontera')
+def ver_registros_individuo(request, individuo_id):
+    individuo = Individuo.objects.get(pk=individuo_id)
+    #Obtentemos todos los registros del individuo
+    registros = RegistroCirculacion.objects.filter(pasajeros__individuo=individuo)
+    #Optimizamos
+    registros = registros.select_related(
+        'circulacion',
+        'destino', 'destino__departamento'
+    )
+    #Lanzamos reporte:
+    return render(request, 'registros_individuo.html', {
+        'individuo': individuo,
+        'registros': registros,
+        'has_table': True,
     })
 
 @permission_required('operadores.frontera')
@@ -846,6 +903,7 @@ def ver_registro_circulacion(request, registro_id):
     return render(request, 'registro_circulacion.html', {
         'circulacion': registro.circulacion,
         'registro': registro,
+        'has_table': True,
         'geoposiciones': registro.geoposiciones(),
     })
 

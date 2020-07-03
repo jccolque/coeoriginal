@@ -197,7 +197,7 @@
                                                     <label class="obligatorio" for="{{form.email_contacto.id_for_label}}">{{form.email_contacto.label}}</label>
                                                     {{form.email_contacto}}
                                                     <small class="form-text text-danger">{{form.email_contacto.errors.as_text}}</small>
-                                                    <p><strong>Asegúrese de introducir un email válido, a través del mismo lo contactaremos.</strong></p>
+                                                    <p>Asegúrese de introducir un email válido, a través del mismo lo contactaremos.</p>
                                                 </div>
                                             </div>
                                             <div class="col-lg-6"> 
@@ -215,7 +215,7 @@
                                                     <label class="obligatorio" for="{{form.origen.id_for_label}}">Provincia de Origen:</label>
                                                     {{form.origen}}
                                                     <small class="form-text text-danger">{{form.origen.errors.as_text}}</small>
-                                                    <p><strong>Es la Provincia en la que se encuentra en estos momentos.</strong></p>                                                    
+                                                    <p>Es la Provincia en la que se encuentra en estos momentos.</p>                                                    
                                                 </div>
                                             </div>
                                             <div class="col-lg-6"> 
@@ -223,7 +223,7 @@
                                                     <label class="obligatorio" for="{{form.destino.id_for_label}}">Localidad de Destino:</label>
                                                     {{form.destino}}
                                                     <small class="form-text text-danger">{{form.destino.errors.as_text}}</small>
-                                                    <p><strong>Localidad de la Provincia de Jujuy a la que se quiere dirigir.</strong></p>
+                                                    <p>Localidad de la Provincia de Jujuy a la que se quiere dirigir.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -238,14 +238,14 @@
                                         <div class="col-md-12">
                                             <div class="col-lg-6">                                
                                                 <div class="form-group">
-                                                    <label for="{{form.marca.id_for_label}}">MARCA:</label>
+                                                    <label class="obligatorio" for="{{form.marca.id_for_label}}">MARCA:</label>
                                                     {{form.marca}}
                                                     <small class="form-text text-danger">{{form.marca.errors.as_text}}</small>                                                    
                                                 </div>
                                             </div>
                                             <div class="col-lg-6"> 
                                                 <div class="form-group">
-                                                    <label for="{{form.modelo.id_for_label}}">MODELO:</label>
+                                                    <label class="obligatorio" for="{{form.modelo.id_for_label}}">MODELO:</label>
                                                     {{form.modelo}}
                                                     <small class="form-text text-danger">{{form.modelo.errors.as_text}}</small>
                                                 </div>
@@ -254,20 +254,18 @@
                                         <div class="col-md-12">
                                             <div class="col-lg-6">                                
                                                 <div class="form-group">
-                                                    <label for="{{form.patente.id_for_label}}">PATENTE:</label>
+                                                    <label class="obligatorio" for="{{form.patente.id_for_label}}">PATENTE:</label>
                                                     {{form.patente}}
                                                     <small class="form-text text-danger">{{form.patente.errors.as_text}}</small>                                                    
                                                 </div>
                                             </div>                                            
                                         </div>
-                                        <div class="col-md-12">
-                                            <div class="col-lg-6">                                
-                                                <div class="form-group">
-                                                    <label for="{{form.aclaracion.id_for_label}}">Aclaraciones Pertinentes:</label>
-                                                    {{form.aclaracion}}
-                                                    <small class="form-text text-danger">{{form.aclaracion.errors.as_text}}</small>                                                    
-                                                </div>
-                                            </div>                                            
+                                        <div class="col-md-12">                             
+                                            <div class="form-group">
+                                                <label for="{{form.aclaracion.id_for_label}}">Aclaraciones Pertinentes:</label>
+                                                {{form.aclaracion}}
+                                                <small class="form-text text-danger">{{form.aclaracion.errors.as_text}}</small>                                                    
+                                            </div>                                        
                                         </div>           
                                         <br>                                     
                                         

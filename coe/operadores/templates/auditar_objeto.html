@@ -23,7 +23,7 @@
                                         <ul>
                                             {% ct_changes_to_list reg.changes as changes %}
                                             {% for change in changes %}
-                                                <li>{{change}}</li>
+                                                <li>{{change|safe}}</li>
                                             {% endfor %}
                                         </ul>
                                     </td>

@@ -20,11 +20,9 @@ logger = logging.getLogger("tasks")
 @background(schedule=20)
 def reintentar_validar():
     logger.info("\nInicia reintentar_validar")
-    
     if SEND_MAIL:
         limite = timezone.now() - timedelta(days=3)
         inscriptos = Inscripcion.objects.filter(valido=False, fecha__gt=limite)
-        print("Re enviamos " + str(inscriptos.count()) + ' Mails.')
         for inscripto in inscriptos:
             logger.info("Procesamos a:" + str(inscripto.individuo))
             try:
@@ -43,6 +41,4 @@ def reintentar_validar():
     #Damos de baja los que ya cumplieron 3 dias y no validaron
     inscriptos = Inscripcion.objects.filter(valido=False, fecha__lt=limite)
     inscriptos.update(estado=99)
-    print("Dimos de Baja " + str(inscriptos.count()) + ' Inscripciones.')
-    
     logger.info("Finaliza reintentar_validar\n")

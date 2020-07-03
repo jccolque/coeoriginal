@@ -9,7 +9,7 @@ from coe.settings import SECRET_KEY
 from core.widgets import XDSoftDatePickerInput, XDSoftDateTimePickerInput
 from georef.models import Localidad, Ubicacion
 #Imports de la app
-from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
+from .choices import atributos_iniciales, TIPO_SINTOMA
 from .models import Vehiculo, TrasladoVehiculo
 from .models import Individuo, Domicilio, SignosVitales, Atributo, Sintoma
 from .models import Situacion, Patologia, Archivo, Relacion
@@ -72,7 +72,7 @@ class FullIndividuoForm(forms.ModelForm):
     dom_fecha = forms.DateTimeField(required=False)
     dom_aislamiento = forms.BooleanField(required=False, initial=False)
     atributos = forms.MultipleChoiceField(
-        choices=TIPO_ATRIBUTO,
+        choices=atributos_iniciales(),
         widget=CheckboxSelectMultiple(attrs={'class':'multiplechoice',}),
         required=False
     )
@@ -99,7 +99,7 @@ class FullIndividuoForm(forms.ModelForm):
 
 class InquilinoForm(forms.ModelForm):
     atributos = forms.MultipleChoiceField(
-        choices=TIPO_ATRIBUTO,
+        choices=atributos_iniciales(),
         widget=CheckboxSelectMultiple(attrs={'class':'multiplechoice',}),
         required=False
     )

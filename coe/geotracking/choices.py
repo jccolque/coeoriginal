@@ -5,6 +5,7 @@ TIPO_GEOPOS = (
     ('PC', 'Punto de Control'),#Lugar de referencia
     ('RG', 'Reporte de GeoPosicion'),
     ('CG', 'Control Permiso Digital'),
+    ('TS', 'Testeo Realizado'),
 )
 
 TIPO_ALERTA = (

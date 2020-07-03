@@ -78,18 +78,21 @@
                                             
                                             <p>Por favor sea puntual, tendra 5 minutos de tolerancia.</p>
                                         {% endwith %}
-                                    {% else %}
+                                    {% elif inscripto.estado == 2 or inscripto.estado == 3 %}
                                         <h3><b>Seleccione el Lugar donde desea realizar el tramite presencial:</b></h3>
-                                        <ul>
-                                            {% for ubicacion in ubicaciones %}
-                                                <li>
-                                                    <a href="{% url 'inscripciones:turnero' ubicacion_id=ubicacion.id inscripto_id=inscripto.id %}" target="_blank">
-                                                        {{ubicacion.nombre}} ({{ubicacion.localidad.nombre}})
-                                                    </a>
-                                                </li>
-                                            {% endfor %}
-                                        </ul>
-                                        <p><i>Turnos de Lunes a Viernes de 8 a 19 horas.</i></p>
+                                        {% if ubicaciones %}
+                                            <ul>
+                                                {% for ubicacion in ubicaciones %}
+                                                    <li>
+                                                        <a href="{% url 'inscripciones:turnero' ubicacion_id=ubicacion.id inscripto_id=inscripto.id %}" target="_blank">
+                                                            {{ubicacion.nombre}} ({{ubicacion.localidad.nombre}})
+                                                        </a>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <p><b>No hay Lugares Disponibles.</b></p>
+                                        {% endif %}
                                     {% endif %}
                                 </div>
                             </div>
@@ -170,6 +173,9 @@
                     </div>
                     <div class="col-lg-3">
                         <h2><b>Estado:</b><br> {{inscripto.get_estado_display}}</h2>
+                        {% if inscripto.tarea_asignada %}
+                            <b>{{inscripto.tarea_asignada}}</b>
+                        {% endif %}
                         <hr>
                         <p><b>Tareas Pendientes:</b></p>
                         {% if inscripto.estado == 0 %}<!--Recien inscripto-->
@@ -232,14 +238,16 @@
                         {% endif %}
 
                         {% if perms.operadores.menu_inscripciones %}
-                            {% if not inscripto.estado == 4 %}
-                                <hr>
-                                <h2>Menu Operador</h2>
-                                <ul class="menu_botones">
-                                    <li><a href="{% url 'inscripciones:enviar_email' inscripcion_id=inscripto.id %}">Enviar Correo Electronico</a></li>
+                            <hr>
+                            <h2>Menu Operador</h2>
+                            <ul class="menu_botones">
+                                <li><a href="{% url 'inscripciones:enviar_email' inscripcion_id=inscripto.id %}">Enviar Correo Electronico</a></li>
+                                {% if not inscripto.estado == 4 %}
                                     <li><a href="{% url 'inscripciones:avanzar_estado' inscripcion_id=inscripto.id %}">Avanzar al siguiente Estado</a></li>
-                                </ul>
-                            {% endif %}
+                                {% else %}
+                                    <li><a href="{% url 'inscripciones:asignar_tarea' inscripcion_id=inscripto.id %}">Asignar Tarea</a></li>
+                                {% endif %}
+                            </ul>
                         {% endif %}
                     </div>
                 </div>

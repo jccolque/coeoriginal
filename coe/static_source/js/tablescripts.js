@@ -1,6 +1,8 @@
 $(document).ready(function() {
     $('#table thead tr').clone(true).appendTo('#table thead');
+    
     $('#table thead tr:eq(1) th').each( function (i) {
+        
         var title = $(this).text();
         $(this).html( '<input type="text" placeholder="'+title+'" />' );
  
@@ -14,9 +16,12 @@ $(document).ready(function() {
         } );
     } );
 
-    $("tr:first").css("visibility", "hidden");
+    var table = ocultar_cabecera();
+})
 
-    var table = $('#table').DataTable( {
+function ocultar_cabecera() {
+    $("#table tr:first").css("visibility", "hidden");
+    var table = $('#table').DataTable({
         dom: 'Bfrtip',
         "pageLength": 50,
 
@@ -25,5 +30,6 @@ $(document).ready(function() {
         buttons: [
             'excel',
         ]
-    } )
-})
+    });
+    return table;
+}

@@ -23,6 +23,8 @@ def ct_icon_map(geopos):
     #Por tipo
     if geopos.tipo == 'AD':#Si es autodiagnostico
         icono = 'autodiagnostico'
+    elif geopos.tipo == 'TS':
+        icono = 'test'
     elif geopos.tipo == 'ST':#Si inicio el tracking
         icono = 'hogar_rojo'
     elif geopos.tipo == 'PC':#Si es el origen de control

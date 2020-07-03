@@ -12,13 +12,13 @@ from seguimiento.models import Seguimiento
 from app.models import AppNotificacion
 #Import de la app
 from .models import GeoPosicion
-from .geofence import obtener_trackeados
+from .functions import obtener_trackeados
 
 #Definimos logger
 logger = logging.getLogger("tasks")
 
 #Definimos tareas
-@background(schedule=1)
+@background(schedule=30)
 def geotrack_sin_actualizacion():
     logger.info("\nGeoTrackings Sin actualizar")
     individuos = obtener_trackeados()
@@ -54,7 +54,7 @@ def geotrack_sin_actualizacion():
         except Exception as error:
             logger.info("Fallo: "+str(error)+':\n'+str(traceback.format_exc()))
 
-@background(schedule=30)
+@background(schedule=15)
 def finalizar_geotracking():
     logger.info("\nRealizamos la finalizacion de los Geotrackings")
     individuos = obtener_trackeados()

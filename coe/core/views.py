@@ -25,6 +25,9 @@ def faqs(request):
 def consejos(request):
     return render(request, 'consejos.html', {})
 
+def entregas(request):
+    return render(request, 'entregas.html', {})
+
 #Manejo de sesiones de Usuarios
 def home_login(request):
     message = ''

@@ -72,6 +72,11 @@ class CirculacionTemporalForm(forms.ModelForm):
 class IngresanteForm(forms.ModelForm):
     #Domicilio actual
     dom_origen = forms.CharField(required=True, widget=forms.TextInput(attrs={'placeholder': 'Calle Numero, Localidad, Provincia'}))
+    localidad_origen = forms.ModelChoiceField(
+        queryset=Localidad.objects.all(),
+        widget=autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+        required=True,
+    )
     #Domicilio en jujuy
     dom_localidad = forms.ModelChoiceField(
         queryset=Localidad.objects.all(),

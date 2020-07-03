@@ -24,7 +24,7 @@ from georef.models import Ubicacion
 from graficos.functions import obtener_grafico
 from operadores.models import Operador
 from operadores.functions import obtener_operador
-from informacion.choices import TIPO_ATRIBUTO, TIPO_PATOLOGIA
+from informacion.choices import atributos_excepcionales, TIPO_PATOLOGIA
 from informacion.models import Individuo, Atributo, Patologia
 from informacion.models import SignosVitales, Relacion
 from informacion.models import Situacion, Documento
@@ -110,7 +110,7 @@ def pedir_test(request):
     return render(request, "pedir_test.html", {
         'error': error,
         'tipos_patologias': TIPO_PATOLOGIA,
-        'tipos_excepciones': [t for t in TIPO_ATRIBUTO if len(t[0]) == 3],
+        'tipos_excepciones': atributos_excepcionales(),
     })
 
 #Menu
@@ -128,11 +128,11 @@ def cargar_seguimiento(request, individuo_id, seguimiento_id=None, tipo=None):
     individuo = Individuo.objects.get(pk=individuo_id)
     if seguimiento_id:
         seguimiento = Seguimiento.objects.get(pk=seguimiento_id)
-        form = SeguimientoForm(instance=seguimiento)
+        form = SeguimientoForm(instance=seguimiento, user=request.user)
     else:
-        form = SeguimientoForm(initial={'tipo': tipo})
+        form = SeguimientoForm(initial={'tipo': tipo}, user=request.user)
     if request.method == "POST":
-        form = SeguimientoForm(request.POST, instance=seguimiento)
+        form = SeguimientoForm(request.POST, instance=seguimiento, user=request.user)
         if form.is_valid():
             seguimiento = form.save(commit=False)
             seguimiento.individuo = individuo
@@ -413,16 +413,15 @@ def situacion_operativos(request):
     #Obtenemos ultimas geoposiciones:
     geoposiciones = []
     for operativo in operativos:
-        geoposiciones.append(operativo.get_geoposiciones.last())
+        geoposiciones.append(operativo.get_geoposiciones().last())
     #Mostramos
     return render(request, "situacion_operativos.html", {
-        'operativo': operativo,
+        'operativos': operativos,
         'geoposiciones': geoposiciones,
-        'refresh': (operativo.estado == 'I'),
+        'refresh': operativos.exists(),
         'gmkey': GEOPOSITION_GOOGLE_MAPS_API_KEY,
         }
     )
-
 
 @permission_required('operadores.operativos')
 def ver_operativo(request, operativo_id):
@@ -437,6 +436,7 @@ def ver_operativo(request, operativo_id):
         'operativo': operativo,
         'refresh': (operativo.estado == 'I'),
         'gmkey': GEOPOSITION_GOOGLE_MAPS_API_KEY,
+        'has_table': True,
         }
     )
 
@@ -522,6 +522,15 @@ def agregar_testeado(request, operativo_id):
             return redirect('seguimiento:ver_operativo', operativo_id=operativo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Agregar Testeado", 'form': form, 'boton': "Agregar", })
 
+@permission_required('operadores.operativos')
+def quitar_testeado(request, operativo_id, individuo_id):
+    operativo = OperativoVehicular.objects.get(pk=operativo_id)
+    individuo = Individuo.objects.get(pk=individuo_id)
+    test = operativo.tests.filter(individuo=individuo).first()
+    if test:
+        test.delete()
+    return redirect('seguimiento:ver_operativo', operativo_id=operativo.id)
+
 #@permission_required('operadores.operativos')
 #def quitar_cazador(request, test_id):
 
@@ -539,12 +548,12 @@ def ranking_test(request):
     individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__ubicacion')
     individuos = individuos.prefetch_related('seguimientos', 'patologias', 'atributos')
     #Rankeamos
-    excepciones = [t[0] for t in TIPO_ATRIBUTO if len(t[0]) == 3]
+    excepciones = atributos_excepcionales()
     for individuo in individuos:
         individuo.pedido = [s for s in individuo.seguimientos.all() if s.tipo == 'PT'][-1]
         #1pt por cada dia despues del 4to
         dias = int((timezone.now() - individuo.situacion_actual.fecha).total_seconds() / 3600 / 24)
-        individuo.puntaje = int((timezone.now() - individuo.situacion_actual.fecha).total_seconds() / 3600 / 24) - 4
+        individuo.puntaje = int((timezone.now() - individuo.situacion_actual.fecha).total_seconds() / 3600 / 24) - 7
         individuo.motivos = ["Dias: " + str(dias), ]
         #2 pts por cada atributo de excepcion
         atribs = [a.get_tipo_display() for a in individuo.atributos.all() if a.tipo in excepciones]

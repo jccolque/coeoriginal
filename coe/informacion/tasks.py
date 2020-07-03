@@ -64,7 +64,7 @@ def baja_cuarentena():
             logger.info("Fallo baja_cuarentena de: " + str(individuo))
     logger.info("Finalizamos Baja de Cuarentena Obligatoria\n")
 
-@background(schedule=15)
+@background(schedule=20)
 def devolver_domicilio():
     logger.info(str(timezone.now())[0:16] + "\nIniciamos el Cambio de Domicilio")
     #Obtenemos fecha de corte:

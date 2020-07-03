@@ -24,11 +24,9 @@
                     <h2><b>Domicilio Actual:</b> {{permiso.individuo.domicilio_actual.calle}} {{permiso.individuo.domicilio_actual.numero}}</h2>
                     <h2>{{permiso.individuo.domicilio_actual.localidad.nombre}}</h2>
                     <h2 style="text-align:center;"><b>{{permiso.aclaracion}}</b></h2>
-                    {% if permiso.aprobar %}
-                        <p><b>Validez:</b>
-                        <p><b>Inicio:</b> {{permiso.begda|date:"d/m/Y H:i"}}</p>
-                        <p><b>Fin:</b> {{permiso.endda|date:"d/m/Y H:i"}}</p>
-                    {% endif %}
+                    <p><b>Validez:</b>
+                    <p><b>Inicio:</b> {{permiso.begda|date:"d/m/Y H:i"}}</p>
+                    <p><b>Fin:</b> {{permiso.endda|date:"d/m/Y H:i"}}</p>
                 </div>
             </div>
             <a class="no-print" onclick='window.print();return false;'>Imprimir</a>

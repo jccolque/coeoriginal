@@ -4,9 +4,10 @@ import logging
 import traceback
 from datetime import timedelta
 #Imports de django
+from django.db.models import Q, Count
 from django.utils import timezone
 from django.core.files import File
-from django.db.models import Q
+from django.core.cache import cache
 #Imports Extras:
 from PyPDF2 import PdfFileWriter, PdfFileReader
 from reportlab.pdfgen import canvas
@@ -17,9 +18,9 @@ from coe.settings import STATIC_ROOT, MEDIA_ROOT
 from coe.constantes import DIAS_CUARENTENA
 from informacion.models import Individuo, Situacion, Documento
 from app.functions import desactivar_tracking
-from seguimiento.models import Seguimiento
 #Imports de la app
-from .models import Vigia
+from .models import Seguimiento
+from .models import Vigia, OperativoVehicular
 
 #Logger
 logger = logging.getLogger('errors')
@@ -35,11 +36,11 @@ def creamos_doc_alta(individuo):
         #Se crea un pdf utilizando reportLab
         pdf = canvas.Canvas(packet, pagesize = A4)
         pdf.setFont('Times-Roman', 12)
-        pdf.drawString(85, 620, individuo.apellidos + ', ' + individuo.nombres + ' - ' + individuo.get_tipo_doc_display() + ': ' + str(individuo.num_doc))
+        pdf.drawString(110, 560, individuo.apellidos + ', ' + individuo.nombres + ' - ' + individuo.get_tipo_doc_display() + ': ' + str(individuo.num_doc))
         inicio = individuo.situaciones.filter(conducta__in=('D','E')).last().fecha
         fin = inicio + timedelta(days=DIAS_CUARENTENA)
-        pdf.drawString(85, 600, "Inicio Su Aislamiento el dia: " + str(inicio.date()) + '.')
-        pdf.drawString(85, 580, "Cumplira los 14 dias y finalizara su aislamiento obligatorio el " + str(fin.date()) + ' a las 6am.')
+        pdf.drawString(110, 545, "Inicio Su Aislamiento el dia: " + str(inicio.date()) + '.')
+        pdf.drawString(110, 530, "Cumplira los 14 dias y finalizara su aislamiento obligatorio el " + str(fin.date()) + ' a las 6am.')
         pdf.save()
         # Nos movemos al comienzo del búfer StringIO
         packet.seek(0)
@@ -130,3 +131,46 @@ def realizar_alta(individuo, operador):
             dom.aclaracion = "Baja confirmada por: " + str(operador)
             dom.fecha = timezone.now()
             dom.save()
+
+def es_operador_activo(num_doc):
+    #Buscamos la cache
+    operadores_activos = cache.get("operadores_activos")
+    #Si no hay cache disponible
+    if not operadores_activos:
+        operadores_activos = []#Creamos nuevo grupo de registros
+        operativos = OperativoVehicular.objects.all()#filter()
+        operativos = operativos.prefetch_related('cazadores')
+        for operativo in operativos:
+            for cazador in operativo.cazadores.all():
+                operadores_activos.append(cazador.num_doc)
+        #Guardamos la cache
+        cache.set("operadores_activos", operadores_activos, timeout=60)
+    #Vemos si es cazador:
+    if str(num_doc) in operadores_activos:
+        return True
+
+def obtener_operativo(num_doc):
+    operativos = OperativoVehicular.objects.filter(cazadores__num_doc=num_doc)
+    operativos = operativos.filter(estado='I')
+    return operativos.last()
+
+def asignar_vigilante(individuo, tipo):
+    #Definimos tipos
+    tipos = {
+        'VE': 'E',#Vigilancia Epidemiologica
+        'VM': 'M',#Vigilancia de Salud Mental
+        'VT': 'T',#Vigilancia de Circulacion Temporal
+    }
+    #Si es uno de los deseados:
+    if tipo in tipos:
+        #Iniciamos proceso de asignacion:
+        try:
+            if not individuo.vigiladores.filter(tipo=tipos[tipo]).exists():#Si no tiene Vigilante
+                #Intentamos buscarle el vigilante que menos asignados tenga
+                vigias = Vigia.objects.filter(tipo=tipos[tipo]).annotate(cantidad=Count('controlados'))
+                for vigia in vigias.order_by('cantidad'):
+                    if vigia.max_controlados > vigia.cantidad:
+                        vigia.controlados.add(individuo)
+                        break#Lo cargamos, terminamos
+        except:
+            logger.info("No existen Vigias: " + tipo + ", " + str(individuo) + " quedo sin vigilancia.")

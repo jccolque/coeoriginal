@@ -375,6 +375,7 @@ def cargar_inquilino(request, ubicacion_id, num_doc):
 #INDIVIDUOS
 @permission_required('operadores.individuos')
 def ver_individuo(request, individuo_id):
+    #Optimizamos la busqueda
     individuo = Individuo.objects.prefetch_related(
         'domicilios', 'domicilios__localidad', 'domicilios__localidad__departamento',
         'signos_vitales',
@@ -396,6 +397,14 @@ def ver_individuo(request, individuo_id):
         'origen_internacional', 'origen_nacional',
         'destino')
     individuo = individuo.get(pk=individuo_id)
+    #Chequeamos que no sea info confidencial
+    sit = individuo.get_situacion()
+    if sit.estado == 50 and not request.user.has_perm('operadores.epidemiologia'):#Si es Confirmado y no se tiene permisos
+        return render(request, 'extras/error.html', {
+            'titulo': 'Informacion Confidencial',
+            'error': "Usted no tiene acceso a este inidividuo.",
+        })
+    #Mostrmoas individuo
     return render(request, "ver_individuo.html", {'individuo': individuo, })
 
 #Relaciones
@@ -461,6 +470,13 @@ def lista_individuos(
     individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'domicilio_actual__localidad__departamento')
     individuos = individuos.select_related('situacion_actual')
     individuos = individuos.prefetch_related('atributos', 'sintomas', 'situaciones', 'relaciones')
+    #Chequeamos que no sea info confidencial:
+    if estado == 50 and not request.user.has_perm('operadores.epidemiologia'):
+        return render(request, 'extras/error.html', {
+            'titulo': 'Informacion Confidencial',
+            'error': "Usted no tiene acceso a este listado.",
+        })
+    #Mostramos lista
     return render(request, "lista_individuos.html", {
         'individuos': individuos,
         'has_table': True,
@@ -634,16 +650,16 @@ def cargar_situacion(request, individuo_id=None, situacion_id=None):
 
 @permission_required('operadores.individuos')
 def del_situacion(request, situacion_id=None):
+    #Obtenemos los datos
     situacion = Situacion.objects.get(pk=situacion_id)
     individuo = situacion.individuo
+    #Si es actual, cambiamos
     if situacion == individuo.situacion_actual:
-        return render(request, 'extras/error.html', {
-            'titulo': 'Eliminar Situacion',
-            'error': "No se puede Borrar la Situacion Actual.",
-        })
-    else:
-        situacion.delete()
-        return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+        individuo.situacion_actual = individuo.situaciones.exclude(pk=situacion.pk).last()
+        individuo.save()
+    #Eliminamos
+    situacion.delete()
+    return redirect('informacion:ver_individuo', individuo_id=individuo.id)
 
 #Signos Vitales
 @permission_required('operadores.individuos')
@@ -704,9 +720,9 @@ def cargar_atributo(request, individuo_id, atributo_id=None, tipo=None):
         form = AtributoForm(request.POST, instance=atributo)
         if form.is_valid():
             individuo = Individuo.objects.get(pk=individuo_id)
-            sintoma = form.save(commit=False)
-            sintoma.individuo = individuo
-            sintoma.save()
+            atributo = form.save(commit=False)
+            atributo.individuo = individuo
+            atributo.save()
             return render(request, "extras/close.html")
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Atributo", 'form': form, 'boton': "Cargar", })
 

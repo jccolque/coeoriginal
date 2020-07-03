@@ -40,4 +40,3 @@ def desactivar_tracking(individuo):
         logger.info("\nFallo Desactivar Tracking: "+str(individuo))
         logger.info(e)
         logger.info(traceback.format_exc())
-    

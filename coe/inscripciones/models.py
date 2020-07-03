@@ -62,10 +62,14 @@ class Inscripcion(models.Model):
     #dona_sangre = models.BooleanField(default=False, null=True, blank=True)
     tiene_internet = models.BooleanField(default=False, null=True, blank=True)
     capacitaciones = models.ManyToManyField(Capacitacion)
+    tarea_asignada = models.CharField('Tarea Asignada', max_length=200, null=True, blank=True)
     fecha = models.DateTimeField('Fecha Inscripcion', default=timezone.now)
     valido = models.BooleanField(default=False)
     disponible = models.BooleanField(default=True)
     def chequear_estado(self):
+        if self.estado == 99: #Si estaba eliminada pero la chequeamos, revive
+            self.estado == 0
+            self.save()
         if self.estado == 0:#Inscripcion Iniciada
             if self.individuo.fotografia and self.get_frente_dni() and self.get_reverso_dni():
                 self.estado = 1

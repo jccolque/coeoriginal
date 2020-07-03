@@ -2,13 +2,19 @@
 
 {% load static %}
 {% load files_tags %}
+{% load auditar_tags %}
 
 {% block content %}
     <section class="resumen">
         <section class="informacion_basica">
             <div class="container">
                 <div class="row">
-                    <h2><b>Panel de Ingreso Provincial</b></h2>
+                    <h2>
+                        <b>Panel de Ingreso Provincial</b>
+                        <a class="nolink"  href="{% ct_auditar_obj_url ingreso %}">
+                            <img class="icons" src="{% static '/img/icons/question.png' %}">
+                        </a>
+                    </h2>
                     <div class="col-md-8">
                         <div class="row">
                             <div class="col-md-6">
@@ -26,7 +32,6 @@
                                     </a>
                                     <br>
                                     <a href="{% url 'permisos:ingreso_subir_permiso_nac' token=ingreso.token %}" style="font-weight:bold;color:red;">(Cambiar Archivo)</a>
-                                    
                                 {% else %}
                                     <a href="{% url 'permisos:ingreso_subir_permiso_nac' token=ingreso.token %}">CARGAR</a><br>
                                     <i>Si usted carga este documento podemos acelerar la Aprobacion de su Permiso de Ingreso a Jujuy.</i>
@@ -168,12 +173,14 @@
                                         <td>{{individuo.domicilio_actual}}</td>
                                         <td>
                                             {% for doc in individuo.get_dnis %}
-                                                <a href="{{doc.archivo.url}}" target="_blank">{{doc.aclaracion}}</a><br>
+                                                {% if doc.archivo %}
+                                                    <a href="{{doc.archivo.url}}" target="_blank">{{doc.aclaracion}}</a><br>
+                                                {% endif %}        
                                             {% endfor %}
                                         </td>
                                         <td>
                                             {% with individuo.get_permiso_nacional as permiso %}
-                                                {% if permiso %}
+                                                {% if permiso and permiso.archivo %}
                                                     <a href="{{permiso.archivo.url}}" target="_blank">
                                                         <img class="icons" src="{% static '/img/icons/history.png' %}">
                                                     </a>

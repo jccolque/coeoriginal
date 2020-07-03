@@ -61,7 +61,6 @@ class TestOperativo(models.Model):#cada test realizado
     num_doc = models.CharField('Numero de Documento/Pasaporte', 
         max_length=50,
         validators=[RegexValidator('^[A-Z_\d]*$', 'Solo Mayusculas.')],
-        unique=True,
     )
     individuo = models.ForeignKey(Individuo, on_delete=models.SET_NULL, null=True, blank=True, related_name="tests_aleatorios")
     geoposicion = models.ForeignKey(GeoPosicion, on_delete=models.SET_NULL, null=True, blank=True, related_name="tests_aleatorios")
