@@ -11,6 +11,7 @@ from django.db.models import OuterRef, Subquery, Sum
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.decorators import permission_required
 from django.contrib.admin.views.decorators import staff_member_required
+from django.views import generic 
 #Imports extras
 from auditlog.models import LogEntry
 #Imports del proyecto
@@ -43,6 +44,8 @@ from .forms import OperativoForm, TestOperativoForm
 from .functions import obtener_bajo_seguimiento
 from .functions import realizar_alta
 from .tasks import altas_masivas
+from .forms import DatosGisForm
+from .models import DatosGis
 
 #Publico
 def buscar_alta_aislamiento(request):
@@ -716,3 +719,33 @@ def altas_realizadas(request):
         'individuos': individuos,
         'has_table': True,
     })
+
+def gis_list(request):
+    datosgis = DatosGis.objects.all()   
+    #Lanzamos listado
+    return render(request, 'gis_list.html', {       
+        'datosgis': datosgis,
+        'has_table': True,
+    })
+
+def cargar_gis(request, datosgis_id=None):
+    datosgis = None    
+    form = DatosGisForm()
+    if datosgis_id:
+        datosgis = DatosGis.objects.get(pk=datosgis_id)
+        form = DatosGisForm(instance=datosgis)        
+    if request.method == 'POST':
+        form = DatosGisForm(request.POST, instance=datosgis)
+        if form.is_valid():
+            datosgis = form.save(commit=False)
+            localidad = form.cleaned_data['localidad']
+            datosgis.localidad = localidad
+            datosgis.save()
+            return redirect('seguimiento:gis_list')
+    return render(request, "carga_gis.html", {'form': form,})
+
+
+
+
+
+

@@ -53,3 +53,9 @@ ESTADO_RESULTADO = (
     ('P', 'Positivo'),
     ('N', 'Negativo'),
 )
+
+TIPO_TURNO = (
+    ('M', 'MANIANA'),
+    ('T', 'TARDE'),
+    ('N', 'NOCHE'),
+)

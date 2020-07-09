@@ -61,6 +61,10 @@ urlpatterns = [
     path('panel/vigia/<int:vigia_id>', views.panel_vigia, name='ver_panel'),
     path('agregar/vigilado/<int:vigia_id>', views.agregar_vigilado, name='agregar_vigilado'),
     path('quitar/vigilado/<int:vigia_id>/<int:individuo_id>', views.quitar_vigilado, name='quitar_vigilado'),
+    #Gis
+    path('gis/lista', views.gis_list, name="gis_list"),
+    path('gis/cargar', views.cargar_gis, name="cargar_gis"),
+    path('gis/mod/datos/<int:datosgis_id>', views.cargar_gis, name="mod_gis"),
     #Autocomplete
     url(r'^individuosvigilados-autocomplete/$', autocomplete.IndividuosVigiladosAutocomplete.as_view(), name='individuosvigilados-autocomplete',),
     url(r'^vigias-autocomplete/$', autocomplete.VigiasAutocomplete.as_view(), name='vigias-autocomplete',),

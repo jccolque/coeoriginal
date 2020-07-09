@@ -12,8 +12,11 @@ from coe.settings import LOADDATA
 from operadores.models import Operador
 from informacion.models import Individuo, Vehiculo
 from geotracking.models import GeoPosicion
+from georef.models import Localidad
 #Imports de la app
 from .choices import TIPO_SEGUIMIENTO, TIPO_VIGIA, ESTADO_OPERATIVO, ESTADO_RESULTADO
+from .choices import TIPO_TURNO
+
 
 # Create your models here.
 class Seguimiento(models.Model):
@@ -67,7 +70,41 @@ class TestOperativo(models.Model):#cada test realizado
     resultado = models.CharField(choices=ESTADO_RESULTADO, max_length=1, default='E')#Al activarse > Prende Gps de todos los cazadores
     fecha = models.DateTimeField('Fecha del Test', default=timezone.now)
 
+class DatosGis(models.Model):
+    localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="Localidades")    
+    turno = models.CharField(
+        'Turno',
+        choices=TIPO_TURNO,
+        max_length=1,        
+    )
+    fecha_carga = models.DateTimeField('Fecha del Test', default=timezone.now)
+
+    confirmados = models.CharField(
+        'Casos Confirmados',
+        max_length=5
+    )   
+    recuperados = models.CharField(
+        'Casos Recuperados',
+        max_length=5
+    )
+    fallecidos = models.CharField(
+        'Fallecidos',
+        max_length=5
+    )
+    pcr = models.CharField(
+        'Cantidad de PCR',
+        max_length=5
+    )
+    def save(self):
+        self.confirmados = self.confirmados.upper()
+        self.recuperados = self.recuperados.upper()
+        self.fallecidos = self.fallecidos.upper()
+        self.pcr = self.pcr.upper()
+        super(DatosGis, self).save()
+
+
 if not LOADDATA:
     #Auditoria
     auditlog.register(Seguimiento)
     auditlog.register(Vigia)
+    auditlog.register(DatosGis)

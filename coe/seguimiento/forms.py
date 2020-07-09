@@ -5,11 +5,13 @@ from dal import autocomplete
 #Imports del proyecto
 from informacion.models import Individuo
 from core.widgets import XDSoftDatePickerInput, XDSoftDateTimePickerInput
+from georef.models import Localidad
 #Imports de la app
 from .models import Seguimiento, Vigia
 from .models import OperativoVehicular, TestOperativo
 from .functions import obtener_bajo_seguimiento
 from .choices import obtener_seguimientos
+from .models import DatosGis
 
 #Definimos nuestros forms aqui:
 class SeguimientoForm(forms.ModelForm):
@@ -28,7 +30,6 @@ class SeguimientoForm(forms.ModelForm):
             self.fields['tipo'].choices = [(instance.tipo, instance.get_tipo_display()), ]
         else:
             self.fields['tipo'].choices = obtener_seguimientos(user)
-
 
 
 class NuevoVigia(forms.ModelForm):
@@ -68,4 +69,32 @@ class TestOperativoForm(forms.ModelForm):
         model = OperativoVehicular
         fields= '__all__'
         exclude = ('operativo', 'individuo', 'geoposicion', 'fecha')
+
+class DatosGisForm(forms.ModelForm):
+    localidad = forms.ModelChoiceField(
+        queryset=Localidad.objects.all(),
+        widget=autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+        required=False,
+    )
+    class Meta:
+        model = DatosGis
+        fields = '__all__'
+        exclude = ('fecha_carga',)
+        widgets = {            
+            'turno': forms.Select(attrs={'placeholder': 'SELECCIONE TURNO'}),            
+            'confirmados': forms.TextInput(attrs={'placeholder': 'CANTIDAD CONFIRMADOS'}),
+            'recuperados': forms.TextInput(attrs={'placeholder': 'CANTIDAD RECUPERADOS'}),
+            'fallecidos': forms.TextInput(attrs={'placeholder': 'CANTIDAD FALLECIDOS'}),            
+            'pcr': forms.TextInput(attrs={'placeholder': 'CANTIDAD PCR'}),       
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class':'form-control'
+            })
+        self.fields['localidad'].empty_label = "Seleccione Localidad"
+        self.fields['turno'].empty_label = "Seleccione Turno"
+       
         
