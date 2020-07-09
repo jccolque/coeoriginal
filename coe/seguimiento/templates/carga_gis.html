@@ -1,0 +1,208 @@
+{% extends 'base/base.html' %}
+
+{% load static %}
+
+{% block custom_head %}
+
+<head>
+    <!-- mobile responsive meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <style>
+        @media screen and (max-width: 720px){
+            .page-wrapper {
+              width: 100%;
+            }
+        }
+        .contact-area {
+            padding-left: 70px;
+        }
+
+        .contact-area form {
+            margin-top: 60px;
+        }
+
+        .contact-area .form-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .contact-area input, .contact-area textarea {
+            position: relative;
+            width: 100%;
+            min-height: 50px;
+            color: #777777;
+            padding: 10px 25px;
+            background: #f4f4f4;
+            display: block;
+            border: 1px solid #ececec;
+        }
+
+        .contact-area .form-group select {
+            -webkit-appearance: none;
+            -ms-appearance: none;
+            -moz-appearance: none;
+            -o-appearance: none;
+            height: 50px;
+            width: 100%;
+            padding: 10px 20px;
+            border: 1px solid #ececec;
+            background: #f4f4f4 url(../images/icons/icon-select.png) right center no-repeat;
+            cursor: pointer;
+        }
+
+        .contact-area .form-group option {
+            font-weight: normal;
+            display: block;
+            white-space: pre;
+            height: 50px;
+            padding: 20px;
+        }
+
+        .contact-area .form-group option:hover {
+            background: #7b64cb;
+        }
+
+        .contact-area textarea {
+            height: 190px;
+            resize: none;
+        }
+
+        .contact-area button {
+            width: 100%;
+            height: 50px;
+        }
+
+        .contact-area .form-group i {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            font-size: 15px;
+        }
+
+        .contact-area .form-group select {
+            -webkit-appearance: none;
+            -ms-appearance: none;
+            -moz-appearance: none;
+            -o-appearance: none;
+            height: 50px;
+            width: 100%;
+            padding: 10px 20px;
+            border: 1px solid #ececec;
+            background: #f4f4f4 url(../images/icons/icon-select.png) right center no-repeat;
+            cursor: pointer;
+        }
+
+        .contact-area .form-group option {
+            font-weight: normal;
+            display: block;
+            white-space: pre;
+            height: 50px;
+            padding: 20px;
+        }
+
+        .contact-area .form-group option:hover {
+            background: #7b64cb;
+        }
+
+        .contact-area textarea {
+            height: 190px;
+            resize: none;
+        }
+
+        .contact-area button {
+            width: 100%;
+            height: 50px;
+        }
+
+        .contact-area .form-group i {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            font-size: 15px;
+        }
+
+        label {
+            font-weight: initial!important;
+        }
+
+        .obligatorio {
+            font-weight: bold!important;
+        }
+
+    </style>    
+</head>
+
+{% endblock %}
+
+{% block content %}
+<section class="section wow animated slideInUp">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="contact-area">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="bordeado">
+                                <h2>CARGA DE DATOS EPIDEMIOLÓGICOS</h2>                                                                  
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <form name="contact_form" class="default-form contact-form" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}        
+                            {% if form.errors %}
+                                <div class="col-sm-6 col-sm-offset-3">
+                                    {{form.errors|safe}}
+                                </div>
+                            {% endif %}
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label for="{{form.localidad.id_for_label}}">{{form.localidad.label}}</label>
+                                        {{form.localidad}}
+                                        <small class="form-text text-danger">{{form.localidad.errors.as_text}}</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="{{form.turno.id_for_label}}">{{form.turno.label}}</label>
+                                        {{form.turno}}
+                                        <small class="form-text text-danger">{{form.turno.errors.as_text}}</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="{{form.confirmados.id_for_label}}">{{form.confirmados.label}}</label>
+                                        {{form.confirmados}}
+                                        <small class="form-text text-danger">{{form.confirmados.errors.as_text}}</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="{{form.recuperados.id_for_label}}">{{form.recuperados.label}}</label>
+                                        {{form.recuperados}}
+                                        <small class="form-text text-danger">{{form.recuperados.errors.as_text}}</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label for="{{form.fallecidos.id_for_label}}">{{form.fallecidos.label}}</label>
+                                        {{form.fallecidos}}
+                                        <small class="form-text text-danger">{{form.fallecidos.errors.as_text}}</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="{{form.pcr.id_for_label}}">{{form.pcr.label}}</label>
+                                        {{form.pcr}}
+                                        <small class="form-text text-danger">{{form.pcr.errors.as_text}}</small>
+                                    </div>                                    
+                                </div>
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <div class="form-group text-center">
+                                        <button type="submit" class="btn-style-one">CARGAR DATOS</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>                                
+                  
+{% endblock %}

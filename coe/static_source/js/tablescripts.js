@@ -16,7 +16,7 @@ $(document).ready(function() {
         } );
     } );
 
-    var table = ocultar_cabecera();
+    var table = ocultar_cabecera();    
 })
 
 function ocultar_cabecera() {
