@@ -24,4 +24,9 @@ urlpatterns = [
     path('tipo_conducta', views.tipo_conducta, name='tipo_conducta'),
     path('tipo_permiso', views.tipo_permiso, name='tipo_permiso'),
     path('tipo_denuncia', views.tipo_denuncia, name='tipo_denuncia'),
+    #GIS
+    path('confirmados_gis', views.ws_confirmados_gis, name='confirmados_gis'),
+    path('recuperados_gis', views.ws_recuperados_gis, name='recuperados_gis'),
+    path('fallecidos_gis', views.ws_fallecidos_gis, name='fallecidos_gis'),
+    path('pcr_gis', views.ws_pcr_gis, name='pcr_gis'),
 ]

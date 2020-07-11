@@ -9,7 +9,7 @@ from django.shortcuts import redirect
 from django.core.files.base import File
 from django.db.models import OuterRef, Subquery, Sum
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.views import generic 
 #Imports extras
@@ -720,6 +720,8 @@ def altas_realizadas(request):
         'has_table': True,
     })
 
+@login_required(login_url='/login/')
+@permission_required('operadores.carga_gis')
 def gis_list(request):
     datosgis = DatosGis.objects.all()   
     #Lanzamos listado
@@ -727,7 +729,9 @@ def gis_list(request):
         'datosgis': datosgis,
         'has_table': True,
     })
-
+    
+@login_required(login_url='/login/')
+@permission_required('operadores.carga_gis')
 def cargar_gis(request, datosgis_id=None):
     datosgis = None    
     form = DatosGisForm()

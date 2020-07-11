@@ -1,48 +1,47 @@
 {% extends 'base/base.html' %}
 
 {% block content %}
-<!-- Dropdown Card Example -->
-<div class="card shadow mb-4">
-    <!-- Card Header - Dropdown -->
-    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-      <h6 class="m-0 font-weight-bold text-primary">Lista de Datos Gis</h6>      
-    </div>
-    <a href="{% url 'seguimiento:cargar_gis' %}">Cargar Datos Gis</a>
-    <!-- Card Body -->
-    <div class="card-body">
-        {% if not datosgis %}
-        <div class="alert alert-info">No hay Datos Ingresados</div>    
-        {% endif %}
-        <table class="listado" id="table">
-            <thead>
-                <th>Localidad</th>
-                <th>Turno</th>
-                <th>Confirmados</th>
-                <th>Recuperados</th>
-                <th>Fallecidos</th>
-                <th>Cantidad PCR</th>             
-                <th>Fecha</th>               
-                <th class="all">Acciones</th>
-            </thead>
-            <tbody>
-                {% for item in datosgis %}
-                <tr>
-                    <td>{{ item.localidad }}</td>
-                    <td>{{ item.get_turno_display }}</td>
-                    <td>{{ item.confirmados }}</td>
-                    <td>{{ item.recuperados }}</td>
-                    <td>{{ item.fallecidos }}</td>
-                    <td>{{ item.pcr }}</td>                 
-                    <td>{{ item.fecha_carga|date:"d/m/Y H:i:s" }}</td>                    
-                    <td>
-                      <a href="{% url 'seguimiento:mod_gis' datosgis_id=item.id %}"> Modificar                       
-                      </a>                                              
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>    
-     
+<div class="beneficiario container">
+    <div class="row">
+        <h2><b>Lista de Datos GeoEpidemiológicos</b></h2>
+        <a class="botoncito" href="{% url 'seguimiento:cargar_gis' %}">
+            Cargar Datos GeoEpidemiológicos
+            <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
+        </a>
+        <div class="col-md-12">
+            {% if not datosgis %}
+            <div class="alert alert-info">No hay Datos Ingresados</div>    
+            {% endif %}
+            <table class="listado" id="table">
+                <thead>
+                    <th>Localidad</th>
+                    <th>Turno</th>
+                    <th>Confirmados</th>
+                    <th>Recuperados</th>
+                    <th>Fallecidos</th>
+                    <th>Cantidad PCR</th>             
+                    <th>Fecha</th>               
+                    <th class="all">Acciones</th>
+                </thead>
+                <tbody>
+                    {% for item in datosgis %}
+                    <tr>
+                        <td>{{ item.localidad }}</td>
+                        <td>{{ item.get_turno_display }}</td>
+                        <td>{{ item.confirmados }}</td>
+                        <td>{{ item.recuperados }}</td>
+                        <td>{{ item.fallecidos }}</td>
+                        <td>{{ item.pcr }}</td>                 
+                        <td>{{ item.fecha_carga|date:"d/m/Y H:i:s" }}</td>                    
+                        <td>
+                        <a href="{% url 'seguimiento:mod_gis' datosgis_id=item.id %}"> Modificar                       
+                        </a>                                              
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

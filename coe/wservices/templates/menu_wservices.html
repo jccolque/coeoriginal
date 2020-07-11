@@ -25,6 +25,13 @@
                             <h2>Generales:</h2>
                             <li><a href="{% url 'wservices:ws_aislados'  %}">Individuos Aislados</a></li>
                             <li><a href="{% url 'ide_urls:mapeo_general'  %}">Mapeo General</a></li>
+                            <hr>
+                            <h2>DatosGeoEpidemiológicos</h2>
+                            <li><a href="{% url 'wservices:confirmados_gis'  %}"> Gis Confirmados </a></li>
+                            <li><a href="{% url 'wservices:recuperados_gis'  %}"> Gis Recuperados </a></li>
+                            <li><a href="{% url 'wservices:fallecidos_gis'  %}"> Gis Fallecidos </a></li>
+                            <li><a href="{% url 'wservices:pcr_gis'  %}"> Gis PCRS </a></li>
+                            
                         </ul>
                     </div>
                     <div class="col-md-4">
