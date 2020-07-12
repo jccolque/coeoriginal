@@ -192,6 +192,7 @@ def ws_recuperados_gis(request):
     datos = []
     dgis = DatosGis.objects.all()   
     for dgi in dgis:
+        datos.append(
             {    
                 'localidad': dgi.localidad.nombre,
                 'longitud': str(dgi.localidad.longitud),
@@ -207,6 +208,7 @@ def ws_fallecidos_gis(request):
     datos = []
     dgis = DatosGis.objects.all()   
     for dgi in dgis:
+        datos.append(
             {    
                 'localidad': dgi.localidad.nombre,
                 'longitud': str(dgi.localidad.longitud),
@@ -222,6 +224,7 @@ def ws_pcr_gis(request):
     datos = []
     dgis = DatosGis.objects.all()   
     for dgi in dgis:
+        datos.append(
             {    
                 'localidad': dgi.localidad.nombre,
                 'longitud': str(dgi.localidad.longitud),

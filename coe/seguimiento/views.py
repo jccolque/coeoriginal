@@ -753,7 +753,8 @@ def cargar_gis(request, datosgis_id=None):
     return render(request, "carga_gis.html", {'form': form,})
 
 
-class GisDel(SuccessMessageMixin, generic.DeleteView):
+class GisDel(LoginRequiredMixin, PermissionRequiredMixin, \
+    SuccessMessageMixin, generic.DeleteView):
     permission_required = "operadores.carga_gis"  
     model=DatosGis
     template_name='delete_gis.html'
