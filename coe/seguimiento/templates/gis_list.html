@@ -20,7 +20,8 @@
                     <th>Recuperados</th>
                     <th>Fallecidos</th>
                     <th>Cantidad PCR</th>             
-                    <th>Fecha</th>               
+                    <th>Fecha</th>
+                    <th>Operador</th>          
                     <th class="all">Acciones</th>
                 </thead>
                 <tbody>
@@ -32,10 +33,11 @@
                         <td>{{ item.recuperados }}</td>
                         <td>{{ item.fallecidos }}</td>
                         <td>{{ item.pcr }}</td>                 
-                        <td>{{ item.fecha_carga|date:"d/m/Y H:i:s" }}</td>                    
-                        <td>
-                        <a href="{% url 'seguimiento:mod_gis' datosgis_id=item.id %}"> Modificar                       
-                        </a>                                              
+                        <td>{{ item.fecha_carga|date:"d/m/Y H:i:s" }}</td>
+                        <td>{{ item.operador }}</td>                   
+                        <td>                        
+                        <a href="{% url 'seguimiento:mod_gis' datosgis_id=item.id %}" class="btn btn-warning btn-circle" role="button"><i class="far fa-edit"></i>Modificar</a>
+                        <a href="{% url 'seguimiento:gis_del' item.id %}" class="btn btn-danger btn-circle" role="button"><i class="far fa-trash-alt"></i>Eliminar</a>                                                                 
                         </td>
                     </tr>
                     {% endfor %}

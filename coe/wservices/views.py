@@ -171,7 +171,6 @@ def ws_ocupacion(request):
         )
     return HttpResponse(json.dumps({'alojamientos': datos, "cant_registros": len(datos),}), content_type='application/json')
 
-#@permission_required('operadores.carga_gis')
 def ws_confirmados_gis(request):
     datos = []
     dgis = DatosGis.objects.all()   
@@ -179,8 +178,8 @@ def ws_confirmados_gis(request):
         datos.append(
             {
                 'localidad': dgi.localidad.nombre,
-                'latitud': dgi.localidad.latitud,
-                'longitud': dgi.localidad.longitud,
+                'latitud': str(dgi.localidad.latitud),
+                'longitud': str(dgi.localidad.longitud),
                 'turno': dgi.get_turno_display(),
                 'fecha_carga': str(dgi.fecha_carga.date()),
                 'confirmados': dgi.confirmados,                
@@ -188,16 +187,16 @@ def ws_confirmados_gis(request):
         )
     return HttpResponse(json.dumps({'confirmados_gis': datos, "cantidad_registros": len(datos),}), content_type='application/json')
 
-#@permission_required('operadores.carga_gis')
+
 def ws_recuperados_gis(request):
     datos = []
     dgis = DatosGis.objects.all()   
     for dgi in dgis:
         datos.append(
-            {
+            {    
                 'localidad': dgi.localidad.nombre,
-                'latitud': dgi.localidad.latitud,
-                'longitud': dgi.localidad.longitud,
+                'longitud': str(dgi.localidad.longitud),
+                'latitud': str(dgi.localidad.latitud),
                 'turno': dgi.get_turno_display(),
                 'fecha_carga': str(dgi.fecha_carga.date()),                
                 'recuperados': dgi.recuperados,                
@@ -205,16 +204,15 @@ def ws_recuperados_gis(request):
         )
     return HttpResponse(json.dumps({'recuperados_gis': datos, "cantidad_registros": len(datos),}), content_type='application/json')
 
-#@permission_required('operadores.carga_gis')
 def ws_fallecidos_gis(request):
     datos = []
     dgis = DatosGis.objects.all()   
     for dgi in dgis:
         datos.append(
-            {
+            {    
                 'localidad': dgi.localidad.nombre,
-                'latitud': dgi.localidad.latitud,
-                'longitud': dgi.localidad.longitud,
+                'longitud': str(dgi.localidad.longitud),
+                'latitud': str(dgi.localidad.latitud),
                 'turno': dgi.get_turno_display(),
                 'fecha_carga': str(dgi.fecha_carga.date()),                
                 'fallecidos': dgi.fallecidos,                
@@ -222,20 +220,19 @@ def ws_fallecidos_gis(request):
         )
     return HttpResponse(json.dumps({'fallecidos_gis': datos, "cantidad_registros": len(datos),}), content_type='application/json')
 
-#@permission_required('operadores.carga_gis')
 def ws_pcr_gis(request):
     datos = []
     dgis = DatosGis.objects.all()   
     for dgi in dgis:
         datos.append(
-            {
+            {    
                 'localidad': dgi.localidad.nombre,
-                'latitud': dgi.localidad.latitud,
-                'longitud': dgi.localidad.longitud,
+                'longitud': str(dgi.localidad.longitud),
+                'latitud': str(dgi.localidad.latitud),
                 'turno': dgi.get_turno_display(),
                 'fecha_carga': str(dgi.fecha_carga.date()),                
-                'pcr': dgi.pcr,
+                'pcr': dgi.pcr,                
             }
         )
     return HttpResponse(json.dumps({'pcr_gis': datos, "cantidad_registros": len(datos),}), content_type='application/json')
-    
+

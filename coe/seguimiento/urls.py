@@ -4,6 +4,7 @@ from django.urls import path
 #Import de modulos personales
 from . import views as views
 from . import autocomplete
+from .views import GisDel
 
 #Definimos paths de la app
 app_name = 'seguimiento'
@@ -65,6 +66,7 @@ urlpatterns = [
     path('gis/lista', views.gis_list, name="gis_list"),
     path('gis/cargar', views.cargar_gis, name="cargar_gis"),
     path('gis/mod/datos/<int:datosgis_id>', views.cargar_gis, name="mod_gis"),
+    path('gis/delete/datos/<int:pk>', GisDel.as_view(), name='gis_del'),
     #Autocomplete
     url(r'^individuosvigilados-autocomplete/$', autocomplete.IndividuosVigiladosAutocomplete.as_view(), name='individuosvigilados-autocomplete',),
     url(r'^vigias-autocomplete/$', autocomplete.VigiasAutocomplete.as_view(), name='vigias-autocomplete',),

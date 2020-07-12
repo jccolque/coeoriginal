@@ -11,7 +11,10 @@ from django.db.models import OuterRef, Subquery, Sum
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.admin.views.decorators import staff_member_required
-from django.views import generic 
+from django.views import generic
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.urls import reverse_lazy
 #Imports extras
 from auditlog.models import LogEntry
 #Imports del proyecto
@@ -734,19 +737,33 @@ def gis_list(request):
 @permission_required('operadores.carga_gis')
 def cargar_gis(request, datosgis_id=None):
     datosgis = None    
-    form = DatosGisForm()
+    form = DatosGisForm()    
     if datosgis_id:
         datosgis = DatosGis.objects.get(pk=datosgis_id)
         form = DatosGisForm(instance=datosgis)        
     if request.method == 'POST':
         form = DatosGisForm(request.POST, instance=datosgis)
         if form.is_valid():
-            datosgis = form.save(commit=False)
+            datosgis = form.save(commit=False)            
             localidad = form.cleaned_data['localidad']
             datosgis.localidad = localidad
+            datosgis.operador = obtener_operador(request)
             datosgis.save()
             return redirect('seguimiento:gis_list')
     return render(request, "carga_gis.html", {'form': form,})
+
+
+class GisDel(LoginRequiredMixin, PermissionRequiredMixin, \
+    SuccessMessageMixin, generic.DeleteView):
+    permission_required = "operadores.carga_gis"  
+    model=DatosGis
+    template_name='delete_gis.html'
+    context_object_name='obj'
+    success_url=reverse_lazy("seguimiento:gis_list")
+    success_message="Dato Epidemiológico Eliminado Satisfactoriamente"
+
+
+
 
 
 

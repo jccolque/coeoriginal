@@ -79,13 +79,14 @@ class DatosGisForm(forms.ModelForm):
     class Meta:
         model = DatosGis
         fields = '__all__'
-        exclude = ('fecha_carga',)
+        exclude = ('operador',)
         widgets = {            
             'turno': forms.Select(attrs={'placeholder': 'SELECCIONE TURNO'}),            
             'confirmados': forms.TextInput(attrs={'placeholder': 'CANTIDAD CONFIRMADOS'}),
             'recuperados': forms.TextInput(attrs={'placeholder': 'CANTIDAD RECUPERADOS'}),
             'fallecidos': forms.TextInput(attrs={'placeholder': 'CANTIDAD FALLECIDOS'}),            
-            'pcr': forms.TextInput(attrs={'placeholder': 'CANTIDAD PCR'}),       
+            'pcr': forms.TextInput(attrs={'placeholder': 'CANTIDAD PCR'}),
+            'fecha_carga': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'},),    
         }
     
     def __init__(self, *args, **kwargs):
