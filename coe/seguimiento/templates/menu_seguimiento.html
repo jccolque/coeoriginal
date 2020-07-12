@@ -34,13 +34,20 @@
                                     <h3>Otras Listas:</h3>
                                     <li><a href="{% url 'seguimiento:lista_sin_telefono' %}">Listado de Individuos sin Telefono</a></li>
                                     <li><a href="{% url 'seguimiento:lista_autodiagnosticos' %}">Listado de Autodiagnosticos</a></li>
-                                    <li><a href="{% url 'seguimiento:lista_aislados' %}">Listado de Todos los Aislados</a></li>                                    <hr>
+                                    <li><a href="{% url 'seguimiento:lista_aislados' %}">Listado de Todos los Aislados</a></li>                                   
                                 {% endif %}
                                 {% if perms.operadores.operativos %}
+                                    <hr>
                                     <h3>Cazador 360</h3>
                                     <li><a href="{% url 'seguimiento:situacion_operativos' %}">Situacion Operativos</a></li>
                                     <li><a href="{% url 'seguimiento:lista_operativos' %}">Lista de Vehiculos Habilitados</a></li>
                                 {% endif %}
+                            {% endif %}
+
+                            {% if perms.operadores.carga_gis %}
+                                <hr>
+                                <h3>Data Entry GeoEpidemiológico</h3>
+                                <li><a href="{% url 'seguimiento:gis_list' %}">Lista de Datos GeoEpidemiológicos</a></li>                               
                             {% endif %}
 
                             {% if request.user.is_superuser %}

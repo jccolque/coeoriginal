@@ -191,6 +191,13 @@
                                         <small class="form-text text-danger">{{form.pcr.errors.as_text}}</small>
                                     </div>                                    
                                 </div>
+                                <div class="col-md-6 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label for="{{form.fecha_carga.id_for_label}}">{{form.fecha_carga.label}}</label>
+                                        {{form.fecha_carga}}
+                                        <small class="form-text text-danger">{{form.fecha_carga.errors.as_text}}</small>
+                                    </div>                                                                       
+                                </div>
                                 <div class="col-md-12 col-sm-12 col-xs-12">
                                     <div class="form-group text-center">
                                         <button type="submit" class="btn-style-one">CARGAR DATOS</button>

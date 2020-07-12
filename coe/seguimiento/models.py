@@ -77,7 +77,7 @@ class DatosGis(models.Model):
         choices=TIPO_TURNO,
         max_length=1,        
     )
-    fecha_carga = models.DateTimeField('Fecha del Test', default=timezone.now)
+    fecha_carga = models.DateTimeField('Fecha de Carga', default=timezone.now)
 
     confirmados = models.CharField(
         'Casos Confirmados',
@@ -95,6 +95,9 @@ class DatosGis(models.Model):
         'Cantidad de PCR',
         max_length=5
     )
+
+    operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True, related_name="datos_gis")
+
     def save(self):
         self.confirmados = self.confirmados.upper()
         self.recuperados = self.recuperados.upper()

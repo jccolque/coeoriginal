@@ -91,6 +91,8 @@ class Operador(models.Model):
             ("seguimiento", "Monitor Seguimiento de Individuos."),
             ("seguimiento_admin", "Administrar Sistema de Seguimiento."),
             ("operativos", "Operativos de Test Masivos."),
+            ("carga_gis", "Carga datos GeoEpidemilógicos"),
+            ("tablero_comando", "Tablero Epidemiológico"),
             #GeoTracking
             ("geotracking", "Monitore Tracking de Individuos."),
             ("geotracking_admin", "Administrador Sistema de GeTracking."),
