@@ -216,7 +216,8 @@ def ver_tracking(request, individuo_id):
     individuo = Individuo.objects.prefetch_related('domicilios', 'domicilios__localidad')
     individuo = individuo.get(pk=individuo_id)
     geoposiciones = obtener_geoposiciones(individuo)
-    return render(request, 'tracking.html', {'geoposiciones': geoposiciones,})
+    
+    #return render(request, 'tracking.html', {'geoposiciones': geoposiciones,})
 
     return render(request, "seguimiento.html", {
         'gmkey': GEOPOSITION_GOOGLE_MAPS_API_KEY,

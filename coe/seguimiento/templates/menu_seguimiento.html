@@ -47,7 +47,7 @@
                             {% if perms.operadores.carga_gis %}
                                 <hr>
                                 <h3>Data Entry GeoEpidemiológico</h3>
-                                <li><a href="{% url 'seguimiento:gis_list' %}}">Lista de Datos GeoEpidemiológicos</a></li>                               
+                                <li><a href="{% url 'seguimiento:gis_list' %}">Lista de Datos GeoEpidemiológicos</a></li>                               
                             {% endif %}
 
                             {% if request.user.is_superuser %}
