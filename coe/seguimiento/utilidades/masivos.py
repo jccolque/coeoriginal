@@ -18,7 +18,7 @@ def crear_vigias(filename):
     subcomite = SubComite.objects.get_or_create(nombre="Vigilancia Epidemiologica")[0]
     #Procesamos el archivo
     with open(filename) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
+        csv_reader = csv.reader(csv_file, delimiter=';')
         for row in csv_reader:
             print("\nProcesamos " + row[0] + ': ' + row[1] + ', ' + row[2])
             #Procesamos linea: 0-DNI 1-Apellido 2-Nombre 3-E-mail 4-Teléfono 5-max_controlados 6-Tipo
@@ -48,16 +48,19 @@ def crear_vigias(filename):
             new_operador.usuario.user_permissions.add(permisos.get(codename='individuos'))
             new_operador.usuario.user_permissions.add(permisos.get(codename='seguimiento'))
             #Creamos vigilante
-            if row[6] in ('VE', 'VM', 'ST', 'VT'):
-                vigia = Vigia()
-                vigia.tipo = row[6]
-                vigia.operador = new_operador
-                vigia.max_controlados = row[5]
-                vigia.save()
-                print("Creamos Vigia")
-            elif row[6] == 'A':
-                new_operador.usuario.user_permissions.add(permisos.get(codename='seguimiento_admin'))
-                print("Creamos Administrador de Seguimiento.")
+            if not Vigia.objects.filter(operador=new_operador).exists():
+                if row[6] in ('VE', 'VM', 'ST', 'VT'):
+                    vigia = Vigia()
+                    vigia.tipo = row[6]
+                    vigia.operador = new_operador
+                    vigia.max_controlados = row[5]
+                    vigia.save()
+                    print("Creamos Vigia")
+                elif row[6] == 'A':
+                    new_operador.usuario.user_permissions.add(permisos.get(codename='seguimiento_admin'))
+                    print("Creamos Administrador de Seguimiento.")
+            else:
+                print("Ya es vigia.")
 
 def altas_masivas(filename):
     #Procesamos el archivo
