@@ -36,9 +36,10 @@ def obtener_seguimientos(user):
     return tipos
 
 TIPO_VIGIA = (
-    ('E', 'Vigilancia Epidemiologica'),
-    ('M', 'Salud Mental'),
-    ('T', 'Vigilancia de Transportistas'),
+    ('VE', 'Vigilancia Epidemiologica'),
+    ('VM', 'Vigilancia Salud Mental'),
+    ('ST', 'Seguimiento Clinico de TeleSalud'),
+    ('VT', 'Vigilancia de Circulacion Temporal'),
 )
 
 ESTADO_OPERATIVO = (

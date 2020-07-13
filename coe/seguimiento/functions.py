@@ -156,21 +156,14 @@ def obtener_operativo(num_doc):
 
 def asignar_vigilante(individuo, tipo):
     #Definimos tipos
-    tipos = {
-        'VE': 'E',#Vigilancia Epidemiologica
-        'VM': 'M',#Vigilancia de Salud Mental
-        'VT': 'T',#Vigilancia de Circulacion Temporal
-    }
-    #Si es uno de los deseados:
-    if tipo in tipos:
-        #Iniciamos proceso de asignacion:
-        try:
-            if not individuo.vigiladores.filter(tipo=tipos[tipo]).exists():#Si no tiene Vigilante
-                #Intentamos buscarle el vigilante que menos asignados tenga
-                vigias = Vigia.objects.filter(tipo=tipos[tipo]).annotate(cantidad=Count('controlados'))
-                for vigia in vigias.order_by('cantidad'):
-                    if vigia.max_controlados > vigia.cantidad:
-                        vigia.controlados.add(individuo)
-                        break#Lo cargamos, terminamos
-        except:
-            logger.info("No existen Vigias: " + tipo + ", " + str(individuo) + " quedo sin vigilancia.")
+    #Iniciamos proceso de asignacion:
+    try:
+        if not individuo.vigiladores.filter(tipo=tipo).exists():#Si no tiene Vigilante
+            #Intentamos buscarle el vigilante que menos asignados tenga
+            vigias = Vigia.objects.filter(tipo=tipo).annotate(cantidad=Count('controlados'))
+            for vigia in vigias.order_by('cantidad'):
+                if vigia.max_controlados > vigia.cantidad:
+                    vigia.controlados.add(individuo)
+                    break#Lo cargamos, terminamos
+    except:
+        logger.info("No existen Vigias: " + tipo + ", " + str(individuo) + " quedo sin vigilancia.")

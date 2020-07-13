@@ -92,7 +92,7 @@ def poner_en_seguimiento(created, instance, **kwargs):
 def atributo_vigilancia(created, instance, **kwargs):
     if created:
         #Si se indica alguna vigilancia
-        if instance.tipo in ('VE', 'VM', 'VT'):
+        if instance.tipo in ('VE', 'VM', 'VT', 'ST'):
             asignar_vigilante(instance.individuo, instance.tipo)
 
 @receiver(post_save, sender=Seguimiento)

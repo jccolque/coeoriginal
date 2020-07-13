@@ -43,13 +43,12 @@ def crear_vigias(filename):
                 new_operador.usuario = crear_usuario(new_operador)
                 new_operador.save()
                 print("Creamos usuario: " + new_operador.usuario.username)
-                #Se lo agregamos:
             #Otorgamos Solo permisos para vigilancia:
             permisos = Permission.objects.filter(content_type__app_label='operadores', content_type__model='operador')
             new_operador.usuario.user_permissions.add(permisos.get(codename='individuos'))
             new_operador.usuario.user_permissions.add(permisos.get(codename='seguimiento'))
             #Creamos vigilante
-            if row[6] in ('E', 'M'):
+            if row[6] in ('VE', 'VM', 'ST', 'VT'):
                 vigia = Vigia()
                 vigia.tipo = row[6]
                 vigia.operador = new_operador

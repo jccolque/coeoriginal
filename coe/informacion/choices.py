@@ -64,6 +64,7 @@ TIPO_ATRIBUTO = (
     ('IP', 'Informado Por'),
     ('VE', 'Vigilancia Epidemiologica'),
     ('VM', 'Vigilancia Salud Mental'),
+    ('ST', 'Seguimiento Clinico de TeleSalud'),
     ('VT', 'Vigilancia de Circulacion Temporal'),
     ('AD', 'Aislamiento Domiciliario'),
     ('AS', 'Es Agente de Salud'),
