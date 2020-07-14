@@ -98,7 +98,7 @@
                             <div class="col-sm-5">
                                 <p>
                                     <b>Documento:</b> {{individuo.get_tipo_doc_display}} {{individuo.num_doc}}
-                                    {% if request.user.is_superuser %}
+                                    {% if perms.operadores.epidemiologia %}
                                         <a href="{% url 'informacion:mod_num_doc' individuo_id=individuo.id %}" target="_blank">
                                             <img class="icons" src="{% static '/img/icons/change.png' %}" alt="Modificar">
                                         </a>
@@ -196,7 +196,7 @@
                                     <a class="nolink"  href="{% url 'informacion:mod_signosvitales' individuo_id=individuo.id signosvitales_id=signovitale.id %}">
                                         <img class="icons" src="{% static '/img/icons/change.png' %}">
                                     </a>
-                                    {% if request.user.is_superuser %}
+                                    {% if perms.operadores.epidemiologia %}
                                         <a class="nolink"  href="{% url 'informacion:del_signosvitales' signosvitales_id=signovitale.id %}">
                                             <img class="icons" src="{% static '/img/icons/delete.png' %}">
                                         </a>
@@ -327,7 +327,7 @@
                                     <a class="nolink"  href="{% url 'informacion:mod_documento' individuo_id=individuo.id documento_id=documento.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/change.png' %}">
                                     </a>
-                                    {% if request.user.is_superuser %}
+                                    {% if perms.operadores.epidemiologia %}
                                         <a class="nolink"  href="{% url 'informacion:del_documento' documento_id=documento.id %}">
                                             <img class="icons" src="{% static '/img/icons/delete.png' %}">
                                         </a>
