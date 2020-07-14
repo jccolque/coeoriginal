@@ -77,6 +77,13 @@ def confirmar_sospechoso(created, instance, **kwargs):
         situacion.conducta = 'E'
         situacion.aclaracion = "Confirmado por TEST PCR"
         situacion.save()
+        #Lo saacamos de seguimiento normal:
+        instance.individuo.vigiladores.clear()
+        #Lo ponemos bajo seguimiento de TeleMedicina
+        atributo = Atributo(individuo=instance.individuo)
+        atributo.tipo = 'ST'
+        atributo.aclaracion = "Se requiere seguimiento de Telemedicina."
+        atributo.save()
 
 @receiver(post_save, sender=Domicilio)
 def poner_en_seguimiento(created, instance, **kwargs):
