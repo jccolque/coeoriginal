@@ -79,12 +79,10 @@
             </div>
             <div class="col-lg-4">
                 <h3>Individuos Controlados ({{vigia.controlados.count}})</h3>
-                {% if perms.operadores.seguimiento_admin %}
-                    <a class="botoncito" href="{% url 'seguimiento:agregar_vigilado' vigia_id=vigia.id %}">
-                        Asignar Nuevo Individuo
-                        <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
-                    </a>
-                {% endif %}
+                <a class="botoncito" href="{% url 'seguimiento:agregar_vigilado' vigia_id=vigia.id %}">
+                    Asignar Nuevo Individuo
+                    <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
+                </a>
                 <table class="listado">
                     <thead>
                         <tr>

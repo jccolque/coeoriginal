@@ -185,15 +185,6 @@ def aislamiento_domiciliario(created, instance, **kwargs):
             atributo.aclaracion = "Por Ingreso a Aislamiento."
             atributo.save()
 
-@receiver(post_save, sender=Situacion)
-def quitar_vigilancia_confirmado(created, instance, **kwargs):
-    if instance.estado == 50:
-        if created or ('estado' in kwargs.get('update_fields')):#Si creamos o pasamos a confirmado
-            seguimiento = Seguimiento(individuo=instance.individuo)
-            seguimiento.tipo = 'FS'
-            seguimiento.aclaracion = 'Fin de Seguimiento Normal por TEST Confirmado'
-            seguimiento.save()
-
 #@receiver(post_save, sender=Atributo)
 #def iniciar_tracking_transportistas(created, instance, **kwargs):
 #    if created and instance.tipo == "CT":

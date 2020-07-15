@@ -623,7 +623,9 @@ def lista_sin_telefono(request):
     individuos = individuos.select_related('nacionalidad')
     individuos = individuos.select_related('situacion_actual', 'seguimiento_actual')
     individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'domicilio_actual__ubicacion')
-    #Lanzamos reporte    
+    #Limpiamos duplicados
+    
+    #Lanzamos reporte
     return render(request, "lista_sin_telefonos.html", {
         'individuos': individuos,
         'has_table': True,
