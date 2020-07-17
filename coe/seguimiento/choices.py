@@ -19,13 +19,14 @@ TIPO_SEGUIMIENTO = (
     #Solo usuarios con permiso: 
     ('CT', 'Confirmado por Test'),
     ('DT', 'Descartado por Test'),
+    ('AP', 'Alta Positivo por PCR'),
 )
 
 def obtener_seguimientos(user):
     #Tipo de Seguimientos:
     sistema = ['I', 'A', 'IT', 'AT', 'FT', 'DF', 'TA', 'RC', 'PT']
     publicos = ['L', 'M', 'C', 'E', 'TE', 'ET', 'FS']
-    epidemiologia = ['CT', 'DT']
+    epidemiologia = ['CT', 'DT', 'AP']
     #Generamos seguimientos accesibles
     tipos = [t for t in TIPO_SEGUIMIENTO if t[0] in publicos]
     #Agregamos segun permisos:
@@ -38,6 +39,7 @@ def obtener_seguimientos(user):
 TIPO_VIGIA = (
     ('VE', 'Vigilancia Epidemiologica'),
     ('VM', 'Vigilancia Salud Mental'),
+    ('VD', 'Vigilancia Domestica'),
     ('ST', 'Seguimiento Clinico de TeleSalud'),
     ('VT', 'Vigilancia de Circulacion Temporal'),
 )

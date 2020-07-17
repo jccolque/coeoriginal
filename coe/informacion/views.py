@@ -22,6 +22,7 @@ from background.functions import crear_progress_link
 from graficos.functions import obtener_grafico
 from app.models import AppData
 from permisos.forms import FotoForm
+from geotracking.models import GeoPosicion
 #imports de la app
 from .choices import TIPO_ESTADO, TIPO_CONDUCTA
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
