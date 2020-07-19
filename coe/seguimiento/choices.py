@@ -13,19 +13,20 @@ TIPO_SEGUIMIENTO = (
     ('M', 'Reporte Medico'),
     ('C', 'Cronologia'),
     ('E', 'Epicrisis'),
+    ('IR', 'Individuo Sospechoso: Evaluar'),
     ('ET', 'Esperando Resultados PCR'),
     ('TE', 'No Posee Telefono / Telefono Equivocado'),
     ('FS', 'Fin del Seguimiento/Alta'),
     #Solo usuarios con permiso: 
     ('CT', 'Confirmado por Test'),
     ('DT', 'Descartado por Test'),
-    ('AP', 'Alta Positivo por PCR'),
+    ('AP', 'Alta de Positivo por PCR'),
 )
 
 def obtener_seguimientos(user):
     #Tipo de Seguimientos:
     sistema = ['I', 'A', 'IT', 'AT', 'FT', 'DF', 'TA', 'RC', 'PT']
-    publicos = ['L', 'M', 'C', 'E', 'TE', 'ET', 'FS']
+    publicos = ['L', 'M', 'C', 'E', 'IR', 'ET', 'TE','FS']
     epidemiologia = ['CT', 'DT', 'AP']
     #Generamos seguimientos accesibles
     tipos = [t for t in TIPO_SEGUIMIENTO if t[0] in publicos]
@@ -39,8 +40,8 @@ def obtener_seguimientos(user):
 TIPO_VIGIA = (
     ('VE', 'Vigilancia Epidemiologica'),
     ('VM', 'Vigilancia Salud Mental'),
-    ('VD', 'Vigilancia Domestica'),
-    ('ST', 'Seguimiento Clinico de TeleSalud'),
+    ('ST', 'Vigilancia Clinica de TeleSalud'),
+    ('VD', 'Vigilancia Telegestores - Domestica'),
     ('VT', 'Vigilancia de Circulacion Temporal'),
 )
 

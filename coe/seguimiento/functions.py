@@ -155,7 +155,6 @@ def obtener_operativo(num_doc):
     return operativos.last()
 
 def asignar_vigilante(individuo, tipo):
-    #Definimos tipos
     #Iniciamos proceso de asignacion:
     try:
         if not individuo.vigiladores.filter(tipo=tipo).exists():#Si no tiene Vigilante
@@ -164,6 +163,10 @@ def asignar_vigilante(individuo, tipo):
             for vigia in vigias.order_by('cantidad'):
                 if vigia.max_controlados > vigia.cantidad:
                     vigia.controlados.add(individuo)
-                    break#Lo cargamos, terminamos
+                    #Si no es mental o circulacion, lo dejamos solo en ese panel nuevo:
+                    if tipo not in  ("VM", "VT"):
+                        for old_vigilante in individuo.vigiladores.exclude(tipo__in=("VM", "VT")).exclude(id=vigia.id):
+                            individuo.vigiladores.remove(old_vigilante)
+                    break#Lo cargamos, limpiamos, terminamos
     except:
         logger.info("No existen Vigias: " + tipo + ", " + str(individuo) + " quedo sin vigilancia.")

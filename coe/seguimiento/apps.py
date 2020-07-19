@@ -14,6 +14,7 @@ class SeguimientoConfig(AppConfig):
             from .signals import seguimiento_actual
             from .signals import recuperar_seguimiento
             from .signals import iniciar_seguimiento
+            from .signals import evaluar_sospechoso
             from .signals import descartar_sospechoso
             from .signals import confirmar_sospechoso
             from .signals import poner_en_seguimiento

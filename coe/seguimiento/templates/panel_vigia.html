@@ -93,7 +93,7 @@
                     <tbody>
                         {% for individuo in vigia.controlados.all %}
                             <tr>
-                                <td>{{individuo}}</td>
+                                <td>{{individuo}} {% if individuo.tiene_obrasocial %}<b>({{individuo.get_obrasocial}})</b>{% endif%} </td>
                                 <td>
                                     {% if perms.operadores.individuos %}
                                         <a class="nolink"  href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" class="nolink" target="_blank">

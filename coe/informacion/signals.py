@@ -37,17 +37,6 @@ def estado_inicial(created, instance, **kwargs):
                 atributo.tipo = 'PR'
                 atributo.save()
 
-#@receiver(post_save, sender=TrasladoVehiculo)
-#def relacion_vehiculo(instance, **kwargs):
-#    if not instance.traslado.vehiculo.tipo == 1:
-#        for pasajero in instance.pasajeros.exclude(pk=instance.individuo.pk):
-#            relacion = Relacion()
-#            relacion.tipo = 'CE'
-#            relacion.individuo = instance.individuo
-#            relacion.relacionado = pasajero.individuo
-#            relacion.aclaracion = "Mismo Vehiculo-Mismo Traslado"
-#            relacion.save()
-
 @receiver(post_save, sender=Domicilio)
 def domicilio_actual(created, instance, **kwargs):
     if created:
@@ -160,32 +149,28 @@ def relacionar_situacion(created, instance, **kwargs):
         if sit_individuo.estado > sit_relacionado.estado:
             if sit_individuo.estado == 32:#Contacto Alto Riesgo            
                 sit_relacionado.estado = 31
+                sit_relacionado.aclaracion = "Situacion Escalada por Relacion Detectada por sistema"
+                sit_relacionado.save()
             if sit_individuo.estado == 40:#Sospechoso
                 sit_relacionado.estado = 32
+                sit_relacionado.aclaracion = "Situacion Escalada por Relacion Detectada por sistema"
+                sit_relacionado.save()
             if sit_individuo.estado == 50:#Confirmado
-                sit_relacionado.estado = 40
-            sit_relacionado.aclaracion = "Situacion Escalada por Relacion Detectada por sistema"
-            sit_relacionado.save()
+                #Pedimos seguimiento
+                seguimiento = Seguimiento(individuo=sit_relacionado.individuo)
+                seguimiento.tipo = "IR"
+                seguimiento.aclaracion = "Contacto con confirmado: " + str(sit_individuo.individuo)
+                seguimiento.save()
+                #Este seguimiento lo pondra como sospechoso y generara seguimiento.
 
 @receiver(post_save, sender=Atributo)
 def aislamiento_domiciliario(created, instance, **kwargs):
-    if created and instance.tipo == "AD":
+    if created and instance.tipo == "VD":
         #Creamos la situacion de aislamiento
         sit_actual = instance.individuo.get_situacion()
-        if sit_actual.conducta not in ('D', 'E'):
-            sit = Situacion()
-            sit.individuo = instance.individuo
+        if sit_actual.conducta != 'E':
+            sit = Situacion(individuo=instance.individuo)
+            sit.estado = sit_actual.estado
             sit.conducta = 'E'
-            sit.aclaracion = "Debe Realizar Cuarentena Obligatoria en su Hogar"
+            sit.aclaracion = "Debe Realizar Aislamiento Obligatoria en su Hogar"
             sit.save()
-            #Lo asignamos a vigilancia epidemiologica
-            atributo = Atributo()
-            atributo.individuo = instance.individuo
-            atributo.tipo = 'VE'
-            atributo.aclaracion = "Por Ingreso a Aislamiento."
-            atributo.save()
-
-#@receiver(post_save, sender=Atributo)
-#def iniciar_tracking_transportistas(created, instance, **kwargs):
-#    if created and instance.tipo == "CT":
-#        pass  #  INICIAMOS TRACKING DEL INDIVIDUO

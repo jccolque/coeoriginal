@@ -145,6 +145,13 @@ class Individuo(models.Model):
         return self.documentos.filter(tipo='AT').last()
     def es_camionero(self):
         return self.atributos.filter(tipo='VT').exists()
+    def tiene_obrasocial(self):
+        return self.atributos.filter(tipo='TO').exists()
+    def get_obrasocial(self):
+        try:
+            return self.atributos.filter(tipo='TO').last().aclaracion
+        except:
+            return "Sin obra social"
 
 class Relacion(models.Model):#Origen del Dato
     tipo = models.CharField('Tipo Relacion', choices=TIPO_RELACION, max_length=2, default='F')

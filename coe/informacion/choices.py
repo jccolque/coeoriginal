@@ -28,8 +28,8 @@ TIPO_VEHICULO = (
 )
 
 TIPO_ESTADO = (
-    (11, 'Asintomatico'),
     (10, 'Sano'),
+    (11, 'Asintomatico'),
     (31, 'Contacto Bajo Riesgo'),
     (32, 'Contacto Alto Riesgo'),
     (40, 'Sospechoso'),
@@ -43,8 +43,8 @@ TIPO_CONDUCTA = (
     ('A', 'Nada'),
     ('B', 'Evaluar'),
     ('C', 'Cuarentena Voluntaria'),
-    ('D', 'Cuarentena Obligatoria'),
-    ('E', 'Aislamiento'),
+    ('D', 'Cuarentena Obligatoria (Domiciliario)'),
+    ('E', 'Aislamiento (Custodiado)'),
     ('F', 'En Morgue'),
     ('G', 'Cremado'),
     ('H', 'Enterrado'),
@@ -61,12 +61,13 @@ TIPO_RELACION = (
 TIPO_ATRIBUTO = (
     ('PR', 'Poblacion de Riesgo/Comorbilidades'),
     ('DE', 'Denuncia Externa'),
-    ('IP', 'Informado Por'),
+    #Vigilancia
     ('VE', 'Vigilancia Epidemiologica'),
     ('VM', 'Vigilancia Salud Mental'),
     ('ST', 'Seguimiento Clinico de TeleSalud'),
     ('VT', 'Vigilancia de Circulacion Temporal'),
-    ('VD', 'Aislamiento Domiciliario'),
+    ('VD', 'Vigilancia Domiciliaria (Telegestores)'),
+    #Trabajo:
     ('AS', 'Es Agente de Salud'),
     ('PS', 'Es Personal de Seguridad'),
     ('FP', 'Es Funcionario Publico'),
@@ -74,12 +75,14 @@ TIPO_ATRIBUTO = (
     ('TE', 'Es Trabajador de Empresa Estrategica'),
     ('CT', 'Posee Permiso de Circulacion Temporal'),
     ('PD', 'Se encuentra Presos/Detenidos'),
+    #Otros
     ('CE', 'Visito Pais de Riesgo/Contacto con Extranjeros'),
     ('CP', 'Tiene Potestad de Controlar Permisos'),
     ('VA', 'Voluntario Aprobado'),
+    ('TO', 'Posee Obra Social'),
     ('TP', 'Test Prioritario'),
     #excepciones (3 caracteres)
-    ('OP2', 'Puede acreditar que requiere imprescindiblemente de cuidados domiciliarios'),
+    ('OP2', 'Puede acreditar que requiere imprescindiblemente cuidados domiciliarios'),
     ('EMB', 'Embarazada a partir del segundo Trimestre'),
     ('DIS', 'Posee Certificado de Discapacidad'),
     ('APS', 'Posee antecedentes Psiquiatricos'),
@@ -115,7 +118,7 @@ TIPO_SINTOMA = (
     ('SN', 'Secrecion Nasal'),
     ('TOS', 'Tos'),
     ('VOM', 'Vomitos'),
-    ('ESC', 'Escalofrios')
+    ('ESC', 'Escalofrios'),
 )
 
 TIPO_PATOLOGIA = (

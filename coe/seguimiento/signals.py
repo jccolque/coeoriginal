@@ -38,7 +38,7 @@ def iniciar_seguimiento(created, instance, **kwargs):
         #Creamos inicializacion
         seguimiento = Seguimiento(individuo=instance)
         seguimiento.tipo = "I"
-        seguimiento.aclaracion = "Ingreso al sistema"
+        seguimiento.aclaracion = "Carga Inicial al sistema"
         seguimiento.save()
 
 @receiver(post_save, sender=Seguimiento)
@@ -77,9 +77,7 @@ def confirmar_sospechoso(created, instance, **kwargs):
         situacion.conducta = 'E'
         situacion.aclaracion = "Confirmado por TEST PCR"
         situacion.save()
-        #Lo saacamos de seguimiento normal:
-        instance.individuo.vigiladores.clear()
-        #Lo ponemos bajo seguimiento de TeleMedicina
+        #Lo ponemos bajo seguimiento de telesalud
         atributo = Atributo(individuo=instance.individuo)
         atributo.tipo = 'ST'
         atributo.aclaracion = "Se requiere seguimiento de Telemedicina."
@@ -95,11 +93,26 @@ def poner_en_seguimiento(created, instance, **kwargs):
         atributo.aclaracion = "Por Ingreso a Aislamiento."
         atributo.save()
 
+@receiver(post_save, sender=Seguimiento)
+def evaluar_sospechoso(created, instance, **kwargs):
+    if created and instance.tipo == "IR":
+        if instance.individuo.get_situacion().estado < 40:#Si no esta en sospechso o peor
+            situacion = Situacion(individuo=instance.individuo)
+            situacion.estado = 40
+            situacion.conducta = 'B'
+            situacion.aclaracion = "Requiere evaluacion Medica"
+            situacion.save()
+        #Le agregamos atributo de seguimiento medico:
+        atributo = Atributo(individuo=instance.individuo)
+        atributo.tipo = "VD"
+        atributo.aclaracion = "Se requiere analisis medico: Individuo Sospechoso"
+        atributo.save()
+
 @receiver(post_save, sender=Atributo)
 def atributo_vigilancia(created, instance, **kwargs):
     if created:
         #Si se indica alguna vigilancia
-        if instance.tipo in ('VE', 'VM', 'VD', 'ST', 'VT'):
+        if instance.tipo in ('VE', 'VM', 'ST', 'VD', 'VT'):
             asignar_vigilante(instance.individuo, instance.tipo)
 
 @receiver(post_save, sender=Seguimiento)
