@@ -164,7 +164,7 @@ def asignar_vigilante(individuo, tipo):
                 if vigia.max_controlados > vigia.cantidad:
                     vigia.controlados.add(individuo)
                     #Si no es mental o circulacion, lo dejamos solo en ese panel nuevo:
-                    if tipo not in  ("VM", "VT"):
+                    if tipo not in  ("VM", "AP", "VT"):
                         for old_vigilante in individuo.vigiladores.exclude(tipo__in=("VM", "VT")).exclude(id=vigia.id):
                             individuo.vigiladores.remove(old_vigilante)
                     break#Lo cargamos, limpiamos, terminamos

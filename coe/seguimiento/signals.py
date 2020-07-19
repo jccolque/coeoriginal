@@ -112,7 +112,7 @@ def evaluar_sospechoso(created, instance, **kwargs):
 def atributo_vigilancia(created, instance, **kwargs):
     if created:
         #Si se indica alguna vigilancia
-        if instance.tipo in ('VE', 'VM', 'ST', 'VD', 'VT'):
+        if instance.tipo in ('VE', 'VM', 'AP', 'ST', 'VD', 'VT'):
             asignar_vigilante(instance.individuo, instance.tipo)
 
 @receiver(post_save, sender=Seguimiento)

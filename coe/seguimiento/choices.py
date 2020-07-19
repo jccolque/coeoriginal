@@ -40,6 +40,7 @@ def obtener_seguimientos(user):
 TIPO_VIGIA = (
     ('VE', 'Vigilancia Epidemiologica'),
     ('VM', 'Vigilancia Salud Mental'),
+    ('AP', 'Atencion Psiquiatrica'),
     ('ST', 'Vigilancia Clinica de TeleSalud'),
     ('VD', 'Vigilancia Telegestores - Domestica'),
     ('VT', 'Vigilancia de Circulacion Temporal'),

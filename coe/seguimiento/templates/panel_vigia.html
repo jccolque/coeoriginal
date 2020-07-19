@@ -60,9 +60,15 @@
                                     <a class="nolink" href="{% url 'informacion:cargar_patologia' individuo_id=individuo.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/patologia.png' %}">
                                     </a>
-                                    <a class="nolink" href="{% url 'informacion:cargar_atributo' individuo_id=individuo.id tipo='VM' %}" target="_blank">
-                                        <img class="icons" src="{% static '/img/icons/crazy.png' %}">
-                                    </a>
+                                    {% if vigia.tipo == "VM" %}
+                                        <a class="nolink" href="{% url 'informacion:cargar_atributo' individuo_id=individuo.id tipo='AP' %}" target="_blank">
+                                            <img class="icons" src="{% static '/img/icons/crazy.png' %}">
+                                        </a>
+                                    {% elif vigia.tipo != "AP" %}
+                                        <a class="nolink" href="{% url 'informacion:cargar_atributo' individuo_id=individuo.id tipo='VM' %}" target="_blank">
+                                            <img class="icons" src="{% static '/img/icons/crazy.png' %}">
+                                        </a>
+                                    {% endif %}
                                     <a class="nolink" href="{% url 'seguimiento:ver_seguimiento' individuo_id=individuo.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/lupa.png' %}">
                                     </a>
