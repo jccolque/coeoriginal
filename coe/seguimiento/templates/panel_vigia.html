@@ -8,14 +8,13 @@
         <div class="row">
             <h2><b>Panel de {{vigia}}</b></h2>
             <p><b>{{vigia.get_tipo_display}}</b></p>
-            <div class="col-lg-8">
+            <div class="col-lg-7">
                 <h3>Alertas Activas ({{vigia.alertas_activas}})</h3>
                 <table class="listado" id="table">
                     <thead>
                         <tr>
                             <th>Retraso</th>
                             <th>Individuo</th>
-                            <th>Situacion</th>
                             <th>Domicilio</th>
                             <th>Telefono</th>
                             <th>Ultimo Seguimiento</th>
@@ -31,7 +30,7 @@
                                 <td>
                                     {{individuo.apellidos}}, {{individuo.nombres}}
                                 </td>
-                                <td>{{individuo.situacion_actual}}</td>
+                                
                                 <td>{{individuo.domicilio_actual}}</td>
                                 <td>
                                     {{individuo.telefono}}
@@ -83,7 +82,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-5">
                 <h3>Individuos Controlados ({{vigia.controlados.count}})</h3>
                 <a class="botoncito" href="{% url 'seguimiento:agregar_vigilado' vigia_id=vigia.id %}">
                     Asignar Nuevo Individuo
@@ -93,13 +92,33 @@
                     <thead>
                         <tr>
                             <th>Individuo</th>
+                            <th>Situacion</th>
+                            <th>Obra Social</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody style="font-size:small;">
                         {% for individuo in vigia.controlados.all %}
                             <tr>
-                                <td>{{individuo}} {% if individuo.tiene_obrasocial %}<b>({{individuo.get_obrasocial}})</b>{% endif%} </td>
+                                <td>
+                                    <b>{{individuo}}</b>
+                                </td>
+                                <td>
+                                    {% with individuo.get_situacion as situacion %}
+                                        {{situacion}}<br>
+                                        {{situacion.aclaracion|safe}}
+                                    {% endwith %}
+                                </td>
+                                <td>
+                                    {% if individuo.tiene_obrasocial %}
+                                        <b>{{individuo.get_obrasocial}}</b>
+                                    {% else %}
+                                        No Tiene
+                                        <a class="nolink" href="{% url 'informacion:cargar_atributo' individuo_id=individuo.id tipo='TO' %}" target="_blank">
+                                            <img class="icons" src="/static/admin/img/icon-addlink.svg">
+                                        </a>
+                                    {% endif %}
+                                </td>
                                 <td>
                                     {% if perms.operadores.individuos %}
                                         <a class="nolink"  href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" class="nolink" target="_blank">

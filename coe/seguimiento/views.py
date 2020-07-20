@@ -575,6 +575,10 @@ def ranking_test(request):
         if individuo.atributos.filter(tipo='TP').exists():
             individuo.puntaje += 50
             individuo.motivos += ["Ranking Prioritario", ]
+        #+100 sospechoso:
+        if individuo.situacion_actual.estado == 40:
+            individuo.puntaje += 75
+            individuo.motivos += ["Sospechoso", ]
         #Ranking de puntajes:
     #Mostramos
     return render(request, "ranking_test.html", {

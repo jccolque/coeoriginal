@@ -7,7 +7,6 @@ TIPO_SEGUIMIENTO = (
     ('DF', 'Domicilio Fuera de la Provincia'),
     ('TA', 'Traslado a Aislamiento'),
     ('RC', 'Registro de Circulacion Temporal'),
-    ('PT', 'Pidio Test'),
     #Todos los usuarios
     ('L', 'Llamada Telefonica'),
     ('M', 'Reporte Medico'),
@@ -16,6 +15,7 @@ TIPO_SEGUIMIENTO = (
     ('IR', 'Individuo Sospechoso: Evaluar'),
     ('ET', 'Esperando Resultados PCR'),
     ('TE', 'No Posee Telefono / Telefono Equivocado'),
+    ('PT', 'Pidio Test'),
     ('FS', 'Fin del Seguimiento/Alta'),
     #Solo usuarios con permiso: 
     ('CT', 'Confirmado por Test'),
@@ -25,8 +25,8 @@ TIPO_SEGUIMIENTO = (
 
 def obtener_seguimientos(user):
     #Tipo de Seguimientos:
-    sistema = ['I', 'A', 'IT', 'AT', 'FT', 'DF', 'TA', 'RC', 'PT']
-    publicos = ['L', 'M', 'C', 'E', 'IR', 'ET', 'TE','FS']
+    sistema = ['I', 'A', 'IT', 'AT', 'FT', 'DF', 'TA', 'RC']
+    publicos = ['L', 'M', 'C', 'E', 'IR', 'ET', 'TE','FS', 'PT']
     epidemiologia = ['CT', 'DT', 'AP']
     #Generamos seguimientos accesibles
     tipos = [t for t in TIPO_SEGUIMIENTO if t[0] in publicos]

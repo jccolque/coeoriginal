@@ -129,6 +129,10 @@ def afectar_relacionados(created, instance, **kwargs):
                 sit_rel.estado = 32
             if instance.estado == 50:#Confirmado
                 sit_rel.estado = 40
+                atributo = Atributo(individuo=sit_rel.individuo)
+                atributo.tipo = "VE"
+                atributo.aclaracion = "Contacto detectada por sistema con: " + str(individuo)
+                atributo.save()
             #Agregamos descripcion y guardamos
             sit_rel.conducta = 'B'
             sit_rel.aclaracion = "Detectado por sistema, Relacionado con: " + str(individuo)
@@ -136,7 +140,7 @@ def afectar_relacionados(created, instance, **kwargs):
                 sit_rel.save()
 
 @receiver(post_save, sender=Relacion)
-def relacionar_situacion(created, instance, **kwargs):
+def relacionar_situacion_nueva(created, instance, **kwargs):
     #Creamos la relacion inversa
     if created:
         individuo = instance.individuo
@@ -149,19 +153,22 @@ def relacionar_situacion(created, instance, **kwargs):
         if sit_individuo.estado > sit_relacionado.estado:
             if sit_individuo.estado == 32:#Contacto Alto Riesgo            
                 sit_relacionado.estado = 31
-                sit_relacionado.aclaracion = "Situacion Escalada por Relacion Detectada por sistema"
+                sit_relacionado.aclaracion = "Contacto detectada por sistema con: " + str(individuo)
                 sit_relacionado.save()
             if sit_individuo.estado == 40:#Sospechoso
                 sit_relacionado.estado = 32
-                sit_relacionado.aclaracion = "Situacion Escalada por Relacion Detectada por sistema"
+                sit_relacionado.aclaracion = "Contacto detectada por sistema con: " + str(individuo)
                 sit_relacionado.save()
             if sit_individuo.estado == 50:#Confirmado
+                #Lo pondra como sospechoso y generara seguimiento.
+                sit_relacionado.estado = 40
+                sit_relacionado.aclaracion = "Contacto detectada por sistema con: " + str(individuo)
+                sit_relacionado.save()                
                 #Pedimos seguimiento
-                seguimiento = Seguimiento(individuo=sit_relacionado.individuo)
-                seguimiento.tipo = "IR"
-                seguimiento.aclaracion = "Contacto con confirmado: " + str(sit_individuo.individuo)
-                seguimiento.save()
-                #Este seguimiento lo pondra como sospechoso y generara seguimiento.
+                atributo = Atributo(individuo=sit_relacionado.individuo)
+                atributo.tipo = "VE"
+                atributo.aclaracion = "Contacto detectada por sistema con: " + str(individuo)
+                atributo.save()
 
 @receiver(post_save, sender=Atributo)
 def aislamiento_domiciliario(created, instance, **kwargs):
