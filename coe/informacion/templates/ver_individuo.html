@@ -38,7 +38,7 @@
                                 {% if individuo.situacion_actual %}
                                     <h4>Estado: <b>{{individuo.situacion_actual}}</b><br>
                                         ({{individuo.situacion_actual.fecha}})
-                                        {% if perms.operadores.epidemiologia %}
+                                        {% if perms.operadores.admin_informacion %}
                                             <a class="nolink" href="{% url 'informacion:cargar_situacion' individuo_id=individuo.id %}" target="_blank">
                                                 <img class="icons" src="{% static '/img/icons/change.png' %}">
                                             </a>
@@ -100,7 +100,7 @@
                             <div class="col-sm-5">
                                 <p>
                                     <b>Documento:</b> {{individuo.get_tipo_doc_display}} {{individuo.num_doc}}
-                                    {% if perms.operadores.epidemiologia %}
+                                    {% if perms.operadores.admin_informacion %}
                                         <a href="{% url 'informacion:mod_num_doc' individuo_id=individuo.id %}" target="_blank">
                                             <img class="icons" src="{% static '/img/icons/change.png' %}" alt="Modificar">
                                         </a>
@@ -190,9 +190,11 @@
                                     <a class="nolink"  href="{% url 'informacion:mod_atributo' individuo_id=individuo.id atributo_id=atributo.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/change.png' %}">
                                     </a>
-                                    <a class="nolink"  href="{% url 'informacion:del_atributo' atributo_id=atributo.id %}" target="_blank">
-                                        <img class="icons" src="{% static '/img/icons/delete.png' %}">
-                                    </a>
+                                    {% if perms.operadores.admin_informacion %}
+                                        <a class="nolink"  href="{% url 'informacion:del_atributo' atributo_id=atributo.id %}" target="_blank">
+                                            <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                        </a>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% if forloop.last %}
@@ -229,7 +231,7 @@
                                     <a class="nolink"  href="{% url 'informacion:mod_signosvitales' individuo_id=individuo.id signosvitales_id=signovitale.id %}">
                                         <img class="icons" src="{% static '/img/icons/change.png' %}">
                                     </a>
-                                    {% if perms.operadores.epidemiologia %}
+                                    {% if perms.operadores.admin_informacion %}
                                         <a class="nolink"  href="{% url 'informacion:del_signosvitales' signosvitales_id=signovitale.id %}" target="_blank">
                                             <img class="icons" src="{% static '/img/icons/delete.png' %}">
                                         </a>
@@ -262,9 +264,11 @@
                                     <a class="nolink"  href="{% url 'informacion:mod_sintoma' individuo_id=individuo.id sintoma_id=sintoma.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/change.png' %}">
                                     </a>
-                                    <a class="nolink"  href="{% url 'informacion:del_sintoma' sintoma_id=sintoma.id %}" target="_blank">
-                                        <img class="icons" src="{% static '/img/icons/delete.png' %}">
-                                    </a>
+                                    {% if perms.operadores.admin_informacion %}
+                                        <a class="nolink"  href="{% url 'informacion:del_sintoma' sintoma_id=sintoma.id %}" target="_blank">
+                                            <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                        </a>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% if forloop.last %}
@@ -293,9 +297,11 @@
                                     <a class="nolink"  href="{% url 'informacion:mod_patologia' individuo_id=individuo.id patologia_id=patologia.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/change.png' %}">
                                     </a>
-                                    <a class="nolink"  href="{% url 'informacion:del_patologia' patologia_id=patologia.id %}" target="_blank">
-                                        <img class="icons" src="{% static '/img/icons/delete.png' %}">
-                                    </a>
+                                    {% if perms.operadores.admin_informacion %}
+                                        <a class="nolink"  href="{% url 'informacion:del_patologia' patologia_id=patologia.id %}" target="_blank">
+                                            <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                        </a>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% if forloop.last %}
@@ -312,6 +318,7 @@
                                     <tr>
                                         <th>Tipo</th>
                                         <th>Individuo</th>
+                                        <th>Telefono</th>
                                         <th>Aclaracion</th>
                                         <th>Estado</th>
                                         <th>Fecha</th>
@@ -323,6 +330,12 @@
                                 <td>
                                     <a href="{% url 'informacion:ver_individuo' individuo_id=relacion.relacionado.id %}" target="_blank">
                                         {{relacion.relacionado}}
+                                    </a>
+                                </td>
+                                <td>
+                                    {{relacion.relacionado.telefono}}
+                                    <a href="{% url 'informacion:mod_telefono' individuo_id=relacion.relacionado.id %}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/change.png' %}" alt="Modificar">
                                     </a>
                                 </td>
                                 <td>{{relacion.aclaracion}}</td>
@@ -371,7 +384,7 @@
                                     <a class="nolink"  href="{% url 'informacion:mod_documento' individuo_id=individuo.id documento_id=documento.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/change.png' %}">
                                     </a>
-                                    {% if perms.operadores.epidemiologia %}
+                                    {% if perms.operadores.admin_informacion %}
                                         <a class="nolink"  href="{% url 'informacion:del_documento' documento_id=documento.id %}" target="_blank">
                                             <img class="icons" src="{% static '/img/icons/delete.png' %}">
                                         </a>
@@ -406,9 +419,11 @@
                                     <a class="nolink"  href="{% url 'seguimiento:mod_seguimiento' individuo_id=individuo.id seguimiento_id=seguimiento.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/change.png' %}">
                                     </a>
-                                    <a class="nolink"  href="{% url 'seguimiento:del_seguimiento' seguimiento_id=seguimiento.id %}" target="_blank">
-                                        <img class="icons" src="{% static '/img/icons/delete.png' %}">
-                                    </a>
+                                    {% if perms.operadores.admin_informacion %}
+                                        <a class="nolink"  href="{% url 'seguimiento:del_seguimiento' seguimiento_id=seguimiento.id %}" target="_blank">
+                                            <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                        </a>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% if forloop.last %}
@@ -447,9 +462,7 @@
                             <hr>
                             <li><a href="{% url 'informacion:cargar_domicilio' individuo_id=individuo.id %}">Cargar Domicilio</a></li>
                             <li><a href="{% url 'informacion:cargar_geoposicion' individuo_id=individuo.id %}" >Asignar GeoPosicion</a></li>
-                            <!--
-                                <li><a href="{% url 'informacion:elegir_ubicacion' individuo_id=individuo.id %}">Trasladar Aislacion/Internacion</a></li>
-                            -->
+                            <li><a href="{% url 'informacion:elegir_ubicacion' individuo_id=individuo.id %}">Trasladar Aislacion/Internacion</a></li>
                             <hr>
                             <li><a href="{% url 'informacion:cargar_signosvitales' individuo_id=individuo.id %}" target="_blank">Cargar Signos Vitales</a></li>
                             <li><a href="{% url 'informacion:cargar_documento' individuo_id=individuo.id %}" target="_blank">Cargar Documento</a></li>

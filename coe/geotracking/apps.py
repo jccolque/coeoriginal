@@ -19,6 +19,5 @@ class GeotrackingConfig(AppConfig):
         inicializar_background_job(finalizar_geotracking, 12, 'finalizar_geotracking')
         #Señales
         if not LOADDATA:
-            from .signals import asignar_geoperador
             from .signals import inicio_seguimiento
             from .signals import asignar_punto_control

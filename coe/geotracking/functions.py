@@ -1,6 +1,8 @@
 #Imports de Python
+import logging
 from datetime import timedelta
 #Imports de Django
+from django.db.models import Count
 from django.core.cache import cache
 #Imports Extras
 from geographiclib.geodesic import Geodesic
@@ -9,7 +11,10 @@ from coe.constantes import DISTANCIA_MAXIMA, CENTRO_LATITUD, CENTRO_LONGITUD
 from informacion.models import Individuo
 from seguimiento.models import Seguimiento
 #Imports de la app
-from .models import GeoPosicion
+from .models import GeoPosicion, GeOperador
+
+#Logger
+logger = logging.getLogger('functions')
 
 #Definimos nuestras funciones:
 def obtener_trackeados():
@@ -129,3 +134,11 @@ def control_movimiento(nueva_geopos):
         nueva_geopos.aclaracion = 'Lleva ' + str(cant * 10) + 'mins sin registrar movimientos.'
     #Evitamos control a la hora de dormir
     return nueva_geopos
+
+def asignar_geoperador(individuo):
+    #Obtenemos el que menos controlados tiene
+    geoperadores = GeOperador.objects.annotate(cantidad=Count('controlados')).order_by('cantidad')
+    for geoperador in geoperadores:
+        if geoperador.controlados.count() < geoperador.max_controlados:
+            geoperador.controlados.add(individuo)
+            break

@@ -86,6 +86,7 @@ class Operador(models.Model):
             ("archivos", "Crear Archivos."),
             ("vehiculos", "Informacion de Vehiculo."),
             ("individuos", "Informacion de Individuos."),
+            ("admin_informacion", "Se puede modificar Informacion compleja de Individuos."),
             ("epidemiologia", "Acceso a Informacion Epidemiologica Confidencial"),
             #Seguimiento:
             ("seguimiento", "Monitor Seguimiento de Individuos."),

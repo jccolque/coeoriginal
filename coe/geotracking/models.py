@@ -28,6 +28,7 @@ class GeoPosicion(models.Model):
 
 class GeOperador(models.Model):
     operador = models.OneToOneField(Operador, on_delete=models.CASCADE, related_name="geoperador")
+    max_controlados = models.SmallIntegerField('Cantidad Maxima de Controlados', default=30)
     controlados = models.ManyToManyField(Individuo, related_name='geoperadores')
     def __str__(self):
         return str(self.operador.nombres) + ' ' + str(self.operador.apellidos)

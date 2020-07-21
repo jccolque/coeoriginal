@@ -97,3 +97,10 @@ def obtener_last_seg():
         individuo.seguimiento_actual = individuo.seguimientos.last()
         individuo.save()
         print(individuo)
+
+def confirmar_individuos(filename):
+    #Cargamos masivamente los test positivos:
+     with open(filename) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        for row in csv_reader:
+            pass

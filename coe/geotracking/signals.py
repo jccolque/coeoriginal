@@ -10,25 +10,12 @@ from django.db.models import Count
 from seguimiento.models import Seguimiento
 #Imports de la app
 from .models import GeoPosicion, GeOperador
+from .functions import asignar_geoperador
 
 #Logger
 logger = logging.getLogger('signals')
 
 #Definimos nuestra señales
-@receiver(post_save, sender=GeoPosicion)
-def asignar_geoperador(created, instance, **kwargs):
-    if created and instance.tipo == 'ST':#Si lo ingresamos al sistema
-        try:
-            #Chequeamos que este en aislamiento
-            if instance.individuo.situacion_actual.conducta in ('D', 'E'): 
-                #Obtenemos el que menos controlados tiene
-                geoperador = GeOperador.objects.annotate(cantidad=Count('controlados')).order_by('cantidad').first()
-                #Se lo agregamos
-                geoperador.controlados.add(instance.individuo)
-        except:
-            logger.info("Falla: No se pudo asignar Operador!")
-            logger.info("Falla: "+str(traceback.format_exc()))
-
 @receiver(post_save, sender=GeoPosicion)
 def asignar_punto_control(created, instance, **kwargs):
     if created and instance.tipo == 'ST':#Si lo ingresamos al sistema
@@ -53,5 +40,7 @@ def inicio_seguimiento(created, instance, **kwargs):
     if created and instance.tipo == 'ST':#Si lo ingresamos al sistema
         seguimiento = Seguimiento(individuo=instance.individuo)
         seguimiento.tipo = 'IT'
-        seguimiento.aclaracion = "Autogenerado por Pulsera Activada"
+        seguimiento.aclaracion = "Autogenerado por activacion de Pulsera Digital"
         seguimiento.save()
+        #Asignamos a un geoperador
+        asignar_geoperador(instance.individuo)
