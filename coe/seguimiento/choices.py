@@ -15,7 +15,7 @@ TIPO_SEGUIMIENTO = (
     ('IR', 'Individuo Sospechoso: Evaluar'),
     ('ET', 'Esperando Resultados PCR'),
     ('TE', 'No Posee Telefono / Telefono Equivocado'),
-    ('PT', 'Pidio Test'),
+    ('PT', 'Pedido de Test'),
     ('FS', 'Fin del Seguimiento/Alta'),
     #Solo usuarios con permiso: 
     ('CT', 'Confirmado por Test'),
