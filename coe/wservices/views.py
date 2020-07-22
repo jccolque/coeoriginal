@@ -9,7 +9,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import permission_required
 from django.core import serializers
 #Imports del proyecto
-from georef.models import Localidad, Barrio
+from georef.models import Provincia, Localidad, Barrio
 from informacion.choices import TIPO_ESTADO, TIPO_CONDUCTA
 from informacion.models import Individuo, Situacion, Domicilio
 from permisos.choices import TIPO_PERMISO
@@ -83,10 +83,13 @@ def tipo_denuncia(request):
     )
 
 def ws_localidades(request):
-    datos = Localidad.objects.all()
+    #Filtramos jujuy:
+    jujuy = Provincia.objects.get(id_infragob=38)
+    #Obtenemos todas las localidades de jujuy
+    datos = Localidad.objects.filter(departamento__provincia=jujuy)
     datos = [d.as_dict() for d in datos]
     return HttpResponse(json.dumps({'Localidades': datos, "cant_registros": len(datos),}), content_type='application/json')
-    
+
 def ws_barrios(request, localidad_id=None):
     datos = Barrio.objects.all()
     if localidad_id:
