@@ -33,4 +33,6 @@ urlpatterns = [
     #Autocomplete
     url(r'^individuostrackeados-autocomplete/$', autocomplete.IndividuosTrackeadosAutocomplete.as_view(), name='individuostrackeados-autocomplete',),
     url(r'^geoperadores-autocomplete/$', autocomplete.GeOperadoresAutocomplete.as_view(), name='geoperadores-autocomplete',),
+    #Wservice
+    path('json/<str:num_doc>', views.json_individuo, name='json_individuo'),
 ]

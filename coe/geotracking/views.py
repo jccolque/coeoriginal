@@ -293,3 +293,19 @@ def config_tracking(request, individuo_id):
             appdata.save()
             return redirect('geotracking:ver_tracking', individuo_id=individuo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Configurar Parametros Individuales", 'form': form, 'boton': "Configurar", })
+
+#Testing
+@permission_required('operadores.geotracking_admin')
+def json_individuo(request, num_doc):
+    #Traemos requerimientos
+    from django.http import JsonResponse
+    from .clases import MapeadorIndividual
+    #Obtenemos datos
+    individuo = Individuo.objects.get(num_doc=num_doc)
+    mapeador = MapeadorIndividual(individuo)
+    #Devolvemos json
+    return JsonResponse(
+        mapeador.create_dict(),
+        safe=False
+    )
+    

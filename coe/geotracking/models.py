@@ -25,6 +25,32 @@ class GeoPosicion(models.Model):
     operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True)
     def __str__(self):
         return str(self.latitud) + '|' + str(self.longitud)
+    def icono(self):
+        icono = "/img/icons/maps/house_red.png"
+        #Por tipo
+        if self.tipo == 'AD':#Si es autodiagnostico
+            icono = "/img/icons/maps/autodiagnostico.png"
+        elif self.tipo == 'TS':
+            icono = "/img/icons/maps/test.png"
+        elif self.tipo == 'ST':#Si inicio el tracking
+            icono = "/img/icons/maps/house_red.png"
+        elif self.tipo == 'PC':#Si es el origen de control
+            icono = "/img/icons/maps/house.png"
+        elif self.tipo == 'RG':#Si es un tracking
+            icono = "/img/icons/maps/steps.png"
+        elif self.tipo == 'CG':
+            icono = "/img/icons/maps/detective.png"
+        #Por alerta
+        if self.alerta != 'SA':
+            if self.tipo == 'RG':
+                icono = "/img/icons/maps/alerta.png"
+            elif self.procesada:
+                if self.tipo == 'CG':
+                    icono = "/img/icons/maps/detective_red.png"
+                else:
+                    icono = "/img/icons/maps/alerta_procesada.png"
+        #Devolvemos el icono correspondiente
+        return icono
 
 class GeOperador(models.Model):
     operador = models.OneToOneField(Operador, on_delete=models.CASCADE, related_name="geoperador")
