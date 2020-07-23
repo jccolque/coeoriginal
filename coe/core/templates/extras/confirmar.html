@@ -4,7 +4,7 @@
     <section class="formulario">
         <section class="formulario-container">
             <h2>{{titulo}}</h2>
-            <p class="texto">{{message}}</p>
+            <p class="texto">{{message|safe}}</p>
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <br>

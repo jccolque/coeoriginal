@@ -27,7 +27,9 @@ logger = logging.getLogger('errors')
 
 #Definimos funciones
 def obtener_bajo_seguimiento():
+    #Obtenemos los en cuarentena obligatorio o aislamiento
     individuos = Individuo.objects.filter(situacion_actual__conducta__in=('D', 'E'))
+    #Devolvemos listado
     return individuos
 
 def creamos_doc_alta(individuo):

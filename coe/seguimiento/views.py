@@ -235,17 +235,12 @@ def seguimientos_vigia(request, vigia_id):
 @permission_required('operadores.seguimiento_admin')
 def lista_seguimientos(request):
     #Obtenemos los registros
-    individuos = obtener_bajo_seguimiento()
-    #Filtramos por los que tienen vigia
-    individuos = individuos.exclude(vigiladores=None)
+    individuos = Individuo.objects.exclude(vigiladores=None)
     #Optimizamos las busquedas
     individuos = individuos.select_related('nacionalidad')
     individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'domicilio_actual__ubicacion')
     individuos = individuos.select_related('situacion_actual', 'seguimiento_actual')
     individuos = individuos.prefetch_related('vigiladores', 'vigiladores__operador')
-    #Traemos seguimientos terminados para descartar
-    #last12hrs = timezone.now() - timedelta(hours=12)
-    #individuos = individuos.exclude(seguimientos__fecha__gt=last12hrs)
     #Lanzamos reporte
     return render(request, "lista_seguidos.html", {
         'individuos': individuos,
@@ -335,8 +330,18 @@ def agregar_vigilado(request, vigia_id):
     if request.method == "POST":
         form = NuevoIndividuo(request.POST)
         if form.is_valid():
+            #Obtenemos datos
             vigia = Vigia.objects.get(pk=vigia_id)
-            vigia.controlados.add(form.cleaned_data['individuo'])
+            individuo = form.cleaned_data['individuo']
+            #Agregamos registro:
+            atributo = Atributo(individuo=individuo)
+            atributo.tipo = vigia.tipo
+            atributo.aclaracion = "Seguimiento Manual cargado por " + str(obtener_operador(request))
+            atributo.fecha = timezone.now()
+            Atributo.objects.bulk_create([atributo, ])
+            #Agregamos a vigilancia
+            vigia.controlados.add(individuo)
+            #Volvemos a la vista
             return redirect('seguimiento:ver_panel', vigia_id=vigia.id)
     return render(request, "extras/generic_form.html", {'titulo': "Agregar Individuo Seguido", 'form': form, 'boton': "Agregar", })
 
@@ -544,7 +549,6 @@ def quitar_testeado(request, operativo_id, individuo_id):
 @permission_required('operadores.individuos')
 def ranking_test(request):
     #Buscamos los que tenemos que analizar
-    #individuos = obtener_bajo_seguimiento()
     individuos = Individuo.objects.filter(seguimientos__tipo='PT')
     #individuos = individuos.filter(seguimientos__tipo='PT')
     individuos = individuos.exclude(seguimientos__tipo__in=('ET','DT'))
@@ -707,9 +711,22 @@ def dar_alta(request, individuo_id):
         realizar_alta(individuo, obtener_operador(request))
         #Volvemos a la lista
         return redirect('seguimiento:esperando_alta_seguimiento')
+    #Obtenemos los datos:
+    ultimo_aislamiento = individuo.situaciones.filter(conducta__in=('D','E')).last()
+    if not ultimo_aislamiento:#Si no esta aislado por sistema pero lo estamos siguiendo
+        ultimo_aislamiento = individuo.atributos.filter(tipo__in=('VE', 'ST', 'VT')).last()
+    #Generamos datos
+    inicio = ultimo_aislamiento.fecha
+    fin = inicio + timedelta(days=DIAS_CUARENTENA)
+    #Generamos Aviso:
+    mensaje = "<b>Controle bien los siguientes datos:</b><br>"
+    mensaje += "<b>Inicio:</b> " + str(inicio)[0:10] + " (Fecha ultima situacion de aislamiento)<br>"
+    mensaje += "<b>Final:</b> " + str(fin)[0:10] + " (" +str(DIAS_CUARENTENA+1)+ " Dias Despues)<br><br>"
+    mensaje += "<b>Si realiza esta accion quedara registrada por su usuario.</b>"
+    #Mostramos confirmacion:
     return render(request, "extras/confirmar.html", {
             'titulo': "Dar de Alta a " + str(individuo),
-            'message': "Si realiza esta accion quedara registrada por su usuario.",
+            'message': mensaje,
             'has_form': True,
         }
     )
