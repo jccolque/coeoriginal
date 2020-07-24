@@ -26,8 +26,11 @@ class MapeadorIndividual:
         data["fotografia"] = self.individuo.get_foto()
         documentos = self.individuo.get_dnis()
         if documentos:
-            data["DNI_Front"] = documentos[0]
-            data["DNI_Back"] = documentos[-1]
+            try:
+                data["DNI_Front"] = documentos[0].archivo.url
+                data["DNI_Back"] = documentos[-1].archivo.url
+            except:
+                pass
         #Domicilio:
         data["domicilio"] = self.individuo.domicilio_actual.calle + ' ' + self.individuo.domicilio_actual.numero
         data["localidad"] = str(self.individuo.domicilio_actual.localidad)
