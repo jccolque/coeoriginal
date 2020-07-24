@@ -19,8 +19,15 @@ class MapeadorIndividual:
         data["id"] = self.individuo.pk
         data["num_doc"] = self.individuo.num_doc
         data["apellidos"] = self.individuo.apellidos
+        data["situacion"] = str(self.individuo.get_situacion())
         data["nombres"] = self.individuo.nombres
         data["telefono"] = self.individuo.telefono
+        #imagenes:
+        data["fotografia"] = self.individuo.get_foto()
+        documentos = self.individuo.get_dnis()
+        if documentos:
+            data["DNI_Front"] = documentos[0]
+            data["DNI_Back"] = documentos[-1]
         #Domicilio:
         data["domicilio"] = self.individuo.domicilio_actual.calle + ' ' + self.individuo.domicilio_actual.numero
         data["localidad"] = str(self.individuo.domicilio_actual.localidad)
@@ -31,14 +38,16 @@ class MapeadorIndividual:
         data["radio2"] = self.parametros.distancia_critica
         #Base:
         if self.gps_base:
+            data["punto_base"] = True
             data["base_latitud"] = self.gps_base.latitud
             data["base_longitud"] = self.gps_base.longitud
         else:
+            data["punto_base"] = False
             data["base_latitud"] = 0
             data["base_longitud"] = 0
         #Geoposiciones
         data["geoposiciones"] = []
-        geoposiciones = self.individuo.geoposiciones.exclude(tipo='PC')[:100]
+        geoposiciones = self.individuo.geoposiciones.exclude(tipo='PC')
         for geopos in geoposiciones:
             #Creamos cada dict por posicion a mostrar:
             gpd = {}

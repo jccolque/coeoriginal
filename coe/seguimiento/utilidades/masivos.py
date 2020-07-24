@@ -10,12 +10,14 @@ from operadores.models import SubComite, Operador
 from operadores.functions import crear_usuario
 from inscripciones.models import Inscripcion
 #Imports de la app
+from seguimiento.choices import TIPO_VIGIA
 from seguimiento.models import Seguimiento, Vigia
 from seguimiento.functions import realizar_alta, obtener_bajo_seguimiento
 
 def crear_vigias(filename):
     #obtenemos el comite de vigilancia Epidemiologica
     subcomite = SubComite.objects.get_or_create(nombre="Vigilancia Epidemiologica")[0]
+    tipos_vigia = [tipo[0] for tipo in TIPO_VIGIA]
     #Procesamos el archivo
     with open(filename) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=';')
@@ -24,7 +26,7 @@ def crear_vigias(filename):
             #Procesamos linea: 0-DNI 1-Apellido 2-Nombre 3-E-mail 4-Teléfono 5-max_controlados 6-Tipo
             #OPERADOR:
             if not Operador.objects.filter(num_doc=row[0]).exists():
-                print("Creamos Operador")
+                print("Operador Creado")
                 #Creamos Operador
                 new_operador = Operador()
                 new_operador.subcomite = subcomite
@@ -43,24 +45,29 @@ def crear_vigias(filename):
                 new_operador.usuario = crear_usuario(new_operador)
                 new_operador.save()
                 print("Creamos usuario: " + new_operador.usuario.username)
-            #Otorgamos Solo permisos para vigilancia:
+            else:
+                print("Ya Tenia usuario: " + new_operador.usuario.username)
+            
+            #Otorgamos permisos:
+            #Obtenemos todos los permisos Custom:
             permisos = Permission.objects.filter(content_type__app_label='operadores', content_type__model='operador')
+            #Agregamos permisos Basicos
             new_operador.usuario.user_permissions.add(permisos.get(codename='individuos'))
             new_operador.usuario.user_permissions.add(permisos.get(codename='seguimiento'))
             #Creamos vigilante
             if not Vigia.objects.filter(operador=new_operador).exists():
-                if row[6] in ('VE', 'VM', 'ST', 'VT'):
+                if row[6] in tipos_vigia:
                     vigia = Vigia()
                     vigia.tipo = row[6]
                     vigia.operador = new_operador
                     vigia.max_controlados = row[5]
                     vigia.save()
                     print("Creamos Vigia")
-                elif row[6] == 'A':
+                elif row[6] == 'ADM_SEG':
                     new_operador.usuario.user_permissions.add(permisos.get(codename='seguimiento_admin'))
                     print("Creamos Administrador de Seguimiento.")
             else:
-                print("Ya es vigia.")
+                print("Ya es vigia. No Procesado")
 
 def altas_masivas(filename):
     #Procesamos el archivo
