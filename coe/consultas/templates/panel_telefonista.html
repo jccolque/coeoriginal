@@ -23,6 +23,19 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% for denuncia in telefonista.denuncias.all %}
+                            <tr>
+                                <td>{{denuncia.fecha}}</td>
+                                <td colspan="3" style="text-align:center;"><b>Denuncia Anonima</b></td>
+                                <td>{{denuncia.get_tipo_display}}</td>
+                                <td>{{denuncia.descripcion}}</td>
+                                <td>
+                                    <a href="{% url 'consultas:ver_denuncia' denuncia_id=denuncia.id %}" target="_blank">
+                                        Ver
+                                    </a>
+                                </td>
+                            </td>
+                        {% endfor %}
                         {% for consulta in telefonista.consultas.all %}
                             <tr>
                                 <td>{{consulta.fecha_consulta}}</td>
@@ -50,6 +63,7 @@
                 <h2>Atenciones Realizadas:</h2>
                 <p><a href="{% url 'consultas:llamadas_telefonista' telefonista_id=telefonista.id %}" target="_blank">Llamadas ({{llamadas.count}})</a></p>
                 <p><a href="{% url 'consultas:consultas_telefonista' telefonista_id=telefonista.id %}" target="_blank">Consultas ({{respuestas.count}})</a></p>
+                <p><a href="{% url 'consultas:denuncias_telefonista' telefonista_id=telefonista.id %}" target="_blank">Denuncias ({{denuncias.count}})</a></p>
                 <!--
                     PROXIMAMENTE
                     <p><a href="{% url 'consultas:denuncias_telefonista' telefonista_id=telefonista.id %}" target="_blank">Denuncias ({{denuncias.count}})</a></p>

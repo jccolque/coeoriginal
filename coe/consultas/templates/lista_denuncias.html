@@ -24,7 +24,7 @@
                             <td>{{denuncia.fecha}}</td>
                             <td>{{denuncia.descripcion}}</td>
                             <td>{{denuncia.get_estado_display}}</td>
-                            <td><a href="{% url 'denuncias:ver_denuncia' denuncia_id=denuncia.id %}" target="_blank">(Ver Detalle)</a></td>
+                            <td><a href="{% url 'consultas:ver_denuncia' denuncia_id=denuncia.id %}" target="_blank">(Ver Detalle)</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>

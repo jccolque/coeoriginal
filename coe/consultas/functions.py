@@ -1,3 +1,5 @@
+#Imports Django
+from django.db.models import Count
 #Imports del proyecto
 from operadores.functions import obtener_operador
 #Imports de la app

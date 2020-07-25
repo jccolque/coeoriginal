@@ -30,9 +30,10 @@ urlpatterns = [
     path('telefonista/del/<int:telefonista_id>', views.del_telefonista, name='del_telefonista'),
     
     path('lista/llamadas', views.lista_llamadas, name='lista_llamadas'),
-    path('lista/llamadas/<int:telefonista_id>', views.lista_llamadas, name='llamadas_telefonista'),
-    path('lista/consultas/<int:telefonista_id>', views.lista_consultas, name='consultas_telefonista'),
-    path('lista/denuncias/<int:telefonista_id>', views.denuncias_telefonista, name='denuncias_telefonista'),
+    path('lista/llamadas/tel/<int:telefonista_id>', views.lista_llamadas, name='llamadas_telefonista'),
+    path('lista/consultas/tel/<int:telefonista_id>', views.lista_consultas, name='consultas_telefonista'),
+    path('lista/denuncias/tel/<int:telefonista_id>', views.lista_denuncias, name='denuncias_telefonista'),
+
     path('telefonista/panel/<int:telefonista_id>', views.ver_panel, name='ver_panel'),
     path('llamada/del/<int:llamada_id>', views.del_llamada, name='del_llamada'),
     path('telefonista/actividad/<int:telefonista_id>', views.informe_actividad, name='actividad_telefonista'),

@@ -13,7 +13,7 @@ from georef.models import Provincia, Localidad, Barrio
 from informacion.choices import TIPO_ESTADO, TIPO_CONDUCTA
 from informacion.models import Individuo, Situacion, Domicilio
 from permisos.choices import TIPO_PERMISO
-from denuncias.choices import TIPO_DENUNCIA
+from consultas.choices import TIPO_DENUNCIA
 from seguimiento.models import DatosGis
 
 #Publicos

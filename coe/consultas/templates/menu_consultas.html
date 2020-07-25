@@ -29,17 +29,17 @@
                             {% endif %}
 
                             {% if perms.operadores.denuncias %}
-                                <li><a href="{% url 'consultas:lista_denuncias' %}">Listado de Denuncias Activas</a></li>
                                 <hr>
+                                <h3>Denuncias</h3>
+                                <li><a href="{% url 'consultas:lista_denuncias' %}">Listado de Denuncias Activas</a></li>
                                 <li><a href="{% url 'consultas:lista_filtro_estado' estado='RE'  %}">Denuncias Resueltas</a></li>
                                 <li><a href="{% url 'consultas:lista_filtro_estado' estado='BA'  %}">Denuncias Eliminadas</a></li>
                                 <hr>
-                            {% endif %}
-
-                            {% if perms.operadores.reportes %}
-                                <li><a href="{% url 'consultas:menu'  %}">Situacion de Denuncias</a></li>
-                                <li><a href="{% url 'consultas:menu' %}">Mapa de Denuncias</a></li>
-                                <hr>
+                                {% if perms.operadores.reportes %}
+                                    <li><a href="{% url 'consultas:menu'  %}">Situacion de Denuncias</a></li>
+                                    <li><a href="{% url 'consultas:menu' %}">Mapa de Denuncias</a></li>
+                                    <hr>
+                                {% endif %}
                             {% endif %}
 
                             {% if request.user.is_superuser %}

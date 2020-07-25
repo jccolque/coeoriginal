@@ -30,27 +30,46 @@ class Consulta(models.Model):
     def __str__(self):
         return self.autor + ": " + self.asunto + '(' + str(self.fecha_consulta.date()) + ')'
 
+class DenunciaAnonima(models.Model):
+    tipo = models.CharField('Tipo Denuncia', max_length=2, choices=TIPO_DENUNCIA, default='SC')
+    descripcion = models.TextField('Descripcion')
+    imagen = models.FileField('Imagen', upload_to='denuncias/')
+    latitud = models.DecimalField('latitud', max_digits=12, decimal_places=10)
+    longitud = models.DecimalField('longitud', max_digits=12, decimal_places=10)
+    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    estado = models.CharField('Tipo Denuncia', max_length=2, choices=ESTADO_DENUNCIA, default='IN')
+    aclaraciones = models.ManyToManyField(Aclaracion)
+    def __str__(self):
+        return self.get_tipo_display() + ': ' + self.descripcion
+
 class Telefonista(models.Model):
     tipo = models.CharField('Tipo Telefonista', choices=TIPO_TELEFONISTA, max_length=2, default='MX')
     operador = models.OneToOneField(Operador, on_delete=models.CASCADE, related_name="telefonista")
     max_pendientes = models.SmallIntegerField('Cantidad Maxima de Pendientes', default=100)
-    consultas = models.ManyToManyField(Consulta, related_name='telefonista')
-    #denuncias = models.ManyToManyField(DenunciaAnonima, related_name='telefonista')
+    consultas = models.ManyToManyField(Consulta, related_name='telefonistas')
+    denuncias = models.ManyToManyField(DenunciaAnonima, related_name='telefonistas')
     def __str__(self):
         return str(self.operador.nombres) + ' ' + str(self.operador.apellidos)
+    def cant_pendientes(self):
+        conteo = self.consultas.count()
+        conteo += self.denuncias.count()
+        return conteo
     def atenciones_24hrs(self):
         limite = timezone.now() - timedelta(hours=24)
         conteo = Respuesta.objects.filter(telefonista=self, fecha__gt=limite).count()
         conteo += Llamada.objects.filter(telefonista=self, fecha__gt=limite).count()
+        conteo += Aclaracion.objects.filter(operador=self.operador, fecha__gt=limite).count()
         return conteo
     def atenciones_7dias(self):
         limite = timezone.now() - timedelta(hours=24 * 7)
         conteo = Respuesta.objects.filter(telefonista=self, fecha__gt=limite).count()
         conteo += Llamada.objects.filter(telefonista=self, fecha__gt=limite).count()
+        conteo += Aclaracion.objects.filter(operador=self.operador, fecha__gt=limite).count()
         return conteo
     def total(self):
         conteo = Respuesta.objects.filter(telefonista=self).count()
         conteo += Llamada.objects.filter(telefonista=self).count()
+        conteo += Aclaracion.objects.filter(operador=self.operador).count()
         return conteo
 
 class Respuesta(models.Model):
@@ -68,19 +87,6 @@ class Llamada(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
     resuelta = models.BooleanField('Respondida', default=True)
     telefonista = models.ForeignKey(Telefonista, on_delete=models.SET_NULL, blank=True, null=True, related_name="llamadas")
-
-class DenunciaAnonima(models.Model):
-    tipo = models.CharField('Tipo Denuncia', max_length=2, choices=TIPO_DENUNCIA, default='SC')
-    descripcion = models.TextField('Descripcion')
-    imagen = models.FileField('Imagen', upload_to='denuncias/')
-    latitud = models.DecimalField('latitud', max_digits=12, decimal_places=10)
-    longitud = models.DecimalField('longitud', max_digits=12, decimal_places=10)
-    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
-    estado = models.CharField('Tipo Denuncia', max_length=2, choices=ESTADO_DENUNCIA, default='IN')
-    #telefonista = models.ForeignKey(Telefonista, on_delete=models.SET_NULL, blank=True, null=True, related_name="denuncias_resueltas")
-    aclaraciones = models.ManyToManyField(Aclaracion)
-    def __str__(self):
-        return self.get_tipo_display() + ': ' + self.descripcion
 
 if not LOADDATA:
     #Auditoria

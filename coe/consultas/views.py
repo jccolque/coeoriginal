@@ -78,7 +78,8 @@ def lista_denuncias(request, tipo=None, estado=None, telefonista_id=None):
     if estado:
         denuncias = denuncias.filter(estado=estado)
     if telefonista_id:
-        denuncias = denuncias.filter(telefonista__id=telefonista_id)
+        telefonista = Telefonista.objects.get(pk=telefonista_id)
+        denuncias = denuncias.filter(aclaraciones__operador=telefonista.operador)
     #Si no hay filtros:
     if not tipo and not estado:
         denuncias = denuncias.exclude(estado__in=('RE','BA'))
@@ -112,8 +113,11 @@ def evolucionar_denuncia(request, denuncia_id):
             #agregamos la aclaracion a la denuncia:
             denuncia.aclaraciones.add(aclaracion)
             denuncia.estado = form.cleaned_data['estado']
+            #Una vez evolucionada la sacamos del telefonista:
+            denuncia.telefonistas.clear()
+            #Guardamos
             denuncia.save()
-            return redirect('denuncias:ver_denuncia', denuncia_id=denuncia.id)
+            return redirect('consultas:ver_denuncia', denuncia_id=denuncia.id)
     #Lanzamos form
     return render(request, "extras/generic_form.html", {'titulo': "Evolucionar Denuncia", 'form': form, 'boton': "Confirmar", })
 
@@ -130,7 +134,7 @@ def eliminar_denuncia(request, denuncia_id):
         denuncia.aclaraciones.add(aclaracion)
         denuncia.estado = 'BA'
         denuncia.save()
-        return redirect('denuncias:lista_denuncias')
+        return redirect('consultas:lista_denuncias')
     return render(request, "extras/confirmar.html", {
             'titulo': "Eliminar Denuncia",
             'message': "Si realiza esta accion quedara registrada por su usuario.",
@@ -219,11 +223,6 @@ def consulta_respondida(request, consulta_id):
         #Permitimos cargar llamada:
         return redirect('consultas:cargar_llamada_consulta', telefonista_id=telefonista.id, consulta_id=consulta.id)
     return render(request, "extras/close.html")
-
-#Denuncias
-@permission_required('operadores.telefonistas')
-def denuncias_telefonista(request, telefonista_id=None):
-    pass
 
 #Telefonista
 @permission_required('operadores.admin_telefonistas')
@@ -351,11 +350,13 @@ def ver_panel(request, telefonista_id=None):
     #Obtenemos llamadas y consultas respondidas
     llamadas = Llamada.objects.filter(telefonista=telefonista)
     respuestas = Respuesta.objects.filter(telefonista=telefonista)
+    denuncias = DenunciaAnonima.objects.filter(aclaraciones__operador=telefonista.operador).distinct()
     #Mostramos panel
     return render(request, "panel_telefonista.html", {
         'telefonista': telefonista,
         'llamadas': llamadas,
         'respuestas': respuestas,
+        'denuncias': denuncias,
         'refresh': True,
         'has_table': True,
     })
