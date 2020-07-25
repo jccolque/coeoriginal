@@ -27,9 +27,10 @@ from permisos.models import Permiso
 from permisos.functions import horario_activo
 from permisos.functions import buscar_permiso, validar_permiso, json_permiso
 from permisos.choices import TIPO_PERMISO
-from denuncias.models import DenunciaAnonima
+from consultas.models import DenunciaAnonima
 from seguimiento.models import TestOperativo
 from seguimiento.functions import es_operador_activo, obtener_operativo
+
 #Imports de la app
 from .models import AppData
 from .tokens import TokenGenerator

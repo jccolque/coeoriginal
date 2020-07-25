@@ -9,14 +9,18 @@ from django.contrib.auth.decorators import permission_required
 from django.core.mail import EmailMessage
 #Imports del proyecto
 from coe.settings import SEND_MAIL
+from core.models import Aclaracion
 from core.tokens import account_activation_token
 from operadores.functions import obtener_operador
 #Imports de la app
 from .choices import TIPO_LLAMADA
 from .models import Telefonista, Consulta, Respuesta, Llamada
+from .models import DenunciaAnonima
 from .forms import ConsultaForm, RespuestaForm, NuevoTelefonistaForm, LlamadaForm
+from .forms import EvolucionarForm
 from .functions import obtener_telefonista
 
+#PUBLICO
 #Consultas
 def contacto(request):
     if request.method == 'POST': #En caso de que se haya realizado una busqueda
@@ -59,6 +63,80 @@ def activar_consulta(request, consulta_id, token):
     else:
         texto = 'El link de activacion es invalido!'
     return render(request, 'extras/resultado.html', {'texto': texto, })
+
+# Create your views here.
+@permission_required('operadores.denuncias')
+def menu(request):
+    return render(request, 'menu_denuncias.html', {})
+
+@permission_required('operadores.denuncias')
+def lista_denuncias(request, tipo=None, estado=None, telefonista_id=None):
+    denuncias = DenunciaAnonima.objects.all()
+    #Filtramos si es necesario
+    if tipo:
+        denuncias = denuncias.filter(tipo=tipo)
+    if estado:
+        denuncias = denuncias.filter(estado=estado)
+    if telefonista_id:
+        denuncias = denuncias.filter(telefonista__id=telefonista_id)
+    #Si no hay filtros:
+    if not tipo and not estado:
+        denuncias = denuncias.exclude(estado__in=('RE','BA'))
+    #Mostramos la lista
+    return render(request, 'lista_denuncias.html', {
+        'denuncias': denuncias,
+        'has_table': True,
+        'refresh': True,
+    })
+
+@permission_required('operadores.denuncias')
+def ver_denuncia(request, denuncia_id):
+    denuncia = DenunciaAnonima.objects.get(pk=denuncia_id)
+    return render(request, 'ver_denuncia.html', {
+        'denuncia': denuncia,
+    })
+
+#Administrador
+@permission_required('operadores.denuncias')
+def evolucionar_denuncia(request, denuncia_id):
+    form = EvolucionarForm()
+    if request.method == 'POST':
+        form = EvolucionarForm(request.POST)
+        if form.is_valid():
+            denuncia = DenunciaAnonima.objects.get(pk=denuncia_id)
+            #Creamos la aclaracion
+            aclaracion = form.save(commit=False)
+            aclaracion.modelo = 'DenunciaAnonima'
+            aclaracion.operador = obtener_operador(request)
+            aclaracion.save()
+            #agregamos la aclaracion a la denuncia:
+            denuncia.aclaraciones.add(aclaracion)
+            denuncia.estado = form.cleaned_data['estado']
+            denuncia.save()
+            return redirect('denuncias:ver_denuncia', denuncia_id=denuncia.id)
+    #Lanzamos form
+    return render(request, "extras/generic_form.html", {'titulo': "Evolucionar Denuncia", 'form': form, 'boton': "Confirmar", })
+
+@permission_required('operadores.denuncias')
+def eliminar_denuncia(request, denuncia_id):
+    denuncia = DenunciaAnonima.objects.get(pk=denuncia_id)
+    if request.method == "POST":
+        #Creamos aclaracion
+        aclaracion = Aclaracion()
+        aclaracion.operador = obtener_operador(request)
+        aclaracion.descripcion = "Se elimino la Denuncia"
+        aclaracion.save()
+        #modificamos denuncia
+        denuncia.aclaraciones.add(aclaracion)
+        denuncia.estado = 'BA'
+        denuncia.save()
+        return redirect('denuncias:lista_denuncias')
+    return render(request, "extras/confirmar.html", {
+            'titulo': "Eliminar Denuncia",
+            'message': "Si realiza esta accion quedara registrada por su usuario.",
+            'has_form': True,
+        }
+    )
 
 #Administracion Consultas
 @permission_required('operadores.menu_consultas')

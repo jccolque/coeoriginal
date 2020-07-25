@@ -14,6 +14,13 @@ urlpatterns = [
     path('lista/respondidas', views.lista_respondidas, name='lista_respondidas'),
     path('ver/consulta/<int:consulta_id>', views.ver_consulta, name='ver_consulta'),
     path('consulta/respondida/<int:consulta_id>', views.consulta_respondida, name='consulta_respondida'),
+    #Denuncias
+    path('denuncias/lista', views.lista_denuncias, name='lista_denuncias'),
+    path('denuncias/lista/tipo/<str:tipo>', views.lista_denuncias, name='lista_filtro_tipo'),
+    path('denuncias/lista/estado/<str:estado>', views.lista_denuncias, name='lista_filtro_estado'),
+    path('denuncia/ver/<int:denuncia_id>', views.ver_denuncia, name='ver_denuncia'),
+    path('denuncias/evolucionar/<int:denuncia_id>', views.evolucionar_denuncia, name='evolucionar_denuncia'),
+    path('denuncias/eliminar/<int:denuncia_id>', views.eliminar_denuncia, name='eliminar_denuncia'),
     #Telefonistas
     #Administrar
     path('informe_actividad', views.informe_actividad, name='informe_actividad'),

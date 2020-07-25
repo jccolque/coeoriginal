@@ -4,7 +4,10 @@ from django import forms
 #Imports extra
 from dal import autocomplete
 #Imports del proyecto
+from core.widgets import XDSoftDateTimePickerInput
+from core.models import Aclaracion
 #Imports de la app
+from .choices import ESTADO_DENUNCIA
 from .models import Telefonista
 from .models import Consulta, Respuesta
 from .models import Llamada
@@ -39,4 +42,14 @@ class LlamadaForm(forms.ModelForm):
         exclude = ('fecha', 'telefonista', )
         widgets = {
             'individuo': autocomplete.ModelSelect2(url='informacion:individuos-autocomplete'),
+        }
+
+class EvolucionarForm(forms.ModelForm):
+    estado = forms.ChoiceField(choices=ESTADO_DENUNCIA, required=True)
+    class Meta:
+        model = Aclaracion
+        fields= '__all__'
+        exclude = ('modelo', 'operador', )
+        widgets = {
+            'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
         }

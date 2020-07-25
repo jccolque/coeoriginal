@@ -20,10 +20,5 @@ class DenunciaAnonima(models.Model):
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     estado = models.CharField('Tipo Denuncia', max_length=2, choices=ESTADO_DENUNCIA, default='IN')
     #telefonista = models.ForeignKey(Telefonista, on_delete=models.SET_NULL, blank=True, null=True, related_name="denuncias_resueltas")
-    aclaraciones = models.ManyToManyField(Aclaracion)
     def __str__(self):
         return self.get_tipo_display() + ': ' + self.descripcion
-
-if not LOADDATA:
-    #Auditoria
-    auditlog.register(DenunciaAnonima)

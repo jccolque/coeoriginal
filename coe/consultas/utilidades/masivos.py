@@ -49,6 +49,7 @@ def crear_telefonistas(filename):
             #Obtenemos todos los permisos Custom:
             permisos = Permission.objects.filter(content_type__app_label='operadores', content_type__model='operador')
             #Agregamos permisos Basicos
+            new_operador.usuario.user_permissions.add(permisos.get(codename='menu_informacion'))
             new_operador.usuario.user_permissions.add(permisos.get(codename='individuos'))
             new_operador.usuario.user_permissions.add(permisos.get(codename='consultas'))
             new_operador.usuario.user_permissions.add(permisos.get(codename='telefonistas'))
@@ -63,6 +64,8 @@ def crear_telefonistas(filename):
                     print("Creamos telefonista")
                 elif row[6] == 'ADM_TEL':
                     new_operador.usuario.user_permissions.add(permisos.get(codename='admin_telefonistas'))
+                    new_operador.usuario.user_permissions.add(permisos.get(codename='menu_operadores'))
+                    new_operador.usuario.user_permissions.add(permisos.get(codename='administrador'))
                     print("Creamos Administrador de Call Center.")
             else:
                 print("Ya es telefonista. No Procesado")

@@ -67,7 +67,7 @@ class Operador(models.Model):
         verbose_name_plural = 'Operadores'
         ordering = ['apellidos', 'nombres']
         permissions = (
-            #Home
+            #Consultas
             ("consultas", "Sistema de Consultas"),
             ("telefonistas", "Operario de CallCenter."),
             ("admin_telefonistas", "Administrador de CallCenter."),
