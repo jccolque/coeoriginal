@@ -9,14 +9,15 @@
         </div>
         <div class="row">
             <div class="col-sm-4">
-                <h3>Telefonistas:</h3>
+                <h3>Atenciones:</h3>
                 <table class="listado">
                     <thead>
                         <tr>
                             <th>Telefonista</th>
-                            <th>Atenciones 24hrs</th>
-                            <th>Atenciones 7 dias</th>
-                            <th>Ver Detalle</th>
+                            <th>24hrs</th>
+                            <th>7 dias</th>
+                            <th>Total</th>
+                            <th>Detalle</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -25,6 +26,7 @@
                                 <td>{{telefonista}}</td>
                                 <td>{{telefonista.atenciones_24hrs}}</td>
                                 <td>{{telefonista.atenciones_7dias}}</td>
+                                <td>{{telefonista.total}}</td>
                                 <td>
                                     <a href="{% url 'consultas:ver_panel' telefonista_id=telefonista.id %}" target="_blank">
                                         <img class="icons" src="/static/img/icons/control_panel.png" alt="Panel de Control">
@@ -62,7 +64,7 @@
                         </table>
                     </div>
                     <div class="col-sm-6">
-                        
+                        GRAFICO (En progreso)
                     </div>
                 </div>
                 <div class="row">
@@ -90,7 +92,7 @@
                         </table>
                     </div>
                     <div class="col-sm-6">
-                        
+                        GRAFICO (En progreso)
                     </div>
                 </div>
             </div>

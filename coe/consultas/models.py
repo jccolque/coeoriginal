@@ -48,6 +48,10 @@ class Telefonista(models.Model):
         conteo = Respuesta.objects.filter(telefonista=self, fecha__gt=limite).count()
         conteo += Llamada.objects.filter(telefonista=self, fecha__gt=limite).count()
         return conteo
+    def total(self):
+        conteo = Respuesta.objects.filter(telefonista=self).count()
+        conteo += Llamada.objects.filter(telefonista=self).count()
+        return conteo
 
 class Respuesta(models.Model):
     consulta = models.ForeignKey(Consulta, on_delete=models.CASCADE, related_name="respuestas")
