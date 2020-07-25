@@ -1,0 +1,54 @@
+{% extends 'base/base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2>Llamadas Atendidas:</h2>
+        </div>
+        <div class="row">
+        <div class="col-md-12">
+            <table class="listado" id="table">
+                <thead>
+                    <tr>
+                        <th>Individuo</th>
+                        <th>Fecha</th>
+                        <th>Asunto</th>
+                        <th>Desarrollo</th>
+                        <th>Resuelta</th>
+                        <th>Telefonista</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for llamada in llamadas %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'informacion:ver_individuo' individuo_id=llamada.individuo.id %}" target="_blank">
+                                    {{llamada.individuo}}
+                                </a>
+                            </td>
+                            <td>{{llamada.fecha}}</td>
+                            <td>{{llamada.get_tipo_display}}</td>
+                            <td>{{llamada.desarrollo|safe}}</td>
+                            <td>
+                                {% if llamada.resuelta %}
+
+                                {% else %}
+
+                                {% endif %}
+                            </td>
+                            <td>{{llamada.telefonista}}</td>
+                            <td>
+                                <a href="{% url 'consultas:del_llamada' llamada_id=llamada.id %}">
+                                    <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

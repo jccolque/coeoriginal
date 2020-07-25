@@ -1,0 +1,99 @@
+{% extends 'base_informacion.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2><b>Tablero de Situacion</b></h2>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <h3>Telefonistas:</h3>
+                <table class="listado">
+                    <thead>
+                        <tr>
+                            <th>Telefonista</th>
+                            <th>Atenciones 24hrs</th>
+                            <th>Atenciones 7 dias</th>
+                            <th>Ver Detalle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for telefonista in telefonistas %}
+                            <tr>
+                                <td>{{telefonista}}</td>
+                                <td>{{telefonista.atenciones_24hrs}}</td>
+                                <td>{{telefonista.atenciones_7dias}}</td>
+                                <td>
+                                    <a href="{% url 'consultas:ver_panel' telefonista_id=telefonista.id %}" target="_blank">
+                                        <img class="icons" src="/static/img/icons/control_panel.png" alt="Panel de Control">
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- Situacion -->
+            <div class="col-sm-8">
+                <h3>Llamadas Atendidas:</h3>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <table class="listado">
+                            <thead>
+                                <tr>
+                                    <th>Tipo Llamada</th>
+                                    <th>Ultimas 24hrs</th>
+                                    <th>Ultimos 7 dias</th>
+                                    <th>Totales</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for llamada in llamadas %}
+                                    <tr>
+                                        <td>{{llamada.0}}</th>
+                                        <td>{{llamada.1}}</th>
+                                        <td>{{llamada.2}}</th>
+                                        <td>{{llamada.3}}</th>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-sm-6">
+                        
+                    </div>
+                </div>
+                <div class="row">
+                    <h3>Consultas Atendidas:</h3>
+                    <div class="col-sm-6">
+                        <table class="listado">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Ultimas 24hrs</th>
+                                    <th>Ultimos 7 dias</th>
+                                    <th>Totales</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for consulta in consultas %}
+                                    <tr>
+                                        <td>{{consulta.0}}</th>
+                                        <td>{{consulta.1}}</th>
+                                        <td>{{consulta.2}}</th>
+                                        <td>{{consulta.3}}</th>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-sm-6">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

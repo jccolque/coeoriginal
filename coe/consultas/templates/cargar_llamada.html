@@ -1,0 +1,36 @@
+{% extends 'base/base.html' %}
+
+{% load form_tags %}
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+
+            <div class="col-sm-8">
+                {% include "extras/generic_form-nobase.html" %}
+            </div>
+
+            <div class="col-sm-4">
+                {% if consulta %}
+                    <br>
+                    <h1>Consulta</h1>
+                    <p><b>Autor:</b>{{consulta.autor}}</p>
+                    <p><b>Fecha:</b>{{consulta.fecha_consulta}}</b>
+                    <p><b>Email:</b>{{consulta.email}}</b>
+                    <p><b>Telefono:</b>{{consulta.telefono}}</b>
+                    <p><b>Asunto:</b>{{consulta.asunto}}</b>
+                    <p><b>Descripcion:</b>{{consulta.descripcion|safe}}</b>
+                    <hr>
+                {% endif %}
+                <h3>
+                    Si el individuo no existe, puede crearlo aqui antes de cargar la llamada indicando los datos basicos: 
+                    <a class="nolink" href="{% url 'informacion:cargar_individuo' num_doc=0 %}" target="_blank">
+                        <img class="icons" src="/static/img/icons/add_person.png" alt="Panel de Control">
+                    </a>
+                </h3>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -25,6 +25,10 @@ class MapeadorIndividual:
         #imagenes:
         data["fotografia"] = self.individuo.get_foto()
         documentos = self.individuo.get_dnis()
+
+        # doc.tipo == 'DI'
+        # aclracion__icontains frente o reverso
+
         if documentos:
             try:
                 data["DNI_Front"] = documentos[0].archivo.url

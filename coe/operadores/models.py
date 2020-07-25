@@ -69,6 +69,8 @@ class Operador(models.Model):
         permissions = (
             #Home
             ("consultas", "Sistema de Consultas"),
+            ("telefonistas", "Operario de CallCenter."),
+            ("admin_telefonistas", "Administrador de CallCenter."),
             #Operadores:
             ("menu_operadores", "Menu de Operadores"),
             ("subcomites", "Crear/Modificar SubComites"),

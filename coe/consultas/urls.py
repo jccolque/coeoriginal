@@ -14,7 +14,27 @@ urlpatterns = [
     path('lista/respondidas', views.lista_respondidas, name='lista_respondidas'),
     path('ver/consulta/<int:consulta_id>', views.ver_consulta, name='ver_consulta'),
     path('consulta/respondida/<int:consulta_id>', views.consulta_respondida, name='consulta_respondida'),
+    #Telefonistas
+    #Administrar
+    path('informe_actividad', views.informe_actividad, name='informe_actividad'),
+    path('lista/telefonistas', views.lista_telefonistas, name='lista_telefonistas'),
+    path('telefonista/agregar', views.agregar_telefonista, name='agregar_telefonista'),
+    path('telefonista/mod/<int:telefonista_id>', views.agregar_telefonista, name='mod_telefonista'),
+    path('telefonista/del/<int:telefonista_id>', views.del_telefonista, name='del_telefonista'),
+    
+    path('lista/llamadas', views.lista_llamadas, name='lista_llamadas'),
+    path('lista/llamadas/<int:telefonista_id>', views.lista_llamadas, name='llamadas_telefonista'),
+    path('lista/consultas/<int:telefonista_id>', views.lista_consultas, name='consultas_telefonista'),
+    path('lista/denuncias/<int:telefonista_id>', views.denuncias_telefonista, name='denuncias_telefonista'),
+    path('telefonista/panel/<int:telefonista_id>', views.ver_panel, name='ver_panel'),
+    path('llamada/del/<int:llamada_id>', views.del_llamada, name='del_llamada'),
+    path('telefonista/actividad/<int:telefonista_id>', views.informe_actividad, name='actividad_telefonista'),
 
+    #Trabajo
+    path('telefonista/mipanel', views.ver_panel, name='mi_panel'),
+    path('llamada/cargar/<int:telefonista_id>', views.cargar_llamada, name='cargar_llamada'),
+    path('llamada/cargar/<int:telefonista_id>/consulta/<int:consulta_id>', views.cargar_llamada, name='cargar_llamada_consulta'),
+    path('llamada/mod/<int:llamada_id>', views.cargar_llamada, name='mod_llamada'),
     #Validar
     url(r'^act_consulta/(?P<consulta_id>[0-9]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', views.activar_consulta, name='activar_consulta'),
 ]

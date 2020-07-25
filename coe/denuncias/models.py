@@ -6,6 +6,7 @@ from auditlog.registry import auditlog
 #Imports del proyecto
 from coe.settings import LOADDATA
 from core.models import Aclaracion
+from consultas.models import Telefonista
 #Imports de la app
 from .choices import  TIPO_DENUNCIA, ESTADO_DENUNCIA
 
@@ -18,6 +19,7 @@ class DenunciaAnonima(models.Model):
     longitud = models.DecimalField('longitud', max_digits=12, decimal_places=10)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     estado = models.CharField('Tipo Denuncia', max_length=2, choices=ESTADO_DENUNCIA, default='IN')
+    #telefonista = models.ForeignKey(Telefonista, on_delete=models.SET_NULL, blank=True, null=True, related_name="denuncias_resueltas")
     aclaraciones = models.ManyToManyField(Aclaracion)
     def __str__(self):
         return self.get_tipo_display() + ': ' + self.descripcion

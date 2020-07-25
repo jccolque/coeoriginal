@@ -82,6 +82,12 @@ def confirmar_sospechoso(created, instance, **kwargs):
         atributo.tipo = 'ST'
         atributo.aclaracion = "Se requiere seguimiento de Telemedicina."
         atributo.save()
+        #Lo ponemos bajo seguimiento psicologico
+        if not instance.individuo.vigiladores.filter(tipo="VM").exists():
+            atributo = Atributo(individuo=instance.individuo)
+            atributo.tipo = 'VM'
+            atributo.aclaracion = "Se requiere seguimiento de Salud Mental por Caso Positivo."
+            atributo.save()        
 
 @receiver(post_save, sender=Domicilio)
 def poner_en_seguimiento(created, instance, **kwargs):

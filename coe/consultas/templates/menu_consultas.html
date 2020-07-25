@@ -10,7 +10,20 @@
                     <h1>Menu Principal:</h1>
                     <div class="col-md-8">
                         <ul class="menu_botones">
+                            {% if es_telefonista %}
+                                <li><a href="{% url 'consultas:mi_panel' %}">Ver Mi Panel de Control</a></li>
+                            {% endif %}
+
+                            {% if perms.operadores.admin_telefonistas %}
+                                <h3>Telefonistas</h3>
+                                <li><a href="{% url 'consultas:informe_actividad' %}">Informe de Actividad</a></li>
+                                <li><a href="{% url 'consultas:lista_telefonistas' %}">Lista de Telefonistas Habilitados</a></li>
+                                <li><a href="{% url 'consultas:lista_llamadas' %}">Ver Registro de Llamadas</a></li>
+                            {% endif %}
+
                             {% if perms.operadores.consultas %}
+                                <hr>
+                                <h3>Consultas</h3>
                                 <li><a href="{% url 'consultas:lista_consultas' %}">Ver Consultas Sin Responder</a></li>
                                 <li><a href="{% url 'consultas:lista_respondidas' %}">Ver Consultas Respondidas</a></li>
                             {% endif %}

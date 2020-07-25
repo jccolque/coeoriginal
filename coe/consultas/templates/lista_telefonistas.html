@@ -1,0 +1,57 @@
+{% extends 'base_consultas.html' %}
+
+{% load static %}
+{% load auditar_tags %}
+
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2><b>Lista de Telefonistas</b></h2>
+            <a class="botoncito" href="{% url 'consultas:agregar_telefonista' %}">
+                Habilitar nuevo Telefonista
+                <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
+            </a>
+            <div class="col-md-12">
+                <table class="listado" id="table">
+                    <thead>
+                        <tr>
+                            <th>Tipo Telefonista</th>
+                            <th>Operador</th>
+                            <th>Telefono</th>
+                            <th>Ultimo Ingreso</th>
+                            <th>Atenciones 24hrs</th>
+                            <th>Atenciones 7 dias</th>
+                            <th>Ver Detalle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for telefonista in telefonistas %}
+                            <tr>
+                                <td>{{telefonista.get_tipo_display}}</td>
+                                <td>{{telefonista}}</td>
+                                <td>{{telefonista.operador.telefono}}</td>
+                                <td>{{telefonista.operador.usuario.last_login}}</td>
+                                <td>{{telefonista.atenciones_24hrs}}</td>
+                                <td>{{telefonista.atenciones_7dias}}</td>
+                                <td>
+                                    <a href="{% url 'consultas:ver_panel' telefonista_id=telefonista.id %}" target="_blank">
+                                        <img class="icons" src="/static/img/icons/control_panel.png" alt="Panel de Control">
+                                    </a>
+                                    <a href="{% url 'consultas:mod_telefonista' telefonista_id=telefonista.id %}">
+                                        <img class="icons" src="{% static '/img/icons/change.png' %}">
+                                    </a>
+                                    <a href="{% url 'consultas:del_telefonista' telefonista_id=telefonista.id %}">
+                                        <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                    </a>
+                                    <a href="{% url 'consultas:actividad_telefonista' telefonista_id=telefonista.id %}">
+                                        <img class="icons" src="{% static '/img/icons/graph.png' %}">
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

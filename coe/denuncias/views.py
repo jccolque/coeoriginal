@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import permission_required
 #Imports del Proyecto
 from core.models import Aclaracion
 from operadores.functions import obtener_operador
+from consultas.models import Telefonista
 #Imports de la app
 from .models import DenunciaAnonima
 from .forms import EvolucionarForm
@@ -15,13 +16,15 @@ def menu(request):
     return render(request, 'menu_denuncias.html', {})
 
 @permission_required('operadores.denuncias')
-def lista_denuncias(request, tipo=None, estado=None):
+def lista_denuncias(request, tipo=None, estado=None, telefonista_id=None):
     denuncias = DenunciaAnonima.objects.all()
     #Filtramos si es necesario
     if tipo:
         denuncias = denuncias.filter(tipo=tipo)
     if estado:
         denuncias = denuncias.filter(estado=estado)
+    if telefonista_id:
+        denuncias = denuncias.filter(telefonista__id=telefonista_id)
     #Si no hay filtros:
     if not tipo and not estado:
         denuncias = denuncias.exclude(estado__in=('RE','BA'))
