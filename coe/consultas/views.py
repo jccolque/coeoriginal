@@ -65,11 +65,11 @@ def activar_consulta(request, consulta_id, token):
     return render(request, 'extras/resultado.html', {'texto': texto, })
 
 # Create your views here.
-@permission_required('operadores.denuncias')
+@permission_required('operadores.telefonistas')
 def menu(request):
     return render(request, 'menu_denuncias.html', {})
 
-@permission_required('operadores.denuncias')
+@permission_required('operadores.telefonistas')
 def lista_denuncias(request, tipo=None, estado=None, telefonista_id=None):
     denuncias = DenunciaAnonima.objects.all()
     #Filtramos si es necesario
@@ -90,7 +90,7 @@ def lista_denuncias(request, tipo=None, estado=None, telefonista_id=None):
         'refresh': True,
     })
 
-@permission_required('operadores.denuncias')
+@permission_required('operadores.telefonistas')
 def ver_denuncia(request, denuncia_id):
     denuncia = DenunciaAnonima.objects.get(pk=denuncia_id)
     return render(request, 'ver_denuncia.html', {
@@ -98,7 +98,7 @@ def ver_denuncia(request, denuncia_id):
     })
 
 #Administrador
-@permission_required('operadores.denuncias')
+@permission_required('operadores.telefonistas')
 def evolucionar_denuncia(request, denuncia_id):
     form = EvolucionarForm()
     if request.method == 'POST':
@@ -121,7 +121,7 @@ def evolucionar_denuncia(request, denuncia_id):
     #Lanzamos form
     return render(request, "extras/generic_form.html", {'titulo': "Evolucionar Denuncia", 'form': form, 'boton': "Confirmar", })
 
-@permission_required('operadores.denuncias')
+@permission_required('operadores.telefonistas')
 def eliminar_denuncia(request, denuncia_id):
     denuncia = DenunciaAnonima.objects.get(pk=denuncia_id)
     if request.method == "POST":
