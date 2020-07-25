@@ -21,6 +21,7 @@
                             <th>Ultimo Ingreso</th>
                             <th>Atenciones 24hrs</th>
                             <th>Atenciones 7 dias</th>
+                            <th>Pendientes</th>
                             <th>Ver Detalle</th>
                         </tr>
                     </thead>
@@ -33,6 +34,7 @@
                                 <td>{{telefonista.operador.usuario.last_login}}</td>
                                 <td>{{telefonista.atenciones_24hrs}}</td>
                                 <td>{{telefonista.atenciones_7dias}}</td>
+                                <td>{{telefonista.consultas.count}}</td>
                                 <td>
                                     <a href="{% url 'consultas:ver_panel' telefonista_id=telefonista.id %}" target="_blank">
                                         <img class="icons" src="/static/img/icons/control_panel.png" alt="Panel de Control">
