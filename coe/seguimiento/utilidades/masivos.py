@@ -1,5 +1,6 @@
 #Imports de python
 import csv
+from datetime import datetime
 #Imports de Django
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Permission
@@ -111,8 +112,43 @@ def obtener_last_seg():
         print(individuo)
 
 def confirmar_individuos(filename):
+    from georef.models import Localidad
+    from georef.functions import obtener_argentina
+    from informacion.models import Atributo
     #Cargamos masivamente los test positivos:
-     with open(filename) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
+    with open(filename) as csv_file:
+        argentina = obtener_argentina()
+        csv_reader = csv.reader(csv_file, delimiter=';')
         for row in csv_reader:
-            pass
+            print(row)
+            #0-DNI	1-FECHA	2-Apellido	3-Nombres	4-LOCALIDAD	5-DOMICILIO	6-BARRIOS	7-SEXO	8-EDAD	9-TELEFONO
+            try:
+                individuo = Individuo.objects.get(num_doc=row[0])
+                if individuo.get_situacion().conducta == 50:
+                    print("Ya se encuentra confirmado")
+                    continue
+                print("Existe: " + str(individuo))
+            except:
+                individuo = Individuo(num_doc=row[0])
+                individuo.apellidos = row[2]
+                individuo.nombres = row[3]
+                individuo.sexo = row[7]
+                individuo.telefono = row[9]
+                individuo.nacionalidad = argentina
+                individuo.save()
+                print("Creamos: " + str(individuo))
+                #Creamos domicilio
+            #Tenemos el individuo:
+            if row[8] and int(row[8]) > 64:
+                atrib = Atributo(individuo=individuo)
+                atrib.tipo = "PR"
+                atrib.aclaracion = "Mayor de 65 años."
+                atrib.save()
+                print("Marcado como Poblacion de Riesgo")
+            #Le cargamos el seguimiento de confirmado por test:
+            seguimiento = Seguimiento(individuo=individuo)
+            seguimiento.tipo = "CT"
+            seguimiento.fecha = datetime.strptime(row[1], "%d/%m/%Y").date()
+            seguimiento.aclaracion = "Obtenido de Excel de Epidemiologia"
+            seguimiento.save()
+            print("Marcado como confirmado.")

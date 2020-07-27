@@ -76,6 +76,7 @@ def confirmar_sospechoso(created, instance, **kwargs):
         situacion.estado = 50
         situacion.conducta = 'E'
         situacion.aclaracion = "Confirmado por TEST PCR"
+        situacion.fecha = instance.fecha
         situacion.save()
         #Lo ponemos bajo seguimiento de telesalud
         atributo = Atributo(individuo=instance.individuo)
