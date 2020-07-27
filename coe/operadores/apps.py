@@ -8,3 +8,4 @@ class OperadoresConfig(AppConfig):
     name = 'operadores'
     def ready(self):
         agregar_menu(self)
+        from .signals import asignar_individuo

@@ -39,7 +39,14 @@
                                         
                                         <td>{{operador.usuario.username}}</td>
                                         <td>{{operador.num_doc}}</td>
-                                        <td>{{operador.apellidos}}, {{operador.nombres}}</td>
+                                        <td>
+                                            {{operador.apellidos}}, {{operador.nombres}}
+                                            {% if operador.individuo %}
+                                                <a href="{% url 'informacion:ver_individuo' individuo_id=operador.individuo.id %}" target="_blank">
+                                                    <img class="icons" src="/static/img/icons/check.png" alt="Ver">
+                                                </a>
+                                            {% endif %}
+                                        </td>
                                         <td>{{operador.subcomite}}</td>
                                         <td>{{operador.get_nivel_acceso_display}}</td>
                                         <td>{{operador.telefono}}</td>

@@ -11,7 +11,6 @@ from auditlog.registry import auditlog
 #Imports del proyecto:
 from coe.settings import BASE_DIR, STATIC_ROOT, MEDIA_ROOT, LOADDATA
 from coe.constantes import NOIMAGE, DIAS_CUARENTENA
-from operadores.models import Operador
 from core.choices import TIPO_DOCUMENTOS, TIPO_SEXO
 from georef.models import Nacionalidad, Localidad, Ubicacion
 #Imports de la app
@@ -27,7 +26,6 @@ class Archivo(models.Model):
     nombre = models.CharField('Nombres', max_length=100)
     archivo = models.FileField('Archivo', upload_to='informacion/archivos/')
     fecha = models.DateTimeField('Fecha del evento', default=timezone.now)
-    operador = models.ForeignKey(Operador, on_delete=models.CASCADE, related_name="archivos")
     procesado = models.BooleanField(default=False)
     descripcion = HTMLField(verbose_name='Descripcion', null=True, blank=True)
     def __str__(self):

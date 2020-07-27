@@ -59,6 +59,15 @@
                                 {% endif %}
                             </div>
                             <div class="col-sm-5">
+
+                                {% if individuo.operador %}
+                                    <h4><b>Es Operador del COE</b>
+                                        <a class="nolink" href="{% url 'operadores:ver_credencial' operador_id=individuo.operador.id %}">
+                                            <img class="icons" src="/static/img/icons/access_card.png" alt="Ver Tarjeta">
+                                        </a>
+                                    </h4>
+                                {% endif %}
+
                                 {% if individuo.voluntariados.exists %}
                                     <div class="bordeado">
                                         <h4><b>Voluntario:</b></h4>

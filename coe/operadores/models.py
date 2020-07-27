@@ -11,6 +11,7 @@ from tinymce.models import HTMLField
 from coe.settings import MEDIA_ROOT, LOADDATA
 from coe.constantes import NOIMAGE
 from core.choices import TIPO_DOCUMENTOS
+from informacion.models import Individuo
 #improts de la app
 from .choices import TIPO_EVENTO, NIVELES_SEGURIDAD
 
@@ -57,6 +58,7 @@ class Operador(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="operadores")
     tipo_doc = models.IntegerField(choices=TIPO_DOCUMENTOS, default=2)
     num_doc = models.CharField('Numero de Documento', unique=True, max_length=100)
+    individuo = models.OneToOneField(Individuo, on_delete=models.SET_NULL, null=True, blank=True, related_name="operador")
     apellidos = models.CharField('Apellidos', max_length=100)
     nombres  = models.CharField('Nombres', max_length=100)
     email = models.EmailField('Correo Electronico')
@@ -68,7 +70,6 @@ class Operador(models.Model):
         ordering = ['apellidos', 'nombres']
         permissions = (
             #Consultas
-            ("consultas", "Sistema de Consultas"),
             ("telefonistas", "Operario de CallCenter."),
             ("admin_telefonistas", "Administrador de CallCenter."),
             #Operadores:

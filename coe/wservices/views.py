@@ -102,6 +102,37 @@ def ws_barrios(request, localidad_id=None):
             "cant_registros": len(datos),
         }), content_type='application/json')
 
+@permission_required('operadores.individuos')
+def ws_seguimientos(request):
+    #Generamos diccionario
+    data = {}
+    #Obtenemos datos a procesar
+    individuos = Individuo.objects.exclude(seguimientos=None)
+    individuos = individuos.select_related("situacion_actual", "domicilio_actual", "domicilio_actual__localidad")
+    individuos = individuos.prefetch_related("seguimientos", "seguimientos__operador")
+    #Generamos un subdict por cada individuo
+    for individuo in individuos:
+        ind = {}
+        ind["num_doc"] = individuo.num_doc
+        ind["apellidos"] = individuo.apellidos
+        ind["situacion"] = str(individuo.get_situacion())
+        ind["nombres"] = individuo.nombres
+        ind["telefono"] = individuo.telefono
+        if individuo.domicilio_actual:
+            ind["domicilio"] = individuo.domicilio_actual.calle + ' ' + individuo.domicilio_actual.numero
+            ind["localidad"] = str(individuo.domicilio_actual.localidad.nombre)
+        ind["seguimientos"] = []
+        for seguimiento in individuo.seguimientos.all():
+            seg = {}
+            seg["tipo"] = seguimiento.get_tipo_display()
+            seg["aclaracion"] = seguimiento.aclaracion
+            seg["operador"] = str(seguimiento.operador)
+            seg["fecha"] = str(seguimiento.fecha)
+            ind["seguimientos"].append(seg)
+        data[individuo.num_doc] = ind
+    #Entregamos json
+    return HttpResponse(json.dumps({'Individuos': data, "cant_registros": len(data),}), content_type='application/json')
+
 #Privados
 # Create your views here.
 @permission_required('operadores.wservices')

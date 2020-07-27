@@ -66,10 +66,6 @@ def activar_consulta(request, consulta_id, token):
 
 # Create your views here.
 @permission_required('operadores.telefonistas')
-def menu(request):
-    return render(request, 'menu_denuncias.html', {})
-
-@permission_required('operadores.telefonistas')
 def lista_denuncias(request, tipo=None, estado=None, telefonista_id=None):
     denuncias = DenunciaAnonima.objects.all()
     #Filtramos si es necesario
@@ -143,13 +139,13 @@ def eliminar_denuncia(request, denuncia_id):
     )
 
 #Administracion Consultas
-@permission_required('operadores.menu_consultas')
+@permission_required('operadores.telefonistas')
 def menu(request):
     return render(request, 'menu_consultas.html', {
         'es_telefonista': Telefonista.objects.filter(operador=obtener_operador(request)).exists(),
     })
 
-@permission_required('operadores.menu_consultas')
+@permission_required('operadores.admin_telefonistas')
 def lista_consultas(request, telefonista_id=None):
     if telefonista_id:
         telefonista = Telefonista.objects.get(pk=telefonista_id)
@@ -163,7 +159,7 @@ def lista_consultas(request, telefonista_id=None):
         "refresh": True,
     })
 
-@permission_required('operadores.menu_consultas')
+@permission_required('operadores.admin_telefonistas')
 def lista_respondidas(request):
     consultas = Consulta.objects.filter(respondida=True)
     return render(request, 'lista_respondidas.html', {
@@ -171,7 +167,7 @@ def lista_respondidas(request):
         "has_table": True,
     })
 
-@permission_required('operadores.menu_consultas')
+@permission_required('operadores.telefonistas')
 def ver_consulta(request, consulta_id):
     form = RespuestaForm()
     consulta = Consulta.objects.get(pk=consulta_id)
@@ -205,7 +201,7 @@ def ver_consulta(request, consulta_id):
             return redirect('consultas:lista_consultas')
     return render(request, 'ver_consulta.html', {"consulta": consulta, 'form': form, })
 
-@permission_required('operadores.menu_consultas')
+@permission_required('operadores.telefonistas')
 def consulta_respondida(request, consulta_id):
     consulta = Consulta.objects.get(pk=consulta_id)
     consulta.respondida = True

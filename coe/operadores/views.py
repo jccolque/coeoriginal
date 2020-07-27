@@ -77,16 +77,7 @@ def crear_subcomite(request, subco_id=None):
 @permission_required('operadores.operadores')
 def listar_operadores(request):
     operadores = Operador.objects.all()
-    operadores = operadores.select_related('subcomite', 'usuario')
-    if request.method == 'POST':
-        form = SearchForm(request.POST)
-        if form.is_valid():
-            search = form.cleaned_data['search']
-            operadores = operadores.filter(
-                Q(num_doc__contains=search) |
-                Q(apellidos__icontains=search) |
-                Q(subcomite__nombre__icontains=search)
-            )
+    operadores = operadores.select_related('subcomite', 'usuario', 'individuo')
     return render(request, 'lista_operadores.html', {
         'operadores': operadores,    
         'has_table': True,

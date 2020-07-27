@@ -83,9 +83,7 @@ def upload_archivos(request):
     if request.method == "POST":
         form = ArchivoForm(request.POST, request.FILES)
         if form.is_valid():
-            operador = obtener_operador(request)
             archivo = form.save(commit=False)
-            archivo.operador = operador
             archivo.save()
             return redirect('informacion:ver_archivo', archivo_id=archivo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Subir Archivo para Carga", 'form': form, 'boton': "Subir", })
@@ -141,7 +139,6 @@ def cargar_vehiculo(request, vehiculo_id=None, identificacion=None):
         if form.is_valid():
             operador = obtener_operador(request)
             vehiculo = form.save(commit=False)
-            vehiculo.operador = operador
             vehiculo.save()
             return redirect('informacion:ver_vehiculo', vehiculo_id=vehiculo.id)
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Vehiculo", 'form': form, 'boton': "Cargar", })
@@ -191,7 +188,6 @@ def cargar_individuo(request, traslado_id=None, num_doc=None):
         if form.is_valid():
             operador = obtener_operador(request)
             individuo = form.save(commit=False)
-            individuo.operador = operador
             #Le cargamos el ultimo domicilio y situacion
             if not individuo.situacion_actual:
                 individuo.situacion_actual = individuo.situaciones.last()
@@ -324,7 +320,6 @@ def cargar_inquilino(request, ubicacion_id, num_doc):
         if form.is_valid():
             #Creamos el individuo
             individuo = form.save(commit=False)
-            individuo.operador = obtener_operador(request)
             individuo.save()
             #Obtenemos la ubicacion
             ubicacion = form.cleaned_data['ubicacion']
@@ -400,11 +395,13 @@ def ver_individuo(request, individuo_id):
     individuo = individuo.get(pk=individuo_id)
     #Chequeamos que no sea info confidencial
     sit = individuo.get_situacion()
-    if sit.estado == 50 and not request.user.has_perm('operadores.epidemiologia'):#Si es Confirmado y no se tiene permisos
-        return render(request, 'extras/error.html', {
-            'titulo': 'Informacion Confidencial',
-            'error': "Usted no tiene acceso a este inidividuo.",
-        })
+    if sit.estado == 50:
+        #Si es Confirmado y no se tiene permisos
+        if not request.user.has_perm('operadores.epidemiologia') and not individuo.vigiladores.filter(operador=obtener_operador(request)).exists():        
+            return render(request, 'extras/error.html', {
+                'titulo': 'Informacion Confidencial',
+                'error': "Usted no tiene acceso a este inidividuo.",
+            })
     #Mostrmoas individuo
     return render(request, "ver_individuo.html", {'individuo': individuo, })
 

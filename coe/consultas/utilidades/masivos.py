@@ -51,7 +51,6 @@ def crear_telefonistas(filename):
             #Agregamos permisos Basicos
             new_operador.usuario.user_permissions.add(permisos.get(codename='menu_informacion'))
             new_operador.usuario.user_permissions.add(permisos.get(codename='individuos'))
-            new_operador.usuario.user_permissions.add(permisos.get(codename='consultas'))
             new_operador.usuario.user_permissions.add(permisos.get(codename='telefonistas'))
             #Creamos vigilante
             if not Telefonista.objects.filter(operador=new_operador).exists():

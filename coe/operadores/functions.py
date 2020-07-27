@@ -45,6 +45,14 @@ def crear_usuario(operador):
     usuario.save()
     return usuario
 
+def obtener_localidad(operador):
+    if operador.individuo:
+        domicilio = operador.individuo.domicilio_actual
+        if domicilio:
+            return domicilio.localidad
+    return None
+
+
 def auditar_objeto(instancia):
     from django.contrib.contenttypes.models import ContentType
     from auditlog.models import LogEntry
