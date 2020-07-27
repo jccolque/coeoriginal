@@ -54,6 +54,18 @@ def geotrack_sin_actualizacion():
         except Exception as error:
             logger.info("Fallo: "+str(error)+':\n'+str(traceback.format_exc()))
 
+@background(schedule=25)
+def vencer_alertas():
+    #Obtenemos todasl as alertas vencidas
+    alertas = GeoPosicion.objects.filter(procesada=False)
+    #Eliminamos las que no son alerta
+    alertas = alertas.exclude(alerta='SA')
+    alertas = alertas.exclude(alerta='FP')#Tampoco las de sin permiso
+    #Filtramos
+    limite = timezone.now() - timedelta(hours=24 * 7)#Una semana
+    alertas = alertas.filter(fecha__lt=limite)
+    alertas.update(procesada=True, aclaracion="Dada de baja por vencimiento")
+
 @background(schedule=15)
 def finalizar_geotracking():
     logger.info("\nRealizamos la finalizacion de los Geotrackings")

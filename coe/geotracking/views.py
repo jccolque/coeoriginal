@@ -175,17 +175,24 @@ def lista_trackeados(request):
 
 @permission_required('operadores.geotracking_admin')
 def lista_alertas(request):
-    #Obtenemos Alertas
-    alertas = GeoPosicion.objects.filter(procesada=False).exclude(alerta='SA').exclude(alerta='FP')
+    #Obtenemos Alertas sin procesar
+    alertas = GeoPosicion.objects.filter(procesada=False)
+    #Eliminamos las que no son alerta
+    alertas = alertas.exclude(alerta='SA')
+    alertas = alertas.exclude(alerta='FP')#Tampoco las de sin permiso
+    #Optimizamos
     alertas = alertas.select_related(
         'individuo', 'individuo__situacion_actual',
         'individuo__domicilio_actual', "individuo__domicilio_actual__localidad"
     )
+    #Ordenamos por distancia
     alertas = alertas.order_by('distancia')
+    #Dejamos solo una por individuo
     dict_alertas = {alerta.individuo.num_doc:alerta for alerta in alertas}
     alertas = list(dict_alertas.values())
     #Lanzamos listado
-    return render(request, "lista_alertas.html", {
+    print(len(alertas))
+    return render(request, "lista_sin_procesar.html", {
         'alertas': alertas,
         'refresh': True,
         'has_table': True,
@@ -247,7 +254,8 @@ def procesar_alerta(request, geoposicion_id):
                 operador=geoposicion.operador,
                 aclaracion='Se proceso Alerta: '+str(geoposicion.id)+'. Justificativo: '+geoposicion.aclaracion
             )
-            return redirect('geotracking:lista_alertas')
+            #Cerramos ventana
+            return render(request, "extras/close.html")
     return render(request, "extras/generic_form.html", {'titulo': "Procesar Alerta", 'form': form, 'boton': "Procesar", })
 
 @permission_required('operadores.geotracking')
