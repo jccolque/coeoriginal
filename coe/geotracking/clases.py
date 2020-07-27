@@ -31,7 +31,9 @@ class MapeadorIndividual:
 
         if documentos:
             try:
+                self.dni_frente = documentos[0].archivo.url
                 data["DNI_Front"] = documentos[0].archivo.url
+                self.dni_reverso = documentos[0].archivo.url
                 data["DNI_Back"] = documentos[-1].archivo.url
             except:
                 pass
@@ -45,27 +47,24 @@ class MapeadorIndividual:
         data["radio2"] = self.parametros.distancia_critica
         #Base:
         if self.gps_base:
-            data["punto_base"] = True
-            data["base_latitud"] = self.gps_base.latitud
-            data["base_longitud"] = self.gps_base.longitud
-        else:
-            data["punto_base"] = False
-            data["base_latitud"] = 0
-            data["base_longitud"] = 0
+            data["base_latitud"] = float(self.gps_base.latitud)
+            data["base_longitud"] = float(self.gps_base.longitud)
         #Geoposiciones
         data["geoposiciones"] = []
         geoposiciones = self.individuo.geoposiciones.exclude(tipo='PC')
         for geopos in geoposiciones:
             #Creamos cada dict por posicion a mostrar:
             gpd = {}
+            gpd["id"] = geopos.id
             gpd["tipo"] = geopos.get_tipo_display()
             gpd["fecha"] = str(geopos.fecha.date())
             gpd["hora"] = str(geopos.fecha.time())
-            gpd["latitud"] = geopos.latitud
-            gpd["longitud"] = geopos.longitud
-            gpd["distancia"] = geopos.distancia
+            gpd["latitud"] = float(geopos.latitud)
+            gpd["longitud"] = float(geopos.longitud)
+            gpd["distancia"] = int(geopos.distancia)
+            gpd["alerta"] = geopos.get_alerta_display()
             gpd["aclaracion"] = geopos.aclaracion
-            gpd["procesada"] = geopos.procesada
+            gpd["procesada"] = str(geopos.procesada)
             gpd["operador"] = str(geopos.operador)
             gpd["icono"] = geopos.icono()
             #Lo sumamos al grupo de geopos

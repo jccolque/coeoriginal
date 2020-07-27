@@ -1,6 +1,7 @@
 #Imports Django
 from django.db.models import Count
 from django.shortcuts import render
+from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import permission_required
 #Imports del proyecto
@@ -9,6 +10,7 @@ from operadores.functions import obtener_operador
 from core.forms import JustificarForm
 from informacion.models import Individuo
 #imports de la app
+from .clases import MapeadorIndividual
 from .models import GeoPosicion, GeOperador
 from .functions import obtener_trackeados, renovar_base, obtener_geoposiciones
 from .forms import ConfigGeoForm, NuevoGeoOperador, NuevoIndividuo, AsignarGeOperador
@@ -222,14 +224,11 @@ def ver_tracking(request, individuo_id):
     individuo = Individuo.objects.select_related('situacion_actual', 'domicilio_actual', 'appdata')
     individuo = Individuo.objects.prefetch_related('domicilios', 'domicilios__localidad')
     individuo = individuo.get(pk=individuo_id)
-    geoposiciones = obtener_geoposiciones(individuo)
-    
-    #return render(request, 'tracking.html', {'geoposiciones': geoposiciones,})
-
-    return render(request, "seguimiento.html", {
-        'gmkey': GEOPOSITION_GOOGLE_MAPS_API_KEY,
+    mapeador = MapeadorIndividual(individuo)
+    return render(request, 'mapa_seguimiento2.html', {
         'individuo': individuo,
-        'geoposiciones': geoposiciones,
+        'mapeador': mapeador,
+        'datos': mapeador.create_dict(),
     })
 
 @permission_required('operadores.geotracking')
