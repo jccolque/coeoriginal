@@ -43,7 +43,7 @@ class NuevoVigia(forms.ModelForm):
 
 class NuevoIndividuo(forms.Form):
     individuo = forms.ModelChoiceField(
-        queryset= obtener_bajo_seguimiento(),
+        queryset= Individuo.objects.all(),
         required= True,
         widget= autocomplete.ModelSelect2(url='seguimiento:individuosvigilados-autocomplete'),
     )

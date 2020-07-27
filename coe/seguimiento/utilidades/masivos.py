@@ -68,6 +68,11 @@ def crear_vigias(filename):
                     print("Creamos Administrador de Seguimiento.")
             else:
                 print("Ya es vigia. No Procesado")
+                if row[6] == 'CARGA':
+                    Vigia.objects.filter(operador=new_operador).delete()
+                    print("Eliminamos vigilante")
+                    new_operador.usuario.user_permissions.add(permisos.get(codename='epidemiologia'))
+                    print("Creamos Cargador.")
 
 def altas_masivas(filename):
     #Procesamos el archivo
