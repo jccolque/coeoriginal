@@ -225,10 +225,9 @@ def ver_tracking(request, individuo_id):
     individuo = Individuo.objects.prefetch_related('domicilios', 'domicilios__localidad')
     individuo = individuo.get(pk=individuo_id)
     mapeador = MapeadorIndividual(individuo)
-    return render(request, 'mapa_seguimiento2.html', {
+    return render(request, 'mapa_seguimiento.html', {
         'individuo': individuo,
         'mapeador': mapeador,
-        'datos': mapeador.create_dict(),
     })
 
 @permission_required('operadores.geotracking')

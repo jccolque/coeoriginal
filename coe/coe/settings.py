@@ -26,7 +26,6 @@ SECRET_KEY = 'n!+$&mpxi^8b1tgi)bffl0*gl$0%(esc&icba-0_p#ptayuz=0'
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'coe.jujuy.gob.ar',]
 
 # Application definition
-
 INSTALLED_APPS = [
     #Autocomplete
     'dal',

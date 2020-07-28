@@ -1,6 +1,7 @@
 TIPO_SEGUIMIENTO = (
     ('I', 'Inclusion al Sistema'),
     ('A', 'Autodiagnostico'),
+    ('AI', 'Actualizacion de Individuo'),
     ('IT', 'Inicio Tracking'),
     ('AT', 'Alerta Tracking'),
     ('FT', 'Finalizacion del Tracking'),

@@ -3,7 +3,6 @@ from django.contrib import admin
 #Imports extras
 
 #Imports de proyecto
-from core.admin import register_hidden_models
 #Imports de la app
 from .models import SubComite, Operador
 

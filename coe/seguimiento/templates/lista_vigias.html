@@ -16,6 +16,7 @@
                     <thead>
                         <tr>
                             <th>Tipo Vigia</th>
+                            <th>Aclaracion</th>
                             <th>Operador</th>
                             <th>Telefono</th>
                             <th>Ultimo Ingreso</th>
@@ -28,6 +29,11 @@
                         {% for vigia in vigias %}
                             <tr>
                                 <td>{{vigia.get_tipo_display}}</td>
+                                <td>
+                                    {% if vigia.aclaracion %}
+                                        {{vigia.aclaracion}}
+                                    {% endif %}
+                                </td>
                                 <td>{{vigia}}</td>
                                 <td>{{vigia.operador.telefono}}</td>
                                 <td>{{vigia.operador.usuario.last_login}}</td>

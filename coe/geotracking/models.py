@@ -44,7 +44,7 @@ class GeoPosicion(models.Model):
         if self.alerta != 'SA':
             if self.tipo == 'RG':
                 icono = "/img/icons/maps/alerta.png"
-            elif self.procesada:
+            if self.procesada:
                 if self.tipo == 'CG':
                     icono = "/img/icons/maps/detective_red.png"
                 else:

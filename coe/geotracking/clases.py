@@ -23,7 +23,8 @@ class MapeadorIndividual:
         data["nombres"] = self.individuo.nombres
         data["telefono"] = self.individuo.telefono
         #imagenes:
-        data["fotografia"] = self.individuo.get_foto()
+        self.fotografia = self.individuo.get_foto()
+        data["fotografia"] = self.fotografia
         documentos = self.individuo.get_dnis()
 
         # doc.tipo == 'DI'
@@ -46,12 +47,25 @@ class MapeadorIndividual:
         data["radio1"] = self.parametros.distancia_alerta
         data["radio2"] = self.parametros.distancia_critica
         #Base:
+
         if self.gps_base:
+            data["punto_base"] = 1
             data["base_latitud"] = float(self.gps_base.latitud)
             data["base_longitud"] = float(self.gps_base.longitud)
+        else:
+            #Si no tiene punto base buscamos otro:
+            gps = self.individuo.geoposiciones.last()
+            data["base_latitud"] = float(self.gps.latitud)
+            data["base_longitud"] = float(self.gps.longitud)
+
         #Geoposiciones
         data["geoposiciones"] = []
-        geoposiciones = self.individuo.geoposiciones.exclude(tipo='PC')
+        geoposiciones = self.individuo.geoposiciones.all()
+        
+        if geoposiciones.exclude(alerta="SA").filter(procesada=False).exists():
+            geoposiciones = geoposiciones.exclude(tipo="RG", alerta="SA")
+        
+        geoposiciones = geoposiciones.order_by("-fecha")
         for geopos in geoposiciones:
             #Creamos cada dict por posicion a mostrar:
             gpd = {}

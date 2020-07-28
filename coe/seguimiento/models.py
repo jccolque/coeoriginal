@@ -32,6 +32,7 @@ class Seguimiento(models.Model):
 
 class Vigia(models.Model):
     tipo = models.CharField('Tipo Vigia', choices=TIPO_VIGIA, max_length=2, default='VE')
+    aclaracion = models.CharField('Aclaraciones', max_length=200, null=True, blank=True)
     operador = models.OneToOneField(Operador, on_delete=models.CASCADE, related_name="vigia")
     max_controlados = models.SmallIntegerField('Cantidad Maxima de Seguidos', default=60)
     controlados = models.ManyToManyField(Individuo, related_name='vigiladores')
