@@ -103,7 +103,7 @@ def crear_operador(request):
             #Guardamos
             operador.save()
             return redirect('operadores:listar_operadores')
-    return render(request, "extras/generic_form.html", {'titulo': "Subir Archivo para Carga", 'form': form, 'boton': "Subir", })
+    return render(request, "extras/generic_form.html", {'titulo': "Generar Operador COE2020", 'form': form, 'boton': "Crear", })
 
 @permission_required('operadores.operadores')
 def mod_operador(request, operador_id=None):
@@ -338,7 +338,7 @@ def asistencia(request, operador_id):
         else:
             asistencia[1] = asistencia[1].fecha
         #Calculamos tiempo entre fechas
-        tiempo = int((asistencia[1] - asistencia[0]).total_seconds() / 3600)
+        tiempo = int((asistencia[1].replace(tzinfo=None) - asistencia[0].replace(tzinfo=None)).total_seconds() / 3600)
         asistencia.append(tiempo)
         asistencias.append(asistencia)
     return render(request, 'ver_asistencias.html', {

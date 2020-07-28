@@ -8,7 +8,7 @@ from django.forms.widgets import CheckboxSelectMultiple
 #Imports extra
 from dal import autocomplete
 #Imports del proyecto
-from core.widgets import XDSoftDateTimePickerInput
+from core.widgets import XDSoftDatePickerInput
 #Imports de la app
 from .models import SubComite, Operador
 
@@ -95,19 +95,13 @@ class AuditoriaForm(forms.Form):
         queryset=User.objects.all(),
         widget=autocomplete.ModelSelect2(url='core:usuarios-autocomplete'),
         required=True)
-    begda = forms.DateField(label='Inicio', initial=timezone.now(), widget=XDSoftDateTimePickerInput())
-    endda = forms.DateField(label='Fin',initial=timezone.now(), widget=XDSoftDateTimePickerInput())
+    begda = forms.DateField(label='Inicio', initial=timezone.now(), widget=XDSoftDatePickerInput())
+    endda = forms.DateField(label='Fin',initial=timezone.now(), widget=XDSoftDatePickerInput())
     def __init__(self, *args, **kwargs):
         super(AuditoriaForm, self).__init__(*args, **kwargs)
         if kwargs.get('initial', None):
             if kwargs['initial'].get('usuario'):
                 self.fields['usuario'].widget = forms.HiddenInput()
-    def clean(self):
-        if self.cleaned_data['begda'] > self.cleaned_data['endda']:
-            raise forms.ValidationError("La fecha de Inicio debe ser Menor a la de fin.")
-        if self.cleaned_data['endda'] > date.today():
-            raise forms.ValidationError("No puede ingresar una fecha posteriores a hoy.")
-        return self.cleaned_data
 
 class AsistenciaForm(forms.Form):
     num_doc = forms.IntegerField(label='Num de Documento', required=False)
