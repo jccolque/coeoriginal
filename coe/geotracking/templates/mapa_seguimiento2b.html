@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block custom_head %}
-
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.21/datatables.min.css"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -16,27 +16,14 @@
         var $tblAlertas;
         var defaultLatLng;
 
-        var JSONData;
+        var JSONData = {{datos|safe}};
 
         $(document).ready(function() {
 
-            cargarJSON(JSONData, iniciarGmap);
+            iniciarGmap();
 
-        });
+            $minimap.markers = [];
 
-        $(document).on('click', '[btn-marker]', function(event) {
-            event.preventDefault;
-            var $tr = $(this).closest('tr');
-            var row = $tblAlertas.row($tr);
-            var rowData = row.data();
-            var marker = $minimap.markers[rowData.rowId];
-
-            animateMarker(marker);
-        });
-
-        function cargarJSON(serverData, gmapsCallback) {
-            JSONData = serverData;
-            gmapsCallback();
             $tblAlertas = $('#tablaAlertas').DataTable({
                 data: JSONData.geoposiciones,
                 searching: false,
@@ -59,6 +46,7 @@
                     {
                         title: "FECHA Y HORA",
                         data: 'fecha',
+                        orderable: false,
                         render: function(data, type, row) {
                             var texto;
                             var fecha = row.fecha.split('-').reverse().join('/');
@@ -70,21 +58,13 @@
                         title: "REPORTE DISTANCIA",
                         render: function(data, type, row) {
                             var texto;
-                            texto =  `<span class="label label-primary">${row.tipo}</span><br><b>${row.distancia}m. de base</b>`;
+                            texto =  `${row.tipo} ${row.distancia}m. de base`;
                             return texto;
                         },
                     },
                     { 
                         title: "ACLARACION",
                         data: 'aclaracion',
-                    },
-                    {
-                        title: "PROCESADA",
-                        render: function(data, type, row) {
-                            var texto;
-                            texto =  (row.procesada) ? `${row.aclaracion} ${row.operador}` : 'SIN PROCESAR';
-                            return texto;
-                        },
                     },
                 ],
                 createdRow: function (row, data, dataIndex) {
@@ -97,7 +77,29 @@
                 },
 
             } );
-        }
+
+            $(".apellido").html(JSONData.apellidos);
+            $(".nombres").html(JSONData.nombres);
+            $(".num_doc").html(JSONData.num_doc);
+            $(".domicilio").html(JSONData.domicilio);
+            $(".telefono").html(JSONData.telefono);
+            $(".situacion").html(JSONData.situacion);
+
+
+            $('.dni_frente').attr('src', 'http://coe.jujuy.gob.ar' + JSONData.DNI_Front);
+            $('.dni_dorso').attr('src', 'http://coe.jujuy.gob.ar' + JSONData.DNI_Back);
+
+        });
+
+        $(document).on('click', '[btn-marker]', function(event) {
+            event.preventDefault;
+            var $tr = $(this).closest('tr');
+            var row = $tblAlertas.row($tr);
+            var rowData = row.data();
+            var marker = $minimap.markers[rowData.rowId];
+
+            animateMarker(marker);
+        });
 
         /* Funciones googlemaps */
         function iniciarGmap() {
@@ -105,7 +107,6 @@
             var circuloVerde;
             var circuloAmarillo;
             var zoom;
-
             zoom = 12;
             {% if mapeador.gps_base %}
                 defaultLatLng = new google.maps.LatLng(JSONData.base_latitud, JSONData.base_longitud);
@@ -129,9 +130,8 @@
             };
 
             $minimap = new google.maps.Map(minimapDiv, opcionesMapa);
-            $minimap.markers = [];
 
-            if (JSONData.punto_base == true){
+            if (JSONData.punto_base){
                 circuloVerde = new google.maps.Circle({
                     center: defaultLatLng,
                     radius: JSONData.radio1/2,
@@ -176,11 +176,7 @@
             var contentString = `<h4 class="text-bold"><img src="http://coe.jujuy.gob.ar/static${data.icono}"> ${data.tipo}</h4>
                 <div>
                     <p class="text-center">
-                        ${data.tipo} ${data.distancia}m. de base
-                    </p>
-                    <p class="text-center">
                         <b>${data.fecha_dmy} ${data.hora}</b><br>
-                        <a href="/geotracking/cambiar_base/${JSONData.id}" class="text-center" title="Cambiar Punto Base"><img src="http://coe.jujuy.gob.ar/static/img/icons/house.png" height="16px"></a>
                     </p>
                 </div>`;
 
@@ -207,24 +203,17 @@
             $minimap.panTo(mrk.position);
             $(rowId).toggleClass('selected');
         }
-        /* fin Funciones googlemaps */
-
     </script>
 {% endblock %}
 
 {% block content %}
-    	<div class="container-fluid" style="min-height: 800px; margin-top: 20px;">
+    	<div class="content-wrapper" style="min-height: 800px; margin-top: 20px;">
         <!-- Main content -->
         <section>
             <div class="row">
-					<div class="col-sm-12 col-md-6" style="min-height: 80vh;">
-                        <h4>
-                            <span>{{individuo.apellidos}} {{individuo.nombres}}</span> 
-                        </h4>
-                        <div id="minimap" style="height: 70vh;">
-                        </div>
-					</div>
-					<div class="col-sm-12 col-md-6">
+                <div id="minimap" class="col-xs-6" style="min-height: 80vh; position: relative; overflow: hidden;">
+                </div>
+                <div class="col-xs-6">
                     <ul class="nav nav-tabs" role="tablist">
                         <li role="presentation" class="active"><a href="#posiciones_geotracking" aria-controls="posiciones_geotracking" role="tab" data-toggle="tab">Listado Geoposiciones</a></li>
                         <li role="presentation"><a href="#info_persona" aria-controls="info_persona" role="tab" data-toggle="tab">Informacion de la Persona</a></li>
@@ -246,19 +235,16 @@
                                     </div>
                                     <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                                         <div class="panel-body">
-                                            <div class="col-xs-12 col-sm-8">
-                                                <p>Apellido(s): {{individuo.apellidos}}</p>
-                                                <p>Nombre(s): {{individuo.nombres}}</p>
-                                                <p>Documento: {{individuo.num_doc}}</p>
-                                                <p>Domicilio: {{individuo.domicilio_actual}}</p>
-                                                <p>Telefono: {{individuo.telefono}}</p>
-                                                <p>Situacion: {{individuo.get_situacion}}</p>
-                                                <a href="#" class="btn btn-default btn-marker">
-                                                    Mostrar Punto Base
-                                                </a>
-                                            </div>
+                                            <p>Apellido(s): {{individuo.apellidos}}</p>
+                                            <p>Nombre(s): {{individuo.nombres}}</p>
+                                            <p>Documento: {{individuo.num_doc}}</p>
+                                            <p>Domicilio: {{individuo.domicilio_actual}}</p>
+                                            <p>Telefono: {{individuo.telefono}}</p>
+                                            <p>Situacion: {{individuo.get_situacion}}</p>
+                                            <a href="#" class="btn btn-default btn-marker">
+                                                Mostrar Punto Base
+                                            </a>
                                         </div>
-                                        <img class="col-xs-12 col-sm-4 img-responsive" src="{{individuo.foto}}">
                                     </div>
                                 </div>
                                 <div class="panel panel-default">
