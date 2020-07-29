@@ -125,7 +125,7 @@
                                             <img class="icons" src="{% static '/img/icons/access_card.png' %}">
                                         </a>
                                     {% endif %}
-                                    {% if perms.operadores.geotracking_admin %}
+                                    {% if perms.operadores.seguimiento_admin %}
                                         <a class="nolink"  href="{% url 'seguimiento:quitar_vigilado' vigia_id=vigia.id individuo_id=individuo.id %}">
                                             <img class="icons" src="{% static '/img/icons/delete.png' %}">
                                         </a>
