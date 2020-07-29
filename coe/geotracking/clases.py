@@ -55,8 +55,8 @@ class MapeadorIndividual:
         else:
             #Si no tiene punto base buscamos otro:
             gps = self.individuo.geoposiciones.last()
-            data["base_latitud"] = float(self.gps.latitud)
-            data["base_longitud"] = float(self.gps.longitud)
+            data["base_latitud"] = float(gps.latitud)
+            data["base_longitud"] = float(gps.longitud)
 
         #Geoposiciones
         data["geoposiciones"] = []
@@ -76,6 +76,7 @@ class MapeadorIndividual:
             gpd["latitud"] = float(geopos.latitud)
             gpd["longitud"] = float(geopos.longitud)
             gpd["distancia"] = int(geopos.distancia)
+            gpd["talerta"] = geopos.alerta
             gpd["alerta"] = geopos.get_alerta_display()
             gpd["aclaracion"] = geopos.aclaracion
             gpd["procesada"] = str(geopos.procesada)

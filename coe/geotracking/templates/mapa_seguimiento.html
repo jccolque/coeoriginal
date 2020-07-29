@@ -35,11 +35,11 @@
                             <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                                 <div class="panel panel-default">
                                     <div class="panel-heading" role="tab" id="headingOne">
-                                    <h4 class="panel-title">
-                                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                            Informacion Basica
-                                        </a>
-                                    </h4>
+                                        <h4 class="panel-title">
+                                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                Informacion Basica
+                                            </a>
+                                        </h4>
                                     </div>
                                     <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                                         <div class="row panel-body">
@@ -78,15 +78,27 @@
                             </div>
                         </div>
                         <div role="tabpanel" class="tab-pane active table-responsive" id="parametros">
-                            <h4>
-                                <b>Parametros:</b>
-                                <a href="{% url 'geotracking:config_tracking' individuo_id=individuo.id %}" target="_blank">
-                                    <img class="icons" src="{% static '/img/icons/config.png' %}">
-                                </a>
-                            </h4>
-                            <p><b>Intervalo:</b> {{mapeador.parametros.intervalo}} minutos</p>
-                            <p><b>Distancia de Alerta:</b> {{mapeador.parametros.distancia_alerta}}mts</p>
-                            <p><b>Distancia Critica:</b> {{mapeador.parametros.distancia_critica}}mts</p>
+                            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading" role="tab" id="headingThree">
+                                        <h4 class="panel-title">
+                                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                Parametros:
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseThree" class="panel-collapse" role="tabpanel" aria-labelledby="headingTwo">
+                                       <div class="panel-body">
+                                            <p><b>Intervalo:</b> {{mapeador.parametros.intervalo}} minutos</p>
+                                            <p><b>Distancia de Alerta:</b> {{mapeador.parametros.distancia_alerta}}mts</p>
+                                            <p><b>Distancia Critica:</b> {{mapeador.parametros.distancia_critica}}mts</p>
+                                            <a href="{% url 'geotracking:config_tracking' individuo_id=individuo.id %}" target="_blank">
+                                                <img class="icons" src="{% static '/img/icons/config.png' %}">
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -152,7 +164,7 @@
                         }
                     },
                     {
-                        title: "FECHA Y HORA",
+                        title: "Fecha y Hora",
                         data: 'fecha',
                         render: function(data, type, row) {
                             var texto;
@@ -162,19 +174,47 @@
                         }
                     },
                     {
-                        title: "REPORTE DISTANCIA",
+                        title: "Tipo",
                         render: function(data, type, row) {
                             var texto;
-                            texto =  `<span class="label label-primary">${row.tipo}</span><br><b>${row.distancia}m. de base</b>`;
+                            texto =  `<span class="label label-primary">${row.tipo}</span>`;
                             return texto;
                         },
                     },
 
                     {
-                        title: "PROCESADA",
+                        title: "Distancia",
                         render: function(data, type, row) {
                             var texto;
-                            texto =  (row.procesada) ? `${row.aclaracion} ${row.operador}` : 'SIN PROCESAR';
+                            texto =  `<b>${row.distancia}m. de base</b>`;
+                            return texto;
+                        },
+                    },
+
+                    {
+                        title: "Situacion",
+                        render: function(data, type, row) {
+                            var texto;
+                            if (row.talerta == 'SA')
+                            {
+                                texto = 'Sin Alerta.';
+                            }
+                            else 
+                            {
+                                if (row.procesada == "True")
+                                {
+                                    texto =  `${row.aclaracion} ${row.operador}`;
+                                }
+                                else 
+                                {
+                                    texto =  `<a href="/geotracking/procesar/${row.id}" title="Procesar" target="_blank"><img class="icons" src="/static/img/icons/operador.png"></a>`;
+                                }
+                            }
+                            
+                            {% if perms.operadores.geotracking_admin %}
+                                texto += `<a href="/geotracking/delete/${row.id}" title="delete"><img class="icons" src="/static/img/icons/delete.png"></a>`;
+                            {% endif %}
+
                             return texto;
                         },
                     },

@@ -225,6 +225,7 @@ def ver_tracking(request, individuo_id):
     individuo = Individuo.objects.prefetch_related('domicilios', 'domicilios__localidad')
     individuo = individuo.get(pk=individuo_id)
     mapeador = MapeadorIndividual(individuo)
+    #Mostramos mapa
     return render(request, 'mapa_seguimiento.html', {
         'individuo': individuo,
         'mapeador': mapeador,
@@ -244,7 +245,8 @@ def procesar_alerta(request, geoposicion_id):
             #Damos de baja el resto de las alertas
             GeoPosicion.objects.filter(
                 individuo=geoposicion.individuo,
-                procesada=False
+                fecha__lt=geoposicion.fecha,
+                procesada=False,
             ).exclude(
                 alerta='SA',
             ).update(
@@ -255,6 +257,13 @@ def procesar_alerta(request, geoposicion_id):
             #Cerramos ventana
             return render(request, "extras/close.html")
     return render(request, "extras/generic_form.html", {'titulo': "Procesar Alerta", 'form': form, 'boton': "Procesar", })
+
+@permission_required('operadores.geotracking_admin')
+def delete_geopos(request, geoposicion_id):
+    geoposicion = GeoPosicion.objects.get(pk=geoposicion_id)
+    individuo = geoposicion.individuo
+    geoposicion.delete()
+    return redirect('geotracking:ver_tracking', individuo_id=individuo.id)
 
 @permission_required('operadores.geotracking')
 def cambiar_base(request, geoposicion_id):
