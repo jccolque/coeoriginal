@@ -22,7 +22,15 @@
                             <td>{{documento.get_tipo_display}}</td>
                             <td>{{documento.subcomite}}</td>
                             <td>{{documento.nombre}}</td>
-                            <td><a href="{{documento.ultima_version.archivo.url}}">Descargar</a></td>
+                            <td>
+                                {% if archivo.ultima_version %}
+                                    <a href="{{documento.ultima_version.archivo.url}}">
+                                        Descargar
+                                    </a>
+                                {% else %}
+                                    Version Eliminada
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>

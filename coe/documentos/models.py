@@ -18,7 +18,7 @@ class Documento(models.Model):
     def __str__(self):
         return self.nombre + '-' + self.tipo + '-' + self.autor
     def ultima_version(self):
-        if self.versiones.all():
+        if self.versiones.exclude(archivo=None):
             return [v for v in self.versiones.all()][-1]
         else:
             return None
