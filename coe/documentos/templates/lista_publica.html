@@ -23,12 +23,14 @@
                             <td>{{documento.subcomite}}</td>
                             <td>{{documento.nombre}}</td>
                             <td>
-                                {% if archivo.ultima_version %}
-                                    <a href="{{documento.ultima_version.archivo.url}}">
-                                        Descargar
-                                    </a>
+                                {% if documento.ultima_version %}
+                                    {% if documento.ultima_version.archivo %}
+                                        <a href="{{documento.ultima_version.archivo.url}}">Descargar</a>
+                                    {% else %}
+                                        <p>Sin Archivos Cargados</p>
+                                    {% endif %}
                                 {% else %}
-                                    Version Eliminada
+                                    <p>Sin Archivos Cargados</p>
                                 {% endif %}
                             </td>
                         </tr>
