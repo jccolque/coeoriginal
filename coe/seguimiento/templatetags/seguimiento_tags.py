@@ -16,12 +16,12 @@ def ct_horas_desde(fecha):
 def ct_color_alerta(seguimiento):
     if seguimiento:
         horas = (timezone.now() - seguimiento.fecha).total_seconds() / 3600
-        if horas > 48:
+        if horas > 72:
             return 'rojo'
         elif horas > 36:
             return 'naranja'
         elif horas > 24:
             return 'amarillo'
-        elif horas > 12:
+        elif horas > 18:
             return 'verde'
     return 'rojo'

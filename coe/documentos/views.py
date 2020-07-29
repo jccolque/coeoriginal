@@ -14,7 +14,10 @@ from .forms import DocumentoForm, VersionForm
 
 #Publico
 def lista_publica(request):
+    #Obtenemos documentos
     documentos = Documento.objects.filter(publico=True)
+    documentos = documentos.exclude(versiones=None)
+    #Optimizamos
     documentos = documentos.select_related('subcomite')
     documentos = documentos.prefetch_related('versiones')
     if request.method == "POST":

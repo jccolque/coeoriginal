@@ -282,7 +282,7 @@ def lista_vigias(request):
     vigias = vigias.select_related('operador', 'operador__usuario')
     vigias = vigias.prefetch_related('controlados')
     #Obtenemos valor:
-    limite = timezone.now() - timedelta(hours=12)
+    limite = timezone.now() - timedelta(hours=18)
     vigias = vigias.annotate(alertas=Count('controlados', filter=Q(controlados__seguimiento_actual__fecha__lt=limite)))
     #Lanzamos listado
     return render(request, "lista_vigias.html", {
@@ -371,8 +371,8 @@ def panel_vigia(request, vigia_id=None):
             'error': "Usted no es un Vigilante Habilitado, si deberia tener acceso a esta seccion, por favor contacte a los administradores.",
         })
     #Buscamos Alertas
-    last12hrs = timezone.now() - timedelta(hours=12)
-    individuos = vigia.controlados.filter(Q(seguimiento_actual__fecha__lt=last12hrs) | Q(seguimiento_actual=None))
+    limite = timezone.now() - timedelta(hours=18)
+    individuos = vigia.controlados.filter(Q(seguimiento_actual__fecha__lt=limite) | Q(seguimiento_actual=None))
     #Optimizamos
     individuos = individuos.select_related(
         'situacion_actual',
