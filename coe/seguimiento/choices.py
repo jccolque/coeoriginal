@@ -18,6 +18,7 @@ TIPO_SEGUIMIENTO = (
     ('TE', 'No Posee Telefono / Telefono Equivocado'),
     ('PT', 'Pedido de Test'),
     ('FS', 'Fin del Seguimiento/Alta'),
+    ('FA', 'Fallecido'),
     #Solo usuarios con permiso: 
     ('CT', 'Confirmado por Test'),
     ('DT', 'Descartado por Test'),

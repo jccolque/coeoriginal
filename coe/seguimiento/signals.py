@@ -125,7 +125,26 @@ def atributo_vigilancia(created, instance, **kwargs):
 @receiver(post_save, sender=Seguimiento)
 def quitar_seguimiento(created, instance, **kwargs):
     if created and instance.tipo == 'FS':
+        #Lo quitamos de todos los paneles de seguimiento
         instance.individuo.vigiladores.clear()
+
+@receiver(post_save, sender=Seguimiento)
+def fallecimiento(created, instance, **kwargs):
+    if created and instance.tipo == 'FA':
+        #Le cargamos el fin de seguimiento, dispara: quitar_seguimiento
+        seguimiento = Seguimiento(individuo=instance.individuo)
+        seguimiento.tipo = 'FS'
+        seguimiento.aclaracion = "Se debe dejar de seguir por fallecimiento."
+        seguimiento.fecha = instance.fecha
+        seguimiento.save()
+        #le generamos la nueva situacion
+        situacion = Situacion(individuo=instance.individuo)
+        situacion.estado = 1
+        situacion.conducta = 'F'
+        situacion.aclaracion = 'Se informo Fallecimiento.'
+        situacion.fecha = instance.fecha
+        situacion.save()
+
 
 @receiver(post_save, sender=SignosVitales)
 def cargo_signosvitales(created, instance, **kwargs):
