@@ -24,7 +24,7 @@ def crear_vigias(filename):
         csv_reader = csv.reader(csv_file, delimiter=';')
         for row in csv_reader:
             print("\nProcesamos " + row[0] + ': ' + row[1] + ', ' + row[2])
-            #Procesamos linea: 0-DNI 1-Apellido 2-Nombre 3-E-mail 4-Teléfono 5-max_controlados 6-Tipo
+            #Procesamos linea: 0-DNI 1-Apellido 2-Nombre 3-E-mail 4-Teléfono 5-max_controlados 6-Tipo 7-Origen
             #OPERADOR:
             if not Operador.objects.filter(num_doc=row[0]).exists():
                 print("Operador Creado")
@@ -56,24 +56,23 @@ def crear_vigias(filename):
             new_operador.usuario.user_permissions.add(permisos.get(codename='individuos'))
             new_operador.usuario.user_permissions.add(permisos.get(codename='seguimiento'))
             #Creamos vigilante
-            if not Vigia.objects.filter(operador=new_operador).exists():
-                if row[6] in tipos_vigia:
-                    vigia = Vigia()
+            if row[6] in tipos_vigia:
+                #Chequeamos que no sea vigilante:
+                if Vigia.objects.filter(operador=new_operador).exists():
+                    Vigia.objects.filter(operador=new_operador).update(tipo=row[6], max_controlados=row[5])
+                    print("Actualizamos vigilante (Le van a quedar asignados los controlados")
+                else:
+                    vigia = Vigia(operador=new_operador)
                     vigia.tipo = row[6]
-                    vigia.operador = new_operador
                     vigia.max_controlados = row[5]
                     vigia.save()
                     print("Creamos Vigia")
-                elif row[6] == 'ADM_SEG':
-                    new_operador.usuario.user_permissions.add(permisos.get(codename='seguimiento_admin'))
-                    print("Creamos Administrador de Seguimiento.")
-            else:
-                print("Ya es vigia. No Procesado")
-                if row[6] == 'CARGA':
-                    Vigia.objects.filter(operador=new_operador).delete()
-                    print("Eliminamos vigilante")
+            elif row[6] == 'CARGA':
                     new_operador.usuario.user_permissions.add(permisos.get(codename='epidemiologia'))
                     print("Creamos Cargador.")
+            elif row[6] == 'ADM_SEG':
+                new_operador.usuario.user_permissions.add(permisos.get(codename='seguimiento_admin'))
+                print("Creamos Administrador de Seguimiento.")
 
 def altas_masivas(filename):
     #Procesamos el archivo
