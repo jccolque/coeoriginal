@@ -18,10 +18,9 @@ class Documento(models.Model):
     def __str__(self):
         return self.nombre + '-' + self.tipo + '-' + self.autor
     def ultima_version(self):
-        if self.versiones.exclude(archivo=None):
-            return [v for v in self.versiones.all()][-1]
-        else:
-            return None
+        lista = [v for v in self.versiones.all() if v.archivo]
+        if lista:
+            return lista[-1]
 
 class Protocolo(models.Model):
     actividad = models.CharField('Actividad', max_length=200)

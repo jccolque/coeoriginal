@@ -24,12 +24,12 @@ from .forms import ModOperadorForm, ModPassword, AuditoriaForm
 from .forms import AsistenciaForm, ImprimirTarjetasForm
 
 # Create your views here.
-@permission_required('operadores.menu_operadores')
+@permission_required('operadores.operadores')
 def menu(request):
     return render(request, 'menu_operadores.html', {})
 
 #Manejo de SubComites
-@permission_required('operadores.subcomites')
+@permission_required('operadores.operadores')
 def listar_subcomites(request):
     subcomites = SubComite.objects.all()
     subcomites = subcomites.prefetch_related('operadores', 'tareas', 'tareas__eventos')
@@ -44,7 +44,7 @@ def listar_subcomites(request):
         'has_table': True,
     })
 
-@permission_required('operadores.subcomites')
+@permission_required('operadores.operadores')
 def ver_subcomite(request, subco_id):
     subcomite = SubComite.objects.prefetch_related(
         'operadores', 'operadores__usuario',
@@ -59,7 +59,7 @@ def ver_subcomite(request, subco_id):
             operador.save()
     return render(request, 'ver_subcomite.html', {'subcomite': subcomite, 'form': form, })
 
-@permission_required('operadores.subcomites')
+@permission_required('operadores.admin_operadores')
 def crear_subcomite(request, subco_id=None):
     subcomite = None
     if subco_id:
@@ -83,7 +83,7 @@ def listar_operadores(request):
         'has_table': True,
     })
 
-@permission_required('operadores.operadores')
+@permission_required('operadores.admin_operadores')
 def crear_operador(request):
     form = CrearOperadorForm()
     if request.method == "POST":

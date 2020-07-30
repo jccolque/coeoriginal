@@ -73,11 +73,9 @@ class Operador(models.Model):
             ("telefonistas", "Operario de CallCenter."),
             ("admin_telefonistas", "Administrador de CallCenter."),
             #Operadores:
-            ("menu_operadores", "Menu de Operadores"),
-            ("subcomites", "Crear/Modificar SubComites"),
             ("operadores", "Crear/Modificar Operadores"),
             ("auditar_operadores", "Auditar Operadores"),
-            ("administrador", "Administrar Usuarios."),
+            ("admin_operadores", "Administrar Usuarios."),
             #Georef
             ("menu_georef", "Informacion Geografica/Ubicaciones"),
             #Inventario

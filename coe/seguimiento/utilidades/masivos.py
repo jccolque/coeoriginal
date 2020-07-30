@@ -72,6 +72,8 @@ def crear_vigias(filename):
                     print("Creamos Cargador.")
             elif row[6] == 'ADM_SEG':
                 new_operador.usuario.user_permissions.add(permisos.get(codename='seguimiento_admin'))
+                new_operador.usuario.user_permissions.add(permisos.get(codename='operadores'))#Puede crear usuarios
+                new_operador.usuario.user_permissions.add(permisos.get(codename='administrador'))#Puede crear usuarios
                 print("Creamos Administrador de Seguimiento.")
 
 def altas_masivas(filename):

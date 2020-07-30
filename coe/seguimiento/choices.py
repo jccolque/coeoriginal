@@ -28,7 +28,7 @@ TIPO_SEGUIMIENTO = (
 def obtener_seguimientos(user):
     #Tipo de Seguimientos:
     sistema = ['I', 'A', 'IT', 'AT', 'FT', 'DF', 'TA', 'RC']
-    publicos = ['L', 'M', 'C', 'E', 'IR', 'ET', 'TE','FS', 'PT']
+    publicos = ['L', 'M', 'C', 'E', 'IR', 'ET', 'TE','FS', 'PT', 'FA']
     epidemiologia = ['CT', 'DT', 'AP']
     #Generamos seguimientos accesibles
     tipos = [t for t in TIPO_SEGUIMIENTO if t[0] in publicos]

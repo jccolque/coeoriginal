@@ -63,7 +63,7 @@ def crear_telefonistas(filename):
                     print("Creamos telefonista")
                 elif row[6] == 'ADM_TEL':
                     new_operador.usuario.user_permissions.add(permisos.get(codename='admin_telefonistas'))
-                    new_operador.usuario.user_permissions.add(permisos.get(codename='menu_operadores'))
+                    new_operador.usuario.user_permissions.add(permisos.get(codename='operadores'))
                     new_operador.usuario.user_permissions.add(permisos.get(codename='administrador'))
                     print("Creamos Administrador de Call Center.")
             else:

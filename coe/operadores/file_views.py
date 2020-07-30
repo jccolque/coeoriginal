@@ -27,7 +27,7 @@ def ver_foto_individuo(request, filename):
 def ver_doc_individuo(request, filename):
     return entregar_file(request, 'informacion/individuos/documentos/'+filename) 
 
-@permission_required('operadores.menu_operadores')
+@permission_required('operadores.operadores')
 def ver_operador(request, filename):
     return entregar_file(request, 'operadores/'+filename) 
 
