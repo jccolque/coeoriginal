@@ -50,24 +50,25 @@ def descartar_sospechoso(created, instance, **kwargs):
         situacion.aclaracion = 'Descartado' + instance.aclaracion
         situacion.save()
         #Creamos archivo de Descartado por Test
-        doc = Documento(individuo=instance.individuo)
-        doc.tipo = 'TN'
-        doc.archivo = crear_doc_descartado(doc.individuo)
-        doc.aclaracion = "TEST NEGATIVO CONFIRMADO"
-        doc.save()
-        #Enviar mail
-        if SEND_MAIL and instance.individuo.email:
-            to_email = instance.individuo.email
-            #Preparamos el correo electronico
-            mail_subject = 'Constancia de Test - COE2020'
-            message = render_to_string('emails/constancia_test.html', {
-                    'individuo': instance.individuo,
-                    'doc': doc,
-                })
-            #Instanciamos el objeto mail con destinatario
-            email = EmailMessage(mail_subject, message, to=[to_email])
-            #Enviamos el correo
-            email.send()
+        ##CANCELADO
+        # doc = Documento(individuo=instance.individuo)
+        # doc.tipo = 'TN'
+        # doc.archivo = crear_doc_descartado(doc.individuo)
+        # doc.aclaracion = "TEST NEGATIVO CONFIRMADO"
+        # doc.save()
+        # #Enviar mail
+        # if SEND_MAIL and instance.individuo.email:
+        #     to_email = instance.individuo.email
+        #     #Preparamos el correo electronico
+        #     mail_subject = 'Constancia de Test - COE2020'
+        #     message = render_to_string('emails/constancia_test.html', {
+        #             'individuo': instance.individuo,
+        #             'doc': doc,
+        #         })
+        #     #Instanciamos el objeto mail con destinatario
+        #     email = EmailMessage(mail_subject, message, to=[to_email])
+        #     #Enviamos el correo
+        #     email.send()
 
 @receiver(post_save, sender=Seguimiento)
 def confirmar_sospechoso(created, instance, **kwargs):

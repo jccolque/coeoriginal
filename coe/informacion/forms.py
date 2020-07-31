@@ -125,6 +125,12 @@ class InquilinoForm(forms.ModelForm):
             'destino': autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
         }
 
+
+class MinIndividuoForm(forms.ModelForm):
+    class Meta:
+        model = Individuo
+        fields= ('num_doc', 'apellidos', 'nombres', 'telefono', 'email')
+
 class NumDocForm(forms.ModelForm):
     class Meta:
         model = Individuo

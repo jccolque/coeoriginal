@@ -36,6 +36,7 @@ class NuevoTelefonistaForm(forms.ModelForm):
         }
 
 class LlamadaForm(forms.ModelForm):
+    #telefono = forms.CharField(label="Telefono", max_length=50, required=True, initial=False)
     class Meta:
         model = Llamada
         fields= '__all__'

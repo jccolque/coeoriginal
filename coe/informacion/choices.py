@@ -59,8 +59,6 @@ TIPO_RELACION = (
 )
 
 TIPO_ATRIBUTO = (
-    ('PR', 'Poblacion de Riesgo/Comorbilidades'),
-    ('DE', 'Denuncia Externa'),
     #Vigilancia
     ('VE', 'Vigilancia Epidemiologica'),
     ('VM', 'Vigilancia Salud Mental'),
@@ -82,6 +80,8 @@ TIPO_ATRIBUTO = (
     ('VA', 'Voluntario Aprobado'),
     ('TO', 'Posee Obra Social'),
     ('TP', 'Test Prioritario'),
+    ('PR', 'Poblacion de Riesgo/Comorbilidades'),
+    ('DE', 'Denuncia Externa'),
     #excepciones (3 caracteres)
     ('OP2', 'Puede acreditar que requiere imprescindiblemente cuidados domiciliarios'),
     ('EMB', 'Embarazada a partir del segundo Trimestre'),
@@ -89,6 +89,22 @@ TIPO_ATRIBUTO = (
     ('APS', 'Posee antecedentes Psiquiatricos'),
     ('NM2', 'Grupo Familiar con menores de 2 años, adultos mayores y/o personas con discapacidad'),
 )
+
+def obtener_atributos(user):
+    #Tipo de Seguimientos:
+    publicos = ['OP2', 'EMB', 'DIS', 'APS', 'NM2']
+    carga = ['CE', 'CP', 'TO', 'TP', 'PR', 'DE']
+    ocupacion = ['AS', 'PS', 'FP', 'EP', 'TE', 'CT', 'PD']
+    vigilancia = ['VE', 'VM', 'AP', 'ST', 'VT', 'VD']
+    sistema = ['VA']
+    
+    #Generamos seguimientos accesibles
+    tipos = [t for t in TIPO_ATRIBUTO if t[0] in publicos]
+    #Agregamos segun permisos:
+    
+    if user.has_perm('operadores.sistemas'):#No existe, solo root
+        tipos += [t for t in TIPO_ATRIBUTO if t[0] in sistema]
+    return tipos
 
 def atributos_iniciales():
     return [a for a in TIPO_ATRIBUTO if len(a[0]) == 2]

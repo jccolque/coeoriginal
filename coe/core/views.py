@@ -1,8 +1,8 @@
 #Import Python Standard
 #Imports de Django
-from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import permission_required
@@ -44,7 +44,11 @@ def home_login(request):
             user = authenticate(username=username, password=password)
             if user:
                 login(request, user)
-                return home(request)
+                #Aqui ponemos controles para otros menus
+                if user.has_perm("operadores.tablero_comando") and not user.is_superuser:
+                    return redirect('informacion:tablero_control')
+                else:
+                    return redirect('core:menu')
     return render(request, "extras/generic_form.html", {'titulo': "Ingresar al Sistema", 'form': form, 'boton': "Ingresar", 'message': message, })
 
 def home_logout(request):

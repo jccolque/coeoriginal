@@ -35,6 +35,7 @@ urlpatterns = [
     path('lista/conducta/<str:conducta>', views.lista_individuos, name='lista_conducta'),
     #Individuo
     path('cargar/individuo/<str:num_doc>', views.cargar_individuo, name='cargar_individuo'),
+    path('cargar/min/individuo', views.cargar_min_individuo, name='cargar_min_individuo'),
     path('cargar/pasajero/<int:traslado_id>', views.buscar_individuo, name='buscar_pasajero'),
     path('cargar/pasajero/<int:traslado_id>/nuevo/<int:individuo_id>/', views.cargar_individuo, name='cargar_pasajero'),
     path('cargar/pasajero/<int:traslado_id>/nuevo/<str:num_doc>/', views.cargar_individuo, name='cargar_pasajero_nuevo'),

@@ -14,8 +14,8 @@ from coe.constantes import DIAS_CUARENTENA
 from core.decoradores import superuser_required
 from core.functions import date2str
 from core.forms import SearchForm, FileForm, JustificarForm, TextoForm, ChangeEmailForm
-from georef.models import Nacionalidad
-from georef.models import Ubicacion
+from georef.models import Nacionalidad, Ubicacion
+from georef.functions import obtener_argentina
 from seguimiento.models import Seguimiento
 from operadores.functions import obtener_operador
 from background.functions import crear_progress_link
@@ -35,7 +35,8 @@ from .models import Atributo, Sintoma, Patologia
 from .models import Documento
 from .forms import ArchivoForm, ArchivoFormWithPass
 from .forms import VehiculoForm, TrasladoVehiculoForm
-from .forms import IndividuoForm, FullIndividuoForm, InquilinoForm, NumDocForm
+from .forms import IndividuoForm, FullIndividuoForm, InquilinoForm, MinIndividuoForm
+from .forms import NumDocForm
 from .forms import BuscadorIndividuosForm, TrasladarIndividuoForm
 from .forms import DomicilioForm, AtributoForm, SintomaForm, PatologiaForm
 from .forms import SituacionForm, RelacionForm
@@ -367,6 +368,19 @@ def cargar_inquilino(request, ubicacion_id, num_doc):
             'ubicacion': ubicacion,
         }
     )
+
+@permission_required('operadores.individuos')
+def cargar_min_individuo(request):
+    form = MinIndividuoForm()
+    if request.method == "POST":
+        form = MinIndividuoForm(request.POST)
+        if form.is_valid():
+            individuo = form.save(commit=False)
+            individuo.nacionalidad = obtener_argentina()
+            form.save()
+            return render(request, "extras/close.html")
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Individuo", 'form': form, 'boton': "Cargar", }) 
+
 
 #INDIVIDUOS
 @permission_required('operadores.individuos')
