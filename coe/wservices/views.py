@@ -140,7 +140,7 @@ def ws_atributos(request):
     #Obtenemos datos a procesar
     individuos = Individuo.objects.exclude(atributos=None)
     individuos = individuos.select_related("domicilio_actual", "domicilio_actual__localidad")
-    individuos = individuos.prefetch_related("atributos", "atributos__operador")
+    individuos = individuos.prefetch_related("atributos")
     #Generamos un subdict por cada individuo
     for individuo in individuos:
         ind = {}
@@ -157,7 +157,6 @@ def ws_atributos(request):
             atrib = {}
             atrib["tipo"] = atributo.get_tipo_display()
             atrib["aclaracion"] = atributo.aclaracion
-            atrib["operador"] = str(atributo.operador)
             atrib["fecha"] = str(atributo.fecha)
             ind["atributos"].append(atrib)
         data[individuo.num_doc] = ind

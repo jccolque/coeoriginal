@@ -294,7 +294,7 @@ def lista_vigias(request):
 def lista_ocupacion(request):
     vigias = Vigia.objects.all()
     vigias = vigias.select_related('operador', 'operador__usuario')
-    vigias = vigias.prefetch_related('controlados')
+    vigias = vigias.prefetch_related('controlados', 'controlados__domicilio_actual', 'controlados__domicilio_actual__localidad')
     #Lanzamos listado
     return render(request, "lista_ocupacion.html", {
         'vigias': vigias,

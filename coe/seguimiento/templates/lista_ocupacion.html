@@ -17,7 +17,7 @@
                             <th>Telefono</th>
                             <th>Ultimo Ingreso</th>
 
-                            <th colspan="3">Controlado</th>
+                            <th colspan="4">Controlado</th>
 
                             <th>Ver Detalle</th>
                         </tr>
@@ -40,6 +40,7 @@
                                     <td>{{controlado.num_doc}}</td>
                                     <td>{{controlado.apellidos}} {{controlado.nombres}}</td>
                                     <td>{{controlado.telefono}}</td>
+                                    <td>{{controlado.domicilio_actual.localidad.nombre}}</td>
                                     
                                     <td>
                                         <a href="{% url 'seguimiento:ver_panel' vigia_id=vigia.id %}" target="_blank">
