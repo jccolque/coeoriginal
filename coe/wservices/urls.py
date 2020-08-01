@@ -19,6 +19,7 @@ urlpatterns = [
     path('aislados', views.ws_aislados, name='ws_aislados'),
     path('ocupacion', views.ws_ocupacion, name='ws_ocupacion'),
     path('seguimientos', views.ws_seguimientos, name='ws_seguimientos'),
+    path('atributos', views.ws_atributos, name='ws_atributos'),
     #Choices    
     path('tipo_estado', views.tipo_estado, name='tipo_estado'),
     path('tipo_conducta', views.tipo_conducta, name='tipo_conducta'),

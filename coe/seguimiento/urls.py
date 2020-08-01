@@ -28,6 +28,7 @@ urlpatterns = [
     path('del/seguimiento/<int:seguimiento_id>', views.del_seguimiento, name='del_seguimiento'),
     #Administracion
     path('lista/vigias', views.lista_vigias, name='lista_vigias'),
+    path('lista/ocupacion', views.lista_ocupacion, name='lista_ocupacion'),
     path('agregar/vigia', views.agregar_vigia, name='agregar_vigia'),
     path('mod/vigia/<int:vigia_id>', views.agregar_vigia, name='mod_vigia'),
     path('del/vigia/<int:vigia_id>', views.del_vigia, name='del_vigia'),

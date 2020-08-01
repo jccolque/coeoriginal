@@ -291,6 +291,18 @@ def lista_vigias(request):
     })
 
 @permission_required('operadores.seguimiento_admin')
+def lista_ocupacion(request):
+    vigias = Vigia.objects.all()
+    vigias = vigias.select_related('operador', 'operador__usuario')
+    vigias = vigias.prefetch_related('controlados')
+    #Lanzamos listado
+    return render(request, "lista_ocupacion.html", {
+        'vigias': vigias,
+        'has_table': True,
+    })
+
+
+@permission_required('operadores.seguimiento_admin')
 def agregar_vigia(request, vigia_id=None):
     vigia = None
     if vigia_id:

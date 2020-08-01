@@ -1,0 +1,66 @@
+{% extends 'base_seguimiento.html' %}
+
+{% load static %}
+{% load auditar_tags %}
+
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2><b>Lista de Ocupacion</b></h2>
+            <div class="col-md-12">
+                <table class="listado" id="table">
+                    <thead>
+                        <tr>
+                            <th>Tipo Vigia</th>
+                            <th>Operador</th>
+                            <th>Aclaracion</th>
+                            <th>Telefono</th>
+                            <th>Ultimo Ingreso</th>
+
+                            <th colspan="3">Controlado</th>
+
+                            <th>Ver Detalle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vigia in vigias %}
+                            {% for controlado in vigia.controlados.all %}
+                                <tr>
+                                    <td>{{vigia.get_tipo_display}}</td>
+                                    <td>{{vigia}}</td>
+                                    <td>
+                                        {% if vigia.aclaracion %}
+                                            {{vigia.aclaracion}}
+                                        {% endif %}
+                                    </td>
+                                    
+                                    <td>{{vigia.operador.telefono}}</td>
+                                    <td>{{vigia.operador.usuario.last_login}}</td>
+                                    
+                                    <td>{{controlado.num_doc}}</td>
+                                    <td>{{controlado.apellidos}} {{controlado.nombres}}</td>
+                                    <td>{{controlado.telefono}}</td>
+                                    
+                                    <td>
+                                        <a href="{% url 'seguimiento:ver_panel' vigia_id=vigia.id %}" target="_blank">
+                                            <img class="icons" src="/static/img/icons/control_panel.png" alt="Panel de Control">
+                                        </a>
+                                        <a href="{% url 'seguimiento:mod_vigia' vigia_id=vigia.id %}">
+                                            <img class="icons" src="{% static '/img/icons/change.png' %}">
+                                        </a>
+                                        <a href="{% url 'seguimiento:del_vigia' vigia_id=vigia.id %}">
+                                            <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                        </a>
+                                        <a class="nolink"  href="{% ct_auditar_obj_url vigia %}">
+                                            <img class="icons" src="{% static '/img/icons/question.png' %}">
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
