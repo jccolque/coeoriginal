@@ -6,6 +6,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import permission_required
+from django.contrib.admin.views.decorators import staff_member_required
+
 #Imports del proyecto
 from documentos.functions import ver_publicadas
 #Imports de la app
@@ -56,7 +58,7 @@ def home_logout(request):
     return home(request)
 
 #Menu Principal
-@permission_required('operadores.menu_core')
+@staff_member_required
 def menu(request):
     return render(request, 'menu_core.html', {})
 
