@@ -112,7 +112,7 @@ def evaluar_sospechoso(created, instance, **kwargs):
             situacion.save()
         #Le agregamos atributo de seguimiento medico:
         atributo = Atributo(individuo=instance.individuo)
-        atributo.tipo = "VD"
+        atributo.tipo = "ST"
         atributo.aclaracion = "Se requiere analisis medico: Individuo Sospechoso"
         atributo.save()
 

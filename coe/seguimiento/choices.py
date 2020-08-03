@@ -43,7 +43,7 @@ TIPO_VIGIA = (
     ('VE', 'Vigilancia Epidemiologica'),
     ('VM', 'Vigilancia Salud Mental'),
     ('AP', 'Atencion Psiquiatrica'),
-    ('VD', 'Vigilancia de Sospechosos - Domestica'),
+    ('VD', 'Vigilancia de Adultos Mayores'),
     ('ST', 'Vigilancia Medica'),
     ('VT', 'Vigilancia de Circulacion Temporal'),
 )
