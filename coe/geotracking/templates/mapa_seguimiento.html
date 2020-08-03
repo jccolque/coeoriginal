@@ -50,8 +50,8 @@
                                                 <p>Domicilio: {{individuo.domicilio_actual}}</p>
                                                 <p>Telefono: {{individuo.telefono}}</p>
                                                 <p>Situacion: {{individuo.get_situacion}}</p>
-                                                <a href="#" class="btn btn-default btn-marker">
-                                                    Mostrar Punto Base
+                                                <a href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" class="btn btn-default btn-marker" target="_blank">
+                                                    Ir a Planilla
                                                 </a>
                                             </div>
                                             <div class="col-sm-4">
@@ -88,7 +88,7 @@
                                         </h4>
                                     </div>
                                     <div id="collapseThree" class="panel-collapse" role="tabpanel" aria-labelledby="headingTwo">
-                                       <div class="panel-body">
+                                    <div class="panel-body">
                                             <p><b>Intervalo:</b> {{mapeador.parametros.intervalo}} minutos</p>
                                             <p><b>Distancia de Alerta:</b> {{mapeador.parametros.distancia_alerta}}mts</p>
                                             <p><b>Distancia Critica:</b> {{mapeador.parametros.distancia_critica}}mts</p>
