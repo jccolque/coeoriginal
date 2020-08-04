@@ -23,6 +23,8 @@ from graficos.functions import obtener_grafico
 from app.models import AppData
 from permisos.forms import FotoForm
 from geotracking.models import GeoPosicion
+from seguimiento.choices import TIPO_VIGIA
+from seguimiento.functions import asignar_vigilante
 #imports de la app
 from .choices import TIPO_ESTADO, TIPO_CONDUCTA
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
@@ -517,11 +519,18 @@ def mod_telefono(request, individuo_id=None):
         if form.is_valid():
             individuo.telefono = form.cleaned_data['texto']
             individuo.save()
-            #Le eliminamos la flag de telefono errado
-            individuo.seguimientos.filter(tipo='TE').delete()
+            #Vemos si fue descartado de vigilancia por falta de telefono
+            if individuo.seguimientos.filter(tipo='TE').exists():
+                #Le eliminamos la flag de telefono errado
+                individuo.seguimientos.filter(tipo='TE').delete()
+                #Devolvemos todas las vigilancias no vencidas:
+                limite = timezone.now() - timedelta(days=DIAS_CUARENTENA)
+                tipos_de_vigia = [t[0] for t in TIPO_VIGIA]
+                for vigilancia in individuo.atributos.filter(tipo__in=tipos_de_vigia, fecha__gt=limite):
+                    asignar_vigilante(individuo, vigilancia.tipo)
             #Cerramos ventana
             return render(request, "extras/close.html")
-    return render(request, "extras/generic_form.html", {'titulo': "Cambiar Telefono", 'form': form, 'boton': "Modificar", })
+    return render(request, "extras/generic_form.html", {'titulo': "Cambiar Telefono a "+str(individuo), 'form': form, 'boton': "Modificar", })
 
 #Modificar Email
 @permission_required('operadores.individuos')

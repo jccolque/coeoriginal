@@ -53,7 +53,10 @@ urlpatterns = [
     path('test/pedidos', views.ranking_test, name='ranking_test'),
     path('test/esperando', views.esperando_test, name='esperando_test'),
     path('test/realizados', views.test_realizados, name='test_realizados'),
+    
     path('lista/sin_telefono', views.lista_sin_telefono, name='lista_sin_telefono'),
+    path('quitar/sintel/<int:individuo_id>', views.quitar_lista_sintel, name='quitar_lista_sintel'),
+
     path('lista/autodiagnosticos', views.lista_autodiagnosticos, name='lista_autodiagnosticos'),
     path('lista/aislados', views.lista_aislados, name='lista_aislados'),
     #Situacion

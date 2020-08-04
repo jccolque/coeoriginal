@@ -124,7 +124,7 @@ def atributo_vigilancia(created, instance, **kwargs):
             asignar_vigilante(instance.individuo, instance.tipo)
 
 @receiver(post_save, sender=Seguimiento)
-def quitar_seguimiento(created, instance, **kwargs):
+def finalizar_seguimiento(created, instance, **kwargs):
     if created and instance.tipo == 'FS':
         #Lo quitamos de todos los paneles de seguimiento
         instance.individuo.vigiladores.clear()
@@ -159,8 +159,13 @@ def seguimiento_urgente(created, instance, **kwargs):
     if created and instance.tipo == 'EM':
         asignar_vigilante(instance.individuo, 'EM')
 
+@receiver(post_save, sender=Seguimiento)
+def sin_telefono(created, instance, **kwargs):
+    if created and instance.tipo == 'TE':
+        instance.individuo.vigiladores.clear()
+
 @receiver(post_save, sender=TestOperativo)
-def test_get_individuo(created, instance, **kwargs):
+def operativo_get_individuo(created, instance, **kwargs):
     if created:
         try:
             instance.individuo = Individuo.objects.get(num_doc=instance.num_doc)

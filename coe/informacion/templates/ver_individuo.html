@@ -357,9 +357,14 @@
                                     <a class="nolink"  href="{% url 'informacion:mod_relacion' individuo_id=individuo.id relacion_id=relacion.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/change.png' %}">
                                     </a>
-                                    <a class="nolink"  href="{% url 'informacion:del_relacion' relacion_id=relacion.id %}" target="_blank">
-                                        <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                    <a class="nolink"  href="{% ct_auditar_obj_url relacion %}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/question.png' %}">
                                     </a>
+                                    {% if perms.operadores.admin_informacion %}
+                                        <a class="nolink"  href="{% url 'informacion:del_relacion' relacion_id=relacion.id %}" target="_blank">
+                                            <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                        </a>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% if forloop.last %}

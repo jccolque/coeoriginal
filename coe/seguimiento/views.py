@@ -309,7 +309,8 @@ def lista_vigias(request):
     vigias = vigias.prefetch_related('controlados')
     #Obtenemos valor:
     limite = timezone.now() - timedelta(hours=18)
-    vigias = vigias.annotate(alertas=Count('controlados', filter=Q(controlados__seguimiento_actual__fecha__lt=limite)))
+    seguimientos_actualizados = Seguimiento.objects.filter(tipo='L', fecha__gt=limite)#generamos subquery
+    vigias = vigias.annotate(alertas=Count('controlados', exclude=Q(controlados__seguimiento__in=seguimientos_actualizados)))
     #Lanzamos listado
     return render(request, "lista_vigias.html", {
         'vigias': vigias,
@@ -403,12 +404,13 @@ def quitar_vigilado(request, vigia_id, individuo_id):
 @permission_required('operadores.seguimiento')
 def panel_vigia(request, vigia_id=None):
     #Obtenemos el operador en cuestion
+    vigias = Vigia.objects.prefetch_related('controlados', 'controlados__situacion_actual', 'controlados__atributos')
     if vigia_id:
-        vigia = Vigia.objects.get(pk=vigia_id)
+        vigia = vigias.get(pk=vigia_id)
     else:
         operador = obtener_operador(request)
         try:
-            vigia = operador.vigia
+            vigia = vigias.get(operador=operador)
         except:
             return render(request, 'extras/error.html', {
             'titulo': 'No existe Panel de Vigilancia',
@@ -419,13 +421,18 @@ def panel_vigia(request, vigia_id=None):
         limite = timezone.now()#SON EMERGENCIAS YA!
     else:#Se podrian definir diferentes colores por tipo
         limite = timezone.now() - timedelta(hours=18)
-    individuos = vigia.controlados.filter(Q(seguimiento_actual__fecha__lt=limite) | Q(seguimiento_actual=None))
+
+    #Solo filtramos por el ultimo seguimiento tipo 'L'
+    seguimiento_valido = Seguimiento.objects.filter(tipo='L', fecha__gt=limite)#generamos subquery
+    individuos = vigia.controlados.exclude(seguimientos__in=seguimiento_valido)
+
     #Optimizamos
     individuos = individuos.select_related(
         'situacion_actual',
         'domicilio_actual', "domicilio_actual__localidad",
         'seguimiento_actual', 'seguimiento_actual__operador',
     )
+    individuos = individuos.prefetch_related('seguimientos', 'atributos')
     #Ordenamos por fecha
     individuos = individuos.order_by('seguimiento_actual__fecha')
     #Lanzamos panel
@@ -678,13 +685,39 @@ def lista_sin_telefono(request):
     individuos = individuos.select_related('nacionalidad')
     individuos = individuos.select_related('situacion_actual', 'seguimiento_actual')
     individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'domicilio_actual__ubicacion')
+    individuos = individuos.prefetch_related('seguimientos')
     #Limpiamos duplicados
     individuos = individuos.distinct()
+    #Generamos prioridad
+    for individuo in individuos:
+        pedido = [seg for seg in individuo.seguimientos.all() if seg.tipo == 'TE'][-1]
+        individuo.prioridad = timezone.now() - pedido.fecha
+        individuo.prioridad = individuo.prioridad.days
     #Lanzamos reporte
     return render(request, "lista_sin_telefonos.html", {
         'individuos': individuos,
         'has_table': True,
     })
+
+@permission_required('operadores.individuos')
+def quitar_lista_sintel(request, individuo_id):
+    individuo = Individuo.objects.get(pk=individuo_id)
+    if request.method == "POST":
+        #Le eliminamos la flag de telefono inexistente/errado
+        individuo.seguimientos.filter(tipo='TE').delete()
+        #Volvemos a la lista
+        return redirect('seguimiento:lista_sin_telefono')
+    #Generamos Aviso:
+    mensaje = "<b>Eliminara el Pedido de Telefono para:</b><br>"
+    mensaje += "<b>" + str(individuo) + ".</b><br>"
+    mensaje += "<b>Si realiza esta accion quedara registrada por su usuario.</b>"
+    #Mostramos confirmacion:
+    return render(request, "extras/confirmar.html", {
+            'titulo': "Eliminar Seguimiento" + str(individuo),
+            'message': mensaje,
+            'has_form': True,
+        }
+    )
 
 @permission_required('operadores.individuos')
 def lista_autodiagnosticos(request):

@@ -30,7 +30,7 @@ def quitar_viejos():
         #Generamos bulk de seguimientos
         seguimientos = []
         #Recorremos vigilantes:
-        for vigia in Vigia.objects.exclude(tipo__in=('SM', 'AP')).prefetch_related('controlados'):
+        for vigia in Vigia.objects.exclude(tipo__in=('VM', 'AP')).prefetch_related('controlados'):
             #Recorremos todos los vigilados
             for controlado in vigia.controlados.all().prefetch_related('atributos'):
                 atrib = controlado.atributos.filter(tipo=vigia.tipo).last()
@@ -55,3 +55,15 @@ def quitar_viejos():
                     vigia.controlados.remove(controlado)
         #Hacemos bulk masivo para que no llame signals:
         Seguimiento.objects.bulk_create(seguimientos)
+
+def quitar_sin_telefono():
+    from coe.constantes import NOTEL
+    from seguimiento.models import Vigia, Seguimiento
+    for vigia in Vigia.objects.all().prefetch_related('controlados'):
+        for controlado in vigia.controlados.all():
+            if controlado.telefono == NOTEL:
+                seg = Seguimiento(individuo=controlado)
+                seg.tipo = "TE"
+                seg.aclaracion = "Limpieza Masiva, Requiere Carga de Telefono"
+                seg.save()
+                vigia.controlados.remove(controlado)

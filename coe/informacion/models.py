@@ -142,9 +142,9 @@ class Individuo(models.Model):
     def voluntario_autorizado(self):
         return self.documentos.filter(tipo='AT').last()
     def es_camionero(self):
-        return self.atributos.filter(tipo='VT').exists()
+        return True in [True for a in self.atributos.all() if a.tipo == 'VT']
     def tiene_obrasocial(self):
-        return self.atributos.filter(tipo='TO').exists()
+        return True in [True for a in self.atributos.all() if a.tipo == 'TO']
     def get_obrasocial(self):
         try:
             return self.atributos.filter(tipo='TO').last().aclaracion
