@@ -199,6 +199,9 @@
                                     <a class="nolink"  href="{% url 'informacion:mod_atributo' individuo_id=individuo.id atributo_id=atributo.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/change.png' %}">
                                     </a>
+                                    <a class="nolink"  href="{% ct_auditar_obj_url atributo %}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/question.png' %}">
+                                    </a>
                                     {% if perms.operadores.admin_informacion %}
                                         <a class="nolink"  href="{% url 'informacion:del_atributo' atributo_id=atributo.id %}" target="_blank">
                                             <img class="icons" src="{% static '/img/icons/delete.png' %}">

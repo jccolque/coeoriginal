@@ -44,7 +44,7 @@ from .models import Seguimiento, Vigia
 from .models import OperativoVehicular, TestOperativo
 from .forms import SeguimientoForm, NuevoVigia, NuevoIndividuo
 from .forms import OperativoForm, TestOperativoForm
-from .functions import obtener_bajo_seguimiento
+from .functions import obtener_bajo_seguimiento, asignar_vigilante
 from .functions import realizar_alta
 from .tasks import altas_masivas
 from .forms import DatosGisForm
@@ -352,15 +352,14 @@ def mod_estado_vigia(request, vigia_id):
 def del_vigia(request, vigia_id):
     vigia = Vigia.objects.get(pk=vigia_id)
     if request.method == "POST":
-        #Asignamos todos sus controlados a otras personas
-        for controlado in vigia.controlados.all():
-            try:
-                nuevo_vigia = Vigia.objects.exclude(pk=vigia.pk).annotate(cantidad=Count('controlados')).order_by('cantidad').first()
-                nuevo_vigia.controlados.add(controlado)
-            except:
-                pass
+        #Guardamos la lista de controlados
+        controlados = [c for c in vigia.controlados.all()]
         #Lo damos de baja:
         vigia.delete()
+        #Asignamos todos sus controlados a otras personas
+        for controlado in controlados:
+            asignar_vigilante(controlado, vigia.tipo)
+        #Volvemos a la lista de vigilancia
         return redirect('seguimiento:lista_vigias')
     return render(request, "extras/confirmar.html", {
             'titulo': "Eliminar Vigilante",
