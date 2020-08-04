@@ -7,6 +7,7 @@ from django.utils import timezone
 #Imports Extras
 from background_task import background
 #Imports del proyeco
+from background.functions import hasta_madrugada
 #Import de la app
 from .models import IngresoProvincia
 
@@ -14,7 +15,7 @@ from .models import IngresoProvincia
 logger = logging.getLogger("tasks")
 
 #Definimos tareas
-@background(schedule=5)
+@background(schedule=hasta_madrugada(40))
 def eliminar_ingresos_provinciales():
     logger.info("\neliminar_ingresos_provinciales")
     #Buscamos los recien cargados

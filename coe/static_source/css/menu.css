@@ -31,7 +31,7 @@ menu {
 }
 
 .navbar-nav {
-    float: right;
+    float: right!important;
     padding-top: 10px;
     font-family: Roboto;
 }

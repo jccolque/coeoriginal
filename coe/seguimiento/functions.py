@@ -35,17 +35,27 @@ def obtener_bajo_seguimiento():
 def asignar_vigilante(individuo, tipo):
     #Iniciamos proceso de asignacion:
     try:
-        if not individuo.vigiladores.filter(tipo=tipo).exists():#Si no tiene Vigilante
-            #Intentamos buscarle el vigilante que menos asignados tenga
-            vigias = Vigia.objects.filter(tipo=tipo).annotate(cantidad=Count('controlados')).exclude(activo=False)
-            for vigia in vigias.order_by('cantidad'):
-                if vigia.max_controlados > vigia.cantidad:
+        if not individuo.vigiladores.filter(tipo=tipo).exists():#Si no tiene ese tipo de Vigilante
+            #Si es Vigilancia Medica, lo sacamos de Epidemiologia:
+            if tipo == "ST":#(ODIO HARDCODEAR)
+                individuo.vigiladores.filter(tipo="VE").clear()
+            #Intentamos buscar vigilante asignado a algun relacionado:
+            for relacion in individuo.relaciones.exclude(relacionado__vigiladores=None):
+                try:
+                    vigia = relacion.relacionado.vigiladores.get(tipo=tipo)
                     vigia.controlados.add(individuo)
-                    #Si no es mental o circulacion, lo dejamos solo en ese panel nuevo:
-                    if tipo not in  ("VM", "AP", "VT"):
-                        for old_vigilante in individuo.vigiladores.exclude(tipo__in=("VM", "VT")).exclude(id=vigia.id):
-                            individuo.vigiladores.remove(old_vigilante)
+                    print("ENCONTRAMOS VIGILANTE FAMILIAR")
                     break#Lo cargamos, limpiamos, terminamos
+                except:
+                    pass#No tenia de ese tipo
+            if not individuo.vigiladores.filter(tipo=tipo).exists():#Si no tiene Vigilante
+                print("NO ENCONTRAMOS VIGILANTE FAMILIAR")
+                #Intentamos buscarle el vigilante que menos asignados tenga
+                vigias = Vigia.objects.filter(tipo=tipo).annotate(cantidad=Count('controlados')).exclude(activo=False)
+                for vigia in vigias.order_by('cantidad'):
+                    if vigia.max_controlados > vigia.cantidad:
+                        vigia.controlados.add(individuo)
+                        break#Lo cargamos, limpiamos, terminamos
     except:
         logger.info("No existen Vigias: " + tipo + ", " + str(individuo) + " quedo sin vigilancia.")
 

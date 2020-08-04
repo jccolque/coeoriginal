@@ -9,10 +9,11 @@ class GeorefConfig(AppConfig):
         agregar_menu(self)
         #Inicializacion de georeferencias:
         try:
-            from .models import Nacionalidad
-            if not Nacionalidad.objects.exists():
+            from .models import Localidad
+            if not Localidad.objects.exists():
+                from background_task.models import Task
                 from background.functions import inicializar_background_job
                 from .tasks import obtener_localidades_infra_gob
-                inicializar_background_job(obtener_localidades_infra_gob, 0, 'obtener_localidades_infra_gob')
+                inicializar_background_job(obtener_localidades_infra_gob, Task.NEVER, 'obtener_localidades_infra_gob')
         except:
             pass #print("No se pudo inicializar georeferencias")

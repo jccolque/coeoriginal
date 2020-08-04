@@ -8,6 +8,7 @@ from django.utils import timezone
 from background_task import background
 #Imports del proyeco
 from coe.constantes import DIAS_CUARENTENA
+from background.functions import hasta_madrugada
 from seguimiento.models import Seguimiento
 from app.models import AppNotificacion
 #Import de la app
@@ -18,7 +19,7 @@ from .functions import obtener_trackeados
 logger = logging.getLogger("tasks")
 
 #Definimos tareas
-@background(schedule=30)
+@background(schedule=hasta_madrugada(30))
 def geotrack_sin_actualizacion():
     logger.info("\nGeoTrackings Sin actualizar")
     individuos = obtener_trackeados()
@@ -54,7 +55,7 @@ def geotrack_sin_actualizacion():
         except Exception as error:
             logger.info("Fallo: "+str(error)+':\n'+str(traceback.format_exc()))
 
-@background(schedule=25)
+@background(schedule=hasta_madrugada(20))
 def vencer_alertas():
     #Obtenemos todasl as alertas vencidas
     alertas = GeoPosicion.objects.filter(procesada=False)
@@ -66,7 +67,7 @@ def vencer_alertas():
     alertas = alertas.filter(fecha__lt=limite)
     alertas.update(procesada=True, aclaracion="Dada de baja por vencimiento")
 
-@background(schedule=15)
+@background(schedule=hasta_madrugada(15))
 def finalizar_geotracking():
     logger.info("\nRealizamos la finalizacion de los Geotrackings")
     individuos = obtener_trackeados()

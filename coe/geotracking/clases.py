@@ -1,5 +1,6 @@
 #Imports de python
 import json
+from datetime import timedelta
 #Imports del proyecto
 from informacion.models import Individuo
 

@@ -6,6 +6,7 @@ import traceback
 from background_task import background
 #Imports del proyecto
 from core.api import requests_retry_session
+from background.functions import hasta_madrugada
 #Imports de la app
 from .models import Provincia, Departamento, Localidad
 from .functions import obtener_argentina

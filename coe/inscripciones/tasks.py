@@ -10,6 +10,7 @@ from django.template.loader import render_to_string
 from background_task import background
 #Imports del proyeco
 from coe.settings import SEND_MAIL
+from background.functions import hasta_madrugada
 #Import de la app
 from .models import Inscripcion
 
@@ -17,7 +18,7 @@ from .models import Inscripcion
 logger = logging.getLogger("tasks")
 
 #Definimos tareas
-@background(schedule=20)
+@background(schedule=hasta_madrugada(50))
 def reintentar_validar():
     logger.info("\nInicia reintentar_validar")
     if SEND_MAIL:

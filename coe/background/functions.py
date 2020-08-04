@@ -29,12 +29,27 @@ def limpiar_background_viejas():
         logger = logging.getLogger("tasks")
         logger.info("Falla: "+str(traceback.format_exc()))
 
-def inicializar_background_job(function, horas, function_name):
+def inicializar_background_job(function, intervalo, function_name):
     #Tareas Background:
     try:
         from background_task.models import Task
         if not Task.objects.filter(verbose_name=function_name).exists():
-            function(repeat=3600 * horas, verbose_name=function_name)
+            if isinstance(intervalo, int):#si es una cantidad
+                function(repeat=3600 * intervalo, verbose_name=function_name)
+            else:
+                function(repeat=intervalo, verbose_name=function_name)
     except:
         logger = logging.getLogger("tasks")
         logger.info("Falla: "+str(traceback.format_exc()))
+
+def hasta_madrugada(minutos_extra):
+    #obtenemos horas faltantes para las 12
+    falta_medianoche = 24 - timezone.now().time().hour
+    #Agregamos 2 horas
+    hasta_las_2 = falta_medianoche + 2
+    #Transformamos en minutos
+    hasta_las_2 = hasta_las_2 * 60
+    #Agregamos los minutos extras:
+    hasta_las_2 += minutos_extra
+    #Devolvemos en segundos
+    return hasta_las_2 * 60

@@ -61,7 +61,7 @@ def quitar_sin_telefono():
     from seguimiento.models import Vigia, Seguimiento
     for vigia in Vigia.objects.all().prefetch_related('controlados'):
         for controlado in vigia.controlados.all():
-            if controlado.telefono == NOTEL:
+            if controlado.telefono == NOTEL or controlado.telefono == "":
                 seg = Seguimiento(individuo=controlado)
                 seg.tipo = "TE"
                 seg.aclaracion = "Limpieza Masiva, Requiere Carga de Telefono"
