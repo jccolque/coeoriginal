@@ -143,7 +143,7 @@ def cargar_seguimiento(request, individuo_id, seguimiento_id=None, tipo=None):
             seguimiento = form.save(commit=False)
             seguimiento.individuo = individuo
             seguimiento.operador = obtener_operador(request)
-            form.save()
+            seguimiento.save()
             return render(request, "extras/close.html")
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Seguimiento", 'form': form, 'boton': "Cargar", })
 
@@ -153,6 +153,33 @@ def del_seguimiento(request, seguimiento_id=None):
     individuo = seguimiento.individuo
     seguimiento.delete()
     return render(request, "extras/close.html")
+
+@permission_required('operadores.seguimiento')
+def fin_seguimiento(request, vigia_id, individuo_id):
+    #Obtenemos datos basicos
+    vigia = Vigia.objects.get(pk=vigia_id)
+    individuo = Individuo.objects.get(pk=individuo_id)
+    #Generamos form
+    form = SeguimientoForm(initial={'tipo': 'FS'}, user=request.user)
+    if request.method == "POST":
+        form = SeguimientoForm(request.POST, user=request.user)
+        if form.is_valid():
+            #Obtenemos seguimiento
+            seg = form.save(commit=False)
+            if not seg.tipo == "FS":
+                return render(request, 'extras/error.html', {
+                    'titulo': 'Esta opcion es solo para Finalizar Seguimientos',
+                    'error': "Solo puede utilizarse con el tipo Final de Seguimiento.",
+                })
+            #Creamos FIN DE SEGUIMIENTO
+            seg.individuo = individuo
+            seg.operador = obtener_operador(request)
+            Seguimiento.objects.bulk_create([seg, ])
+            #Damos de baja el seguimiento    
+            vigia.controlados.remove(individuo)
+            return redirect('seguimiento:ver_panel', vigia_id=vigia_id)
+    return render(request, "extras/generic_form.html", {'titulo': "Finalizar Seguimiento", 'form': form, 'boton': "Confirmar", })
+
 
 #Listados
 @permission_required('operadores.seguimiento_admin')
@@ -263,7 +290,6 @@ def lista_sin_vigias(request):
         'has_table': True,
     })
 
-
 @permission_required('operadores.seguimiento_admin')
 def asignar_vigia(request, individuo_id):
     form = AsignarVigia()
@@ -301,7 +327,6 @@ def lista_ocupacion(request):
         'has_table': True,
     })
 
-
 @permission_required('operadores.seguimiento_admin')
 def agregar_vigia(request, vigia_id=None):
     vigia = None
@@ -314,6 +339,13 @@ def agregar_vigia(request, vigia_id=None):
             form.save()
             return redirect('seguimiento:lista_vigias')
     return render(request, "extras/generic_form.html", {'titulo': "Habilitar Nuevo Vigia", 'form': form, 'boton': "Habilitar", })
+
+@permission_required('operadores.seguimiento')
+def mod_estado_vigia(request, vigia_id):
+    vigia = Vigia.objects.get(pk=vigia_id)
+    vigia.activo = not vigia.activo#Invertimos estado
+    vigia.save()
+    return redirect('seguimiento:ver_panel', vigia_id=vigia_id)
 
 @permission_required('operadores.seguimiento_admin')
 def del_vigia(request, vigia_id):
@@ -383,7 +415,10 @@ def panel_vigia(request, vigia_id=None):
             'error': "Usted no es un Vigilante Habilitado, si deberia tener acceso a esta seccion, por favor contacte a los administradores.",
         })
     #Buscamos Alertas
-    limite = timezone.now() - timedelta(hours=18)
+    if vigia.tipo == "EM":
+        limite = timezone.now()#SON EMERGENCIAS YA!
+    else:#Se podrian definir diferentes colores por tipo
+        limite = timezone.now() - timedelta(hours=18)
     individuos = vigia.controlados.filter(Q(seguimiento_actual__fecha__lt=limite) | Q(seguimiento_actual=None))
     #Optimizamos
     individuos = individuos.select_related(

@@ -10,6 +10,7 @@ TIPO_SEGUIMIENTO = (
     ('RC', 'Registro de Circulacion Temporal'),
     #Todos los usuarios
     ('L', 'Llamada Telefonica'),
+    ('EM', 'Requiere Seguimiento URGENTE medico'),
     ('M', 'Reporte Medico'),
     ('C', 'Cronologia'),
     ('E', 'Epicrisis'),
@@ -28,7 +29,7 @@ TIPO_SEGUIMIENTO = (
 def obtener_seguimientos(user):
     #Tipo de Seguimientos:
     sistema = ['I', 'A', 'IT', 'AT', 'FT', 'DF', 'TA', 'RC']
-    publicos = ['L', 'M', 'C', 'E', 'IR', 'ET', 'TE','FS', 'PT', 'FA']
+    publicos = ['L', 'EM', 'M', 'C', 'E', 'IR', 'ET', 'TE','FS', 'PT', 'FA']
     epidemiologia = ['CT', 'DT', 'AP']
     #Generamos seguimientos accesibles
     tipos = [t for t in TIPO_SEGUIMIENTO if t[0] in publicos]
@@ -46,6 +47,7 @@ TIPO_VIGIA = (
     ('VD', 'Vigilancia de Adultos Mayores'),
     ('ST', 'Vigilancia Medica'),
     ('VT', 'Vigilancia de Circulacion Temporal'),
+    ('EM', 'Emergencia Medica - URGENTE'),
 )
 
 ESTADO_OPERATIVO = (

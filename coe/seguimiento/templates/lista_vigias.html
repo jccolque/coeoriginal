@@ -22,6 +22,7 @@
                             <th>Ultimo Ingreso</th>
                             <th>Controlados</th>
                             <th>Alertas Activas</th>
+                            <th>Estado</th>
                             <th>Ver Detalle</th>
                         </tr>
                     </thead>
@@ -39,6 +40,13 @@
                                 <td>{{vigia.operador.usuario.last_login}}</td>
                                 <td>{{vigia.controlados.count}}/{{vigia.max_controlados}}</td>
                                 <td>{{vigia.alertas}}</td>
+                                <td>
+                                    {% if vigia.activo %}
+                                        <img class="icons" src="/static/img/icons/check.png">
+                                    {% else %}
+                                        <img class="icons" src="/static/img/icons/wrong.png">
+                                    {% endif %}
+                                </td>
                                 <td>
                                     <a href="{% url 'seguimiento:ver_panel' vigia_id=vigia.id %}" target="_blank">
                                         <img class="icons" src="/static/img/icons/control_panel.png" alt="Panel de Control">

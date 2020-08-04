@@ -32,6 +32,24 @@ def obtener_bajo_seguimiento():
     #Devolvemos listado
     return individuos
 
+def asignar_vigilante(individuo, tipo):
+    #Iniciamos proceso de asignacion:
+    try:
+        if not individuo.vigiladores.filter(tipo=tipo).exists():#Si no tiene Vigilante
+            #Intentamos buscarle el vigilante que menos asignados tenga
+            vigias = Vigia.objects.filter(tipo=tipo).annotate(cantidad=Count('controlados')).exclude(activo=False)
+            for vigia in vigias.order_by('cantidad'):
+                if vigia.max_controlados > vigia.cantidad:
+                    vigia.controlados.add(individuo)
+                    #Si no es mental o circulacion, lo dejamos solo en ese panel nuevo:
+                    if tipo not in  ("VM", "AP", "VT"):
+                        for old_vigilante in individuo.vigiladores.exclude(tipo__in=("VM", "VT")).exclude(id=vigia.id):
+                            individuo.vigiladores.remove(old_vigilante)
+                    break#Lo cargamos, limpiamos, terminamos
+    except:
+        logger.info("No existen Vigias: " + tipo + ", " + str(individuo) + " quedo sin vigilancia.")
+
+
 def creamos_doc_alta(individuo):
     try:
         packet = io.BytesIO()
@@ -155,20 +173,3 @@ def obtener_operativo(num_doc):
     operativos = OperativoVehicular.objects.filter(cazadores__num_doc=num_doc)
     operativos = operativos.filter(estado='I')
     return operativos.last()
-
-def asignar_vigilante(individuo, tipo):
-    #Iniciamos proceso de asignacion:
-    try:
-        if not individuo.vigiladores.filter(tipo=tipo).exists():#Si no tiene Vigilante
-            #Intentamos buscarle el vigilante que menos asignados tenga
-            vigias = Vigia.objects.filter(tipo=tipo).annotate(cantidad=Count('controlados'))
-            for vigia in vigias.order_by('cantidad'):
-                if vigia.max_controlados > vigia.cantidad:
-                    vigia.controlados.add(individuo)
-                    #Si no es mental o circulacion, lo dejamos solo en ese panel nuevo:
-                    if tipo not in  ("VM", "AP", "VT"):
-                        for old_vigilante in individuo.vigiladores.exclude(tipo__in=("VM", "VT")).exclude(id=vigia.id):
-                            individuo.vigiladores.remove(old_vigilante)
-                    break#Lo cargamos, limpiamos, terminamos
-    except:
-        logger.info("No existen Vigias: " + tipo + ", " + str(individuo) + " quedo sin vigilancia.")

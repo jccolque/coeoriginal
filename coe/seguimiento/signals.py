@@ -146,7 +146,6 @@ def fallecimiento(created, instance, **kwargs):
         situacion.fecha = instance.fecha
         situacion.save()
 
-
 @receiver(post_save, sender=SignosVitales)
 def cargo_signosvitales(created, instance, **kwargs):
     if created:
@@ -154,6 +153,11 @@ def cargo_signosvitales(created, instance, **kwargs):
         seguimiento.tipo = 'E'
         seguimiento.aclaracion = "Se Informaron Signos vitales"
         seguimiento.save()
+
+@receiver(post_save, sender=Seguimiento)
+def seguimiento_urgente(created, instance, **kwargs):
+    if created and instance.tipo == 'EM':
+        asignar_vigilante(instance.individuo, 'EM')
 
 @receiver(post_save, sender=TestOperativo)
 def test_get_individuo(created, instance, **kwargs):

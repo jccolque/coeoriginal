@@ -36,6 +36,7 @@ class Vigia(models.Model):
     operador = models.OneToOneField(Operador, on_delete=models.CASCADE, related_name="vigia")
     max_controlados = models.SmallIntegerField('Cantidad Maxima de Seguidos', default=60)
     controlados = models.ManyToManyField(Individuo, related_name='vigiladores')
+    activo = models.BooleanField('Disponible', default=True)
     def __str__(self):
         return str(self.operador.nombres) + ' ' + str(self.operador.apellidos)
     def alertas_activas(self):

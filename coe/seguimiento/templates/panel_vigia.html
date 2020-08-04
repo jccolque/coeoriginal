@@ -6,8 +6,28 @@
 {% block content %}
     <div class="beneficiario container">
         <div class="row">
-            <h2><b>Panel de {{vigia}}</b></h2>
-            <p><b>{{vigia.get_tipo_display}}</b></p>
+            <div class="col-sm-8">
+                <h2><b>Panel de {{vigia}}</b></h2>
+                <p><b>{{vigia.get_tipo_display}}</b></p>
+            </div>
+            <div class="col-sm-4 situacion_vigia">
+                <br>
+                {% if vigia.activo %}
+                    <div class="vigia_activo">
+                        ACTIVO: Asignacion Automatica
+                {% else %}
+                    <div class="vigia_inactivo">
+                        DESACTIVADO: Sin Asignacion Automatica
+                {% endif %}
+                        {% if perms.operadores.seguimiento_admin or vigia.tipo == "EM" %}
+                            <a class="nolink" href="{% url 'seguimiento:mod_estado_vigia' vigia_id=vigia.id %}">
+                                <img class="icons" src="{% static '/img/icons/switch.png' %}" alt="Modificar">
+                            </a>
+                        {% endif %}
+                    </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-xl-7">
                 <h3>Alertas Activas ({{vigia.alertas_activas}})</h3>
                 <table class="listado" id="table">
@@ -70,6 +90,9 @@
                                     {% endif %}
                                     <a class="nolink" href="{% url 'seguimiento:ver_seguimiento' individuo_id=individuo.id %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                    </a>
+                                    <a class="nolink" href="{% url 'seguimiento:fin_seguimiento' vigia_id=vigia.id individuo_id=individuo.id %}">
+                                        <img class="icons" src="{% static '/img/icons/exit.png' %}">
                                     </a>
                                     {% if individuo.es_camionero %}
                                         <a href="{% url 'permisos:ver_registros_individuo' individuo_id=individuo.id %}" target="_blank">

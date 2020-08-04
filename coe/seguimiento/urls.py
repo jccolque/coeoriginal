@@ -26,6 +26,7 @@ urlpatterns = [
     path('cargar/seguimiento/<int:individuo_id>/tipo/<str:tipo>', views.cargar_seguimiento, name='cargar_seguimiento'),
     path('mod/seguimiento/<int:individuo_id>/<int:seguimiento_id>', views.cargar_seguimiento, name='mod_seguimiento'),
     path('del/seguimiento/<int:seguimiento_id>', views.del_seguimiento, name='del_seguimiento'),
+    path('fin/seguimiento/<int:vigia_id>/<int:individuo_id>', views.fin_seguimiento, name='fin_seguimiento'),
     #Administracion
     path('lista/vigias', views.lista_vigias, name='lista_vigias'),
     path('lista/ocupacion', views.lista_ocupacion, name='lista_ocupacion'),
@@ -33,6 +34,7 @@ urlpatterns = [
     path('mod/vigia/<int:vigia_id>', views.agregar_vigia, name='mod_vigia'),
     path('del/vigia/<int:vigia_id>', views.del_vigia, name='del_vigia'),
     path('lista/sin/vigias', views.lista_sin_vigias, name='lista_sin_vigias'),
+    path('vigia/mod/estado/<int:vigia_id>', views.mod_estado_vigia, name='mod_estado_vigia'),
     #Cazador 360
     path('operativos/situacion', views.situacion_operativos, name='situacion_operativos'),
     path('operativos/lista', views.lista_operativos, name='lista_operativos'),
@@ -46,7 +48,6 @@ urlpatterns = [
     path('operativo/quitar/testeado/<int:operativo_id>/<int:individuo_id>', views.quitar_testeado, name='quitar_testeado'),
     path('operativo/iniciar/<int:operativo_id>', views.iniciar_operativo, name='iniciar_operativo'),
     path('operativo/finalizar/<int:operativo_id>', views.finalizar_operativo, name='finalizar_operativo'),
-    
     #path('operativo/quitar/testeado/<int:operativo_id>/<int:individuo_id>', views.quitar_testeado, name='quitar_testeado'),
     #Otros Listados
     path('test/pedidos', views.ranking_test, name='ranking_test'),
