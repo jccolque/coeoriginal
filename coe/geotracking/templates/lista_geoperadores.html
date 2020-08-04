@@ -25,13 +25,7 @@
                             <tr>
                                 <td>{{geoperador}}</td>
                                 <td>{{geoperador.operador.telefono}}</td>
-                                <td>
-                                    {% if geoperador.operador.usuario.is_authenticated %}
-                                        Online
-                                    {% else %}
-                                        {{geoperador.operador.usuario.last_login}}
-                                    {% endif %}
-                                </td>
+                                <td>{{geoperador.operador.usuario.last_login}}</td>
                                 <td>{{geoperador.cant_controlados}}</td>
                                 <td>{{geoperador.alertas_activas}}</td>
                                 <td>

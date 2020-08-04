@@ -58,12 +58,16 @@ class GeOperador(models.Model):
     controlados = models.ManyToManyField(Individuo, related_name='geoperadores')
     def __str__(self):
         return str(self.operador.nombres) + ' ' + str(self.operador.apellidos)
-    def controlados_actuales(self):
-        return self.controlados.all()#Deberiamos filtrar
     def cantidad_controlados(self):
-        return self.controlados_actuales().count()
+        return sum([1 for c in self.controlados.all()])
     def alertas_activas(self):
-        return self.controlados.filter(Q(geoposiciones__procesada=False) & ~Q(geoposiciones__alerta='SA')).distinct().count()
+        total = 0#utilizamos este metodo por optimizacion
+        for controlado in self.controlados.all():
+            for geopos in controlado.geoposiciones.all():
+                if geopos.alerta != 'SA' and not geopos.procesada:
+                    total += 1
+                    break
+        return total
 
 if not LOADDATA:
     #Auditoria

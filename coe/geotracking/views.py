@@ -47,7 +47,7 @@ def lista_geooperadores(request):
     #Obtenemos el operador en cuestion
     geoperadores = GeOperador.objects.all()
     geoperadores = geoperadores.select_related('operador', 'operador__usuario')
-    geoperadores = geoperadores.prefetch_related('controlados')
+    geoperadores = geoperadores.prefetch_related('controlados', 'controlados__geoposiciones')
     #Optimizamos:
     geoperadores = geoperadores.annotate(cant_controlados=Count('controlados'))
     return render(request, "lista_geoperadores.html", {

@@ -62,8 +62,9 @@ class MapeadorIndividual:
             gpd = {}
             gpd["id"] = geopos.id
             gpd["tipo"] = geopos.get_tipo_display()
-            gpd["fecha"] = str(geopos.fecha.date())
-            gpd["hora"] = str(geopos.fecha.time())
+            fecha = geopos.fecha - timedelta(hours=3)#ODIO HARDCODEAR
+            gpd["fecha"] = str(fecha.date())
+            gpd["hora"] = str(fecha.time())
             gpd["latitud"] = float(geopos.latitud)
             gpd["longitud"] = float(geopos.longitud)
             gpd["distancia"] = int(geopos.distancia)
