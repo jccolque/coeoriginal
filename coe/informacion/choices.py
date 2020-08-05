@@ -63,7 +63,7 @@ TIPO_ATRIBUTO = (
     ('VE', 'Vigilancia Epidemiologica'),
     ('VM', 'Vigilancia Salud Mental'),
     ('AP', 'Atencion Psiquiatrica'),
-    ('ST', 'Seguimiento Medico'),
+    ('ST', 'Vigilancia Medica'),
     ('VD', 'Vigilancia Adultos Mayores'),
     ('VT', 'Vigilancia de Circulacion Temporal'),
     #Trabajo:
