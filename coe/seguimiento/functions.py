@@ -15,7 +15,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 #Imports del Proyeto
 from coe.settings import STATIC_ROOT, MEDIA_ROOT
-from coe.constantes import DIAS_CUARENTENA
+from coe.constantes import DIAS_CUARENTENA, NOTEL
 from informacion.models import Individuo, Situacion, Documento
 from app.functions import desactivar_tracking
 #Imports de la app
@@ -36,26 +36,39 @@ def obtener_bajo_seguimiento():
 def asignar_vigilante(individuo, tipo):
     #Iniciamos proceso de asignacion:
     try:
-        if not individuo.vigiladores.filter(tipo=tipo).exists():#Si no tiene ese tipo de Vigilante
-            #Si es Vigilancia Medica, lo sacamos de Epidemiologia:
-            if tipo == "ST":#(ODIO HARDCODEAR)
-                for vigia in individuo.vigiladores.filter(tipo="VE"):
-                    individuo.vigiladores.remove(vigia)
-            #Intentamos buscar vigilante asignado a algun relacionado:
-            for relacion in individuo.relaciones.exclude(relacionado__vigiladores=None):
-                try:
-                    vigia = relacion.relacionado.vigiladores.get(tipo=tipo)
-                    vigia.controlados.add(individuo)
-                    break#Lo cargamos, limpiamos, terminamos
-                except:
-                    pass#No tenia de ese tipo
-            if not individuo.vigiladores.filter(tipo=tipo).exists():#Si no tiene Vigilante
-                #Intentamos buscarle el vigilante que menos asignados tenga
-                vigias = Vigia.objects.filter(tipo=tipo).annotate(cantidad=Count('controlados')).exclude(activo=False)
-                for vigia in vigias.order_by('cantidad'):
-                    if vigia.max_controlados > vigia.cantidad:
+        #Chequeamos que tenga telefono:
+        if individuo.telefono not in (NOTEL, ""):
+            #Buscamos vigilante
+            if not individuo.vigiladores.filter(tipo=tipo).exists():#Si no tiene ese tipo de Vigilante
+                #Si es Vigilancia Medica, lo sacamos de Epidemiologia:
+                if tipo == "ST":#(ODIO HARDCODEAR)
+                    for vigia in individuo.vigiladores.filter(tipo="VE"):
+                        individuo.vigiladores.remove(vigia)
+                #Intentamos buscar vigilante asignado a algun relacionado:
+                for relacion in individuo.relaciones.exclude(relacionado__vigiladores=None):
+                    try:
+                        vigia = relacion.relacionado.vigiladores.get(tipo=tipo)
                         vigia.controlados.add(individuo)
                         break#Lo cargamos, limpiamos, terminamos
+                    except:
+                        pass#No tenia de ese tipo
+                if not individuo.vigiladores.filter(tipo=tipo).exists():#Si no tiene Vigilante
+                    #Intentamos buscarle el vigilante que menos asignados tenga
+                    vigias = Vigia.objects.filter(tipo=tipo).annotate(cantidad=Count('controlados')).exclude(activo=False)
+                    for vigia in vigias.order_by('cantidad'):
+                        if vigia.max_controlados > vigia.cantidad:
+                            vigia.controlados.add(individuo)
+                            break#Lo cargamos, limpiamos, terminamos
+        else:
+            #No tiene telefono
+            if not individuo.seguimientos.filter(tipo="TE").exists():
+                print("No tiene Seguimiento")
+                #Si no esta informada la falta, le metemos seguimiento: "TE"
+                seg = Seguimiento(individuo=individuo)
+                seg.tipo = "TE"
+                seg.aclaracion = "Se intento asignar Vigilante, no tiene telefono"
+                seg.save()
+                print("Creamos seguimiento")
     except:
         logger.info("Fallo asignar_vigilante: :\n"+str(traceback.format_exc()))
 

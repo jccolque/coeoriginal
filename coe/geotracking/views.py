@@ -193,7 +193,6 @@ def lista_alertas(request):
     dict_alertas = {alerta.individuo.num_doc:alerta for alerta in alertas}
     alertas = list(dict_alertas.values())
     #Lanzamos listado
-    print(len(alertas))
     return render(request, "lista_sin_procesar.html", {
         'alertas': alertas,
         'refresh': True,
