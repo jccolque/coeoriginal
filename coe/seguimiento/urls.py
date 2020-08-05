@@ -27,6 +27,10 @@ urlpatterns = [
     path('mod/seguimiento/<int:individuo_id>/<int:seguimiento_id>', views.cargar_seguimiento, name='mod_seguimiento'),
     path('del/seguimiento/<int:seguimiento_id>', views.del_seguimiento, name='del_seguimiento'),
     path('fin/seguimiento/<int:vigia_id>/<int:individuo_id>', views.fin_seguimiento, name='fin_seguimiento'),
+    #Condicion
+    path('cargar/condicion/<int:individuo_id>', views.crear_condicion, name='crear_condicion'),
+    path('mod/condicion/<int:individuo_id>/<int:condicion_id>', views.crear_condicion, name='mod_condicion'),
+    path('del/condicion/<int:condicion_id>', views.del_condicion, name='del_condicion'),
     #Administracion
     path('lista/vigias', views.lista_vigias, name='lista_vigias'),
     path('lista/ocupacion', views.lista_ocupacion, name='lista_ocupacion'),

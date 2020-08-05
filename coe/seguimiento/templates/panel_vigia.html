@@ -41,6 +41,7 @@
                             <th>Ultimo Seguimiento</th>
                             <th>Fecha</th>
                             <th>Operador</th>
+                            <th>Condiciones</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -63,7 +64,23 @@
                                 <td>{{individuo.seguimiento_actual.get_tipo_display}}: {{individuo.seguimiento_actual.aclaracion|safe}}</td>
                                 <td>{{individuo.seguimiento_actual.fecha|date:"d/m H:i"}}</td>
                                 <td>{{individuo.seguimiento_actual.operador}}</td>
-
+                                
+                                <td>
+                                    {% if individuo.condicion %}
+                                        <a class="nolink" href="{% url 'seguimiento:mod_condicion' individuo_id=individuo.id condicion_id=individuo.condicion.id %}" target="_blank">
+                                            <img class="icons" src="{% static '/img/icons/change.png' %}" alt="Modificar" style="float:right;">
+                                        </a>
+                                        <p>{{individuo.condicion.get_contencion_display}}</p>
+                                        <p>{{individuo.condicion.get_alimentos_display}}</p>
+                                        <p>{{individuo.condicion.get_medicamentos_display}}</p>
+                                    {% else %}
+                                        <a class="nolink" href="{% url 'seguimiento:crear_condicion' individuo_id=individuo.id %}" target="_blank">
+                                            <img class="icons" src="{% static '/img/icons/change.png' %}" alt="Modificar" style="float:right;">
+                                        </a>
+                                        <p style="text-align:center;">CARGAR CONDICIONES</p>
+                                    {% endif %}
+                                </td>
+                                
                                 <td>
                                     <a class="nolink" href="{% url 'seguimiento:cargar_seguimiento' individuo_id=individuo.id tipo='L' %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/add_call.png' %}">

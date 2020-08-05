@@ -16,6 +16,7 @@ from georef.models import Localidad
 #Imports de la app
 from .choices import TIPO_SEGUIMIENTO, TIPO_VIGIA, ESTADO_OPERATIVO, ESTADO_RESULTADO
 from .choices import TIPO_TURNO
+from .choices import NIVEL_CONTENCION, NIVEL_ALIMENTOS, NIVEL_MEDICACION
 
 
 # Create your models here.
@@ -23,12 +24,21 @@ class Seguimiento(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="seguimientos")
     tipo = models.CharField('Tipo Seguimiento', choices=TIPO_SEGUIMIENTO, max_length=2, default='I')
     aclaracion = HTMLField()
-    operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True, related_name="seguimientos_cargados")
     fecha = models.DateTimeField('Fecha del Seguimiento', default=timezone.now)
+    operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True, related_name="seguimientos_informados")
     class Meta:
         ordering = ['fecha', ]
     def __str__(self):
         return str(self.fecha)[0:16] + ': ' + self.get_tipo_display() + ': ' + self.aclaracion
+
+class Condicion(models.Model):
+    individuo = models.OneToOneField(Individuo, on_delete=models.CASCADE, related_name="condicion")
+    contencion = models.SmallIntegerField('Contencion Familiar', choices=NIVEL_CONTENCION, default=0)
+    alimentos = models.SmallIntegerField('Soporte Alimenticio', choices=NIVEL_ALIMENTOS, default=0)
+    medicamentos = models.SmallIntegerField('Medicacion', choices=NIVEL_MEDICACION, default=0)
+    aclaracion = HTMLField()
+    fecha = models.DateTimeField('Fecha del Informe', default=timezone.now)
+    operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True, related_name="condiciones_informadas")
 
 class Vigia(models.Model):
     tipo = models.CharField('Tipo Vigia', choices=TIPO_VIGIA, max_length=2, default='VE')
@@ -43,6 +53,7 @@ class Vigia(models.Model):
         limite = timezone.now() - timedelta(hours=12)
         return sum([1 for c in self.controlados.all() if c.seguimiento_actual and c.seguimiento_actual.fecha < limite])
 
+#OPERATIVO
 class OperativoVehicular(models.Model):
     vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, related_name="operativos")
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)

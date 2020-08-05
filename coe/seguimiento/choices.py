@@ -68,3 +68,26 @@ TIPO_TURNO = (
     ('T', 'TARDE'),
     ('N', 'NOCHE'),
 )
+
+#CONDICIONES AMBIENTALES:
+NIVEL_CONTENCION = (
+    (0, 'Convive con personas Adultas y Responsables'),
+    (5, 'Posee Familiares que lo visitan regularmente'),
+    (10, 'Posee Familiares que pueden auxiliarlo en Emergencias'),
+    (15, 'Tiene Vecinos que lo contienen'),
+    (30, 'No tiene Contencion de Ningun Tipo'),
+)
+
+NIVEL_ALIMENTOS = (
+    (0, 'No tiene Problemas para conseguir lo que necesite'),
+    (5, 'Esporadicamente le envian Mercaderia'),
+    (10, 'Acceso minimo a elementos indispensables'),
+    (30, 'Carece de elementos basicos'),
+)
+
+NIVEL_MEDICACION = (
+    (0, 'No requiere medicamentos'),
+    (2, 'No tiene Problemas para conseguir sus medicamentos'),
+    (10, 'Recibe irregularmente medicacion necesaria'),
+    (30, 'Dificultad para recibir Medicacion Vital'),
+)

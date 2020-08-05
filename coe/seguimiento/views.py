@@ -42,8 +42,10 @@ from background.functions import crear_progress_link
 #imports de la app
 from .models import Seguimiento, Vigia
 from .models import OperativoVehicular, TestOperativo
+from .models import Condicion
 from .forms import SeguimientoForm, NuevoVigia, NuevoIndividuo
 from .forms import OperativoForm, TestOperativoForm
+from .forms import CondicionForm
 from .functions import obtener_bajo_seguimiento, asignar_vigilante
 from .functions import realizar_alta
 from .tasks import altas_masivas
@@ -154,6 +156,36 @@ def del_seguimiento(request, seguimiento_id=None):
     seguimiento.delete()
     return render(request, "extras/close.html")
 
+#CONDICIONES
+@permission_required('operadores.individuos')
+def crear_condicion(request, individuo_id, condicion_id=None):
+    #obtenemos individuo
+    individuo = Individuo.objects.get(pk=individuo_id)
+    #buscamos condicion PreExistente
+    condicion = None
+    if condicion_id:
+        condicion = Condicion.objects.get(pk=condicion_id)
+    #Creamos Form
+    form = CondicionForm(instance=condicion)
+    #Preguntamos si envio info:
+    if request.method == "POST":
+        form = CondicionForm(request.POST, instance=condicion)
+        if form.is_valid():
+            condicion = form.save(commit=False)
+            condicion.individuo = individuo
+            condicion.operador = obtener_operador(request)
+            condicion.save()
+            return render(request, "extras/close.html")
+    return render(request, "extras/generic_form.html", {'titulo': "Informar Condicion", 'form': form, 'boton': "Guardar", })
+
+@permission_required('operadores.individuos')
+def del_condicion(request, condicion_id=None):
+    condicion = Condicion.objects.get(pk=condicion_id)
+    individuo = condicion.individuo
+    condicion.delete()
+    return render(request, "extras/close.html")
+
+#OPERACIONES
 @permission_required('operadores.seguimiento')
 def fin_seguimiento(request, vigia_id, individuo_id):
     #Obtenemos datos basicos
@@ -202,11 +234,11 @@ def situacion_vigilancia(request):
             )
         ).annotate(
             total_seguimientos=Subquery(
-                Operador.objects.filter(pk=OuterRef('operador')).annotate(total_seguimientos=Count('seguimientos_cargados')).values('total_seguimientos')[:1]
+                Operador.objects.filter(pk=OuterRef('operador')).annotate(total_seguimientos=Count('seguimientos_informados')).values('total_seguimientos')[:1]
             ),
         ).annotate(
             semana_seguimientos=Subquery(
-                Operador.objects.filter(pk=OuterRef('operador')).annotate(total_seguimientos=Count('seguimientos_cargados', filter=Q(seguimientos_cargados__fecha__gt=limite_semana))).values('total_seguimientos')[:1]
+                Operador.objects.filter(pk=OuterRef('operador')).annotate(total_seguimientos=Count('seguimientos_informados', filter=Q(seguimientos_informados__fecha__gt=limite_semana))).values('total_seguimientos')[:1]
             ),
     )
     #Generamos estadisticas para grafico de la ultimas dos semanas:
@@ -250,7 +282,7 @@ def seguimientos_vigia(request, vigia_id):
     #Optimizamos
     vigia = vigia.select_related('operador', 'operador__usuario')
     vigia = vigia.prefetch_related('controlados')
-    vigia = vigia.prefetch_related('operador', 'operador__seguimientos_cargados', 'operador__seguimientos_cargados__individuo')
+    vigia = vigia.prefetch_related('operador', 'operador__seguimientos_informados', 'operador__seguimientos_informados__individuo')
     #OBtenemos
     vigia = vigia.get(id=vigia_id)
     #Lanzamos reporte

@@ -9,6 +9,7 @@ from georef.models import Localidad
 #Imports de la app
 from .models import Seguimiento, Vigia
 from .models import OperativoVehicular, TestOperativo
+from .models import Condicion
 from .functions import obtener_bajo_seguimiento
 from .choices import obtener_seguimientos
 from .models import DatosGis
@@ -31,6 +32,15 @@ class SeguimientoForm(forms.ModelForm):
         else:
             self.fields['tipo'].choices = obtener_seguimientos(user)
 
+
+class CondicionForm(forms.ModelForm):
+    class Meta:
+        model = Condicion
+        fields= '__all__'
+        exclude = ('individuo', 'fecha', 'operador')
+        widgets = {
+            'fecha': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
+        }
 
 class NuevoVigia(forms.ModelForm):
     class Meta:
