@@ -165,7 +165,7 @@ def subir_viejitos(filename):
     dict_localidades = {l.id_infragob:l for l in Localidad.objects.filter(departamento__provincia__id_infragob=38)}
     dict_vigilados = set(a.individuo.id for a in Atributo.objects.filter(tipo='VD'))
     #Leemos el archivo csv
-    with open(filename) as csv_file:
+    with open(filename, encoding='ISO-8859-1') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=';')
         for row in csv_reader:
             #0-nrodoc	1-apellido	2-nombre	3-fecnac	4-sexo	5-calle	6-NroPta	7-bardsc	8-localidad_id	9-telefonos
@@ -188,10 +188,13 @@ def subir_viejitos(filename):
             individuo.nacionalidad = argentina
             individuo.telefono = row[9]
             #Limpiamos / (inicio y final)
-            if individuo.telefono[0] == "/":
-                individuo.telefono = individuo.telefono[1:]
-            if individuo.telefono[-1] == "/":
-                individuo.telefono = individuo.telefono[:-1]
+            try:
+                if individuo.telefono[0] == "/":
+                    individuo.telefono = individuo.telefono[1:]
+                if individuo.telefono[-1] == "/":
+                    individuo.telefono = individuo.telefono[:-1]
+            except:
+                pass
             individuo.save()#Guardamos
             #Generamos domicilio
             domicilio = Domicilio(individuo=individuo)
