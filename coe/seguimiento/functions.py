@@ -19,11 +19,12 @@ from coe.constantes import DIAS_CUARENTENA
 from informacion.models import Individuo, Situacion, Documento
 from app.functions import desactivar_tracking
 #Imports de la app
+from .choices import TIPO_VIGIA
 from .models import Seguimiento
 from .models import Vigia, OperativoVehicular
 
 #Logger
-logger = logging.getLogger('errors')
+logger = logging.getLogger('functions')
 
 #Definimos funciones
 def obtener_bajo_seguimiento():
@@ -38,7 +39,8 @@ def asignar_vigilante(individuo, tipo):
         if not individuo.vigiladores.filter(tipo=tipo).exists():#Si no tiene ese tipo de Vigilante
             #Si es Vigilancia Medica, lo sacamos de Epidemiologia:
             if tipo == "ST":#(ODIO HARDCODEAR)
-                individuo.vigiladores.filter(tipo="VE").clear()
+                for vigia in individuo.vigiladores.filter(tipo="VE"):
+                    individuo.vigiladores.remove(vigia)
             #Intentamos buscar vigilante asignado a algun relacionado:
             for relacion in individuo.relaciones.exclude(relacionado__vigiladores=None):
                 try:
@@ -55,8 +57,7 @@ def asignar_vigilante(individuo, tipo):
                         vigia.controlados.add(individuo)
                         break#Lo cargamos, limpiamos, terminamos
     except:
-        logger.info("No existen Vigias: " + tipo + ", " + str(individuo) + " quedo sin vigilancia.")
-
+        logger.info("Fallo asignar_vigilante: :\n"+str(traceback.format_exc()))
 
 def creamos_doc_alta(individuo):
     try:

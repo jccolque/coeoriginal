@@ -12,6 +12,7 @@ from coe.settings import SEND_MAIL
 from informacion.models import Individuo, Domicilio
 from informacion.models import Situacion, Atributo, SignosVitales, Documento
 #Imports de la app
+from .choices import TIPO_VIGIA
 from .models import Seguimiento, Vigia, TestOperativo
 from .functions import crear_doc_descartado, asignar_vigilante 
 
@@ -118,8 +119,9 @@ def evaluar_sospechoso(created, instance, **kwargs):
 @receiver(post_save, sender=Atributo)
 def atributo_vigilancia(created, instance, **kwargs):
     if created:
+        tipos = (t[0] for t in TIPO_VIGIA)
         #Si se indica alguna vigilancia
-        if instance.tipo in ('VE', 'VM', 'AP', 'ST', 'VD', 'VT'):
+        if instance.tipo in tipos:
             asignar_vigilante(instance.individuo, instance.tipo)
 
 @receiver(post_save, sender=Seguimiento)

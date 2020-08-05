@@ -19,7 +19,7 @@ from django.urls import reverse_lazy
 from auditlog.models import LogEntry
 #Imports del proyecto
 from coe.settings import GEOPOSITION_GOOGLE_MAPS_API_KEY
-from coe.constantes import DIAS_CUARENTENA
+from coe.constantes import DIAS_CUARENTENA, NOTEL
 from core.decoradores import superuser_required
 from core.functions import date2str
 from core.forms import SearchForm, JustificarForm
@@ -800,6 +800,13 @@ def quitar_lista_sintel(request, individuo_id):
     if request.method == "POST":
         #Le eliminamos la flag de telefono inexistente/errado
         individuo.seguimientos.filter(tipo='TE').delete()
+        #Vemos si fue descartado de vigilancia por falta de telefono
+        if individuo.telefono != NOTEL and not individuo.telefono:
+            #Devolvemos todas las vigilancias no vencidas:
+            limite = timezone.now() - timedelta(days=DIAS_CUARENTENA)
+            tipos_de_vigia = [t[0] for t in TIPO_VIGIA]
+            for vigilancia in individuo.atributos.filter(tipo__in=tipos_de_vigia, fecha__gt=limite):
+                asignar_vigilante(individuo, vigilancia.tipo)
         #Volvemos a la lista
         return redirect('seguimiento:lista_sin_telefono')
     #Generamos Aviso:
