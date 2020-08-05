@@ -81,13 +81,13 @@ NIVEL_CONTENCION = (
 NIVEL_ALIMENTOS = (
     (0, 'No tiene Problemas para conseguir lo que necesite'),
     (5, 'Esporadicamente le envian Mercaderia'),
-    (10, 'Acceso minimo a elementos indispensables'),
-    (30, 'Carece de elementos basicos'),
+    (20, 'Acceso minimo a elementos indispensables'),
+    (30, 'Carece completamente de elementos basicos'),
 )
 
 NIVEL_MEDICACION = (
     (0, 'No requiere medicamentos'),
     (2, 'No tiene Problemas para conseguir sus medicamentos'),
-    (10, 'Recibe irregularmente medicacion necesaria'),
+    (25, 'Recibe irregularmente medicacion necesaria'),
     (30, 'Dificultad para recibir Medicacion Vital'),
 )

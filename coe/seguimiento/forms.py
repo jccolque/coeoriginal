@@ -19,7 +19,7 @@ class SeguimientoForm(forms.ModelForm):
     class Meta:
         model = Seguimiento
         fields= '__all__'
-        exclude = ('individuo', 'operador')
+        exclude = ('individuo', 'atendido', 'operador')
         widgets = {
             'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
         }
@@ -37,10 +37,12 @@ class CondicionForm(forms.ModelForm):
     class Meta:
         model = Condicion
         fields= '__all__'
-        exclude = ('individuo', 'fecha', 'operador')
-        widgets = {
-            'fecha': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
-        }
+        exclude = ('individuo', 'fecha', 'atendido', 'operador')
+
+class AtenderForm(forms.ModelForm):
+    class Meta:
+        model = Condicion
+        fields= ('aclaracion', )
 
 class NuevoVigia(forms.ModelForm):
     class Meta:

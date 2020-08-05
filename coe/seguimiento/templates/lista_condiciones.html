@@ -1,0 +1,74 @@
+{% extends 'base_seguimiento.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class="beneficiario container">
+        <div class="row">
+            <h2>Condiciones Ambientales</h2>
+        </div>
+        <div class="row">
+        <div class="col-md-12">
+            <table class="listado" id="table">
+                <thead>
+                    <tr>
+                        <th>Prioridad</th>
+                        <th>Documento</th>
+                        <th>Individuo</th>
+                        <th>Telefono</th>
+                        <th>Situacion</th>
+
+                        <th>Localidad</th>
+                        <th>Domicilio</th>
+                        
+                        <th>Contencion Familiar</th>
+                        <th>Soporte Alimenticio</th>
+                        <th>Medicacion</th>
+                        <th>Aclaracion</th>
+
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for condicion in condiciones %}
+                        <tr>
+                            <td>{{condicion.prioridad}}</td>
+                            <td>{{condicion.individuo.num_doc}}</td>
+                            <td>{{condicion.individuo.apellidos}}, {{condicion.individuo.nombres}}</td>
+                            <td>{{condicion.individuo.situacion_actual}}</td>
+
+                            <td>{{condicion.individuo.telefono}}</td>
+                            <td>{{condicion.individuo.domicilio_actual.localidad.nombre}}</td>
+                            <td>{{condicion.individuo.domicilio_actual.calle}} {{individuo.domicilio_actual.numero}}</td>
+
+                            <td>{{condicion.get_contencion_display}}</td>
+                            <td>{{condicion.get_alimentos_display}}</td>
+                            <td>{{condicion.get_medicamentos_display}}</td>
+                            <td>
+                                {{condicion.aclaracion|safe}}
+                                <b>{{condicion.operador}}</b>
+                            </td>
+
+                            <td>
+                                <a class="nolink" href="{% url 'seguimiento:cargar_seguimiento' individuo_id=condicion.individuo.id %}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/add_call.png' %}">
+                                </a>
+                                <a class="nolink" href="{% url 'informacion:ver_individuo' individuo_id=condicion.individuo.id %}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                </a>
+                                
+                                <a class="nolink" href="{% url 'seguimiento:atender_condiciones' condicion_id=condicion.id %}">
+                                    {% if condicion.atendido %}
+                                        <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                    {% else %}
+                                        <img class="icons" src="{% static '/img/icons/help.png' %}">
+                                    {% endif %}
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

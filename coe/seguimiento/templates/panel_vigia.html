@@ -73,11 +73,16 @@
                                         <p>{{individuo.condicion.get_contencion_display}}</p>
                                         <p>{{individuo.condicion.get_alimentos_display}}</p>
                                         <p>{{individuo.condicion.get_medicamentos_display}}</p>
+                                        {% if individuo.condicion.atendido %}
+                                            <p style="text-align:right;"><b>Recibiendo Atencion</b></p>
+                                        {% else %}
+                                            <p style="text-align:right;"><b>Esperando atencion</b></p>
+                                        {% endif %}
                                     {% else %}
                                         <a class="nolink" href="{% url 'seguimiento:crear_condicion' individuo_id=individuo.id %}" target="_blank">
                                             <img class="icons" src="{% static '/img/icons/change.png' %}" alt="Modificar" style="float:right;">
+                                            <p style="text-align:center;">CARGAR CONDICIONES</p>
                                         </a>
-                                        <p style="text-align:center;">CARGAR CONDICIONES</p>
                                     {% endif %}
                                 </td>
                                 

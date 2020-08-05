@@ -45,7 +45,7 @@ from .models import OperativoVehicular, TestOperativo
 from .models import Condicion
 from .forms import SeguimientoForm, NuevoVigia, NuevoIndividuo
 from .forms import OperativoForm, TestOperativoForm
-from .forms import CondicionForm
+from .forms import CondicionForm, AtenderForm
 from .functions import obtener_bajo_seguimiento, asignar_vigilante
 from .functions import realizar_alta
 from .tasks import altas_masivas
@@ -463,7 +463,10 @@ def panel_vigia(request, vigia_id=None):
         'domicilio_actual', "domicilio_actual__localidad",
         'seguimiento_actual', 'seguimiento_actual__operador',
     )
-    individuos = individuos.prefetch_related('seguimientos', 'atributos')
+    individuos = individuos.prefetch_related(
+        'seguimientos', 'atributos',
+        'condicion',
+    )
     #Ordenamos por fecha
     individuos = individuos.order_by('seguimiento_actual__fecha')
     #Lanzamos panel
@@ -730,6 +733,67 @@ def lista_sin_telefono(request):
         'has_table': True,
     })
 
+@permission_required('operadores.individuos')
+def lista_requiere_atencion(request):
+    #Obtenemos todas las condiciones que no fueron atendidas
+    condiciones = Condicion.objects.filter(atendido=False)
+    #Quitamos los que tienen menos de 20 puntos de prioridad
+    
+    #optimizamos
+    condiciones = condiciones.select_related(
+        'individuo',
+        'individuo__situacion_actual',
+        'individuo__domicilio_actual', 'individuo__domicilio_actual__localidad',
+        'operador',
+    )
+    #Lanzamos reporte
+    return render(request, "lista_condiciones.html", {
+        'condiciones': condiciones,
+        'has_table': True,
+    })
+
+@permission_required('operadores.individuos')
+def atender_condiciones(request, condicion_id):
+    #buscamos condicion PreExistente
+    condicion = Condicion.objects.get(pk=condicion_id)
+    #Creamos Form
+    form = AtenderForm(instance=condicion)
+    if request.method == "POST":#si envio info:
+        form = AtenderForm(request.POST, instance=condicion)
+        if form.is_valid():
+            condicion = form.save(commit=False)
+            condicion.operador = obtener_operador(request)
+            condicion.atendido = not condicion.atendido
+            condicion.save()
+            return render(request, "extras/close.html")
+    #Generamos titulo
+    if condicion.atendido:
+        titulo = "Negar informe de Atencion"
+    else:
+        titulo = "Informar Atencion Realizada"
+    #lanzamos form
+    return render(request, "extras/generic_form.html", {'titulo': titulo, 'form': form, 'boton': "Guardar", })
+
+@permission_required('operadores.individuos')
+def lista_atendidos(request):
+    #Obtenemos todas las condiciones que no fueron atendidas
+    condiciones = Condicion.objects.filter(atendido=True)
+    #Quitamos los que tienen menos de 20 puntos de prioridad
+    
+    #optimizamos
+    condiciones = condiciones.select_related(
+        'individuo',
+        'individuo__situacion_actual',
+        'individuo__domicilio_actual', 'individuo__domicilio_actual__localidad',
+        'operador',
+    )
+    #Lanzamos reporte
+    return render(request, "lista_condiciones.html", {
+        'condiciones': condiciones,
+        'has_table': True,
+    })
+
+#Telefonico
 @permission_required('operadores.individuos')
 def quitar_lista_sintel(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)

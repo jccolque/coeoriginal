@@ -23,7 +23,7 @@
                                     <li><a href="{% url 'seguimiento:lista_sin_vigias' %}">Listado de Individuos Sin Seguimiento</a></li>
                                     <li><a href="{% url 'seguimiento:lista_seguimientos' %}">Listado de Individuos Bajo Seguimiento</a></li>
                                     <hr>
-                                    <h3>Altas Realizadas</h3>
+                                    <h3>Altas de Aislamiento</h3>
                                     <li><a href="{% url 'seguimiento:esperando_alta_seguimiento' %}">Individuos para Alta de Seguimiento</a></li>
                                     <li><a href="{% url 'seguimiento:altas_realizadas' %}">Altas Realizadas</a></li>
                                     <hr>
@@ -32,8 +32,12 @@
                                     <li><a href="{% url 'seguimiento:esperando_test' %}">Esperando Realizacion y Resultado de Test</a></li>
                                     <li><a href="{% url 'seguimiento:test_realizados' %}">Test Realizados</a></li>
                                     <hr>
-                                    <h3>Otras Listas:</h3>
+                                    <h3>Atencion Primaria de Salud:</h3>
                                     <li><a href="{% url 'seguimiento:lista_sin_telefono' %}">Busqueda Telefonica por APS</a></li>
+                                    <li><a href="{% url 'seguimiento:lista_requiere_atencion' %}">Requisitos de Atencion Territorial por APS</a></li>
+                                    <li><a href="{% url 'seguimiento:lista_atendidos' %}">Atenciones Realizadas por APS</a></li>
+                                    <hr>
+                                    <h3>Otras Listas:</h3>
                                     <li><a href="{% url 'seguimiento:lista_autodiagnosticos' %}">Listado de Autodiagnosticos</a></li>
                                     <li><a href="{% url 'seguimiento:lista_aislados' %}">Listado de Todos los Aislados</a></li>                                   
                                 {% endif %}

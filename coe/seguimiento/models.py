@@ -36,9 +36,13 @@ class Condicion(models.Model):
     contencion = models.SmallIntegerField('Contencion Familiar', choices=NIVEL_CONTENCION, default=0)
     alimentos = models.SmallIntegerField('Soporte Alimenticio', choices=NIVEL_ALIMENTOS, default=0)
     medicamentos = models.SmallIntegerField('Medicacion', choices=NIVEL_MEDICACION, default=0)
+    atendido = models.BooleanField('Atendido', default=False)
     aclaracion = HTMLField()
     fecha = models.DateTimeField('Fecha del Informe', default=timezone.now)
     operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True, related_name="condiciones_informadas")
+    def prioridad(self):
+        dias = (timezone.now() - self.fecha).days
+        return self.contencion + self.alimentos + self.medicamentos + dias
 
 class Vigia(models.Model):
     tipo = models.CharField('Tipo Vigia', choices=TIPO_VIGIA, max_length=2, default='VE')

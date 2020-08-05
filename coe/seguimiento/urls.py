@@ -17,10 +17,6 @@ urlpatterns = [
     #Base
     path('lista/seguimientos', views.lista_seguimientos, name='lista_seguimientos'),
     path('ver/<int:individuo_id>', views.ver_seguimiento, name='ver_seguimiento'),
-    #Lista Para Liberar:
-    path('lista/esperando/alta', views.esperando_alta_seguimiento, name='esperando_alta_seguimiento'),
-    path('dar/alta/<int:individuo_id>', views.dar_alta, name='dar_alta'),
-    path('lista/altas/realizadas', views.altas_realizadas, name='altas_realizadas'),
     #Seguimiento
     path('cargar/seguimiento/<int:individuo_id>', views.cargar_seguimiento, name='cargar_seguimiento'),
     path('cargar/seguimiento/<int:individuo_id>/tipo/<str:tipo>', views.cargar_seguimiento, name='cargar_seguimiento'),
@@ -31,6 +27,13 @@ urlpatterns = [
     path('cargar/condicion/<int:individuo_id>', views.crear_condicion, name='crear_condicion'),
     path('mod/condicion/<int:individuo_id>/<int:condicion_id>', views.crear_condicion, name='mod_condicion'),
     path('del/condicion/<int:condicion_id>', views.del_condicion, name='del_condicion'),
+    path('lista/requieren/atencion', views.lista_requiere_atencion, name='lista_requiere_atencion'),
+    path('atender/condiciones/<int:condicion_id>', views.atender_condiciones, name='atender_condiciones'),
+    path('lista/atendidos', views.lista_atendidos, name='lista_atendidos'),
+    #Lista Para Liberar:
+    path('lista/esperando/alta', views.esperando_alta_seguimiento, name='esperando_alta_seguimiento'),
+    path('dar/alta/<int:individuo_id>', views.dar_alta, name='dar_alta'),
+    path('lista/altas/realizadas', views.altas_realizadas, name='altas_realizadas'),
     #Administracion
     path('lista/vigias', views.lista_vigias, name='lista_vigias'),
     path('lista/ocupacion', views.lista_ocupacion, name='lista_ocupacion'),
