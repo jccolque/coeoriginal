@@ -126,5 +126,6 @@ class DatosGis(models.Model):
 if not LOADDATA:
     #Auditoria
     auditlog.register(Seguimiento)
+    auditlog.register(Condicion)
     auditlog.register(Vigia)
     auditlog.register(DatosGis)

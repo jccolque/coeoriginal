@@ -1,6 +1,7 @@
 {% extends 'base_seguimiento.html' %}
 
 {% load static %}
+{% load auditar_tags %}
 
 {% block content %}
     <div class="beneficiario container">
@@ -64,6 +65,11 @@
                                         <img class="icons" src="{% static '/img/icons/help.png' %}">
                                     {% endif %}
                                 </a>
+
+                                <a class="nolink"  href="{% ct_auditar_obj_url condicion %}">
+                                    <img class="icons" src="{% static '/img/icons/question.png' %}">
+                                </a>
+                                
                             </td>
                         </tr>
                     {% endfor %}

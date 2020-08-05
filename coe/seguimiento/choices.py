@@ -89,5 +89,5 @@ NIVEL_MEDICACION = (
     (0, 'No requiere medicamentos'),
     (2, 'No tiene Problemas para conseguir sus medicamentos'),
     (25, 'Recibe irregularmente medicacion necesaria'),
-    (30, 'Dificultad para recibir Medicacion Vital'),
+    (30, 'Dificultad para recibir Medicacion Esencial'),
 )

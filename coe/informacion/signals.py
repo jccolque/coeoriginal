@@ -37,6 +37,7 @@ def adulto_mayor(created, instance, **kwargs):
             atributo = Atributo()
             atributo.individuo = instance
             atributo.tipo = 'PR'
+            atributo.aclaracion = "Adulto Mayor - Detectado por Edad en Sistema"
             atributo.save()
 
 @receiver(post_save, sender=Domicilio)
