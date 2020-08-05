@@ -34,7 +34,7 @@
                 <table class="listado" id="table">
                     <thead>
                         <tr>
-                            <th>Retraso</th>
+                            <th>Ultima Llamada</th>
                             <th>Individuo</th>
                             <th>Domicilio</th>
                             <th>Telefono</th>
@@ -46,8 +46,8 @@
                     </thead>
                     <tbody>
                         {% for individuo in individuos %}
-                            <tr id="{{individuo.id}}" class="{% ct_color_alerta individuo.seguimiento_actual %}">
-                                <td><b>{% ct_horas_desde individuo.seguimiento_actual.fecha %}hrs</b></td>
+                            <tr id="{{individuo.id}}" class="{% ct_color_alerta individuo.ultima_llamada %}">
+                                <td><b>{% ct_horas_desde individuo.ultima_llamada.fecha %}hrs</b></td>
                                 <td>
                                     {{individuo.apellidos}}, {{individuo.nombres}}
                                 </td>
@@ -59,17 +59,11 @@
                                         <img class="icons" src="{% static '/img/icons/change.png' %}" alt="Modificar">
                                     </a>
                                 </td>
-                                {% if individuo.seguimiento_actual %}
-                                    <td>{{individuo.seguimiento_actual.get_tipo_display}}: {{individuo.seguimiento_actual.aclaracion|safe}}</td>
-                                    <td>{{individuo.seguimiento_actual.fecha|date:"d/m H:i"}}</td>
-                                    <td>{{individuo.seguimiento_actual.operador}}</td>
-                                {% else %}
-                                    {% with individuo.seguimientos_actual as seguimiento %}
-                                        <td>{{seguimiento.get_tipo_display}}: {{seguimiento.aclaracion|safe}}</td>
-                                        <td>{{seguimiento.fecha|date:"d/m H:i"}}</td>
-                                        <td>{{seguimiento.operador}}</td>
-                                    {% endwith %}
-                                {% endif %}
+
+                                <td>{{individuo.seguimiento_actual.get_tipo_display}}: {{individuo.seguimiento_actual.aclaracion|safe}}</td>
+                                <td>{{individuo.seguimiento_actual.fecha|date:"d/m H:i"}}</td>
+                                <td>{{individuo.seguimiento_actual.operador}}</td>
+
                                 <td>
                                     <a class="nolink" href="{% url 'seguimiento:cargar_seguimiento' individuo_id=individuo.id tipo='L' %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/add_call.png' %}">

@@ -134,7 +134,13 @@ class Individuo(models.Model):
         else:
             return 'Sin Aislamiento'
     def ultima_alerta(self):
-        return self.geoposiciones.exclude(alerta='SA').last()
+        alertas = [a for a in self.geoposiciones.all() if (a.alerta != "SA" and not a.procesada)]
+        if alertas:
+            return alertas[-1]
+    def ultima_llamada(self):
+        llamadas = [l for l in self.seguimientos.all() if l.tipo == "L"]
+        if llamadas:
+            return llamadas[-1]
     def controlador(self):
         return self.atributos.filter(tipo='CP').exists()
     def familiar(self):
