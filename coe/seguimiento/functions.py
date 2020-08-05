@@ -44,12 +44,10 @@ def asignar_vigilante(individuo, tipo):
                 try:
                     vigia = relacion.relacionado.vigiladores.get(tipo=tipo)
                     vigia.controlados.add(individuo)
-                    print("ENCONTRAMOS VIGILANTE FAMILIAR")
                     break#Lo cargamos, limpiamos, terminamos
                 except:
                     pass#No tenia de ese tipo
             if not individuo.vigiladores.filter(tipo=tipo).exists():#Si no tiene Vigilante
-                print("NO ENCONTRAMOS VIGILANTE FAMILIAR")
                 #Intentamos buscarle el vigilante que menos asignados tenga
                 vigias = Vigia.objects.filter(tipo=tipo).annotate(cantidad=Count('controlados')).exclude(activo=False)
                 for vigia in vigias.order_by('cantidad'):

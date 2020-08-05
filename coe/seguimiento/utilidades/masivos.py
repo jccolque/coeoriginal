@@ -153,3 +153,59 @@ def confirmar_individuos(filename):
             seguimiento.aclaracion = "Obtenido de Excel de Epidemiologia"
             seguimiento.save()
             print("Marcado como confirmado.")
+
+def subir_viejitos(filename):
+    #Imports requeridos
+    from georef.models import Localidad
+    from georef.functions import obtener_argentina
+    from informacion.models import Individuo, Domicilio
+    from informacion.models import Atributo
+    #Generamos datos basicos:
+    argentina = obtener_argentina()
+    dict_localidades = {l.id_infragob:l for l in Localidad.objects.filter(departamento__provincia__id_infragob=38)}
+    dict_vigilados = set(a.individuo.id for a in Atributo.objects.filter(tipo='VD'))
+    #Leemos el archivo csv
+    with open(filename) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=';')
+        for row in csv_reader:
+            #0-nrodoc	1-apellido	2-nombre	3-fecnac	4-sexo	5-calle	6-NroPta	7-bardsc	8-localidad_id	9-telefonos
+            #Obtenemos individuo:
+            try:
+                individuo = Individuo.objects.get(num_doc=row[0])
+            except:
+                individuo = Individuo(num_doc=row[0])
+            #Cargamos la informacion:
+            individuo.apellidos = row[1]
+            individuo.nombres = row[2]
+            try:
+                individuo.fecha_nacimiento = datetime.strptime(row[3], "%Y-%m-%d").date()
+            except:
+                try:
+                    individuo.fecha_nacimiento = datetime.strptime(row[3], "%d/%m/%Y").date()
+                except:
+                    pass
+            individuo.sexo = row[4]
+            individuo.nacionalidad = argentina
+            individuo.telefono = row[9]
+            #Limpiamos / (inicio y final)
+            if individuo.telefono[0] == "/":
+                individuo.telefono = individuo.telefono[1:]
+            if individuo.telefono[-1] == "/":
+                individuo.telefono = individuo.telefono[:-1]
+            individuo.save()#Guardamos
+            #Generamos domicilio
+            domicilio = Domicilio(individuo=individuo)
+            domicilio.localidad = dict_localidades[row[8]]
+            domicilio.calle = row[5]
+            domicilio.numero = row[6]
+            domicilio.aclaracion = row[7]
+            domicilio.save()
+            #Atributo a generar: ('VD', 'Vigilancia de Adultos Mayores'),
+            if individuo.id not in dict_vigilados:
+                atributo = Atributo(individuo=individuo)
+                atributo.tipo = "VD"
+                atributo.aclaracion = "Se cargo masivamente de archivo."
+                atributo.save()
+                print(str(individuo) + " Puesto bajo Vigilancia.")
+            else:
+                print(str(individuo) + " Ya estaba bajo vigilancia.")

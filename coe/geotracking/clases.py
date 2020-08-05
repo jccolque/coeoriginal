@@ -54,8 +54,8 @@ class MapeadorIndividual:
         data["geoposiciones"] = []
         geoposiciones = self.individuo.geoposiciones.all()
         #Hacemos ciertos filtros para optimizar:
-        if geoposiciones.exclude(alerta="SA").filter(procesada=False).exists():
-            geoposiciones = geoposiciones.exclude(tipo="RG", alerta="SA")
+        #if geoposiciones.exclude(alerta="SA").filter(procesada=False).exists():
+        #    geoposiciones = geoposiciones.exclude(tipo="RG", alerta="SA")
         #Creamos cada entrada del dict por posicion a mostrar:
         geoposiciones = geoposiciones.order_by("-fecha")
         for geopos in geoposiciones:

@@ -22,7 +22,7 @@ def crear_progress_link(nombre_tarea):
 def limpiar_background_viejas():
     try:
         from background_task.models import Task
-        ts = Task.objects.filter(run_at__lt=timezone.now() - timedelta(minutes=5))
+        ts = Task.objects.filter(run_at__lt=timezone.now() - timedelta(minutes=1))
         ts = ts.exclude(repeat=0)
         ts.delete()
     except:
@@ -32,11 +32,11 @@ def limpiar_background_viejas():
 def inicializar_background_job(function, intervalo, function_name):
     #Tareas Background:
     try:
-        from background_task.models import Task
-        if not Task.objects.filter(verbose_name=function_name).exists():
+        from background_task.models import Task#Traemos el modelo de tareas programadas
+        if not Task.objects.filter(verbose_name=function_name).exists():#Solo si no existe
             if isinstance(intervalo, int):#si es una cantidad
-                function(repeat=3600 * intervalo, verbose_name=function_name)
-            else:
+                function(repeat=intervalo * 3600, verbose_name=function_name)
+            else:#Si es una constante
                 function(repeat=intervalo, verbose_name=function_name)
     except:
         logger = logging.getLogger("tasks")

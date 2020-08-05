@@ -23,14 +23,15 @@ logger = logging.getLogger("tasks")
 def geotrack_sin_actualizacion():
     logger.info("\nGeoTrackings Sin actualizar")
     individuos = obtener_trackeados()
-    #Quitamos los que enviaron Posicion GPS en las ultimas 2 horas:
+    #Quitamos los que enviaron Posicion GPS en las ultimas 4 horas:
     limite = timezone.now() - timedelta(hours=4)
-    individuos = individuos.exclude(geoposiciones__in=GeoPosicion.objects.filter(fecha__gt=limite, tipo='RG'))
+    posiciones_actuales = GeoPosicion.objects.filter(fecha__gt=limite, tipo='RG')
+    individuos = individuos.exclude(geoposiciones__in=posiciones_actuales)
     #Quitamos los que ya generamos alerta y aun no se proceso
-    individuos = individuos.exclude(geoposiciones__in=GeoPosicion.objects.filter(alerta='FG', procesada=False))
+    alertas_activas = GeoPosicion.objects.filter(alerta='FG', procesada=False)
+    individuos = individuos.exclude(geoposiciones__in=alertas_activas)
     #Recorrer y alertar
     for individuo in individuos:
-        logger.info("Procesamos: " + str(individuo))
         try:
             geopos = individuo.geoposiciones.last()
             geopos.alerta = 'FG'
@@ -57,14 +58,15 @@ def geotrack_sin_actualizacion():
 
 @background(schedule=hasta_madrugada(20))
 def vencer_alertas():
-    #Obtenemos todasl as alertas vencidas
-    alertas = GeoPosicion.objects.filter(procesada=False)
-    #Eliminamos las que no son alerta
-    alertas = alertas.exclude(alerta='SA')
+    #Obtenemos todas las geopos que son alerta
+    alertas = GeoPosicion.objects.exclude(alerta='SA')
+    #Eliminamos las procesadas
+    alertas = alertas.exclude(procesada=True)
     alertas = alertas.exclude(alerta='FP')#Tampoco las de sin permiso
-    #Filtramos
+    #Obtenemos todas las viejas
     limite = timezone.now() - timedelta(hours=24 * 7)#Una semana
     alertas = alertas.filter(fecha__lt=limite)
+    #Las cancelamos
     alertas.update(procesada=True, aclaracion="Dada de baja por vencimiento")
 
 @background(schedule=hasta_madrugada(15))

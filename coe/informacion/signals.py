@@ -29,13 +29,15 @@ def estado_inicial(created, instance, **kwargs):
         situacion.individuo = instance
         situacion.aclaracion = "Iniciada por Sistema"
         situacion.save()
-        #   Vejez +60 años
-        if instance.fecha_nacimiento:
-            if instance.fecha_nacimiento < (timezone.now().date() - relativedelta(years=60)):
-                atributo = Atributo()
-                atributo.individuo = instance
-                atributo.tipo = 'PR'
-                atributo.save()
+
+@receiver(post_save, sender=Individuo)
+def adulto_mayor(created, instance, **kwargs):
+    if instance.fecha_nacimiento:
+        if instance.fecha_nacimiento < (timezone.now().date() - relativedelta(years=60)):
+            atributo = Atributo()
+            atributo.individuo = instance
+            atributo.tipo = 'PR'
+            atributo.save()
 
 @receiver(post_save, sender=Domicilio)
 def domicilio_actual(created, instance, **kwargs):

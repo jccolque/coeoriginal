@@ -267,28 +267,39 @@ def delete_geopos(request, geoposicion_id):
 
 @permission_required('operadores.geotracking')
 def cambiar_base(request, geoposicion_id):
-    #Obtenemos la nueva base:
-    geopos = GeoPosicion.objects.select_related('individuo').get(pk=geoposicion_id)
+    #Obtenemos operador
     operador = obtener_operador(request)
-    #Desactivamos la anterior
-    GeoPosicion.objects.filter(individuo=geopos.individuo, tipo='PC').update(tipo='RG', aclaracion="Desactivada: "+str(operador))
-    #Desactivamos todas las alarmas
-    GeoPosicion.objects.filter(individuo=geopos.individuo
-        ).exclude(
-            alerta='SA'
-        ).update(
+    #Obtenemos base:
+    old_base = GeoPosicion.objects.select_related('individuo').get(pk=geoposicion_id)
+    #Desactivamos base anterior
+    old_base.tipo = "RG"
+    old_base.aclaracion = "Desactivada por: "+str(operador)
+    old_base.save()
+    #Desactivamos todas las alarmas previas
+    GeoPosicion.objects.filter(individuo=old_base.individuo
+        ).exclude(#No afectamos las posteriores a base marcada
+            fecha__gt=old_base.fecha,
+        ).exclude(#No afectamos las que no son alertas
+            alerta='SA',
+        ).exclude(#No afectamos las que ya fueron procesadas
             procesada=True,
+        ).update(
+            procesada=True,#Marcamos como procesada
             aclaracion="Desactivada por Cambio de Punto de Control. " + str(operador)
     )
-    #Generamos nuevo inicio Tracking
-    geopos.tipo = 'PC'
-    geopos.operador = operador
-    geopos.aclaracion = "PUNTO DE CONTROL - Definido por:" + str(operador)
-    geopos.save()
+    #Generamos nuevo Puntoo de Control:
+    new_base = GeoPosicion(individuo=old_base.individuo)
+    new_base.tipo = 'PC'
+    new_base.latitud = old_base.latitud
+    new_base.longitud = old_base.longitud
+    new_base.fecha = old_base.fecha
+    new_base.operador = operador
+    new_base.aclaracion = "PUNTO DE CONTROL - Definido por:" + str(operador)
+    new_base.save()
     #Renovamos cache para proximos checks
-    renovar_base(geopos)
+    renovar_base(new_base)
     #Volvemos al mapa
-    return redirect('geotracking:ver_tracking', individuo_id=geopos.individuo.id)
+    return redirect('geotracking:ver_tracking', individuo_id=old_base.individuo.id)
 
 @permission_required('operadores.geotracking')
 def config_tracking(request, individuo_id):

@@ -16,6 +16,7 @@ class InformacionConfig(AppConfig):
         if not LOADDATA:
             #Señales
             from .signals import estado_inicial
+            from .signals import adulto_mayor
             from .signals import situacion_actual
             from .signals import domicilio_actual
             from .signals import relacion_domicilio
