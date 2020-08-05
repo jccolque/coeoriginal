@@ -34,7 +34,7 @@
                             <li><a href="{% url 'inscripciones:lista_peticiones_org' %}">Listado de Peticiones de Organizaciones</a></li>
                             {% if request.user.is_superuser %}
                                 <hr> 
-                                <li><a href="{% url 'admin:index' %}">Opcion del Administrador</a></li>
+                                <li><a href="{% url 'admin:index' %}">Administrador</a></li>
                             {% endif %}
                         </ul>
                     </div>

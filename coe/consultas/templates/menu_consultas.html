@@ -44,7 +44,7 @@
 
                             {% if request.user.is_superuser %}
                                 <hr>
-                                <li><a href="{% url 'operadores:menu' %}">Opcion del Administrador</a></li>
+                                <li><a href="{% url 'admin:index' %}">Administrador</a></li>
                             {% endif %}
                         </ul>
                     </div>

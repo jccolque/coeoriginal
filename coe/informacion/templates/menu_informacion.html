@@ -40,7 +40,7 @@
 
                             {% if request.user.is_superuser %}
                                 <h3>Uso Bajo Supervision:</h3>
-                                <li><a href="{% url 'documentos:menu' %}">Opcion del Administrador</a></li>
+                                <li><a href="{% url 'admin:index' %}">Administrador</a></li>
                             {% endif %}
                         </ul>
                     </div>

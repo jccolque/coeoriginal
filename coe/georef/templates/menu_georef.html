@@ -24,10 +24,6 @@
                                 <li><a href="{% url 'georef:lista_barrios'  %}">Listado Barrios</a></li>
                                 <li><a href="{% url 'georef:lista_ubicaciones' %}">Listado Ubicaciones Estrategicas</a></li>
                             {% endif %}
-                            <hr>
-                            {% if request.user.is_superuser %}
-                                <li><a href="{% url 'georef:upload_localidades' %}">Upload CSV Masivo</a></li>
-                            {% endif %}
                         </ul>
                     </div>
                     <div class="col-md-4">

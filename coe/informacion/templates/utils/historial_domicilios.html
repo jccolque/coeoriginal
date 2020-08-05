@@ -21,7 +21,7 @@
                                 <img class="icons" src="{% static '/img/icons/house.png' %}">
                             </a>
                         {% endif %}
-                        {% if request.user.is_superuser %}
+                        {% if perms.operadores.admin_informacion %}
                             <a href="{% url 'informacion:del_domicilio' domicilio_id=dom.id %}">
                                 <img class="icons" src="{% static '/img/icons/delete.png' %}">
                             </a>

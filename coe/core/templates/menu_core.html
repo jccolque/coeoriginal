@@ -19,11 +19,6 @@
                             {% if user.is_staff %}
                                 <li><a href="{% url 'admin:index' %}">Administrador</a></li>
                             {% endif %}
-
-                            {% if request.user.is_superuser %}
-                                <li><a href="{% url 'wservices:menu' %}">Web Services</a></li>
-                            {% endif %}
-
                             <li><a href="{% url 'core:home_logout' %}">Cerrar Sesion</a></li>                            
                         </ul>
                     </div>
