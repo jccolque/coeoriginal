@@ -62,13 +62,11 @@ def asignar_vigilante(individuo, tipo):
         else:
             #No tiene telefono
             if not individuo.seguimientos.filter(tipo="TE").exists():
-                print("No tiene Seguimiento")
                 #Si no esta informada la falta, le metemos seguimiento: "TE"
                 seg = Seguimiento(individuo=individuo)
                 seg.tipo = "TE"
                 seg.aclaracion = "Se intento asignar Vigilante, no tiene telefono"
                 seg.save()
-                print("Creamos seguimiento")
     except:
         logger.info("Fallo asignar_vigilante: :\n"+str(traceback.format_exc()))
 

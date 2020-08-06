@@ -269,7 +269,7 @@ def cambiar_base(request, geoposicion_id):
     #Obtenemos operador
     operador = obtener_operador(request)
     #Obtenemos base:
-    old_base = GeoPosicion.objects.select_related('individuo').get(pk=geoposicion_id)
+    old_base = GeoPosicion.objects.get(pk=geoposicion_id)
     #Desactivamos base anterior
     old_base.tipo = "RG"
     old_base.aclaracion = "Desactivada por: "+str(operador)
