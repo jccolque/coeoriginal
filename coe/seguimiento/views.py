@@ -390,6 +390,8 @@ def rellenar_vigia(request, vigia_id):
     individuos = Individuo.objects.filter(atributos__in=pedido_actualizado)
     #descartamos los que ya tienen seguimiento de ese tipo:
     individuos = individuos.exclude(vigiladores__tipo=vigia.tipo)
+    #descartamos los que no tienen telefono
+    individuos = individuos.exclude(seguimientos__tipo="TE")
     #Ordenamos de mas tiempo sin vigilancia
         #Podriamos switchear la busqueda y trabajar con atributos (ordenar con fecha)
     #asignamos hasta llenar el cupo
