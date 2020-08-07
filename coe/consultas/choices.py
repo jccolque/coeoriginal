@@ -1,6 +1,8 @@
 TIPO_LLAMADA = (
     ('CT', 'Consulta Tecnica'),
     ('CM', 'Consulta Medica'),
+    ('CP', 'Consulta Ingreso Provincial/Permisos'),
+    ('CE', 'Consulta Comercial/Protocolos'),
 )
 
 TIPO_TELEFONISTA = (
