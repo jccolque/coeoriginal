@@ -394,15 +394,25 @@ def rellenar_vigia(request, vigia_id):
     individuos = individuos.exclude(seguimientos__tipo="TE")
     #Ordenamos de mas tiempo sin vigilancia
         #Podriamos switchear la busqueda y trabajar con atributos (ordenar con fecha)
-    #asignamos hasta llenar el cupo
-    for individuo in individuos:
-        if vigia.controlados.count() < vigia.max_controlados:
-            #Si aun hay lugar, lo agregamos
-            vigia.controlados.add(individuo)
-        else:#Si ya no hay lugar, terminamos
-            break
-    #Volvemos al panel
-    return redirect('seguimiento:ver_panel', vigia_id=vigia_id)
+    #Si confirma
+    if request.method == "POST":
+        #asignamos hasta llenar el cupo
+        for individuo in individuos:
+            if vigia.controlados.count() < vigia.max_controlados:
+                #Si aun hay lugar, lo agregamos
+                vigia.controlados.add(individuo)
+            else:#Si ya no hay lugar, terminamos
+                break
+        #Volvemos al panel
+        return redirect('seguimiento:ver_panel', vigia_id=vigia_id)
+    #Mostramos el listado:
+    return render(request, 'rellenar_vigia.html', {
+            'vigia': vigia,
+            'individuos': individuos[0:vigia.cap_disponible()],
+            'has_form': True,
+        }
+    )
+
 
 @permission_required('operadores.seguimiento_admin')
 def del_vigia(request, vigia_id):

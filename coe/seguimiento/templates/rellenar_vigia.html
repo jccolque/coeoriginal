@@ -1,0 +1,51 @@
+{% extends 'base/base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <section class="formulario">
+        <section class="formulario-container">
+            <h2>Ocupar capacidad Disponible:</h2>
+            <p class="texto">Hemos encontrado los siguientes individuos que requieren {{vigia.get_tipo_display}}:</p>
+                <table class="listado" id="table">
+                <thead>
+                    <tr>
+                        <th>Individuo</th>
+                        <th>Telefono</th>
+                        <th>Situacion</th>
+                        <th>Ver</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for individuo in individuos %}
+                        <tr style="background-color:white;">
+                            <td>{{individuo}}</td>
+                            <td>{{individuo.telefono}}</td>
+                            <td>{{individuo.situacion_actual}}</td>
+                            <td>
+                                <a class="nolink" href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <hr>
+            <p class="texto">Los agregaremos a su panel.</p>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <br>
+                <p class="texto"><b>Seguro desea continuar?<b></p>
+                <div class="col-sm-4 offset-4"></div>
+                    <div class="col-sm-2">
+                        <input type="button" value="Cancelar" onclick="history.back()">
+                    </div>
+                    <div class="col-sm-2">
+                        <button type="submit">Confirmar</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </section>
+{% endblock %}
