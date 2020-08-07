@@ -168,7 +168,7 @@ def subir_viejitos(filename):
     with open(filename, encoding='ISO-8859-1') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=';')
         for row in csv_reader:
-            #0-nrodoc	1-apellido	2-nombre	3-fecnac	4-sexo	5-calle	6-NroPta	7-bardsc	8-localidad_id	9-telefonos
+            #0-nrodoc	1-apellido	2-nombre	3-fecnac	4-sexo	5-calle	6-NroPta	7-barrio	8-localidad_id	9-telefonos
             #Obtenemos individuo:
             try:
                 individuo = Individuo.objects.get(num_doc=row[0])
@@ -197,12 +197,13 @@ def subir_viejitos(filename):
                 pass
             individuo.save()#Guardamos
             #Generamos domicilio
-            domicilio = Domicilio(individuo=individuo)
-            domicilio.localidad = dict_localidades[row[8]]
-            domicilio.calle = row[5]
-            domicilio.numero = row[6]
-            domicilio.aclaracion = row[7]
-            domicilio.save()
+            if row[5]:
+                domicilio = Domicilio(individuo=individuo)
+                domicilio.localidad = dict_localidades[row[8]]
+                domicilio.calle = row[5]
+                domicilio.numero = row[6]
+                domicilio.aclaracion = row[7]
+                domicilio.save()
             #Atributo a generar: ('VD', 'Vigilancia de Adultos Mayores'),
             if individuo.id not in dict_vigilados:
                 atributo = Atributo(individuo=individuo)
