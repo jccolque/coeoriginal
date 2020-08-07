@@ -150,9 +150,7 @@ class Ubicacion(models.Model):
         individuos = individuos.select_related('domicilio_actual', 'situacion_actual', 'appdata')
         return individuos
     def capacidad_ocupada(self):
-        return self.aislados_actuales().count()
-
-
+        return sum([1 for a in self.aislados_actuales()])
 
 if not LOADDATA:
     #Auditoria

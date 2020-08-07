@@ -50,6 +50,13 @@ TIPO_CONDUCTA = (
     ('H', 'Enterrado'),
 )
 
+TIPO_DOMICILIO = (
+    ('HO', 'Hogar'),
+    ('LA', 'Laboral'),
+    ('AI', 'Aislamiento'),
+    ('IN', 'Aislamiento'),
+)
+
 TIPO_RELACION = (
     ('F', 'Familiar'),
     ('CE', 'Contacto Bajo Riesgo'),

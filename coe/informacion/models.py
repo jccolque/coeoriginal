@@ -16,6 +16,7 @@ from georef.models import Nacionalidad, Localidad, Ubicacion
 #Imports de la app
 from .choices import TIPO_IMPORTANCIA, TIPO_ARCHIVO
 from .choices import TIPO_VEHICULO, TIPO_ESTADO, TIPO_CONDUCTA
+from .choices import TIPO_DOMICILIO
 from .choices import TIPO_RELACION
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA, TIPO_PATOLOGIA
 from .choices import TIPO_DOCUMENTO
@@ -84,7 +85,11 @@ class Individuo(models.Model):
         if doms:
             return doms[-1]
     def domicilio_retorno(self):#El mas actualizado que no es de aislamiento
-        return self.domicilios.filter(aislamiento=False).last()
+        return self.domicilios.filter(aislamiento=False, tipo="HO").last()
+    def domicilio_laboral(self):
+        doms = [d for d in self.domicilios.all() if d.tipo=="LA"]
+        if doms:
+            return doms[-1]
     def geoposicion(self):
         return self.geoposiciones.last()
     def localidad_actual(self):
@@ -176,6 +181,7 @@ class Relacion(models.Model):#Origen del Dato
 #Datos del individuo
 class Domicilio(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="domicilios")
+    tipo = models.CharField('Tipo Domicilio', choices=TIPO_DOMICILIO, max_length=2, default='HO')
     localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="domicilios_individuos")
     calle = models.CharField('Calle', max_length=200)
     numero = models.CharField('Numero', max_length=100)

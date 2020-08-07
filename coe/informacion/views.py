@@ -600,7 +600,11 @@ def del_domicilio(request, domicilio_id=None):
 @permission_required('operadores.individuos')
 def elegir_ubicacion(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
+    #Obtenemos y optimizamos ubicaciones
     ubicaciones = Ubicacion.objects.filter(tipo__in=('AI', 'IN'))
+    ubicaciones = ubicaciones.select_related('localidad')
+    ubicaciones = ubicaciones.prefetch_related('aislados', 'aislados__ubicacion')
+    #Mostramos lista
     return render(request, "seleccionar_ubicacion.html", {
         'individuo': individuo,
         'ubicaciones': ubicaciones,
@@ -629,10 +633,11 @@ def trasladar(request, individuo_id, ubicacion_id, vehiculo_id):
     vehiculo = Vehiculo.objects.get(pk=vehiculo_id)
     #Creamos nuevo domicilio:
     domicilio = Domicilio(individuo=individuo)
-    domicilio.localidad = ubicacion.localidad
+    domicilio.tipo = ubicacion.tipo
     domicilio.calle = ubicacion.calle
     domicilio.numero = ubicacion.numero
     domicilio.aclaracion = ubicacion.nombre + " (Traslado Via Sistema)"
+    domicilio.localidad = ubicacion.localidad
     domicilio.aislamiento = True
     domicilio.ubicacion = ubicacion
     domicilio.save()

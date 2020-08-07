@@ -187,9 +187,15 @@
                                             </a>
                                         {% endif %}
                                     {% endwith %}
+                                    {% include 'utils/historial_domicilios.html' %}
                                 </p>
                             {% endwith %}
-                            {% include 'utils/historial_domicilios.html' %}
+                            
+                            {% with individuo.domicilio_laboral as domicilio %}
+                                {% if domicilio %}
+                                <p><b>Domicilio Laboral:</b> {{domicilio.calle}} {{domicilio.numero}}, {{domicilio.localidad.nombre}} | {{domicilio.aclaracion}}</p>
+                                {% endif %}
+                            {% endwith %}
                         {% else %}
                             <h4 class="alerta">EL INDIVIDUO NO REGISTRA RESIDENCIA ACTUAL:
                                 <a class="nolink"  href="{% url 'informacion:cargar_domicilio' individuo_id=individuo.id %}">

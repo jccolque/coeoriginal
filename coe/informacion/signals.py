@@ -42,7 +42,7 @@ def adulto_mayor(created, instance, **kwargs):
 
 @receiver(post_save, sender=Domicilio)
 def domicilio_actual(created, instance, **kwargs):
-    if created:
+    if created and instance.tipo != "LA":
         individuo = instance.individuo
         individuo.domicilio_actual = instance
         individuo.save()
