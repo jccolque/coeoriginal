@@ -56,6 +56,8 @@ class Vigia(models.Model):
     def alertas_activas(self):
         limite = timezone.now() - timedelta(hours=12)
         return sum([1 for c in self.controlados.all() if c.seguimiento_actual and c.seguimiento_actual.fecha < limite])
+    def cap_disponible(self):
+        return self.max_controlados - sum([1 for c in self.controlados.all()])
 
 #OPERATIVO
 class OperativoVehicular(models.Model):

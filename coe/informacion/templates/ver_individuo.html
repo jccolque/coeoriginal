@@ -57,6 +57,28 @@
                                     <br>
                                     <h4><b>Autodiagnostico:</b> {{individuo.appdata.get_estado_display}} ({{individuo.appdata.fecha}})</h4>
                                 {% endif %}
+                                <div class="bordeado" style="text-align:left;">
+                                    <h4><b>Condiciones SocioAmbientales:</b></h4>
+                                    {% if individuo.condicion %}
+                                        <a class="nolink" href="{% url 'seguimiento:mod_condicion' individuo_id=individuo.id condicion_id=individuo.condicion.id %}" target="_blank">
+                                            <img class="icons" src="{% static '/img/icons/change.png' %}" alt="Modificar" style="float:right;">
+                                        </a>
+                                        <p><b>Contencion:</b>{{individuo.condicion.get_contencion_display}}</p>
+                                        <p><b>Alimentacion:</b>{{individuo.condicion.get_alimentos_display}}</p>
+                                        <p><b>Medicacion:</b>{{individuo.condicion.get_medicamentos_display}}</p>
+                                        {{individuo.condicion.aclaracion|safe}}
+                                        {% if individuo.condicion.atendido %}
+                                            <p style="text-align:right;"><b>Recibiendo Atencion</b></p>
+                                        {% else %}
+                                            <p style="text-align:right;"><b>Esperando atencion</b></p>
+                                        {% endif %}
+                                    {% else %}
+                                        <a class="nolink" href="{% url 'seguimiento:crear_condicion' individuo_id=individuo.id %}" target="_blank">
+                                            <img class="icons" src="{% static '/img/icons/change.png' %}" alt="Modificar" style="float:right;">
+                                            <p style="text-align:center;">CARGAR CONDICIONES</p>
+                                        </a>
+                                    {% endif %}
+                                </div>
                             </div>
                             <div class="col-sm-5">
 
@@ -442,6 +464,50 @@
                                         </a>
                                     {% endif %}
                                 </td>
+                            </tr>
+                            {% if forloop.last %}
+                                </table>
+                            {% endif %}
+                        {% endfor %}
+
+                        <!-- Llamadas Telefonicas -->
+                        {% for consulta in individuo.consultas.all %}
+                            {% if forloop.first %}
+                                <hr>
+                                <h3>Llamadas Telefonicas:</h3>
+                                <table class="listado">
+                                    <tr>
+                                        <th>Tipo</th>
+                                        <th>Fecha</th>
+                                        <th>Desarrollo</th>
+                                        <th>Resuelta</th>
+                                        <th>Telefonista</th>
+                                        <th>Ver</th>
+                                    </tr>
+                                {% endif %}
+                                <tr>
+                                <td>{{consulta.get_tipo_display}}</td>
+
+                                <td>{{consulta.fecha}}</td>
+                                <td>{{consulta.desarrollo|safe}}</td>
+                                <td>
+                                    {% if consulta.resuelta %}
+                                        <img class="icons" src="/static/img/icons/check.png">
+                                    {% else %}
+                                        <img class="icons" src="/static/img/icons/wrong.png">
+                                    {% endif %}
+                                </td>
+                                <td>{{consulta.telefonista}}</td>
+                                <td>
+                                    <a href="{% url 'consultas:mod_llamada' llamada_id=consulta.id %}">
+                                        <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                    </a>
+                                    {% if perms.operadores.admin_informacion %}
+                                        <a href="{% url 'consultas:del_llamada' llamada_id=consulta.id %}">
+                                            <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                        </a>
+                                    {% endif %}
+                                </li>
                             </tr>
                             {% if forloop.last %}
                                 </table>

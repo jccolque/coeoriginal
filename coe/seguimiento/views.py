@@ -380,6 +380,28 @@ def mod_estado_vigia(request, vigia_id):
     vigia.save()
     return redirect('seguimiento:ver_panel', vigia_id=vigia_id)
 
+
+@permission_required('operadores.seguimiento')
+def rellenar_vigia(request, vigia_id):
+    vigia = Vigia.objects.get(pk=vigia_id)
+    #Buscamos todas las personas que requieran seguimiento 
+    limite = timezone.now() - timedelta(days=DIAS_CUARENTENA/2)#(1/2 cuarentena)
+    pedido_actualizado = Atributo.objects.filter(tipo=vigia.tipo, fecha__gt=limite)
+    individuos = Individuo.objects.filter(atributos__in=pedido_actualizado)
+    #descartamos los que ya tienen seguimiento de ese tipo:
+    individuos = individuos.exclude(vigiladores__tipo=vigia.tipo)
+    #Ordenamos de mas tiempo sin vigilancia
+        #Podriamos switchear la busqueda y trabajar con atributos (ordenar con fecha)
+    #asignamos hasta llenar el cupo
+    for individuo in individuos:
+        if vigia.controlados.count() < vigia.max_controlados:
+            #Si aun hay lugar, lo agregamos
+            vigia.controlados.add(individuo)
+        else:#Si ya no hay lugar, terminamos
+            break
+    #Volvemos al panel
+    return redirect('seguimiento:ver_panel', vigia_id=vigia_id)
+
 @permission_required('operadores.seguimiento_admin')
 def del_vigia(request, vigia_id):
     vigia = Vigia.objects.get(pk=vigia_id)

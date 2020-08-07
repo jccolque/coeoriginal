@@ -195,6 +195,7 @@ a.boton_suelto {
     border: black 1px solid;
     border-radius: 15px;
     padding: 20px;
+    margin-bottom: 5px;
 }
 
 .importante {

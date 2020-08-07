@@ -41,6 +41,9 @@
                             </td>
                             <td>{{llamada.telefonista}}</td>
                             <td>
+                                <a href="{% url 'consultas:mod_llamada' llamada_id=llamada.id %}">
+                                    <img class="icons" src="{% static '/img/icons/change.png' %}">
+                                </a>
                                 <a href="{% url 'consultas:del_llamada' llamada_id=llamada.id %}">
                                     <img class="icons" src="{% static '/img/icons/delete.png' %}">
                                 </a>

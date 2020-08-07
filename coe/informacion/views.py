@@ -401,10 +401,12 @@ def ver_individuo(request, individuo_id):
         'relaciones__relacionado',
         'relaciones__relacionado__situacion_actual',
         'traslados', 'traslados__vehiculo',
+        'consultas', 'consultas__telefonista', 'consultas__telefonista__operador',
         'voluntariados')
     individuo = individuo.select_related(
         'situacion_actual', 
-        'domicilio_actual', 
+        'domicilio_actual',
+        'condicion',
         'appdata',
         'origen_internacional', 'origen_nacional',
         'destino')

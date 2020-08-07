@@ -359,12 +359,14 @@ def ver_panel(request, telefonista_id=None):
 
 #llamadas
 @permission_required('operadores.telefonistas')
-def cargar_llamada(request, telefonista_id, llamada_id=None, consulta_id=None):
+def cargar_llamada(request, telefonista_id=None, llamada_id=None, consulta_id=None):
     #Obtenemos datos base
-    telefonista = Telefonista.objects.get(pk=telefonista_id)
+    if telefonista_id:
+        telefonista = Telefonista.objects.get(pk=telefonista_id)
     llamada = None
     if llamada_id:
         llamada = Llamada.objects.get(pk=llamada_id)
+        telefonista = llamada.telefonista
     consulta = None
     if consulta_id:
         consulta = Consulta.objects.get(pk=consulta_id)
@@ -389,7 +391,15 @@ def del_llamada(request, llamada_id):
     #Obtenemos info
     llamada = Llamada.objects.get(pk=llamada_id)
     telefonista = llamada.telefonista
-    #La eliminamos
-    llamada.delete()
-    #Volvemos a la lista
-    return redirect('consultas:lista_llamadas', telefonista_id=telefonista.pk)
+    #Chequeamos si quiere eliminar
+    if request.method == "POST":
+        #La eliminamos
+        llamada.delete()
+        #Volvemos a la lista
+        return redirect('consultas:lista_llamadas', telefonista_id=telefonista.pk)
+    return render(request, "extras/confirmar.html", {
+            'titulo': "Eliminar Llamada",
+            'message': "Si realiza esta accion quedara registrada por su usuario.",
+            'has_form': True,
+        }
+    )

@@ -9,6 +9,14 @@
             <div class="col-sm-8">
                 <h2><b>Panel de {{vigia}}</b></h2>
                 <p><b>{{vigia.get_tipo_display}}</b></p>
+                <p>
+                    <b>Capacidad Disponible:</b> {{vigia.cap_disponible}}
+                    {% if vigia.cap_disponible > 0 %}
+                        <a class="nolink" href="{% url 'seguimiento:rellenar_vigia' vigia_id=vigia.id %}">
+                            <img class="icons" src="{% static '/img/icons/reload.png' %}" alt="Modificar">
+                        </a>
+                    {% endif %}
+                </p>
                 <p><b>Telefono:</b> {{vigia.operador.telefono}}</p>
             </div>
             <div class="col-sm-4 situacion_vigia">
