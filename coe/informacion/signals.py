@@ -49,7 +49,7 @@ def domicilio_actual(created, instance, **kwargs):
 
 @receiver(post_save, sender=Domicilio)
 def relacion_domicilio(created, instance, **kwargs):
-    if created and not instance.aislamiento:#Que no sea sitio de aislamiento
+    if created and instance.tipo not in ("IN", "AI"):#Que no sea sitio de aislamiento
         domicilios = Domicilio.objects.filter(
                         localidad=instance.localidad,
                         calle=instance.calle,

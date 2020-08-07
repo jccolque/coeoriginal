@@ -47,4 +47,22 @@ def migrar_sintomas():
 #         for pasajero in traslado.pasajeros_old.all():
 #             print(pasajero.individuo)
 #             traslado.pasajeros.add(pasajero.individuo)
-    
+
+def migrar_tipo_domicilio():
+    from informacion.models import Domicilio
+    #Obtentemos domicilios con ubicacion
+    domicilios = Domicilio.objects.exclude(ubicacion=None)
+    domicilios = domicilios.select_related("ubicacion")
+    #Informamos
+    total = domicilios.count()
+    print("Vamos a Actualizar: " + str(total))
+    contador = 0
+    #recorremos y actualizamos
+    for dom in domicilios:
+        dom.tipo = dom.ubicacion.tipo
+        dom.save()
+        #contamos:
+        contador+=1
+        if contador % 100 == 0:
+            print("llevamos: " + str(contador) + "/" + str(total))
+    print("Finalizado!")

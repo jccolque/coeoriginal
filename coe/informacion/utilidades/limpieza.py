@@ -47,7 +47,8 @@ def bajas_automaticas():
         if not dom:#Si no existe
             dom = individuo.domicilio_actual#usamos el de aislamiento
             dom.ubicacion = None#Pero blanqueado
-            dom.aislamiento = False
+            #dom.aislamiento = False
+            dom.tipo = "HO"
             dom.numero += '(pk:' + str(individuo.pk) + ')'#Agregamos 'salt' para evitar relaciones
         #Blanqueamos campos para crearlo como nuevo:
         dom.pk = None

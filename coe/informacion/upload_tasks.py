@@ -308,7 +308,7 @@ def guardar_padron_domicilios(lineas, archivo_id, ultimo=False):
                 domicilio.localidad = localidades[linea[2]]
                 domicilio.calle = linea[1]
                 domicilio.aclaracion = "PADRON"
-                domicilio.aislamiento = False
+                #domicilio.aislamiento = False
                 domicilios.append(domicilio)
     #Creamos este bloque
     Domicilio.objects.bulk_create(domicilios)

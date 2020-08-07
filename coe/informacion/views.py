@@ -287,7 +287,8 @@ def confirmar_inquilino(request, ubicacion_id, individuo_id):
                 domicilio.numero = ubicacion.numero
                 domicilio.aclaracion = ubicacion.nombre + " Habitacion:" + form.cleaned_data['habitacion']
                 domicilio.fecha = datetime.combine(form.cleaned_data['fecha'].date(), time(6,0))#Horario Fijo
-                domicilio.aislamiento = True
+                #domicilio.aislamiento = True
+                domicilio.tipo = ubicacion.tipo
                 domicilio.ubicacion = ubicacion
                 domicilio.save()
                 #Creamos Cronologia
@@ -349,7 +350,8 @@ def cargar_inquilino(request, ubicacion_id, num_doc):
             domicilio.calle = ubicacion.calle
             domicilio.numero = ubicacion.numero
             domicilio.aclaracion = ubicacion.nombre + " (Traslado Via Sistema)"
-            domicilio.aislamiento = True
+            #domicilio.aislamiento = True
+            domicilio.tipo = ubicacion.tipo
             domicilio.ubicacion = ubicacion
             domicilio.fecha = form.cleaned_data['fecha']
             domicilio.save()
@@ -638,7 +640,8 @@ def trasladar(request, individuo_id, ubicacion_id, vehiculo_id):
     domicilio.numero = ubicacion.numero
     domicilio.aclaracion = ubicacion.nombre + " (Traslado Via Sistema)"
     domicilio.localidad = ubicacion.localidad
-    domicilio.aislamiento = True
+    #domicilio.aislamiento = True
+    domicilio.tipo = ubicacion.tipo
     domicilio.ubicacion = ubicacion
     domicilio.save()
     #Creamos Cronologia

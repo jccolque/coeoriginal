@@ -83,7 +83,7 @@ def devolver_domicilio():
             if not dom:
                 dom = individuo.domicilio_actual
                 dom.ubicacion = None
-                dom.aislamiento = False
+                #dom.aislamiento = False
                 dom.numero += '(pk:' + str(individuo.pk) + ')'
             #Blanqueamos campos para crearlo como nuevo:
             dom.pk = None

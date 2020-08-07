@@ -93,7 +93,7 @@ def confirmar_sospechoso(created, instance, **kwargs):
 
 @receiver(post_save, sender=Domicilio)
 def poner_en_seguimiento(created, instance, **kwargs):
-    if created and instance.aislamiento:
+    if created and instance.tipo in ("AI", "IN"):
         individuo = instance.individuo
         #Generamos atributo de vigilancia
         atributo = Atributo(individuo=individuo)
