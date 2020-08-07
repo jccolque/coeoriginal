@@ -13,6 +13,7 @@ from coe.settings import BASE_DIR, STATIC_ROOT, MEDIA_ROOT, LOADDATA
 from coe.constantes import NOIMAGE, DIAS_CUARENTENA
 from core.choices import TIPO_DOCUMENTOS, TIPO_SEXO
 from georef.models import Nacionalidad, Localidad, Ubicacion
+from georef.functions import obtener_argentina
 #Imports de la app
 from .choices import TIPO_IMPORTANCIA, TIPO_ARCHIVO
 from .choices import TIPO_VEHICULO, TIPO_ESTADO, TIPO_CONDUCTA
@@ -65,7 +66,7 @@ class Individuo(models.Model):
     sexo = models.CharField('Sexo', max_length=1, choices=TIPO_SEXO, default='M')
     telefono = models.CharField('Telefono', max_length=50, default='+549388', null=True, blank=True)
     email = models.EmailField('Correo Electronico', null=True, blank=True)#Enviar mails
-    nacionalidad = models.ForeignKey(Nacionalidad, on_delete=models.CASCADE, related_name="individuos")
+    nacionalidad = models.ForeignKey(Nacionalidad, on_delete=models.SET_NULL, null=True, blank=True, related_name="individuos")
     cuil = models.CharField('CUIL', max_length=13, null=True, blank=True)
     origen_internacional = models.ForeignKey(Nacionalidad, on_delete=models.SET_NULL, null=True, blank=True, related_name="individuos_origen")
     origen_nacional = models.ForeignKey(Localidad, on_delete=models.SET_NULL, null=True, blank=True, related_name="individuos_origen")

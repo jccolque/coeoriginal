@@ -153,6 +153,28 @@ def mod_operador(request, operador_id=None):
     return render(request, "extras/generic_form.html", {'titulo': "Subir Archivo para Carga", 'form': form, 'boton': "Subir", })
 
 @permission_required('operadores.operadores')
+def check_individuo(request, operador_id):
+    operador = Operador.objects.get(id=operador_id)
+    #buscamos si existe individuo
+    try:
+        individuo = Individuo.objects.get(num_doc=operador.num_doc)
+        operador.individuo = individuo
+        operador.save()
+        return redirect('operadores:listar_operadores')
+    except:
+        individuo = Individuo()
+        individuo.num_doc = operador.num_doc
+        individuo.apellidos = operador.apellidos
+        individuo.nombres = operador.nombres
+        individuo.email = operador.email
+        individuo.telefono = operador.telefono
+        individuo.save()
+        #Lo asignamos:
+        operador.individuo = individuo
+        operador.save()
+        return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+
+@permission_required('operadores.operadores')
 def ver_credencial(request, operador_id):
     operador = Operador.objects.get(id=operador_id)
     return render(request, 'credencial.html', {'operador': operador,})

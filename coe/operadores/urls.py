@@ -17,6 +17,7 @@ urlpatterns = [
     path('listar/op', views.listar_operadores, name='listar_operadores'),
     path('crear/op', views.crear_operador, name='crear_operador'),
     path('modificar/op/<int:operador_id>', views.mod_operador, name='modificar_usuario'),
+    path('check/individuo/<int:operador_id>', views.check_individuo, name='check_individuo'),
     path('chpass/op/<int:operador_id>', views.cambiar_password, name='cambiar_password'),
     path('desactivar/op/<int:operador_id>', views.desactivar_usuario, name='desactivar_usuario'),
     path('activar/op/<int:operador_id>', views.activar_usuario, name='activar_usuario'),

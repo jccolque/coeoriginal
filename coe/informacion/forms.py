@@ -51,7 +51,7 @@ class IndividuoForm(forms.ModelForm):
     class Meta:
         model = Individuo
         fields= '__all__'
-        exclude = ('num_doc', 'observaciones', 'domicilio_actual', 'seguimiento_actual', 'situacion_actual', 'fotografia', 'qrpath', )
+        exclude = ('tipo_doc', 'num_doc', 'observaciones', 'domicilio_actual', 'seguimiento_actual', 'situacion_actual', 'fotografia', 'qrpath', )
         widgets = {
             'fecha_nacimiento': XDSoftDatePickerInput(attrs={'autocomplete':'off'}),
             'nacionalidad': autocomplete.ModelSelect2(url='georef:nacionalidad-autocomplete'),
