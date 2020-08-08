@@ -3,6 +3,7 @@ from datetime import timedelta
 #Imports de Django
 from django.db import models
 from django.utils import timezone
+from django.core.validators import RegexValidator
 #Imports Extras
 from tinymce.models import HTMLField
 from auditlog.registry import auditlog
@@ -17,6 +18,10 @@ from .choices import  TIPO_DENUNCIA, ESTADO_DENUNCIA
 
 # Create your models here.
 class Consulta(models.Model):
+    num_doc = models.CharField('Numero de Documento/Pasaporte', 
+        max_length=50,
+        validators=[RegexValidator('^[A-Z_\d]*$', 'Solo Mayusculas.')],
+    )
     autor = models.CharField('Nombre y Apellido', max_length=100)
     email = models.EmailField('Correo Electronico', blank=True, null=True)
     telefono = models.CharField('Telefono', max_length=100, blank=True, null=True)
@@ -51,8 +56,8 @@ class Telefonista(models.Model):
     def __str__(self):
         return str(self.operador.nombres) + ' ' + str(self.operador.apellidos)
     def cant_pendientes(self):
-        conteo = self.consultas.count()
-        conteo += self.denuncias.count()
+        conteo = sum([1 for c in self.consultas.all()])
+        conteo += sum([1 for d in self.denuncias.all()])
         return conteo
     def atenciones_24hrs(self):
         limite = timezone.now() - timedelta(hours=24)
@@ -81,7 +86,7 @@ class Respuesta(models.Model):
         return str(self.consulta) + ": " + self.respuesta
 
 class Llamada(models.Model):
-    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="consultas")
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="llamadas")
     tipo = models.CharField('Asunto', choices=TIPO_LLAMADA, max_length=2)
     desarrollo = HTMLField()
     fecha = models.DateTimeField(auto_now_add=True)

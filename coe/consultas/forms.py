@@ -16,7 +16,7 @@ from .models import Llamada
 class ConsultaForm(forms.ModelForm):
     class Meta:
         model = Consulta
-        fields = ['autor', 'email', 'telefono', 'asunto', 'descripcion']
+        fields = ['num_doc', 'autor', 'email', 'telefono', 'asunto', 'descripcion']
         widgets = {
             'descripcion': forms.Textarea(attrs={'cols': 40, 'rows': 10}),
         }

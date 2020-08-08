@@ -199,6 +199,8 @@ def ver_consulta(request, consulta_id):
             #Guardamos
             consulta.save()
             return redirect('consultas:lista_consultas')
+    #Mostramos la consulta:
+
     return render(request, 'ver_consulta.html', {"consulta": consulta, 'form': form, })
 
 @permission_required('operadores.telefonistas')
@@ -224,7 +226,9 @@ def consulta_respondida(request, consulta_id):
 @permission_required('operadores.admin_telefonistas')
 def lista_telefonistas(request, telefonista_id=None):
     telefonistas = Telefonista.objects.all()
+    #Optimizamos:
     telefonistas = telefonistas.select_related('operador', 'operador__usuario')
+    telefonistas = telefonistas.prefetch_related('consultas', 'denuncias')
     #Lanzamos listado
     return render(request, "lista_telefonistas.html", {
         'telefonistas': telefonistas,

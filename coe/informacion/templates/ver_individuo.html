@@ -477,7 +477,7 @@
                         {% endfor %}
 
                         <!-- Llamadas Telefonicas -->
-                        {% for consulta in individuo.consultas.all %}
+                        {% for llamada in individuo.llamadas.all %}
                             {% if forloop.first %}
                                 <hr>
                                 <h3>Llamadas Telefonicas:</h3>
@@ -492,24 +492,24 @@
                                     </tr>
                                 {% endif %}
                                 <tr>
-                                <td>{{consulta.get_tipo_display}}</td>
+                                <td>{{llamada.get_tipo_display}}</td>
 
-                                <td>{{consulta.fecha}}</td>
-                                <td>{{consulta.desarrollo|safe}}</td>
+                                <td>{{llamada.fecha}}</td>
+                                <td>{{llamada.desarrollo|safe}}</td>
                                 <td>
-                                    {% if consulta.resuelta %}
+                                    {% if llamada.resuelta %}
                                         <img class="icons" src="/static/img/icons/check.png">
                                     {% else %}
                                         <img class="icons" src="/static/img/icons/wrong.png">
                                     {% endif %}
                                 </td>
-                                <td>{{consulta.telefonista}}</td>
+                                <td>{{llamada.telefonista}}</td>
                                 <td>
-                                    <a href="{% url 'consultas:mod_llamada' llamada_id=consulta.id %}">
+                                    <a href="{% url 'consultas:mod_llamada' llamada_id=llamada.id %}">
                                         <img class="icons" src="{% static '/img/icons/lupa.png' %}">
                                     </a>
                                     {% if perms.operadores.admin_informacion %}
-                                        <a href="{% url 'consultas:del_llamada' llamada_id=consulta.id %}">
+                                        <a href="{% url 'consultas:del_llamada' llamada_id=llamada.id %}">
                                             <img class="icons" src="{% static '/img/icons/delete.png' %}">
                                         </a>
                                     {% endif %}

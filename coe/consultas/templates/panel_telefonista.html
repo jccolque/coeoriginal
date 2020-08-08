@@ -31,7 +31,7 @@
                                 <td>{{denuncia.descripcion}}</td>
                                 <td>
                                     <a href="{% url 'consultas:ver_denuncia' denuncia_id=denuncia.id %}" target="_blank">
-                                        Ver
+                                        <img class="icons" src="{% static '/img/icons/lupa.png' %}">
                                     </a>
                                 </td>
                             </td>
@@ -46,7 +46,7 @@
                                 <td>{{consulta.descripcion|safe}}</td>
                                 <td>
                                     <a href="{% url 'consultas:ver_consulta' consulta_id=consulta.id %}" target="_blank">
-                                        Responder
+                                        <img class="icons" src="{% static '/img/icons/lupa.png' %}">
                                     </a>
                                 </td>
                             </tr>
@@ -64,10 +64,6 @@
                 <p><a href="{% url 'consultas:llamadas_telefonista' telefonista_id=telefonista.id %}" target="_blank">Llamadas ({{llamadas.count}})</a></p>
                 <p><a href="{% url 'consultas:consultas_telefonista' telefonista_id=telefonista.id %}" target="_blank">Consultas ({{respuestas.count}})</a></p>
                 <p><a href="{% url 'consultas:denuncias_telefonista' telefonista_id=telefonista.id %}" target="_blank">Denuncias ({{denuncias.count}})</a></p>
-                <!--
-                    PROXIMAMENTE
-                    <p><a href="{% url 'consultas:denuncias_telefonista' telefonista_id=telefonista.id %}" target="_blank">Denuncias ({{denuncias.count}})</a></p>
-                -->
             </div>
         </div>
     </div>
