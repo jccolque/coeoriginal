@@ -86,7 +86,9 @@ class Individuo(models.Model):
         if doms:
             return doms[-1]
     def domicilio_retorno(self):#El mas actualizado que no es de aislamiento
-        return self.domicilios.filter(aislamiento=False, tipo="HO").last()
+        doms = [d for d in self.domicilios.all() if d.ubicacion is None]
+        if doms:
+            return doms[-1]
     def domicilio_laboral(self):
         doms = [d for d in self.domicilios.all() if d.tipo=="LA"]
         if doms:

@@ -1011,9 +1011,9 @@ def lista_ingresos_hoteles(request):
             individuos = individuos.distinct()
             #Optimizamos
             individuos = individuos.select_related('nacionalidad')
-            individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad')
+            individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__ubicacion', 'domicilio_actual__localidad')
             individuos = individuos.select_related('situacion_actual')
-            individuos = individuos.prefetch_related('domicilios', 'domicilios__localidad')
+            individuos = individuos.prefetch_related('domicilios', 'domicilios__ubicacion', 'domicilios__localidad')
             #Ordenamos
             individuos = individuos.order_by('domicilio_actual__fecha')
             return render(request, "ingresos_hoteles.html", {
