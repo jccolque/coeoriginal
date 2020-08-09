@@ -33,12 +33,16 @@
             </div>
             <div class="col-lg-5">
                 <div class="row">
+                    <!--
                     <div class="col-sm-6">
                         <a href="{% url 'inscripciones:inscripcion_proyecto' %}">
                             <img class="fotos" src="{% static 'img/proyecto_estudiantil.gif' %}">
                         </a>
-                        <a href="{% url 'app:download_app' %}">
-                            <img class="fotos" src="{% static 'img/download_app.jpg' %}" style="border-radius: 35px;">
+                    </div>
+                    -->
+                    <div class="col-sm-6">
+                        <a href="{% url 'inscripciones:inscripcion_salud' %}">
+                            <img class="fotos" src="{% static 'img/permiso_circulacion.jpeg' %}">
                         </a>
                     </div>
                     <div class="col-sm-6">
@@ -49,11 +53,9 @@
                             </a>
                         </div>
                         -->
-                        <div class="elem">
-                            <a href="{% url 'core:entregas' %}" target="_blank">
-                                <img class="fotos"  src="{% static 'img/entregas.jpg' %}">
-                            </a>
-                        </div>
+                        <a href="{% url 'core:entregas' %}" target="_blank">
+                            <img class="fotos"  src="{% static 'img/entregas.jpg' %}">
+                        </a>
 
                         <!--
                             <div class="col-sm-12">
@@ -62,10 +64,6 @@
                                 </a>
                             </div>
                         -->
-                        <a href="{% url 'inscripciones:inscripcion_salud' %}">
-                            <img class="fotos" src="{% static 'img/reclutamiento_salud.jpeg' %}">
-                        </a>
-
                     </div>
                 </div>
 
@@ -93,7 +91,14 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-sm-8 col-sm-offset-2">
+                    <div class="col-sm-6">
+
+                        <a href="{% url 'app:download_app' %}">
+                            <img class="fotos" src="{% static 'img/download_app.jpg' %}" style="border-radius: 35px;">
+                        </a>
+                    </div>
+
+                    <div class="col-sm-6">
                         <a href="{% url 'seguimiento:buscar_alta_aislamiento' %}">
                             <img class="fotos" src="{% static 'img/obtener_alta.png' %}">
                         </a>
