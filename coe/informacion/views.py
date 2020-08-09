@@ -392,6 +392,7 @@ def ver_individuo(request, individuo_id):
     #Optimizamos la busqueda
     individuo = Individuo.objects.prefetch_related(
         'domicilios', 'domicilios__localidad', 'domicilios__localidad__departamento',
+        'geoposiciones',
         'signos_vitales',
         'seguimientos', 'seguimientos__operador',
         'atributos',
@@ -403,7 +404,7 @@ def ver_individuo(request, individuo_id):
         'relaciones__relacionado',
         'relaciones__relacionado__situacion_actual',
         'traslados', 'traslados__vehiculo',
-        'consultas', 'consultas__telefonista', 'consultas__telefonista__operador',
+        'llamadas', 'llamadas__telefonista', 'llamadas__telefonista__operador',
         'voluntariados')
     individuo = individuo.select_related(
         'situacion_actual', 

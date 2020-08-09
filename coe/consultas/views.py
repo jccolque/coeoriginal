@@ -272,8 +272,8 @@ def informe_actividad(request, telefonista_id=None):
     graf_llamadas = obtener_grafico('graf_llamadas', 'Grafico Diario de Llamadas', 'L')
     graf_llamadas.reiniciar_datos()
     llamadas = Llamada.objects.filter(fecha__date__gte=limite)
-    for dia in semana:
-        for tipo in TIPO_LLAMADA:
+    for tipo in TIPO_LLAMADA:
+        for dia in semana:
             graf_llamadas.bulk_dato(
                 dia,
                 tipo[1],
