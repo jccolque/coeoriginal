@@ -70,7 +70,7 @@ class Operador(models.Model):
         ordering = ['apellidos', 'nombres']
         permissions = (
             #Consultas
-            ("telefonistas", "Operario de CallCenter."),
+            ("telefonistas", "Acceso a CallCenter."),
             ("admin_telefonistas", "Administrador de CallCenter."),
             #Operadores:
             ("operadores", "Crear/Modificar Operadores"),

@@ -94,7 +94,7 @@ class Individuo(models.Model):
         if doms:
             return doms[-1]
     def geoposicion(self):
-        geopos = self.geoposiciones.all()
+        geopos = [g for g in self.geoposiciones.all()]
         if geopos:
             return geopos[-1]
     def localidad_actual(self):

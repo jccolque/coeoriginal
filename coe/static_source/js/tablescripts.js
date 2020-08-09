@@ -19,12 +19,24 @@ $(document).ready(function() {
     var table = ocultar_cabecera();
 })
 
+
 function ocultar_cabecera() {
     $("#table tr:first").css("visibility", "hidden");
     var table = $('#table').DataTable({
         dom: 'Bfrtip',
         "pageLength": 50,
+        "lengthChange": false,                
+        "language":
+        {
+            "search": "Buscar",                    
+            "paginate":
+            {
+                "previous": "Previo",
+                "next": "Siguiente"
+            },
 
+        },
+        
         fixedHeader: true,
 
         buttons: [

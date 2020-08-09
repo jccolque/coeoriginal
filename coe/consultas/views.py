@@ -200,9 +200,8 @@ def ver_consulta(request, consulta_id):
                 pass#No la respondio un telefonista/sin asignar
             #Guardamos
             consulta.save()
-            return redirect('consultas:lista_consultas')
+            return render(request, "extras/close.html")
     #Mostramos la consulta:
-
     return render(request, 'ver_consulta.html', {"consulta": consulta, 'form': form, })
 
 @permission_required('operadores.telefonistas')
