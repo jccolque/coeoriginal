@@ -244,7 +244,7 @@ def informe_actividad(request, telefonista_id=None):
     if telefonista_id:
         telefonistas = telefonistas.filter(pk=telefonista_id)
         llamadas = llamadas.filter(telefonista__pk=telefonista_id)
-        consultas = consultas.filter(Q(respuestas__telefonista__pk=telefonista_id) | Q(telefonista__pk=telefonista_id)).distinct()
+        consultas = consultas.filter(Q(respuestas__telefonista__pk=telefonista_id) | Q(telefonistas__pk=telefonista_id)).distinct()
     #Generamos informacion:
     #llamadas
     data_llamadas = []
