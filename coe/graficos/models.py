@@ -18,7 +18,7 @@ class Grafico(models.Model):
         #Buscamos/Creamos la columna
         try:
             columna = [c for c in self.columnas.all() if c.nombre == columna_nombre][0]
-        except Columna.DoesNotExist:
+        except:
             cant = self.columnas.count() + 1
             columna = Columna(grafico=self, orden=cant, nombre=columna_nombre)
             columna.save()
@@ -41,7 +41,7 @@ class Grafico(models.Model):
         #Buscamos/Creamos la columna
         try:
             columna = [c for c in self.columnas.all() if c.nombre == columna_nombre][0]
-        except Columna.DoesNotExist:
+        except:
             cant = self.columnas.count() + 1
             columna = Columna(grafico=self, orden=cant, nombre=columna_nombre)
             columna.save()
