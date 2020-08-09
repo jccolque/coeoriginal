@@ -64,7 +64,7 @@
                         </table>
                     </div>
                     <div class="col-sm-6">
-                        GRAFICO (En progreso)
+                        {% include 'lineas.html' with graf_datos=graf_llamadas %}
                     </div>
                 </div>
                 <div class="row">
@@ -92,7 +92,7 @@
                         </table>
                     </div>
                     <div class="col-sm-6">
-                        GRAFICO (En progreso)
+                        {% include 'lineas.html' with graf_datos=graf_consultas %}
                     </div>
                 </div>
             </div>

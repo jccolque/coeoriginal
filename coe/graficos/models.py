@@ -17,7 +17,7 @@ class Grafico(models.Model):
     def agregar_dato(self, update_date, columna_nombre, fila, valor):
         #Buscamos/Creamos la columna
         try:
-            columna = self.columnas.get(nombre=columna_nombre)
+            columna = [c for c in self.columnas.all() if c.nombre == columna_nombre][0]
         except Columna.DoesNotExist:
             cant = self.columnas.count() + 1
             columna = Columna(grafico=self, orden=cant, nombre=columna_nombre)
@@ -40,7 +40,7 @@ class Grafico(models.Model):
     def bulk_dato(self, update_date, columna_nombre, fila, valor):
         #Buscamos/Creamos la columna
         try:
-            columna = self.columnas.get(nombre=columna_nombre)
+            columna = [c for c in self.columnas.all() if c.nombre == columna_nombre][0]
         except Columna.DoesNotExist:
             cant = self.columnas.count() + 1
             columna = Columna(grafico=self, orden=cant, nombre=columna_nombre)

@@ -61,20 +61,20 @@ class Telefonista(models.Model):
         return conteo
     def atenciones_24hrs(self):
         limite = timezone.now() - timedelta(hours=24)
-        conteo = Respuesta.objects.filter(telefonista=self, fecha__gt=limite).count()
-        conteo += Llamada.objects.filter(telefonista=self, fecha__gt=limite).count()
-        conteo += Aclaracion.objects.filter(operador=self.operador, fecha__gt=limite).count()
+        conteo = sum([1 for r in self.respuestas.all() if r.fecha >= limite])
+        conteo += sum([1 for l in self.llamadas.all() if l.fecha >= limite])
+        conteo += sum([1 for d in self.operador.aclaraciones.all() if d.fecha >= limite])
         return conteo
     def atenciones_7dias(self):
         limite = timezone.now() - timedelta(hours=24 * 7)
-        conteo = Respuesta.objects.filter(telefonista=self, fecha__gt=limite).count()
-        conteo += Llamada.objects.filter(telefonista=self, fecha__gt=limite).count()
-        conteo += Aclaracion.objects.filter(operador=self.operador, fecha__gt=limite).count()
+        conteo = sum([1 for r in self.respuestas.all() if r.fecha >= limite])
+        conteo += sum([1 for l in self.llamadas.all() if l.fecha >= limite])
+        conteo += sum([1 for d in self.operador.aclaraciones.all() if d.fecha >= limite])
         return conteo
     def total(self):
-        conteo = Respuesta.objects.filter(telefonista=self).count()
-        conteo += Llamada.objects.filter(telefonista=self).count()
-        conteo += Aclaracion.objects.filter(operador=self.operador).count()
+        conteo = sum([1 for r in self.respuestas.all()])
+        conteo += sum([1 for l in self.llamadas.all()])
+        conteo += sum([1 for d in self.operador.aclaraciones.all()])
         return conteo
 
 class Respuesta(models.Model):

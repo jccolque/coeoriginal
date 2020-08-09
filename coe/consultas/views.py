@@ -9,9 +9,11 @@ from django.contrib.auth.decorators import permission_required
 from django.core.mail import EmailMessage
 #Imports del proyecto
 from coe.settings import SEND_MAIL
+from core.functions import date2str
 from core.models import Aclaracion
 from core.tokens import account_activation_token
 from operadores.functions import obtener_operador
+from graficos.functions import obtener_grafico
 #Imports de la app
 from .choices import TIPO_LLAMADA
 from .models import Telefonista, Consulta, Respuesta, Llamada
@@ -237,10 +239,19 @@ def lista_telefonistas(request, telefonista_id=None):
 
 @permission_required('operadores.admin_telefonistas')
 def informe_actividad(request, telefonista_id=None):
+    #Parametros base
+    ahora = timezone.now()
+    semana = [ahora - timedelta(days=x) for x in range(0,7)]
+    semana = [dia.date() for dia in semana]
+    semana.reverse()
+    limite = semana[0]
     #obtenemos informacion
     telefonistas = Telefonista.objects.all()
     llamadas = Llamada.objects.all()
     consultas = Consulta.objects.all()
+    #Optimizamos
+    telefonistas = telefonistas.prefetch_related('respuestas', 'llamadas', 'operador', 'operador__aclaraciones')
+    #Filtramos
     if telefonista_id:
         telefonistas = telefonistas.filter(pk=telefonista_id)
         llamadas = llamadas.filter(telefonista__pk=telefonista_id)
@@ -257,8 +268,19 @@ def informe_actividad(request, telefonista_id=None):
                 llamadas.filter(tipo=tipo[0]).count(),
             ]
         )
-
-    graf_llamadas = None #PROCESAR!
+    #Graficar:
+    graf_llamadas = obtener_grafico('graf_llamadas', 'Grafico Diario de Llamadas', 'L')
+    graf_llamadas.reiniciar_datos()
+    llamadas = Llamada.objects.filter(fecha__date__gte=limite)
+    for dia in semana:
+        for tipo in TIPO_LLAMADA:
+            graf_llamadas.bulk_dato(
+                dia,
+                tipo[1],
+                date2str(dia),
+                sum([1 for l in llamadas if l.tipo==tipo[0] and l.fecha.date()==dia]),
+            )
+    graf_llamadas.bulk_save()
     #consultas
     data_consultas = []
     data_consultas.append(
@@ -285,13 +307,34 @@ def informe_actividad(request, telefonista_id=None):
             consultas.filter(respondida=True).count(),
         ]
     )
-    graf_consultas = None #PROCESAR!
+    #Grafico
+    graf_consultas = obtener_grafico('graf_consultas', 'Grafico Diario de Consultas', 'L')
+    graf_consultas.reiniciar_datos()
+    consultas = Consulta.objects.filter(fecha_consulta__date__gte=limite)
+    respuestas = Respuesta.objects.filter(fecha__date__gte=limite)
+    #Generamos grafico
+    for dia in semana:
+        graf_consultas.bulk_dato(
+            dia,
+            "Consultas",
+            date2str(dia),
+            sum([1 for c in consultas if c.fecha_consulta.date()==dia]),
+        )
+        graf_consultas.bulk_dato(
+            dia,
+            "Respuestas",
+            date2str(dia),
+            sum([1 for r in respuestas if r.fecha.date()==dia]),
+        )
+    graf_consultas.bulk_save()
     #Lanzamos reporte
     return render(request, "informe_actividad.html", {
         'telefonistas': telefonistas,
         'has_table': True,
         'llamadas': data_llamadas,
         'consultas': data_consultas,
+        'graf_llamadas': graf_llamadas,
+        'graf_consultas': graf_consultas,
     })
 
 @permission_required('operadores.admin_telefonistas')
