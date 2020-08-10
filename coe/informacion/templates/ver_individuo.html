@@ -63,6 +63,11 @@
                                         <a class="nolink" href="{% url 'seguimiento:mod_condicion' individuo_id=individuo.id condicion_id=individuo.condicion.id %}" target="_blank">
                                             <img class="icons" src="{% static '/img/icons/change.png' %}" alt="Modificar" style="float:right;">
                                         </a>
+                                        {% if perms.operadores.admin_informacion %}
+                                            <a class="nolink"  href="{% url 'seguimiento:del_condicion' condicion_id=individuo.condicion.id %}" target="_blank">
+                                                <img class="icons" src="{% static '/img/icons/delete.png' %}" alt="Eliminar" style="float:right;">
+                                            </a>
+                                        {% endif %}
                                         <p><b>Contencion:</b>{{individuo.condicion.get_contencion_display}}</p>
                                         <p><b>Alimentacion:</b>{{individuo.condicion.get_alimentos_display}}</p>
                                         <p><b>Medicacion:</b>{{individuo.condicion.get_medicamentos_display}}</p>

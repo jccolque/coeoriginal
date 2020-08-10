@@ -44,7 +44,7 @@ def baja_seguimiento():
             logger.info("Fallo baja_aislamiento: " + str(individuo))
     logger.info("Finalizamos Baja de Seguimiento\n")
 
-@background(schedule=hasta_madrugada(15))
+@background(schedule=5)#Debe ser a pedido
 def altas_masivas(inds_ids, operador_id):
     #Obtenemos todos los individuos
     individuos = Individuo.objects.filter(id__in=inds_ids)
