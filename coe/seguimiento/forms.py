@@ -13,6 +13,8 @@ from .models import Condicion
 from .functions import obtener_bajo_seguimiento
 from .choices import obtener_seguimientos
 from .models import DatosGis
+from .models import Muestra
+from .choices import ESTADO_TIPO, TIPO_PRIORIDAD, TIPO_RESULTADO
 
 #Definimos nuestros forms aqui:
 class SeguimientoForm(forms.ModelForm):
@@ -110,4 +112,64 @@ class DatosGisForm(forms.ModelForm):
         self.fields['localidad'].empty_label = "Seleccione Localidad"
         self.fields['turno'].empty_label = "Seleccione Turno"
        
+class BioqEditForm(forms.ModelForm):
+    class Meta:
+        model = Muestra
+        fields = ['resultado', 'estado',]
+        widgets = {    
+            'resultado': forms.Select(attrs={'placeholder': 'SELECCIONE RESULTADO'}),
+            'estado': forms.Select(attrs={'placeholder': 'SELECCIONE ESTADO'}),                
+        }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class':'form-control'
+            })
         
+
+class PanelEditForm(forms.ModelForm):
+    #Domicilio   
+    dom_localidad = forms.ModelChoiceField(
+        queryset=Localidad.objects.all(),
+        widget=autocomplete.ModelSelect2(url='georef:localidad-autocomplete'),
+        required=True,
+    )
+    dom_calle = forms.CharField(required=True, )
+    dom_numero = forms.CharField(required=True, )
+    dom_aclaracion = forms.CharField(required=False, )
+    #Muestra
+    estado  = forms.ChoiceField(choices=ESTADO_TIPO, required=False)
+    prioridad  = forms.ChoiceField(choices=TIPO_PRIORIDAD, required=False)
+    resultado  = forms.ChoiceField(choices=TIPO_RESULTADO, required=False)    
+    fecha_muestra = forms.DateField(widget=XDSoftDatePickerInput(attrs={'autocomplete':'off'},))
+    lugar_carga = forms.CharField(required=False, )
+    grupo_etereo = forms.CharField(required=True, )
+
+    class Meta:
+        model = Individuo
+        fields = ['num_doc', 'apellidos', 'nombres', 'sexo', 'telefono',]
+        widgets = {            
+            'num_doc': forms.TextInput(attrs={'placeholder': 'INTRODUCIR DNI'}),           
+            'apellidos': forms.TextInput(attrs={'placeholder': 'INTRODUCIR APELLIDOS'}),
+            'nombres': forms.TextInput(attrs={'placeholder': 'INTRODUCIR NOMBRES'}),
+            'sexo': forms.Select(attrs={'placeholder': 'SELECCIONE RESULTADO'}),            
+            'telefono': forms.TextInput(attrs={'placeholder': 'CANTIDAD PCR'}),               
+        }
+
+     
+
+
+class PriorForm(forms.ModelForm):
+    class Meta:
+        model = Muestra
+        fields = ['prioridad',]       
+        widgets = {      
+            'prioridad': forms.Select(attrs={'placeholder': 'SELECCIONE PRIORIDAD'}),        
+        }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class':'form-control'
+            })   

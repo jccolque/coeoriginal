@@ -1,5 +1,5 @@
 #Import de python
-from datetime import timedelta
+from datetime import datetime, timedelta
 #Imports Django
 from django.db import models
 from django.utils import timezone
@@ -113,7 +113,7 @@ class Muestra(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="muestras", null=True, blank=True)
     operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, related_name="operadores_muestras", null=True, blank=True)
     #Campos propios
-    fecha_muestra = models.DateField('Fecha de Muestra', default=datetime.date.today)
+    fecha_muestra = models.DateField('Fecha de Muestra', default=timezone.now)
     estado = models.CharField('Estado', max_length=2, choices=ESTADO_TIPO, default='EE')
     prioridad = models.CharField('Prioridad', max_length=2, choices=TIPO_PRIORIDAD, default='SP')
     resultado = models.CharField('Resultado', max_length=2, choices=TIPO_RESULTADO, default='SR')

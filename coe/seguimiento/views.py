@@ -52,6 +52,10 @@ from .tasks import altas_masivas
 from .forms import DatosGisForm
 from .models import DatosGis
 
+from .models import Muestra
+from .forms import BioqEditForm, PanelEditForm
+from .forms import PriorForm
+
 #Publico
 def buscar_alta_aislamiento(request):
     form = BuscarIndividuoSeguro()
@@ -1001,11 +1005,137 @@ class GisDel(LoginRequiredMixin, PermissionRequiredMixin, \
     success_url=reverse_lazy("seguimiento:gis_list")
     success_message="Dato Epidemiológico Eliminado Satisfactoriamente"
 
+@login_required(login_url='/login/')
+@permission_required('operadores.bioq_plp')
+def muestra_list_bioq(request):
+    muestras = Muestra.objects.all()
+    muestras = muestras.select_related('operador')
+    muestras = muestras.prefetch_related('individuo')
+    return render(request, 'muestra_list_bioq.html',{
+        'muestras': muestras,
+        'has_table': True,
+    })
 
+@login_required(login_url='/login/')
+@permission_required('operadores.panel_plp')
+def muestra_list_panel(request):
+    muestras = Muestra.objects.all()
+    muestras = muestras.select_related('operador')
+    muestras = muestras.prefetch_related('individuo')
+    return render(request, 'muestra_list_panel.html',{
+        'muestras': muestras,
+        'has_table': True,
+    })
 
+@login_required(login_url='/login/')
+@permission_required('operadores.carga_plp')
+def muestra_list_comp(request):
+    muestras = Muestra.objects.all()
+    muestras = muestras.select_related('operador')
+    muestras = muestras.prefetch_related('individuo')
+    return render(request, 'muestra_list_comp.html',{
+        'muestras': muestras,
+        'has_table': True,
+    })
 
+@login_required(login_url='/login/')
+@permission_required('operadores.bioq_plp')
+def edit_bioq(request, muestra_id):
+    muestra = None
+    form = BioqEditForm()
+    if muestra_id:
+        muestra = Muestra.objects.get(pk=muestra_id)
+        form = BioqEditForm(instance=muestra)
+    if request.method == 'POST':
+        form = BioqEditForm(request.POST, instance=muestra)
+        if form.is_valid():
+            muestra = form.save(commit=False)
+            muestra.operador = obtener_operador(request)
+            muestra.save()
+            return redirect('seguimiento:muestra_list_bioq')
+    return render(request, "extras/generic_form.html", {
+        'titulo': 'SUBIR RESULTADOS',
+        'form': form,
+        'boton': 'EDITAR',
+    })
 
+@login_required(login_url='/login/')
+@permission_required('operadores.cargar_plp')
+def cargar_plp(request, muestra_id=None):    
+    if muestra_id:
+        muestra = Muestra.objects.get(pk=muestra_id)
+        individuo = muestra.individuo
+        domicilio = individuo.domicilios.last()
+        form = PanelEditForm(
+            instance=individuo,
+            initial={
+                #Domicilio
+                'dom_localidad': domicilio.localidad,               
+                'dom_calle': domicilio.calle,
+                'dom_numero': domicilio.numero,
+                'dom_aclaracion': domicilio.aclaracion,
+                #Muestra                
+                'estado': muestra.estado,
+                'prioridad': muestra.prioridad,
+                'resultado': muestra.resultado,
+                'fecha_muestra': muestra.fecha_muestra,
+                'lugar_carga': muestra.lugar_carga,
+                'grupo_etereo': muestra.grupo_etereo,              
+            }
+        )
+        if request.method == "POST":
+            form = PanelEditForm(request.POST, instance=individuo)
+            if form.is_valid():
+                individuo = actualizar_individuo(form)                
+                muestra.estado = form.cleaned_data['estado']
+                muestra.prioridad = form.cleaned_data['prioridad']
+                muestra.resultado = form.cleaned_data['resultado']
+                muestra.fecha_muestra = form.cleaned_data['fecha_muestra']
+                muestra.lugar_carga = form.cleaned_data['lugar_carga']
+                muestra.grupo_etereo = form.cleaned_data['grupo_etereo']
+                muestra.operador = obtener_operador(request)               
+                muestra.save()
+                return redirect('seguimiento:muestra_list_comp')
+    else:
+        form = PanelEditForm()
+        if request.method == "POST":
+            form = PanelEditForm(request.POST)
+            if form.is_valid():
+                individuo = actualizar_individuo(form)
+                muestra = Muestra()                
+                muestra.estado = form.cleaned_data['estado']
+                muestra.prioridad = form.cleaned_data['prioridad']
+                muestra.resultado = form.cleaned_data['resultado']
+                muestra.fecha_muestra = form.cleaned_data['fecha_muestra']
+                muestra.lugar_carga = form.cleaned_data['lugar_carga']
+                muestra.grupo_etereo = form.cleaned_data['grupo_etereo']
+                muestra.individuo = individuo
+                muestra.operador = obtener_operador(request)
+                muestra.save()
+                return redirect('seguimiento:muestra_list_comp')
+    return render(request, "extras/generic_form.html", {
+        'titulo': "CARGA DE DATOS PLP",
+        'form': form,
+        'boton': "CARGAR DATOS",
+    })
 
-
-
-
+@login_required(login_url='/login/')
+@permission_required('operadores.panel_plp')
+def edit_panel(request, muestra_id=None):
+    muestra = None    
+    form = PriorForm()    
+    if muestra_id:
+        muestra = Muestra.objects.get(pk=muestra_id)
+        form = PriorForm(instance=muestra)        
+    if request.method == 'POST':
+        form = PriorForm(request.POST, instance=muestra)
+        if form.is_valid():
+            muestra = form.save(commit=False)   
+            muestra.operador = obtener_operador(request)
+            muestra.save()
+            return redirect('seguimiento:muestra_list_panel')
+    return render(request, "extras/generic_form.html", {
+        'titulo': 'EDITAR PRIORIDAD',
+        'form': form,
+        'boton': 'CAMBIAR PRIORIDAD'
+        })

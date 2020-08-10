@@ -78,6 +78,14 @@ urlpatterns = [
     path('gis/cargar', views.cargar_gis, name="cargar_gis"),
     path('gis/mod/datos/<int:datosgis_id>', views.cargar_gis, name="mod_gis"),
     path('gis/delete/datos/<int:pk>', GisDel.as_view(), name='gis_del'),
+    #Seguimiento PLP
+    path('plp/bioq/list', views.muestra_list_bioq, name="muestra_list_bioq"),
+    path('plp/comp/list', views.muestra_list_comp, name="muestra_list_comp"),
+    path('plp/panel/list', views.muestra_list_panel, name="muestra_list_panel"),
+    path('plp/edit/bioq/<int:muestra_id>', views.edit_bioq, name="edit_bioq"),
+    path('plp/panel/cargar', views.cargar_plp, name="cargar_plp"),
+    path('plp/editar/panel/<int:muestra_id>', views.cargar_plp, name="editar_plp"),
+    path('plp/panel_editar/<int:muestra_id>', views.edit_panel, name="editar_panel_plp"),
     #Autocomplete
     url(r'^individuosvigilados-autocomplete/$', autocomplete.IndividuosVigiladosAutocomplete.as_view(), name='individuosvigilados-autocomplete',),
     url(r'^vigias-autocomplete/$', autocomplete.VigiasAutocomplete.as_view(), name='vigias-autocomplete',),

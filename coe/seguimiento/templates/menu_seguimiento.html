@@ -55,6 +55,24 @@
                                 <li><a href="{% url 'seguimiento:gis_list' %}">Lista de Datos GeoEpidemiológicos</a></li>                               
                             {% endif %}
 
+                            {% if perms.operadores.bioq_plp %}
+                                <hr>
+                                <h3> Carga de Resultados - Bioquímicos</h3>
+                                <li><a href="{% url 'seguimiento:gis_list' %}">Lista de Muestras - Bioquímicos</a></li>                               
+                            {% endif %}
+
+                            {% if perms.operadores.carga_plp %}
+                                <hr>
+                                <h3>Carga de Muestras PLP </h3>
+                                <li><a href="{% url 'seguimiento:gis_list' %}">Lista de Muestras - Completas</a></li>                               
+                            {% endif %}
+
+                            {% if perms.operadores.panel_plp %}
+                                <hr>
+                                <h3>Panel de Muestras PLP</h3>
+                                <li><a href="{% url 'seguimiento:gis_list' %}">Panel PLP</a></li>                               
+                            {% endif %}
+
                             {% if request.user.is_superuser %}
                                 <hr>
                                 <h3>Uso Bajo Supervision:</h3>

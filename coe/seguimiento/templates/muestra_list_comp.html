@@ -1,0 +1,60 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="beneficiario container">
+    <div class="row">
+        <h2><b>Seguimiento de Muestras PCR - Módulo PLP - LISTA COMPLETA</b></h2>
+        <!-- <a class="botoncito" href="#">
+            CARGAR EXCEL
+            <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
+        </a> -->
+        <br>
+        <a class="botoncito" href="{% url 'seguimiento:cargar_plp' %}">
+            CARGA MANUAL DE REGISTROS
+            <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
+        </a>
+        <div class="col-md-12">
+            {% if not muestras  %}
+            <div class="alert alert-info">No hay Muestras Ingresadas</div>    
+            {% endif %}
+            <table class="listado" id="table">
+                <thead>
+                    <th>DNI</th>
+                    <th>Nombre Completo</th>        
+                    <th>Localidad</th>
+                    <th>Domicilio</th>                              
+                    <th>Fecha de Muestra</th>                    
+                    <th>Operador</th>
+                    <th>Grupo Etereo</th>
+                    <th>Teléfono</th>                
+                    <th>Estado</th>
+                    <th>Resultado</th>      
+                    <th class="all">Acciones</th>
+                </thead>
+                <tbody>
+                    {% for muestra in muestras %}
+                    <tr>                        
+                        <td>{{ muestra.individuo.num_doc }}</td>
+                        <td>{{ muestra.individuo.apellidos }},{{ muestra.individuo.nombres }}</td>            
+                        <td>{{ muestra.individuo.domicilio_actual.localidad }}</td>
+                        <td>{{ muestra.individuo.domicilio_actual }}</td>                                      
+                        <td>{{ muestra.fecha_muestra }}</td>                        
+                        <td>{{ muestra.operador }}</td>
+                        <td>{{ muestra.grupo_etereo }}</td>
+                        <td>{{ muestra.individuo.telefono}}</td>                       
+                        <td>{{ muestra.get_estado_display }}</td>
+                        <td>{{ muestra.get_resultado_display }}</td>             
+                        <td>                                              
+                        <a href="{% url 'seguimiento:editar_plp' muestra_id=muestra.id %}">
+                            <img class="icons" src="{% static '/img/icons/change.png' %}">
+                        </a>                                                                                         
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
