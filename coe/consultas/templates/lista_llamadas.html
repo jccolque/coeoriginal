@@ -25,9 +25,13 @@
                     {% for llamada in llamadas %}
                         <tr>
                             <td>
-                                <a href="{% url 'informacion:ver_individuo' individuo_id=llamada.individuo.id %}" target="_blank">
-                                    {{llamada.individuo}}
-                                </a>
+                                {% if llamada.individuo %}
+                                    <a href="{% url 'informacion:ver_individuo' individuo_id=llamada.individuo.id %}" target="_blank">
+                                        {{llamada.individuo}}
+                                    </a>
+                                {% else %}
+                                    Anonima
+                                {% endif %}
                             </td>
                             <td>{{llamada.fecha}}</td>
                             <td>{{llamada.get_tipo_display}}</td>

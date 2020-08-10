@@ -8,7 +8,7 @@ from django.core.validators import RegexValidator
 from tinymce.models import HTMLField
 from auditlog.registry import auditlog
 #Imports del proyecto
-from core.models import Aclaracion
+from core.models import Faq, Aclaracion
 from coe.settings import LOADDATA
 from informacion.models import Individuo
 from operadores.models import Operador
@@ -86,8 +86,9 @@ class Respuesta(models.Model):
         return str(self.consulta) + ": " + self.respuesta
 
 class Llamada(models.Model):
-    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="llamadas")
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, blank=True, null=True, related_name="llamadas")
     tipo = models.CharField('Asunto', choices=TIPO_LLAMADA, max_length=2)
+    frecuente = models.ForeignKey(Faq, on_delete=models.SET_NULL, blank=True, null=True, related_name="llamadas")
     desarrollo = HTMLField()
     fecha = models.DateTimeField(auto_now_add=True)
     resuelta = models.BooleanField('Respondida', default=True)

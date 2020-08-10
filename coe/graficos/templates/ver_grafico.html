@@ -34,17 +34,19 @@
                     </div>
                     <div class="col-md-4">
                         <ul class="menu_botones">
-                            <li><a href="{% url 'graficos:mod_grafico' grafico_id=grafico.id %}">Editar Grafico</a></li>
-                            {% if grafico.publico %}
-                                <li><a href="{% url 'graficos:cambiar_estado' grafico_id=grafico.id  %}">Hacer Privado</a></li>
-                            {% else %}
-                                <li><a href="{% url 'graficos:cambiar_estado' grafico_id=grafico.id  %}">Hacer Publico</a></li>
+                            {% if perms.operadores.admin_informacion %}
+                                <li><a href="{% url 'graficos:mod_grafico' grafico_id=grafico.id %}">Editar Grafico</a></li>
+                                {% if grafico.publico %}
+                                    <li><a href="{% url 'graficos:cambiar_estado' grafico_id=grafico.id  %}">Hacer Privado</a></li>
+                                {% else %}
+                                    <li><a href="{% url 'graficos:cambiar_estado' grafico_id=grafico.id  %}">Hacer Publico</a></li>
+                                {% endif %}
+                                <hr>
+                                <li><a href="{% url 'graficos:crear_columna' grafico_id=grafico.id  %}">Agregar Columna</a></li>
+                                <li><a href="{% url 'graficos:agregar_fila' grafico_id=grafico.id  %}">Agregar Fila de Datos</a></li>
+                                <li><a href="{% url 'graficos:reniciar_datos' grafico_id=grafico.id  %}">Reiniciar Datos</a></li>
+                                <li><a href="{% url 'graficos:eliminar_grafico' grafico_id=grafico.id  %}">Eliminar</a></li>
                             {% endif %}
-                            <hr>
-                            <li><a href="{% url 'graficos:crear_columna' grafico_id=grafico.id  %}">Agregar Columna</a></li>
-                            <li><a href="{% url 'graficos:agregar_fila' grafico_id=grafico.id  %}">Agregar Fila de Datos</a></li>
-                            <li><a href="{% url 'graficos:reniciar_datos' grafico_id=grafico.id  %}">Reiniciar Datos</a></li>
-                            <li><a href="{% url 'graficos:eliminar_grafico' grafico_id=grafico.id  %}">Eliminar</a></li>
                         </ul>
                     </div>
                 </div>
@@ -58,9 +60,11 @@
                             {% else %}
                                 <img class="icons" src="/static/img/icons/private.png" alt="Oculto">
                             {% endif %}
-                            <a href="{% url 'graficos:mod_columna' grafico_id=grafico.id columna_id=columna.id %}">
-                                <img class="icons" src="{% static '/img/icons/change.png' %}">
-                            </a>
+                            {% if perms.operadores.admin_informacion %}
+                                <a href="{% url 'graficos:mod_columna' grafico_id=grafico.id columna_id=columna.id %}">
+                                    <img class="icons" src="{% static '/img/icons/change.png' %}">
+                                </a>
+                            {% endif %}
                         </h4>
                         <div class="col-md-12">
                             <table class="listado">
@@ -77,9 +81,13 @@
                                             <td>{{dato.fila}}</td>
                                             <td>{{dato.valor}}</td>
                                             <td>
-                                                <a href="{% url 'graficos:mod_dato' dato_id=dato.id %}">
-                                                    <img class="icons" src="{% static '/img/icons/change.png' %}">
-                                                </a>
+                                                {% if perms.operadores.admin_informacion %}
+                                                    <a href="{% url 'graficos:mod_dato' dato_id=dato.id %}">
+                                                        <img class="icons" src="{% static '/img/icons/change.png' %}">
+                                                    </a>
+                                                {% else %}
+                                                    No puede Editar
+                                                {% endif %}
                                             </td>
                                         </tr>
                                     {% endfor %}
