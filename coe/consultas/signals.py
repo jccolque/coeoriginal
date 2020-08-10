@@ -19,7 +19,7 @@ logger = logging.getLogger('signals')
 def asignar_denuncia(created, instance, **kwargs):
     if created:
         telefonistas = Telefonista.objects.all().annotate(cantidad=Count('consultas')+Count('denuncias'))
-        for telefonista in telefonistas.order_by('cantidad'):
+        for telefonista in telefonistas.filter(tipo__in=("MX", "DE")).order_by('cantidad'):
             if telefonista.max_pendientes > telefonista.cantidad:
                 telefonista.denuncias.add(instance)
                 break

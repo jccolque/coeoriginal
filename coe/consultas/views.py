@@ -57,7 +57,7 @@ def activar_consulta(request, consulta_id, token):
         consulta.save()
         #Validado: La asignamos a un telefonista:
         telefonistas = Telefonista.objects.all().annotate(cantidad=Count('consultas'))
-        for telefonista in telefonistas.order_by('cantidad'):
+        for telefonista in telefonistas.filter(tipo__in=("MX","ES")).order_by('cantidad'):
             if telefonista.max_pendientes > telefonista.cantidad:
                 telefonista.consultas.add(consulta)
                 break

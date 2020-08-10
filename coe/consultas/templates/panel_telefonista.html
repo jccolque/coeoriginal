@@ -8,7 +8,21 @@
         <div class="row">
             <h2><b>Panel de {{telefonista}}</b></h2>
             <p><b>Tipo de Operador: {{telefonista.get_tipo_display}}</b></p>
-            <div class="col-sm-8">
+            <div class="col-sm-6">
+                <h2>Atenciones Realizadas:</h2>
+                <p><a href="{% url 'consultas:llamadas_telefonista' telefonista_id=telefonista.id %}" target="_blank">Llamadas ({{llamadas.count}})</a></p>
+                <p><a href="{% url 'consultas:consultas_telefonista' telefonista_id=telefonista.id %}" target="_blank">Consultas ({{respuestas.count}})</a></p>
+                <p><a href="{% url 'consultas:denuncias_telefonista' telefonista_id=telefonista.id %}" target="_blank">Denuncias ({{denuncias.count}})</a></p>
+            </div>
+            <div class="col-sm-6">
+                <ul class="menu_botones">
+                    <li><a href="{% url 'consultas:cargar_llamada' telefonista_id=telefonista.id %}" target="_blank">Cargar Llamada</a></li>
+                    <li><a href="{% url 'consultas:actividad_telefonista' telefonista_id=telefonista.id %}" target="_blank">Ver estadisticas</a></li>
+                </ul>
+            </div>
+
+            <div class="col-sm-12">
+                <hr>
                 <h3>Consultas sin responder: {{telefonista.consultas.count}}</h3>
                 <table class="listado" id="table">
                     <thead>
@@ -53,17 +67,6 @@
                         {% endfor %}
                     </tbody>
                 </table>
-            </div>
-            <div class="col-sm-4">
-                <ul class="menu_botones">
-                    <li><a href="{% url 'consultas:cargar_llamada' telefonista_id=telefonista.id %}" target="_blank">Cargar Llamada</a></li>
-                    <li><a href="{% url 'consultas:actividad_telefonista' telefonista_id=telefonista.id %}" target="_blank">Ver estadisticas</a></li>
-                </ul>
-
-                <h2>Atenciones Realizadas:</h2>
-                <p><a href="{% url 'consultas:llamadas_telefonista' telefonista_id=telefonista.id %}" target="_blank">Llamadas ({{llamadas.count}})</a></p>
-                <p><a href="{% url 'consultas:consultas_telefonista' telefonista_id=telefonista.id %}" target="_blank">Consultas ({{respuestas.count}})</a></p>
-                <p><a href="{% url 'consultas:denuncias_telefonista' telefonista_id=telefonista.id %}" target="_blank">Denuncias ({{denuncias.count}})</a></p>
             </div>
         </div>
     </div>
