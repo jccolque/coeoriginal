@@ -55,7 +55,7 @@ def asignar_vigilante(individuo, tipo):
                 if not individuo.vigiladores.filter(tipo=tipo).exists():#Si no tiene Vigilante
                     #Intentamos buscarle el vigilante que menos asignados tenga
                     vigias = Vigia.objects.filter(tipo=tipo).annotate(cantidad=Count('controlados')).exclude(activo=False)
-                    for vigia in vigias.order_by('cantidad'):
+                    for vigia in vigias.order_by('-priorizar', 'cantidad'):
                         if vigia.max_controlados > vigia.cantidad:
                             vigia.controlados.add(individuo)
                             break#Lo cargamos, limpiamos, terminamos

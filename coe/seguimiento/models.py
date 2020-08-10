@@ -49,6 +49,7 @@ class Vigia(models.Model):
     aclaracion = models.CharField('Aclaraciones', max_length=200, null=True, blank=True)
     operador = models.OneToOneField(Operador, on_delete=models.CASCADE, related_name="vigia")
     max_controlados = models.SmallIntegerField('Cantidad Maxima de Seguidos', default=60)
+    priorizar = models.BooleanField('Priorizar Confirmados', default=False)
     controlados = models.ManyToManyField(Individuo, related_name='vigiladores')
     activo = models.BooleanField('Disponible', default=True)
     def __str__(self):
