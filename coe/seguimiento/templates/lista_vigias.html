@@ -29,7 +29,12 @@
                     <tbody>
                         {% for vigia in vigias %}
                             <tr>
-                                <td>{{vigia.get_tipo_display}}</td>
+                                <td>
+                                    {{vigia.get_tipo_display}}
+                                    {% if vigia.priorizar %}
+                                        (Prioriza Confirmados)
+                                    {% endif %}
+                                </td>
                                 <td>
                                     {% if vigia.aclaracion %}
                                         {{vigia.aclaracion}}

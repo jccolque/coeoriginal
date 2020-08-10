@@ -17,6 +17,7 @@ from georef.models import Localidad
 from .choices import TIPO_SEGUIMIENTO, TIPO_VIGIA, ESTADO_OPERATIVO, ESTADO_RESULTADO
 from .choices import TIPO_TURNO
 from .choices import NIVEL_CONTENCION, NIVEL_ALIMENTOS, NIVEL_MEDICACION
+from .choices import ESTADO_TIPO, TIPO_PRIORIDAD, TIPO_RESULTADO
 
 
 # Create your models here.
@@ -92,32 +93,13 @@ class TestOperativo(models.Model):#cada test realizado
 
 class DatosGis(models.Model):
     localidad = models.ForeignKey(Localidad, on_delete=models.CASCADE, related_name="Localidades")    
-    turno = models.CharField(
-        'Turno',
-        choices=TIPO_TURNO,
-        max_length=1,        
-    )
+    turno = models.CharField('Turno', choices=TIPO_TURNO, max_length=1)
     fecha_carga = models.DateTimeField('Fecha de Carga', default=timezone.now)
-
-    confirmados = models.CharField(
-        'Casos Confirmados',
-        max_length=5
-    )   
-    recuperados = models.CharField(
-        'Casos Recuperados',
-        max_length=5
-    )
-    fallecidos = models.CharField(
-        'Fallecidos',
-        max_length=5
-    )
-    pcr = models.CharField(
-        'Cantidad de PCR',
-        max_length=5
-    )
-
+    confirmados = models.CharField('Casos Confirmados', max_length=5)   
+    recuperados = models.CharField('Casos Recuperados', max_length=5)
+    fallecidos = models.CharField('Fallecidos', max_length=5)
+    pcr = models.CharField('Cantidad de PCR', max_length=5)
     operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True, related_name="datos_gis")
-
     def save(self):
         self.confirmados = self.confirmados.upper()
         self.recuperados = self.recuperados.upper()
@@ -126,9 +108,28 @@ class DatosGis(models.Model):
         super(DatosGis, self).save()
 
 
+class Muestra(models.Model):
+    #Llaves foraneas
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="muestras", null=True, blank=True)
+    operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, related_name="operadores_muestras", null=True, blank=True)
+    #Campos propios
+    fecha_muestra = models.DateField('Fecha de Muestra', default=datetime.date.today)
+    estado = models.CharField('Estado', max_length=2, choices=ESTADO_TIPO, default='EE')
+    prioridad = models.CharField('Prioridad', max_length=2, choices=TIPO_PRIORIDAD, default='SP')
+    resultado = models.CharField('Resultado', max_length=2, choices=TIPO_RESULTADO, default='SR')
+    grupo_etereo = models.CharField('Grupo Etereo', max_length=20)
+    lugar_carga = models.CharField('Lugar de Carga', max_length=100, null = True, blank = True)    
+    #Sobreescribo el método save y guardo los campos mencionados en mayusculas
+    def save(self):
+        self.estado = self.estado.upper()
+        self.prioridad = self.prioridad.upper()
+        self.resultado = self.resultado.upper()       
+        super(Muestra, self).save()
+
 if not LOADDATA:
     #Auditoria
     auditlog.register(Seguimiento)
     auditlog.register(Condicion)
     auditlog.register(Vigia)
     auditlog.register(DatosGis)
+    auditlog.register(Muestra)

@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-sm-8">
                 <h2><b>Panel de {{vigia}}</b></h2>
-                <p><b>{{vigia.get_tipo_display}}</b></p>
+                <p><b>{{vigia.get_tipo_display}}</b> {% if vigia.priorizar %}(Prioriza Confirmados){% endif %} </p>
                 <p>
                     <b>Capacidad Disponible:</b> {{vigia.cap_disponible}}
                     {% if vigia.cap_disponible > 0 %}

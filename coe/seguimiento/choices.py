@@ -91,3 +91,22 @@ NIVEL_MEDICACION = (
     (25, 'Recibe irregularmente medicacion necesaria'),
     (30, 'Dificultad para recibir Medicacion Esencial'),
 )
+#Muestreo
+ESTADO_TIPO = (
+    ('EE', 'EN ESPERA'),
+    ('EP', 'EN PROCESO'),
+    ('F', 'FINALIZADO'),
+)
+
+TIPO_PRIORIDAD = (
+    ('SP', 'SIN PRIORIDAD'),
+    ('V', 'VERDE'),
+    ('A', 'AMARILLO'),
+    ('R', 'ROJO'),
+)
+
+TIPO_RESULTADO = (
+    ('SR', 'SIN RESULTADO'),
+    ('N', 'NEGATIVO PARA CORONAVIRUS'),
+    ('P', 'POSITIVO PARA CORONAVIRUS'),
+)
