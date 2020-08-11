@@ -30,7 +30,7 @@ class NuevoTelefonistaForm(forms.ModelForm):
     class Meta:
         model = Telefonista
         fields= '__all__'
-        exclude = ('consultas', )
+        exclude = ('consultas', 'denuncias')
         widgets = {
             'operador': autocomplete.ModelSelect2(url='operadores:operadores-autocomplete'),
         }

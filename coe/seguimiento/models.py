@@ -11,6 +11,7 @@ from auditlog.registry import auditlog
 from coe.settings import LOADDATA
 from operadores.models import Operador
 from informacion.models import Individuo, Vehiculo
+from informacion.functions import actualizar_individuo
 from geotracking.models import GeoPosicion
 from georef.models import Localidad
 #Imports de la app
@@ -109,18 +110,15 @@ class DatosGis(models.Model):
 
 
 class Muestra(models.Model):
-    #Llaves foraneas
-    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="muestras", null=True, blank=True)
-    operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, related_name="operadores_muestras", null=True, blank=True)
-    #Campos propios
+    seguimiento = models.OneToOneField(Seguimiento, on_delete=models.CASCADE, related_name="muestra")
     fecha_muestra = models.DateField('Fecha de Muestra', default=timezone.now)
     estado = models.CharField('Estado', max_length=2, choices=ESTADO_TIPO, default='EE')
     prioridad = models.CharField('Prioridad', max_length=2, choices=TIPO_PRIORIDAD, default='SP')
     resultado = models.CharField('Resultado', max_length=2, choices=TIPO_RESULTADO, default='SR')
     grupo_etereo = models.CharField('Grupo Etereo', max_length=20)
-    lugar_carga = models.CharField('Lugar de Carga', max_length=100, null = True, blank = True)    
+    lugar_carga = models.CharField('Lugar de Carga', max_length=100, null = True, blank = True)
     #Sobreescribo el método save y guardo los campos mencionados en mayusculas
-    def save(self):
+    def save(self):#innecesario
         self.estado = self.estado.upper()
         self.prioridad = self.prioridad.upper()
         self.resultado = self.resultado.upper()       

@@ -43,6 +43,11 @@ def iniciar_seguimiento(created, instance, **kwargs):
         seguimiento.save()
 
 @receiver(post_save, sender=Seguimiento)
+def crear_muestra(created, instance, **kwargs):
+    if created and instance.tipo == "ET":
+        pass#Aca creamos muestra
+
+@receiver(post_save, sender=Seguimiento)
 def descartar_sospechoso(created, instance, **kwargs):
     if created and instance.tipo == "DT":
         #El estado pasa a asintomatico

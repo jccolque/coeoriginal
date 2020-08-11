@@ -221,11 +221,10 @@ def ws_ocupacion(request):
     for dom in doms:
         datos.append(
             {
-                #DAtos del pasajero
+                #Datos del pasajero
                 'num_doc': dom.individuo.num_doc,
                 'nombres': dom.individuo.nombres,
                 'apellidos': dom.individuo.apellidos,
-                'nacionalidad': dom.individuo.nacionalidad.nombre,
                 #Datos del hotel
                 'fecha_ingreso': str(dom.fecha.date()),
                 'hotel': dom.ubicacion.nombre,

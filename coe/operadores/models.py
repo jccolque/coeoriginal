@@ -94,6 +94,10 @@ class Operador(models.Model):
             ("seguimiento_admin", "Administrar Sistema de Seguimiento."),
             ("operativos", "Operativos de Test Masivos."),
             ("carga_gis", "Carga datos GeoEpidemilógicos"),
+            
+            #bioq_plp
+            #cargar_plp 
+            
             #GeoTracking
             ("geotracking", "Monitore Tracking de Individuos."),
             ("geotracking_admin", "Administrador Sistema de GeTracking."),
@@ -114,7 +118,7 @@ class Operador(models.Model):
             #Wservices
             ("wservices", "WebServices del Sistema"),
             #Extras:
-            ("tablero_comando", "Tablero de Informacion Jerarquico"),
+            ("tablero_comando", "Tableros de Informacion Jerarquica"),
         )
     def __str__(self):
         return self.apellidos + ', ' + self.nombres

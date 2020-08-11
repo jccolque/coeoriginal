@@ -1,7 +1,3 @@
-#Imports del proyecto
-from informacion.models import Individuo, Domicilio, Documento
-from seguimiento.models import Seguimiento
-
 #Definimos nuestras funciones reutilizables
 def obtener_relacionados(individuo, relaciones):
     if individuo.id not in relaciones:
@@ -11,6 +7,8 @@ def obtener_relacionados(individuo, relaciones):
     return relaciones
 
 def actualizar_individuo(form):
+    from informacion.models import Individuo, Domicilio, Documento
+    from seguimiento.models import Seguimiento
     #Instanciamos individuo
     individuo = form.save(commit=False)
     #Intentamos actualizarlo

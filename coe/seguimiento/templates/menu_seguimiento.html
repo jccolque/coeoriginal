@@ -55,22 +55,18 @@
                                 <li><a href="{% url 'seguimiento:gis_list' %}">Lista de Datos GeoEpidemiológicos</a></li>                               
                             {% endif %}
 
-                            {% if perms.operadores.bioq_plp %}
+                            {% if perms.operadores.bioq_plp and perms.operadores.carga_plp and perms.operadores.panel_plp %}
                                 <hr>
-                                <h3> Carga de Resultados - Bioquímicos</h3>
-                                <li><a href="{% url 'seguimiento:gis_list' %}">Lista de Muestras - Bioquímicos</a></li>                               
-                            {% endif %}
-
-                            {% if perms.operadores.carga_plp %}
-                                <hr>
-                                <h3>Carga de Muestras PLP </h3>
-                                <li><a href="{% url 'seguimiento:gis_list' %}">Lista de Muestras - Completas</a></li>                               
-                            {% endif %}
-
-                            {% if perms.operadores.panel_plp %}
-                                <hr>
-                                <h3>Panel de Muestras PLP</h3>
-                                <li><a href="{% url 'seguimiento:gis_list' %}">Panel PLP</a></li>                               
+                                <h3> Manejo de Test</h3>
+                                {% if perms.operadores.bioq_plp %}
+                                    <li><a href="{% url 'seguimiento:muestra_list_bioq' %}">Lista de Muestras - Bioquímicos</a></li>
+                                {% endif %}
+                                {% if perms.operadores.carga_plp %}
+                                    <li><a href="{% url 'seguimiento:muestra_list_comp' %}">Lista de Muestras - Completas</a></li>
+                                {% endif %}
+                                {% if perms.operadores.panel_plp %}
+                                    <li><a href="{% url 'seguimiento:muestra_list_panel' %}">Panel PLP</a></li>
+                                {% endif %}
                             {% endif %}
 
                             {% if request.user.is_superuser %}

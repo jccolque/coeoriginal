@@ -51,7 +51,6 @@ from .functions import realizar_alta
 from .tasks import altas_masivas
 from .forms import DatosGisForm
 from .models import DatosGis
-
 from .models import Muestra
 from .forms import BioqEditForm, PanelEditForm
 from .forms import PriorForm
@@ -1061,7 +1060,8 @@ def edit_bioq(request, muestra_id):
 
 @login_required(login_url='/login/')
 @permission_required('operadores.cargar_plp')
-def cargar_plp(request, muestra_id=None):    
+def cargar_plp(request, muestra_id=None):
+    from informacion.functions import actualizar_individuo#avoid import circular
     if muestra_id:
         muestra = Muestra.objects.get(pk=muestra_id)
         individuo = muestra.individuo
