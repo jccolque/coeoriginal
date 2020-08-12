@@ -1102,7 +1102,7 @@ def cargar_plp(request, individuo_id=None, num_doc=None):
     if request.method == "POST":
         form = PanelEditForm(request.POST, instance=individuo)       
         if form.is_valid():
-            from informacon.functions import actualizar_individuo#evitamos dependencia circular
+            from informacion.functions import actualizar_individuo#evitamos dependencia circular
             individuo = actualizar_individuo(form)
             muestra = Muestra()                
             muestra.estado = form.cleaned_data['estado']
@@ -1170,7 +1170,7 @@ def editar_muestra(request, muestra_id=None):
             instance=individuo,          
         )                  
         if form.is_valid():
-            from informacon.functions import actualizar_individuo#evitamos dependencia circular
+            from informacion.functions import actualizar_individuo#evitamos dependencia circular
             individuo = actualizar_individuo(form)                
             muestra.estado = form.cleaned_data['estado']
             muestra.prioridad = form.cleaned_data['prioridad']
