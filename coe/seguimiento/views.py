@@ -790,6 +790,9 @@ def lista_requiere_atencion(request, atrib=None):
         'individuo__domicilio_actual', 'individuo__domicilio_actual__localidad',
         'operador',
     )
+    condiciones = condiciones.prefetch_related(
+        'individuo__seguimientos', 'individuo__seguimientos__operador',
+    )
     #Lanzamos reporte
     return render(request, "lista_condiciones.html", {
         'condiciones': condiciones,
@@ -814,7 +817,7 @@ def atender_condiciones(request, condicion_id):
     if condicion.atendido:
         titulo = "Negar informe de Atencion"
     else:
-        titulo = "Informar Atencion Realizada"
+        titulo = "Informar Atencion Realizada/Eliminar Alerta"
     #lanzamos form
     return render(request, "extras/generic_form.html", {'titulo': titulo, 'form': form, 'boton': "Guardar", })
 
