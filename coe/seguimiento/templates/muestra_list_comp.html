@@ -10,7 +10,7 @@
             <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
         </a> -->
         <br>
-        <a class="botoncito" href="{% url 'seguimiento:cargar_plp' %}">
+        <a class="botoncito" href="{% url 'seguimiento:buscar_persona_muestra' %}">
             CARGA MANUAL DE REGISTROS
             <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
         </a>
@@ -46,7 +46,7 @@
                         <td>{{ muestra.get_estado_display }}</td>
                         <td>{{ muestra.get_resultado_display }}</td>             
                         <td>                                              
-                        <a href="{% url 'seguimiento:editar_plp' muestra_id=muestra.id %}">
+                        <a href="{% url 'seguimiento:editar_muestra' muestra_id=muestra.id %}">
                             <img class="icons" src="{% static '/img/icons/change.png' %}">
                         </a>                                                                                         
                         </td>

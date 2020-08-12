@@ -975,7 +975,8 @@ def altas_realizadas(request):
         'has_table': True,
     })
 
-@login_required(login_url='/login/')
+#Sistema de muestras (TEST)
+
 @permission_required('operadores.carga_gis')
 def gis_list(request):
     datosgis = DatosGis.objects.all()   
@@ -985,7 +986,7 @@ def gis_list(request):
         'has_table': True,
     })
     
-@login_required(login_url='/login/')
+
 @permission_required('operadores.carga_gis')
 def cargar_gis(request, datosgis_id=None):
     datosgis = None    
@@ -1014,7 +1015,7 @@ class GisDel(LoginRequiredMixin, PermissionRequiredMixin, \
     success_url=reverse_lazy("seguimiento:gis_list")
     success_message="Dato Epidemiológico Eliminado Satisfactoriamente"
 
-@login_required(login_url='/login/')
+#Sistema de muestras (TEST)
 @permission_required('operadores.bioq_plp')
 def muestra_list_bioq(request):
     muestras = Muestra.objects.all()
@@ -1025,7 +1026,6 @@ def muestra_list_bioq(request):
         'has_table': True,
     })
 
-@login_required(login_url='/login/')
 @permission_required('operadores.panel_plp')
 def muestra_list_panel(request):
     muestras = Muestra.objects.all()
@@ -1036,7 +1036,6 @@ def muestra_list_panel(request):
         'has_table': True,
     })
 
-@login_required(login_url='/login/')
 @permission_required('operadores.carga_plp')
 def muestra_list_comp(request):
     muestras = Muestra.objects.all()
@@ -1047,7 +1046,6 @@ def muestra_list_comp(request):
         'has_table': True,
     })
 
-@login_required(login_url='/login/')
 @permission_required('operadores.bioq_plp')
 def edit_bioq(request, muestra_id):
     muestra = None
@@ -1068,13 +1066,28 @@ def edit_bioq(request, muestra_id):
         'boton': 'EDITAR',
     })
 
-@login_required(login_url='/login/')
-@permission_required('operadores.cargar_plp')
-def cargar_plp(request, muestra_id=None):
-    from informacion.functions import actualizar_individuo#avoid import circular
-    if muestra_id:
-        muestra = Muestra.objects.get(pk=muestra_id)
-        individuo = muestra.individuo
+def buscar_persona_muestra(request):
+    form = SearchIndividuoForm()
+    if request.method == "POST":
+        form = SearchIndividuoForm(request.POST)
+        if form.is_valid():
+            num_doc = form.cleaned_data['num_doc'].upper()
+            try:
+                individuo = Individuo.objects.get(num_doc=num_doc)
+                return redirect('seguimiento:existe_plp', individuo_id=individuo.id, num_doc=num_doc)
+            except Individuo.DoesNotExist:
+                return redirect('seguimiento:cargar_plp', num_doc=num_doc)
+    return render(request, "extras/generic_form.html", {
+        'titulo': "Indicar Documento de Individuo", 
+        'form': form, 
+        'boton': "Buscar", 
+    })
+
+def cargar_plp(request, individuo_id=None, num_doc=None):
+    individuo = None
+    form = PanelEditForm(initial={"num_doc":num_doc})     
+    if individuo_id:
+        individuo = Individuo.objects.get(pk=individuo_id, num_doc=num_doc)
         domicilio = individuo.domicilios.last()
         form = PanelEditForm(
             instance=individuo,
@@ -1083,53 +1096,32 @@ def cargar_plp(request, muestra_id=None):
                 'dom_localidad': domicilio.localidad,               
                 'dom_calle': domicilio.calle,
                 'dom_numero': domicilio.numero,
-                'dom_aclaracion': domicilio.aclaracion,
-                #Muestra                
-                'estado': muestra.estado,
-                'prioridad': muestra.prioridad,
-                'resultado': muestra.resultado,
-                'fecha_muestra': muestra.fecha_muestra,
-                'lugar_carga': muestra.lugar_carga,
-                'grupo_etereo': muestra.grupo_etereo,              
+                'dom_aclaracion': domicilio.aclaracion,             
             }
         )
-        if request.method == "POST":
-            form = PanelEditForm(request.POST, instance=individuo)
-            if form.is_valid():
-                individuo = actualizar_individuo(form)                
-                muestra.estado = form.cleaned_data['estado']
-                muestra.prioridad = form.cleaned_data['prioridad']
-                muestra.resultado = form.cleaned_data['resultado']
-                muestra.fecha_muestra = form.cleaned_data['fecha_muestra']
-                muestra.lugar_carga = form.cleaned_data['lugar_carga']
-                muestra.grupo_etereo = form.cleaned_data['grupo_etereo']
-                muestra.operador = obtener_operador(request)               
-                muestra.save()
-                return redirect('seguimiento:muestra_list_comp')
-    else:
-        form = PanelEditForm()
-        if request.method == "POST":
-            form = PanelEditForm(request.POST)
-            if form.is_valid():
-                individuo = actualizar_individuo(form)
-                muestra = Muestra()                
-                muestra.estado = form.cleaned_data['estado']
-                muestra.prioridad = form.cleaned_data['prioridad']
-                muestra.resultado = form.cleaned_data['resultado']
-                muestra.fecha_muestra = form.cleaned_data['fecha_muestra']
-                muestra.lugar_carga = form.cleaned_data['lugar_carga']
-                muestra.grupo_etereo = form.cleaned_data['grupo_etereo']
-                muestra.individuo = individuo
-                muestra.operador = obtener_operador(request)
-                muestra.save()
-                return redirect('seguimiento:muestra_list_comp')
+    if request.method == "POST":
+        form = PanelEditForm(request.POST, instance=individuo)       
+        if form.is_valid():
+            from informacon.functions import actualizar_individuo#evitamos dependencia circular
+            individuo = actualizar_individuo(form)
+            muestra = Muestra()                
+            muestra.estado = form.cleaned_data['estado']
+            muestra.prioridad = form.cleaned_data['prioridad']
+            muestra.resultado = form.cleaned_data['resultado']
+            muestra.fecha_muestra = form.cleaned_data['fecha_muestra']
+            muestra.lugar_carga = form.cleaned_data['lugar_carga']
+            muestra.grupo_etereo = form.cleaned_data['grupo_etereo']
+            #muestra.operador = obtener_operador(request)               
+            muestra.individuo = individuo
+            muestra.save()
+            return redirect('seguimiento:muestra_list_comp')
     return render(request, "extras/generic_form.html", {
         'titulo': "CARGA DE DATOS PLP",
         'form': form,
         'boton': "CARGAR DATOS",
     })
 
-@login_required(login_url='/login/')
+
 @permission_required('operadores.panel_plp')
 def edit_panel(request, muestra_id=None):
     muestra = None    
@@ -1149,3 +1141,48 @@ def edit_panel(request, muestra_id=None):
         'form': form,
         'boton': 'CAMBIAR PRIORIDAD'
         })
+
+@permission_required('operadores.panel_plp')
+def editar_muestra(request, muestra_id=None):
+    muestra = Muestra.objects.get(pk=muestra_id)
+    individuo = muestra.individuo
+    domicilio = individuo.domicilios.last()
+    form = PanelEditForm(
+            instance=individuo,
+            initial={
+                #Domicilio
+                'dom_localidad': domicilio.localidad,               
+                'dom_calle': domicilio.calle,
+                'dom_numero': domicilio.numero,
+                'dom_aclaracion': domicilio.aclaracion,
+                #Muestra                
+                'estado': muestra.estado,
+                'prioridad': muestra.prioridad,
+                'resultado': muestra.resultado,
+                'fecha_muestra': muestra.fecha_muestra,
+                'lugar_carga': muestra.lugar_carga,
+                'grupo_etereo': muestra.grupo_etereo,              
+            }
+        ) 
+    if request.method == "POST":
+        form = PanelEditForm(
+            request.POST,
+            instance=individuo,          
+        )                  
+        if form.is_valid():
+            from informacon.functions import actualizar_individuo#evitamos dependencia circular
+            individuo = actualizar_individuo(form)                
+            muestra.estado = form.cleaned_data['estado']
+            muestra.prioridad = form.cleaned_data['prioridad']
+            muestra.resultado = form.cleaned_data['resultado']
+            muestra.fecha_muestra = form.cleaned_data['fecha_muestra']
+            muestra.lugar_carga = form.cleaned_data['lugar_carga']
+            muestra.grupo_etereo = form.cleaned_data['grupo_etereo']
+            #muestra.operador = obtener_operador(request)               
+            muestra.save()
+            return redirect('seguimiento:muestra_list_comp')
+    return render(request, "extras/generic_form.html", {
+        'titulo': "CARGA DE DATOS PLP",
+        'form': form,
+        'boton': "CARGAR DATOS",
+    })

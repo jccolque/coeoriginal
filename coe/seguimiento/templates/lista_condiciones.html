@@ -55,6 +55,8 @@
                                     {% if ultima %}
                                         {{ultima.aclaracion|safe}}
                                         <p><b>{{ultima.operador}}</b> (Hace: {{ultima.desde}} dias)</p>
+                                    {% else %}
+                                        Nunca recibio Atencion.
                                     {% endif %}
                                 {% endwith %}
                             </td>

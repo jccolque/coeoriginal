@@ -116,7 +116,10 @@ class DatosGis(models.Model):
 
 
 class Muestra(models.Model):
-    seguimiento = models.OneToOneField(Seguimiento, on_delete=models.CASCADE, related_name="muestra")
+    #Llaves foraneas
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="muestras", null=True, blank=True)
+    operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, related_name="operadores_muestras", null=True, blank=True)
+    #Campos propios
     fecha_muestra = models.DateField('Fecha de Muestra', default=timezone.now)
     estado = models.CharField('Estado', max_length=2, choices=ESTADO_TIPO, default='EE')
     prioridad = models.CharField('Prioridad', max_length=2, choices=TIPO_PRIORIDAD, default='SP')

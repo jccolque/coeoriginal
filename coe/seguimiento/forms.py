@@ -156,7 +156,10 @@ class PanelEditForm(forms.ModelForm):
             'sexo': forms.Select(attrs={'placeholder': 'SELECCIONE RESULTADO'}),            
             'telefono': forms.TextInput(attrs={'placeholder': 'CANTIDAD PCR'}),               
         }
+
      
+
+
 class PriorForm(forms.ModelForm):
     class Meta:
         model = Muestra

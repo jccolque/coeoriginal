@@ -94,10 +94,10 @@ class Operador(models.Model):
             ("seguimiento_admin", "Administrar Sistema de Seguimiento."),
             ("operativos", "Operativos de Test Masivos."),
             ("carga_gis", "Carga datos GeoEpidemilógicos"),
-            
-            #bioq_plp
-            #cargar_plp 
-            
+            #Muestras:
+            ("bioq_plp", "Carga de Bioquimicos PLP"),
+            ("carga_plp", "Carga Completa PLP"),
+            ("panel_plp", "Panel PLP"), 
             #GeoTracking
             ("geotracking", "Monitore Tracking de Individuos."),
             ("geotracking_admin", "Administrador Sistema de GeTracking."),
