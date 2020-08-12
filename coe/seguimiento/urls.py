@@ -28,6 +28,7 @@ urlpatterns = [
     path('mod/condicion/<int:individuo_id>/<int:condicion_id>', views.crear_condicion, name='mod_condicion'),
     path('del/condicion/<int:condicion_id>', views.del_condicion, name='del_condicion'),
     path('lista/requieren/atencion', views.lista_requiere_atencion, name='lista_requiere_atencion'),
+    path('lista/requieren/atencion/atrib/<str:atrib>', views.lista_requiere_atencion, name='lista_requiere_atencion_filtro'),
     path('atender/condiciones/<int:condicion_id>', views.atender_condiciones, name='atender_condiciones'),
     path('lista/atendidos', views.lista_atendidos, name='lista_atendidos'),
     #Lista Para Liberar:

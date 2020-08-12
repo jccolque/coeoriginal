@@ -26,7 +26,7 @@
                         <th>Soporte Alimenticio</th>
                         <th>Medicacion</th>
                         <th>Aclaracion</th>
-
+                        <th>Ultima Intervencion</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -36,9 +36,10 @@
                             <td>{{condicion.prioridad}}</td>
                             <td>{{condicion.individuo.num_doc}}</td>
                             <td>{{condicion.individuo.apellidos}}, {{condicion.individuo.nombres}}</td>
+                            <td>{{condicion.individuo.telefono}}</td>
                             <td>{{condicion.individuo.situacion_actual}}</td>
 
-                            <td>{{condicion.individuo.telefono}}</td>
+                            
                             <td>{{condicion.individuo.domicilio_actual.localidad.nombre}}</td>
                             <td>{{condicion.individuo.domicilio_actual.calle}} {{individuo.domicilio_actual.numero}}</td>
 
@@ -49,10 +50,15 @@
                                 {{condicion.aclaracion|safe}}
                                 <b>{{condicion.operador}}</b>
                             </td>
-
                             <td>
-                                <a class="nolink" href="{% url 'seguimiento:cargar_seguimiento' individuo_id=condicion.individuo.id %}" target="_blank">
-                                    <img class="icons" src="{% static '/img/icons/add_call.png' %}">
+                                {% with condicion.ultima_intervencion as ultima %}
+                                    {{ultima.aclaracion|safe}}
+                                    <p><b>{{ultima.operador}}</b> (Hace: {{ultima.desde}} dias)</p>
+                                {% endwith %}
+                            </td>
+                            <td>
+                                <a class="nolink" href="{% url 'seguimiento:cargar_seguimiento' individuo_id=condicion.individuo.id tipo="T" %}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/knock.png' %}">
                                 </a>
                                 <a class="nolink" href="{% url 'informacion:ver_individuo' individuo_id=condicion.individuo.id %}" target="_blank">
                                     <img class="icons" src="{% static '/img/icons/lupa.png' %}">

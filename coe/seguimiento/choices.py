@@ -1,6 +1,7 @@
 TIPO_SEGUIMIENTO = (
     #Todos los usuarios
     ('L', 'Llamada Telefonica'),
+    ('T', 'Intervencion en Territorio'),
     ('EM', 'Requiere Seguimiento URGENTE medico'),
     ('M', 'Reporte Medico'),
     ('C', 'Cronologia'),
@@ -30,7 +31,7 @@ TIPO_SEGUIMIENTO = (
 def obtener_seguimientos(user):
     #Tipo de Seguimientos:
     sistema = ['I', 'A', 'IT', 'AT', 'FT', 'DF', 'TA', 'RC']
-    publicos = ['L', 'EM', 'M', 'C', 'E', 'IR', 'TE','FS', 'PT', 'FA']
+    publicos = ['L', 'T', 'EM', 'M', 'C', 'E', 'IR', 'TE','FS', 'PT', 'FA']
     epidemiologia = ['ET', 'CT', 'DT', 'AP']
     #Generamos seguimientos publicos
     tipos = [t for t in TIPO_SEGUIMIENTO if t[0] in publicos]

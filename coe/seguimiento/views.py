@@ -771,11 +771,18 @@ def lista_sin_telefono(request):
     })
 
 @permission_required('operadores.individuos')
-def lista_requiere_atencion(request):
+def lista_requiere_atencion(request, atrib=None):
     #Obtenemos todas las condiciones que no fueron atendidas
     condiciones = Condicion.objects.filter(atendido=False)
+    #Filtramos si es necesario:
+    if atrib:
+        condiciones = condiciones.filter(individuo__atributos__tipo=atrib)
     #Quitamos los que tienen menos de 20 puntos de prioridad
     
+    #Quitamos los que fueron atendidos en territorio en las ultimas 24 horas
+    limite = timezone.now() - timedelta(hours=24)
+    atendido = Seguimiento.objects.filter(fecha__gt=limite, tipo="T")
+    condiciones = condiciones.exclude(individuo__seguimientos__in=atendido)
     #optimizamos
     condiciones = condiciones.select_related(
         'individuo',

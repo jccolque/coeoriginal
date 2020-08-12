@@ -20,7 +20,6 @@ from .choices import TIPO_TURNO
 from .choices import NIVEL_CONTENCION, NIVEL_ALIMENTOS, NIVEL_MEDICACION
 from .choices import ESTADO_TIPO, TIPO_PRIORIDAD, TIPO_RESULTADO
 
-
 # Create your models here.
 class Seguimiento(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="seguimientos")
@@ -32,6 +31,8 @@ class Seguimiento(models.Model):
         ordering = ['fecha', ]
     def __str__(self):
         return str(self.fecha)[0:16] + ': ' + self.get_tipo_display() + ': ' + self.aclaracion
+    def desde(self):
+        return (timezone.now() - self.fecha).days
 
 class Condicion(models.Model):
     individuo = models.OneToOneField(Individuo, on_delete=models.CASCADE, related_name="condicion")
@@ -45,6 +46,11 @@ class Condicion(models.Model):
     def prioridad(self):
         dias = (timezone.now() - self.fecha).days
         return self.contencion + self.alimentos + self.medicamentos + dias
+    def ultima_intervencion(self):
+        intervenciones = [i for i in self.individuo.seguimientos.all() if i.tipo == "T"]
+        if intervenciones:
+            return intervenciones[-1]
+
 
 class Vigia(models.Model):
     tipo = models.CharField('Tipo Vigia', choices=TIPO_VIGIA, max_length=2, default='VE')
