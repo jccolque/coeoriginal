@@ -52,8 +52,10 @@
                             </td>
                             <td>
                                 {% with condicion.ultima_intervencion as ultima %}
-                                    {{ultima.aclaracion|safe}}
-                                    <p><b>{{ultima.operador}}</b> (Hace: {{ultima.desde}} dias)</p>
+                                    {% if ultima %}
+                                        {{ultima.aclaracion|safe}}
+                                        <p><b>{{ultima.operador}}</b> (Hace: {{ultima.desde}} dias)</p>
+                                    {% endif %}
                                 {% endwith %}
                             </td>
                             <td>
