@@ -46,7 +46,8 @@ from .models import Condicion
 from .forms import SeguimientoForm, NuevoVigia, NuevoIndividuo
 from .forms import OperativoForm, TestOperativoForm
 from .forms import CondicionForm, AtenderForm
-from .functions import obtener_bajo_seguimiento, asignar_vigilante
+from .functions import esperando_seguimiento
+from .functions import asignar_vigilante
 from .functions import realizar_alta
 from .tasks import altas_masivas
 from .forms import DatosGisForm
@@ -312,8 +313,7 @@ def lista_seguimientos(request):
 #Administracion
 @permission_required('operadores.seguimiento_admin')
 def lista_sin_vigias(request):
-    individuos = obtener_bajo_seguimiento()
-    individuos = individuos.filter(vigiladores=None)
+    individuos = esperando_seguimiento()
     #Optimizamos las busquedas
     individuos = individuos.select_related('nacionalidad')
     individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'domicilio_actual__ubicacion')
@@ -387,19 +387,14 @@ def mod_estado_vigia(request, vigia_id):
 @permission_required('operadores.seguimiento')
 def rellenar_vigia(request, vigia_id):
     vigia = Vigia.objects.get(pk=vigia_id)
-    #Buscamos todas las personas que requieran seguimiento 
+    #Buscamos todas las personas que requieran este tipo de seguimiento 
     limite = timezone.now() - timedelta(days=DIAS_CUARENTENA/2)#(1/2 cuarentena)
     pedido_actualizado = Atributo.objects.filter(tipo=vigia.tipo, fecha__gt=limite)
     individuos = Individuo.objects.filter(atributos__in=pedido_actualizado)
-    #descartamos los que ya tienen seguimiento de ese tipo:
+    #Que aun no tienen seguimiento de ese tipo
     individuos = individuos.exclude(vigiladores__tipo=vigia.tipo)
-    #descartamos los que recibieron alta en la ultima semana:
-    altas_nuevas = Seguimiento.objects.filter(fecha__gt=limite, tipo="FS")
-    individuos = individuos.exclude(seguimientos__in=altas_nuevas)
-    #descartamos los que no tienen telefono
-    individuos = individuos.exclude(seguimientos__tipo="TE")
-    #Ordenamos de mas tiempo sin vigilancia
-        #Podriamos switchear la busqueda y trabajar con atributos (ordenar con fecha)
+    #filtramos los que requieren seguimiento actualizado:
+    individuos = esperando_seguimiento(individuos)
     #Si confirma
     if request.method == "POST":
         #asignamos hasta llenar el cupo

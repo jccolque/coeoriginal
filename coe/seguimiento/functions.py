@@ -16,7 +16,7 @@ from reportlab.lib.units import mm
 #Imports del Proyeto
 from coe.settings import STATIC_ROOT, MEDIA_ROOT
 from coe.constantes import DIAS_CUARENTENA, NOTEL
-from informacion.models import Individuo, Situacion, Documento
+from informacion.models import Individuo, Situacion, Atributo, Documento
 from app.functions import desactivar_tracking
 #Imports de la app
 from .choices import TIPO_VIGIA
@@ -31,6 +31,21 @@ def obtener_bajo_seguimiento():
     #Obtenemos los en cuarentena obligatorio o aislamiento
     individuos = Individuo.objects.filter(situacion_actual__conducta__in=('D', 'E'))
     #Devolvemos listado
+    return individuos
+
+def esperando_seguimiento(individuos=None):
+    #Si ya paso una semana no tiene sentido seguirlos
+    limite = timezone.now() - timedelta(days=DIAS_CUARENTENA/2)
+    #Comenzamos a filtrar
+    if not individuos:
+        tipos = [t[0] for t in TIPO_VIGIA]
+        vigilancia_actual = Atributo.objects.filter(tipo__in=tipos, fecha__gt=limite)
+        individuos = Individuo.objects.filter(atributos__in=vigilancia_actual)
+    #descartamos los que recibieron alta en la ultima semana:
+    altas_nuevas = Seguimiento.objects.filter(fecha__gt=limite, tipo="FS")
+    individuos = individuos.exclude(seguimientos__in=altas_nuevas)
+    #descartamos los que no tienen telefono
+    individuos = individuos.exclude(seguimientos__tipo="TE")
     return individuos
 
 def asignar_vigilante(individuo, tipo):
