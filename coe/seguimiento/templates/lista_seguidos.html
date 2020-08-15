@@ -21,6 +21,7 @@
                         <th>Localidad</th>
                         <th>Ultima Actualizacion</th>
                         <th>Responsables</th>
+                        <th>Requiere</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -39,7 +40,12 @@
                             </td>
                             <td>
                                 {% for vigia in individuo.vigiladores.all %}
-                                    <p><a href="{% url 'seguimiento:ver_panel' vigia_id=vigia.id %}">{{vigia}}</a></p>
+                                    <p><a href="{% url 'seguimiento:ver_panel' vigia_id=vigia.id %}">{{vigia}} ({{vigia.get_tipo_display}})</a></p>
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for atrib in individuo.requiere %}
+                                    <p>{{atrib.get_tipo_display}} (Hace: {{atrib.desde}} Dias)</a></p>
                                 {% endfor %}
                             </td>
                             <td>

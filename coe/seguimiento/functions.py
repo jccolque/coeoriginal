@@ -34,8 +34,8 @@ def obtener_bajo_seguimiento():
     return individuos
 
 def esperando_seguimiento(individuos=None):
-    #Si ya paso una semana no tiene sentido seguirlos
-    limite = timezone.now() - timedelta(days=DIAS_CUARENTENA/2)
+    #Si ya paso el tiempo definido para aislamiento no tiene sentido seguirlos
+    limite = timezone.now() - timedelta(days=DIAS_CUARENTENA)
     #Comenzamos a filtrar
     if not individuos:
         tipos = [t[0] for t in TIPO_VIGIA]
@@ -46,6 +46,24 @@ def esperando_seguimiento(individuos=None):
     individuos = individuos.exclude(seguimientos__in=altas_nuevas)
     #descartamos los que no tienen telefono
     individuos = individuos.exclude(seguimientos__tipo="TE")
+    #evitamos repetidos
+    individuos = individuos.distinct()
+    #devolvemos listado
+    return individuos
+
+def vigilancias_faltantes(individuos):#Debe ser queryset
+    #Optimizamos busqueda necesaria
+    individuos = individuos.prefetch_related("atributos", "vigiladores")
+    #Generamos listado de las vigilancias que requiere:
+    tipos_vigilancia = [t[0] for t in TIPO_VIGIA]
+    limite = timezone.now() - timedelta(days=DIAS_CUARENTENA)
+    for individuo in individuos:
+        individuo.requiere = []
+        vigilancias_tiene = [vigia.tipo for vigia in individuo.vigiladores.all()]
+        vigilancia_faltantes = [tipo for tipo in tipos_vigilancia if tipo not in vigilancias_tiene]
+        for atrib in individuo.atributos.all():
+            if atrib.tipo in vigilancia_faltantes and atrib.fecha > limite:
+                individuo.requiere.append(atrib)
     return individuos
 
 def asignar_vigilante(individuo, tipo):

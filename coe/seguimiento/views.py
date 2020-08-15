@@ -40,16 +40,18 @@ from app.models import AppData, AppNotificacion
 from app.functions import activar_tracking, desactivar_tracking
 from background.functions import crear_progress_link
 #imports de la app
+from .choices import TIPO_VIGIA
 from .models import Seguimiento, Vigia
 from .models import OperativoVehicular, TestOperativo
 from .models import Condicion
 from .forms import SeguimientoForm, NuevoVigia, NuevoIndividuo
 from .forms import OperativoForm, TestOperativoForm
 from .forms import CondicionForm, AtenderForm
-from .functions import esperando_seguimiento
+from .functions import esperando_seguimiento, vigilancias_faltantes
 from .functions import asignar_vigilante
 from .functions import realizar_alta
 from .tasks import altas_masivas
+#Agregados pablo
 from .forms import DatosGisForm
 from .models import DatosGis
 from .models import Muestra
@@ -304,6 +306,8 @@ def lista_seguimientos(request):
     individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'domicilio_actual__ubicacion')
     individuos = individuos.select_related('situacion_actual', 'seguimiento_actual')
     individuos = individuos.prefetch_related('vigiladores', 'vigiladores__operador')
+    #Obtenemos lista de vigilancias faltantes:
+    individuos = vigilancias_faltantes(individuos)
     #Lanzamos reporte
     return render(request, "lista_seguidos.html", {
         'individuos': individuos,
@@ -319,6 +323,8 @@ def lista_sin_vigias(request):
     individuos = individuos.select_related('domicilio_actual', 'domicilio_actual__localidad', 'domicilio_actual__ubicacion')
     individuos = individuos.select_related('situacion_actual', 'seguimiento_actual')
     individuos = individuos.prefetch_related('vigiladores', 'vigiladores__operador')
+    #Obtenemos lista de vigilancias faltantes:
+    individuos = vigilancias_faltantes(individuos)
     #Lanzamos Reporte
     return render(request, "lista_seguidos.html", {
         'individuos': individuos,

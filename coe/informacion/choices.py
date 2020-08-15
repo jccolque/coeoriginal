@@ -100,21 +100,32 @@ TIPO_ATRIBUTO = (
 def obtener_atributos(user):
     #Tipo de Seguimientos:
     publicos = ['OP2', 'EMB', 'DIS', 'APS', 'NM2']
-    carga = ['CE', 'CP', 'TO', 'TP', 'PR', 'DE']
-    ocupacion = ['AS', 'PS', 'FP', 'EP', 'TE', 'CT', 'PD']
+    carga = ['CE', 'TO', 'TP', 'PR']
+    trabajo = ['AS', 'PS', 'FP', 'EP', 'TE', 'CT', 'PD']
     vigilancia = ['VE', 'VM', 'AP', 'ST', 'VT', 'VD']
-    sistema = ['VA']
-    
+    sistema = ['VA', 'DE', 'CP']
     #Generamos seguimientos accesibles
     tipos = [t for t in TIPO_ATRIBUTO if t[0] in publicos]
     #Agregamos segun permisos:
-    
-    if user.has_perm('operadores.sistemas'):#No existe, solo root
+    if user.is_staff:
+        tipos += [t for t in TIPO_ATRIBUTO if t[0] in carga]
+        tipos += [t for t in TIPO_ATRIBUTO if t[0] in trabajo]
+    if user.has_perm('operadores.admin_informacion'):
+        tipos += [t for t in TIPO_ATRIBUTO if t[0] in vigilancia]
+    if user.has_perm('operadores.sistemas'):#No existe, solo superusuario
         tipos += [t for t in TIPO_ATRIBUTO if t[0] in sistema]
     return tipos
 
 def atributos_iniciales():
-    return [a for a in TIPO_ATRIBUTO if len(a[0]) == 2]
+    #Tipo de Seguimientos:
+    publicos = ['OP2', 'EMB', 'DIS', 'APS', 'NM2']
+    carga = ['CE', 'TO', 'TP', 'PR']
+    trabajo = ['AS', 'PS', 'FP', 'EP', 'TE', 'CT', 'PD']
+    #Generamos seguimientos accesibles
+    tipos = [t for t in TIPO_ATRIBUTO if t[0] in publicos]
+    tipos += [t for t in TIPO_ATRIBUTO if t[0] in carga]
+    tipos += [t for t in TIPO_ATRIBUTO if t[0] in trabajo]
+    return tipos
 
 def atributos_excepcionales():
     return [a for a in TIPO_ATRIBUTO if len(a[0]) == 3]

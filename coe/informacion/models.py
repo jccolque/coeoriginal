@@ -237,6 +237,8 @@ class Atributo(models.Model):
         ordering = ['fecha', ]
     def __str__(self):
         return str(self.individuo) + ': ' + self.get_tipo_display() + ' ' + str(self.fecha)
+    def desde(self):
+        return (timezone.now() - self.fecha).days
 
 class Sintoma(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="sintomas")

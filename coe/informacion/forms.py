@@ -9,7 +9,7 @@ from coe.settings import SECRET_KEY
 from core.widgets import XDSoftDatePickerInput, XDSoftDateTimePickerInput
 from georef.models import Localidad, Ubicacion
 #Imports de la app
-from .choices import atributos_iniciales, TIPO_SINTOMA
+from .choices import atributos_iniciales, obtener_atributos, TIPO_SINTOMA
 from .models import Vehiculo, TrasladoVehiculo
 from .models import Individuo, Domicilio, SignosVitales, Atributo, Sintoma
 from .models import Situacion, Patologia, Archivo, Relacion
@@ -223,6 +223,14 @@ class AtributoForm(forms.ModelForm):
         widgets = {
             'fecha': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
         }
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        instance = kwargs.get('instance')
+        super(AtributoForm, self).__init__(*args, **kwargs)
+        if instance:
+            self.fields['tipo'].choices = [(instance.tipo, instance.get_tipo_display()), ]
+        else:
+            self.fields['tipo'].choices = obtener_atributos(user)
 
 class PatologiaForm(forms.ModelForm):
     class Meta:
