@@ -28,20 +28,30 @@ def contacto(request):
     if request.method == 'POST': #En caso de que se haya realizado una busqueda
         consulta_form = ConsultaForm(request.POST)
         if consulta_form.is_valid():
-            consulta = consulta_form.save()
-            #enviar email de validacion
-            if SEND_MAIL:
-                to_email = consulta_form.cleaned_data.get('email')#Obtenemos el correo
-                #Preparamos el correo electronico
-                mail_subject = 'Confirma tu correo de respuesta por la Consultas Realizada al COE2020.'
-                message = render_to_string('emails/acc_active_consulta.html', {
-                        'consulta': consulta,
-                        'token':account_activation_token.make_token(consulta),
-                    })
-                #Instanciamos el objeto mail con destinatario
-                email = EmailMessage(mail_subject, message, to=[to_email])
-                email.send()
-            return render(request, 'contacto.html', {})
+            consulta = consulta_form.save(commit=False)
+            #Chequeamos que no nos haya hecho la misma consulta:
+            viejos = Consulta.objects.filter(email=consulta.email, asunto=consulta.asunto)
+            if viejos:
+                return render(request, 'extras/error.html', {
+                    'titulo': 'Ya hemos recibido su consulta previamente',
+                    'error': "Prontamente le responderemos, por favor espere a nuestros operadores.",
+                })
+            else:
+                #Guardamos la consulta:
+                consulta.save()
+                #enviar email de validacion
+                if SEND_MAIL:
+                    to_email = consulta_form.cleaned_data.get('email')#Obtenemos el correo
+                    #Preparamos el correo electronico
+                    mail_subject = 'Confirma tu correo de respuesta por la Consultas Realizada al COE2020.'
+                    message = render_to_string('emails/acc_active_consulta.html', {
+                            'consulta': consulta,
+                            'token':account_activation_token.make_token(consulta),
+                        })
+                    #Instanciamos el objeto mail con destinatario
+                    email = EmailMessage(mail_subject, message, to=[to_email])
+                    email.send()
+                return render(request, 'contacto.html', {})
     else:
         consulta_form = ConsultaForm()
     return render(request, 'contacto.html', {"form": consulta_form,
@@ -388,7 +398,7 @@ def ver_panel(request, telefonista_id=None):
             return render(request, 'extras/error.html', {
             'titulo': 'No existe Panel de Telefonista',
             'error': "Usted no es un Telefonista Habilitado, si deberia tener acceso a esta seccion, por favor contacte a los administradores.",
-        })
+            })
     #Obtenemos llamadas y consultas respondidas
     llamadas = Llamada.objects.filter(telefonista=telefonista)
     respuestas = Respuesta.objects.filter(telefonista=telefonista)
