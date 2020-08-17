@@ -145,7 +145,7 @@ class PanelEditForm(forms.ModelForm):
     fecha_muestra = forms.DateField(widget=XDSoftDatePickerInput(attrs={'autocomplete':'off'},))
     lugar_carga = forms.CharField(required=False, )
     grupo_etereo = forms.CharField(required=True, )
-
+    edad = forms.CharField(required=True, )
     class Meta:
         model = Individuo
         fields = ['num_doc', 'apellidos', 'nombres', 'sexo', 'telefono',]

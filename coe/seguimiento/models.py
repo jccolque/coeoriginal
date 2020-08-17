@@ -126,6 +126,7 @@ class Muestra(models.Model):
     resultado = models.CharField('Resultado', max_length=2, choices=TIPO_RESULTADO, default='SR')
     grupo_etereo = models.CharField('Grupo Etereo', max_length=20)
     lugar_carga = models.CharField('Lugar de Carga', max_length=100, null = True, blank = True)
+    edad = models.CharField('Edad', max_length=10, null=True, blank=True)
     #Sobreescribo el método save y guardo los campos mencionados en mayusculas
     def save(self):#innecesario
         self.estado = self.estado.upper()

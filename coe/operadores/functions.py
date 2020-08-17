@@ -22,15 +22,15 @@ def obtener_permisos(usuario=None):
 def generar_username(operador):
     nombre = operador.nombres.lower().replace(' ','')
     apellido = operador.apellidos.lower().replace(' ','')
-    x = 1
+    x = 0
     incorrecto = True
     while incorrecto:
+        x += 1
         username = nombre[0:x] + apellido
         if User.objects.filter(username=username).exists():
-            x += 1
             if x == len(nombre):
                 return str(operador.num_doc)
-        else:
+        elif len(username) > 5:
             incorrecto = False
     return username
 

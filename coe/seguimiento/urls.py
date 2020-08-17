@@ -90,6 +90,7 @@ urlpatterns = [
     path('muestras/editar/panel/<int:muestra_id>', views.editar_muestra, name="editar_muestra"),
     path('muestras/editar/panel/<int:muestra_id>', views.cargar_plp, name="editar_plp"),
     path('muestras/panel_editar/<int:muestra_id>', views.edit_panel, name="editar_panel_plp"),
+    path('muestras/upload/masivo', views.upload_muestras, name="upload_muestras"),
     #Autocomplete
     url(r'^individuosvigilados-autocomplete/$', autocomplete.IndividuosVigiladosAutocomplete.as_view(), name='individuosvigilados-autocomplete',),
     url(r'^vigias-autocomplete/$', autocomplete.VigiasAutocomplete.as_view(), name='vigias-autocomplete',),

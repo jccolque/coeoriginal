@@ -22,7 +22,7 @@ from coe.settings import GEOPOSITION_GOOGLE_MAPS_API_KEY
 from coe.constantes import DIAS_CUARENTENA, NOTEL
 from core.decoradores import superuser_required
 from core.functions import date2str
-from core.forms import SearchForm, JustificarForm
+from core.forms import SearchForm, JustificarForm, UploadCsv
 from georef.models import Nacionalidad
 from georef.models import Ubicacion
 from graficos.functions import obtener_grafico
@@ -1070,6 +1070,7 @@ def edit_bioq(request, muestra_id):
         'boton': 'EDITAR',
     })
 
+@permission_required('operadores.carga_plp')
 def buscar_persona_muestra(request):
     form = SearchIndividuoForm()
     if request.method == "POST":
@@ -1087,6 +1088,7 @@ def buscar_persona_muestra(request):
         'boton': "Buscar", 
     })
 
+@permission_required('operadores.carga_plp')
 def cargar_plp(request, individuo_id=None, num_doc=None):
     individuo = None
     form = PanelEditForm(initial={"num_doc":num_doc})     
@@ -1115,7 +1117,8 @@ def cargar_plp(request, individuo_id=None, num_doc=None):
             muestra.fecha_muestra = form.cleaned_data['fecha_muestra']
             muestra.lugar_carga = form.cleaned_data['lugar_carga']
             muestra.grupo_etereo = form.cleaned_data['grupo_etereo']
-            #muestra.operador = obtener_operador(request)               
+            muestra.edad = form.cleaned_data['edad']
+            muestra.operador = obtener_operador(request)               
             muestra.individuo = individuo
             muestra.save()
             return redirect('seguimiento:muestra_list_comp')
@@ -1165,7 +1168,8 @@ def editar_muestra(request, muestra_id=None):
                 'resultado': muestra.resultado,
                 'fecha_muestra': muestra.fecha_muestra,
                 'lugar_carga': muestra.lugar_carga,
-                'grupo_etereo': muestra.grupo_etereo,              
+                'grupo_etereo': muestra.grupo_etereo,
+                'edad': muestra.edad,
             }
         ) 
     if request.method == "POST":
@@ -1182,11 +1186,80 @@ def editar_muestra(request, muestra_id=None):
             muestra.fecha_muestra = form.cleaned_data['fecha_muestra']
             muestra.lugar_carga = form.cleaned_data['lugar_carga']
             muestra.grupo_etereo = form.cleaned_data['grupo_etereo']
-            #muestra.operador = obtener_operador(request)               
+            muestra.edad = form.cleaned_data['edad']
+            muestra.operador = obtener_operador(request)               
             muestra.save()
             return redirect('seguimiento:muestra_list_comp')
     return render(request, "extras/generic_form.html", {
         'titulo': "CARGA DE DATOS PLP",
         'form': form,
         'boton': "CARGAR DATOS",
+    })
+
+@permission_required('operadores.carga_plp')
+def upload_muestras(request):
+    form = UploadCsv()
+    if request.method == "POST":
+        form = UploadCsv(request.POST, request.FILES)
+        if form.is_valid():
+            count = 0
+            csv_file = form.cleaned_data['csvfile']
+            file_data = csv_file.read().decode("utf-8")
+            lines = file_data.split("\n")
+            #Procesamos el archivo           
+            #2-NOMBRE 3-APELLIDO 4-NUM_DOC 5-SEXO 6-EDAD 11-LOCALIDAD 15-FECHAMUESTRA 20-GRUPOETEREO 21-CALLE 22-NUMERO
+            muestras = []           
+            for line in lines:
+                line=line.split(';')
+                if line[0]:
+                    if not Individuo.objects.filter(num_doc=line[4]).exists():
+                        #Creamos nuevo individuo
+                        nuevo_individuo = Individuo()
+                        nuevo_individuo.nombres = line[2]
+                        nuevo_individuo.apellidos = line[3]
+                        nuevo_individuo.num_doc = line[4]
+                        nuevo_individuo.sexo = line[5]
+                        nuevo_individuo.save()
+                        #Creamos Domicilio
+                        domicilio = Domicilio()
+                        domicilio.calle = line[21]
+                        domicilio.numero = line[22]
+                        domicilio.individuo = nuevo_individuo
+                        if not Localidad.objects.filter(nombre=line[11]).exists():
+                            localidad = Localidad.objects.get(nombre='San Salvador de Jujuy')
+                            domicilio.localidad = localidad
+                        else:
+                            localidad = Localidad.objects.get(nombre=line[11])
+                            domicilio.localidad = localidad
+                        domicilio.save()
+                    else:
+                        nuevo_individuo = Individuo.objects.get(num_doc=line[4])
+                        domicilio = nuevo_individuo.domicilios.last()
+                    #Creamos muestra
+                    muestra = Muestra()
+                    muestra.edad = line[6]
+                    fecha = line[15]
+                    formato = '%d/%m/%Y'
+                    fecha = datetime.strptime(fecha, formato).date()
+                    muestra.fecha_muestra = fecha
+                    muestra.grupo_etereo = line[19]
+                    muestra.individuo = nuevo_individuo
+                    muestra.save()
+                    muestras.append(muestra)
+            count = len(muestras)               
+            return render(request, "mensaje.html", {
+                'message': 'FUE EXITOSA', 
+                'count': count,
+                'bien': True, 
+            })
+        else:
+            message = form.errors
+            return render(request, "mensaje.html", {
+                'message': 'CARGA ERRONEA, RESPETE EL FORMATO DE CSV.', 
+                'error': True,
+            })
+    return render(request, "extras/generic_form.html", {
+        'titulo': 'CARGA MASIVA DE MUESTRAS', 
+        'form': form,
+        'boton': 'Subir CSV',
     })
