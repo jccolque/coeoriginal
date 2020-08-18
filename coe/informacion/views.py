@@ -744,12 +744,13 @@ def del_relacion(request, relacion_id):
 #Atributos
 @permission_required('operadores.individuos')
 def cargar_atributo(request, individuo_id, atributo_id=None, tipo=None):
+    #Pregeneramos info
     atributo = None
-    if tipo:
-        atributo = Atributo(tipo=tipo)
     if atributo_id:
         atributo = Atributo.objects.get(pk=atributo_id)
-    form = AtributoForm(instance=atributo, user=request.user)
+    #Instanciamos form basico:
+    form = AtributoForm(initial={'tipo': tipo}, instance=atributo, user=request.user)
+    #Si envio datos:
     if request.method == "POST":
         form = AtributoForm(request.POST, instance=atributo, user=request.user)
         if form.is_valid():

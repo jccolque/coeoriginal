@@ -5,8 +5,8 @@
 <div class="beneficiario container">
     <div class="row">
         <h2><b>Seguimiento de Muestras PCR - Módulo PLP - LISTA COMPLETA</b></h2>
-        <!-- <a class="botoncito" href="#">
-            CARGAR EXCEL
+        <a class="botoncito" href="{% url 'seguimiento:upload_plp' %}">
+            CARGAR CSV
             <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
         </a> -->
         <br>
@@ -23,7 +23,8 @@
                     <th>DNI</th>
                     <th>Nombre Completo</th>        
                     <th>Localidad</th>
-                    <th>Domicilio</th>                              
+                    <th>Domicilio</th>
+                    <th>Edad</th>                              
                     <th>Fecha de Muestra</th>                    
                     <th>Operador</th>
                     <th>Grupo Etereo</th>
@@ -38,7 +39,8 @@
                         <td>{{ muestra.individuo.num_doc }}</td>
                         <td>{{ muestra.individuo.apellidos }},{{ muestra.individuo.nombres }}</td>            
                         <td>{{ muestra.individuo.domicilio_actual.localidad }}</td>
-                        <td>{{ muestra.individuo.domicilio_actual }}</td>                                      
+                        <td>{{ muestra.individuo.domicilio_actual }}</td>
+                        <td>{{ muestra.edad }}</td>                                      
                         <td>{{ muestra.fecha_muestra }}</td>                        
                         <td>{{ muestra.operador }}</td>
                         <td>{{ muestra.grupo_etereo }}</td>

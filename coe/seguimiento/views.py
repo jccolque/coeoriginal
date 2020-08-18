@@ -33,7 +33,7 @@ from informacion.models import Individuo, Atributo, Patologia
 from informacion.models import SignosVitales, Relacion
 from informacion.models import Situacion, Documento
 from informacion.models import Vehiculo
-from informacion.forms import SearchIndividuoForm, BuscarIndividuoSeguro
+from informacion.forms import ArchivoForm, SearchIndividuoForm, BuscarIndividuoSeguro
 from geotracking.models import GeoPosicion
 from operadores.functions import obtener_operador
 from app.models import AppData, AppNotificacion
@@ -50,7 +50,7 @@ from .forms import CondicionForm, AtenderForm
 from .functions import esperando_seguimiento, vigilancias_faltantes
 from .functions import asignar_vigilante
 from .functions import realizar_alta
-from .tasks import altas_masivas
+from .tasks import altas_masivas, guardar_muestras_bg
 #Agregados pablo
 from .forms import DatosGisForm
 from .models import DatosGis
@@ -139,7 +139,6 @@ def menu_seguimiento(request):
 @permission_required('operadores.individuos')
 def cargar_seguimiento(request, individuo_id, seguimiento_id=None, tipo=None):
     seguimiento = None
-    individuo = Individuo.objects.get(pk=individuo_id)
     if seguimiento_id:
         seguimiento = Seguimiento.objects.get(pk=seguimiento_id)
         form = SeguimientoForm(instance=seguimiento, user=request.user)
@@ -149,7 +148,7 @@ def cargar_seguimiento(request, individuo_id, seguimiento_id=None, tipo=None):
         form = SeguimientoForm(request.POST, instance=seguimiento, user=request.user)
         if form.is_valid():
             seguimiento = form.save(commit=False)
-            seguimiento.individuo = individuo
+            seguimiento.individuo = Individuo.objects.get(pk=individuo_id)
             seguimiento.operador = obtener_operador(request)
             seguimiento.save()
             return render(request, "extras/close.html")
@@ -1197,69 +1196,28 @@ def editar_muestra(request, muestra_id=None):
     })
 
 @permission_required('operadores.carga_plp')
-def upload_muestras(request):
-    form = UploadCsv()
+def upload_plp(request):
+    form = ArchivoForm(initial={'tipo':6, 'nombre': 'cargar_muestras_plp'+str(timezone.now())[0:16]})
     if request.method == "POST":
-        form = UploadCsv(request.POST, request.FILES)
+        form = ArchivoForm(request.POST, request.FILES)
         if form.is_valid():
-            count = 0
-            csv_file = form.cleaned_data['csvfile']
-            file_data = csv_file.read().decode("utf-8")
+            operador = obtener_operador(request)
+            archivo = form.save(commit=False)
+            archivo.operador = operador
+            archivo.save()
+            csv = archivo.archivo            
+            file_data = csv.read().decode("utf-8")
             lines = file_data.split("\n")
-            #Procesamos el archivo           
-            #2-NOMBRE 3-APELLIDO 4-NUM_DOC 5-SEXO 6-EDAD 11-LOCALIDAD 15-FECHAMUESTRA 20-GRUPOETEREO 21-CALLE 22-NUMERO
-            muestras = []           
-            for line in lines:
-                line=line.split(';')
-                if line[0]:
-                    if not Individuo.objects.filter(num_doc=line[4]).exists():
-                        #Creamos nuevo individuo
-                        nuevo_individuo = Individuo()
-                        nuevo_individuo.nombres = line[2]
-                        nuevo_individuo.apellidos = line[3]
-                        nuevo_individuo.num_doc = line[4]
-                        nuevo_individuo.sexo = line[5]
-                        nuevo_individuo.save()
-                        #Creamos Domicilio
-                        domicilio = Domicilio()
-                        domicilio.calle = line[21]
-                        domicilio.numero = line[22]
-                        domicilio.individuo = nuevo_individuo
-                        if not Localidad.objects.filter(nombre=line[11]).exists():
-                            localidad = Localidad.objects.get(nombre='San Salvador de Jujuy')
-                            domicilio.localidad = localidad
-                        else:
-                            localidad = Localidad.objects.get(nombre=line[11])
-                            domicilio.localidad = localidad
-                        domicilio.save()
-                    else:
-                        nuevo_individuo = Individuo.objects.get(num_doc=line[4])
-                        domicilio = nuevo_individuo.domicilios.last()
-                    #Creamos muestra
-                    muestra = Muestra()
-                    muestra.edad = line[6]
-                    fecha = line[15]
-                    formato = '%d/%m/%Y'
-                    fecha = datetime.strptime(fecha, formato).date()
-                    muestra.fecha_muestra = fecha
-                    muestra.grupo_etereo = line[19]
-                    muestra.individuo = nuevo_individuo
-                    muestra.save()
-                    muestras.append(muestra)
-            count = len(muestras)               
-            return render(request, "mensaje.html", {
-                'message': 'FUE EXITOSA', 
-                'count': count,
-                'bien': True, 
-            })
-        else:
-            message = form.errors
-            return render(request, "mensaje.html", {
-                'message': 'CARGA ERRONEA, RESPETE EL FORMATO DE CSV.', 
-                'error': True,
-            })
+            tarea = crear_progress_link(str(operador)+":cargar_muestras_plp("+str(timezone.now())[0:16].replace(' ','')+")")            
+            #Dividimos en fragmentos
+            frag_size = 2000
+            segmentos = [lines[x:x+frag_size] for x in range(0, len(lines), frag_size)]
+            for segmento in segmentos[0:-1]:#Procesamos todos menos el ultimo
+                guardar_muestras_bg(segmento, archivo_id=archivo.id, queue=tarea)
+            guardar_muestras_bg(segmentos[-1], archivo_id=archivo.id, queue=tarea, ultimo=True)
+            return redirect('informacion:ver_archivo', archivo_id=archivo.id)                      
     return render(request, "extras/generic_form.html", {
-        'titulo': 'CARGA MASIVA DE MUESTRAS', 
-        'form': form,
-        'boton': 'Subir CSV',
+        'titulo': "CARGA MASIVA DE MUESTRAS CSV", 
+        'form': form, 
+        'boton': "CARGAR ARCHIVO", 
     })

@@ -1,0 +1,17 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    
+    {% if bien %}
+    <h3>Su carga <span> {{ message }} </span></h3>
+    <h3>Registros cargados: <span> {{ count }} </span></h3>
+    {% endif %}
+    {% if error %}
+    <h3>Ha ocurrido un error: <span> {{ message }} </span></h3>
+    {% endif %}
+    <a href="{% url 'seguimiento:muestra_list_comp' %}"></a>
+
+</div>
+{% endblock %}
