@@ -12,6 +12,7 @@ from background_task import background
 from coe.constantes import DIAS_CUARENTENA
 from background.functions import hasta_madrugada
 from georef.models import Nacionalidad, Departamento, Localidad
+from informacion.models import Archivo
 from informacion.models import Individuo, Domicilio
 from operadores.models import Operador
 #Import Personales
@@ -53,7 +54,7 @@ def altas_masivas(inds_ids, operador_id):
     for individuo in individuos:
         realizar_alta(individuo, operador)
 
-@background(schedule=1)#
+@background(schedule=5)#
 def guardar_muestras_bg(lineas, archivo_id, ultimo=False):
     logger.info("Iniciamos CARGA MASIVA DE PRUEBAS")
     #Obtenemos archivo sobre el que vamos generando el update:
@@ -94,9 +95,9 @@ def guardar_muestras_bg(lineas, archivo_id, ultimo=False):
                 nuevo_individuo = num_docs_existentes[linea[4]]
             #Creamos muestra
             muestra = Muestra()
-            muestra.edad = linea[6]            
-            fecha = datetime.strptime(linea[15], '%d/%m/%Y').date()
-            muestra.fecha_muestra = fecha
+            muestra.edad = linea[6]
+            fecha = datetime.strptime(linea[13], '%d/%m/%Y').date()
+            muestra.fecha_muestra = fecha            
             muestra.grupo_etereo = linea[19]
             muestra.individuo = nuevo_individuo
             muestras.append(muestra)    

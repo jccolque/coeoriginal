@@ -1196,7 +1196,7 @@ def editar_muestra(request, muestra_id=None):
     })
 
 @permission_required('operadores.carga_plp')
-def upload_plp(request):
+def upload_muestra(request):
     form = ArchivoForm(initial={'tipo':6, 'nombre': 'cargar_muestras_plp'+str(timezone.now())[0:16]})
     if request.method == "POST":
         form = ArchivoForm(request.POST, request.FILES)
@@ -1210,7 +1210,7 @@ def upload_plp(request):
             lines = file_data.split("\n")
             tarea = crear_progress_link(str(operador)+":cargar_muestras_plp("+str(timezone.now())[0:16].replace(' ','')+")")            
             #Dividimos en fragmentos
-            frag_size = 2000
+            frag_size = 500
             segmentos = [lines[x:x+frag_size] for x in range(0, len(lines), frag_size)]
             for segmento in segmentos[0:-1]:#Procesamos todos menos el ultimo
                 guardar_muestras_bg(segmento, archivo_id=archivo.id, queue=tarea)
