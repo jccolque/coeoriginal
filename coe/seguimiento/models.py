@@ -114,7 +114,6 @@ class DatosGis(models.Model):
         self.pcr = self.pcr.upper()
         super(DatosGis, self).save()
 
-
 class Muestra(models.Model):
     #Llaves foraneas
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="muestras", null=True, blank=True)
@@ -124,9 +123,9 @@ class Muestra(models.Model):
     estado = models.CharField('Estado', max_length=2, choices=ESTADO_TIPO, default='EE')
     prioridad = models.CharField('Prioridad', max_length=2, choices=TIPO_PRIORIDAD, default='SP')
     resultado = models.CharField('Resultado', max_length=2, choices=TIPO_RESULTADO, default='SR')
-    grupo_etereo = models.CharField('Grupo Etereo', max_length=20)
+    grupo_etereo = models.CharField('Grupo Etereo', max_length=200, null=True, blank=True)
     lugar_carga = models.CharField('Lugar de Carga', max_length=100, null = True, blank = True)
-    edad = models.CharField('Edad', max_length=10, null=True, blank=True)
+    edad = models.CharField('Edad', max_length=200, null=True, blank=True)
     #Sobreescribo el método save y guardo los campos mencionados en mayusculas
     def save(self):#innecesario
         self.estado = self.estado.upper()
