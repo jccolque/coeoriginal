@@ -83,8 +83,8 @@ def guardar_muestras_bg(lineas, archivo_id, ultimo=False):
                 nuevo_individuo.save()
                 #Creamos Domicilio
                 domicilio = Domicilio()
-                domicilio.calle = linea[21]
-                domicilio.numero = linea[22]
+                domicilio.calle = linea[19]
+                domicilio.numero = linea[20]
                 domicilio.individuo = nuevo_individuo
                 if linea[11] in dict_locs:
                     domicilio.localidad = dict_locs[linea[11]] 
@@ -98,7 +98,7 @@ def guardar_muestras_bg(lineas, archivo_id, ultimo=False):
             muestra.edad = linea[6]
             fecha = datetime.strptime(linea[13], '%d/%m/%Y').date()
             muestra.fecha_muestra = fecha            
-            muestra.grupo_etereo = linea[19]
+            muestra.grupo_etereo = linea[18]
             muestra.individuo = nuevo_individuo
             muestras.append(muestra)    
     #Creamos este bloque

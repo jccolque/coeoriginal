@@ -1195,6 +1195,15 @@ def editar_muestra(request, muestra_id=None):
         'boton': "CARGAR DATOS",
     })
 
+class MuestraDel(LoginRequiredMixin, PermissionRequiredMixin, \
+    SuccessMessageMixin, generic.DeleteView):
+    permission_required = "operadores.carga_plp"  
+    model=Muestra
+    template_name='delete_muestra.html'
+    context_object_name='muestra'
+    success_url=reverse_lazy("seguimiento:muestra_list_comp")
+    success_message="Muestra Eliminada Satisfactoriamente"
+
 @permission_required('operadores.carga_plp')
 def upload_muestra(request):
     form = ArchivoForm(initial={'tipo':6, 'nombre': 'cargar_muestras_plp'+str(timezone.now())[0:16]})

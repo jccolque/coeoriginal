@@ -5,10 +5,10 @@
 <div class="beneficiario container">
     <div class="row">
         <h2><b>Seguimiento de Muestras PCR - Módulo PLP - LISTA COMPLETA</b></h2>
-        <a class="botoncito" href="{% url 'seguimiento:upload_muestra' %}">
+        <a class="botoncito" href="{% url 'seguimiento:upload_plp' %}">
             CARGAR CSV
             <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">
-        </a> -->
+        </a>
         <br>
         <a class="botoncito" href="{% url 'seguimiento:buscar_persona_muestra' %}">
             CARGA MANUAL DE REGISTROS
@@ -50,7 +50,10 @@
                         <td>                                              
                         <a href="{% url 'seguimiento:editar_muestra' muestra_id=muestra.id %}">
                             <img class="icons" src="{% static '/img/icons/change.png' %}">
-                        </a>                                                                                         
+                        </a>
+                        <a href="{% url 'seguimiento:muestra_del' muestra.id %}">
+                            <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                        </a>                                                                                       
                         </td>
                     </tr>
                     {% endfor %}
