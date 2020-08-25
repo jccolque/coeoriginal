@@ -220,6 +220,53 @@ def fin_seguimiento(request, vigia_id, individuo_id):
 
 #Listados
 @permission_required('operadores.seguimiento_admin')
+def reporte_vigilantes(request):
+    #obtenemos vigilantes
+    vigias = Vigia.objects.all()
+    #Optimizamos
+    vigias = vigias.select_related('operador', 'operador__usuario')
+    vigias = vigias.prefetch_related('controlados')
+    #Preparamos filtros
+    limite_1dia = timezone.now() - timedelta(hours=24)
+    limite_2dias = timezone.now() - timedelta(hours=48)
+    limite_3dias = timezone.now() - timedelta(hours=72)
+    limite_semana = timezone.now() - timedelta(days=7)
+    #Agregamos datos de interes:
+    vigias = vigias.annotate(
+            cant_controlados=Count('controlados')
+        ).annotate(
+            total_seguimientos=Subquery(
+                Operador.objects.filter(pk=OuterRef('operador')).annotate(total_seguimientos=Count('seguimientos_informados')).values('total_seguimientos')[:1]
+            ),
+        ).annotate(
+            seguimientos_semana=Subquery(
+                Operador.objects.filter(pk=OuterRef('operador')).annotate(seguimientos_semana=Count('seguimientos_informados', filter=Q(seguimientos_informados__fecha__gt=limite_semana))).values('seguimientos_semana')[:1]
+            ),
+        ).annotate(
+            seguimientos_3dias=Subquery(
+                Operador.objects.filter(pk=OuterRef('operador')).annotate(seguimientos_3dias=Count('seguimientos_informados', filter=Q(seguimientos_informados__fecha__gt=limite_3dias))).values('seguimientos_3dias')[:1]
+            ),
+        ).annotate(
+            seguimientos_2dias=Subquery(
+                Operador.objects.filter(pk=OuterRef('operador')).annotate(seguimientos_2dias=Count('seguimientos_informados', filter=Q(seguimientos_informados__fecha__gt=limite_2dias))).values('seguimientos_2dias')[:1]
+            ),
+        ).annotate(
+            seguimientos_1dia=Subquery(
+                Operador.objects.filter(pk=OuterRef('operador')).annotate(seguimientos_1dia=Count('seguimientos_informados', filter=Q(seguimientos_informados__fecha__gt=limite_1dia))).values('seguimientos_1dia')[:1]
+            ),
+        ).annotate(
+            altas_generadas=Subquery(
+                Operador.objects.filter(pk=OuterRef('operador')).annotate(altas_generadas=Count('seguimientos_informados', filter=Q(seguimientos_informados__tipo='FS'))).values('altas_generadas')[:1]
+            ),
+        
+    )    
+    #Lanzamos reporte
+    return render(request, "reporte_vigilantes.html", {
+        'vigias': vigias,
+        'has_table': True,
+    })
+
+@permission_required('operadores.seguimiento_admin')
 def situacion_vigilancia(request):
     #obtenemos vigilantes
     vigias = Vigia.objects.all()
@@ -243,7 +290,7 @@ def situacion_vigilancia(request):
             ),
         ).annotate(
             semana_seguimientos=Subquery(
-                Operador.objects.filter(pk=OuterRef('operador')).annotate(total_seguimientos=Count('seguimientos_informados', filter=Q(seguimientos_informados__fecha__gt=limite_semana))).values('total_seguimientos')[:1]
+                Operador.objects.filter(pk=OuterRef('operador')).annotate(semana_seguimientos=Count('seguimientos_informados', filter=Q(seguimientos_informados__fecha__gt=limite_semana))).values('semana_seguimientos')[:1]
             ),
     )
     #Generamos estadisticas para grafico de la ultimas dos semanas:
@@ -312,6 +359,26 @@ def lista_seguimientos(request):
         'individuos': individuos,
         'has_table': True,
     })
+
+@permission_required('operadores.seguimiento')
+def altas_cargadas(request, vigia_id=None):
+    #Obtenemos altas realizadas
+    altas = Seguimiento.objects.filter(tipo='FS')
+    #Optimizamos
+    altas = altas.select_related('individuo', 'individuo__situacion_actual')
+    altas = altas.select_related('operador__vigia')
+    #Filtramos si seleccion vigia
+    vigia = None
+    if vigia_id:
+        vigia = Vigia.objects.get(pk=vigia_id)
+        altas = altas.filter(operador=vigia.operador)
+    #Lanzamos reportes
+    return render(request, 'altas_cargadas.html', {
+            'vigia': vigia,
+            'altas': altas,
+            'has_table': True,
+        }
+    )
 
 #Administracion
 @permission_required('operadores.seguimiento_admin')

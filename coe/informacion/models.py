@@ -162,9 +162,10 @@ class Individuo(models.Model):
     def tiene_obrasocial(self):
         return True in [True for a in self.atributos.all() if a.tipo == 'TO']
     def get_obrasocial(self):
-        try:
-            return self.atributos.filter(tipo='TO').last().aclaracion
-        except:
+        obra_sociales = [a.aclaracion for a in self.atributos.all() if a.tipo=='TO']
+        if obra_sociales:
+            return obra_sociales[-1]
+        else:
             return "Sin obra social"
 
 class Relacion(models.Model):#Origen del Dato

@@ -21,7 +21,8 @@
 
                         <th>Localidad</th>
                         <th>Domicilio</th>
-                        
+
+                        <th>Obra Social</th>
                         <th>Contencion Familiar</th>
                         <th>Soporte Alimenticio</th>
                         <th>Medicacion</th>
@@ -43,6 +44,7 @@
                             <td>{{condicion.individuo.domicilio_actual.localidad.nombre}}</td>
                             <td>{{condicion.individuo.domicilio_actual.calle}} {{individuo.domicilio_actual.numero}}</td>
 
+                            <td>{{condicion.individuo.get_obrasocial}}</td>
                             <td>{{condicion.get_contencion_display}}</td>
                             <td>{{condicion.get_alimentos_display}}</td>
                             <td>{{condicion.get_medicamentos_display}}</td>
