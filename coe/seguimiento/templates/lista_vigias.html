@@ -19,10 +19,13 @@
                             <th>Aclaracion</th>
                             <th>Operador</th>
                             <th>Telefono</th>
+                            
                             <th>Ultimo Ingreso</th>
                             <th>Controlados</th>
                             <th>Alertas Activas</th>
+                            <th>Parametros</th>
                             <th>Estado</th>
+
                             <th>Ver Detalle</th>
                         </tr>
                     </thead>
@@ -42,9 +45,23 @@
                                 </td>
                                 <td>{{vigia}}</td>
                                 <td>{{vigia.operador.telefono}}</td>
+
                                 <td>{{vigia.operador.usuario.last_login}}</td>
+
                                 <td>{{vigia.controlados.count}}/{{vigia.max_controlados}}</td>
                                 <td>{{vigia.alertas}}</td>
+
+                                <td>
+                                    {% if vigia.configuracion %}
+                                        {{vigia.configuracion}}
+                                    {% else %}
+                                        Configurar
+                                    {% endif %}
+                                    <a style="float:right;" href="{% url 'seguimiento:configurar_vigia' vigia_id=vigia.id %}">
+                                        <img class="icons" src="{% static '/img/icons/config.png' %}">
+                                    </a>
+                                </td>
+
                                 <td>
                                     {% if vigia.activo %}
                                         <img class="icons" src="/static/img/icons/check.png">

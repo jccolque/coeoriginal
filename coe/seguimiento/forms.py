@@ -7,7 +7,7 @@ from informacion.models import Individuo
 from core.widgets import XDSoftDatePickerInput, XDSoftDateTimePickerInput
 from georef.models import Localidad
 #Imports de la app
-from .models import Seguimiento, Vigia
+from .models import Seguimiento, Vigia, Configuracion
 from .models import OperativoVehicular, TestOperativo
 from .models import Condicion
 from .functions import obtener_bajo_seguimiento
@@ -34,6 +34,12 @@ class SeguimientoForm(forms.ModelForm):
         else:
             self.fields['tipo'].choices = obtener_seguimientos(user)
 
+
+class ConfiguracionForm(forms.ModelForm):
+    class Meta:
+        model = Configuracion
+        fields= '__all__'
+        exclude = ('vigia', )
 
 class CondicionForm(forms.ModelForm):
     class Meta:

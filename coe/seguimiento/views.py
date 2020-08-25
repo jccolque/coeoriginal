@@ -41,10 +41,11 @@ from app.functions import activar_tracking, desactivar_tracking
 from background.functions import crear_progress_link
 #imports de la app
 from .choices import TIPO_VIGIA
-from .models import Seguimiento, Vigia
+from .models import Seguimiento, Vigia, Configuracion
 from .models import OperativoVehicular, TestOperativo
 from .models import Condicion
-from .forms import SeguimientoForm, NuevoVigia, NuevoIndividuo
+from .forms import SeguimientoForm
+from .forms import NuevoVigia, ConfiguracionForm, NuevoIndividuo
 from .forms import OperativoForm, TestOperativoForm
 from .forms import CondicionForm, AtenderForm
 from .functions import esperando_seguimiento, vigilancias_faltantes
@@ -413,6 +414,7 @@ def asignar_vigia(request, individuo_id):
 def lista_vigias(request):
     vigias = Vigia.objects.all()
     vigias = vigias.select_related('operador', 'operador__usuario')
+    vigias = vigias.select_related('configuracion')
     vigias = vigias.prefetch_related('controlados')
     #Obtenemos valor:
     limite = timezone.now() - timedelta(hours=18)
@@ -448,13 +450,26 @@ def agregar_vigia(request, vigia_id=None):
             return redirect('seguimiento:lista_vigias')
     return render(request, "extras/generic_form.html", {'titulo': "Habilitar Nuevo Vigia", 'form': form, 'boton': "Habilitar", })
 
+@permission_required('operadores.seguimiento_admin')
+def configurar_vigia(request, vigia_id):
+    vigia = Vigia.objects.get(pk=vigia_id)
+    config = Configuracion.objects.get_or_create(vigia=vigia)[0]
+    form = ConfiguracionForm(instance=config)
+    if request.method == "POST":
+        form = ConfiguracionForm(request.POST, instance=config)
+        if form.is_valid():
+            form.save()
+            #Volvemos a la vista
+            return redirect('seguimiento:ver_panel', vigia_id=config.vigia.id)
+    #Lanzamos Form
+    return render(request, "extras/generic_form.html", {'titulo': "Configurar Alertas", 'form': form, 'boton': "Configurar", })        
+
 @permission_required('operadores.seguimiento')
 def mod_estado_vigia(request, vigia_id):
     vigia = Vigia.objects.get(pk=vigia_id)
     vigia.activo = not vigia.activo#Invertimos estado
     vigia.save()
     return redirect('seguimiento:ver_panel', vigia_id=vigia_id)
-
 
 @permission_required('operadores.seguimiento')
 def rellenar_vigia(request, vigia_id):
@@ -542,7 +557,8 @@ def quitar_vigilado(request, vigia_id, individuo_id):
 @permission_required('operadores.seguimiento')
 def panel_vigia(request, vigia_id=None):
     #Obtenemos el operador en cuestion
-    vigias = Vigia.objects.prefetch_related('controlados', 'controlados__situacion_actual', 'controlados__atributos')
+    vigias = Vigia.objects.select_related('configuracion')
+    vigias = vigias.prefetch_related('controlados', 'controlados__situacion_actual', 'controlados__atributos')
     if vigia_id:
         vigia = vigias.get(pk=vigia_id)
     else:
@@ -554,12 +570,13 @@ def panel_vigia(request, vigia_id=None):
             'titulo': 'No existe Panel de Vigilancia',
             'error': "Usted no es un Vigilante Habilitado, si deberia tener acceso a esta seccion, por favor contacte a los administradores.",
         })
-    #Buscamos Alertas
-    if vigia.tipo == "EM":
-        limite = timezone.now()#SON EMERGENCIAS YA!
-    else:#Se podrian definir diferentes colores por tipo
-        limite = timezone.now() - timedelta(hours=18)
 
+    #Buscamos Alertas
+    if vigia.tipo == "EM":#TODAS SON EMERGENCIAS YA!
+        limite = timezone.now()
+    else:
+        config = Configuracion.objects.get_or_create(vigia=vigia)[0]
+        limite = timezone.now() - timedelta(hours=config.alerta_verde)
     #Solo filtramos por el ultimo seguimiento tipo 'L'
     seguimiento_valido = Seguimiento.objects.filter(tipo='L', fecha__gt=limite)#generamos subquery
     individuos = vigia.controlados.exclude(seguimientos__in=seguimiento_valido)
@@ -579,6 +596,7 @@ def panel_vigia(request, vigia_id=None):
     #Lanzamos panel
     return render(request, "panel_vigia.html", {
         'vigia': vigia,
+        'config': config,
         'individuos': individuos,
         'refresh': True,
         'has_table': True,

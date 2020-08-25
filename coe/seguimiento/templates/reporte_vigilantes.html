@@ -48,25 +48,28 @@
 
                                 <td>{{vigia.cant_controlados}}/{{vigia.max_controlados}}</th>
                                 <td>
-                                    <a href="{% url 'seguimiento:altas_cargadas' vigia_id=vigia.id %}" target="_blank">
-                                        {{vigia.altas_generadas}}
+                                    {{vigia.altas_generadas}}
+                                    <a class="nolink" style="float:right;" href="{% url 'seguimiento:altas_cargadas' vigia_id=vigia.id %}" target="_blank">
+                                        <img class="icons" src="/static/img/icons/history.png" alt="Listado">
                                     </a>
                                 </th>
 
-                                <td>{{vigia.total_seguimientos}}</th>
+                                <td>
+                                    {{vigia.total_seguimientos}}
+                                    <a class="nolink" style="float:right;" href="{% url 'seguimiento:seguimientos_vigia' vigia_id=vigia.id %}" target="_blank">
+                                        <img class="icons" src="/static/img/icons/history.png" alt="Listado">
+                                    </a>
+                                </th>
                                 <td>{{vigia.seguimientos_semana}}</th>
                                 <td>{{vigia.seguimientos_3dias}}</th>
                                 <td>{{vigia.seguimientos_2dias}}</th>
                                 <td>{{vigia.seguimientos_1dia}}</th>
 
                                 <td>
-                                    <a href="{% url 'seguimiento:seguimientos_vigia' vigia_id=vigia.id %}" target="_blank">
-                                        <img class="icons" src="/static/img/icons/history.png" alt="Listado">
-                                    </a>
-                                    <a href="{% url 'seguimiento:ver_panel' vigia_id=vigia.id %}" target="_blank">
+                                    <a class="nolink" href="{% url 'seguimiento:ver_panel' vigia_id=vigia.id %}" target="_blank">
                                         <img class="icons" src="/static/img/icons/control_panel.png" alt="Panel de Control">
                                     </a>
-                                    <a class="nolink"  href="{% ct_auditar_obj_url vigia %}">
+                                    <a class="nolink" href="{% ct_auditar_obj_url vigia %}">
                                         <img class="icons" src="{% static '/img/icons/question.png' %}">
                                     </a>
                                 </td>

@@ -56,7 +56,7 @@
                                 {% with condicion.ultima_intervencion as ultima %}
                                     {% if ultima %}
                                         {{ultima.aclaracion|safe}}
-                                        <p><b>{{ultima.operador}}</b> (Hace: {{ultima.desde}} dias)</p>
+                                        <p><b>{{ultima.operador}}</b> (Hace: {{ultima.desde}} horas)</p>
                                     {% else %}
                                         Nunca recibio Atencion.
                                     {% endif %}

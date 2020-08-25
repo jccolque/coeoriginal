@@ -2,12 +2,18 @@
 
 {% load static %}
 {% load seguimiento_tags %}
+{% load auditar_tags %}
 
 {% block content %}
     <div class="beneficiario container">
         <div class="row">
-            <div class="col-sm-8">
-                <h2><b>Panel de {{vigia}}</b></h2>
+            <div class="col-sm-5">
+                <h2>
+                    <b>Panel de {{vigia}}</b>
+                    <a class="nolink" href="{% ct_auditar_obj_url vigia %}" target="_blank">
+                        <img class="icons" src="{% static '/img/icons/question.png' %}">
+                    </a>
+                </h2>
                 <p><b>{{vigia.get_tipo_display}}</b> {% if vigia.priorizar %}(Prioriza Confirmados){% endif %} </p>
                 <p>
                     <b>Capacidad Disponible:</b> {{vigia.cap_disponible}}
@@ -19,34 +25,52 @@
                 </p>
                 <p><b>Telefono:</b> {{vigia.operador.telefono}}</p>
             </div>
-            <div class="col-sm-4 situacion_vigia">
-                <br>
-                {% if vigia.activo %}
-                    <div class="vigia_activo">
-                        ACTIVO: Asignacion Automatica
-                {% else %}
-                    <div class="vigia_inactivo">
-                        DESACTIVADO: Sin Asignacion Automatica
-                {% endif %}
-                        {% if perms.operadores.seguimiento_admin or vigia.tipo == "EM" %}
-                            <a class="nolink" href="{% url 'seguimiento:mod_estado_vigia' vigia_id=vigia.id %}">
-                                <img class="icons" src="{% static '/img/icons/switch.png' %}" alt="Modificar">
+            <div class="col-sm-3">
+                <div class="situacion_vigia">
+                    <br>
+                    {% if vigia.activo %}
+                        <div class="vigia_activo">
+                            ACTIVO: Asignacion Automatica
+                    {% else %}
+                        <div class="vigia_inactivo">
+                            DESACTIVADO: Sin Asignacion Automatica
+                    {% endif %}
+                            {% if perms.operadores.seguimiento_admin or vigia.tipo == "EM" %}
+                                <a class="nolink" href="{% url 'seguimiento:mod_estado_vigia' vigia_id=vigia.id %}">
+                                    <img class="icons" src="{% static '/img/icons/switch.png' %}" alt="Modificar">
+                                </a>
+                            {% endif %}
+                        </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="bordeado" style="text-align:left;margin-top:5px;">
+                    <h3>
+                        <b>Configuracion:</b>
+                        {% if perms.operadores.seguimiento_admin %}
+                            <a style="float:right;" href="{% url 'seguimiento:configurar_vigia' vigia_id=vigia.id %}">
+                                <img class="icons" src="{% static '/img/icons/config.png' %}">
                             </a>
                         {% endif %}
-                    </div>
+                    </h3>
+                    <p><b>Alerta Verde:</b> {{config.alerta_verde}} hrs</p>
+                    <p><b>Alerta Amarilla:</b> {{config.alerta_amarilla}} hrs</p>
+                    <p><b>Alerta Roja:</b> {{config.alerta_roja}} hrs</p>
+
+                </div>
             </div>
         </div>
         <div class="row">
             <div class="col-xl-7">
-                <h3>Alertas Activas ({{individuos.count}})</h3>
+                <h3><b>Alertas Activas</b> ({{individuos.count}}/{{vigia.controlados.count}})</h3>
                 <table class="listado" id="table">
                     <thead>
                         <tr>
-                            <th>Ultima Llamada</th>
+                            <th>Ultima</th>
                             <th>Individuo</th>
                             <th>Domicilio</th>
                             <th>Telefono</th>
-                            <th>Ultimo Seguimiento</th>
+                            <th>Ultimo Seguimiento Registrado</th>
                             <th>Fecha</th>
                             <th>Operador</th>
                             <th>Condiciones</th>
@@ -55,8 +79,8 @@
                     </thead>
                     <tbody>
                         {% for individuo in individuos %}
-                            <tr id="{{individuo.id}}" class="{% ct_color_alerta individuo.ultima_llamada %}">
-                                <td><b>{% ct_horas_desde individuo.ultima_llamada.fecha %}hrs</b></td>
+                            <tr id="{{individuo.id}}" class="{% ct_color_alerta config individuo.ultima_llamada %}">
+                                <td><b>{{individuo.ultima_llamada.desde}}hrs</b></td>
                                 <td>
                                     {{individuo.apellidos}}, {{individuo.nombres}}
                                 </td>

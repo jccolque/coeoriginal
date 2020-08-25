@@ -38,9 +38,10 @@ urlpatterns = [
     #Administracion
     path('lista/vigias', views.lista_vigias, name='lista_vigias'),
     path('lista/ocupacion', views.lista_ocupacion, name='lista_ocupacion'),
-    path('agregar/vigia', views.agregar_vigia, name='agregar_vigia'),
-    path('mod/vigia/<int:vigia_id>', views.agregar_vigia, name='mod_vigia'),
-    path('del/vigia/<int:vigia_id>', views.del_vigia, name='del_vigia'),
+    path('vigia/agregar', views.agregar_vigia, name='agregar_vigia'),
+    path('vigia/mod/<int:vigia_id>', views.agregar_vigia, name='mod_vigia'),
+    path('vigia/config/<int:vigia_id>', views.configurar_vigia, name='configurar_vigia'),
+    path('vigia/del/<int:vigia_id>', views.del_vigia, name='del_vigia'),
     path('lista/sin/vigias', views.lista_sin_vigias, name='lista_sin_vigias'),
     path('vigia/mod/estado/<int:vigia_id>', views.mod_estado_vigia, name='mod_estado_vigia'),
     path('vigia/rellenar/<int:vigia_id>', views.rellenar_vigia, name='rellenar_vigia'),

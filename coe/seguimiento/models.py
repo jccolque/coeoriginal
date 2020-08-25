@@ -32,7 +32,31 @@ class Seguimiento(models.Model):
     def __str__(self):
         return str(self.fecha)[0:16] + ': ' + self.get_tipo_display() + ': ' + self.aclaracion
     def desde(self):
-        return (timezone.now() - self.fecha).days
+        return int((timezone.now() - self.fecha).total_seconds() / 3600)
+
+class Vigia(models.Model):
+    tipo = models.CharField('Tipo Vigia', choices=TIPO_VIGIA, max_length=2, default='VE')
+    aclaracion = models.CharField('Aclaraciones', max_length=200, null=True, blank=True)
+    operador = models.OneToOneField(Operador, on_delete=models.CASCADE, related_name="vigia")
+    max_controlados = models.SmallIntegerField('Cantidad Maxima de Seguidos', default=60)
+    priorizar = models.BooleanField('Priorizar Confirmados', default=False)
+    controlados = models.ManyToManyField(Individuo, related_name='vigiladores')
+    activo = models.BooleanField('Disponible', default=True)
+    def __str__(self):
+        return str(self.operador.nombres) + ' ' + str(self.operador.apellidos)
+    def alertas_activas(self):
+        limite = timezone.now() - timedelta(hours=12)
+        return sum([1 for c in self.controlados.all() if c.seguimiento_actual and c.seguimiento_actual.fecha < limite])
+    def cap_disponible(self):
+        return self.max_controlados - sum([1 for c in self.controlados.all()])
+
+class Configuracion(models.Model):
+    vigia = models.OneToOneField(Vigia, on_delete=models.CASCADE, related_name="configuracion")
+    alerta_verde = models.IntegerField('Alerta Verde', default=16)
+    alerta_amarilla = models.IntegerField('Alerta Amarilla', default=24)
+    alerta_roja = models.IntegerField('Alerta Roja', default=36)
+    def __str__(self):
+        return str(self.alerta_verde)+'/'+str(self.alerta_amarilla)+'/'+str(self.alerta_roja)
 
 class Condicion(models.Model):
     individuo = models.OneToOneField(Individuo, on_delete=models.CASCADE, related_name="condicion")
@@ -50,23 +74,6 @@ class Condicion(models.Model):
         intervenciones = [i for i in self.individuo.seguimientos.all() if i.tipo == "T"]
         if intervenciones:
             return intervenciones[-1]
-
-
-class Vigia(models.Model):
-    tipo = models.CharField('Tipo Vigia', choices=TIPO_VIGIA, max_length=2, default='VE')
-    aclaracion = models.CharField('Aclaraciones', max_length=200, null=True, blank=True)
-    operador = models.OneToOneField(Operador, on_delete=models.CASCADE, related_name="vigia")
-    max_controlados = models.SmallIntegerField('Cantidad Maxima de Seguidos', default=60)
-    priorizar = models.BooleanField('Priorizar Confirmados', default=False)
-    controlados = models.ManyToManyField(Individuo, related_name='vigiladores')
-    activo = models.BooleanField('Disponible', default=True)
-    def __str__(self):
-        return str(self.operador.nombres) + ' ' + str(self.operador.apellidos)
-    def alertas_activas(self):
-        limite = timezone.now() - timedelta(hours=12)
-        return sum([1 for c in self.controlados.all() if c.seguimiento_actual and c.seguimiento_actual.fecha < limite])
-    def cap_disponible(self):
-        return self.max_controlados - sum([1 for c in self.controlados.all()])
 
 #OPERATIVO
 class OperativoVehicular(models.Model):
@@ -138,5 +145,6 @@ if not LOADDATA:
     auditlog.register(Seguimiento)
     auditlog.register(Condicion)
     auditlog.register(Vigia)
+    auditlog.register(Configuracion)
     auditlog.register(DatosGis)
     auditlog.register(Muestra)
