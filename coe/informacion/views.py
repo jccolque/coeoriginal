@@ -954,7 +954,7 @@ def tablero_control(request):
 
 #IMPORTANTE: CORREGIR QUE SOLO IMPORTE EL ULTIMO ESTADO
 @permission_required('operadores.reportes')
-def reporte_basico(request):
+def reporte_por_filtros(request):
     from seguimiento.choices import TIPO_SEGUIMIENTO
     #iniciamos la vista
     estados = TIPO_ESTADO
