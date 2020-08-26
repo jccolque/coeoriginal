@@ -76,11 +76,14 @@
                                     <a href="{% url 'seguimiento:mod_vigia' vigia_id=vigia.id %}">
                                         <img class="icons" src="{% static '/img/icons/change.png' %}">
                                     </a>
-                                    <a href="{% url 'seguimiento:del_vigia' vigia_id=vigia.id %}">
-                                        <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                    <a href="{% url 'seguimiento:auditar_controlados' vigia_id=vigia.id %}">
+                                        <img class="icons" src="{% static '/img/icons/history.png' %}">
                                     </a>
                                     <a class="nolink"  href="{% ct_auditar_obj_url vigia %}">
                                         <img class="icons" src="{% static '/img/icons/question.png' %}">
+                                    </a>
+                                    <a href="{% url 'seguimiento:del_vigia' vigia_id=vigia.id %}">
+                                        <img class="icons" src="{% static '/img/icons/delete.png' %}">
                                     </a>
                                 </td>
                             </tr>

@@ -1,0 +1,61 @@
+{% extends 'base_seguimiento.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class="beneficiario container">
+        <!-- Listado -->
+        <div class="col-md-12">
+            <h2><b>Lista de Individuos con Carencia de Seguimiento</b></h2>
+            <table class="listado" id="table">
+                <thead>
+                    <tr>
+                        <th>Vigilante</th>
+                        <th>Tipo</th>
+                        <th>Config</th>
+                        
+                        <th>Documento</th>
+                        <th>Individuo</th>
+                        <th>Situacion</th>
+                        <th>Telefono</th>
+                        
+                        <th>Ultima Llamada</th>
+                        <th>Retrazo</th>
+                        <th>Ver Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for abandonado in abandonados %}
+                        <tr>
+                            <td>{{abandonado.vigia}}</td>
+                            <td>{{abandonado.vigia.get_tipo_display}}</td>
+                            <td>{{abandonado.vigia.configuracion}}</td>
+                            
+                            <td>{{abandonado.num_doc}}</td>
+                            <td>{{abandonado.apellidos}}, {{abandonado.nombres}}</td>
+                            <td>{{abandonado.situacion_actual}}</td>
+                            <td>{{abandonado.telefono}}</td>
+
+                            {% if abandonado.llamada %}
+                                <td>{{abandonado.llamada.aclaracion|safe}}</td>
+                                <td>{{abandonado.llamada.desde}}</td>
+                            {% else %}
+                                <td><b>No llamo nunca.</b></td>
+                                <td></td>
+                            {% endif %}
+
+                            <td>
+                                <a class="nolink"  href="{% url 'informacion:ver_individuo' individuo_id=abandonado.id %}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                </a>
+                                <a href="{% url 'seguimiento:ver_panel' vigia_id=abandonado.vigia.id %}" target="_blank">
+                                    <img class="icons" src="/static/img/icons/control_panel.png" alt="Panel de Control">
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

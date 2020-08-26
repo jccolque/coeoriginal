@@ -3,6 +3,7 @@ from django.db.models import Count
 #Importamos de la app
 from informacion.models import Individuo
 from geotracking.models import GeoPosicion, GeOperador
+from geotracking.functions import agregar_trackeado
 
 #Definimos funciones
 def crear_start_trackings():#Para todos los que estan mandando Registros pero no tienen por falla de sistema.
@@ -21,6 +22,6 @@ def asignar_geoperadores():
     for individuo in individuos:
         if not individuo.geoperador.exists():#Si no tiene GeOperador
             geoperador = GeOperador.objects.annotate(cantidad=Count('controlados')).order_by('cantidad').first()
-            geoperador.controlados.add(individuo)
+            agregar_trackeado(geoperador, individuo)
 
     

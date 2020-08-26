@@ -15,7 +15,8 @@ from informacion.functions import actualizar_individuo
 from geotracking.models import GeoPosicion
 from georef.models import Localidad
 #Imports de la app
-from .choices import TIPO_SEGUIMIENTO, TIPO_VIGIA, ESTADO_OPERATIVO, ESTADO_RESULTADO
+from .choices import TIPO_SEGUIMIENTO, TIPO_VIGIA
+from .choices import ESTADO_OPERATIVO, ESTADO_RESULTADO
 from .choices import TIPO_TURNO
 from .choices import NIVEL_CONTENCION, NIVEL_ALIMENTOS, NIVEL_MEDICACION
 from .choices import ESTADO_TIPO, TIPO_PRIORIDAD, TIPO_RESULTADO
@@ -23,9 +24,9 @@ from .choices import ESTADO_TIPO, TIPO_PRIORIDAD, TIPO_RESULTADO
 # Create your models here.
 class Seguimiento(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="seguimientos")
-    tipo = models.CharField('Tipo Seguimiento', choices=TIPO_SEGUIMIENTO, max_length=2, default='I')
+    tipo = models.CharField('Tipo Seguimiento', choices=TIPO_SEGUIMIENTO, max_length=2, default='I', db_index=True)
     aclaracion = HTMLField()
-    fecha = models.DateTimeField('Fecha del Seguimiento', default=timezone.now)
+    fecha = models.DateTimeField('Fecha del Seguimiento', default=timezone.now, db_index=True)
     operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True, related_name="seguimientos_informados")
     class Meta:
         ordering = ['fecha', ]
@@ -44,6 +45,23 @@ class Vigia(models.Model):
     activo = models.BooleanField('Disponible', default=True)
     def __str__(self):
         return str(self.operador.nombres) + ' ' + str(self.operador.apellidos)
+    def add_vigilado(self, individuo):
+        #registro para auditoria
+        history = HistVigilancias(individuo=individuo)
+        history.vigia = self
+        history.evento = 'A'
+        history.save()
+        #agregamos:
+        self.controlados.add(individuo)
+    def del_vigilado(self, individuo):
+        if individuo in self.controlados.all():
+            #registro para auditoria
+            history = HistVigilancias(individuo=individuo)
+            history.vigia = self
+            history.evento = 'E'
+            history.save()
+            #eliminamos:
+            self.controlados.remove(individuo)
     def alertas_activas(self):
         limite = timezone.now() - timedelta(hours=12)
         return sum([1 for c in self.controlados.all() if c.seguimiento_actual and c.seguimiento_actual.fecha < limite])
@@ -57,6 +75,14 @@ class Configuracion(models.Model):
     alerta_roja = models.IntegerField('Alerta Roja', default=36)
     def __str__(self):
         return str(self.alerta_verde)+'/'+str(self.alerta_amarilla)+'/'+str(self.alerta_roja)
+
+class HistVigilancias(models.Model):
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="vigilancias")
+    vigia = models.ForeignKey(Vigia, on_delete=models.SET_NULL, null=True, blank=True, related_name="vigilancias")
+    evento = models.CharField('Tipo Vigia', choices=[('A', 'Asignacion'), ('E', 'Eliminacion')], max_length=2, default='A')
+    fecha = models.DateTimeField('Fecha Registro', default=timezone.now)
+    def __str__(self):
+        return str(self.individuo) + ': ' + str(self.fecha) + ' para ' + self.get_evento_display() + '(Vigilante: ' + str(self.vigia) + ')'
 
 class Condicion(models.Model):
     individuo = models.OneToOneField(Individuo, on_delete=models.CASCADE, related_name="condicion")
@@ -140,11 +166,12 @@ class Muestra(models.Model):
         self.resultado = self.resultado.upper()       
         super(Muestra, self).save()
 
-if not LOADDATA:
+#if not LOADDATA:
     #Auditoria
-    auditlog.register(Seguimiento)
-    auditlog.register(Condicion)
-    auditlog.register(Vigia)
-    auditlog.register(Configuracion)
-    auditlog.register(DatosGis)
-    auditlog.register(Muestra)
+auditlog.register(Seguimiento)
+auditlog.register(Condicion)
+auditlog.register(Vigia)
+auditlog.register(Configuracion)
+auditlog.register(Vigia.controlados.through)#M2M
+auditlog.register(DatosGis)
+auditlog.register(Muestra)

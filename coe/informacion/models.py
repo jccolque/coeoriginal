@@ -59,6 +59,7 @@ class Individuo(models.Model):
         max_length=50,
         validators=[RegexValidator('^[A-Z_\d]*$', 'Solo Mayusculas.')],
         unique=True,
+        db_index=True,
     )
     apellidos = models.CharField('Apellidos', max_length=100)
     nombres = models.CharField('Nombres', max_length=100)
@@ -205,8 +206,8 @@ class Domicilio(models.Model):
 #Extras
 class Situacion(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="situaciones")
-    estado = models.IntegerField('Estado de Seguimiento', choices=TIPO_ESTADO, default=11)
-    conducta = models.CharField('Conducta', max_length=1, choices=TIPO_CONDUCTA, default='A')
+    estado = models.IntegerField('Estado de Seguimiento', choices=TIPO_ESTADO, default=11, db_index=True)
+    conducta = models.CharField('Conducta', max_length=1, choices=TIPO_CONDUCTA, default='A', db_index=True)
     aclaracion = models.CharField('Aclaraciones', max_length=1000, default='', blank=False)
     fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
     class Meta:
@@ -230,9 +231,9 @@ class SignosVitales(models.Model):
 
 class Atributo(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="atributos")
-    tipo = models.CharField('Tipo', choices=TIPO_ATRIBUTO, max_length=3, null=True)
+    tipo = models.CharField('Tipo', choices=TIPO_ATRIBUTO, max_length=3, null=True, db_index=True)
     aclaracion =  models.CharField('Aclaracion', max_length=200, null=True, blank=True)
-    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now)
+    fecha = models.DateTimeField('Fecha del Registro', default=timezone.now, db_index=True)
     activo = models.BooleanField(default=True)
     class Meta:
         ordering = ['fecha', ]

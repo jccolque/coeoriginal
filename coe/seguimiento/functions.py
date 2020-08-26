@@ -21,7 +21,8 @@ from app.functions import desactivar_tracking
 #Imports de la app
 from .choices import TIPO_VIGIA
 from .models import Seguimiento
-from .models import Vigia, OperativoVehicular
+from .models import Vigia
+from .models import OperativoVehicular
 
 #Logger
 logger = logging.getLogger('functions')
@@ -76,12 +77,12 @@ def asignar_vigilante(individuo, tipo):
                 #Si es Vigilancia Medica, lo sacamos de Epidemiologia:
                 if tipo == "ST":#(ODIO HARDCODEAR)
                     for vigia in individuo.vigiladores.filter(tipo="VE"):
-                        individuo.vigiladores.remove(vigia)
+                        vigia.del_vigilado(individuo)
                 #Intentamos buscar vigilante asignado a algun relacionado:
                 for relacion in individuo.relaciones.exclude(relacionado__vigiladores=None):
                     try:
                         vigia = relacion.relacionado.vigiladores.get(tipo=tipo)
-                        vigia.controlados.add(individuo)
+                        vigia.add_vigilado(individuo)
                         break#Lo cargamos, limpiamos, terminamos
                     except:
                         pass#No tenia de ese tipo
@@ -90,7 +91,7 @@ def asignar_vigilante(individuo, tipo):
                     vigias = Vigia.objects.filter(tipo=tipo).annotate(cantidad=Count('controlados')).exclude(activo=False)
                     for vigia in vigias.order_by('-priorizar', 'cantidad'):
                         if vigia.max_controlados > vigia.cantidad:
-                            vigia.controlados.add(individuo)
+                            vigia.add_vigilado(individuo)
                             break#Lo cargamos, limpiamos, terminamos
         else:
             #No tiene telefono

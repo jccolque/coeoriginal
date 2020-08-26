@@ -41,7 +41,7 @@ from app.functions import activar_tracking, desactivar_tracking
 from background.functions import crear_progress_link
 #imports de la app
 from .choices import TIPO_VIGIA
-from .models import Seguimiento, Vigia, Configuracion
+from .models import Seguimiento, Vigia, HistVigilancias, Configuracion
 from .models import OperativoVehicular, TestOperativo
 from .models import Condicion
 from .forms import SeguimientoForm
@@ -214,10 +214,9 @@ def fin_seguimiento(request, vigia_id, individuo_id):
             seg.operador = obtener_operador(request)
             Seguimiento.objects.bulk_create([seg, ])
             #Damos de baja el seguimiento    
-            vigia.controlados.remove(individuo)
+            vigia.del_vigilado(individuo)
             return redirect('seguimiento:ver_panel', vigia_id=vigia_id)
     return render(request, "extras/generic_form.html", {'titulo': "Finalizar Seguimiento", 'form': form, 'boton': "Confirmar", })
-
 
 #Listados
 @permission_required('operadores.seguimiento_admin')
@@ -259,7 +258,6 @@ def reporte_vigilantes(request):
             altas_generadas=Subquery(
                 Operador.objects.filter(pk=OuterRef('operador')).annotate(altas_generadas=Count('seguimientos_informados', filter=Q(seguimientos_informados__tipo='FS'))).values('altas_generadas')[:1]
             ),
-        
     )    
     #Lanzamos reporte
     return render(request, "reporte_vigilantes.html", {
@@ -329,6 +327,26 @@ def situacion_vigilancia(request):
         'graf_vigilancia': graf_vigilancia,
     })
 
+@permission_required('operadores.seguimiento')
+def auditar_controlados(request, vigia_id=None):
+    #Optimizamos
+    vigilancias = HistVigilancias.objects.all()
+    vigilancias = vigilancias.select_related(
+        'vigia',
+        'individuo', 'individuo__situacion_actual'
+    )
+    #Chequeamos si es para un vigia
+    vigia = None
+    if vigia_id:
+        vigia = Vigia.objects.get(pk=vigia_id)
+        vigilancias = vigilancias.filter(vigia=vigia)
+    #Lanzamos reporte:
+    return render(request, "auditoria_controlados.html", {
+        'vigia': vigia,
+        'vigilancias': vigilancias,
+        'has_table': True,
+    })
+
 @permission_required('operadores.seguimiento_admin')
 def seguimientos_vigia(request, vigia_id):
     vigia = Vigia.objects.all()
@@ -360,6 +378,49 @@ def lista_seguimientos(request):
         'individuos': individuos,
         'has_table': True,
     })
+
+@permission_required('operadores.seguimiento_admin')
+def carentes_seguimiento(request):
+    #Obtenemos los vigilantes
+    vigias = Vigia.objects.all()
+    #Optimizamos:
+    vigias = vigias.select_related(
+        'operador', 'operador__usuario',
+        'configuracion',
+    )
+    vigias = vigias.prefetch_related(
+        'controlados',
+        'controlados__seguimientos', 'controlados__seguimientos__operador',
+        'controlados__situacion_actual',
+    )
+    #Preparamos lista para resultado:
+    abandonados = []
+    #Chequeamos a cada vigilante:
+    vigias = list(vigias)#Lo transformamos en lista para poder meterle valores extra
+    for vigia in vigias:
+        try:#Obtenemos configuracion del vigia
+            config = vigia.configuracion
+        except:#si no tiene lo creamos
+            config = Configuracion.objects.get_or_create(vigia=vigia)[0]
+        #Definimos limite para abandono (Alerta Amarilla):
+        limite = timezone.now() - timedelta(hours=config.alerta_roja)#default: 36 horas
+        #Chequeamos a todos los vigilados
+        for individuo in vigia.controlados.all():
+            llamadas = [l for l in individuo.seguimientos.all() if l.tipo == 'L' and l.operador == vigia.operador]
+            if llamadas:#Si recibio llamadas pero son mas viejas que limite
+                if llamadas[-1].fecha < limite:
+                    individuo.llamada = llamadas[-1]
+                    individuo.vigia = vigia
+                    abandonados.append(individuo)
+            else:
+                individuo.vigia = vigia
+                abandonados.append(individuo)
+    #Lanzamos reportes
+    return render(request, 'carentes_seguimiento.html', {
+            'abandonados': abandonados,
+            'has_table': True,
+        }
+    )
 
 @permission_required('operadores.seguimiento')
 def altas_cargadas(request, vigia_id=None):
@@ -406,7 +467,7 @@ def asignar_vigia(request, individuo_id):
         if form.is_valid():
             individuo = Individuo.objects.get(pk=individuo_id)
             vigia = form.cleaned_data['vigia']
-            vigia.controlados.add(individuo)
+            vigia.add_vigilado(individuo)
             return redirect('seguimiento:lista_sin_vigias')
     return render(request, "extras/generic_form.html", {'titulo': "Asignar Controlador", 'form': form, 'boton': "Asignar", })
 
@@ -488,7 +549,7 @@ def rellenar_vigia(request, vigia_id):
         for individuo in individuos:
             if vigia.controlados.count() < vigia.max_controlados:
                 #Si aun hay lugar, lo agregamos
-                vigia.controlados.add(individuo)
+                vigia.add_vigilado(individuo)
             else:#Si ya no hay lugar, terminamos
                 break
         #Volvemos al panel
@@ -538,7 +599,7 @@ def agregar_vigilado(request, vigia_id):
             atributo.fecha = timezone.now()
             Atributo.objects.bulk_create([atributo, ])
             #Agregamos a vigilancia
-            vigia.controlados.add(individuo)
+            vigia.add_vigilado(individuo)
             #Volvemos a la vista
             return redirect('seguimiento:ver_panel', vigia_id=vigia.id)
     return render(request, "extras/generic_form.html", {'titulo': "Agregar Individuo Seguido", 'form': form, 'boton': "Agregar", })
@@ -550,14 +611,14 @@ def quitar_vigilado(request, vigia_id, individuo_id):
     #Obtenemos individuo a dar de baja
     individuo = Individuo.objects.get(pk=individuo_id)
     #Damos de baja
-    vigia.controlados.remove(individuo)
+    vigia.del_vigilado(individuo)
     return redirect('seguimiento:ver_panel', vigia_id=vigia.id)
 
 #Panel
 @permission_required('operadores.seguimiento')
 def panel_vigia(request, vigia_id=None):
     #Obtenemos el operador en cuestion
-    vigias = Vigia.objects.select_related('configuracion')
+    vigias = Vigia.objects.select_related('operador', 'configuracion')
     vigias = vigias.prefetch_related('controlados', 'controlados__situacion_actual', 'controlados__atributos')
     if vigia_id:
         vigia = vigias.get(pk=vigia_id)
@@ -570,7 +631,6 @@ def panel_vigia(request, vigia_id=None):
             'titulo': 'No existe Panel de Vigilancia',
             'error': "Usted no es un Vigilante Habilitado, si deberia tener acceso a esta seccion, por favor contacte a los administradores.",
         })
-
     #Buscamos Alertas
     if vigia.tipo == "EM":#TODAS SON EMERGENCIAS YA!
         limite = timezone.now()
@@ -578,9 +638,8 @@ def panel_vigia(request, vigia_id=None):
         config = Configuracion.objects.get_or_create(vigia=vigia)[0]
         limite = timezone.now() - timedelta(hours=config.alerta_verde)
     #Solo filtramos por el ultimo seguimiento tipo 'L'
-    seguimiento_valido = Seguimiento.objects.filter(tipo='L', fecha__gt=limite)#generamos subquery
+    seguimiento_valido = Seguimiento.objects.filter(tipo='L', fecha__gt=limite, operador=vigia.operador)#generamos subquery
     individuos = vigia.controlados.exclude(seguimientos__in=seguimiento_valido)
-
     #Optimizamos
     individuos = individuos.select_related(
         'situacion_actual',
@@ -588,11 +647,20 @@ def panel_vigia(request, vigia_id=None):
         'seguimiento_actual', 'seguimiento_actual__operador',
     )
     individuos = individuos.prefetch_related(
-        'seguimientos', 'atributos',
+        'seguimientos', 'seguimientos__operador',
+        'atributos',
         'condicion',
     )
-    #Ordenamos por fecha
-    individuos = individuos.order_by('seguimiento_actual__fecha')
+    #Cargamos desde la ultima llamada de ese operador:
+    individuos = list(individuos)
+    for individuo in individuos:
+        llamadas = [l for l in individuo.seguimientos.all() if l.tipo == 'L' and l.operador == vigia.operador]
+        if llamadas:
+            individuo.desde_su_llamada = str(llamadas[-1].desde()) + "hrs"
+        else:
+            individuo.desde_su_llamada = "No registra"
+    #Ordenamos por urgencia
+    
     #Lanzamos panel
     return render(request, "panel_vigia.html", {
         'vigia': vigia,

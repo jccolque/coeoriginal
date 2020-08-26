@@ -62,7 +62,7 @@
         </div>
         <div class="row">
             <div class="col-xl-7">
-                <h3><b>Alertas Activas</b> ({{individuos.count}}/{{vigia.controlados.count}})</h3>
+                <h3><b>Alertas Activas</b> ({{individuos|length}}/{{vigia.controlados.count}})</h3>
                 <table class="listado" id="table">
                     <thead>
                         <tr>
@@ -80,7 +80,7 @@
                     <tbody>
                         {% for individuo in individuos %}
                             <tr id="{{individuo.id}}" class="{% ct_color_alerta config individuo.ultima_llamada %}">
-                                <td><b>{{individuo.ultima_llamada.desde}}hrs</b></td>
+                                <td>{{individuo.desde_su_llamada}}</td>
                                 <td>
                                     {{individuo.apellidos}}, {{individuo.nombres}}
                                 </td>
@@ -155,7 +155,12 @@
                 </table>
             </div>
             <div class="col-xl-5">
-                <h3>Individuos Controlados ({{vigia.controlados.count}})</h3>
+                <h3>
+                    Individuos Controlados ({{vigia.controlados.count}})
+                    <a href="{% url 'seguimiento:auditar_controlados' vigia_id=vigia.id %}" target="_blank">
+                        <img class="icons" src="{% static '/img/icons/history.png' %}">
+                    </a>
+                </h3>
                 <a class="botoncito" href="{% url 'seguimiento:agregar_vigilado' vigia_id=vigia.id %}">
                     Asignar Nuevo Individuo
                     <img class="icons" src="/static/admin/img/icon-addlink.svg" alt="Crear Nuevo">

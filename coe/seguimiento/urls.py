@@ -71,12 +71,15 @@ urlpatterns = [
     path('situacion/vigilancia', views.situacion_vigilancia, name='situacion_vigilancia'),
     path('reporte/vigilantes', views.reporte_vigilantes, name='reporte_vigilantes'),
     path('seguimientos/vigia/<int:vigia_id>', views.seguimientos_vigia, name='seguimientos_vigia'),
+    path('auditar/vigilados', views.auditar_controlados, name='auditar_controlados'),
+    path('carentes', views.carentes_seguimiento, name='carentes_seguimiento'),
     #Panel
     path('panel/vigia', views.panel_vigia, name='mi_panel'),
     path('panel/vigia/<int:vigia_id>', views.panel_vigia, name='ver_panel'),
     path('agregar/vigilado/<int:vigia_id>', views.agregar_vigilado, name='agregar_vigilado'),
     path('quitar/vigilado/<int:vigia_id>/<int:individuo_id>', views.quitar_vigilado, name='quitar_vigilado'),
     path('altas/realizadas/<int:vigia_id>', views.altas_cargadas, name='altas_cargadas'),
+    path('auditar/vigilados/<int:vigia_id>', views.auditar_controlados, name='auditar_controlados'),
     #Gis
     path('gis/lista', views.gis_list, name="gis_list"),
     path('gis/cargar', views.cargar_gis, name="cargar_gis"),

@@ -13,6 +13,7 @@ from informacion.models import Individuo
 from .clases import MapeadorIndividual
 from .models import GeoPosicion, GeOperador
 from .functions import obtener_trackeados, renovar_base, obtener_geoposiciones
+from .functions import agregar_trackeado
 from .forms import ConfigGeoForm, NuevoGeoOperador, NuevoIndividuo, AsignarGeOperador
 
 #Administrar
@@ -107,7 +108,7 @@ def agregar_individuo(request, geoperador_id):
         if form.is_valid():
             geoperador = GeOperador.objects.get(pk=geoperador_id)
             individuo = form.cleaned_data['individuo']
-            geoperador.controlados.add(individuo)
+            agregar_trackeado(geoperador, individuo)
             return redirect('geotracking:ver_geopanel', geoperador_id=geoperador.id)
     return render(request, "extras/generic_form.html", {'titulo': "Agregar Individuo Seguido", 'form': form, 'boton': "Agregar", })
 
@@ -126,7 +127,7 @@ def asignar_geoperador(request, individuo_id):
         if form.is_valid():
             individuo = Individuo.objects.get(pk=individuo_id)
             geoperador = form.cleaned_data['geoperador']
-            geoperador.controlados.add(individuo)
+            agregar_trackeado(geoperador, individuo)
             return redirect('geotracking:lista_sin_geoperador')
     return render(request, "extras/generic_form.html", {'titulo': "Asignar Controlador", 'form': form, 'boton': "Asignar", })
 
@@ -138,7 +139,7 @@ def del_geoperador(request, geoperador_id):
         for controlado in geoperador.controlados.all():
             try:
                 nuevo_geoperador = GeOperador.objects.exclude(pk=geoperador.pk).annotate(cantidad=Count('controlados')).order_by('cantidad').first()
-                nuevo_geoperador.controlados.add(controlado)
+                agregar_trackeado(nuevo_geoperador, controlado)
             except:
                 pass
         #Lo damos de baja:

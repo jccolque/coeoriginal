@@ -52,7 +52,7 @@ def quitar_viejos():
                     seg.aclaracion = "Se dio baja automatica: " + atrib.get_tipo_display() + " orden: Diego Valdecanto."
                     seguimientos.append(seg)
                     #Lo damos de baja
-                    vigia.controlados.remove(controlado)
+                    vigia.del_vigilado(controlado)
         #Hacemos bulk masivo para que no llame signals:
         Seguimiento.objects.bulk_create(seguimientos)
 
@@ -66,4 +66,4 @@ def quitar_sin_telefono():
                 seg.tipo = "TE"
                 seg.aclaracion = "Limpieza Masiva, Requiere Carga de Telefono"
                 seg.save()
-                vigia.controlados.remove(controlado)
+                vigia.del_vigilado(controlado)
