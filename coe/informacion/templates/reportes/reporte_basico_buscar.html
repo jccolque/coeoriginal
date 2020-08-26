@@ -7,53 +7,46 @@
             <div class="row">
                 <h2>Seleccione los filtros:</h2>
                 <div class="col-md-4">
-                    <h3 class="filter_name">Basicos:</h3>
-                    <h2>Fecha:</h2>
-                    <ul>
-                        <li>Desde: <input id="begda" type="date" value="2020-01-01"></li>
-                        <li>Hasta: <input id="endda" type="date" value="2020-12-31"></li></li>
-                    </ul>
-                    <hr>
-                    <h3 class="filter_name">Categorias</h3>
+                    <h3 class="filter_name">Estados</h3>
                     <ul>
                         {% for estado in estados %}
                             <li>
-                                <input type="checkbox" id="estado" name="estado" value="{{estado.0}}" checked>
+                                <input type="checkbox" id="estado" name="estado" value="{{estado.0}}">
                                 <label>{{estado.1}}</label>
                             </li>
                         {% endfor %}
                     </ul>
-                    <h3 class="filter_name">Conducta</h3>
+                    <h3 class="filter_name">Conducta:</h3>
                     <ul>
                         {% for conducta in conductas %}
                             <li>
-                                <input type="checkbox" id="conducta" name="conducta" value="{{conducta.0}}" checked>
+                                <input type="checkbox" id="conducta" name="conducta" value="{{conducta.0}}">
                                 <label>{{conducta.1}}</label>
                             </li>
                         {% endfor %}
                     </ul>  
                 </div>
                 <div class="col-md-4">
-                    <h3 class="filter_name">Sintomas</h3>
-                        <ul>
-                            {% for sintoma in sintomas %}
-                                <li>
-                                    <input type="checkbox" id="sintoma" name="sintoma" value="{{sintoma.0}}" checked>
-                                    <label>{{sintoma.1}}</label>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                </div>
-                <div class="col-md-4">
-                    <h3 class="filter_name">Atributos</h3>
+                    <h3 class="filter_name">Atributos:</h3>
                     <ul>
                         {% for atributo in atributos %}
                             <li>
-                                <input type="checkbox" id="atributo" name="atributo" value="{{atributo.0}}" checked>
+                                <input type="checkbox" id="atributo" name="atributo" value="{{atributo.0}}">
                                 <label>{{atributo.1}}</label>
                             </li>
                         {% endfor %}
                     </ul>
+                </div>
+                <div class="col-md-4">
+                    <h3 class="filter_name">Seguimientos:</h3>
+                        <ul>
+                            {% for seguimiento in seguimientos %}
+                                <li>
+                                    <input type="checkbox" id="seguimiento" name="seguimiento" value="{{seguimiento.0}}">
+                                    <label>{{seguimiento.1}}</label>
+                                </li>
+                            {% endfor %}
+                        </ul>
                 </div>
             </div>
             <button type="submit">Reporte</button>

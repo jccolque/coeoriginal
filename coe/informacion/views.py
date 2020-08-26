@@ -955,47 +955,51 @@ def tablero_control(request):
 #IMPORTANTE: CORREGIR QUE SOLO IMPORTE EL ULTIMO ESTADO
 @permission_required('operadores.reportes')
 def reporte_basico(request):
-    #Definimos un objecto para jugar
-    class Creportado(object):
-        individuo = Individuo()
-        atributos = 0
-        sintomas = 0
+    from seguimiento.choices import TIPO_SEGUIMIENTO
     #iniciamos la vista
     estados = TIPO_ESTADO
     conductas = TIPO_CONDUCTA
     atributos = TIPO_ATRIBUTO
-    sintomas = TIPO_SINTOMA
+    seguimientos = TIPO_SEGUIMIENTO
     if request.method == "POST":
-        reportados = {}
-        #Obtenemos todos los parametros
-        #begda = request.POST['begda']
-        #endda = request.POST['endda']
-        estados = request.POST.getlist('estado')
-        conductas = request.POST.getlist('conducta')
-        #Individuos
-        full_individuos = Individuo.objects.all()
+        #Traemos todos los Individuos
+        individuos = Individuo.objects.all()
         #Obtenemos todos los individuos que esten en situacion especificada
-        full_individuos = full_individuos.filter(situacion_actual__estado__in=estados)
-        full_individuos = full_individuos.filter(situacion_actual__conducta__in=conductas)        
+        estados = request.POST.getlist('estado')
+        if estados:
+            individuos = individuos.exclude(situacion_actual__estado__in=estados)
+        conductas = request.POST.getlist('conducta')
+        if conductas:
+            individuos = individuos.filter(situacion_actual__conducta__in=conductas)        
         #Descartamos por Atributos
         atributos = request.POST.getlist('atributo')
-        full_individuos = full_individuos.filter(atributos__tipo__in=atributos)
-        #Descartamos por Sintomas
-        sintomas = request.POST.getlist('sintoma')
-        full_individuos = full_individuos.filter(sintomas__tipo__in=sintomas)
-        #Obtenemos cantidad de sintomas y de atributos:
-            #Aca deberiamos ordenar por sintomas y atributos
+        for atributo in atributos:
+            individuos = individuos.filter(atributos__tipo=atributo)
+        #Filtramos por seguimientos
+        seguimientos = request.POST.getlist('seguimiento')
+        for seguimiento in seguimientos:
+            individuos = individuos.filter(seguimientos__tipo=seguimiento)
+        # #Descartamos por Sintomas
+        # sintomas = request.POST.getlist('sintoma')
+        # if sintomas:
+        #     individuos = individuos.filter(sintomas__tipo__in=sintomas)
         #Optimizamos
-        full_individuos = full_individuos.prefetch_related('domicilios', 'situaciones', 'atributos', 'sintomas')
+        individuos = individuos.prefetch_related(
+            'situacion_actual',
+            'domicilio_actual',
+        )
+        #Eliminamos todos los repetidos por el join
+        individuos = individuos.distinct()
+        #Lanzamos reporte
         return render(request, "reportes/reporte_basico_mostrar.html", {
-            'reportados': full_individuos,
+            'individuos': individuos,
             'has_table': True,
         })
     return render(request, "reportes/reporte_basico_buscar.html", {
         'estados': estados,
         'conductas': conductas,
         'atributos': atributos, 
-        'sintomas': sintomas,
+        'seguimientos': seguimientos,
     })
 
 @permission_required('operadores.menu_georef')

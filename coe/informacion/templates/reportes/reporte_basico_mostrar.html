@@ -3,7 +3,7 @@
 {% block content %}
     <div class="beneficiario container">
         <div class="row">
-            <h2>Individuos Registrados</h2>
+            <h2>Individuos Encontrados</h2>
         </div>
         <div class="row">
         <div class="col-md-12">
@@ -12,26 +12,20 @@
                     <tr>
                         <th>Documento</th>
                         <th>Individuo</th>
-                        <th>Fecha de Nacimiento</th>
-                        <th>Nacionalidad</th>
-                        <th>Origen - Destino</th>
-                        <th>Estado</th>
-                        <th>Sintomas</th>
-                        <th>Atributos</th>
+                        <th>Telefono</th>
+                        <th>Email</th>
+                        <th>Situacion</th>
                         <th>Ver Detalle</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for individuo in full_individuos %}
+                    {% for individuo in individuos %}
                         <tr>
-                            <td>{{individuo.get_tipo_doc_display}} {{individuo.num_doc}}</td>
+                            <td>{{individuo.num_doc}}</td>
                             <td>{{individuo.apellidos}}, {{individuo.nombres}}</td>
-                            <td>{{individuo.fecha_nacimiento}}</td>
-                            <td>{{individuo.nacionalidad}}</td>
-                            <td>{{individuo.origen}} - {{individuo.destino}}</td>
+                            <td>{{individuo.telefono}}</td>
+                            <td>{{individuo.email}}</td>
                             <td>{{individuo.situacion_actual}}</td>
-                            <td>{{reportado.sintomas}}</td>
-                            <td>{{reportado.atributos}}</td>
                             <td><a href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">(Ver Detalle)</a></td>
                         </tr>
                     {% endfor %}
