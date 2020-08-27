@@ -11,19 +11,22 @@ urlpatterns = [
     #App
     path('', views.menu_geotracking, name='menu_geotracking'),
     #Tracking
-    path('general', views.control_tracking, name='control_tracking'),
-    path('lista/trackeados', views.lista_trackeados, name='lista_trackeados'),
-    path('lista/alertas', views.lista_alertas, name='lista_alertas'),
-    path('lista/procesadas', views.alertas_procesadas, name='alertas_procesadas'),
     path('ver/<int:individuo_id>', views.ver_tracking, name='ver_tracking'),
     path('procesar/<int:geoposicion_id>', views.procesar_alerta, name='procesar_alerta'),
     path('delete/<int:geoposicion_id>', views.delete_geopos, name='delete_geopos'),
     #Panel GeoOperador
     path('lista/sin_geoperador', views.lista_sin_geoperador, name='lista_sin_geoperador'),
-    path('asignar/geoperador/<individuo_id>', views.asignar_geoperador, name='asignar_geoperador'),
-    path('lista/geooperadores', views.lista_geooperadores, name='lista_geooperadores'),
+    path('asignar/geoperador/<int:individuo_id>', views.asignar_geoperador, name='asignar_geoperador'),
+    path('lista/geoperadores', views.lista_geooperadores, name='lista_geooperadores'),
     path('agregar/geoperador', views.agregar_geoperador, name='agregar_geoperador'),
-    path('del/geoperador/<geoperador_id>', views.del_geoperador, name='del_geoperador'),
+    path('del/geoperador/<int:geoperador_id>', views.del_geoperador, name='del_geoperador'),
+    #Admin
+    path('general', views.control_tracking, name='control_tracking'),
+    path('lista/trackeados', views.lista_trackeados, name='lista_trackeados'),
+    path('lista/alertas', views.lista_alertas, name='lista_alertas'),
+    path('lista/procesadas', views.alertas_procesadas, name='alertas_procesadas'),
+    path('auditar/asignaciones', views.auditar_asignaciones, name='auditar_asignaciones'),
+    path('auditar/asignaciones/<int:geoperador_id>', views.auditar_asignaciones, name='auditar_asignaciones'),
     #Panel
     path('cambiar_base/<int:geoposicion_id>', views.cambiar_base, name='cambiar_base'),
     path('config/<int:individuo_id>', views.config_tracking, name='config_tracking'),

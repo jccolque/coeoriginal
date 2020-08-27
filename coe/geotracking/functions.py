@@ -135,16 +135,10 @@ def control_movimiento(nueva_geopos):
     #Evitamos control a la hora de dormir
     return nueva_geopos
 
-def agregar_trackeado(geoperador, individuo):
-    #registro para auditoria
-
-    #agregamos:
-    geoperador.controlados.add(individuo)
-
 def asignar_geoperador(individuo):
     #Obtenemos el que menos controlados tiene
     geoperadores = GeOperador.objects.annotate(cantidad=Count('controlados')).order_by('cantidad')
     for geoperador in geoperadores:
         if geoperador.controlados.count() < geoperador.max_controlados:
-            agregar_trackeado(geoperador, individuo)
+            geoperador.add_trackeado(individuo)
             break

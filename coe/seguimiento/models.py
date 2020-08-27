@@ -172,6 +172,6 @@ auditlog.register(Seguimiento)
 auditlog.register(Condicion)
 auditlog.register(Vigia)
 auditlog.register(Configuracion)
-auditlog.register(Vigia.controlados.through)#M2M
+auditlog.register(HistVigilancias)
 auditlog.register(DatosGis)
 auditlog.register(Muestra)

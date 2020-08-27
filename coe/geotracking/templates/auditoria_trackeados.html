@@ -1,0 +1,67 @@
+{% extends 'base_seguimiento.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class="beneficiario container">
+        <!-- Cabecera -->
+        {% if geoperador %}
+            <div class="row">
+                <div class="col-sm-8">
+                    <h2>
+                        <b>{{geoperador}}</b>
+                        <a href="{% url 'geotracking:ver_geopanel' geoperador_id=geoperador.id %}" target="_blank">
+                            <img class="icons" src="/static/img/icons/control_panel.png" alt="Panel de Control">
+                        </a>
+                    </h2>
+                    <p><b>Capacidad Disponible:</b> {{geoperador.cap_disponible}}</p>
+                    <p><b>Telefono:</b> {{vigia.operador.telefono}}</p>
+                    <p><b>Email:</b> {{vigia.operador.email}}</p>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Listado -->
+        <div class="col-md-12">
+            <h2><b>Lista de Registros de Asignaciones</b></h2>
+            <table class="listado" id="table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        {% if not vigia %}
+                            <th>Vigilante</th>
+                            <th>Tipo</th>
+                        {% endif %}
+                        <th>Evento</th>
+                        <th>Documento</th>
+                        <th>Individuo</th>
+                        <th>Situacion</th>
+                        <th>Telefono</th>
+                        <th>Ver Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for history in vigilancias %}
+                        <tr>
+                            <td>{{history.fecha}}</td>
+                            {% if not vigia %}
+                                <td>{{history.geoperador}}</td>
+                                <td>{{history.geoperador.get_tipo_display}}</td>
+                            {% endif %}
+                            <td>{{history.get_evento_display}}</td>
+                            <td>{{history.individuo.num_doc}}</td>
+                            <td>{{history.individuo.apellidos}}, {{history.individuo.nombres}}</td>
+                            <td>{{history.individuo.situacion_actual}}</td>
+                            <td>{{history.individuo.telefono}}</td>
+                            <td>
+                                <a class="nolink"  href="{% url 'informacion:ver_individuo' individuo_id=history.individuo.id %}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/access_card.png' %}">
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

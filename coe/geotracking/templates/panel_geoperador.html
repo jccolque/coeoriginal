@@ -27,7 +27,12 @@
                 </table>
             </div>
             <div class="col-md-4">
-                <h3>Individuos Controlados ({{geoperador.cantidad_controlados}})</h3>
+                <h3>
+                    Individuos Controlados ({{geoperador.cantidad_controlados}})
+                    <a href="{% url 'geotracking:auditar_asignaciones' geoperador_id=geoperador.id %}" target="_blank">
+                        <img class="icons" src="{% static '/img/icons/history.png' %}">
+                    </a>
+                </h3>
                 {% if perms.operadores.geotracking_admin %}
                     <a class="botoncito" href="{% url 'geotracking:agregar_individuo' geoperador_id=geoperador.id %}">
                         Asignar Nuevo Individuo

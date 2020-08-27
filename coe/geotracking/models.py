@@ -60,6 +60,8 @@ class GeOperador(models.Model):
         return str(self.operador.nombres) + ' ' + str(self.operador.apellidos)
     def cantidad_controlados(self):
         return sum([1 for c in self.controlados.all()])
+    def cap_disponible(self):
+        return self.max_controlados - self.cantidad_controlados()
     def alertas_activas(self):
         total = 0#utilizamos este metodo por optimizacion
         for controlado in self.controlados.all():
@@ -68,8 +70,34 @@ class GeOperador(models.Model):
                     total += 1
                     break
         return total
+    def add_trackeado(self, individuo):
+        #registro para auditoria
+        history = HistTrackeados(individuo=individuo)
+        history.geoperador = self
+        history.evento = 'A'
+        history.save()
+        #agregamos:
+        self.controlados.add(individuo)
+    def del_trackeado(self, individuo):
+        if individuo in self.controlados.all():
+            #registro para auditoria
+            history = HistTrackeados(individuo=individuo)
+            history.geoperador = self
+            history.evento = 'E'
+            history.save()
+            #eliminamos:
+            self.controlados.remove(individuo)
+
+class HistTrackeados(models.Model):
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="histgeotrackings")
+    geoperador = models.ForeignKey(GeOperador, on_delete=models.SET_NULL, null=True, blank=True, related_name="histgeotrackings")
+    evento = models.CharField('Tipo Vigia', choices=[('A', 'Asignacion'), ('E', 'Eliminacion')], max_length=2, default='A')
+    fecha = models.DateTimeField('Fecha Registro', default=timezone.now)
+    def __str__(self):
+        return str(self.individuo) + ': ' + str(self.fecha) + ' para ' + self.get_evento_display() + '(Vigilante: ' + str(self.geoperador) + ')'
 
 if not LOADDATA:
     #Auditoria
     auditlog.register(GeoPosicion)
     auditlog.register(GeOperador)
+    auditlog.register(HistTrackeados)

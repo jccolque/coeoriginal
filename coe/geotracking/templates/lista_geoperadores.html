@@ -32,6 +32,9 @@
                                     <a href="{% url 'geotracking:ver_geopanel' geoperador_id=geoperador.id %}" target="_blank">
                                         <img class="icons" src="/static/img/icons/control_panel.png" alt="Panel de Control">
                                     </a>
+                                    <a href="{% url 'geotracking:auditar_asignaciones' geoperador_id=geoperador.id %}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/history.png' %}">
+                                    </a>
                                     <a href="{% url 'geotracking:del_geoperador' geoperador_id=geoperador.id %}">
                                         <img class="icons" src="{% static '/img/icons/delete.png' %}">
                                     </a>

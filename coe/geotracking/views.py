@@ -13,7 +13,6 @@ from informacion.models import Individuo
 from .clases import MapeadorIndividual
 from .models import GeoPosicion, GeOperador
 from .functions import obtener_trackeados, renovar_base, obtener_geoposiciones
-from .functions import agregar_trackeado
 from .forms import ConfigGeoForm, NuevoGeoOperador, NuevoIndividuo, AsignarGeOperador
 
 #Administrar
@@ -108,7 +107,7 @@ def agregar_individuo(request, geoperador_id):
         if form.is_valid():
             geoperador = GeOperador.objects.get(pk=geoperador_id)
             individuo = form.cleaned_data['individuo']
-            agregar_trackeado(geoperador, individuo)
+            geoperador.add_trackeado(individuo)
             return redirect('geotracking:ver_geopanel', geoperador_id=geoperador.id)
     return render(request, "extras/generic_form.html", {'titulo': "Agregar Individuo Seguido", 'form': form, 'boton': "Agregar", })
 
@@ -116,7 +115,7 @@ def agregar_individuo(request, geoperador_id):
 def quitar_individuo(request, geoperador_id, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
     geoperador = GeOperador.objects.get(pk=geoperador_id)
-    geoperador.controlados.remove(individuo)
+    geoperador.del_trackeado(individuo)
     return redirect('geotracking:ver_geopanel', geoperador_id=geoperador.id)
 
 @permission_required('operadores.geotracking_admin')
@@ -127,7 +126,7 @@ def asignar_geoperador(request, individuo_id):
         if form.is_valid():
             individuo = Individuo.objects.get(pk=individuo_id)
             geoperador = form.cleaned_data['geoperador']
-            agregar_trackeado(geoperador, individuo)
+            geoperador.add_trackeado(individuo)
             return redirect('geotracking:lista_sin_geoperador')
     return render(request, "extras/generic_form.html", {'titulo': "Asignar Controlador", 'form': form, 'boton': "Asignar", })
 
@@ -139,7 +138,7 @@ def del_geoperador(request, geoperador_id):
         for controlado in geoperador.controlados.all():
             try:
                 nuevo_geoperador = GeOperador.objects.exclude(pk=geoperador.pk).annotate(cantidad=Count('controlados')).order_by('cantidad').first()
-                agregar_trackeado(nuevo_geoperador, controlado)
+                nuevo_geoperador.add_trackeado(controlado)
             except:
                 pass
         #Lo damos de baja:
@@ -153,6 +152,28 @@ def del_geoperador(request, geoperador_id):
     )
 
 #LISTAS
+from .models import HistTrackeados
+
+@permission_required('operadores.geotracking_admin')
+def auditar_asignaciones(request, geoperador_id=None):
+    #Optimizamos
+    vigilancias = HistTrackeados.objects.all()
+    vigilancias = vigilancias.select_related(
+        'geoperador',
+        'individuo', 'individuo__situacion_actual'
+    )
+    #Chequeamos si es para un vigia
+    geoperador = None
+    if geoperador_id:
+        geoperador = GeOperador.objects.get(pk=geoperador_id)
+        vigilancias = vigilancias.filter(geoperador=geoperador)
+    #Lanzamos reporte:
+    return render(request, "auditoria_trackeados.html", {
+        'geoperador': geoperador,
+        'vigilancias': vigilancias,
+        'has_table': True,
+    })
+
 @permission_required('operadores.geotracking_admin')
 def lista_sin_geoperador(request):
     #Obtenemos todos los que ya estan siendo controlados
