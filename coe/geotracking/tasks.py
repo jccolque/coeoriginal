@@ -92,7 +92,8 @@ def finalizar_geotracking():
             seguimiento.aclaracion = "Fin de Seguimiento iniciado el: " + str(st_geopos.fecha)[0:16]
             seguimiento.save()
             #Lo quitamos de los paneles de control:
-            individuo.geoperadores.clear()
+            for geoperador in individuo.geoperadores.all():
+                geoperador.del_trackeado(individuo)
             #Enviamos pushnotification para dar de baja tracking
             #eliminamos si tiene una notificacion esperando
             AppNotificacion.objects.filter(appdata=individuo.appdata).delete()
