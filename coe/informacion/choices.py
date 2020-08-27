@@ -66,6 +66,17 @@ TIPO_RELACION = (
 )
 
 TIPO_ATRIBUTO = (
+    #Carga
+    ('CE', 'Visito Pais de Riesgo/Contacto con Extranjeros'),
+    ('TO', 'Posee Obra Social'),
+    ('PR', 'Poblacion de Riesgo/Comorbilidades'),
+    #Trabajo:
+    ('AS', 'Es Agente de Salud'),
+    ('PS', 'Es Personal de Seguridad'),
+    ('FP', 'Es Funcionario Publico'),
+    ('EP', 'Es Empleado Publico'),
+    ('TE', 'Es Trabajador de Empresa Estrategica'),
+    ('PD', 'Se encuentra Presos/Detenidos'),
     #Vigilancia
     ('VE', 'Vigilancia Epidemiologica'),
     ('VM', 'Vigilancia Salud Mental'),
@@ -73,21 +84,12 @@ TIPO_ATRIBUTO = (
     ('ST', 'Vigilancia Medica'),
     ('VD', 'Vigilancia Adultos Mayores'),
     ('VT', 'Vigilancia de Circulacion Temporal'),
-    #Trabajo:
-    ('AS', 'Es Agente de Salud'),
-    ('PS', 'Es Personal de Seguridad'),
-    ('FP', 'Es Funcionario Publico'),
-    ('EP', 'Es Empleado Publico'),
-    ('TE', 'Es Trabajador de Empresa Estrategica'),
-    ('CT', 'Posee Permiso de Circulacion Temporal'),
-    ('PD', 'Se encuentra Presos/Detenidos'),
-    #Otros
-    ('CE', 'Visito Pais de Riesgo/Contacto con Extranjeros'),
-    ('CP', 'Tiene Potestad de Controlar Permisos'),
-    ('VA', 'Voluntario Aprobado'),
-    ('TO', 'Posee Obra Social'),
+    #Solo Epidemiologia
     ('TP', 'Test Prioritario'),
-    ('PR', 'Poblacion de Riesgo/Comorbilidades'),
+    #Sistema
+    ('CP', 'Tiene Potestad de Controlar Permisos'),
+    ('CT', 'Posee Permiso de Circulacion Temporal'),
+    ('VA', 'Voluntario Aprobado'),
     ('DE', 'Denuncia Externa'),
     #excepciones (3 caracteres)
     ('OP2', 'Puede acreditar que requiere imprescindiblemente cuidados domiciliarios'),
@@ -100,18 +102,20 @@ TIPO_ATRIBUTO = (
 def obtener_atributos(user):
     #Tipo de Seguimientos:
     publicos = ['OP2', 'EMB', 'DIS', 'APS', 'NM2']
-    carga = ['CE', 'TO', 'TP', 'PR']
-    trabajo = ['AS', 'PS', 'FP', 'EP', 'TE', 'CT', 'PD']
+    carga = ['CE', 'TO', 'PR']
+    trabajo = ['AS', 'PS', 'FP', 'EP', 'TE', 'PD']
     vigilancia = ['VE', 'VM', 'AP', 'ST', 'VT', 'VD']
-    sistema = ['VA', 'DE', 'CP']
+    epidemiologia = ['TP']
+    sistema = ['CP', 'CT', 'VA', 'DE']
     #Generamos seguimientos accesibles
     tipos = [t for t in TIPO_ATRIBUTO if t[0] in publicos]
     #Agregamos segun permisos:
     if user.is_staff:
         tipos += [t for t in TIPO_ATRIBUTO if t[0] in carga]
         tipos += [t for t in TIPO_ATRIBUTO if t[0] in trabajo]
-    if user.has_perm('operadores.admin_informacion'):
         tipos += [t for t in TIPO_ATRIBUTO if t[0] in vigilancia]
+    if user.has_perm('operadores.epidemiologia'):#Solo Epi
+        tipos += [t for t in TIPO_ATRIBUTO if t[0] in epidemiologia]
     if user.has_perm('operadores.sistemas'):#No existe, solo superusuario
         tipos += [t for t in TIPO_ATRIBUTO if t[0] in sistema]
     return tipos
