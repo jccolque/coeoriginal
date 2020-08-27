@@ -619,7 +619,11 @@ def quitar_vigilado(request, vigia_id, individuo_id):
 def panel_vigia(request, vigia_id=None):
     #Obtenemos el operador en cuestion
     vigias = Vigia.objects.select_related('operador', 'configuracion')
-    vigias = vigias.prefetch_related('controlados', 'controlados__situacion_actual', 'controlados__atributos')
+    vigias = vigias.prefetch_related(
+        'controlados',
+        'controlados__situacion_actual', 'controlados__atributos'
+    )
+    #Buscamos el vigia a mostrar
     if vigia_id:
         vigia = vigias.get(pk=vigia_id)
     else:
@@ -655,17 +659,31 @@ def panel_vigia(request, vigia_id=None):
     individuos = list(individuos)
     for individuo in individuos:
         llamadas = [l for l in individuo.seguimientos.all() if l.tipo == 'L' and l.operador == vigia.operador]
+        individuo.prioridad = 999
         if llamadas:
+            individuo.prioridad = llamadas[-1].desde()
             individuo.desde_su_llamada = str(llamadas[-1].desde()) + "hrs"
         else:
             individuo.desde_su_llamada = "No registra"
     #Ordenamos por urgencia
-    
+
+    #Cargamos info a los controlados:
+    lista_controlados = list(vigia.controlados.all())
+    for controlado in lista_controlados:
+        #Generamos la lista de fechas de inicio de seguimiento
+        acciones = [h for h in controlado.vigilancias.all() if h.vigia==vigia and h.evento=="A"]
+        if acciones:
+             controlado.inicio = acciones[-1].fecha
+        #Le cargamos la ultima llamada
+        llamadas = [l for l in controlado.seguimientos.all() if l.operador==vigia.operador and l.tipo=="L"]
+        if llamadas:
+            controlado.llamada = llamadas[-1]
     #Lanzamos panel
     return render(request, "panel_vigia.html", {
         'vigia': vigia,
         'config': config,
         'individuos': individuos,
+        'lista_controlados': lista_controlados,
         'refresh': True,
         'has_table': True,
     })

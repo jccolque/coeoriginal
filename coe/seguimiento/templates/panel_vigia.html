@@ -156,7 +156,7 @@
             </div>
             <div class="col-xl-5">
                 <h3>
-                    Individuos Controlados ({{vigia.controlados.count}})
+                    Individuos Controlados ({{lista_controlados|length}})
                     <a href="{% url 'seguimiento:auditar_controlados' vigia_id=vigia.id %}" target="_blank">
                         <img class="icons" src="{% static '/img/icons/history.png' %}">
                     </a>
@@ -170,12 +170,14 @@
                         <tr>
                             <th>Individuo</th>
                             <th>Situacion</th>
+                            <th>Inicio</th>
+                            <th>Ultima Llamada</th>
                             <th>Obra Social</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody style="font-size:small;">
-                        {% for individuo in vigia.controlados.all %}
+                        {% for individuo in lista_controlados %}
                             <tr>
                                 <td>
                                     <b>{{individuo}}</b>
@@ -185,6 +187,15 @@
                                         {{situacion}}<br>
                                         {{situacion.aclaracion|safe}}
                                     {% endwith %}
+                                </td>
+                                <td>{{individuo.inicio}}</td>
+                                <td>
+                                    {% if individuo.llamada %}
+                                        {{individuo.llamada.aclaracion|safe}}
+                                        {{individuo.llamada.fecha}} ({{individuo.llamada.desde}}hrs)
+                                    {% else %}
+                                        No registra llamadas
+                                    {% endif %}
                                 </td>
                                 <td>
                                     {% if individuo.tiene_obrasocial %}
