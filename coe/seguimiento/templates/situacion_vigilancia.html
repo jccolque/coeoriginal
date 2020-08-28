@@ -34,49 +34,61 @@
         </div>
 
         <div class="row">
-            <div class="col-lg-6">
-                <h3>Vigilantes:</h3>
-                <table class="listado" id="table">
-
-                    <thead>
-                        <tr>
-                            <th>Vigilante</th>
-                            <th>Tipo</th>
-                            <th>Controlados</th>
-                            <th>Alertas</th>
-                            <th>Totales</th>
-                            <th>Semanales</th>
-                            <th>Ver Detalle</th>
-                        </tr>
-                    </thead>
-                    
-                    <tbody>
-                        {% for vigia in vigias %}
-                            <tr>
-                                <td>{{vigia}}</th>
-                                <td>{{vigia.get_tipo_display}}</td>
-                                <td>{{vigia.cant_controlados}}/{{vigia.max_controlados}}</th>
-                                <td>{{vigia.alertas}}</th>
-                                <td>{{vigia.total_seguimientos}}</th>
-                                <td>{{vigia.semana_seguimientos}}</th>
-                                <td>
-                                    <a href="{% url 'seguimiento:seguimientos_vigia' vigia_id=vigia.id %}" target="_blank">
-                                        <img class="icons" src="/static/img/icons/history.png" alt="Listado">
-                                    </a>
-                                    <a href="{% url 'seguimiento:ver_panel' vigia_id=vigia.id %}" target="_blank">
-                                        <img class="icons" src="/static/img/icons/control_panel.png" alt="Panel de Control">
-                                    </a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-
-                </table>
+            <h2><b>Informacion Individualizada</b></h2>
+            <!-- cabecera -->
+            <ul class="nav nav-tabs" role="tablist">
+                {% for tipo in vigilancias %}
+                    <li role="presentation" {% if forloop.first %}class="active"{% endif %}><a href="#tab_{{tipo.0}}" aria-controls="#tab_{{tipo.0}}" role="tab" data-toggle="tab">{{tipo.1}}</a></li>
+                {% endfor %}
+            </ul>
+            <!-- Tabs -->
+            <div class="col-lg-12">
+                <div class="tab-content">
+                    {% for tipo in vigilancias %}
+                        <div role="tabpanel" class="tab-pane {% if forloop.first %}active{% endif %}" id="tab_{{tipo.0}}">
+                            <table class="listado" id="table">
+                                <thead>
+                                    <tr>
+                                        <th>Vigilante</th>
+                                        <th>Tipo</th>
+                                        <th>Controlados</th>
+                                        <th>Alertas</th>
+                                        <th>Totales</th>
+                                        <th>Semanales</th>
+                                        <th>Ver Detalle</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for vigia in vigias %}
+                                        {% if vigia.tipo == tipo.0 %}
+                                            <tr>
+                                                <td>{{vigia}}</th>
+                                                <td>{{vigia.get_tipo_display}}</td>
+                                                <td>{{vigia.cant_controlados}}/{{vigia.max_controlados}}</th>
+                                                <td>{{vigia.alertas}}</th>
+                                                <td>{{vigia.total_seguimientos}}</th>
+                                                <td>{{vigia.semana_seguimientos}}</th>
+                                                <td>
+                                                    <a href="{% url 'seguimiento:seguimientos_vigia' vigia_id=vigia.id %}" target="_blank">
+                                                        <img class="icons" src="/static/img/icons/history.png" alt="Listado">
+                                                    </a>
+                                                    <a href="{% url 'seguimiento:ver_panel' vigia_id=vigia.id %}" target="_blank">
+                                                        <img class="icons" src="/static/img/icons/control_panel.png" alt="Panel de Control">
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
-            <!-- Grafico -->
+            {% comment %} <!-- Grafico -->
             <div class="col-sm-6">
                 {% include 'lineas.html' with graf_datos=graf_vigilancia %}
-            </div>
+            </div> {% endcomment %}
         </div>
     </div>
 {% endblock %}

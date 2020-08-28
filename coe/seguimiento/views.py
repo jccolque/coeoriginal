@@ -319,38 +319,38 @@ def situacion_vigilancia(request):
                 Operador.objects.filter(pk=OuterRef('operador')).annotate(semana_seguimientos=Count('seguimientos_informados', filter=Q(seguimientos_informados__fecha__gt=limite_semana))).values('semana_seguimientos')[:1]
             ),
     )
-    #Generamos grafico
-    graf_vigilancia = obtener_grafico('graf_vigilancia', 'Grafico de Vigilancia', 'L')
-    graf_vigilancia.reiniciar_datos()
-    #Linea de Seguimientos
-    seguimientos = Seguimiento.objects.filter(fecha__gte=limite_2semanas).exclude(operador=None)
-    segs_dias = {}
-    for seguimiento in seguimientos:
-        if seguimiento.fecha.date() in segs_dias:
-            segs_dias[seguimiento.fecha.date()] += 1
-        else:
-            segs_dias[seguimiento.fecha.date()] = 1
-    for (fecha), cantidad in segs_dias.items():
-        graf_vigilancia.bulk_dato(fecha, 'seguimientos', date2str(fecha), cantidad)
-    #Linea de Controlados
-    situaciones = Situacion.objects.filter(fecha__gte=limite_2semanas, fecha__lte=timezone.now(), conducta__in=('E','D'))
-    sits_dias = {}
-    for situacion in situaciones:
-        if situacion.fecha.date() in sits_dias:
-            sits_dias[situacion.fecha.date()] += 1
-        else:
-            sits_dias[situacion.fecha.date()] = 1
-    for fecha, cantidad in sits_dias.items():
-        graf_vigilancia.bulk_dato(fecha, 'controlados', date2str(fecha), cantidad)
-    graf_vigilancia.bulk_save()
-    #Definimos algunos detalles del grafico:
-    graf_vigilancia.alto = 500
+    # #Generamos grafico
+    # graf_vigilancia = obtener_grafico('graf_vigilancia', 'Grafico de Vigilancia', 'L')
+    # graf_vigilancia.reiniciar_datos()
+    # #Linea de Seguimientos
+    # seguimientos = Seguimiento.objects.filter(fecha__gte=limite_2semanas).exclude(operador=None)
+    # segs_dias = {}
+    # for seguimiento in seguimientos:
+    #     if seguimiento.fecha.date() in segs_dias:
+    #         segs_dias[seguimiento.fecha.date()] += 1
+    #     else:
+    #         segs_dias[seguimiento.fecha.date()] = 1
+    # for (fecha), cantidad in segs_dias.items():
+    #     graf_vigilancia.bulk_dato(fecha, 'seguimientos', date2str(fecha), cantidad)
+    # #Linea de Controlados
+    # situaciones = Situacion.objects.filter(fecha__gte=limite_2semanas, fecha__lte=timezone.now(), conducta__in=('E','D'))
+    # sits_dias = {}
+    # for situacion in situaciones:
+    #     if situacion.fecha.date() in sits_dias:
+    #         sits_dias[situacion.fecha.date()] += 1
+    #     else:
+    #         sits_dias[situacion.fecha.date()] = 1
+    # for fecha, cantidad in sits_dias.items():
+    #     graf_vigilancia.bulk_dato(fecha, 'controlados', date2str(fecha), cantidad)
+    # graf_vigilancia.bulk_save()
+    # #Definimos algunos detalles del grafico:
+    # graf_vigilancia.alto = 500
     #Lanzamos reporte
     return render(request, "situacion_vigilancia.html", {
         'vigilancias': vigilancias,
         'vigias': vigias,
         #'has_table': True,
-        'graf_vigilancia': graf_vigilancia,
+        #'graf_vigilancia': graf_vigilancia,
     })
 
 @permission_required('operadores.seguimiento')
