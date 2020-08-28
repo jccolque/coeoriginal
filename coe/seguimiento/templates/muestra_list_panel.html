@@ -18,7 +18,8 @@
                     <th>Operador</th>                    
                     <th>Estado</th>                    
                     <th>Prioridad</th>
-                    <th>Resultado</th>       
+                    <th>Resultado</th>
+                    <th>Documento</th>
                     <th class="all">Acciones</th>
                 </thead>
                 <tbody>
@@ -32,11 +33,21 @@
                         <td>{{ muestra.operador }}</td>                     
                         <td>{{ muestra.get_estado_display }}</td>
                         <td>{{ muestra.get_prioridad_display }}</td>
-                        <td>{{ muestra.get_resultado_display }}</td>             
+                        <td>{{ muestra.get_resultado_display }}</td>
+                        <td style="text-align:center;">
+                            {% if  muestra.documento %}
+                                Documento
+                                <a href="{{muestra.documento.url}}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/lupa.png' %}">
+                                </a>
+                            {% else %}
+                                Sin Documento
+                            {% endif %}
+                        </td>
                         <td>                                              
-                        <a href="{% url 'seguimiento:editar_panel_plp' muestra_id=muestra.id %}">
-                            <img class="icons" src="{% static '/img/icons/change.png' %}">
-                        </a>                                                                                         
+                            <a href="{% url 'seguimiento:editar_panel_plp' muestra_id=muestra.id %}">
+                                <img class="icons" src="{% static '/img/icons/change.png' %}">
+                            </a>                                                                                         
                         </td>
                     </tr>
                     {% endfor %}
