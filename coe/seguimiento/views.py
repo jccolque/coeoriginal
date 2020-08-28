@@ -224,8 +224,15 @@ def reporte_vigilantes(request):
     #obtenemos vigilantes
     vigias = Vigia.objects.all()
     #Optimizamos
-    vigias = vigias.select_related('operador', 'operador__usuario')
-    vigias = vigias.prefetch_related('controlados')
+    vigias = vigias.select_related(
+        'operador', 'operador__usuario',
+        'configuracion'
+    )
+    vigias = vigias.prefetch_related(
+        'operador__seguimientos_informados',
+        'controlados',
+        'controlados__seguimientos', 'controlados__seguimientos__operador',
+    )
     #Preparamos filtros
     limite_1dia = timezone.now() - timedelta(hours=24)
     limite_2dias = timezone.now() - timedelta(hours=48)
@@ -233,8 +240,6 @@ def reporte_vigilantes(request):
     limite_semana = timezone.now() - timedelta(days=7)
     #Agregamos datos de interes:
     vigias = vigias.annotate(
-            cant_controlados=Count('controlados')
-        ).annotate(
             total_seguimientos=Subquery(
                 Operador.objects.filter(pk=OuterRef('operador')).annotate(total_seguimientos=Count('seguimientos_informados')).values('total_seguimientos')[:1]
             ),
@@ -285,7 +290,7 @@ def situacion_vigilancia(request):
     vigilancias = []
     #0-tipo 1-display 2-cant -3-activos -4 Controlados -5 mensajes_totales -6 mensajes_semanales
     for tipo in TIPO_VIGIA:
-        tipo = [tipo[0], tipo[1], 0, 0, 0, 0, 0]#Transformamos tupla en lista para operarla
+        tipo = [tipo[0], tipo[1], 0, 0, 0, 0, 0, 0]#Transformamos tupla en lista para operarla
         #Cargamos controlados Actuales:
         for vigia in [v for v in vigias if v.tipo == tipo[0]]:
             #cantidad: 2
@@ -301,11 +306,12 @@ def situacion_vigilancia(request):
             tipo[6]+= sum([1 for s in vigia.operador.seguimientos_informados.all() if s.fecha > limite_semana])
         #Lo agregamos
         vigilancias.append(tipo)
-
+    #Sacamos el indice de responsabilidad
+    for tipo in vigilancias:
+        if tipo[4]:
+            tipo[7] = (tipo[6] / 7) / tipo[2]
     #Generamos datos por vigilante:
     vigias = vigias.annotate(
-            cant_controlados=Count('controlados')
-        ).annotate(
             total_seguimientos=Subquery(
                 Operador.objects.filter(pk=OuterRef('operador')).annotate(total_seguimientos=Count('seguimientos_informados')).values('total_seguimientos')[:1]
             ),
@@ -419,10 +425,7 @@ def carentes_seguimiento(request):
     #Chequeamos a cada vigilante:
     vigias = list(vigias)#Lo transformamos en lista para poder meterle valores extra
     for vigia in vigias:
-        try:#Obtenemos configuracion del vigia
-            config = vigia.configuracion
-        except:#si no tiene lo creamos
-            config = Configuracion.objects.get_or_create(vigia=vigia)[0]
+        config = vigia.get_config()#Obtenemos configuracion del vigia
         #Definimos limite para abandono (Alerta Amarilla):
         limite = timezone.now() - timedelta(hours=config.alerta_roja)#default: 36 horas
         #Chequeamos a todos los vigilados
@@ -535,7 +538,7 @@ def agregar_vigia(request, vigia_id=None):
 @permission_required('operadores.seguimiento_admin')
 def configurar_vigia(request, vigia_id):
     vigia = Vigia.objects.get(pk=vigia_id)
-    config = Configuracion.objects.get_or_create(vigia=vigia)[0]
+    config = Vigia.get_config()
     form = ConfiguracionForm(instance=config)
     if request.method == "POST":
         form = ConfiguracionForm(request.POST, instance=config)
@@ -660,7 +663,7 @@ def panel_vigia(request, vigia_id=None):
     if vigia.tipo == "EM":#TODAS SON EMERGENCIAS YA!
         limite = timezone.now()
     else:
-        config = Configuracion.objects.get_or_create(vigia=vigia)[0]
+        config = vigia.get_config()
         limite = timezone.now() - timedelta(hours=config.alerta_verde)
     #Solo filtramos por el ultimo seguimiento tipo 'L'
     seguimiento_valido = Seguimiento.objects.filter(tipo='L', fecha__gt=limite, operador=vigia.operador)#generamos subquery

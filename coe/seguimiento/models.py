@@ -62,11 +62,33 @@ class Vigia(models.Model):
             history.save()
             #eliminamos:
             self.controlados.remove(individuo)
+    def get_config(self):
+        try:#Obtenemos configuracion del vigia
+            return self.configuracion
+        except:#si no tiene lo creamos
+            return Configuracion.objects.get_or_create(vigia=self)[0]
     def alertas_activas(self):
-        limite = timezone.now() - timedelta(hours=12)
-        return sum([1 for c in self.controlados.all() if c.seguimiento_actual and c.seguimiento_actual.fecha < limite])
+        config = self.get_config()
+        #Definimos limite para abandono (Alerta Amarilla):
+        limite = timezone.now() - timedelta(hours=config.alerta_verde)
+        #Controlamos las alertas:
+        alertas = 0
+        for controlado in self.controlados.all():#Recorremos todos los controlados
+            if not [l for l in controlado.seguimientos.all() if l.operador==self.operador and l.tipo=="L" and l.fecha > limite]:
+                alertas += 1#Contamos los que no tienen una llamada reciente
+        return alertas
+    def cant_controlados(self):
+        return sum([1 for c in self.controlados.all()])
     def cap_disponible(self):
-        return self.max_controlados - sum([1 for c in self.controlados.all()])
+        return self.max_controlados - self.cant_controlados()
+    def llamadas_semanales(self):
+        limite = timezone.now() - timedelta(days=7)
+        return sum([1 for l in self.operador.seguimientos_informados.all() if l.tipo=="L" and l.fecha > limite])
+    def responsabilidad(self):   #Sacamos el indice de responsabilidad
+        cantidad = self.cant_controlados()
+        indice_semanal = (7 * 24) / self.get_config().alerta_verde#la cantidad de veces que deberia llamar por semana
+        if cantidad:
+            return (self.llamadas_semanales() / indice_semanal) / cantidad
 
 class Configuracion(models.Model):
     vigia = models.OneToOneField(Vigia, on_delete=models.CASCADE, related_name="configuracion")

@@ -10,7 +10,6 @@
         </div>
         <div class="row">
             <div class="col-lg-12">
-                <h3>Vigilantes:</h3>
                 <table class="listado" id="table">
                     <thead>
                         <tr>
@@ -20,6 +19,8 @@
                             <th>Estado</th>
 
                             <th>Controlados</th>
+                            <th>Alertas</th>
+
                             <th>Altas Cargadas</th>
                             
                             <th>Totales</th>
@@ -28,6 +29,8 @@
                             <th>2 Dias</th>
                             <th>1 Dia</th>
                             
+                            <th>Responsabilidad</th>
+
                             <th>Ver Detalle</th>
                         </tr>
                     </thead>
@@ -47,6 +50,7 @@
                                 </td>
 
                                 <td>{{vigia.cant_controlados}}/{{vigia.max_controlados}}</th>
+                                <td>{{vigia.alertas_activas}}</th>
                                 <td>
                                     {{vigia.altas_generadas}}
                                     <a class="nolink" style="float:right;" href="{% url 'seguimiento:altas_cargadas' vigia_id=vigia.id %}" target="_blank">
@@ -64,6 +68,7 @@
                                 <td>{{vigia.seguimientos_3dias}}</th>
                                 <td>{{vigia.seguimientos_2dias}}</th>
                                 <td>{{vigia.seguimientos_1dia}}</th>
+                                <td>{{vigia.responsabilidad|floatformat:2}}</th>
 
                                 <td>
                                     <a class="nolink" href="{% url 'seguimiento:ver_panel' vigia_id=vigia.id %}" target="_blank">

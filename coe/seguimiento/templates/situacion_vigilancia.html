@@ -11,8 +11,9 @@
                         <th>Cant. Vigias</th>
                         <th>Activos</th>
                         <th>Controlados</th>
-                        <th>Totales</th>
-                        <th>Semanales</th>
+                        <th>Llamadas Totales</th>
+                        <th>Llamadas Semanales</th>
+                        <th>Responsabilidad</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -24,6 +25,7 @@
                             <td>{{tipo.4}}</th>
                             <td>{{tipo.5}}</th>
                             <td>{{tipo.6}}</th>
+                            <td>{{tipo.7|floatformat:2}}%</th>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -53,6 +55,7 @@
                                         <th>Controlados</th>
                                         <th>Llamadas Totales</th>
                                         <th>Llamadas Semanales</th>
+                                        <th>Responsabilidad</th>
                                         <th>Ver Detalle</th>
                                     </tr>
                                 </thead>
@@ -73,6 +76,7 @@
                                                 <td>{{vigia.cant_controlados}}/{{vigia.max_controlados}}</th>
                                                 <td>{{vigia.total_seguimientos}}</th>
                                                 <td>{{vigia.semana_seguimientos}}</th>
+                                                <td>{{vigia.responsabilidad|floatformat:2}}</th>
                                                 <td>
                                                     <a href="{% url 'seguimiento:seguimientos_vigia' vigia_id=vigia.id %}" target="_blank">
                                                         <img class="icons" src="/static/img/icons/history.png" alt="Listado">
