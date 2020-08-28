@@ -314,7 +314,7 @@ def situacion_vigilancia(request):
     for tipo in vigilancias:
         if tipo[4]:
             tipo[6] = tipo[5] - tipo[4]#Disponibles
-            tipo[9] = (tipo[8] / 7) / tipo[4]#Responsabilidad Grupal
+            tipo[9] = (tipo[8] / 7) / tipo[4] * 100#Responsabilidad Grupal
     #Generamos datos por vigilante:
     vigias = vigias.annotate(
             total_seguimientos=Subquery(
