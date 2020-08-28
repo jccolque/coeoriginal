@@ -1220,26 +1220,6 @@ def muestra_list_comp(request):
         'has_table': True,
     })
 
-@permission_required('operadores.bioq_plp')
-def edit_bioq(request, muestra_id):
-    muestra = None
-    form = BioqEditForm()
-    if muestra_id:
-        muestra = Muestra.objects.get(pk=muestra_id)
-        form = BioqEditForm(instance=muestra)
-    if request.method == 'POST':
-        form = BioqEditForm(request.POST, instance=muestra)
-        if form.is_valid():
-            muestra = form.save(commit=False)
-            muestra.operador = obtener_operador(request)
-            muestra.save()
-            return redirect('seguimiento:muestra_list_bioq')
-    return render(request, "extras/generic_form.html", {
-        'titulo': 'SUBIR RESULTADOS',
-        'form': form,
-        'boton': 'EDITAR',
-    })
-
 @permission_required('operadores.carga_plp')
 def buscar_persona_muestra(request):
     form = SearchIndividuoForm()
@@ -1251,7 +1231,7 @@ def buscar_persona_muestra(request):
                 individuo = Individuo.objects.get(num_doc=num_doc)
                 return redirect('seguimiento:existe_plp', individuo_id=individuo.id, num_doc=num_doc)
             except Individuo.DoesNotExist:
-                return redirect('seguimiento:cargar_plp', num_doc=num_doc)
+                return redirect('seguimiento:cargar_muestra', num_doc=num_doc)
     return render(request, "extras/generic_form.html", {
         'titulo': "Indicar Documento de Individuo", 
         'form': form, 
@@ -1259,7 +1239,7 @@ def buscar_persona_muestra(request):
     })
 
 @permission_required('operadores.carga_plp')
-def cargar_plp(request, individuo_id=None, num_doc=None):
+def cargar_muestra(request, individuo_id=None, num_doc=None):
     individuo = None
     form = PanelEditForm(initial={"num_doc":num_doc})     
     if individuo_id:
@@ -1280,7 +1260,8 @@ def cargar_plp(request, individuo_id=None, num_doc=None):
         if form.is_valid():
             from informacion.functions import actualizar_individuo#evitamos dependencia circular
             individuo = actualizar_individuo(form)
-            muestra = Muestra()                
+            muestra = Muestra()
+            muestra.numero = form.cleaned_data['numero']
             muestra.estado = form.cleaned_data['estado']
             muestra.prioridad = form.cleaned_data['prioridad']
             muestra.resultado = form.cleaned_data['resultado']
@@ -1298,6 +1279,26 @@ def cargar_plp(request, individuo_id=None, num_doc=None):
         'boton': "CARGAR DATOS",
     })
 
+
+@permission_required('operadores.bioq_plp')
+def edit_bioq(request, muestra_id):
+    muestra = None
+    form = BioqEditForm()
+    if muestra_id:
+        muestra = Muestra.objects.get(pk=muestra_id)
+        form = BioqEditForm(instance=muestra)
+    if request.method == 'POST':
+        form = BioqEditForm(request.POST, request.FILES, instance=muestra)
+        if form.is_valid():
+            muestra = form.save(commit=False)
+            muestra.operador = obtener_operador(request)
+            muestra.save()
+            return redirect('seguimiento:muestra_list_bioq')
+    return render(request, "extras/generic_form.html", {
+        'titulo': 'SUBIR RESULTADOS',
+        'form': form,
+        'boton': 'EDITAR',
+    })
 
 @permission_required('operadores.panel_plp')
 def edit_panel(request, muestra_id=None):

@@ -117,22 +117,23 @@ class DatosGisForm(forms.ModelForm):
             })
         self.fields['localidad'].empty_label = "Seleccione Localidad"
         self.fields['turno'].empty_label = "Seleccione Turno"
-       
+
 class BioqEditForm(forms.ModelForm):
     class Meta:
         model = Muestra
-        fields = ['resultado', 'estado',]
-        widgets = {    
+        fields = ['numero', 'resultado', 'estado', 'documento']
+        widgets = {
+
             'resultado': forms.Select(attrs={'placeholder': 'SELECCIONE RESULTADO'}),
             'estado': forms.Select(attrs={'placeholder': 'SELECCIONE ESTADO'}),                
         }
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['numero'].widget.attrs['readonly'] = True
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
                 'class':'form-control'
             })
-        
 
 class PanelEditForm(forms.ModelForm):
     #Domicilio   
@@ -145,6 +146,7 @@ class PanelEditForm(forms.ModelForm):
     dom_numero = forms.CharField(required=True, )
     dom_aclaracion = forms.CharField(required=False, )
     #Muestra
+    numero = forms.IntegerField(label="Numero de Muestra")
     estado  = forms.ChoiceField(choices=ESTADO_TIPO, required=False)
     prioridad  = forms.ChoiceField(choices=TIPO_PRIORIDAD, required=False)
     resultado  = forms.ChoiceField(choices=TIPO_RESULTADO, required=False)    
@@ -162,9 +164,6 @@ class PanelEditForm(forms.ModelForm):
             'sexo': forms.Select(attrs={'placeholder': 'SELECCIONE RESULTADO'}),            
             'telefono': forms.TextInput(attrs={'placeholder': 'CANTIDAD PCR'}),               
         }
-
-     
-
 
 class PriorForm(forms.ModelForm):
     class Meta:
