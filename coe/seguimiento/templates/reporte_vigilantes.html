@@ -16,7 +16,9 @@
                             <th>Vigilante</th>
                             <th>Tipo</th>
                             <th>Aclaracion</th>
+                            <th>Config</th>
                             <th>Estado</th>
+                            
 
                             <th>Controlados</th>
                             <th>Alertas</th>
@@ -41,6 +43,7 @@
                                 <td>{{vigia}}</th>
                                 <td>{{vigia.get_tipo_display}}</td>
                                 <td>{{vigia.aclaracion}}</td>
+                                <td>{{vigia.get_config}}</td>
                                 <td>
                                     {% if vigia.activo %}
                                         <img class="icons" src="/static/img/icons/check.png">
@@ -68,7 +71,7 @@
                                 <td>{{vigia.seguimientos_3dias}}</th>
                                 <td>{{vigia.seguimientos_2dias}}</th>
                                 <td>{{vigia.seguimientos_1dia}}</th>
-                                <td>{{vigia.responsabilidad|floatformat:2}}</th>
+                                <td>{{vigia.responsabilidad|floatformat:0}}%</th>
 
                                 <td>
                                     <a class="nolink" href="{% url 'seguimiento:ver_panel' vigia_id=vigia.id %}" target="_blank">

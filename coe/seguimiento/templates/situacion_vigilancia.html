@@ -27,7 +27,7 @@
                             <td>{{tipo.6}}</th>
                             <td>{{tipo.7}}</th>
                             <td>{{tipo.8}}</th>
-                            <td>{{tipo.9|floatformat:2}}%</th>
+                            <td>{{tipo.9|floatformat:0}}%</th>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -53,6 +53,7 @@
                                         <th>Vigilante</th>
                                         <th>Tipo</th>
                                         <th>Aclaracion</th>
+                                        <th>Config</th>
                                         <th>Estado</th>
                                         <th>Controlados</th>
                                         <th>Llamadas Totales</th>
@@ -68,6 +69,7 @@
                                                 <td>{{vigia}}</th>
                                                 <td>{{vigia.get_tipo_display}}</td>
                                                 <td>{{vigia.aclaracion}}</td>
+                                                <td>{{vigia.get_config}}</td>
                                                 <td>
                                                 {% if vigia.activo %}
                                                     <img class="icons" src="/static/img/icons/check.png">
@@ -78,7 +80,7 @@
                                                 <td>{{vigia.cant_controlados}}/{{vigia.max_controlados}}</th>
                                                 <td>{{vigia.total_seguimientos}}</th>
                                                 <td>{{vigia.semana_seguimientos}}</th>
-                                                <td>{{vigia.responsabilidad|floatformat:2}}</th>
+                                                <td>{{vigia.responsabilidad|floatformat:0}}%</th>
                                                 <td>
                                                     <a href="{% url 'seguimiento:seguimientos_vigia' vigia_id=vigia.id %}" target="_blank">
                                                         <img class="icons" src="/static/img/icons/history.png" alt="Listado">
