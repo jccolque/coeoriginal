@@ -118,6 +118,14 @@ class Condicion(models.Model):
     def prioridad(self):
         dias = (timezone.now() - self.fecha).days
         return self.contencion + self.alimentos + self.medicamentos + dias
+    def nivel_riesgo(self):
+        if not self.atendido:
+            valor = self.contencion + self.alimentos + self.medicamentos
+            if valor > 45:
+                return 'rojo'
+            elif valor > 25:
+                return 'amarillo'
+        return 'verde'
     def ultima_intervencion(self):
         intervenciones = [i for i in self.individuo.seguimientos.all() if i.tipo == "T"]
         if intervenciones:

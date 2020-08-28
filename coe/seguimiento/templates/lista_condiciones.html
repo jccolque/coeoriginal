@@ -33,7 +33,7 @@
                 </thead>
                 <tbody>
                     {% for condicion in condiciones %}
-                        <tr>
+                        <tr class="{{condicion.nivel_riesgo}}">
                             <td>{{condicion.prioridad}}</td>
                             <td>{{condicion.individuo.num_doc}}</td>
                             <td>{{condicion.individuo.apellidos}}, {{condicion.individuo.nombres}}</td>

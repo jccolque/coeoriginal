@@ -57,7 +57,7 @@
                                     <br>
                                     <h4><b>Autodiagnostico:</b> {{individuo.appdata.get_estado_display}} ({{individuo.appdata.fecha}})</h4>
                                 {% endif %}
-                                <div class="bordeado" style="text-align:left;">
+                                <div class="bordeado{% if individuo.condicion %} {{individuo.condicion.nivel_riesgo}}{% endif %} minitexto" style="text-align:left;">
                                     <h4><b>Condiciones SocioAmbientales:</b></h4>
                                     {% if individuo.condicion %}
                                         <a class="nolink" href="{% url 'seguimiento:mod_condicion' individuo_id=individuo.id condicion_id=individuo.condicion.id %}" target="_blank">
@@ -68,9 +68,9 @@
                                                 <img class="icons" src="{% static '/img/icons/delete.png' %}" alt="Eliminar" style="float:right;">
                                             </a>
                                         {% endif %}
-                                        <p><b>Contencion:</b>{{individuo.condicion.get_contencion_display}}</p>
-                                        <p><b>Alimentacion:</b>{{individuo.condicion.get_alimentos_display}}</p>
-                                        <p><b>Medicacion:</b>{{individuo.condicion.get_medicamentos_display}}</p>
+                                        <p><b>Contencion:</b> {{individuo.condicion.get_contencion_display}}</p>
+                                        <p><b>Alimentacion:</b> {{individuo.condicion.get_alimentos_display}}</p>
+                                        <p><b>Medicacion:</b> {{individuo.condicion.get_medicamentos_display}}</p>
                                         {{individuo.condicion.aclaracion|safe}}
                                         {% if individuo.condicion.atendido %}
                                             <p style="text-align:right;"><b>Recibiendo Atencion</b></p>

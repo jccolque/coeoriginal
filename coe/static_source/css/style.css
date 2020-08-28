@@ -211,6 +211,14 @@ a.boton_suelto {
     font-size: large;
 }
 
+.minitexto h4 {
+    font-size: smaller;
+}
+
+.minitexto p {
+    font-size: smaller;
+}
+
 /* Tablas */
 .listado {
   width: 100%;
@@ -412,4 +420,19 @@ img.foto_padding {
     border-radius: 5px;
     overflow: hidden;
     box-shadow: 0px 0px 10px #0000001f;
+}
+
+/* Colores tr */
+.rojo{
+    background-color: red!important;
+    color: white;
+}
+.naranja{
+    background-color: rgb(214, 128, 48)!important;
+}
+.amarillo{
+    background-color: rgb(233, 215, 59)!important;
+}
+.verde{
+    background-color: rgb(65, 212, 20)!important;
 }
