@@ -277,10 +277,12 @@ def situacion_vigilancia(request):
     #Optimizamos
     vigias = vigias.select_related(
         'operador', 'operador__usuario',
+        'configuracion'
     )
     vigias = vigias.prefetch_related(
+        'operador__seguimientos_informados',
         'controlados',
-        'operador__seguimientos_informados'
+        'controlados__seguimientos', 'controlados__seguimientos__operador',
     )
     #Preparamos filtros
     limite_dia = timezone.now() - timedelta(hours=24)
@@ -290,7 +292,7 @@ def situacion_vigilancia(request):
     vigilancias = []
     #0-tipo 1-display 2-cant -3-activos -4 Controlados -5 mensajes_totales -6 mensajes_semanales
     for tipo in TIPO_VIGIA:
-        tipo = [tipo[0], tipo[1], 0, 0, 0, 0, 0, 0]#Transformamos tupla en lista para operarla
+        tipo = [tipo[0], tipo[1], 0, 0, 0, 0, 0, 0, 0, 0]#Transformamos tupla en lista para operarla
         #Cargamos controlados Actuales:
         for vigia in [v for v in vigias if v.tipo == tipo[0]]:
             #cantidad: 2
@@ -298,18 +300,21 @@ def situacion_vigilancia(request):
             #Activos: 3
             if vigia.activo:#Si esta activo
                 tipo[3]+= 1
-            #controlados
+            #controlados 4
             tipo[4]+= sum([1 for c in vigia.controlados.all()])
-            #Mensajes totales: 5
-            tipo[5]+= sum([1 for s in vigia.operador.seguimientos_informados.all()])
-            #Mensajes semanales: 6
-            tipo[6]+= sum([1 for s in vigia.operador.seguimientos_informados.all() if s.fecha > limite_semana])
+            #max_controlados 5
+            tipo[5]+= vigia.max_controlados
+            #Mensajes totales: 7
+            tipo[7]+= sum([1 for s in vigia.operador.seguimientos_informados.all()])
+            #Mensajes semanales: 8
+            tipo[8]+= sum([1 for s in vigia.operador.seguimientos_informados.all() if s.fecha > limite_semana])
         #Lo agregamos
         vigilancias.append(tipo)
     #Sacamos el indice de responsabilidad
     for tipo in vigilancias:
         if tipo[4]:
-            tipo[7] = (tipo[6] / 7) / tipo[2]
+            tipo[6] = tipo[5] - tipo[4]#Disponibles
+            tipo[9] = (tipo[8] / 7) / tipo[2]#Responsabilidad Grupal
     #Generamos datos por vigilante:
     vigias = vigias.annotate(
             total_seguimientos=Subquery(

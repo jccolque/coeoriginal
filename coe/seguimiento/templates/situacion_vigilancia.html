@@ -11,6 +11,7 @@
                         <th>Cant. Vigias</th>
                         <th>Activos</th>
                         <th>Controlados</th>
+                        <th>Disponibles</th>
                         <th>Llamadas Totales</th>
                         <th>Llamadas Semanales</th>
                         <th>Responsabilidad</th>
@@ -22,10 +23,11 @@
                             <td>{{tipo.1}}</th>
                             <td>{{tipo.2}}</th>
                             <td>{{tipo.3}}</th>
-                            <td>{{tipo.4}}</th>
-                            <td>{{tipo.5}}</th>
+                            <td>{{tipo.4}}/{{tipo.5}}</th>
                             <td>{{tipo.6}}</th>
-                            <td>{{tipo.7|floatformat:2}}%</th>
+                            <td>{{tipo.7}}</th>
+                            <td>{{tipo.8}}</th>
+                            <td>{{tipo.9|floatformat:2}}%</th>
                         </tr>
                     {% endfor %}
                 </tbody>
