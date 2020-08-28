@@ -86,13 +86,13 @@ class Vigia(models.Model):
         return sum([1 for l in self.operador.seguimientos_informados.all() if l.tipo=="L" and l.fecha > limite])
     def responsabilidad(self):   #Sacamos el indice de responsabilidad
         if self.max_controlados:
-            cantidad = self.cant_controlados()
+            cantidad = self.cant_controlados()#Cantidad de individuos controlados
             indice_semanal = (7 * 24) / self.get_config().alerta_verde#la cantidad de veces que deberia llamar por semana
-            if cantidad:
+            if cantidad:#Si tiene gente bajo su control
                 if cantidad > self.max_controlados:#Chequeamos si esta sobrepoblado
-                    return (self.llamadas_semanales() / indice_semanal) / self.max_controlados
+                    return ((self.llamadas_semanales() / indice_semanal) / self.max_controlados) * 100#en ese caso premiamos el resultado
                 else:
-                    return (self.llamadas_semanales() / indice_semanal) / cantidad 
+                    return ((self.llamadas_semanales() / indice_semanal) / cantidad) * 100
 
 class Configuracion(models.Model):
     vigia = models.OneToOneField(Vigia, on_delete=models.CASCADE, related_name="configuracion")

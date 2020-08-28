@@ -313,7 +313,7 @@ def situacion_vigilancia(request):
             #Responsabilidad Grupal
             responsabilidad = vigia.responsabilidad()
             if responsabilidad:#Si no es CERO
-                tipo[9]+= (responsabilidad / tipo[2]) * 100
+                tipo[9]+= (responsabilidad / tipo[2])
         #Agregamos el tipo de vigilante
         vigilancias.append(tipo)
     #Generamos datos por vigilante:
