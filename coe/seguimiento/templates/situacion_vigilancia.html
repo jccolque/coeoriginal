@@ -6,6 +6,34 @@
             <h2><b>Tablero de Situacion</b></h2>
         </div>
         <div class="row">
+            <h3>Vigilancias:</h3>
+            <table class="listado" id="table">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Cant. Vigias</th>
+                        <th>Activos</th>
+                        <th>Controlados</th>
+                        <th>Totales</th>
+                        <th>Semanales</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tipo in vigilancias %}
+                        <tr>
+                            <td>{{tipo.1}}</th>
+                            <td>{{tipo.2}}</th>
+                            <td>{{tipo.3}}</th>
+                            <td>{{tipo.4}}</th>
+                            <td>{{tipo.5}}</th>
+                            <td>{{tipo.6}}</th>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row">
             <div class="col-lg-6">
                 <h3>Vigilantes:</h3>
                 <table class="listado" id="table">

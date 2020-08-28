@@ -270,12 +270,39 @@ def situacion_vigilancia(request):
     #obtenemos vigilantes
     vigias = Vigia.objects.all()
     #Optimizamos
-    vigias = vigias.select_related('operador', 'operador__usuario')
-    vigias = vigias.prefetch_related('controlados')
+    vigias = vigias.select_related(
+        'operador', 'operador__usuario',
+    )
+    vigias = vigias.prefetch_related(
+        'controlados',
+        'operador__seguimientos_informados'
+    )
     #Preparamos filtros
     limite_dia = timezone.now() - timedelta(hours=24)
     limite_semana = timezone.now() - timedelta(days=7)
-    #Agregamos datos de interes:
+    limite_2semanas = timezone.now() - timedelta(days=14)
+    #generamos datos por tipo de vigilancia
+    vigilancias = []
+    #0-tipo 1-display 2-cant -3-activos -4 Controlados -5 mensajes_totales -6 mensajes_semanales
+    for tipo in TIPO_VIGIA:
+        tipo = [tipo[0], tipo[1], 0, 0, 0, 0, 0]#Transformamos tupla en lista para operarla
+        #Cargamos controlados Actuales:
+        for vigia in [v for v in vigias if v.tipo == tipo[0]]:
+            #cantidad: 2
+            tipo[2]+= 1#Contador basico
+            #Activos: 3
+            if vigia.activo:#Si esta activo
+                tipo[3]+= 1
+            #controlados
+            tipo[4]+= sum([1 for c in vigia.controlados.all()])
+            #Mensajes totales: 5
+            tipo[5]+= sum([1 for s in vigia.operador.seguimientos_informados.all()])
+            #Mensajes semanales: 6
+            tipo[6]+= sum([1 for s in vigia.operador.seguimientos_informados.all() if s.fecha > limite_semana])
+        #Lo agregamos
+        vigilancias.append(tipo)
+
+    #Generamos datos por vigilante:
     vigias = vigias.annotate(
             cant_controlados=Count('controlados')
         ).annotate(
@@ -292,13 +319,11 @@ def situacion_vigilancia(request):
                 Operador.objects.filter(pk=OuterRef('operador')).annotate(semana_seguimientos=Count('seguimientos_informados', filter=Q(seguimientos_informados__fecha__gt=limite_semana))).values('semana_seguimientos')[:1]
             ),
     )
-    #Generamos estadisticas para grafico de la ultimas dos semanas:
-    limite_2semanas = timezone.now() - timedelta(days=14)
     #Generamos grafico
     graf_vigilancia = obtener_grafico('graf_vigilancia', 'Grafico de Vigilancia', 'L')
     graf_vigilancia.reiniciar_datos()
     #Linea de Seguimientos
-    seguimientos = Seguimiento.objects.filter(fecha__gte=limite_2semanas, fecha__lte=timezone.now()).exclude(operador=None)
+    seguimientos = Seguimiento.objects.filter(fecha__gte=limite_2semanas).exclude(operador=None)
     segs_dias = {}
     for seguimiento in seguimientos:
         if seguimiento.fecha.date() in segs_dias:
@@ -322,8 +347,9 @@ def situacion_vigilancia(request):
     graf_vigilancia.alto = 500
     #Lanzamos reporte
     return render(request, "situacion_vigilancia.html", {
+        'vigilancias': vigilancias,
         'vigias': vigias,
-        'has_table': True,
+        #'has_table': True,
         'graf_vigilancia': graf_vigilancia,
     })
 
