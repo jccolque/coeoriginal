@@ -306,11 +306,6 @@ def situacion_vigilancia(request):
     vigias = vigias.annotate(
             cant_controlados=Count('controlados')
         ).annotate(
-            alertas=Count(
-                'controlados',
-                filter=Q(controlados__seguimiento_actual__fecha__lt=limite_dia),
-            )
-        ).annotate(
             total_seguimientos=Subquery(
                 Operador.objects.filter(pk=OuterRef('operador')).annotate(total_seguimientos=Count('seguimientos_informados')).values('total_seguimientos')[:1]
             ),
