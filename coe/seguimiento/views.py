@@ -311,9 +311,10 @@ def situacion_vigilancia(request):
             #Mensajes semanales: 8
             tipo[8]+= sum([1 for s in vigia.operador.seguimientos_informados.all() if s.fecha > limite_semana])
             #Responsabilidad Grupal
-            responsabilidad = vigia.responsabilidad()
-            if responsabilidad:#Si no es CERO
-                tipo[9]+= (responsabilidad / tipo[2])
+            if vigia.activo:
+                responsabilidad = vigia.responsabilidad()
+                if responsabilidad:#Si no es CERO
+                    tipo[9]+= (responsabilidad / tipo[2])
         #Agregamos el tipo de vigilante
         vigilancias.append(tipo)
     #Generamos datos por vigilante:

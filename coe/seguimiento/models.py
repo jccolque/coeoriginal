@@ -93,6 +93,7 @@ class Vigia(models.Model):
                     return ((self.llamadas_semanales() / indice_semanal) / self.max_controlados) * 100#en ese caso premiamos el resultado
                 else:
                     return ((self.llamadas_semanales() / indice_semanal) / cantidad) * 100
+        return 0
 
 class Configuracion(models.Model):
     vigia = models.OneToOneField(Vigia, on_delete=models.CASCADE, related_name="configuracion")
