@@ -543,7 +543,7 @@ def agregar_vigia(request, vigia_id=None):
 @permission_required('operadores.seguimiento_admin')
 def configurar_vigia(request, vigia_id):
     vigia = Vigia.objects.get(pk=vigia_id)
-    config = Vigia.get_config()
+    config = vigia.get_config()
     form = ConfiguracionForm(instance=config)
     if request.method == "POST":
         form = ConfiguracionForm(request.POST, instance=config)

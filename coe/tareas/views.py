@@ -19,14 +19,9 @@ def menu(request):
 def lista_tareas(request):
     tareas = Tarea.objects.all()
     tareas = tareas.exclude(eventos__accion="E")
+    #Optimizar
     tareas = tareas.select_related('subcomite')
     tareas = tareas.prefetch_related('responsables', 'eventos')
-    #Si utilizo el buscador filtramos
-    if request.method == 'POST':
-        form = SearchForm(request.POST)
-        if form.is_valid():
-            search = form.cleaned_data['search']
-            tareas = tareas.filter(nombre__icontains=search)
     return render(request, "lista_tareas.html", {
         'tareas': tareas,
         'has_table': True,

@@ -9,6 +9,7 @@
             <div class="container">
                 <div class="row">        
                     <h2>Tarea: {{tarea.nombre}} - <b>{{tarea.get_prioridad_display}}</b></h2>
+                    <p><b>Estado:</b> {{tarea.eventos.last.accion}}</p>
                     <div class="col-md-8">
                         <h3>Subcomite Responsable: {{tarea.subcomite}}</h3>
                         <p><b>Descripcion:</b> {{tarea.descripcion|safe}}</p>

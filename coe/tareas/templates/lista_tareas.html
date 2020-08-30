@@ -5,17 +5,17 @@
 {% block content %}
     <div class="beneficiario container">
         <div class="row">
-            <div class="col-sm-8">
-                <h2>Tareas Creadas</h2>
-            </div>
-            <div class="col-sm-4">
-                <ul class="menu_botones">
-                    <li><a href="{% url 'tareas:crear_tarea' %}">Crear Tarea</a></li>
-                    {% if terminada %}
-                        <li><a href="{% url 'tareas:lista_tareas' %}">Ver Tareas en Progreso</a></li>
-                    {% else %}
-                        <li><a href="{% url 'tareas:lista_terminadas' %}">Ver Tareas Terminadas</a></li>
-                    {% endif %}
+                <div class="menu_botones">
+                    <div class="col-sm-4">
+                        <li><a href="{% url 'tareas:crear_tarea' %}">Crear Tarea</a></li>
+                    </div>
+                    <div class="col-sm-4">
+                        {% if terminada %}
+                            <li><a href="{% url 'tareas:lista_tareas' %}">Ver Tareas en Progreso</a></li>
+                        {% else %}
+                            <li><a href="{% url 'tareas:lista_terminadas' %}">Ver Tareas Terminadas</a></li>
+                        {% endif %}
+                    </div>
                 </ul>
             </div>
         </div>

@@ -346,7 +346,7 @@ def lista_por_tarea(request, tarea_id):
 @permission_required('operadores.menu_inscripciones')
 def lista_tareas(request):
     areas = Area.objects.all()
-    return render(request, "lista_tareas.html", {
+    return render(request, "lista_x_tareas.html", {
         'areas': areas,
     })
 
