@@ -536,8 +536,18 @@ def agregar_vigia(request, vigia_id=None):
     if request.method == "POST":
         form = NuevoVigia(request.POST, instance=vigia)
         if form.is_valid():
-            form.save()
+            #Obtenemos el vigia
+            vigia = form.save(commit=False)
+            vigia.save()
+            #Creamos config
+            config = vigia.get_config()
+            config.alerta_verde = form.cleaned_data['alerta_verde']
+            config.alerta_amarilla = form.cleaned_data['alerta_amarilla']
+            config.alerta_roja = form.cleaned_data['alerta_roja']
+            config.save()
+            #Volvemos a la lista
             return redirect('seguimiento:lista_vigias')
+    #Lanzamos form
     return render(request, "extras/generic_form.html", {'titulo': "Habilitar Nuevo Vigia", 'form': form, 'boton': "Habilitar", })
 
 @permission_required('operadores.seguimiento_admin')

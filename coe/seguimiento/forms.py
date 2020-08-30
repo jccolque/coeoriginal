@@ -53,6 +53,9 @@ class AtenderForm(forms.ModelForm):
         fields= ('aclaracion', )
 
 class NuevoVigia(forms.ModelForm):
+    alerta_verde = forms.IntegerField(label='Alerta Verde', initial=16)
+    alerta_amarilla = forms.IntegerField(label='Alerta Verde', initial=24)
+    alerta_roja = forms.IntegerField(label='Alerta Verde', initial=36)
     class Meta:
         model = Vigia
         fields= '__all__'
