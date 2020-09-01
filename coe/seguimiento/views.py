@@ -295,6 +295,7 @@ def situacion_vigilancia(request):
         tipo = [tipo[0], tipo[1], 0, 0, 0, 0, 0, 0, 0, 0]#Transformamos tupla en lista para operarla
         #Calculamos cantidad de vigilantes de ese tipo
         tipo[2] = sum([1 for v in vigias if v.tipo==tipo[0]])
+        #Calculamos los activos:
         tipo[3] = sum([1 for v in vigias if v.tipo==tipo[0] and v.activo])#Lo necesitamos listo para responsabilidad grupal
         #Cargamos controlados Actuales:
         for vigia in [v for v in vigias if v.tipo==tipo[0]]:

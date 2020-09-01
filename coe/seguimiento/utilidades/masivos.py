@@ -213,3 +213,42 @@ def subir_viejitos(filename):
                 print(str(individuo) + " Puesto bajo Vigilancia.")
             else:
                 print(str(individuo) + " Ya estaba bajo vigilancia.")
+
+def cargar_matricula(filename):
+    #Imports requeridos
+    from georef.functions import obtener_argentina
+    from informacion.models import Individuo, Atributo
+    from operadores.models import Operador
+    #Generamos datos basicos:
+    argentina = obtener_argentina()
+    #Leemos el archivo csv
+    with open(filename, encoding='ISO-8859-1') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=';')
+        for row in csv_reader:
+            #0-nrodoc	1-apellido	2-nombre	3-matricula	4-aclaracion_vigia
+            #Obtenemos operador:
+            try:
+                operador = Operador.objects.get(num_doc=row[0])
+                try:#Actualizamos aclaracion de Vigia
+                    vigia = operador.vigia
+                    vigia.aclaracion = row[4]
+                    vigia.save()
+                except:
+                    print(str(operador) + ' No es vigia.')
+                #Obtenemos individuo:
+                try:
+                    individuo = Individuo.objects.get(num_doc=row[0])
+                except:#Si no existe lo creamos super basico
+                    individuo = Individuo(num_doc=row[0])
+                    individuo.apellidos = row[1]
+                    individuo.nombres = row[2]
+                    individuo.nacionalidad = argentina
+                    individuo.save()#Guardamos
+                #Generamos Atributo de matricula
+                atributo = Atributo(individuo=individuo)
+                atributo.tipo = "PM"
+                atributo.aclaracion = row[3]
+                atributo.save()
+                print('Matricula cargada para: ' + str(individuo))
+            except:
+                print(row[0] +': ' + row[1] + " No es operador del sistema.")
