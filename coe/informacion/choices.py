@@ -54,7 +54,7 @@ TIPO_DOMICILIO = (
     ('HO', 'Hogar'),
     ('LA', 'Laboral'),
     ('AI', 'Aislamiento'),
-    ('IN', 'Aislamiento'),
+    ('IN', 'Internacion'),
 )
 
 TIPO_RELACION = (
@@ -77,6 +77,7 @@ TIPO_ATRIBUTO = (
     ('EP', 'Es Empleado Publico'),
     ('TE', 'Es Trabajador de Empresa Estrategica'),
     ('PD', 'Se encuentra Presos/Detenidos'),
+    ('PM', 'Es Medico (Matricula)'),
     #Vigilancia
     ('VE', 'Vigilancia Epidemiologica'),
     ('VM', 'Vigilancia Salud Mental'),
@@ -103,12 +104,12 @@ def obtener_atributos(user):
     #Tipo de Seguimientos:
     publicos = ['OP2', 'EMB', 'DIS', 'APS', 'NM2']
     carga = ['CE', 'TO', 'PR']
-    trabajo = ['AS', 'PS', 'FP', 'EP', 'TE', 'PD']
+    trabajo = ['AS', 'PS', 'FP', 'EP', 'TE', 'PD', 'PM']
     vigilancia = ['VE', 'VM', 'AP', 'ST', 'VT', 'VD']
     epidemiologia = ['TP']
     sistema = ['CP', 'CT', 'VA', 'DE']
     #Generamos seguimientos accesibles
-    tipos = [t for t in TIPO_ATRIBUTO if t[0] in publicos]
+    tipos = []
     #Agregamos segun permisos:
     if user.is_staff:
         tipos += [t for t in TIPO_ATRIBUTO if t[0] in carga]
@@ -118,7 +119,13 @@ def obtener_atributos(user):
         tipos += [t for t in TIPO_ATRIBUTO if t[0] in epidemiologia]
     if user.has_perm('operadores.sistemas'):#No existe, solo superusuario
         tipos += [t for t in TIPO_ATRIBUTO if t[0] in sistema]
+    #Cargamos los publicos
+    tipos += [t for t in TIPO_ATRIBUTO if t[0] in publicos]
+    #Devolvemos los tipos validos
     return tipos
+
+def TiposVigilancia():
+    return ['VE', 'VM', 'AP', 'ST']
 
 def atributos_iniciales():
     #Tipo de Seguimientos:
@@ -181,7 +188,9 @@ TIPO_DOCUMENTO = (
     ('AS', 'Analisis de Sangre'),
     ('AO', 'Analisis de Orina'),
     ('LB', 'Laboratorio'),
+    ('CA', 'Certificado de Aislamiento'),
     ('AC', 'Certificado de Alta de Cuarentena'),
+    ('AM', 'Certificado de Alta Medica'),
     ('TN', 'Certificado de Test Negativo'),
     ('CT', 'Certificado Temporal de Aislamiento en Domicilio'),
     ('FP', 'Foto de Perfil'),

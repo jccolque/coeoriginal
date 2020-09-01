@@ -567,8 +567,11 @@
                             <li><a href="{% url 'seguimiento:cargar_seguimiento' individuo_id=individuo.id %}" target="_blank">Cargar Seguimiento</a></li>
                             {% if perms.operadores.seguimiento_admin %}
                                 {% if individuo.aislado or individuo.vigiladores.exists %}
-                                    <li><a href="{% url 'seguimiento:dar_alta' individuo_id=individuo.id %}" target="_blank">Dar Alta AISLAMIENTO</a></li>
+                                    <li><a href="{% url 'seguimiento:dar_alta_seguimiento' individuo_id=individuo.id %}" target="_blank">Dar Alta Aislamiento</a></li>
                                 {% endif %}
+                            {% endif %}
+                            {% if perms.operadores.seguimiento %}
+                                <li><a href="{% url 'seguimiento:dar_alta_medica' individuo_id=individuo.id %}" target="_blank">Dar Alta Medica</a></li>
                             {% endif %}
                         </ul>
                     </div>

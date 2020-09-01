@@ -47,10 +47,10 @@ from .models import Condicion
 from .forms import SeguimientoForm
 from .forms import NuevoVigia, ConfiguracionForm, NuevoIndividuo
 from .forms import OperativoForm, TestOperativoForm
-from .forms import CondicionForm, AtenderForm
+from .forms import CondicionForm, AtenderForm, AltaForm
 from .functions import esperando_seguimiento, vigilancias_faltantes
 from .functions import asignar_vigilante
-from .functions import realizar_alta
+from .functions import realizar_alta_seguimiento, creamos_doc_alta_medica
 from .tasks import altas_masivas, guardar_muestras_bg
 #Agregados pablo
 from .forms import DatosGisForm
@@ -1146,11 +1146,11 @@ def esperando_alta_seguimiento(request):
         })
 
 @permission_required('operadores.seguimiento_admin')
-def dar_alta(request, individuo_id):
+def dar_alta_seguimiento(request, individuo_id):
     individuo = Individuo.objects.get(pk=individuo_id)
     if request.method == "POST":
         #Obtenemos al operador
-        realizar_alta(individuo, obtener_operador(request))
+        realizar_alta_seguimiento(individuo, obtener_operador(request))
         #Volvemos a la lista
         return redirect('seguimiento:esperando_alta_seguimiento')
     #Obtenemos los datos:
@@ -1174,6 +1174,39 @@ def dar_alta(request, individuo_id):
     )
 
 @permission_required('operadores.seguimiento_admin')
+def dar_alta_medica(request, individuo_id):
+    #Obtenemos datos
+    individuo = Individuo.objects.get(pk=individuo_id)
+    operador = obtener_operador(request)
+    #Genero form
+    form = AltaForm()
+    if request.method == "POST":
+        form = AltaForm(request.POST)
+        if form.is_valid():
+            #Generamos seguimiento de alta:
+            seg = Seguimiento(individuo=individuo)
+            seg.tipo = 'FS'
+            seg.fecha = form.cleaned_data['fecha']
+            seg.aclaracion = form.cleaned_data['aclaracion'] + str(operador)
+            seg.operador = operador
+            seg.save()
+            #Generamos documento de alta:
+            doc = Documento(individuo=individuo)
+            doc.tipo = 'AM'
+            doc.aclaracion = form.cleaned_data['aclaracion'] + str(operador)
+            doc.archivo = creamos_doc_alta_medica(seg)
+            doc.save()
+            #Volvemos al individuo
+            return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+    #lanzamos form
+    return render(request, "dar_alta_medica.html", {
+        'operador': operador,
+        'matricula': operador.es_medico(),
+        'individuo': individuo,
+        'form': form,
+    })
+
+@permission_required('operadores.seguimiento_admin')
 def altas_realizadas(request):
     individuos = Individuo.objects.filter(documentos__tipo='AC')
     #Optimizamos
@@ -1188,8 +1221,8 @@ def altas_realizadas(request):
         'has_table': True,
     })
 
-#Sistema de muestras (TEST)
 
+#Sistema de muestras (TEST)
 @permission_required('operadores.carga_gis')
 def gis_list(request):
     datosgis = DatosGis.objects.all()   

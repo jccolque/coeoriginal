@@ -1,5 +1,6 @@
 #Imports Django
 from django import forms
+from django.utils import timezone
 #Imports extra
 from dal import autocomplete
 #Imports del proyecto
@@ -180,4 +181,8 @@ class PriorForm(forms.ModelForm):
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
                 'class':'form-control'
-            })   
+            })
+
+class AltaForm(forms.Form):
+    fecha = forms.DateTimeField(initial=timezone.now(), widget=XDSoftDateTimePickerInput(attrs={'autocomplete':'off'},))
+    aclaracion = forms.CharField(required=True, )

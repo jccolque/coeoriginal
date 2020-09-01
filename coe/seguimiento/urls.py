@@ -33,8 +33,9 @@ urlpatterns = [
     path('lista/atendidos', views.lista_atendidos, name='lista_atendidos'),
     #Lista Para Liberar:
     path('lista/esperando/alta', views.esperando_alta_seguimiento, name='esperando_alta_seguimiento'),
-    path('dar/alta/<int:individuo_id>', views.dar_alta, name='dar_alta'),
+    path('dar/alta/seguimiento/<int:individuo_id>', views.dar_alta_seguimiento, name='dar_alta_seguimiento'),
     path('lista/altas/realizadas', views.altas_realizadas, name='altas_realizadas'),
+    path('dar/alta/medica/<int:individuo_id>', views.dar_alta_medica, name='dar_alta_medica'),
     #Administracion
     path('lista/vigias', views.lista_vigias, name='lista_vigias'),
     path('lista/ocupacion', views.lista_ocupacion, name='lista_ocupacion'),

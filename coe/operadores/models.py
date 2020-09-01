@@ -154,6 +154,14 @@ class Operador(models.Model):
             return self.qrpath
     def tareas_pendientes(self):
         return [r.tarea for r in self.responsables.all().exclude(tarea__eventos__accion='E')]
+    def es_medico(self):
+        try:
+            if not self.individuo:
+                self.individuo = Individuo.objects.get(num_doc=self.num_doc)
+                self.save()
+            return self.individuo.atributos.filter(tipo='PM').last()
+        except:
+            return False
 
 class EventoOperador(models.Model):
     operador = models.ForeignKey(Operador, on_delete=models.CASCADE, null=True, blank=True, related_name="asistencia")

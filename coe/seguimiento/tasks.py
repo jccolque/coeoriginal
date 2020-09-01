@@ -18,7 +18,7 @@ from operadores.models import Operador
 #Import Personales
 from .models import Seguimiento
 from .models import Muestra
-from .functions import realizar_alta
+from .functions import realizar_alta_seguimiento
 
 #Definimos logger
 logger = logging.getLogger("tasks")
@@ -52,7 +52,7 @@ def altas_masivas(inds_ids, operador_id):
     individuos = Individuo.objects.filter(id__in=inds_ids)
     operador = Operador.objects.get(pk=operador_id)
     for individuo in individuos:
-        realizar_alta(individuo, operador)
+        realizar_alta_seguimiento(individuo, operador)
 
 @background(schedule=5)#
 def guardar_muestras_bg(lineas, archivo_id, ultimo=False):

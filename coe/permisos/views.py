@@ -859,9 +859,9 @@ def finalizar_control_circulacion(request, registro_id):
                     seguimiento.tipo = 'RC'
                     seguimiento.aclaracion = "Final de Recorrido"
                     seguimiento.save()
-                    #Si no lo sigue nadie, Agregamos a un panel:
-                    if pasajero.individuo.vigiladores.exists():
-                        pasajero.individuo.vigiladores.clear()
+                    #le quitamos el seguimiento:
+                    for vigia in [v for v in pasajero.vigiladores.all() if v.tipo=='RC']:
+                        vigia.del_vigilado(pasajero)
                     #Lo sacamos de aislamiento:
                     sit_actual = pasajero.individuo.get_situacion()
                     if sit_actual.conducta in ('D', 'E'):

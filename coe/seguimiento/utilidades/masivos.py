@@ -13,7 +13,7 @@ from inscripciones.models import Inscripcion
 #Imports de la app
 from seguimiento.choices import TIPO_VIGIA
 from seguimiento.models import Seguimiento, Vigia
-from seguimiento.functions import realizar_alta, obtener_bajo_seguimiento
+from seguimiento.functions import realizar_alta_seguimiento, obtener_bajo_seguimiento
 
 def crear_vigias(filename):
     #obtenemos el comite de vigilancia Epidemiologica
@@ -83,7 +83,7 @@ def altas_masivas(filename):
         for row in csv_reader:
             try:
                 individuo = Individuo.objects.get(num_doc=row[0])
-                realizar_alta(individuo, 'Archivo CSV Masivo')
+                realizar_alta_seguimiento(individuo, 'Archivo CSV Masivo')
                 print("Alta generada para:" + str(individuo))
             except Individuo.DoesNotExist:
                 print("No existe DNI: " + row[0])

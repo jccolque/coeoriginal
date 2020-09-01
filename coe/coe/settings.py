@@ -164,12 +164,12 @@ LOGGING = {
             'filename': 'archivos/logs/tasks.txt',
         },
         'error_file': {
-            'level': 'ERROR',
+            'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': 'archivos/logs/errors.txt',
         },
         'functions_file': {
-            'level': 'ERROR',
+            'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': 'archivos/logs/functions.txt',
         },

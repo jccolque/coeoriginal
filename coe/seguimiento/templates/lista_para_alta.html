@@ -47,7 +47,7 @@
                                 </td>
                                 <td><input type="checkbox" id="{{individuo.id}}" value={{individuo.id}} name="alta"></td>
                                 <td>
-                                    <a class="nolink" href="{% url 'seguimiento:dar_alta' individuo_id=individuo.pk %}" target="_blank">
+                                    <a class="nolink" href="{% url 'seguimiento:dar_alta_seguimiento' individuo_id=individuo.pk %}" target="_blank">
                                         <img class="icons" src="{% static '/img/icons/check.png' %}">
                                     </a>
                                     <a class="nolink" href="{% url 'informacion:ver_individuo' individuo_id=individuo.id %}" target="_blank">

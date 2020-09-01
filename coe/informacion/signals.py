@@ -11,7 +11,9 @@ from dateutil.relativedelta import relativedelta
 #Imports del proyecto
 #Imports de la app
 from seguimiento.models import Seguimiento
+from seguimiento.functions import creamos_doc_aislamiento
 #from .models import Pasajero
+from .choices import TiposVigilancia
 from .models import Individuo, Domicilio, Situacion, Relacion
 from .models import Atributo, SignosVitales, Documento
 from .models import TrasladoVehiculo
@@ -76,7 +78,7 @@ def relacion_domicilio(created, instance, **kwargs):
 #Evolucionamos Estado segun Domicilio
 @receiver(post_save, sender=Domicilio)
 def aislar_individuo(created, instance, **kwargs):
-    if created and instance.ubicacion:#Si lo mandamos a aislamiento
+    if created and instance.tipo in ('AI', 'IN'):#Si lo mandamos a aislamiento
         individuo = instance.individuo
         #Obtenemos situacion actual
         situacion_actual = individuo.get_situacion()
@@ -175,12 +177,19 @@ def relacionar_situacion_nueva(created, instance, **kwargs):
 
 @receiver(post_save, sender=Atributo)
 def aislamiento_domiciliario(created, instance, **kwargs):
-    if created and instance.tipo == "VD":
+    if created and instance.tipo in TiposVigilancia():
         #Creamos la situacion de aislamiento
         sit_actual = instance.individuo.get_situacion()
+        #Generamos nuevo estado
+        new_sit = Situacion(individuo=instance.individuo)
+        new_sit.estado = sit_actual.estado
+        new_sit.conducta = sit_actual.conducta
+        #Chequeamos si evolucionar estado
+        if sit_actual.estado < 40:
+            new_sit.estado = 40
+        #Chequeamos si evolucionar conducta
         if sit_actual.conducta != 'E':
-            sit = Situacion(individuo=instance.individuo)
-            sit.estado = sit_actual.estado
-            sit.conducta = 'E'
-            sit.aclaracion = "Debe Realizar Aislamiento Obligatoria en su Hogar"
-            sit.save()
+            new_sit.conducta = 'D'
+        #Guardamos el nueuvo estado
+        new_sit.aclaracion = "Debe Realizar Aislamiento Obligatoria en su Hogar"
+        new_sit.save()

@@ -14,7 +14,8 @@ from informacion.models import Situacion, Atributo, SignosVitales, Documento
 #Imports de la app
 from .choices import TIPO_VIGIA
 from .models import Seguimiento, Vigia, TestOperativo
-from .functions import crear_doc_descartado, asignar_vigilante 
+from .functions import crear_doc_descartado, creamos_doc_aislamiento
+from .functions import asignar_vigilante
 
 #Logger
 logger = logging.getLogger('signals')
@@ -56,12 +57,11 @@ def descartar_sospechoso(created, instance, **kwargs):
         situacion.aclaracion = 'Descartado' + instance.aclaracion
         situacion.save()
         #Creamos archivo de Descartado por Test
-        ##CANCELADO
-        # doc = Documento(individuo=instance.individuo)
-        # doc.tipo = 'TN'
-        # doc.archivo = crear_doc_descartado(doc.individuo)
-        # doc.aclaracion = "TEST NEGATIVO CONFIRMADO"
-        # doc.save()
+        doc = Documento(individuo=instance.individuo)
+        doc.tipo = 'TN'
+        doc.archivo = crear_doc_descartado(instance)
+        doc.aclaracion = "TEST NEGATIVO CONFIRMADO"
+        doc.save()
         # #Enviar mail
         # if SEND_MAIL and instance.individuo.email:
         #     to_email = instance.individuo.email
@@ -107,8 +107,15 @@ def poner_en_seguimiento(created, instance, **kwargs):
         atributo.save()
 
 @receiver(post_save, sender=Seguimiento)
-def evaluar_sospechoso(created, instance, **kwargs):
+def evolucionar_sospechoso(created, instance, **kwargs):
     if created and instance.tipo == "IR":
+        #Le cargamos el inicio de aislamiento:
+        doc = Documento(individuo=instance.individuo)
+        doc.tipo = 'CA'
+        doc.archivo = creamos_doc_aislamiento(instance)
+        doc.aclaracion = 'Aislamiento requerido por ' + str(instance.operador)
+        doc.save()
+        #Evolucinamos su situacion
         if instance.individuo.get_situacion().estado < 40:#Si no esta en sospechso o peor
             situacion = Situacion(individuo=instance.individuo)
             situacion.estado = 40
@@ -132,8 +139,12 @@ def atributo_vigilancia(created, instance, **kwargs):
 @receiver(post_save, sender=Seguimiento)
 def finalizar_seguimiento(created, instance, **kwargs):
     if created and instance.tipo == 'FS':
-        #Lo quitamos de todos los paneles de seguimiento
-        instance.individuo.vigiladores.clear()
+        try: #Chequeamos si es vigilante:
+            vigia = Vigia.objects.get(operador=instance.operador)
+            vigia.del_vigilado(instance.individuo)#en ese caso la eliminamos solo de su panel
+        except:
+            for vigia in instance.individuo.vigiladores.all():#Lo eliminamos de todos los paneles
+                vigia.del_vigilado(instance.individuo)
 
 @receiver(post_save, sender=Seguimiento)
 def fallecimiento(created, instance, **kwargs):
@@ -168,7 +179,8 @@ def seguimiento_urgente(created, instance, **kwargs):
 @receiver(post_save, sender=Seguimiento)
 def sin_telefono(created, instance, **kwargs):
     if created and instance.tipo == 'TE':
-        instance.individuo.vigiladores.clear()
+       for vigia in instance.individuo.vigiladores.all():#Lo eliminamos de todos los paneles
+            vigia.del_vigilado(instance.individuo)
 
 @receiver(post_save, sender=TestOperativo)
 def operativo_get_individuo(created, instance, **kwargs):

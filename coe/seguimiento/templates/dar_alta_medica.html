@@ -1,0 +1,48 @@
+{% extends 'base_seguimiento.html' %}
+
+{% block content %}
+    <section class="formulario_custom">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-4 col-sm-offset-2">
+                    <h2><b>Datos del Paciente</b></h2>
+                    <p><b>Documento:</b> {{individuo.num_doc}}</p>
+                    <p><b>{{individuo.apellidos}}, {{individuo.nombres}}</b></p>
+                    <p><b>Estado:</b> {{individuo.situacion_actual}}</p>
+                    {% with individuo.domicilio_retorno as domicilio %}
+                        <b>Domicilio:</b> {{domicilio.calle}} {{domicilio.numero}}, {{domicilio.localidad.nombre}} | {{domicilio.aclaracion}}
+                    {% endwith %}
+                    <p><b>Telefono:</b> {{individuo.telefono}}</p>
+                    <p><b>Email:</b> {{individuo.email}}</p>
+                </div>
+                <div class="col-sm-4">
+                    <h2><b>Datos del Medico</b></h2>
+                    <p><b>Operador:</b> {{operador}}</p>
+                    {% if matricula %}
+                        <p><b>Matricula:</b> {{matricula.aclaracion}}</p>
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <!-- Mostramos errores -->
+                            {% for field in form %}
+                                {% if field.errors %}
+                                    <li>
+                                        {{ field.label }}: {{ field.errors|striptags }}
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            <p><b>Fecha del Alta:</b> {{form.fecha}}</p>
+                            <p><b>Aclaracion:</b> {{form.aclaracion}}</p>
+
+                            <div class="col-sm-3 col-sm-offset-6">
+                                <button type="submit">Dar Alta</button>
+                            </div>
+                        </form>
+                    {% else %}
+                        <p><b>Usted no es medico por lo cual no puede realizar esta accion.</b></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

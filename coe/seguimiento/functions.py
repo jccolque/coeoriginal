@@ -104,7 +104,80 @@ def asignar_vigilante(individuo, tipo):
     except:
         logger.info("Fallo asignar_vigilante: :\n"+str(traceback.format_exc()))
 
-def creamos_doc_alta(individuo):
+def crear_doc_descartado(seguimiento):
+    try:
+        #Generamos informacion base
+        individuo = seguimiento.individuo
+        fecha = seguimiento.fecha.date()
+        #Se crea un pdf utilizando reportLab
+        packet = io.BytesIO()
+        pdf = canvas.Canvas(packet, pagesize = A4)
+        pdf.setFont('Times-Roman', 13)
+        pdf.drawString(85, 635, individuo.apellidos + ', ' + individuo.nombres + ' - ' + individuo.get_tipo_doc_display() + ': ' + str(individuo.num_doc))
+        pdf.setFont('Times-Roman', 16)
+        pdf.drawString(250, 115, str(fecha))
+        pdf.save()
+        # Nos movemos al comienzo del búfer StringIO
+        packet.seek(0)
+        nuevo_pdf = PdfFileReader(packet)
+        # Leemos el pdf base
+        existe_pdf = PdfFileReader(STATIC_ROOT+'/archivo/test_negativo.pdf', "rb")
+        salida = PdfFileWriter()
+        # Se agregan los datos de la persona que será dada de alta, al pdf ya existente
+        pagina = existe_pdf.getPage(0)
+        pagina.mergePage(nuevo_pdf.getPage(0))
+        salida.addPage(pagina)
+        # Finalmente se escribe la salida, en un archivo real
+        path = MEDIA_ROOT+'/informacion/descartado/'+individuo.num_doc+'_'+str(fecha)+".pdf"
+        outputStream = open(path, "wb")
+        salida.write(outputStream)
+        outputStream.close()
+        #Devolvemos el archivo para guardar:
+        return '/informacion/descartado/'+individuo.num_doc+'_'+str(fecha)+".pdf"
+    except:
+        logger.info("No se creo PDF para: " + str(individuo))
+        logger.info("Motivo: " + str(traceback.format_exc()))
+
+def creamos_doc_aislamiento(seguimiento):
+    try:
+        #Obtenemos informacion inicial
+        individuo = seguimiento.individuo
+        operador = seguimiento.operador
+        individuo_txt = individuo.apellidos + ', ' + individuo.nombres + ' (' + individuo.get_tipo_doc_display() + ': ' + str(individuo.num_doc) + ')'
+        inicio = seguimiento.fecha.date()
+        #Se crea un pdf utilizando reportLab
+        packet = io.BytesIO()
+        pdf = canvas.Canvas(packet, pagesize = A4)
+        pdf.setFont('Times-Roman', 12)
+        #comenzamos a escribir la informacion
+        pdf.drawString(200, 630, individuo_txt)
+        pdf.drawString(150, 580, str(inicio))
+        pdf.drawString(350, 215, "Operador del COE:")
+        pdf.drawString(350, 200, operador.apellidos + ', ' + operador.nombres)
+        pdf.drawString(350, 180, operador.num_doc)
+        pdf.save()
+        # Nos movemos al comienzo del búfer StringIO
+        packet.seek(0)
+        nuevo_pdf = PdfFileReader(packet)
+        # Leemos el pdf base
+        pdf_base = PdfFileReader(STATIC_ROOT+'/archivo/certificado_aislamiento.pdf', "rb")
+        # Se agregan los datos de la persona que será dada de alta, al pdf ya existente
+        salida = PdfFileWriter()
+        pagina = pdf_base.getPage(0)
+        pagina.mergePage(nuevo_pdf.getPage(0))
+        salida.addPage(pagina)
+        # Finalmente se escribe la salida, en un archivo real
+        path = MEDIA_ROOT+'/informacion/aislamiento/'+individuo.num_doc+'_'+str(inicio)+".pdf"
+        outputStream = open(path, "wb")
+        salida.write(outputStream)
+        outputStream.close()
+        #Devolvemos el archivo para guardar:
+        return '/informacion/aislamiento/'+individuo.num_doc+'_'+str(inicio)+".pdf"
+    except:
+        logger.info("No se creo PDF para: " + str(individuo))
+        logger.info("Motivo: " + str(traceback.format_exc()))    
+
+def creamos_doc_alta_seguimiento(individuo):
     try:
         packet = io.BytesIO()
         #Se crea un pdf utilizando reportLab
@@ -127,52 +200,21 @@ def creamos_doc_alta(individuo):
         pagina.mergePage(nuevo_pdf.getPage(0))
         salida.addPage(pagina)
         # Finalmente se escribe la salida, en un archivo real
-        path = MEDIA_ROOT+'/informacion/altas/'+individuo.num_doc+".pdf"
+        path = MEDIA_ROOT+'/informacion/altas/'+individuo.num_doc+'_'+str(inicio)+".pdf"
         outputStream = open(path, "wb")
         salida.write(outputStream)
         outputStream.close()
         #Devolvemos el archivo para guardar:
-        return '/informacion/altas/'+individuo.num_doc+".pdf"
+        return '/informacion/altas/'+individuo.num_doc+'_'+str(inicio)+".pdf"
     except:
         logger.info("No se creo PDF para: " + str(individuo))
         logger.info("Motivo: " + str(traceback.format_exc()))
 
-def crear_doc_descartado(individuo):
-    try:
-        packet = io.BytesIO()
-        #Se crea un pdf utilizando reportLab
-        pdf = canvas.Canvas(packet, pagesize = A4)
-        pdf.setFont('Times-Roman', 13)
-        pdf.drawString(85, 635, individuo.apellidos + ', ' + individuo.nombres + ' - ' + individuo.get_tipo_doc_display() + ': ' + str(individuo.num_doc))
-        pdf.setFont('Times-Roman', 16)
-        pdf.drawString(250, 115, str(timezone.now().date()))
-        pdf.save()
-        # Nos movemos al comienzo del búfer StringIO
-        packet.seek(0)
-        nuevo_pdf = PdfFileReader(packet)
-        # Leemos el pdf base
-        existe_pdf = PdfFileReader(STATIC_ROOT+'/archivo/test_negativo.pdf', "rb")
-        salida = PdfFileWriter()
-        # Se agregan los datos de la persona que será dada de alta, al pdf ya existente
-        pagina = existe_pdf.getPage(0)
-        pagina.mergePage(nuevo_pdf.getPage(0))
-        salida.addPage(pagina)
-        # Finalmente se escribe la salida, en un archivo real
-        path = MEDIA_ROOT+'/informacion/descartado/'+individuo.num_doc+".pdf"
-        outputStream = open(path, "wb")
-        salida.write(outputStream)
-        outputStream.close()
-        #Devolvemos el archivo para guardar:
-        return '/informacion/descartado/'+individuo.num_doc+".pdf"
-    except:
-        logger.info("No se creo PDF para: " + str(individuo))
-        logger.info("Motivo: " + str(traceback.format_exc()))
-
-def realizar_alta(individuo, operador):
+def realizar_alta_seguimiento(individuo, operador):
     #Generar documento de alta de aislamiento:
     doc = Documento(individuo=individuo)
     doc.tipo = 'AC'
-    doc.archivo.name = creamos_doc_alta(individuo)
+    doc.archivo.name = creamos_doc_alta_seguimiento(individuo)
     doc.save()
     #Lo quitamos de Seguimiento Epidemiologico
     seguimiento = Seguimiento(individuo=individuo)
@@ -184,7 +226,8 @@ def realizar_alta(individuo, operador):
     seguimiento.aclaracion = "Baja confirmada por: " + str(operador)
     situacion.save()
     #Le damos de baja el seguimiento de tracking si tenia:
-    individuo.geoperadores.clear()
+    for geoperador in individuo.geoperadores.all():
+        geoperadores.del_trackeado(individuo)
     desactivar_tracking(individuo)
     #Generamos final tracking > Seguimiento
     seguimiento = Seguimiento(individuo=individuo)
@@ -206,6 +249,45 @@ def realizar_alta(individuo, operador):
             dom.aclaracion = "Baja confirmada por: " + str(operador)
             dom.fecha = timezone.now()
             dom.save()
+
+def creamos_doc_alta_medica(seguimiento):
+    try:
+        #Obtenemos informacion inicial
+        individuo = seguimiento.individuo
+        operador = seguimiento.operador
+        matricula = Atributo.objects.filter(individuo__num_doc=operador.num_doc, tipo="PM").last()
+        fecha_alta = seguimiento.fecha.date()
+        #Se crea un pdf utilizando reportLab
+        packet = io.BytesIO()
+        pdf = canvas.Canvas(packet, pagesize = A4)
+        pdf.setFont('Times-Roman', 12)
+        #Se escriben bloques de texto:        
+        pdf.drawString(100, 660, individuo.apellidos + ', ' + individuo.nombres)
+        pdf.drawString(150, 635, individuo.num_doc)
+        pdf.drawString(150, 607, str(fecha_alta))
+        pdf.drawString(350, 200, matricula.individuo.apellidos + ', ' + matricula.individuo.nombres)
+        pdf.drawString(350, 180, 'M.N:' + matricula.aclaracion)
+        pdf.save()
+        # Nos movemos al comienzo del búfer StringIO
+        packet.seek(0)
+        nuevo_pdf = PdfFileReader(packet)
+        # Leemos el pdf base
+        existe_pdf = PdfFileReader(STATIC_ROOT+'/archivo/alta_medica.pdf', "rb")
+        salida = PdfFileWriter()
+        # Se agregan los datos de la persona que será dada de alta, al pdf ya existente
+        pagina = existe_pdf.getPage(0)
+        pagina.mergePage(nuevo_pdf.getPage(0))
+        salida.addPage(pagina)
+        # Finalmente se escribe la salida, en un archivo real
+        path = MEDIA_ROOT+'/informacion/altamedica/'+individuo.num_doc+'_'+str(fecha_alta)+".pdf"
+        outputStream = open(path, "wb")
+        salida.write(outputStream)
+        outputStream.close()
+        #Devolvemos el archivo para guardar:
+        return '/informacion/altamedica/'+individuo.num_doc+'_'+str(fecha_alta)+".pdf"
+    except:
+        logger.info("No se creo PDF para: " + str(individuo))
+        logger.info("Motivo: " + str(traceback.format_exc()))
 
 def es_operador_activo(num_doc):
     #Buscamos la cache
