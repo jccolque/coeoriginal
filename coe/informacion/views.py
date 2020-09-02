@@ -13,7 +13,7 @@ from coe.settings import GEOPOSITION_GOOGLE_MAPS_API_KEY
 from coe.constantes import DIAS_CUARENTENA
 from core.decoradores import superuser_required
 from core.functions import date2str
-from core.forms import SearchForm, FileForm, JustificarForm, TextoForm, ChangeEmailForm
+from core.forms import SearchForm, FileForm, JustificarForm, TextoForm, ChangeEmailForm, PeriodoForm
 from georef.models import Nacionalidad, Ubicacion
 from georef.functions import obtener_argentina
 from seguimiento.models import Seguimiento
@@ -28,6 +28,7 @@ from seguimiento.functions import asignar_vigilante
 #imports de la app
 from .choices import TIPO_ESTADO, TIPO_CONDUCTA
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
+from .choices import TiposVigilancia
 from .models import Archivo
 from .models import Vehiculo, TrasladoVehiculo#, Pasajero
 from .models import Individuo, SignosVitales, Relacion
@@ -1002,6 +1003,42 @@ def reporte_por_filtros(request):
         'seguimientos': seguimientos,
     })
 
+@permission_required('operadores.reportes')
+def reporte_info_nueva(request):
+    form = PeriodoForm()
+    if request.method == "POST":
+        form = ReporteHotelesForm(request.POST)
+        if form.is_valid():
+            #Obtenemos filtros
+            begda = form.cleaned_data['begda']
+            endda = form.cleaned_data['endda']
+            #Obtenemos tipos de vigilancia:
+
+            #Traemos todos los individuos
+            individuos = Individuo.objects.all()
+            #Optimizamos:
+            individuos = individuos.prefetch_related(
+                'atributos',
+                'vigiladores',
+            )
+            #Filtramos las cosas que nos interesan:
+            vigilancias_nuevos = Atributo.objects.filter(
+                fecha__gt=begda,
+                fecha__lt=endda,
+                tipo__in=TiposVigilancia()
+            )
+            individuos = individuos.filter(atributos__in=vigilancias_nuevos)
+            #Eliminamos duplicados:
+            individuos = individuos.distinct()
+            #Lanzamos reporte:
+            return render(request, "reportes/reporte_info_nueva.html", {
+                'individuos': individuos,
+                'has_table': True,
+            })
+
+    #Mostramos formulario
+    return render(request, "extras/generic_form.html", {'titulo': "Reporte de Ingreso al sistema", 'form': form, 'boton': "Buscar", })
+
 @permission_required('operadores.menu_georef')
 def lista_ingresos_hoteles(request):
     form = ReporteHotelesForm()
@@ -1029,4 +1066,5 @@ def lista_ingresos_hoteles(request):
                 'begda': begda, 'endda': endda,
                 'has_table': True,
             })
+    #Mostramos formulario
     return render(request, "extras/generic_form.html", {'titulo': "Reporte de Ingreso a Hoteles", 'form': form, 'boton': "Buscar", })
