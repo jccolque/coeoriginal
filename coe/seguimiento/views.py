@@ -1460,7 +1460,7 @@ def upload_muestra(request):
             archivo.operador = operador
             archivo.save()
             csv = archivo.archivo            
-            file_data = csv.read().decode("utf-8")
+            file_data = csv.read().decode("utf-8-sig")
             lines = file_data.split("\n")
             tarea = crear_progress_link(str(operador)+":cargar_muestras_plp("+str(timezone.now())[0:16].replace(' ','')+")")            
             #Dividimos en fragmentos

@@ -188,6 +188,7 @@ TIPO_DOCUMENTO = (
     ('AS', 'Analisis de Sangre'),
     ('AO', 'Analisis de Orina'),
     ('LB', 'Laboratorio'),
+    ('FE', 'Ficha Epidemiologica'),
     ('CA', 'Certificado de Aislamiento'),
     ('AC', 'Certificado de Alta de Cuarentena'),
     ('AM', 'Certificado de Alta Medica'),
