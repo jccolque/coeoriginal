@@ -187,7 +187,7 @@ class Muestra(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="muestras", null=True, blank=True)
     operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, related_name="operadores_muestras", null=True, blank=True)
     #Campos propios
-    numero = models.SmallIntegerField('Numero de Muestra', unique=True, db_index=True)
+    numero = models.IntegerField('Numero de Muestra', db_index=True)
     fecha_muestra = models.DateField('Fecha de Muestra', default=timezone.now)
     estado = models.CharField('Estado', max_length=2, choices=ESTADO_TIPO, default='EE')
     prioridad = models.CharField('Prioridad', max_length=2, choices=TIPO_PRIORIDAD, default='SP')
@@ -196,6 +196,8 @@ class Muestra(models.Model):
     lugar_carga = models.CharField('Lugar de Carga', max_length=100, null = True, blank = True)
     edad = models.CharField('Edad', max_length=200, null=True, blank=True)
     documento = models.FileField('Documento', upload_to='seguimiento/muestras/', null=True, blank=True)
+    class Meta:
+        unique_together = ['individuo', 'numero']
 
 #if not LOADDATA:
     #Auditoria
