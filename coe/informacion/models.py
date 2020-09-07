@@ -168,6 +168,11 @@ class Individuo(models.Model):
             return obra_sociales[-1]
         else:
             return "Sin obra social"
+    def priorizar_seguimiento(self):
+        if True in [True for s in self.seguimientos.all() if s.tipo == 'IS']:
+            return True
+        if self.situacion_actual.estado == 50:
+            return True
 
 class Relacion(models.Model):#Origen del Dato
     tipo = models.CharField('Tipo Relacion', choices=TIPO_RELACION, max_length=2, default='F')

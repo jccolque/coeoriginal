@@ -107,6 +107,20 @@ def poner_en_seguimiento(created, instance, **kwargs):
         atributo.save()
 
 @receiver(post_save, sender=Seguimiento)
+def vigilancia_agravada(created, instance, **kwargs):
+    if created and instance.tipo == "IS":
+        #Evolucinamos su situacion
+        if instance.individuo.get_situacion().estado < 40:#Si no esta en sospechso o peor
+            situacion = Situacion(individuo=instance.individuo)
+            situacion.estado = 40
+            situacion.conducta = 'B'
+            situacion.aclaracion = "Requiere Seguimiento Agravado"
+            situacion.save()
+        #Le buscamos nuevo vigilante:
+        asignar_vigilante(instance.individuo, 'VE')
+        
+
+@receiver(post_save, sender=Seguimiento)
 def evolucionar_sospechoso(created, instance, **kwargs):
     if created and instance.tipo == "IR":
         #Le cargamos el inicio de aislamiento:

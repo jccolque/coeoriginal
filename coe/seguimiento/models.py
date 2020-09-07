@@ -46,6 +46,9 @@ class Vigia(models.Model):
     def __str__(self):
         return str(self.operador.nombres) + ' ' + str(self.operador.apellidos)
     def add_vigilado(self, individuo):
+        #Chequeamos si ya tiene vigilante de ese tipo:
+        for vigia in individuo.vigiladores.filter(tipo=self.tipo):
+            vigia.del_vigilado(individuo)#en caso de que los tenga debemos darlos de baja
         #registro para auditoria
         history = HistVigilancias(individuo=individuo)
         history.vigia = self
@@ -106,7 +109,7 @@ class Configuracion(models.Model):
 class HistVigilancias(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="vigilancias")
     vigia = models.ForeignKey(Vigia, on_delete=models.SET_NULL, null=True, blank=True, related_name="vigilancias")
-    evento = models.CharField('Tipo Vigia', choices=[('A', 'Asignacion'), ('E', 'Eliminacion')], max_length=2, default='A')
+    evento = models.CharField('Tipo Vigia', choices=[('A', 'Asignacion'), ('E', 'Eliminacion'), ('F', 'Sin vigilantes Disponibles')], max_length=1, default='A')
     fecha = models.DateTimeField('Fecha Registro', default=timezone.now)
     def __str__(self):
         return str(self.individuo) + ': ' + str(self.fecha) + ' para ' + self.get_evento_display() + '(Vigilante: ' + str(self.vigia) + ')'
