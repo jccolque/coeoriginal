@@ -68,13 +68,10 @@ def vigilancias_faltantes(individuos):#Debe ser queryset
     return individuos
 
 def asignar_vigilante(individuo, tipo):
-    print("Individuo: " + str(individuo))
-    print("Inicia busqueda de vigilante tipo: " + tipo)
     #Iniciamos proceso de asignacion:
     try:
         #Chequeamos que tenga telefono:
         if individuo.telefono in (NOTEL, ""):#No tiene telefono
-            print("No tiene Telefono")
             if not individuo.seguimientos.filter(tipo="TE").exists():
                 #Si no esta informada la falta, le metemos seguimiento: "TE"
                 seg = Seguimiento(individuo=individuo)
@@ -82,18 +79,14 @@ def asignar_vigilante(individuo, tipo):
                 seg.aclaracion = "Se intento asignar Vigilante, no tiene telefono"
                 seg.save()
         else:#Si tiene telefono al que contactarlo, Buscamos vigilante:
-            print("Tiene Telefono")
             #Obtenemos los vigilantes de ese tipo que tiene:
             vigilantes = [v for v in individuo.vigiladores.all() if v.tipo==tipo]
-            print("Tiene los siguientes Vigilantes: " + str(vigilantes))
             #Chequeamos si debe ser priorizado
             priorizar = individuo.priorizar_seguimiento()
             if priorizar:
-                print("Requiere Priorizar")
                 vigilantes = [v for v in vigilantes if v.priorizar]
             #Controlamos Si no tiene ese tipo de Vigilante Ya
             if not vigilantes:
-                print("Tenemos que buscar un vigilante nuevo")
                 #Intentamos buscar vigilante asignado a algun relacionado suyo de ese tipo:
                 vigias_relaciones = Vigia.objects.filter(
                     controlados__in=[r.relacionado for r in individuo.relaciones.all()],
@@ -103,41 +96,35 @@ def asignar_vigilante(individuo, tipo):
                     vigias_relaciones = vigias_relaciones.filter(priorizar=True)
                 #Ordenamos listado
                 vigias_relaciones = vigias_relaciones.annotate(cantidad=Count('controlados')).exclude(activo=False).order_by('cantidad')
-                print("Sus relaciones Tiene los siguientes Vigilantes: " + str(vigias_relaciones))
                 for vigia in vigias_relaciones:
-                    print("Encontramaos Vigilante posible: " + str(vigia))
                     if vigia.max_controlados > vigia.cantidad:
                         vigia.add_vigilado(individuo)
                         vigilantes.append(vigia)#Para que no intente buscar abajo
-                        print("Vigilante de sus relaciones asignado: " + str(vigia))
                         break
                 #Si aun no tiene Vigilante
                 if not vigilantes:
                     #Intentamos buscarle el vigilante que menos asignados tenga
-                    vigias = Vigia.objects.filter(tipo=tipo).annotate(cantidad=Count('controlados')).exclude(activo=False).order_by('cantidad')
+                    vigias = Vigia.objects.filter(tipo=tipo).annotate(cantidad=Count('controlados'))
+                    vigias = vigias.exclude(activo=False)
+                    vigias = vigias.order_by('priorizar', 'cantidad')
                     #Chequeamos si debe ser priorizado:
                     if priorizar: 
-                        vigias = vigias.order_by('-priorizar')
-                    print("Vigias disponibles: " + str(vigias))
+                        vigias = vigias.order_by('-priorizar', 'cantidad')
                     #Recorremos los vigias para encontrarle uno
                     for vigia in vigias:
-                        print("Encontramaos Vigilante posible: " + str(vigia))
                         if vigia.max_controlados > vigia.cantidad:#Controlamos que no este sobrepoblado
                             vigia.add_vigilado(individuo)
                             vigilantes.append(vigia)
-                            print("Vigilante asignado: " + str(vigia))
                             break#Lo cargamos y terminamos
                 #Si es Vigilancia Medica y le conseguimos uno, lo sacamos de Epidemiologia:
                 if tipo == "ST" and vigilantes:
                     for vigia in individuo.vigiladores.filter(tipo="VE"):
                         vigia.del_vigilado(individuo)
-                        print("Le quitamos Vigilante Epidemiologico: " + str(vigia))
             #Si no se consiguio vigilante
             if not vigilantes:
                 faltante = HistVigilancias(individuo=individuo)
                 faltante.evento = 'F'
                 faltante.save()#Registramos la falta
-                print("No encontramos vigilante disponible")
     except:#Si se genero alguna falla loggeamos:
         logger.info("Fallo asignar_vigilante: :\n"+str(traceback.format_exc()))
 

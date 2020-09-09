@@ -16,4 +16,4 @@ class GeorefConfig(AppConfig):
                 from .tasks import obtener_localidades_infra_gob
                 inicializar_background_job(obtener_localidades_infra_gob, Task.NEVER, 'obtener_localidades_infra_gob')
         except:
-            pass #print("No se pudo inicializar georeferencias")
+            print("No se pudo inicializar georeferencias")
