@@ -163,6 +163,44 @@ def ws_atributos(request):
     #Entregamos json
     return HttpResponse(json.dumps({'Individuos': data, "cant_registros": len(data),}), content_type='application/json')
 
+@permission_required('operadores.individuos')
+def ws_llamadas(request):
+    #Generamos diccionario
+    data = {}
+    #Obtenemos datos a procesar
+    individuos = Individuo.objects.exclude(seguimientos=None)
+    individuos = Individuo.objects.filter(seguimientos__tipo='L')#solo las llamadas
+    individuos = individuos.select_related("situacion_actual", "domicilio_actual", "domicilio_actual__localidad")
+    individuos = individuos.prefetch_related("seguimientos", "seguimientos__operador")
+    #Generamos un subdict por cada individuo
+    for individuo in individuos:
+        ind = {}
+        ind["num_doc"] = individuo.num_doc
+        ind["apellidos"] = individuo.apellidos
+        ind["situacion"] = str(individuo.get_situacion())
+        ind["nombres"] = individuo.nombres
+        ind["telefono"] = individuo.telefono
+        if individuo.domicilio_actual:
+            ind["domicilio"] = individuo.domicilio_actual.calle + ' ' + individuo.domicilio_actual.numero
+            ind["localidad"] = str(individuo.domicilio_actual.localidad.nombre)
+        ind["llamadas"] = []
+        llamadas = [l for l in individuo.seguimientos.all() if l.tipo == 'L']
+        for seguimiento in llamadas:
+            seg = {}
+            seg["tipo"] = seguimiento.get_tipo_display()
+            seg["aclaracion"] = seguimiento.aclaracion
+            seg["fecha"] = str(seguimiento.fecha)
+            seg["vigia"] = str(seguimiento.operador)
+            try:
+                seg["vigia_doc"] = str(seguimiento.operador.num_doc)
+                seg["vigia_tipo"] = str(seguimiento.operador.vigia.tipo)
+            except:
+                seg["tipo_vigia"] = "No registrado"
+            ind["llamadas"].append(seg)
+        data[individuo.num_doc] = ind
+    #Entregamos json
+    return HttpResponse(json.dumps({'Individuos': data, "cant_registros": len(data),}), content_type='application/json')
+
 #Privados
 # Create your views here.
 @permission_required('operadores.wservices')
