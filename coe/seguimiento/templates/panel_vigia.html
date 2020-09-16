@@ -17,7 +17,7 @@
                 <p><b>{{vigia.get_tipo_display}}</b> {% if vigia.priorizar %}(Prioriza Confirmados){% endif %} </p>
                 <p>
                     <b>Capacidad Disponible:</b> {{vigia.cap_disponible}}
-                    {% if vigia.cap_disponible > 0 %}
+                    {% if vigia.cap_disponible > 0 and perms.operadores.seguimiento_admin %}
                         <a class="nolink" href="{% url 'seguimiento:rellenar_vigia' vigia_id=vigia.id %}">
                             <img class="icons" src="{% static '/img/icons/reload.png' %}" alt="Modificar">
                         </a>

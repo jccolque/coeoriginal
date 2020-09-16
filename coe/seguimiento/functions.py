@@ -290,7 +290,7 @@ def creamos_doc_alta_medica(seguimiento):
         pdf.drawString(150, 635, individuo.num_doc)
         pdf.drawString(150, 607, str(fecha_alta))
         pdf.drawString(350, 200, matricula.individuo.apellidos + ', ' + matricula.individuo.nombres)
-        pdf.drawString(350, 180, 'M.N:' + matricula.aclaracion)
+        pdf.drawString(350, 180, 'Matricula Nacional:' + matricula.aclaracion)
         pdf.save()
         # Nos movemos al comienzo del búfer StringIO
         packet.seek(0)

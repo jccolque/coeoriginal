@@ -580,9 +580,9 @@ def volver_domicilio(request, domicilio_id):
     nuevo_domicilio = Domicilio.objects.get(pk=domicilio_id)
     nuevo_domicilio.pk = None
     if nuevo_domicilio.ubicacion:
-        nuevo_domicilio.aclaracion = "Devuelto a " + nuevo_domicilio.ubicacion.nombre + " por " + str(obtener_operador(request))
+        nuevo_domicilio.aclaracion += "(Devuelto a " + nuevo_domicilio.ubicacion.nombre + " por " + str(obtener_operador(request)) + ")"
     else:
-        nuevo_domicilio.aclaracion = "Devuelto a Hogar por " + str(obtener_operador(request))
+        nuevo_domicilio.aclaracion += "(Devuelto a Hogar por " + str(obtener_operador(request)) + ")"
     nuevo_domicilio.fecha = timezone.now()
     nuevo_domicilio.save()
     return redirect('informacion:ver_individuo', individuo_id=nuevo_domicilio.individuo.id)

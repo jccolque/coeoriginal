@@ -17,6 +17,7 @@
                         <tr>
                             <th>Tipo Vigia</th>
                             <th>Aclaracion</th>
+                            <th>Documento</th>
                             <th>Operador</th>
                             <th>Telefono</th>
                             
@@ -43,6 +44,7 @@
                                         {{vigia.aclaracion}}
                                     {% endif %}
                                 </td>
+                                <td>{{vigia.operador.num_doc}}</td>
                                 <td>{{vigia}}</td>
                                 <td>{{vigia.operador.telefono}}</td>
 

@@ -293,9 +293,9 @@ def situacion_vigilancia(request):
     #0-tipo 1-display 2-cant -3-activos -4 Controlados -5 mensajes_totales -6 mensajes_semanales
     for tipo in TIPO_VIGIA:
         tipo = [tipo[0], tipo[1], 0, 0, 0, 0, 0, 0, 0, 0]#Transformamos tupla en lista para operarla
-        #Calculamos cantidad de vigilantes de ese tipo
+        #Cantidad de vigilantes de ese tipo: 2
         tipo[2] = sum([1 for v in vigias if v.tipo==tipo[0]])
-        #Calculamos los activos:
+        #Cantidad de vigilantes activos: 3
         tipo[3] = sum([1 for v in vigias if v.tipo==tipo[0] and v.activo])#Lo necesitamos listo para responsabilidad grupal
         #Cargamos controlados Actuales:
         for vigia in [v for v in vigias if v.tipo==tipo[0]]:
@@ -303,17 +303,16 @@ def situacion_vigilancia(request):
             tipo[4]+= sum([1 for c in vigia.controlados.all()])
             #max_controlados 5
             tipo[5]+= vigia.max_controlados
-            #Disponibles 6
-            tipo[6]+= vigia.cap_disponible()
             #Mensajes totales: 7
             tipo[7]+= sum([1 for s in vigia.operador.seguimientos_informados.all()])
             #Mensajes semanales: 8
             tipo[8]+= sum([1 for s in vigia.operador.seguimientos_informados.all() if s.fecha > limite_semana])
-            #Responsabilidad Grupal
-            if vigia.activo:#Solo calcular con activos
+            #Solo calcular con activos
+            if vigia.activo:
                 responsabilidad = vigia.responsabilidad()
-                if responsabilidad:#Si no es CERO
-                    tipo[9]+= (responsabilidad / tipo[3])#Solo calcular con activos
+                if responsabilidad:#Si no, no suma
+                    tipo[6]+= vigia.cap_disponible()#Disponibles 6
+                    tipo[9]+= (responsabilidad / tipo[3])#Responsabilidad grupal 9
         #Agregamos el tipo de vigilante
         vigilancias.append(tipo)
     #Generamos datos por vigilante:

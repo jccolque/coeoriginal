@@ -86,15 +86,17 @@ def confirmar_sospechoso(created, instance, **kwargs):
         situacion.fecha = instance.fecha
         situacion.save()
         #Lo ponemos bajo seguimiento de Vigilancia Medica
-        atributo = Atributo(individuo=instance.individuo)
-        atributo.tipo = 'ST'
-        atributo.aclaracion = "Se requiere seguimiento de Vigilancia Medica."
-        atributo.save()
+        if not instance.individuo.tiene_vigilancia('ST'):#Si no tiene
+            atributo = Atributo(individuo=instance.individuo)
+            atributo.tipo = 'ST'
+            atributo.aclaracion = "Se requiere seguimiento de Vigilancia Medica."
+            atributo.save()
         #Lo ponemos bajo seguimiento de Vigilancia de Salud Mental
-        atributo = Atributo(individuo=instance.individuo)
-        atributo.tipo = 'VM'
-        atributo.aclaracion = "Se requiere seguimiento de Salud Mental por Caso Positivo."
-        atributo.save()        
+        if not instance.individuo.tiene_vigilancia('VM'):#Si no tiene
+            atributo = Atributo(individuo=instance.individuo)
+            atributo.tipo = 'VM'
+            atributo.aclaracion = "Se requiere seguimiento de Salud Mental por Caso Positivo."
+            atributo.save()        
 
 @receiver(post_save, sender=Domicilio)
 def poner_en_seguimiento(created, instance, **kwargs):
@@ -118,7 +120,6 @@ def vigilancia_agravada(created, instance, **kwargs):
             situacion.save()
         #Le buscamos nuevo vigilante:
         asignar_vigilante(instance.individuo, 'VE')
-        
 
 @receiver(post_save, sender=Seguimiento)
 def evolucionar_sospechoso(created, instance, **kwargs):

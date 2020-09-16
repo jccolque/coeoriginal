@@ -193,7 +193,7 @@ def ws_llamadas(request):
             seg["vigia"] = str(seguimiento.operador)
             try:
                 seg["vigia_doc"] = str(seguimiento.operador.num_doc)
-                seg["vigia_tipo"] = str(seguimiento.operador.vigia.tipo)
+                seg["vigia_tipo"] = str(seguimiento.operador.vigia.get_tipo_display())
             except:
                 seg["tipo_vigia"] = "No registrado"
             ind["llamadas"].append(seg)

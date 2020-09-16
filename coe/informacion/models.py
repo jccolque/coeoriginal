@@ -173,6 +173,9 @@ class Individuo(models.Model):
             return True
         if self.situacion_actual.estado == 50:
             return True
+    def tiene_vigilancia(self, tipo):
+        if True in [True for v in self.vigiladores.all() if v.tipo == tipo]:
+            return True
 
 class Relacion(models.Model):#Origen del Dato
     tipo = models.CharField('Tipo Relacion', choices=TIPO_RELACION, max_length=2, default='F')
