@@ -86,7 +86,7 @@
                                 </div>
                             </div>
                             <div class="col-sm-5">
-
+                                <!-- Es Operador -->
                                 {% if individuo.operador %}
                                     <h4><b>Es Operador del COE</b>
                                         <a class="nolink" href="{% url 'operadores:ver_credencial' operador_id=individuo.operador.id %}">
@@ -94,7 +94,7 @@
                                         </a>
                                     </h4>
                                 {% endif %}
-
+                                <!-- Es Voluntario -->
                                 {% if individuo.voluntariados.exists %}
                                     <div class="bordeado">
                                         <h4><b>Voluntario:</b></h4>
@@ -113,7 +113,7 @@
                                         </ul>
                                     </div>
                                 {% endif %}
-
+                                <!-- Vigilancias -->
                                 {% if individuo.vigiladores.exists %}
                                     <div class="bordeado">
                                         <br>
@@ -121,7 +121,13 @@
                                         {% for vigia in individuo.vigiladores.all %}
                                             <p>
                                                 <a href="{% url 'seguimiento:ver_panel' vigia_id=vigia.id %}" target="_blank">
-                                                    {{vigia}} ({{vigia.get_tipo_display}})
+                                                    {{vigia}}
+                                                    (
+                                                        {{vigia.get_tipo_display}}
+                                                        {% if vigia.aclaracion %}
+                                                            : {{vigia.aclaracion}}
+                                                        {% endif %}
+                                                    )
                                                 </a>
                                             </p>
                                         {% endfor %}

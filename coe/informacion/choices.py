@@ -190,7 +190,7 @@ TIPO_DOCUMENTO = (
     ('LB', 'Laboratorio'),
     ('FE', 'Ficha Epidemiologica'),
     ('CA', 'Certificado de Aislamiento'),
-    ('AC', 'Certificado de Alta de Cuarentena'),
+    ('AC', 'Certificado de Alta de Seguimiento'),
     ('AM', 'Certificado de Alta Medica'),
     ('TN', 'Certificado de Test Negativo'),
     ('CT', 'Certificado Temporal de Aislamiento en Domicilio'),

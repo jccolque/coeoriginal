@@ -27,7 +27,7 @@ from seguimiento.choices import TIPO_VIGIA
 from seguimiento.functions import asignar_vigilante
 #imports de la app
 from .choices import TIPO_ESTADO, TIPO_CONDUCTA
-from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA
+from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA, TIPO_PATOLOGIA
 from .choices import TiposVigilancia
 from .models import Archivo
 from .models import Vehiculo, TrasladoVehiculo#, Pasajero
@@ -962,6 +962,9 @@ def reporte_por_filtros(request):
     conductas = TIPO_CONDUCTA
     atributos = TIPO_ATRIBUTO
     seguimientos = TIPO_SEGUIMIENTO
+    sintomas = TIPO_SINTOMA
+    patologias = TIPO_PATOLOGIA
+    #Si se realizo un pedido
     if request.method == "POST":
         #Traemos todos los Individuos
         individuos = Individuo.objects.all()
@@ -969,6 +972,7 @@ def reporte_por_filtros(request):
         estados = request.POST.getlist('estado')
         if estados:
             individuos = individuos.exclude(situacion_actual__estado__in=estados)
+        #Descartamos por conductas
         conductas = request.POST.getlist('conducta')
         if conductas:
             individuos = individuos.filter(situacion_actual__conducta__in=conductas)        
@@ -980,10 +984,14 @@ def reporte_por_filtros(request):
         seguimientos = request.POST.getlist('seguimiento')
         for seguimiento in seguimientos:
             individuos = individuos.filter(seguimientos__tipo=seguimiento)
-        # #Descartamos por Sintomas
-        # sintomas = request.POST.getlist('sintoma')
-        # if sintomas:
-        #     individuos = individuos.filter(sintomas__tipo__in=sintomas)
+        #Filtramos por sintomas
+        sintomas = request.POST.getlist('sintoma')
+        for sintoma in sintomas:
+            individuos = individuos.filter(sintomas__tipo=sintoma)
+        #Filtramos por patologias
+        patologias = request.POST.getlist('patologia')
+        for patologia in patologias:
+            individuos = individuos.filter(patologias__tipo=patologia)
         #Optimizamos
         individuos = individuos.prefetch_related(
             'situacion_actual',
@@ -1001,6 +1009,8 @@ def reporte_por_filtros(request):
         'conductas': conductas,
         'atributos': atributos, 
         'seguimientos': seguimientos,
+        'sintomas': sintomas,
+        'patologias': patologias,
     })
 
 @permission_required('operadores.reportes')

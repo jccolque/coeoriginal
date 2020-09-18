@@ -62,8 +62,8 @@ class FechaForm(forms.Form):
     fecha = forms.DateField(initial=date.today(), widget=forms.SelectDateWidget())
 
 class PeriodoForm(forms.Form):
-    begda = forms.DateField(label='Inicio', initial=timezone.now(), widget=forms.SelectDateWidget())
-    endda = forms.DateField(label='Fin',initial=timezone.now(), widget=forms.SelectDateWidget())
+    begda = forms.DateField(label='Inicio', initial=timezone.now(), widget=XDSoftDatePickerInput(attrs={'autocomplete':'off'}))
+    endda = forms.DateField(label='Fin', initial=timezone.now(), widget=XDSoftDatePickerInput(attrs={'autocomplete':'off'}))
     def clean(self):
         if self.cleaned_data['begda'] > self.cleaned_data['endda']:
             raise forms.ValidationError("La fecha de Inicio debe ser Menor a la de fin.")
@@ -77,8 +77,8 @@ class AuditoriaForm(forms.Form):
         queryset=User.objects.all(),
         widget=autocomplete.ModelSelect2(url='core:usuarios-autocomplete'),
         required=True)
-    begda = forms.DateField(label='Inicio', initial=timezone.now(), widget=forms.SelectDateWidget())
-    endda = forms.DateField(label='Fin',initial=timezone.now(), widget=forms.SelectDateWidget())
+    begda = forms.DateField(label='Inicio', initial=timezone.now(), widget=XDSoftDatePickerInput(attrs={'autocomplete':'off'}))
+    endda = forms.DateField(label='Fin',initial=timezone.now(), widget=XDSoftDatePickerInput(attrs={'autocomplete':'off'}))
     def __init__(self, *args, **kwargs):
         super(AuditoriaForm, self).__init__(*args, **kwargs)
         if kwargs.get('initial', None):

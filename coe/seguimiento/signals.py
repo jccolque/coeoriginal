@@ -14,7 +14,7 @@ from informacion.models import Situacion, Atributo, SignosVitales, Documento
 #Imports de la app
 from .choices import TIPO_VIGIA
 from .models import Seguimiento, Vigia, TestOperativo
-from .functions import crear_doc_descartado, creamos_doc_aislamiento
+from .functions import creamos_doc_aislamiento
 from .functions import asignar_vigilante
 
 #Logger
@@ -57,11 +57,11 @@ def descartar_sospechoso(created, instance, **kwargs):
         situacion.aclaracion = 'Descartado' + instance.aclaracion
         situacion.save()
         #Creamos archivo de Descartado por Test
-        doc = Documento(individuo=instance.individuo)
-        doc.tipo = 'TN'
-        doc.archivo = crear_doc_descartado(instance)
-        doc.aclaracion = "TEST NEGATIVO CONFIRMADO"
-        doc.save()
+        # doc = Documento(individuo=instance.individuo)
+        # doc.tipo = 'TN'
+        # doc.archivo = crear_doc_descartado(instance)
+        # doc.aclaracion = "TEST NEGATIVO CONFIRMADO"
+        # doc.save()
         # #Enviar mail
         # if SEND_MAIL and instance.individuo.email:
         #     to_email = instance.individuo.email

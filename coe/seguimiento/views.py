@@ -22,7 +22,7 @@ from coe.settings import GEOPOSITION_GOOGLE_MAPS_API_KEY
 from coe.constantes import DIAS_CUARENTENA, NOTEL
 from core.decoradores import superuser_required
 from core.functions import date2str
-from core.forms import SearchForm, JustificarForm, UploadCsv
+from core.forms import SearchForm, JustificarForm, UploadCsv, PeriodoForm
 from georef.models import Nacionalidad
 from georef.models import Ubicacion
 from graficos.functions import obtener_grafico
@@ -1147,31 +1147,38 @@ def esperando_alta_seguimiento(request):
 
 @permission_required('operadores.seguimiento_admin')
 def dar_alta_seguimiento(request, individuo_id):
+    #Obtenemos el individuo al que le vamos a generar el alta:
     individuo = Individuo.objects.get(pk=individuo_id)
-    if request.method == "POST":
-        #Obtenemos al operador
-        realizar_alta_seguimiento(individuo, obtener_operador(request))
-        #Volvemos a la lista
-        return redirect('seguimiento:esperando_alta_seguimiento')
-    #Obtenemos los datos:
+    #teorizamos datos:
     ultimo_aislamiento = individuo.situaciones.filter(conducta__in=('D','E')).last()
     if not ultimo_aislamiento:#Si no esta aislado por sistema pero lo estamos siguiendo
         ultimo_aislamiento = individuo.atributos.filter(tipo__in=('VE', 'ST', 'VT')).last()
     #Generamos datos
     inicio = ultimo_aislamiento.fecha
-    fin = inicio + timedelta(days=DIAS_CUARENTENA)
-    #Generamos Aviso:
-    mensaje = "<b>Controle bien los siguientes datos:</b><br>"
-    mensaje += "<b>Inicio:</b> " + str(inicio)[0:10] + " (Fecha ultima situacion de aislamiento)<br>"
-    mensaje += "<b>Final:</b> " + str(fin)[0:10] + " (" +str(DIAS_CUARENTENA+1)+ " Dias Despues)<br><br>"
-    mensaje += "<b>Si realiza esta accion quedara registrada por su usuario.</b>"
-    #Mostramos confirmacion:
-    return render(request, "extras/confirmar.html", {
-            'titulo': "Dar de Alta a " + str(individuo),
-            'message': mensaje,
-            'has_form': True,
+    fin = inicio + timedelta(days=DIAS_CUARENTENA)    
+    #Generamos form:
+    form = PeriodoForm(initial={
+            'begda': inicio, 
+            'endda': fin,
         }
     )
+    #Si se envio POST:
+    if request.method == "POST":
+        form = PeriodoForm(request.POST)
+        if form.is_valid():
+            #Obtenemos valores informados por usuario
+            inicio = form.cleaned_data['begda']
+            fin = form.cleaned_data['endda']
+            #Obtenemos al operador
+            realizar_alta_seguimiento(individuo, obtener_operador(request), inicio, fin)
+            #Volvemos a la lista
+            return redirect('informacion:ver_individuo', individuo_id=individuo.pk)
+    #Mostramos confirmacion:
+    return render(request, "extras/generic_form.html", {
+        'titulo': "Generar alta de Seguimiento", 
+        'form': form, 
+        'boton': "Generar", 
+    })
 
 @permission_required('operadores.seguimiento_admin')
 def dar_alta_medica(request, individuo_id):
