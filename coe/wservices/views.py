@@ -9,12 +9,13 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import permission_required
 from django.core import serializers
 #Imports del proyecto
+from core.forms import PeriodoForm
 from georef.models import Provincia, Localidad, Barrio
 from informacion.choices import TIPO_ESTADO, TIPO_CONDUCTA
 from informacion.models import Individuo, Situacion, Domicilio
 from permisos.choices import TIPO_PERMISO
 from consultas.choices import TIPO_DENUNCIA
-from seguimiento.models import DatosGis
+from seguimiento.models import Seguimiento, DatosGis
 
 #Publicos
 #Creamos nuestros webservices
@@ -104,102 +105,149 @@ def ws_barrios(request, localidad_id=None):
 
 @permission_required('operadores.individuos')
 def ws_seguimientos(request):
-    #Generamos diccionario
-    data = {}
-    #Obtenemos datos a procesar
-    individuos = Individuo.objects.exclude(seguimientos=None)
-    individuos = individuos.select_related("situacion_actual", "domicilio_actual", "domicilio_actual__localidad")
-    individuos = individuos.prefetch_related("seguimientos", "seguimientos__operador")
-    #Generamos un subdict por cada individuo
-    for individuo in individuos:
-        ind = {}
-        ind["num_doc"] = individuo.num_doc
-        ind["apellidos"] = individuo.apellidos
-        ind["situacion"] = str(individuo.get_situacion())
-        ind["nombres"] = individuo.nombres
-        ind["telefono"] = individuo.telefono
-        if individuo.domicilio_actual:
-            ind["domicilio"] = individuo.domicilio_actual.calle + ' ' + individuo.domicilio_actual.numero
-            ind["localidad"] = str(individuo.domicilio_actual.localidad.nombre)
-        ind["seguimientos"] = []
-        for seguimiento in individuo.seguimientos.all():
-            seg = {}
-            seg["tipo"] = seguimiento.get_tipo_display()
-            seg["aclaracion"] = seguimiento.aclaracion
-            seg["operador"] = str(seguimiento.operador)
-            seg["fecha"] = str(seguimiento.fecha)
-            ind["seguimientos"].append(seg)
-        data[individuo.num_doc] = ind
-    #Entregamos json
-    return HttpResponse(json.dumps({'Individuos': data, "cant_registros": len(data),}), content_type='application/json')
+    form = PeriodoForm()
+    #Si se envio POST:
+    if request.method == "POST":
+        form = PeriodoForm(request.POST)
+        if form.is_valid():
+            #Obtenemos valores informados por usuario
+            begda = form.cleaned_data['begda']
+            endda = form.cleaned_data['endda']
+            #Generamos diccionario
+            data = {}
+            #Obtenemos datos a procesar
+            individuos = Individuo.objects.filter(seguimientos__fecha__date__range=(begda, endda))
+            individuos = individuos.select_related("situacion_actual", "domicilio_actual", "domicilio_actual__localidad")
+            individuos = individuos.prefetch_related("seguimientos", "seguimientos__operador")
+            #Generamos un subdict por cada individuo
+            for individuo in individuos:
+                ind = {}
+                ind["num_doc"] = individuo.num_doc
+                ind["apellidos"] = individuo.apellidos
+                ind["situacion"] = str(individuo.get_situacion())
+                ind["nombres"] = individuo.nombres
+                ind["telefono"] = individuo.telefono
+                if individuo.domicilio_actual:
+                    ind["domicilio"] = individuo.domicilio_actual.calle + ' ' + individuo.domicilio_actual.numero
+                    ind["localidad"] = str(individuo.domicilio_actual.localidad.nombre)
+                ind["seguimientos"] = []
+                seguimientos = [s for s in individuo.seguimientos.all() if begda <= s.fecha.date() <= endda]
+                for seguimiento in seguimientos:
+                    seg = {}
+                    seg["tipo"] = seguimiento.get_tipo_display()
+                    seg["aclaracion"] = seguimiento.aclaracion
+                    seg["operador"] = str(seguimiento.operador)
+                    seg["fecha"] = str(seguimiento.fecha)
+                    ind["seguimientos"].append(seg)
+                if seguimientos:
+                    data[individuo.num_doc] = ind
+            #Entregamos json
+            return HttpResponse(json.dumps({'Individuos': data, "cant_registros": len(data),}), content_type='application/json')
+    #Requerimos fechas:
+    return render(request, "extras/generic_form.html", {
+        'titulo': "Indique Periodo:", 
+        'form': form, 
+        'boton': "Generar", 
+    })
 
 @permission_required('operadores.individuos')
 def ws_atributos(request):
-    #Generamos diccionario
-    data = {}
-    #Obtenemos datos a procesar
-    individuos = Individuo.objects.exclude(atributos=None)
-    individuos = individuos.select_related("domicilio_actual", "domicilio_actual__localidad")
-    individuos = individuos.prefetch_related("atributos")
-    #Generamos un subdict por cada individuo
-    for individuo in individuos:
-        ind = {}
-        ind["num_doc"] = individuo.num_doc
-        ind["apellidos"] = individuo.apellidos
-        ind["situacion"] = str(individuo.get_situacion())
-        ind["nombres"] = individuo.nombres
-        ind["telefono"] = individuo.telefono
-        if individuo.domicilio_actual:
-            ind["domicilio"] = individuo.domicilio_actual.calle + ' ' + individuo.domicilio_actual.numero
-            ind["localidad"] = str(individuo.domicilio_actual.localidad.nombre)
-        ind["atributos"] = []
-        for atributo in individuo.atributos.all():
-            atrib = {}
-            atrib["tipo"] = atributo.get_tipo_display()
-            atrib["aclaracion"] = atributo.aclaracion
-            atrib["fecha"] = str(atributo.fecha)
-            ind["atributos"].append(atrib)
-        data[individuo.num_doc] = ind
-    #Entregamos json
-    return HttpResponse(json.dumps({'Individuos': data, "cant_registros": len(data),}), content_type='application/json')
+    form = PeriodoForm()
+    #Si se envio POST:
+    if request.method == "POST":
+        form = PeriodoForm(request.POST)
+        if form.is_valid():
+            #Obtenemos valores informados por usuario
+            begda = form.cleaned_data['begda']
+            endda = form.cleaned_data['endda']
+            #Generamos diccionario
+            data = {}
+            #Obtenemos datos a procesar
+            individuos = Individuo.objects.filter(atributos__fecha__date__range=(begda, endda))
+            individuos = individuos.select_related("domicilio_actual", "domicilio_actual__localidad")
+            individuos = individuos.prefetch_related("atributos")
+            #Generamos un subdict por cada individuo
+            for individuo in individuos:
+                ind = {}
+                ind["num_doc"] = individuo.num_doc
+                ind["apellidos"] = individuo.apellidos
+                ind["situacion"] = str(individuo.get_situacion())
+                ind["nombres"] = individuo.nombres
+                ind["telefono"] = individuo.telefono
+                if individuo.domicilio_actual:
+                    ind["domicilio"] = individuo.domicilio_actual.calle + ' ' + individuo.domicilio_actual.numero
+                    ind["localidad"] = str(individuo.domicilio_actual.localidad.nombre)
+                ind["atributos"] = []
+                atributos = [a for a in individuo.atributos.all() if begda <= a.fecha.date() <= endda]
+                for atributo in atributos:
+                    atrib = {}
+                    atrib["tipo"] = atributo.get_tipo_display()
+                    atrib["aclaracion"] = atributo.aclaracion
+                    atrib["fecha"] = str(atributo.fecha)
+                    ind["atributos"].append(atrib)
+                if atributos:
+                    data[individuo.num_doc] = ind
+            #Entregamos json
+            return HttpResponse(json.dumps({'Individuos': data, "cant_registros": len(data),}), content_type='application/json')
+    #Requerimos fechas:
+    return render(request, "extras/generic_form.html", {
+        'titulo': "Indique Periodo:", 
+        'form': form, 
+        'boton': "Generar", 
+    })
 
 @permission_required('operadores.individuos')
 def ws_llamadas(request):
-    #Generamos diccionario
-    data = {}
-    #Obtenemos datos a procesar
-    individuos = Individuo.objects.exclude(seguimientos=None)
-    individuos = Individuo.objects.filter(seguimientos__tipo='L')#solo las llamadas
-    individuos = individuos.select_related("situacion_actual", "domicilio_actual", "domicilio_actual__localidad")
-    individuos = individuos.prefetch_related("seguimientos", "seguimientos__operador")
-    #Generamos un subdict por cada individuo
-    for individuo in individuos:
-        ind = {}
-        ind["num_doc"] = individuo.num_doc
-        ind["apellidos"] = individuo.apellidos
-        ind["situacion"] = str(individuo.get_situacion())
-        ind["nombres"] = individuo.nombres
-        ind["telefono"] = individuo.telefono
-        if individuo.domicilio_actual:
-            ind["domicilio"] = individuo.domicilio_actual.calle + ' ' + individuo.domicilio_actual.numero
-            ind["localidad"] = str(individuo.domicilio_actual.localidad.nombre)
-        ind["llamadas"] = []
-        llamadas = [l for l in individuo.seguimientos.all() if l.tipo == 'L']
-        for seguimiento in llamadas:
-            seg = {}
-            seg["tipo"] = seguimiento.get_tipo_display()
-            seg["aclaracion"] = seguimiento.aclaracion
-            seg["fecha"] = str(seguimiento.fecha)
-            seg["vigia"] = str(seguimiento.operador)
-            try:
-                seg["vigia_doc"] = str(seguimiento.operador.num_doc)
-                seg["vigia_tipo"] = str(seguimiento.operador.vigia.get_tipo_display())
-            except:
-                seg["tipo_vigia"] = "No registrado"
-            ind["llamadas"].append(seg)
-        data[individuo.num_doc] = ind
-    #Entregamos json
-    return HttpResponse(json.dumps({'Individuos': data, "cant_registros": len(data),}), content_type='application/json')
+    form = PeriodoForm()
+    #Si se envio POST:
+    if request.method == "POST":
+        form = PeriodoForm(request.POST)
+        if form.is_valid():
+            #Obtenemos valores informados por usuario
+            begda = form.cleaned_data['begda']
+            endda = form.cleaned_data['endda']
+            #Generamos diccionario
+            data = {}
+            #Obtenemos datos a procesar
+            llamadas_en_fecha = Seguimiento.objects.filter(tipo='L', fecha__date__range=(begda, endda))
+            individuos = Individuo.objects.filter(seguimientos__in=llamadas_en_fecha)#solo las llamadas
+            individuos = individuos.select_related("situacion_actual", "domicilio_actual", "domicilio_actual__localidad")
+            individuos = individuos.prefetch_related("seguimientos", "seguimientos__operador")
+            #Generamos un subdict por cada individuo
+            for individuo in individuos:
+                ind = {}
+                ind["num_doc"] = individuo.num_doc
+                ind["apellidos"] = individuo.apellidos
+                ind["situacion"] = str(individuo.get_situacion())
+                ind["nombres"] = individuo.nombres
+                ind["telefono"] = individuo.telefono
+                if individuo.domicilio_actual:
+                    ind["domicilio"] = individuo.domicilio_actual.calle + ' ' + individuo.domicilio_actual.numero
+                    ind["localidad"] = str(individuo.domicilio_actual.localidad.nombre)
+                ind["llamadas"] = []
+                llamadas = [l for l in individuo.seguimientos.all() if l.tipo == 'L' and begda <= l.fecha.date() <= endda]
+                for seguimiento in llamadas:
+                    seg = {}
+                    seg["tipo"] = seguimiento.get_tipo_display()
+                    seg["aclaracion"] = seguimiento.aclaracion
+                    seg["fecha"] = str(seguimiento.fecha)
+                    seg["vigia"] = str(seguimiento.operador)
+                    try:
+                        seg["vigia_doc"] = str(seguimiento.operador.num_doc)
+                        seg["vigia_tipo"] = str(seguimiento.operador.vigia.get_tipo_display())
+                    except:
+                        seg["tipo_vigia"] = "No registrado"
+                    ind["llamadas"].append(seg)
+                if llamadas:
+                    data[individuo.num_doc] = ind
+            #Entregamos json
+            return HttpResponse(json.dumps({'Individuos': data, "cant_registros": len(data),}), content_type='application/json')
+    #Requerimos fechas:
+    return render(request, "extras/generic_form.html", {
+        'titulo': "Indique Periodo:", 
+        'form': form, 
+        'boton': "Generar", 
+    })
 
 #Privados
 # Create your views here.
@@ -231,24 +279,50 @@ def ws(request, nombre_app=None, nombre_modelo=None):
 
 @permission_required('operadores.individuos')
 def ws_aislados(request, localidad_id=None):
-    datos = []
-    individuos = Individuo.objects.filter(situacion_actual__conducta__in=('D','E'))
-    individuos = individuos.select_related('situacion_actual')
-    for individuo in individuos:
-        datos.append(
-            {
-                'num_doc': individuo.num_doc,
-                'nombres': individuo.nombres,
-                'apellidos': individuo.apellidos,
-                'estado': individuo.situacion_actual.estado,
-                'conducta': individuo.situacion_actual.conducta,
-                'fecha_actualizacion': str(individuo.situacion_actual.fecha)[0:16],
-                'foto': individuo.get_foto(),
-                #'qr': individuo.get_qr(),
-            }
-        )
-    return HttpResponse(json.dumps({'individuos': datos, "cant_registros": len(datos),}), content_type='application/json')
-
+    form = PeriodoForm()
+    #Si se envio POST:
+    if request.method == "POST":
+        form = PeriodoForm(request.POST)
+        if form.is_valid():
+            #Obtenemos valores informados por usuario
+            begda = form.cleaned_data['begda']
+            endda = form.cleaned_data['endda']
+            #Generamos diccionario:
+            datos = []
+            #Obtenemos individuos:
+            aislamientos_en_fecha = Situacion.objects.filter(
+                conducta__in=('D','E'),
+                fecha__date__range=(begda, endda),
+            )
+            individuos = Individuo.objects.filter(situaciones__in=aislamientos_en_fecha)
+            #Optimizamos
+            individuos = individuos.prefetch_related('situaciones')
+            individuos = individuos.select_related(
+                'situacion_actual',
+                'domicilio_actual',
+            )
+            #Generamos reporte
+            for individuo in individuos:
+                datos.append(
+                    {
+                        'num_doc': individuo.num_doc,
+                        'nombres': individuo.nombres,
+                        'apellidos': individuo.apellidos,
+                        'estado_actual': individuo.situacion_actual.get_estado_display(),
+                        'conducta_actual': individuo.situacion_actual.get_conducta_display(),
+                        'fecha_actualizacion': str(individuo.situacion_actual.fecha)[0:16],
+                        'domicilio': str(individuo.domicilio_actual),
+                        'foto': individuo.get_foto(),
+                        'situaciones': [str(s) for s in individuo.situaciones.all()],
+                    }
+                )
+            return HttpResponse(json.dumps({'individuos': datos, "cant_registros": len(datos),}), content_type='application/json')
+    #Requerimos fechas:
+    return render(request, "extras/generic_form.html", {
+        'titulo': "Indique Periodo:", 
+        'form': form, 
+        'boton': "Generar", 
+    })
 
 @permission_required('operadores.individuos')
 def ws_ocupacion(request):

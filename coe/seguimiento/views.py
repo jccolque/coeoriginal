@@ -1173,7 +1173,7 @@ def dar_alta_seguimiento(request, individuo_id):
             realizar_alta_seguimiento(individuo, obtener_operador(request), inicio, fin)
             #Volvemos a la lista
             return redirect('informacion:ver_individuo', individuo_id=individuo.pk)
-    #Mostramos confirmacion:
+    #Requerimos fechas:
     return render(request, "extras/generic_form.html", {
         'titulo': "Generar alta de Seguimiento", 
         'form': form, 
