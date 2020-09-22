@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'graficos.apps.GraficosConfig',
     'wservices.apps.WservicesConfig',
     'background.apps.BackgroundConfig',
+    'tablero.apps.TableroConfig',
 ]
 
 MIDDLEWARE = [

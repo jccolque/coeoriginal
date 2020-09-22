@@ -115,6 +115,8 @@ class Operador(models.Model):
             ("menu_inscripciones", "Menu de Inscripciones"),
             #Reportes
             ("reportes", "Reportes del sistema"),
+            #Tablero
+            ("tablero_jerarquico", "Tablero General del Sistema"),
             #Wservices
             ("wservices", "WebServices del Sistema"),
             #Extras:

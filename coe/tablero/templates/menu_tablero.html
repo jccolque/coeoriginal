@@ -1,0 +1,48 @@
+{% extends 'base_tablero.html' %}
+
+{% load seguridad_tags%}
+
+{% block content %}
+    <section class="resumen">
+        <section class="informacion_basica">
+            <div class="container">
+                <div class="row">        
+                    <h1>Reportes:</h1>
+                    <div class="col-md-8">
+                        <ul class="menu_botones">
+                            {% if perms.operadores.reportes %}
+                                <h2>Informacion</h2>
+                                <li><a href="{% url 'informacion:tablero_control'  %}">Tablero de Situacion</a></li>
+                                <li><a href="{% url 'informacion:reporte_por_filtros' %}">Buscador Por Filtros</a></li>
+                                <hr>
+                            {% endif %}
+                            {% if perms.operadores.permisos %}
+                                <h2>Ingresos Provinciales</h2>
+                                <li><a href="{% url 'permisos:situacion_ingresos' %}">Tablero de Permisos</a></li>
+                                <hr>
+                            {% endif %}
+                            {% if perms.operadores.seguimiento_admin %}
+                                <h2>Vigilancia Telefonica</h2>
+                                <li><a href="{% url 'seguimiento:situacion_vigilancia' %}">Situacion Vigilancia</a></li>
+                                <li><a href="{% url 'seguimiento:reporte_vigilantes' %}">Reporte de Vigilantes</a></li>
+                                <hr>
+                            {% endif %}
+                            {% if perms.operadores.admin_telefonistas %}
+                                <h3>Call Center</h3>
+                                <li><a href="{% url 'consultas:informe_actividad' %}">Informe de Actividad</a></li>
+                                <hr>
+                            {% endif %}
+                            {% if perms.operadores.menu_georef %}
+                                <h3>Geolocalizacion</h3>
+                                <li><a href="{% url 'georef:lista_ubicaciones' %}">Listado Ubicaciones Estrategicas</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        {% include 'info_user.html' %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}
