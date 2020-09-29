@@ -293,6 +293,7 @@ class Laboral(models.Model):
     individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="laborales")
     subtipo = models.ForeignKey(SubtipoLaboral, on_delete=models.SET_NULL, null=True, blank=True, related_name="empleados")
     aclaracion = models.CharField('Aclaraciones', max_length=100, default='', blank=False)
+    matricula = models.CharField('Matricula Profesional', max_length=100, default='', null=True, blank=True)
     ubicacion = models.ForeignKey(Ubicacion, on_delete=models.CASCADE, null=True, blank=True, related_name="empleados")
     begda = models.DateTimeField('Fecha Inicio', default=timezone.now)
     endda = models.DateTimeField('Fecha Fin', default=LAST_DATETIME)
