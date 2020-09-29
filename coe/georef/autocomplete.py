@@ -2,8 +2,9 @@
 #Imports Extras
 from dal import autocomplete
 #Imports de la app
-from .models import Departamento, Provincia, Localidad, Barrio
 from .models import Nacionalidad
+from .models import Departamento, Provincia, Localidad, Barrio
+from .models import Ubicacion
 
 class NacionalidadAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
@@ -59,6 +60,15 @@ class BarrioAutocomplete(autocomplete.Select2QuerySetView):
         #Si hay localidad en el form, usamos filtro:
         if localidad:
             qs = qs.filter(localidad=localidad)
+        #Usamos texto
+        if self.q:
+            qs = qs.filter(nombre__icontains=self.q)
+        qs = qs.order_by('nombre')
+        return qs
+
+class UbicacionAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = Ubicacion.objects.all()
         #Usamos texto
         if self.q:
             qs = qs.filter(nombre__icontains=self.q)

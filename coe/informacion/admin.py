@@ -11,6 +11,7 @@ from .models import Vehiculo, Individuo, Domicilio
 from .models import Situacion, Relacion
 from .models import Atributo
 from .models import Sintoma
+from .models import SubtipoLaboral
 
 #Definimos los inlines:
 class SituacionInline(admin.TabularInline):
@@ -69,8 +70,15 @@ class VehiculoAdmin(admin.ModelAdmin):
     search_fields = ['identificacion',]
     list_filter = ['tipo']
 
+
+class SubtipoLaboralAdmin(admin.ModelAdmin):
+    model = SubtipoLaboral
+    search_fields = ['identificacion',]
+    list_filter = ['tipo']
+
 # Register your models here.
 admin.site.register(Archivo, ArchivoAdmin)
 admin.site.register(Enfermedad, EnfermedadAdmin)
 admin.site.register(Individuo, IndividuoAdmin)
 admin.site.register(Vehiculo, VehiculoAdmin)
+admin.site.register(SubtipoLaboral, SubtipoLaboralAdmin)

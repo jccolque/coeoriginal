@@ -217,6 +217,44 @@
                         
                         {{individuo.particularidades|safe}}
 
+                        <!--Tabla de Actividades Laborales -->
+                        {% for actividad in individuo.laborales.all %}
+                            {% if forloop.first %}
+                                <hr>
+                                <h3>Actividades Laborales:</h3>
+                                <table class="listado">
+                                    <tr>
+                                        <th>Area</th>
+                                        <th>Aclaracion</th>
+                                        <th>Ubicacion</th>
+                                        <th>Fecha</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                            {% endif %}
+                            <tr>
+                                <td>{{actividad.get_tipo_display}}</td>
+                                <td>{{actividad.aclaracion}}</td>
+                                <td>{{actividad.ubicacion}}</td>
+                                <td>{{actividad.begda.date}} - {{actividad.endda.date}}</td>
+                                <td>
+                                    <a class="nolink"  href="{% url 'informacion:mod_laboral' individuo_id=individuo.id laboral_id=actividad.id %}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/change.png' %}">
+                                    </a>
+                                    <a class="nolink"  href="{% ct_auditar_obj_url actividad %}" target="_blank">
+                                        <img class="icons" src="{% static '/img/icons/question.png' %}">
+                                    </a>
+                                    {% if perms.operadores.admin_informacion %}
+                                        <a class="nolink"  href="{% url 'informacion:del_laboral' laboral_id=actividad.id %}" target="_blank">
+                                            <img class="icons" src="{% static '/img/icons/delete.png' %}">
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% if forloop.last %}
+                                </table>
+                            {% endif %}
+                        {% endfor %}
+
                         <!--Tabla de Atributos Registrados-->
                         {% for atributo in individuo.atributos.all %}
                             {% if forloop.first %}
@@ -564,13 +602,14 @@
                             <li><a href="{% url 'informacion:cargar_geoposicion' individuo_id=individuo.id %}" >Asignar GeoPosicion</a></li>
                             <li><a href="{% url 'informacion:elegir_ubicacion' individuo_id=individuo.id %}">Trasladar Aislacion/Internacion</a></li>
                             <hr>
+                            <li><a href="{% url 'seguimiento:cargar_seguimiento' individuo_id=individuo.id %}" target="_blank">Cargar Seguimiento</a></li>
+                            <li><a href="{% url 'informacion:cargar_atributo' individuo_id=individuo.id %}" target="_blank">Cargar Atributo</a></li>
+                            <li><a href="{% url 'informacion:cargar_laboral' individuo_id=individuo.id %}" target="_blank">Cargar Actividad Laboral</a></li>
+                            <li><a href="{% url 'informacion:cargar_relacion' individuo_id=individuo.id %}" target="_blank">Cargar Relacion</a></li>
                             <li><a href="{% url 'informacion:cargar_signosvitales' individuo_id=individuo.id %}" target="_blank">Cargar Signos Vitales</a></li>
                             <li><a href="{% url 'informacion:cargar_documento' individuo_id=individuo.id %}" target="_blank">Cargar Documento</a></li>
                             <li><a href="{% url 'informacion:cargar_sintoma' individuo_id=individuo.id  %}" target="_blank">Cargar Sintomas</a></li>
-                            <li><a href="{% url 'informacion:cargar_atributo' individuo_id=individuo.id %}" target="_blank">Cargar Atributo</a></li>
                             <li><a href="{% url 'informacion:cargar_patologia' individuo_id=individuo.id %}" target="_blank">Cargar Patologia</a></li>
-                            <li><a href="{% url 'informacion:cargar_relacion' individuo_id=individuo.id %}" target="_blank">Cargar Relacion</a></li>
-                            <li><a href="{% url 'seguimiento:cargar_seguimiento' individuo_id=individuo.id %}" target="_blank">Cargar Seguimiento</a></li>
                             {% if perms.operadores.seguimiento_admin %}
                                 {% if individuo.aislado or individuo.vigiladores.exists %}
                                     <li><a href="{% url 'seguimiento:dar_alta_seguimiento' individuo_id=individuo.id %}" target="_blank">Dar Alta Aislamiento</a></li>

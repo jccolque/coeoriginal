@@ -10,7 +10,7 @@ from tinymce.models import HTMLField
 from auditlog.registry import auditlog
 #Imports del proyecto:
 from coe.settings import BASE_DIR, STATIC_ROOT, MEDIA_ROOT, LOADDATA
-from coe.constantes import NOIMAGE, DIAS_CUARENTENA
+from coe.constantes import NOIMAGE, DIAS_CUARENTENA, LAST_DATETIME
 from core.choices import TIPO_DOCUMENTOS, TIPO_SEXO
 from georef.models import Nacionalidad, Localidad, Ubicacion
 from georef.functions import obtener_argentina
@@ -21,6 +21,7 @@ from .choices import TIPO_DOMICILIO
 from .choices import TIPO_RELACION
 from .choices import TIPO_ATRIBUTO, TIPO_SINTOMA, TIPO_PATOLOGIA
 from .choices import TIPO_DOCUMENTO
+from .choices import AREA_LABORAL
 
 # Create your models here.
 class Archivo(models.Model):
@@ -281,6 +282,21 @@ class Documento(models.Model):
     def __str__(self):
         return self.get_tipo_display() + ': ' + self.aclaracion
 
+class SubtipoLaboral(models.Model):#MetaModelo
+    tipo = models.CharField('Area Laboral', choices=AREA_LABORAL, max_length=2, default='ME')
+    nombre = models.CharField('Aclaracion', max_length=200)
+    aclaracion = models.CharField('Aclaraciones', max_length=100, default='', null=True, blank=True)
+    def __str__(self):
+        return self.get_tipo_display() + ': ' + self.nombre
+
+class Laboral(models.Model):
+    individuo = models.ForeignKey(Individuo, on_delete=models.CASCADE, related_name="laborales")
+    subtipo = models.ForeignKey(SubtipoLaboral, on_delete=models.SET_NULL, null=True, blank=True, related_name="empleados")
+    aclaracion = models.CharField('Aclaraciones', max_length=100, default='', blank=False)
+    ubicacion = models.ForeignKey(Ubicacion, on_delete=models.CASCADE, null=True, blank=True, related_name="empleados")
+    begda = models.DateTimeField('Fecha Inicio', default=timezone.now)
+    endda = models.DateTimeField('Fecha Fin', default=LAST_DATETIME)
+
 #Controles vehiculares
 class TrasladoVehiculo(models.Model):
     vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, related_name="traslados")
@@ -300,6 +316,7 @@ if not LOADDATA:
     auditlog.register(SignosVitales)
     auditlog.register(Domicilio)
     auditlog.register(Documento)
+    auditlog.register(Laboral)
     auditlog.register(Sintoma)
     auditlog.register(Patologia)
     auditlog.register(Relacion)

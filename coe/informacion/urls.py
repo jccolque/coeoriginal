@@ -90,6 +90,10 @@ urlpatterns = [
     path('cargar/documento/<int:individuo_id>/tipo/<str:tipo>', views.cargar_documento, name='cargar_documento'),
     path('mod/documento/<int:individuo_id>/<int:documento_id>', views.cargar_documento, name='mod_documento'),
     path('del/documento/<int:documento_id>', views.del_documento, name='del_documento'),
+    #Laboral
+    path('cargar/laboral/<int:individuo_id>', views.cargar_laboral, name='cargar_laboral'),
+    path('mod/laboral/<int:individuo_id>/<int:laboral_id>', views.cargar_laboral, name='mod_laboral'),
+    path('del/laboral/<int:laboral_id>', views.del_laboral, name='del_laboral'),
     #Geopos
     path('cargar/geopos/<int:individuo_id>', views.cargar_geoposicion, name='cargar_geoposicion'),
     #Reportes
@@ -100,4 +104,5 @@ urlpatterns = [
     #url(r'^atributos-autocomplete/$', autocomplete.AtributoAutocomplete.as_view(), name='atributos-autocomplete',),
     url(r'^individuos-autocomplete/$', autocomplete.IndividuosAutocomplete.as_view(), name='individuos-autocomplete',),
     url(r'^vehiculos-operativo-autocomplete/$', autocomplete.VehiculosOperativoAutocomplete.as_view(), name='vehiculos-operativo-autocomplete',),
+    url(r'^subtipolaboral-autocomplete/$', autocomplete.SubtipoLaboralAutocomplete.as_view(), name='subtipolaboral-autocomplete',),
 ]

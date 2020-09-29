@@ -3,7 +3,7 @@ from django.db.models import Q
 #Imports Extras
 from dal import autocomplete
 #Imports de la app
-from .models import Individuo, Vehiculo
+from .models import Individuo, Vehiculo, SubtipoLaboral
 
 #Definimos nuestros autocompletes
 class IndividuosAutocomplete(autocomplete.Select2QuerySetView):
@@ -21,4 +21,11 @@ class VehiculosOperativoAutocomplete(autocomplete.Select2QuerySetView):
         qs = Vehiculo.objects.filter(tipo=9)
         if self.q:
             qs = qs.filter(identificacion__icontains=self.q)
+        return qs
+
+class SubtipoLaboralAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = SubtipoLaboral.objects.all()
+        if self.q:
+            qs = qs.filter(nombre__icontains=self.q)
         return qs

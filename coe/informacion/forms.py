@@ -14,6 +14,7 @@ from .models import Vehiculo, TrasladoVehiculo
 from .models import Individuo, Domicilio, SignosVitales, Atributo, Sintoma
 from .models import Situacion, Patologia, Archivo, Relacion
 from .models import Documento
+from .models import Laboral
 
 #Definimos nuestros forms
 class ArchivoForm(forms.ModelForm):
@@ -266,6 +267,18 @@ class DocumentoForm(forms.ModelForm):
 #            self.fields['tipo'].widget = forms.HiddenInput()
 #            self.fields['aclaracion'].widget = forms.HiddenInput()
 #            self.fields['fecha'].widget = forms.HiddenInput()
+
+class LaboralForm(forms.ModelForm):
+    class Meta:
+        model = Laboral
+        fields= '__all__'
+        exclude = ('individuo', )
+        widgets = {
+            'subtipo': autocomplete.ModelSelect2(url='informacion:subtipolaboral-autocomplete'),
+            'ubicacion': autocomplete.ModelSelect2(url='georef:ubicacion-autocomplete'),
+            'begda': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
+            'endda': XDSoftDateTimePickerInput(attrs={'autocomplete':'off'}),
+        }
 
 class ReporteHotelesForm(forms.Form):
     begda = forms.DateField(label="Ingreso Minimo", required=True, 

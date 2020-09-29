@@ -36,6 +36,7 @@ from .models import Situacion
 from .models import Domicilio
 from .models import Atributo, Sintoma, Patologia
 from .models import Documento
+from .models import Laboral
 from .forms import ArchivoForm, ArchivoFormWithPass
 from .forms import VehiculoForm, TrasladoVehiculoForm
 from .forms import IndividuoForm, FullIndividuoForm, InquilinoForm, MinIndividuoForm
@@ -45,6 +46,7 @@ from .forms import DomicilioForm, AtributoForm, SintomaForm, PatologiaForm
 from .forms import SituacionForm, RelacionForm
 from .forms import SearchIndividuoForm, SearchVehiculoForm
 from .forms import DocumentoForm, SignosVitalesForm
+from .forms import LaboralForm
 from .forms import ReporteHotelesForm
 from .upload_tasks import guardar_same, guardar_epidemiologia
 from .upload_tasks import guardar_padron_individuos, guardar_padron_domicilios
@@ -400,6 +402,7 @@ def ver_individuo(request, individuo_id):
         'sintomas',
         'patologias',
         'documentos',
+        'laborales',
         'situaciones',
         'relaciones',
         'relaciones__relacionado',
@@ -587,7 +590,7 @@ def volver_domicilio(request, domicilio_id):
     nuevo_domicilio.save()
     return redirect('informacion:ver_individuo', individuo_id=nuevo_domicilio.individuo.id)
 
-@permission_required('operadores.individuos')
+@permission_required('operadores.admin_informacion')
 def del_domicilio(request, domicilio_id=None):
     domicilio = Domicilio.objects.get(pk=domicilio_id)
     individuo = domicilio.individuo
@@ -681,7 +684,7 @@ def cargar_situacion(request, individuo_id=None, situacion_id=None):
             return render(request, "extras/close.html")
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Situacion", 'form': form, 'boton': "Cargar", }) 
 
-@permission_required('operadores.individuos')
+@permission_required('operadores.admin_informacion')
 def del_situacion(request, situacion_id=None):
     #Obtenemos los datos
     situacion = Situacion.objects.get(pk=situacion_id)
@@ -711,7 +714,7 @@ def cargar_signosvitales(request, individuo_id, signosvitales_id=None):
             return render(request, "extras/close.html")
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Signos Vitales", 'form': form, 'boton': "Cargar", })
 
-@permission_required('operadores.individuos')
+@permission_required('operadores.admin_informacion')
 def del_signosvitales(request, signosvitales_id):
     signosvitales = SignosVitales.objects.get(pk=signosvitales_id)
     individuo = signosvitales.individuo
@@ -735,7 +738,7 @@ def cargar_relacion(request, individuo_id, relacion_id=None):
             return render(request, "extras/close.html")
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Relacion", 'form': form, 'boton': "Cargar", }) 
 
-@permission_required('operadores.individuos')
+@permission_required('operadores.admin_informacion')
 def del_relacion(request, relacion_id):
     relacion = Relacion.objects.get(pk=relacion_id)
     individuo = relacion.individuo
@@ -762,7 +765,7 @@ def cargar_atributo(request, individuo_id, atributo_id=None, tipo=None):
             return render(request, "extras/close.html")
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Atributo", 'form': form, 'boton': "Cargar", })
 
-@permission_required('operadores.individuos')
+@permission_required('operadores.admin_informacion')
 def del_atributo(request, atributo_id):
     atributo = Atributo.objects.get(pk=atributo_id)
     individuo = atributo.individuo
@@ -786,7 +789,7 @@ def cargar_sintoma(request, individuo_id, sintoma_id=None):
             return render(request, "extras/close.html")
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Sintoma", 'form': form, 'boton': "Cargar", })
 
-@permission_required('operadores.individuos')
+@permission_required('operadores.admin_informacion')
 def del_sintoma(request, sintoma_id):
     sintoma = Sintoma.objects.get(pk=sintoma_id)
     individuo = sintoma.individuo
@@ -810,7 +813,7 @@ def cargar_patologia(request, individuo_id, patologia_id=None):
             return render(request, "extras/close.html")
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Patologia", 'form': form, 'boton': "Cargar", })
 
-@permission_required('operadores.individuos')
+@permission_required('operadores.admin_informacion')
 def del_patologia(request, patologia_id):
     patologia = Patologia.objects.get(pk=patologia_id)
     individuo = patologia.individuo
@@ -852,11 +855,35 @@ def cargar_documento(request, individuo_id, documento_id=None, tipo=None):
                 return render(request, "extras/close.html")
     return render(request, "extras/generic_form.html", {'titulo': "Cargar Documento", 'form': form, 'boton': "Cargar", })
 
-@permission_required('operadores.individuos')
+@permission_required('operadores.admin_informacion')
 def del_documento(request, documento_id):
     documento = Documento.objects.get(pk=documento_id)
     individuo = documento.individuo
     documento.delete()
+    return redirect('informacion:ver_individuo', individuo_id=individuo.id)
+
+#Laboral
+@permission_required('operadores.individuos')
+def cargar_laboral(request, individuo_id, laboral_id=None):
+    laboral = None
+    if laboral_id:
+        laboral = Laboral.objects.get(pk=laboral_id)
+    form = LaboralForm(instance=laboral)
+    if request.method == "POST":
+        form = LaboralForm(request.POST, instance=laboral)
+        if form.is_valid():
+            individuo = Individuo.objects.get(pk=individuo_id)
+            laboral = form.save(commit=False)
+            laboral.individuo = individuo
+            laboral.save()
+            return render(request, "extras/close.html")
+    return render(request, "extras/generic_form.html", {'titulo': "Cargar Actividad Laboral", 'form': form, 'boton': "Cargar", })
+
+@permission_required('operadores.admin_informacion')
+def del_laboral(request, laboral_id):
+    laboral = Laboral.objects.get(pk=laboral_id)
+    individuo = laboral.individuo
+    laboral.delete()
     return redirect('informacion:ver_individuo', individuo_id=individuo.id)
 
 #GEOPOS

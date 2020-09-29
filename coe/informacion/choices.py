@@ -202,3 +202,9 @@ TIPO_DOCUMENTO = (
     ('TP', 'Titulo Profesional'),
     ('OT', 'Otros'),
 )
+
+AREA_LABORAL = (
+    ('SA', 'Salud'),
+    ('SG', 'Seguridad'),
+    ('EJ', 'Poder Ejecutivo'),
+)

@@ -48,7 +48,7 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-sm-12"></div>
+                    <div class="col-sm-12">
                         {% if ubicacion.tipo == 'AI' or ubicacion.tipo == 'IN' %}
                             <h4><b>Listado de Aislados Actuales:</b></h4>
                             <table class="listado" id="table">
@@ -126,6 +126,41 @@
                             </table>
                         {% endif %}
                     </div>
+
+                    <!-- Empleados -->
+                    {% for empleado in ubicacion.empleados.all %}
+                        {% if forloop.first %}
+                            <hr>
+                            <h2>Empleados:</h2>
+                            <div class="col-sm-12">
+                                <table class="listado">
+                                    <thead>
+                                        <tr>
+                                            <th>Dni</th>
+                                            <th>Nombre Completo</th>
+                                            <th>Aclaracion</th>
+                                            <th>Fechas</th>
+                                            <th>Detalle</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                        {% endif %}
+                        <tr>
+                            <td>{{empleado.individuo.num_doc}}</td>
+                            <td>{{empleado.individuo.apellidos}}, {{empleado.individuo.nombres}}</td>
+                            <td>{{empleado.aclaracion}}</td>
+                            <td>{{empleado.begda}} - {{empleado.endda}}</td>
+                            <td>
+                                <a href="{% url 'informacion:ver_individuo' individuo_id=empleado.individuo.id %}" target="_blank">
+                                    <img class="icons" src="{% static '/img/icons/access_card.png' %}">
+                                </a>
+                            </td>
+                        </tr>
+                        {% if forloop.last %}
+                                    </tbody>
+                                </div>
+                        {% endif %}
+                    {% endfor %}
                 </div>
             </div>
         </section>
