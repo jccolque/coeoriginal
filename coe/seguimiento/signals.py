@@ -99,7 +99,7 @@ def confirmar_sospechoso(created, instance, **kwargs):
             atributo.save()        
 
 @receiver(post_save, sender=Domicilio)
-def poner_en_seguimiento(created, instance, **kwargs):
+def seguimiento_domiciliario(created, instance, **kwargs):
     if created and instance.tipo in ("AI", "IN"):
         individuo = instance.individuo
         #Generamos atributo de vigilancia
@@ -146,9 +146,11 @@ def evolucionar_sospechoso(created, instance, **kwargs):
 @receiver(post_save, sender=Atributo)
 def atributo_vigilancia(created, instance, **kwargs):
     if created:
+        print("Se creo atributo")
         tipos = (t[0] for t in TIPO_VIGIA)
         #Si se indica alguna vigilancia
         if instance.tipo in tipos:
+            print("Requiere vigilancia")
             asignar_vigilante(instance.individuo, instance.tipo)
 
 @receiver(post_save, sender=Seguimiento)

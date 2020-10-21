@@ -18,7 +18,7 @@ class SeguimientoConfig(AppConfig):
             from .signals import evolucionar_sospechoso
             from .signals import descartar_sospechoso
             from .signals import confirmar_sospechoso
-            from .signals import poner_en_seguimiento
+            from .signals import seguimiento_domiciliario
             from .signals import atributo_vigilancia
             from .signals import cargo_signosvitales
             from .signals import sin_telefono

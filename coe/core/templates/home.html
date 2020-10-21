@@ -53,10 +53,9 @@
                             </a>
                         </div>
                         -->
-                        <a href="{% url 'core:entregas' %}" target="_blank">
-                            <img class="fotos"  src="{% static 'img/entregas.jpg' %}">
+                        <a href="https://drive.google.com/file/d/1zvdYtnzCZIwJoS14houezfGzvtOnO1H2/view?usp=sharing">
+                            <img class="fotos"  src="{% static 'img/new_ingreso.jpeg' %}">
                         </a>
-
                         <!--
                             <div class="col-sm-12">
                                 <a href="{% url 'inscripciones:pedir_coca' %}" target="_blank">
@@ -68,13 +67,28 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-sm-4">
-                        <div class="elem">
-                            <a href="{% url 'permisos:pedir_ingreso_provincial' %}">
-                                <img class="fotos"  src="{% static 'img/ingresoprovincial.png' %}">
-                            </a>
-                        </div>
+                    <div class="col-sm-6">
+                        <a href="{% url 'app:download_app' %}">
+                            <img class="fotos" src="{% static 'img/download_app.jpg' %}" style="border-radius: 35px;">
+                        </a>
                     </div>
+
+                    <div class="col-sm-6">
+                        <a href="{% url 'core:entregas' %}" target="_blank">
+                            <img class="fotos" src="{% static 'img/entregas.jpg' %}">
+                        </a>
+                   </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-sm-6 col-sm-offset-3">
+                        <a href="{% url 'seguimiento:buscar_alta_aislamiento' %}">
+                            <img class="fotos" src="{% static 'img/obtener_alta.png' %}">
+                        </a>
+                    </div>
+                </div>
+
+                <div class="row">
                     <div class="col-sm-4">
                         <div class="elem">
                             <a href="http://coevial.jujuy.gob.ar/" target="_blank">
@@ -86,22 +100,6 @@
                             <a href="{% url 'inscripciones:inscripcion_social' %}" target="_blank">
                                 <img class="fotos" src="{% static 'img/reclutamiento_social.jpeg' %}">
                             </a>
-                    </div>
-                    
-                </div>
-
-                <div class="row">
-                    <div class="col-sm-6">
-
-                        <a href="{% url 'app:download_app' %}">
-                            <img class="fotos" src="{% static 'img/download_app.jpg' %}" style="border-radius: 35px;">
-                        </a>
-                    </div>
-
-                    <div class="col-sm-6">
-                        <a href="{% url 'seguimiento:buscar_alta_aislamiento' %}">
-                            <img class="fotos" src="{% static 'img/obtener_alta.png' %}">
-                        </a>
                     </div>
                 </div>
 

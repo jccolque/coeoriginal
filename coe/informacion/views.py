@@ -208,7 +208,7 @@ def cargar_individuo(request, traslado_id=None, num_doc=None):
                 domicilio.calle = form.cleaned_data['dom_calle']
                 domicilio.numero = form.cleaned_data['dom_numero']
                 domicilio.aclaracion = form.cleaned_data['dom_aclaracion']
-            #Si cambio el domicilio Actual:
+                #Si cambio el domicilio Actual:
                 if not individuo.domicilio_actual:
                     domicilio.save()
                 else:
