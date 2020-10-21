@@ -8,6 +8,7 @@ from dal import autocomplete
 from coe.settings import SECRET_KEY
 from core.widgets import XDSoftDatePickerInput, XDSoftDateTimePickerInput
 from georef.models import Localidad, Ubicacion
+from seguimiento.choices import TIPO_VIGIA
 #Imports de la app
 from .choices import atributos_iniciales, obtener_atributos, TIPO_SINTOMA
 from .models import Vehiculo, TrasladoVehiculo
@@ -79,6 +80,11 @@ class FullIndividuoForm(forms.ModelForm):
     )
     sintomas = forms.MultipleChoiceField(
         choices=TIPO_SINTOMA,
+        widget=CheckboxSelectMultiple(attrs={'class':'multiplechoice',}),
+        required=False
+    )
+    vigilancia = forms.MultipleChoiceField(
+        choices=TIPO_VIGIA,
         widget=CheckboxSelectMultiple(attrs={'class':'multiplechoice',}),
         required=False
     )

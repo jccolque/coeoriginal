@@ -168,6 +168,8 @@ TIPO_SINTOMA = (
 )
 
 TIPO_PATOLOGIA = (
+    ('DNG', 'Dengue'),
+    ('COV', 'Covid-19'),
     ('HIP', 'HiperTension'),
     ('DBT', 'Diabetes'),
     ('TBC', 'Tuberculosis'),

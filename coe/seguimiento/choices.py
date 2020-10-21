@@ -49,8 +49,8 @@ TIPO_VIGIA = (
     ('AP', 'Atencion Psiquiatrica'),
     ('ST', 'Vigilancia Medica'),
     ('VD', 'Vigilancia de Adultos Mayores'),
-    ('VT', 'Vigilancia de Circulacion Temporal'),
-    ('EM', 'Emergencia Medica - URGENTE'),
+    #('VT', 'Vigilancia de Circulacion Temporal'),
+    #('EM', 'Emergencia Medica - URGENTE'),
 )
 
 ESTADO_OPERATIVO = (

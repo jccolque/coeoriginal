@@ -217,18 +217,25 @@ def cargar_individuo(request, traslado_id=None, num_doc=None):
             atributos = form.cleaned_data['atributos']
             individuo.atributos.all().delete()
             for atributo_id in atributos:
-                atributo = Atributo()
-                atributo.individuo = individuo
+                atributo = Atributo(individuo=individuo)
                 atributo.tipo = atributo_id
+                atributo.aclaracion = "Carga Inicial por: " + str(operador)
                 atributo.save()           
             #Creamos sintomas
             sintomas = form.cleaned_data['sintomas']
             individuo.sintomas.all().delete()
             for sintoma_id in sintomas:
-                sintoma = Sintoma()
-                sintoma.individuo = individuo
+                sintoma = Sintoma(individuo=individuo)
                 sintoma.tipo = sintoma_id
-                sintoma.save()  
+                sintoma.aclaracion = "Carga Inicial por: " + str(operador)
+                sintoma.save()
+            #Creamos vigilancia
+            vigilancias = form.cleaned_data['vigilancia']
+            for vigilancia_id in vigilancias:
+                atributo = Atributo(individuo=individuo)
+                atributo.tipo = vigilancia_id
+                atributo.aclaracion = "Carga Inicial por: " + str(operador)
+                atributo.save()
             #Si vino en un vehiculo
             if traslado_id:
                 traslado = TrasladoVehiculo.objects.get(pk=traslado_id)
