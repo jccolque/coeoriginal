@@ -7,6 +7,7 @@ from auditlog.registry import auditlog
 #Imports del proyecto
 from coe.settings import LOADDATA
 from operadores.models import Operador
+from georef.models import Ubicacion
 from tareas.models import Tarea
 #Imports de la app
 from .choices import TIPO_EVENTO_ITEM
@@ -48,6 +49,7 @@ class Item(models.Model):
     subgrupo = models.ForeignKey(SubGrupo, on_delete=models.CASCADE, related_name="items")
     nombre = models.CharField('Identificacion', max_length=200)
     responsable = models.ForeignKey(Operador, on_delete=models.CASCADE, null=True, blank=True, related_name="responsable_items")
+    ubicacion = models.ForeignKey(Ubicacion, on_delete=models.SET_NULL, related_name="items", null=True, blank=True)
     class Meta:
         unique_together = ['subgrupo', 'nombre']
         ordering = ['subgrupo', 'nombre', ]

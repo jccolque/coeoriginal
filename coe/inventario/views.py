@@ -65,7 +65,7 @@ def lista_general(request):
 def lista_detallada(request, rubro_id=None, subgrupo_id=None):
     items = Item.objects.all()
     items = items.select_related('subgrupo', 'subgrupo__rubro', 'responsable', )
-    items = items.prefetch_related('eventos')
+    items = items.prefetch_related('eventos', 'ubicacion')
     if rubro_id:
         items = items.filter(subgrupo__rubro__id=rubro_id)
     if subgrupo_id:
@@ -86,7 +86,13 @@ def lista_detallada(request, rubro_id=None, subgrupo_id=None):
 
 @permission_required('operadores.menu_inventario')
 def ver_item(request, item_id):
-    item = Item.objects.get(pk=item_id)
+    items = Item.objects.all()
+    #optimizamos
+    items = items.select_related('subgrupo', 'subgrupo__rubro', 'responsable', )
+    items = items.prefetch_related('eventos', 'eventos__operador', 'eventos__tarea')
+    items = items.prefetch_related('ubicacion')
+    #Obtenemos el que necesitamos
+    item = items.get(pk=item_id)
     return render(request, 'ver_item.html', {'item': item, })
 
 @permission_required('operadores.menu_inventario')

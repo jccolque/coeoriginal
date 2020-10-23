@@ -11,6 +11,9 @@
                         <h2>{{item.nombre}}</h2>
                         <p>Rubro: {{item.subgrupo.rubro}}</p>
                         <p>Subgrupo: {{item.subgrupo}}</p>
+                        {% if item.ubicacion %}
+                            <p>Ubicacion: {{item.ubicacion}}</p>
+                        {% endif %}
                         <p>Responsable: {{item.responsable}}</p>
                         <p>Datos de Contacto: {{item.responsable.telefono}} /  {{item.responsable.email}}</p>
                         <p>Cantidad Disponible: {{item.cantidad_disponible}}</p>

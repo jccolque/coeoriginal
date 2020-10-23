@@ -32,6 +32,7 @@ class ItemForm(forms.ModelForm):
         fields= '__all__'
         widgets = {
             'subgrupo': autocomplete.ModelSelect2(url='inventario:subgrupos-autocomplete'),
+            'ubicacion': autocomplete.ModelSelect2(url='georef:ubicacion-autocomplete'),
             'responsable' : autocomplete.ModelSelect2(url='operadores:operadores-autocomplete'),
         }
 
@@ -41,6 +42,7 @@ class ModItemForm(forms.ModelForm):
         fields= '__all__'
         widgets = {
             'subgrupo': autocomplete.ModelSelect2(url='inventario:subgrupos-autocomplete'),
+            'ubicacion': autocomplete.ModelSelect2(url='georef:ubicacion-autocomplete'),
             'responsable' : autocomplete.ModelSelect2(url='operadores:operadores-autocomplete'),
         }
 
