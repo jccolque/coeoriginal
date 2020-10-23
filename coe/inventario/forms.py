@@ -48,7 +48,7 @@ class EventoItemForm(forms.ModelForm):
     class Meta:
         model = EventoItem
         fields= '__all__'
-        exclude = ('item', 'fecha', )
+        exclude = ('item', 'fecha', 'operador', 'devuelto', )
         widgets = {
             'tarea' : autocomplete.ModelSelect2(url='tareas:tareas-autocomplete'),
             'operador' : autocomplete.ModelSelect2(url='operadores:operadores-autocomplete'),

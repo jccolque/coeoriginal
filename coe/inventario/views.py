@@ -148,6 +148,7 @@ def crear_evento(request, item_id=None):
         if form.is_valid():
             evento = form.save(commit=False)
             evento.item = item
+            evento.operador = obtener_operador(request)
             evento.save()
             return redirect('inventario:ver_item', item_id=item.id)
     return render(request, "extras/generic_form.html", {'titulo': "Crear Evento del Item", 'form': form, 'boton': "Agregar", })
@@ -161,6 +162,7 @@ def devolver_item(request, evento_id):
     devuelto.id = None
     devuelto.accion = 'I'
     devuelto.fecha = timezone.now()
+    devuelto.operador = obtener_operador(request)
     devuelto.save()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
