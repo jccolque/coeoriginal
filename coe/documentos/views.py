@@ -38,7 +38,7 @@ def menu(request):
 #ITEMS:
 @permission_required('operadores.menu_documentos')
 def lista_general(request, subco_id=None):
-    documentos = Documento.objects.all()
+    documentos = Documento.objects.all(habilitados=None)#solo los que no tienen requisitos
     documentos = documentos.select_related('subcomite')
     documentos = documentos.prefetch_related('versiones')
     if subco_id:
@@ -48,6 +48,20 @@ def lista_general(request, subco_id=None):
         if form.is_valid():
             search = form.cleaned_data['search']
             documentos = documentos.filter(nombre__icontains=search)
+    return render(request, 'lista_documentos.html', {
+        'documentos': documentos,    
+        'has_table': True,
+    })
+
+@permission_required('operadores.menu_documentos')
+def lista_privada(request):
+    #Obtenemos el operador
+    operador = obtener_operador(request)
+    #Obtenemos solo los que tienen habilitacion
+    documentos = Documento.objects.filter(habilitados=operador)
+    documentos = documentos.select_related('subcomite')
+    documentos = documentos.prefetch_related('versiones')
+    #Lanzamos reporte
     return render(request, 'lista_documentos.html', {
         'documentos': documentos,    
         'has_table': True,
