@@ -3,6 +3,7 @@
 {% block content %}
     <li><a href="{% url 'core:home' %}">Inicio</a></li>
     <li><a href="{% url 'noticias:ver_noticias' %}">Noticias</a></li>
+    <li><a href="{% url 'noticias:ver_partes' %}">Partes Especiales</a></li>
     <li><a href="{% url 'core:faqs' %}">Dudas</a></li>
     <li><a href="{% url 'consultas:consultas' %}">Consultas</a></li>
     {% if user.is_authenticated %}

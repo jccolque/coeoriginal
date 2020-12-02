@@ -1,0 +1,56 @@
+{% extends 'base_noticias.html' %} 
+
+{% block content %}
+    <div class="noticias container">
+        <div class="row">
+            <div class="col-sm-12">
+                {% if partes %}
+                    <br>
+                    <h1><b>Últimos Partes</b></h1>
+                    <hr>
+                    <div class="lista-noticias container">
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <ul class="noticias">
+                                    {% for parte in partes %}
+                                    <li class="noticia">
+                                        <div class=row>
+                                            <div class="col-sm-3 foto">
+                                                <a class="novedad-link" href="{% url 'noticias:ver_parte' parte_id=parte.id %}">
+                                                    <img src="{{parte.photo.url}}">
+                                                </a>
+                                            </div>
+                                            <div class="col-sm-9 info">
+                                                <h2 class="titulo"><b>{{parte.title}}</b></h2>
+                                                <p>{{ parte.cuerpo|truncatewords:60|safe }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="leer-mas">
+                                            <a class="novedad-link" href="{% url 'noticias:ver_parte' parte_id=parte.id %}">
+                                                Leer Parte
+                                            </a>
+                                        </div>
+                                    </li>
+                                    <br>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="col-sm-3">
+                                {% include 'extras/buscador_partes.html' %}
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="aviso_faltadata">
+                        {% if request.user.is_staff %}
+                            <h2>No se han cargado partes destacados</h2>
+                            <p>Por favor comience a agregar contenido <a href="{% url 'admin:noticias_parte_add' %}">aqui</a></p>
+                        {% else %}
+                            <h2>No se han encontrado partes con esas palabras claves</h2>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div> 
+{% endblock %}

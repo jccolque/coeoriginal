@@ -1,0 +1,43 @@
+{% extends 'base_noticias.html' %} 
+
+{% load static %}
+
+{% block custom_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/noticias.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/noticia.css' %}" />
+{% endblock %}
+
+
+{% block content %}
+    <div class="container noticias noticia-single noticia">
+        <div class="row">
+            <h1>
+                <b>
+                    {{noticia.titulo}}
+                    {% if perms.noticias.change_parte %}
+                        <a class="nolink" href="{% url 'admin:noticias_parte_change' parte.id %}" target="_blank">
+                            <img class="icons nolink" src="{% static '/img/icons/change.png' %}">
+                        </a>
+                    {% endif %}
+                </b>
+            </h1>
+            <hr>
+            <div class="col-sm-8 col-sm-offset-1">
+                <div class="noticia-cuerpo">
+                    <br>
+                    <div class="info">
+                        <div class="foto-noticia">
+                            <p class="fecha">{{parte.fecha}}</p>
+                            <img src="{{parte.photo.url}}">
+                            <p class="epigrafe" style="font-family: Roboto">{{parte.epigraph}}</p>
+                        </div>
+                        {{ parte.cuerpo|safe }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                {% include 'extras/buscador_partes.html' with etiquetas=parte.etiquetas.all %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

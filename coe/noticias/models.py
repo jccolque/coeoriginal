@@ -38,6 +38,46 @@ class Noticia(models.Model):
             'destacada': self.destacada,
         }
 
+
+class Parte(models.Model):
+    title = models.CharField(
+        'Título', 
+        max_length=200
+    )
+    photo = models.FileField(
+        'Foto',
+        upload_to='partes/',
+        default='/static/img/noimage.png'
+    )
+    epigraph = models.CharField(
+        'Epigrafe', 
+        default='imagen', 
+        max_length=100
+    )
+    etiquetas = TaggableManager()
+    cuerpo = HTMLField()
+    fecha = models.DateTimeField(
+        'Fecha', 
+        default=timezone.now
+    )
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    destacada = models.BooleanField(default=False)     
+    def __str__(self):
+        return self.title
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'title':  self.title,
+            'photo': str(self.photo),
+            'epigraph': self.epigraph,
+            'etiquetas': str(self.etiquetas.all()),
+            'cuerpo': self.cuerpo,
+            'fecha': str(self.fecha),
+            'author': str(self.author),
+            'destacada': self.destacada,
+        }
+
 if not LOADDATA:
     #Auditoria
     auditlog.register(Noticia)
+    auditlog.register(Parte)
