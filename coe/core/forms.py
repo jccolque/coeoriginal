@@ -59,7 +59,7 @@ class MesForm(forms.Form):
         super(MesForm, self).__init__(*args, **kwargs)
 
 class FechaForm(forms.Form):
-    fecha = forms.DateField(initial=date.today(), widget=forms.SelectDateWidget())
+    fecha = forms.DateField(initial=date.today(), widget=forms.SelectDateWidget(years=range(2020,2033)))
 
 class PeriodoForm(forms.Form):
     begda = forms.DateField(label='Inicio', initial=timezone.now(), widget=XDSoftDatePickerInput(attrs={'autocomplete':'off'}))
