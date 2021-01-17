@@ -15,7 +15,7 @@ from .models import Faq
 from .tokens import account_activation_token
 
 # Create your views here.
-#PUBLICAS:
+# PUBLICAS:
 def home(request):
     versiones = ver_publicadas(limit=5)
     return render(request, 'home.html', {'versiones': versiones, })
@@ -51,13 +51,19 @@ def home_login(request):
                     return redirect('informacion:tablero_control')
                 else:
                     return redirect('core:menu')
-    return render(request, "extras/generic_form.html", {'titulo': "Ingresar al Sistema", 'form': form, 'boton': "Ingresar", 'message': message, })
+    return render(request, "extras/generic_form.html", {
+        'titulo': "Ingresar al Sistema", 
+        'form': form, 
+        'boton': "Ingresar", 
+        'message': message, 
+        }
+    )
 
 def home_logout(request):
     logout(request)
     return home(request)
 
-#Menu Principal
+# Menu Principal
 @staff_member_required
 def menu(request):
     return render(request, 'menu_core.html', {})

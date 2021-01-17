@@ -22,9 +22,9 @@ class Consulta(models.Model):
         max_length=50,
         validators=[RegexValidator('^[A-Z_\d]*$', 'Solo Mayusculas.')],
     )
-    autor = models.CharField('Nombre y Apellido', max_length=100)
-    email = models.EmailField('Correo Electronico', blank=True, null=True)
-    telefono = models.CharField('Telefono', max_length=100, blank=True, null=True)
+    autor = models.CharField('Nombre Completo', max_length=100)
+    email = models.EmailField('Email', blank=True, null=True)
+    telefono = models.CharField('Teléfono', max_length=100, blank=True, null=True)
     asunto = models.CharField('Asunto', max_length=100)
     descripcion = HTMLField()
     fecha_consulta = models.DateTimeField(auto_now_add=True)

@@ -16,10 +16,21 @@ from .models import Llamada
 class ConsultaForm(forms.ModelForm):
     class Meta:
         model = Consulta
-        fields = ['num_doc', 'autor', 'email', 'telefono', 'asunto', 'descripcion']
-        widgets = {
+        fields = ['num_doc', 'autor', 'email', 'telefono', 'asunto', 'descripcion']        
+        widgets = {          
+            "num_doc": forms.TextInput(attrs={"placeholder": "DNI"}),
+            "autor": forms.TextInput(attrs={"placeholder": "INTRODUZCA NOMBRE COMPLETO"}),            
+            "email": forms.TextInput(attrs={"placeholder": "INTRODUZCA EMAIL"}),
+            "telefono": forms.TextInput(attrs={"placeholder": "INTRODUZCA TELÉFONO"}),
+            "asunto": forms.TextInput(attrs={"placeholder": "INTRODUZCA ASUNTO"}),
             'descripcion': forms.Textarea(attrs={'cols': 40, 'rows': 10}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({"class": "form-control"})
+        
 
 class RespuestaForm(forms.ModelForm):
     class Meta:
